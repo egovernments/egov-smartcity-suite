@@ -1814,4 +1814,67 @@ public class PropertyExternalService {
         return assessmentDetails;
     }
     
+    /**
+     * API for Mutation Fee Payment
+     * @param payPropertyTaxDetails
+     * @return ReceiptDetails
+     */
+    public ReceiptDetails payMutationFee(final PayPropertyTaxDetails payPropertyTaxDetails) {
+        ReceiptDetails receiptDetails = null;
+        ErrorDetails errorDetails = null;
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
+                .getAssessmentNo());
+        propertyTaxBillable.setBasicProperty(basicProperty);
+        ApplicationThreadLocals.setUserId(2L);
+        propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
+        propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
+        propertyTaxBillable.setMutationFee(payPropertyTaxDetails.getPaymentAmount());
+        propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
+        propertyTaxBillable.setMutationApplicationNo(payPropertyTaxDetails.getApplicationNo());
+        propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
+        
+        final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
+        final CollectionHelper collectionHelper = new CollectionHelper(egBill);
+        final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
+        paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
+        paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, egBill.getCitizenName());
+        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
+                .getPaymentMode().toLowerCase())
+                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
+                        .getPaymentMode().toLowerCase())) {
+            paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
+            paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE,
+                    ChequePayment.CHEQUE_DATE_FORMAT.format(payPropertyTaxDetails.getChqddDate()));
+            paymentDetailsMap.put(ChequePayment.BRANCHNAME, payPropertyTaxDetails.getBranchName());
+            final Long validatesBankId = validateBank(payPropertyTaxDetails.getBankName());
+            paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
+        }
+        final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
+        collectionHelper.setIsMutationFeePayment(true);
+        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment,
+                payPropertyTaxDetails.getSource());
+
+        if (null != billReceiptInfo) {
+            receiptDetails = new ReceiptDetails();
+            receiptDetails.setReceiptNo(billReceiptInfo.getReceiptNum());
+            receiptDetails.setReceiptDate(formatDate(billReceiptInfo.getReceiptDate()));
+            receiptDetails.setPayeeName(billReceiptInfo.getPayeeName());
+            receiptDetails.setPayeeAddress(billReceiptInfo.getPayeeAddress());
+            receiptDetails.setBillReferenceNo(billReceiptInfo.getBillReferenceNum());
+            receiptDetails.setServiceName(billReceiptInfo.getServiceName());
+            receiptDetails.setDescription(billReceiptInfo.getDescription());
+            receiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
+            receiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
+            receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
+            receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+
+            receiptDetails.setErrorDetails(errorDetails);
+        }
+        return receiptDetails;
+    }
+    
 }

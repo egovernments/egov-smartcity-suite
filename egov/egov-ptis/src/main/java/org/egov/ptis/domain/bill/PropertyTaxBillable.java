@@ -294,7 +294,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getDescription() {
-        return "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
+    	String description = "";
+    	if (!isMutationFeePayment()) {
+    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
+    	} else{
+    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo() + " (" + mutationApplicationNo + ")";
+    	}
+    	return description;
     }
 
     /**

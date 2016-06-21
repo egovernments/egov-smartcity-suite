@@ -62,6 +62,8 @@ public class PayPropertyTaxDetails implements Serializable {
     private String branchName;
     @JsonIgnore
     private String source;
+    
+    private String applicationNo;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -156,5 +158,13 @@ public class PayPropertyTaxDetails implements Serializable {
     public void setSource(String source) {
         this.source = source;
     }
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
 
 }

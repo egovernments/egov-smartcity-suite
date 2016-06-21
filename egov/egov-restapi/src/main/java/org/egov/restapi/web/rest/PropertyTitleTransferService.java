@@ -44,6 +44,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -55,9 +56,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
+import org.egov.ptis.domain.model.PayPropertyTaxDetails;
+import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
@@ -173,6 +178,60 @@ public class PropertyTitleTransferService {
         return responseJson;
     }
     
+    /**
+     * This method is used to pay the mutation fee
+     * 
+     * @param payPropertyTaxDetails - JSON request string
+     * @param request - HttpServletRequest
+     * @return responseJson - server response in JSON format
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/paymutationfee", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String payMutationFee(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        String responseJson;
+        try {
+            responseJson = new String();
+            PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
+                    payPropertyTaxDetails, PayPropertyTaxDetails.class);
+
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,true);
+            if (null != errorDetails) {
+                responseJson = getJSONResponse(errorDetails);
+            } else {
+                payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                        .getAttribute("source").toString()
+                        : "");
+                ReceiptDetails receiptDetails = propertyExternalService.payMutationFee(payPropTaxDetails);
+                responseJson = getJSONResponse(receiptDetails);
+            }
+        } catch (ValidationException e) {
+            e.printStackTrace();
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+
+            List<ValidationError> errors = e.getErrors();
+            for (ValidationError ve : errors)
+            {
+                ErrorDetails er = new ErrorDetails();
+                er.setErrorCode(ve.getKey());
+                er.setErrorMessage(ve.getMessage());
+                errorList.add(er);
+            }
+            responseJson = JsonConvertor.convert(errorList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            responseJson = JsonConvertor.convert(errorList);
+        }
+        return responseJson;
+    }
+    
 	/**
      * This method is used to get POJO object from JSON request.
      * 
@@ -206,4 +265,5 @@ public class PropertyTitleTransferService {
         String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
     }
+    
 }

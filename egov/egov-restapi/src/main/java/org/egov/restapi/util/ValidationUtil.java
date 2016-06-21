@@ -419,7 +419,7 @@ public class ValidationUtil {
             }
         return errorDetails;
     }
-    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails) {
+    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails, boolean isMutationFeePayment) {
         ErrorDetails errorDetails = null;
         if (payPropTaxDetails.getAssessmentNo() == null || payPropTaxDetails.getAssessmentNo().trim().length() == 0) {
             errorDetails = new ErrorDetails();
@@ -436,6 +436,14 @@ public class ValidationUtil {
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             }
+        }
+        
+        if(isMutationFeePayment){
+        	if(StringUtils.isBlank(payPropTaxDetails.getApplicationNo())){
+        		errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED);
+                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_APPLICATION_NO_REQUIRED);
+        	}
         }
         
         if (payPropTaxDetails.getTransactionId() == null || "".equals(payPropTaxDetails.getTransactionId()) ){
