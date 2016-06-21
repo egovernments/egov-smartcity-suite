@@ -106,6 +106,16 @@ public class WorkOrder extends StateAware implements Auditable {
     public static final String GET_All_CONTRACTORS = "GET_All_CONTRACTORS";
     public static final String GETAPPROVEDCONTRACTORSWITHWO = "getApprovedContractorsWithWO";
 
+    public enum OfflineStatuses {
+
+        ACCEPTANCE_LETTER_ISSUED, ACCEPTANCE_LETTER_ACKNOWLEDGED, AGREEMENT_ORDER_SIGNED, WORK_ORDER_ACKNOWLEDGED, SITE_HANDED_OVER, WORK_COMMENCED;
+        
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+    
     @Id
     @GeneratedValue(generator = SEQ_EGW_WORKORDER, strategy = GenerationType.SEQUENCE)
     private Long id;

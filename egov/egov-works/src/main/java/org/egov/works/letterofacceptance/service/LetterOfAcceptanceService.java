@@ -860,6 +860,14 @@ public class LetterOfAcceptanceService {
                         WorksConstants.APPROVED.toString());
         return estimateNumbers;
     }
+    
+    public List<String> getEstimateNumbersForApprovedLoa(final String estimateNumber) {
+        final List<WorkOrder> workorders = letterOfAcceptanceRepository.findByEstimateNumberContainingIgnoreCaseAndEgwStatus_codeEquals(estimateNumber,WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrder details : workorders)
+            results.add(details.getEstimateNumber());
+        return results;
+    }
 
     public WorkOrder getWorkOrderDocuments(final WorkOrder workOrder) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();

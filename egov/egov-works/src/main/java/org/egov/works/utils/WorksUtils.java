@@ -241,4 +241,9 @@ public class WorksUtils {
             exceptionaluoms = exceptionaluoms + appVal.getValue() + ":";
         return exceptionaluoms;
     }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public EgwStatus getStatusById(final Integer id) {
+        return egwStatusHibernateDAO.findById(id, true);
+    }
 }
