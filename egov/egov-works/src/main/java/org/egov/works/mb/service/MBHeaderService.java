@@ -48,8 +48,6 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBHeader;
@@ -84,9 +82,6 @@ public class MBHeaderService {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private AssignmentService assignmentService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -188,7 +183,7 @@ public class MBHeaderService {
     }
 
     public List<EgwStatus> getMBHeaderStatus() {
-        List<EgwStatus> statusList = egwStatusHibernateDAO.getStatusByModule(WorksConstants.MBHEADER);
+        final List<EgwStatus> statusList = egwStatusHibernateDAO.getStatusByModule(WorksConstants.MBHEADER);
         final List<EgwStatus> latestStatusList = new ArrayList<EgwStatus>();
         if (!statusList.isEmpty())
             for (final EgwStatus egwStatus : statusList)
