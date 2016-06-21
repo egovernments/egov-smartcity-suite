@@ -624,6 +624,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Approved";
     public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
+    public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
+    public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -724,6 +726,9 @@ public interface PropertyTaxConstants {
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String ADDTIONAL_RULE_PROPERTY_TRANSFER = "PROPERTY TRANSFER";
+    public static final String ADDTIONAL_RULE_PARTIAL_TRANSFER = "PARTIAL TRANSFER";
+    public static final String ADDTIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
+    public static final String ADDTIONAL_RULE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
     public static final String DEMOLITION = "DEMOLITION";

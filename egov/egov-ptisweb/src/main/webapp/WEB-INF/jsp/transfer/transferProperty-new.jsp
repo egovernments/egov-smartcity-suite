@@ -95,6 +95,7 @@
 				<div class="headingbg">
 					<s:text name="transferortitle" />
 				</div>
+				<s:hidden name="type" value="%{type}"/>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox2" style="width: 5%;">&nbsp;</td>

@@ -71,8 +71,6 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.property.VacancyRemissionService;
-import org.python.antlr.PythonParser.return_stmt_return;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -103,7 +101,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
-        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
+        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
@@ -193,9 +191,6 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private PropertyService propertyService;
-
-    @Autowired
-    private VacancyRemissionService vacancyRemissionService;
 
     @Autowired
     private SecurityUtils securityUtils;

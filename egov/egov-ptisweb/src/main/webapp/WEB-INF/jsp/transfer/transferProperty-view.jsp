@@ -346,16 +346,18 @@
 								</s:else>
 						</span></td>
 					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="docNum" />:</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="%{deedNo}" /></span></td>
-						<td class="greybox"><s:text name="docDate" />:</td>
-						<td class="greybox"><s:date name="deedDate" var="docDate"
-								format="dd/MM/yyyy" /> <span class="bold"><s:property
-									value="%{#docDate}" /></span></td>
-					</tr>
+					<s:if test="%{registrationDone}">
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="docNum" />:</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="%{deedNo}" /></span></td>
+							<td class="greybox"><s:text name="docDate" />:</td>
+							<td class="greybox"><s:date name="deedDate" var="docDate"
+									format="dd/MM/yyyy" /> <span class="bold"><s:property
+										value="%{#docDate}" /></span></td>
+						</tr>					
+					</s:if>
 					<s:if
 						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
 						<tr>
@@ -368,6 +370,15 @@
 										value="%{mutationFee}" default="N/A" /></span></td>
 						</tr>
 					</s:if>
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="label.parties.value" /> :</td>
+						<td class="greybox"><span class="bold"><s:property
+									value="%{partyValue}" default="N/A" /></span></td>
+						<td class="greybox"><s:text name="label.department.value" /> :</td>
+						<td class="greybox"><span class="bold"><s:property
+										value="%{departmentValue}" default="N/A" /></span></td>
+					</tr>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
 					<tr>
@@ -383,7 +394,9 @@
 				<s:if
 					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
+				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
+				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&
+				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 					</div>
@@ -392,8 +405,9 @@
 					</div>
 				</s:if>
 				<s:elseif
-					test="%{(model.receiptNum != '' && model.receiptDate != null) || 
-				model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)}">
+					test="%{model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) ||
+					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED) ||
+					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>

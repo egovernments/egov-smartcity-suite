@@ -57,6 +57,7 @@
 	function loadOnStartUp() {
 		var saleDetails = '<s:property value="%{saleDetail}"/>';
 		enableBlock();
+		enableRegistrationDetails();
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
@@ -219,6 +220,19 @@
 					<%@ include file="transfereeDetailsForm.jsp"%>
 					<tr>
 						<td class="greybox2">&nbsp;</td>
+						<td class="greybox">
+							<s:checkbox name="partialMutation" id="partialMutation" value="%{partialMutation}"/>
+							<s:text name="label.is.mutation.partial"/>
+						</td>
+						<td class="greybox">
+							<s:checkbox name="registrationDone" id="registrationDone" value="%{registrationDone}" onchange="enableRegistrationDetails();"/>
+							<s:text name="label.is.reg.done"/>
+						</td>
+						<td class="greybox">&nbsp;</td>
+						<td class="greybox">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="transferreason"></s:text> <span
 							class="mandatory1">*</span> :</td>
 						<td class="greybox"><s:select name="mutationReason"
@@ -234,7 +248,7 @@
 								onblur="trim(this,this.value);"></s:textarea></td>
 					</tr>
 
-					<tr>
+					<tr class="documentDetRow">
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="docNum" /><span
 							class="mandatory1">*</span> :</td>
@@ -249,20 +263,17 @@
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
 					</tr>
-					<s:if
-						test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_BILL_COLLECTOR_APPROVED.equals(state.value)}">
-						<tr>
-							<td class="bluebox2">&nbsp;</td>
-							<td class="bluebox"><s:text name="docValue" /><span
-								class="mandatory1">*</span> :</td>
-							<td class="bluebox"><s:textfield name="marketValue"
-									id="marketValue" maxlength="64" /></td>
-							<td class="bluebox"><s:text name="payablefee" /><span
-								class="mandatory1">*</span> :</td>
-							<td class="bluebox"><s:textfield name="mutationFee"
-									id="mutationFee" /></td>
-						</tr>
-					</s:if>
+					<tr>
+						<td class="greybox2">&nbsp;</td>
+						<td class="greybox"><s:text name="label.parties.value" /> :</td>
+						<td class="greybox">
+							<s:textfield name="partyValue" value="%{partyValue}" id="partyValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
+						</td>
+						<td class="greybox"><s:text name="label.department.value" />:</td>
+						<td class="greybox">
+							<s:textfield name="departmentValue" value="%{departmentValue}" id="departmentValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
+						</td>
+					</tr>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
 					<%@ include file="../common/DocumentUploadForm.jsp"%>
@@ -316,6 +327,16 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
+			}
+		}
+		function enableRegistrationDetails() {
+			var obj = document.getElementById("registrationDone");
+			if (obj.checked) {
+				jQuery("tr.documentDetRow").show();
+			} else {
+				jQuery("#docNum").val("");
+				jQuery("#deedDate").val("");
+				jQuery("tr.documentDetRow").hide();
 			}
 		}
 

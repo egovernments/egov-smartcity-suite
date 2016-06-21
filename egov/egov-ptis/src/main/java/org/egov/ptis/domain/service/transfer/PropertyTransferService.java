@@ -93,7 +93,6 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -201,14 +200,13 @@ public class PropertyTransferService {
     @Autowired
     @Qualifier("waterChargesIntegrationServiceImpl")
     private WaterChargesIntegrationService waterChargesIntegrationService;
-
-    @Autowired
-    private PtDemandDao ptDemandDAO;
     
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
+        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue());
+        propertyMutation.setMutationFee(mutationFee);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
         propertyMutation.setMutationDate(new Date());
@@ -245,6 +243,8 @@ public class PropertyTransferService {
         checkAllMandatoryDocumentsAttached(propertyMutation);
         createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
+        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue());
+        propertyMutation.setMutationFee(mutationFee);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
     }
@@ -374,8 +374,10 @@ public class PropertyTransferService {
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
             noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
-            noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
-            noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+            if (propertyMutation.isRegistrationDone()) {
+                noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
+                noticeBean.setRegDocNo(propertyMutation.getDeedNo());
+            }
             noticeBean.setAssessmentNo(basicProp.getUpicNo());
             noticeBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
             if (basicProp.getAddress() != null) {
@@ -415,7 +417,6 @@ public class PropertyTransferService {
     }
 
     private void createUserIfNotExist(final PropertyMutation propertyMutation,final List<PropertyMutationTransferee> transferees) {
-        final List<PropertyMutationTransferee> newOwners = new ArrayList<PropertyMutationTransferee>();
             propertyMutation.getTransfereeInfos().clear();
             for(PropertyMutationTransferee transferee : transferees){ 
             if (transferee!=null) { 

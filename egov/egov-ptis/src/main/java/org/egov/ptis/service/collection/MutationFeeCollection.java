@@ -58,7 +58,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REGISTRATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 
 public class MutationFeeCollection extends TaxCollection {
@@ -75,7 +77,6 @@ public class MutationFeeCollection extends TaxCollection {
     @Autowired
     private EgBillDao egBillDAO;
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo bri) {
@@ -83,10 +84,16 @@ public class MutationFeeCollection extends TaxCollection {
                 bri.getBillReferenceNum()).getConsumerId());
         propertyMutation.setReceiptDate(bri.getReceiptDate());
         propertyMutation.setReceiptNum(bri.getReceiptNum());
+        String nextAction = null;
+        if (ADDTIONAL_RULE_FULL_TRANSFER.equals(propertyMutation.getType())) {
+            nextAction = WF_STATE_REGISTRATION_PENDING;
+        } else {
+            nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
+        }
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
-        .withOwner(propertyMutation.getState().getOwnerPosition())
+                .withOwner(propertyMutation.getState().getOwnerPosition())
                 .withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
-        .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
+                .withNextAction(nextAction);
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }

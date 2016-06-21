@@ -55,6 +55,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOT
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
+/**
+ * @author subhash
+ *
+ */
 public class PropertyMutation extends StateAware {
 
     private static final long serialVersionUID = -3387659460257524470L;
@@ -85,6 +89,7 @@ public class PropertyMutation extends StateAware {
     private BigDecimal departmentValue;
     private boolean partialMutation;
     private boolean registrationDone;
+    private String type;
 
     
     @Override
@@ -426,6 +431,14 @@ public class PropertyMutation extends StateAware {
 
     public void setRegistrationDone(boolean registrationDone) {
         this.registrationDone = registrationDone;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
    
 }
