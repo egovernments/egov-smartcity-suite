@@ -48,6 +48,7 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -56,7 +57,7 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     MBHeader findById(final Long id);
 
     List<MBHeader> findByWorkOrder(final WorkOrder workOrder);
-    
+
     List<MBHeader> findByWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate);
 
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEquals(final WorkOrder workOrder, final String statusCode);
@@ -65,7 +66,13 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
             final String statusCode);
 
     List<MBHeader> findByEgBillregister(final ContractorBillRegister contractorBillRegister);
-    
+
+    MBHeader findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(final Long WorkOrderEstimateId, final String statusCode);
+
+    @Query("select mbh from MBHeader as mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and egwStatus.code not in (:status1, :status2, :status3)")
+    MBHeader findByWorkOrderEstimateAndStatus(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("status1") String status1, @Param("status2") String status2, @Param("status3") String status3);
+
     @Query("select distinct(mbh.createdBy) from MBHeader as mbh")
     List<User> findMBHeaderCreatedByUsers();
 

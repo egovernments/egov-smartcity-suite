@@ -93,8 +93,8 @@ public class AjaxMBController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
                 .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(workOrderEstimateList)).append("}")
-                .toString();
+        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(workOrderEstimateList))
+                .append("}").toString();
         return result;
     }
 
@@ -110,8 +110,8 @@ public class AjaxMBController {
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderId,
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
-        workOrderEstimateService.validateMBInDrafts(workOrderId, jsonObject);
-        workOrderEstimateService.validateMBInWorkFlow(workOrderId, jsonObject);
+        mBHeaderService.validateMBInDrafts(workOrderId, jsonObject);
+        mBHeaderService.validateMBInWorkFlow(workOrderId, jsonObject);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";

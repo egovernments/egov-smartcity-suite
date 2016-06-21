@@ -48,13 +48,15 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
@@ -62,8 +64,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
@@ -78,10 +83,13 @@ public class MBHeaderService {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private ResourceBundleMessageSource messageSource;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private WorksUtils worksUtils;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -180,13 +188,37 @@ public class MBHeaderService {
     }
 
     public List<EgwStatus> getMBHeaderStatus() {
-        List<EgwStatus> statusList = egwStatusDAO.getStatusByModule(WorksConstants.MBHEADER);
+        List<EgwStatus> statusList = egwStatusHibernateDAO.getStatusByModule(WorksConstants.MBHEADER);
         final List<EgwStatus> latestStatusList = new ArrayList<EgwStatus>();
         if (!statusList.isEmpty())
             for (final EgwStatus egwStatus : statusList)
                 if (!egwStatus.getCode().equals(WorksConstants.NEW))
                     latestStatusList.add(egwStatus);
         return latestStatusList;
+    }
+
+    public JsonObject validateMBInDrafts(final Long workOrderEstimateId, final JsonObject jsonObject) {
+        final MBHeader mbHeader = mbHeaderRepository
+                .findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(workOrderEstimateId, WorksConstants.NEW);
+        String userName = "";
+        if (mbHeader != null) {
+            userName = worksUtils.getApproverName(mbHeader.getState().getOwnerPosition().getId());
+            jsonObject.addProperty("mberror", messageSource.getMessage("error.mbheader.newstatus",
+                    new String[] { mbHeader.getMbRefNo(), mbHeader.getEgwStatus().getDescription(), userName }, null));
+        }
+        return jsonObject;
+    }
+
+    public JsonObject validateMBInWorkFlow(final Long workOrderEstimateId, final JsonObject jsonObject) {
+        final MBHeader mBHeader = mbHeaderRepository.findByWorkOrderEstimateAndStatus(workOrderEstimateId,
+                WorksConstants.CANCELLED_STATUS, WorksConstants.APPROVED, WorksConstants.NEW);
+        String userName = "";
+        if (mBHeader != null) {
+            userName = worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId());
+            jsonObject.addProperty("mberror", messageSource.getMessage("error.mbheader.workflow",
+                    new String[] { mBHeader.getMbRefNo(), mBHeader.getEgwStatus().getDescription(), userName }, null));
+        }
+        return jsonObject;
     }
 
 }

@@ -45,17 +45,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Criteria;
@@ -79,16 +74,10 @@ public class WorkOrderEstimateService {
     private final WorkOrderEstimateRepository workOrderEstimateRepository;
 
     @Autowired
-    private MBHeaderService mbHeaderService;
-
+    private ContractorBillRegisterService contractorBillRegisterService;
+    
     @Autowired
     private ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -160,45 +149,6 @@ public class WorkOrderEstimateService {
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
-    }
-
-    public JsonObject validateMBInDrafts(final Long workOrderId, final JsonObject jsonObject) {
-        final List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrder(getWorkOrderEstimateById(workOrderId).getWorkOrder());
-        String userName = "";
-        for (final MBHeader MBHeader : mbHeaders)
-            if (MBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)) {
-                final Assignment assignment = assignmentService
-                        .getPrimaryAssignmentForPositon(MBHeader.getState().getOwnerPosition().getId());
-                if (assignment != null)
-                    userName = assignment.getEmployee().getName();
-                jsonObject
-                        .addProperty("mberror",
-                                messageSource.getMessage("error.mbheader.newstatus", new String[] {
-                                        MBHeader.getMbRefNo(), MBHeader.getEgwStatus().getDescription(), userName },
-                                        null));
-            }
-        return jsonObject;
-    }
-
-    public JsonObject validateMBInWorkFlow(final Long workOrderEstimateId, final JsonObject jsonObject) {
-        final List<MBHeader> mbHeaders = mbHeaderService
-                .getMBHeadersByWorkOrderEstimate(getWorkOrderEstimateById(workOrderEstimateId));
-        String userName = "";
-        for (final MBHeader mBHeader : mbHeaders)
-            if (!(mBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.NEW)
-                    || mBHeader.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED))) {
-                final Assignment assignment = assignmentService
-                        .getPrimaryAssignmentForPositon(mBHeader.getState().getOwnerPosition().getId());
-                if (assignment != null)
-                    userName = assignment.getEmployee().getName();
-                jsonObject
-                        .addProperty("mberror",
-                                messageSource.getMessage("error.mbheader.workflow", new String[] {
-                                        mBHeader.getMbRefNo(), mBHeader.getEgwStatus().getDescription(), userName },
-                                        null));
-            }
-        return jsonObject;
     }
 
     /**
