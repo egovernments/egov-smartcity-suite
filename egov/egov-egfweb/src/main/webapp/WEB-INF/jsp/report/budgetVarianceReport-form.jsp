@@ -185,35 +185,36 @@ function checkMandatoryField(fieldName){
 	<div class="formmainbox">
 		<div class="formheading"></div>
 		<div class="subheadnew">Budget Variance Report</div>
-<h5 style="color: red">
-<s:actionerror /></h5>
+		<h5 style="color: red">
+			<s:actionerror />
+		</h5>
 		<s:form action="budgetVarianceReport" theme="simple"
 			name="budgetVarianceReport">
 			<table width="100%" cellpadding="0" cellspacing="0" border="0">
 				<tr>
-				<s:if test="%{isFieldMandatory('executingDepartment')}">
+					<s:if test="%{isFieldMandatory('executingDepartment')}">
 						<td class="bluebox" width="10%">Department:<span
 							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="executingDepartment"
 								id="executingDepartment" list="dropdownData.departmentList"
 								listKey="id" listValue="name" headerKey="-1"
 								headerValue="----Choose----" /></td>
-								</s:if>
-								<s:if test="%{isFieldMandatory('function')}">
+					</s:if>
+					<s:if test="%{isFieldMandatory('function')}">
 						<td class="bluebox" width="10%">Function:<span
 							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="function" id="function"
 								list="dropdownData.functionList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" /></td>
-								</s:if>
+					</s:if>
 				</tr>
 				<tr>
-				<s:if test="%{isFieldMandatory('fund')}">
+					<s:if test="%{isFieldMandatory('fund')}">
 						<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="fund" id="fund"
 								list="dropdownData.fundList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" /></td>
-								</s:if>
+					</s:if>
 					<s:if test="%{isFieldMandatory('functionary')}">
 						<td class="greybox" width="10%">Functionary:<span
 							class="mandatory1">*</span></td>
@@ -254,7 +255,7 @@ function checkMandatoryField(fieldName){
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('boundary')}">
-						<td class="greybox"><s:text name="field" id="field"/>:<span
+						<td class="greybox"><s:text name="field" id="field" />:<span
 							class="mandatory1">*</span></td>
 						<td class="greybox"><s:select list="dropdownData.fieldList"
 								listKey="id" listValue="name" headerKey="0"
@@ -276,36 +277,37 @@ function checkMandatoryField(fieldName){
 				<tr>
 					<td class="greybox" width="10%">As On Date:<span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="asOnDate" id="asOnDate"
-							cssStyle="width:100px" value='%{getFormattedDate(asOnDate)}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('budgetVarianceReport.asOnDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-					</td>
+
+					<td class="greybox"><s:date name="asOnDate" id="asOnDateId"
+							format="dd/MM/yyyy" /> <s:textfield id="asOnDate"
+							name="asOnDate" value="%{asOnDateId}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox">&nbsp;</td>
 				</tr>
 			</table>
-			
-			
+
+
 			<br />
 			<br />
 			<div class="buttonbottom">
 				<input type="submit" value="Search" class="buttonsubmit"
-					onclick="return getData();"  /> &nbsp
+					onclick="return getData();" /> &nbsp
 				<s:reset name="button" type="submit" cssClass="button" id="button"
 					value="Cancel" />
 				<input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
 	</div>
-	
+
 	</s:form>
-	
-<div id="results"><jsp:include page="./budgetVarianceReport-results.jsp"></jsp:include>
 
-</div>	
+	<div id="results"><jsp:include
+			page="./budgetVarianceReport-results.jsp"></jsp:include>
 
-	</body>
+	</div>
+
+</body>
 </html>
