@@ -215,7 +215,9 @@
 		 <module>egov-tlweb</module> 
 		<module>egov-ear</module>
 		<module>egov-restapi</module>
-	</modules>
+    <module>egov-council</module>
+    <module>egov-councilweb</module>
+  </modules>
 
 	<dependencyManagement>
 		<dependencies>
