@@ -94,7 +94,6 @@ public class EditCollectionController {
     @Autowired
     @Qualifier("persistenceService")
     protected PersistenceService persistenceService;
-    private BasicPropertyImpl basicProperty;
     @Autowired
     @Qualifier("propertyReceiptService")
     private PropertyReceiptService propertyReceiptService;
@@ -110,7 +109,7 @@ public class EditCollectionController {
     public String form(@ModelAttribute("demandDetailBeansForm") DemandDetailBeansForm demandDetailBeansForm,
             @PathVariable final String assessmentNo, Model model) {
         List<DemandDetail> demandDetailBeans = new ArrayList<DemandDetail>();
-        basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (!basicProperty.isEligible()) {
             return EDIT_COLLECTION_ERROR;
         }
@@ -147,7 +146,7 @@ public class EditCollectionController {
     public String update(@ModelAttribute("demandDetailBeansForm") DemandDetailBeansForm demandDetailBeansForm,
             BindingResult errors, Model model) {
         errors = validate(demandDetailBeansForm, errors);
-        basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(basicProperty.getUpicNo());
+        BasicPropertyImpl basicProperty = (BasicPropertyImpl) basicPropertyDAO.getBasicPropertyByPropertyID(demandDetailBeansForm.getBasicProperty().getUpicNo());
         if (errors.hasErrors()) {
             model.addAttribute("demandDetailBeans", demandDetailBeansForm.getDemandDetailBeans());
             model.addAttribute("property", basicProperty.getActiveProperty());

@@ -378,8 +378,14 @@ $(document).ready(function(){
 	});
 	
 	$("#submit").click(function () {
-		if($("#assignmentTable tr").length==1){
-			$('.assignmentserror').html('At least one assignment should be entered ').show().fadeOut(5000);
+		var count = 0;
+        jQuery(".table-bordered tr").find('input').each(function(){
+                if(jQuery(this).val() == "true"){
+                        count++;
+                }
+        });
+		if($("#assignmentTable tr").length==1 || count == 0 ){
+			$('.assignmentserror').html('Employee should have primary assignment').show().fadeOut(7000);
 			$('.fromdateerror').hide();
 			$('.departmenterror').hide();
 			$('.designationerror').hide();

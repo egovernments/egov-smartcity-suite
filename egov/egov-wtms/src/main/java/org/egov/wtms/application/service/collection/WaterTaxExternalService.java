@@ -53,6 +53,7 @@ import java.util.Map;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillDetails;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -376,7 +377,7 @@ public class WaterTaxExternalService {
                     isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
                             billDet.getOrderNo(), rd.getCramount(), rd.getDramount(),
-                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand);
+                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand, PURPOSE.OTHERS);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }

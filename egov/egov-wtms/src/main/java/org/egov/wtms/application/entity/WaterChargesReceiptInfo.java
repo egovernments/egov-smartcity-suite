@@ -39,7 +39,6 @@
  */
 package org.egov.wtms.application.entity;
 
-
 import java.util.Date;
 
 public class WaterChargesReceiptInfo {
@@ -100,14 +99,12 @@ public class WaterChargesReceiptInfo {
         this.toDate = toDate;
     }
 
-	public double getReceiptAmount() {
-		return receiptAmount;
-	}
+    public double getReceiptAmount() {
+        return receiptAmount;
+    }
 
-	public void setReceiptAmount(double receiptAmount) {
-		this.receiptAmount = receiptAmount;
-	}
-
-    
+    public void setReceiptAmount(final double receiptAmount) {
+        this.receiptAmount = receiptAmount;
+    }
 
 }

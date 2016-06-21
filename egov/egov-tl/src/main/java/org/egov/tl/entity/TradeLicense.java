@@ -56,11 +56,6 @@ public class TradeLicense extends License {
     private List<LicenseDocument> documents = new ArrayList<>();
 
     @Override
-    public String generateLicenseNumber(final Serializable runningNumber) {
-        return this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
-    }
-
-    @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         final StringBuffer details = new StringBuffer();

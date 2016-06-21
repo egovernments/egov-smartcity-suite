@@ -40,16 +40,6 @@
 
 package org.egov.tl.service;
 
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONREJECT;
-
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
@@ -73,14 +63,21 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
-
-    @Autowired
-    private TradeLicenseUpdateIndexService updateIndexService;
 
     @Autowired
     private ReportService reportService;
@@ -147,7 +144,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     && !license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
                 validityService.applyLicenseValidity(license);
                 if (license.getTempLicenseNumber() == null)
-                    license.generateLicenseNumber(getNextRunningLicenseNumber("egtl_license_number"));
+                    license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
             }
             license.setActive(true);
             license = (TradeLicense) licenseUtils.applicationStatusChange(license,

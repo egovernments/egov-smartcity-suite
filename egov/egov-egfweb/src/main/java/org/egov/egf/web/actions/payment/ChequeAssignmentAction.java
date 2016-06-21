@@ -76,6 +76,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.autonumber.RtgsNumberGenerator;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.egf.web.actions.voucher.CommonAction;
@@ -88,6 +89,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.DBSequenceGenerator;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -114,7 +116,6 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
 @ParentPackage("egov")
 @Results({
         @Result(name = "search", location = "chequeAssignment-search.jsp"),
@@ -199,6 +200,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private List<InstrumentVoucher> instrumentVoucherList;
     private List<InstrumentHeader> instrumentHeaderList;
     private CommonAction common;
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
     String[] surrender;
     String instrumentNumber;
     Long recoveryId;
@@ -311,10 +314,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         if (deptNonMandatory == true)
             mandatoryFields.remove("department");
 
-     // overriding department Mandatory Condition only for cheque assignment search
+        // overriding department Mandatory Condition only for cheque assignment search
         if (functionNonMandatory == true)
             mandatoryFields.remove("function");
-        
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed prepare.");
     }
@@ -1089,14 +1092,17 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                             rtgsdate = formatter.parse(date);
                             // LOGGER.debug(rtgsdate);
                         }
+                        final String finYearRange = financialYearDAO.getFinancialYearByDate(rtgsdate).getFinYearRange();
+
+                        RtgsNumberGenerator r = (RtgsNumberGenerator) beanResolver
+                                .getAutoNumberServiceFor(RtgsNumberGenerator.class);
                         if (null == autoNoCutOffDate || rtgsdate.after(autoNoCutOffDate))
                         {
-                            final String finYearRange = financialYearDAO.getFinancialYearByDate(rtgsdate).getFinYearRange();
-                            // LOGGER.debug(finYearRange);
-                            rtgsNo = getRtgsSequenceNumber("RTGS_RefNumber_" + finYearRange.replace('-', '_'));
+                            rtgsNo = r.getNextNumber("RTGS_RefNumber_" + finYearRange.replace('-', '_'));
+
                             rtgsNo = rtgsNo + "/" + finYearRange;
                         } else
-                            rtgsNo = getRtgsSequenceNumber("RTGS_RefNumber");
+                            rtgsNo = r.getNextNumber("RTGS_RefNumber");
 
                         // LOGGER.debug(rtgsNo);
                         final String[] refNoArray = new String[] { rtgsNo };
@@ -1253,21 +1259,6 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         }
         else
             return "view";
-    }
-
-    protected String getRtgsSequenceNumber(final String SEQ_RTGS_ReferenceNumber) {
-        try {
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(SEQ_RTGS_ReferenceNumber);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(SEQ_RTGS_ReferenceNumber);
-            }
-            return String.format("%06d", sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
-        }
-        
     }
 
     @ValidationErrorPage(value = "searchpensionpayment")
@@ -2435,8 +2426,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public void setRtgsSeceltedAccMap(final Map<String, Boolean> rtgsSeceltedAccMap) {
         this.rtgsSeceltedAccMap = rtgsSeceltedAccMap;
     }
- 
- 
+
     public List<InstrumentHeader> getInstVoucherDisplayList() {
         return instVoucherDisplayList;
     }

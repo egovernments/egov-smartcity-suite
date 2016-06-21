@@ -37,25 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.collection.service;
+package org.egov.egf.autonumber.impl;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
-import org.egov.collection.entity.ReceiptHeader;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.egf.autonumber.RtgsNumberGenerator;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public abstract class CollectionRemittanceService implements Serializable {
-    private static final long serialVersionUID = 494234993113078236L;
+@Service
+public class RtgsNumberGeneratorImpl implements RtgsNumberGenerator {
 
-    public abstract List<ReceiptHeader> createBankRemittance(final String[] serviceNameArr,
-            final String[] totalCashAmount, final String[] totalChequeAmount, final String[] totalCardAmount,
-            final String[] totalOnlineAmount, final String[] receiptDateArray, final String[] fundCodeArray,
-            final String[] departmentCodeArray, final Integer accountNumberId, final Integer positionUser,
-            final String[] receiptNumberArray, final Date remittanceDate);
-    
-    public abstract List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
-            final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+
+    /**
+     * 
+     * Format seqnumber
+     *
+     */
+    public String getNextNumber(String sequenceName) {
+        String rtgsNumber = "";
+        Serializable nextSequence = applicationSequenceNumberGenerator
+                .getNextSequence(sequenceName);
+
+        rtgsNumber = String.format("%06d", nextSequence);
+
+        return rtgsNumber;
+    }
+
 }

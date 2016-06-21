@@ -67,7 +67,7 @@ public class BillDetails {
     private final BigDecimal minimumAmount;
 
     @XStreamAlias("accounts")
-    private final List<BillAccountDetails> accounts = new ArrayList<BillAccountDetails>();
+    private final List<BillAccountDetails> accounts = new ArrayList<BillAccountDetails>(0);
 
     public BillDetails(final String refNo, final Date billDate, final String consumerCode, final String boundaryNum,
             final String boundaryType, final String description, final BigDecimal totalAmount,

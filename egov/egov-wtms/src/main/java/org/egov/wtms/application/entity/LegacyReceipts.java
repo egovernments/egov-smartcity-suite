@@ -39,13 +39,8 @@
  */
 package org.egov.wtms.application.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import java.math.BigDecimal;
 import java.util.Date;
-
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,6 +54,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egwtr_legacy_receipts")
@@ -76,24 +75,24 @@ public class LegacyReceipts extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "connectiondetails")
     private WaterConnectionDetails waterConnectionDetails;
-    
+
     private String bookNumber;
-    
+
     @NotNull
     @SafeHtml
     @Length(max = 50)
     private String receiptNumber;
-    
-   	@NotNull
+
+    @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date receiptDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date toDate;
-    
+
     @NotNull
     @Min(value = 1)
     private BigDecimal amount;
@@ -108,62 +107,60 @@ public class LegacyReceipts extends AbstractAuditable {
         this.id = id;
     }
 
-
     public WaterConnectionDetails getWaterConnectionDetails() {
         return waterConnectionDetails;
     }
 
-    public void setWaterConnectionDetails(
-            final WaterConnectionDetails waterConnectionDetails) {
+    public void setWaterConnectionDetails(final WaterConnectionDetails waterConnectionDetails) {
         this.waterConnectionDetails = waterConnectionDetails;
     }
-    
+
     public String getBookNumber() {
-		return bookNumber;
-	}
+        return bookNumber;
+    }
 
-	public void setBookNumber(String bookNumber) {
-		this.bookNumber = bookNumber;
-	}
+    public void setBookNumber(final String bookNumber) {
+        this.bookNumber = bookNumber;
+    }
 
-	public String getReceiptNumber() {
-		return receiptNumber;
-	}
+    public String getReceiptNumber() {
+        return receiptNumber;
+    }
 
-	public void setReceiptNumber(String receiptNumber) {
-		this.receiptNumber = receiptNumber;
-	}
+    public void setReceiptNumber(final String receiptNumber) {
+        this.receiptNumber = receiptNumber;
+    }
 
-	public Date getReceiptDate() {
-		return receiptDate;
-	}
+    public Date getReceiptDate() {
+        return receiptDate;
+    }
 
-	public void setReceiptDate(Date receiptDate) {
-		this.receiptDate = receiptDate;
-	}
+    public void setReceiptDate(final Date receiptDate) {
+        this.receiptDate = receiptDate;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setAmount(final BigDecimal amount) {
+        this.amount = amount;
+    }
 
 }

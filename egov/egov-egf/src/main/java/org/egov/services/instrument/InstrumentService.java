@@ -921,7 +921,7 @@ public class InstrumentService {
         return true;
     }
 
-    boolean isChequeNumberUnique(final String chequeNumber,
+   public boolean isChequeNumberUnique(final String chequeNumber,
             final Long bankAccountId, final String serialNo) {
         final InstrumentType instrumentType = getInstrumentTypeByType("cheque");
         List<InstrumentHeader> list = new ArrayList<InstrumentHeader>();
@@ -942,7 +942,7 @@ public class InstrumentService {
         return true;
     }
 
-    boolean isRtgsNumberUnique(final String chequeNumber,
+   public  boolean isRtgsNumberUnique(final String chequeNumber,
             final Long bankAccountId) {
         final InstrumentType instrumentType = getInstrumentTypeByType("advice");
         final List<InstrumentHeader> list = instrumentHeaderService
@@ -954,7 +954,7 @@ public class InstrumentService {
         return true;
     }
 
-    boolean isChequeIsSurrenderdForReassign(final String chequeNumber,
+   public  boolean isChequeIsSurrenderdForReassign(final String chequeNumber,
             final Long bankAccountId, final String serialNo) {
         final InstrumentType instrumentType = getInstrumentTypeByType("cheque");
         final List<InstrumentHeader> list = instrumentHeaderService

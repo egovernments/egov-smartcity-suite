@@ -38,40 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.utils;
+package org.egov.egf.autonumber;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.hibernate.exception.SQLGrammarException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-
 @Service
-public class LicenseNumberGenerator {
+public interface BanNumberGenerator {
 
-	@Autowired
-	private DBSequenceGenerator dbSequenceGenerator;
-
-	@Autowired
-	private SequenceNumberGenerator sequenceNumberGenerator;
-
-	public String generateBillNumber(final String installmentYear) {
-		try {
-			final String sequenceName = Constants.LICENSE_BILLNO_SEQ+ installmentYear;
-			Serializable sequenceNumber;
-			try {
-				sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-			} catch (final SQLGrammarException e) {
-				sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-			}
-			return String.format("%s%06d", "", sequenceNumber);
-		} catch (final SQLException e) {
-			throw new ApplicationRuntimeException("Error occurred while generating water connection charges bill Number ", e);
-		}
-	}
-
+    public String getNextNumber();
 }

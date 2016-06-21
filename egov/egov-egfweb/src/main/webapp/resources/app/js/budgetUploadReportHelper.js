@@ -113,17 +113,20 @@ function callAjaxSearch() {
 
 $('#reBudget').change(function() {
 	$('#referenceBudget').html('');
-	$.ajax({
-		url : '/EGF/budgetuploadreport/ajax/getReferenceBudget',
-		type : "get",
-		data : {
-			budgetId : $('#reBudget').val()
-		},
-		success : function(data, textStatus, jqXHR) {
-			$('#referenceBudget').html(data.name)
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			bootbox.alert("Error while getting reference budget");
-		}
-	});
+	console.log($('#reBudget').val());
+	if($('#reBudget').val()!=''){
+		$.ajax({
+			url : '/EGF/budgetuploadreport/ajax/getReferenceBudget',
+			type : "get",
+			data : {
+				budgetId : $('#reBudget').val()
+			},
+			success : function(data, textStatus, jqXHR) {
+				$('#referenceBudget').html(data)
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				bootbox.alert("Error while getting reference budget");
+			}
+		});
+	}
 });

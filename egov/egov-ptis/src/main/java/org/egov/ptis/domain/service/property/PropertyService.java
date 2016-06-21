@@ -503,12 +503,8 @@ public class PropertyService {
         final PropertyStatusValues propStatVal = new PropertyStatusValues();
         final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
                 "from PropertyStatus where statusCode=?", statusCode);
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode) || PROP_CREATE_RSN.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(statusCode) || REVISIONPETITION_STATUS_CODE.equals(statusCode))
-            propStatVal.setIsActive("W");
-        else
-            propStatVal.setIsActive("Y");
+        
+        propStatVal.setIsActive("Y");
         final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         propStatVal.setCreatedDate(new Date());
         propStatVal.setModifiedDate(new Date());
@@ -3072,6 +3068,7 @@ public class PropertyService {
 	                    savedFloor.getBuiltUpArea().setArea(floorProxy.getBuiltUpArea().getArea());
 	                    savedFloor.getBuiltUpArea().setLength(floorProxy.getBuiltUpArea().getLength());
 	                    savedFloor.getBuiltUpArea().setBreadth(floorProxy.getBuiltUpArea().getLength());
+	                    savedFloor.setFirmName(floorProxy.getFirmName());
 	                    // setting total builtup area.
 	                    totBltUpArea.setArea(totBltUpAreaVal);
 	                    totBltUpArea.setLength(floorProxy.getBuiltUpArea().getLength());
