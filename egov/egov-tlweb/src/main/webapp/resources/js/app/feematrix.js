@@ -165,9 +165,10 @@ $( "#save" ).click(function( event ) {
 if(!validateDetailsBeforeSubmit()){
 	return false;
 } 
-var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
-var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
-var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
+	
+	var natureOfBusinessDisabled=$('#natureOfBusiness').is(':disabled');
+	var licenseAppTypeDisabled=$('#licenseAppType').is(':disabled');
+	var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 	$('#natureOfBusiness').removeAttr("disabled");
 	$('#licenseAppType').removeAttr("disabled");
 	$('#unitOfMeasurement').removeAttr("disabled");
@@ -177,6 +178,9 @@ var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 			url: "/tl/feematrix/create",
 			type: "POST",
 			data: fd,
+		    beforeSend: function() {
+		    	$("#save").attr('disabled',true);
+		    },
 			//dataType: "text",
 			success: function (response) {
 				console.log("success"+response );
@@ -198,6 +202,10 @@ var unitOfMeasurementDisabled=$('#unitOfMeasurement').is(':disabled');
 				if(unitOfMeasurementDisabled)
 					 $('#unitOfMeasurement').attr("disabled", true); 
 				bootbox.alert("Failed to Save Details");
-			}
+			},
+		    complete: function() {
+		  	  $("#save").removeAttr('disabled');
+		    }
 		});
+
 });
