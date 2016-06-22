@@ -1770,7 +1770,7 @@ public class PropertyExternalService {
      */
     public RestAssessmentDetails loadAssessmentDetails(final String applicationNo, final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
-        PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+        PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(assessmentNo, applicationNo);
         if(propertyMutation != null){
         	basicProperty = propertyMutation.getBasicProperty();
         	if (basicProperty != null) {
@@ -1877,4 +1877,34 @@ public class PropertyExternalService {
         return receiptDetails;
     }
     
+    /**
+     * Validate the payment amount entered for mutation
+     * @param assessmentNo
+     * @param applicationNo
+     * @param paymentAmount
+     * @return boolean
+     */
+    public boolean validateMutationFee(String assessmentNo, String applicationNo, BigDecimal paymentAmount){
+    	boolean validFee = true;
+    	PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(assessmentNo, applicationNo);
+    	if(propertyMutation != null){
+    		if(paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0){
+    			validFee = false;
+    		}
+    	}else{
+    		validFee = false;
+    	}
+    	return validFee;
+    }
+    
+    /**
+     * Fetch PropertyMutation for given assessmentNo and applicationNo
+     * @param assessmentNo
+     * @param applicationNo
+     * @return PropertyMutation
+     */
+    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo){
+    	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+    	return propertyMutation;
+    }
 }

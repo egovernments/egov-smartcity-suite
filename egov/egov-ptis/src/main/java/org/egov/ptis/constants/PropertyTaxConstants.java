@@ -1199,6 +1199,12 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "PTIS-REST-38";
     public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_REQUIRED = "Application number is required";
+    
+    public static final String THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE = "PTIS-REST-40";
+    public static final String THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE = "Mutation fee entered is excess";
+    
+    public static final String THIRD_PARTY_ERR_CODE_MUTATION_INVALID = "PTIS-REST-41";
+    public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "Mutation application number is invalid";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";

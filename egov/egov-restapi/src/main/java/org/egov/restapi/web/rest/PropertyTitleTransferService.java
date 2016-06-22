@@ -47,6 +47,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -189,7 +190,7 @@ public class PropertyTitleTransferService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/paymutationfee", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String payMutationFee(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request)
+    public String payMutationFee(@RequestBody String payPropertyTaxDetails, final HttpServletRequest request, String source)
             throws JsonGenerationException, JsonMappingException, IOException {
         String responseJson;
         try {
@@ -201,9 +202,12 @@ public class PropertyTitleTransferService {
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);
             } else {
-                payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
-                        .getAttribute("source").toString()
-                        : "");
+            	if(StringUtils.isNotBlank(source))
+            		payPropTaxDetails.setSource(source);
+            	else
+	                payPropTaxDetails.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+	                        .getAttribute("source").toString()
+	                        : "");
                 ReceiptDetails receiptDetails = propertyExternalService.payMutationFee(payPropTaxDetails);
                 responseJson = getJSONResponse(receiptDetails);
             }
