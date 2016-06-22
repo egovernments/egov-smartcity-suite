@@ -89,7 +89,11 @@ function validateEstimateTemplateFormAndSubmit() {
 </script>
 
 <div class="new-page-header">
-	<s:text name="estimate.sor.createEstimate"/>	
+	<s:if test="%{mode == 'edit'}">
+		<s:text name="estimate.sor.modifyEstimate"/>	
+	</s:if><s:else>
+		<s:text name="estimate.sor.createEstimate"/>
+	</s:else>
 </div>
 <div id="estimatetemplateerror" class="alert alert-danger" style="display:none;"></div>
 <div id="templatecodeerror" class="alert alert-danger" style="display:none;">
