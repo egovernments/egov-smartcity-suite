@@ -317,4 +317,8 @@ public class EgDemandDetails implements Serializable, Cloneable {
     public Date getInstallmentEndDate() {
         return getEgDemandReason().getEgInstallmentMaster().getToDate();
     }
+    
+    public String getReasonCategory() {
+        return getEgDemandReason().getEgDemandReasonMaster().getEgReasonCategory().getCode();
+    }
 }
