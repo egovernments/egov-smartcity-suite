@@ -99,6 +99,10 @@ public class MBHeaderService {
         return mbHeaderRepository.findOne(id);
     }
 
+    public List<MBHeader> getMBHeadersByWorkOrderId(final Long workOrderId) {
+        return mbHeaderRepository.findByWorkOrder_id(workOrderId);
+    }
+
     public List<MBHeader> getMBHeadersByWorkOrder(final WorkOrder workOrder) {
         return mbHeaderRepository.findByWorkOrder(workOrder);
     }

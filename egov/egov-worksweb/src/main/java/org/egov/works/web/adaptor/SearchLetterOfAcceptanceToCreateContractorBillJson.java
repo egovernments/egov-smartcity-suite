@@ -41,10 +41,15 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,8 +68,12 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
 
+    @Autowired
+    private MBHeaderService mBHeaderService;
+
     @Override
     public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final JsonObject jsonObject = new JsonObject();
         if (workOrder != null) {
             if (workOrder.getWorkOrderNumber() != null)
@@ -72,14 +81,13 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
             else
                 jsonObject.addProperty("workOrderNumber", "");
             if (workOrder.getWorkOrderDate() != null)
-                jsonObject.addProperty("workOrderDate", workOrder.getWorkOrderDate().toString());
+                jsonObject.addProperty("workOrderDate", formatter.format(workOrder.getWorkOrderDate()));
             else
                 jsonObject.addProperty("workOrderDate", "");
             if (workOrder.getContractor() != null) {
                 jsonObject.addProperty("contractor", workOrder.getContractor().getName());
                 jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("contractor", "");
                 jsonObject.addProperty("contractorcode", "");
             }
@@ -98,6 +106,25 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());
+            if (workOrder.getId() != null) {
+                List<MBHeader> mbHeaders = mBHeaderService.getMBHeadersByWorkOrderId(workOrder.getId());
+                if (!mbHeaders.isEmpty()) {
+                    String mbRefNumbers = "";
+                    BigDecimal mbAmount = BigDecimal.ZERO;
+                    for (MBHeader header : mbHeaders) {
+                        mbRefNumbers = mbRefNumbers + header.getMbRefNo() + ",";
+                        mbAmount = mbAmount.add(header.getMbAmount());
+                    }
+                    jsonObject.addProperty("mbRefNumbers",
+                            !mbRefNumbers.equalsIgnoreCase("") ? mbRefNumbers.substring(0, mbRefNumbers.length() - 1) : "");
+                    jsonObject.addProperty("mbAmount", mbAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                } else {
+                    jsonObject.addProperty("mbRefNumbers", "NA");
+                    jsonObject.addProperty("mbAmount", "NA");
+                }
+            }
+            if (workOrder.getWorkOrderEstimates() != null)
+                jsonObject.addProperty("aeId", workOrder.getWorkOrderEstimates().get(0).getEstimate().getId());
         }
         return jsonObject;
     }

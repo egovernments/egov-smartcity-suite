@@ -38,38 +38,42 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-		<form:form name="SearchRequestForLOA" role="form" action=""
-			modelAttribute="searchRequestLetterOfAcceptance"
-			id="searchRequestLetterOfAcceptance"
-			class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchLOAForContractorBill-form.jsp" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-					<a href='javascript:void(0)' class='btn btn-default'
-						onclick='self.close()'><spring:message code='lbl.close' /></a>
-				</div>
-			</div>
-		</form:form>
-<jsp:include page="searchLOAForContractorBill-searchResult.jsp" />
-<script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
-<script
-	src="<c:url value='/resources/js/searchloacreatecontractorbill.js?rnd=${app_release_no}'/>"></script>
+<div class="display-hide report-section">
+	<div class="table-header text-left">
+		<spring:message code="title.letterofacceptance.search" />
+	</div>
+	<div id="errorMessage" style="display: none;">
+		<spring:message code="error.loa.contractorbill.search" />
+	</div>
+	<div class="form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.selectonly" /></th>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.loanumberanddate" /></th>
+					<th><spring:message code="lbl.contractornamecode" /></th>
+					<th><spring:message code="lbl.nameofwork" /></th>
+					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.mb.referencenumbers" /></th>
+					<th><spring:message code="lbl.mbamount" /></th>
+				</tr>
+			</thead>
+			<tbody class="no-pointer">
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type='button' class='btn btn-primary' id="btncreateloa">
+				<spring:message code='lbl.createcontractorbill' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
+	</div>
+</div>

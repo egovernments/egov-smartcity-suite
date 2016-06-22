@@ -117,12 +117,16 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					if (data.estimateNumber != null)
 						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderNumber +' name="selectCheckbox" value="'+ data.id +'"/>');
-					$('td:eq(1)', row).html(index + 1);
-					$('td:eq(2)', row).html(
-							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
-									+ data.id + '\')">'
-									+ data.workOrderNumber + '</a>');
-					$('td:eq(7)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+						$('td:eq(1)', row).html(index + 1);
+						$('td:eq(2)', row).html(
+								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
+										+ data.aeId + '\')">'
+										+ data.estimateNumber + '</a>');
+						$('td:eq(3)', row).html(
+								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
+										+ data.id + '\')">'
+										+ data.workOrderNumber + ' -- ' + data.workOrderDate + '</a>');
+						$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting : [],
@@ -130,19 +134,12 @@ function callAjaxSearch() {
 					"data" : "", "sClass" : "text-center","sWidth": "1%"} ,{ 
 					"data" : "","autoWidth": "false",
 					"sClass" : "text-center","sWidth": "2%"
+				},{
+					"data" : "estimateNumber",
+					"sClass" : "text-left","width": "13.5%"
 				}, {
 					"data" : "workOrderNumber",
 					"sClass" : "text-left","width": "13.5%"
-				}, {
-					"data" : "workOrderDate",
-					"sClass" : "text-left" ,"width": "6%",
-					render: function (data, type, full) {
-						if(full!=null &&  full.workOrderDate != undefined) {
-							var regDateSplit = full.workOrderDate.split("T")[0].split("-");		
-							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-						}
-						else return "";
-			    	}
 				}, {
 					"data" : "contractor",
 					"sClass" : "text-left","sWidth": "15%",
@@ -154,12 +151,15 @@ function callAjaxSearch() {
 					"sClass" : "text-left","sWidth": "15%"
 					
 				}, {
-					"data" : "workIdentificationNumber",
-					"sClass" : "text-left","width": "12%"
-				}, {
 					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"
-				} ]
+				} ,{
+					"data" : "mbRefNumbers",
+					"sClass" : "text-left","width": "12%"
+				} ,{
+					"data" : "mbAmount",
+					"sClass" : "text-left","width": "12%"
+				}]
 			});
 }
 
@@ -197,6 +197,14 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
+	
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+	
 	var contractorSearch = new Bloodhound(
 			{
 				datumTokenizer : function(datum) {
@@ -259,3 +267,8 @@ $(document).ready(function() {
 		source : workOrderNumber.ttAdapter()
 	});
 });
+
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

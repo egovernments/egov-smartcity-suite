@@ -39,13 +39,13 @@
  */
 package org.egov.works.letterofacceptance.repository;
 
+import java.util.List;
+
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, Long> {
@@ -73,17 +73,29 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
 
     WorkOrder findByWorkOrderNumberAndEgwStatus_codeEquals(final String workOrderNumber, final String statusCode);
 
-    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where upper(wo.workOrderNumber) like upper(:workOrderNumber) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where upper(wo.workOrderNumber) like upper(:workOrderNumber) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
     List<String> findWorkOrderNumberForContractorBill(@Param("workOrderNumber") String workOrderNumber,
-            @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.estimateNumber) like upper(:estimateNumber) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where upper(wo.workOrderNumber) like upper(:workOrderNumber) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrder from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
+    List<String> findWorkOrderNumberForContractorBillWithMB(@Param("workOrderNumber") String workOrderNumber,
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
+
+    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.estimateNumber) like upper(:estimateNumber) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findEstimateNumberForContractorBill(@Param("estimateNumber") String estimateNumber,
-            @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:contractorname) and wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where upper(wo.estimateNumber) like upper(:estimateNumber) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrder from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
+    List<String> findEstimateNumberForContractorBillWithMB(@Param("estimateNumber") String estimateNumber,
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
+
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:contractorname) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) ")
     List<String> findContractorForContractorBill(@Param("contractorname") String contractorname,
-            @Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
+
+    @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:contractorname) and wo.egwStatus.code = :approvedStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype) and exists (select distinct mh.workOrder from MBHeader mh where mh.egwStatus.code =:approvedStatus )")
+    List<String> findContractorForContractorBillWithMB(@Param("contractorname") String contractorname,
+            @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
     @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     List<String> getDistinctNonCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus,
@@ -92,15 +104,17 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrder.id = :workOrderId and upper(cbr.billstatus) not in (:billstatus1,:billstatus2)")
     List<String> getContractorBillInWorkflowForWorkorder(@Param("workOrderId") Long workOrderId,
             @Param("billstatus1") String billstatus1, @Param("billstatus2") String billstatus2);
-    
+
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber)")
     List<String> findWorkIdentificationNumberToCreateMilestone(@Param("code") String code);
-    
+
     @Query("select sum(br.billamount) from EgBillregister as br where br.workOrder.id = (select id from WorkOrder as wo where wo.workOrderNumber = :workOrderNumber and wo.egwStatus.code = :status) and br.billstatus != :billStatus")
-    Double getGrossBillAmountOfBillsCreated(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status, @Param("billStatus") String billstatus);
-    
+    Double getGrossBillAmountOfBillsCreated(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status,
+            @Param("billStatus") String billstatus);
+
     @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
-    List<String> findWorkOrderNumbersToModifyLoa(@Param("workOrderStatus") String workOrderStatus, @Param("status") String status, @Param("billtype") String billtype);
+    List<String> findWorkOrderNumbersToModifyLoa(@Param("workOrderStatus") String workOrderStatus, @Param("status") String status,
+            @Param("billtype") String billtype);
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and egwStatus.code = :status)")
     List<String> findWorkIdentificationNumbersToSearchLOAToCancel(@Param("code") String code,
@@ -108,10 +122,13 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
 
     @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:code) and wo.egwStatus.code = :status")
     List<String> findContractorsToSearchLOAToCancel(@Param("code") String code, @Param("status") String status);
-    
+
     @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where wo.egwStatus.code = :workorderstatus and exists (select distinct(led.estimateNumber) from LineEstimateDetails as led  where led.lineEstimate.id = :lineestimateid and led.estimateNumber = wo.estimateNumber)")
-    List<String> findEstimateNumbersToSearchLOAToCancel(@Param("lineestimateid") Long linEstimateId, @Param("workorderstatus") String workOrderStatus);
-    
+    List<String> findEstimateNumbersToSearchLOAToCancel(@Param("lineestimateid") Long linEstimateId,
+            @Param("workorderstatus") String workOrderStatus);
+
     @Query("select distinct(wo.id) from WorkOrder as wo where wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :offlineStatus2 and os.objectId = wo.id) and os.objectId = wo.id and os.egwStatus.code = :offlineStatus1 and os.objectType = :offlineStatus2 )")
-    List<Long> findWorkOrderForLoaStatus(@Param("offlineStatus1") String offlineStatus1 , @Param("offlineStatus2") String offlineStatus2);
+    List<Long> findWorkOrderForLoaStatus(@Param("offlineStatus1") String offlineStatus1,
+            @Param("offlineStatus2") String offlineStatus2);
+
 }

@@ -60,6 +60,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
 
     List<MBHeader> findByWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate);
 
+    List<MBHeader> findByWorkOrder_id(final Long workOrderId);
+
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEquals(final WorkOrder workOrder, final String statusCode);
 
     List<MBHeader> findByEgBillregisterAndEgwStatus_codeEquals(final ContractorBillRegister contractorBillRegister,

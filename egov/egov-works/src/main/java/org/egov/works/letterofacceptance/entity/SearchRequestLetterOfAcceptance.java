@@ -49,6 +49,7 @@ public class SearchRequestLetterOfAcceptance {
     private Date toDate;
     private String name;
     private String fileNumber;
+    private String mbRefNumber;
     private Long departmentName;
     private String estimateNumber;
     private String egwStatus;
@@ -118,14 +119,6 @@ public class SearchRequestLetterOfAcceptance {
         this.egwStatus = egwStatus;
     }
 
-    public String getFileNumber() {
-        return fileNumber;
-    }
-
-    public void setFileNumber(final String fileNumber) {
-        this.fileNumber = fileNumber;
-    }
-
     public String getWorkIdentificationNumber() {
         return workIdentificationNumber;
     }
@@ -173,4 +166,21 @@ public class SearchRequestLetterOfAcceptance {
     public void setContractor(final String contractor) {
         this.contractor = contractor;
     }
+
+    public String getMbRefNumber() {
+        return mbRefNumber;
+    }
+
+    public void setMbRefNumber(String mbRefNumber) {
+        this.mbRefNumber = mbRefNumber;
+    }
+
+    public String getFileNumber() {
+        return fileNumber;
+    }
+
+    public void setFileNumber(String fileNumber) {
+        this.fileNumber = fileNumber;
+    }
+
 }
