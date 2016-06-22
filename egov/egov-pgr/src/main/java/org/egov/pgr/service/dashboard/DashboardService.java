@@ -203,19 +203,19 @@ public class DashboardService {
                 startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
         final List<Object[]> topFiveCompTypeCurrentMonth = dashboardRepository.fetchTopComplaintsForCurrentMonthBetween(
                 startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
-        final Map<Object, Object> data = new LinkedHashMap<Object, Object>();
+        final Map<Object, Object> constructResultPlaceholder = new LinkedHashMap<Object, Object>();
         final Map<Object, Object> actualdata = new LinkedHashMap<Object, Object>();
         for (final Object complaintType : topFiveCompTypeCurrentMonth)
             for (final Object month : dataHolderNumber)
-                data.put(month + "-" + complaintType, BigInteger.ZERO);
+                constructResultPlaceholder.put(month + "-" + complaintType, BigInteger.ZERO);
         for (final Object[] top5CompType : topFiveCompTypeData)
             actualdata.put(top5CompType[0] + "-" + top5CompType[2], top5CompType[1]);
         final Map<Object, Object> newdata = new LinkedHashMap<Object, Object>();
-        for (final Object ttt : data.keySet())
-            if (actualdata.get(ttt) == null)
-                newdata.put(ttt, BigInteger.ZERO);
+        for (final Object placeholderMapKey : constructResultPlaceholder.keySet())
+            if (actualdata.get(placeholderMapKey) == null)
+                newdata.put(placeholderMapKey, BigInteger.ZERO);
             else
-                newdata.put(ttt, actualdata.get(ttt));
+                newdata.put(placeholderMapKey, actualdata.get(placeholderMapKey));
         final Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<String, Object>();
 
         final List<Object> dataHolder = new LinkedList<Object>();
