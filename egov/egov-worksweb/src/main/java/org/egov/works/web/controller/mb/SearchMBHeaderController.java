@@ -41,24 +41,21 @@ package org.egov.works.web.controller.mb;
 
 import java.util.List;
 
-import org.egov.commons.EgwStatus;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping(value = "/mbheader")
 public class SearchMBHeaderController {
 
     @Autowired
@@ -73,7 +70,7 @@ public class SearchMBHeaderController {
     @Autowired
     private SecurityUtils securityUtils;
 
-    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    @RequestMapping(value = "/mbheader/searchform", method = RequestMethod.GET)
     public String showSearchWorkOrder(@ModelAttribute final SearchRequestMBHeader searchRequestMBHeader,
             final Model model) {
         setDropDownValues(model);
@@ -89,5 +86,14 @@ public class SearchMBHeaderController {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("createdUsers", mBHeaderService.getMBHeaderCreatedByUsers());
     }
-
+    
+    @RequestMapping(value = "/measurementbook/searchactivityform", method = RequestMethod.GET)
+    public String showSearchWorkOrderActivity(@RequestParam("woeId") final Long workOrderEstimateId,
+            @RequestParam("workOrderNo") final String workOrderNo,
+            final Model model) {
+        model.addAttribute("workOrderEstimateId", workOrderEstimateId);
+        model.addAttribute("workOrderNo", workOrderNo);
+        
+        return "workorderactivity-searchform";
+    }
 }

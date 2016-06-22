@@ -245,19 +245,46 @@ $('#btncreatemb').click(function(e) {
 		bootbox.alert("Please select atleast one work order to create Measurement book");
 	}
 	else {
+		$('#searchFormDiv').remove();
+		$('.loader-class').modal('show', {backdrop: 'static'});
 		$.ajax({
 			type: "GET",
-			url: "/egworks/workorder/validatemb/"+workOrderId,
+			url: "/egworks/measurementbook/create/" + workOrderId,
 			cache: true,
-		}).done(function(value) {
-			if(value == '') {
-				$('#errorMessage').hide();
-				window.location = "/egworks/mbheader/create?workOrderId="+workOrderId;
-			} else {
-				var json = $.parseJSON(value);
-				$('#errorMessage').append(json.mberror+ '</br>');
-				$('#errorMessage').show();
-			}
+			dataType: "json"
+		}).done(function(json) {
+			json = $.parseJSON(json);
+			console.log(json);
+			$.each(json, function(key, value){
+//				if($('#' + key).is('div') || $('#' + key).is('span'))
+//					$('#' + key).html(value);
+//				else
+				if(key == "mbDate") {
+					$('#mbDate').val(value);
+					$('#mbDate').datepicker().off('changeDate');
+				}
+				else
+					$('#' + key).val(value);
+			});
 		});
+//		$('#searchRequestLetterOfAcceptance').attr('hidden', 'true');
+		$('.title2').html('Create Measurement Book');
+		$('#measurementBookDiv').removeAttr('hidden');
+		$('.loader-class').modal('hide');
+		
+//		$.ajax({
+//			type: "GET",
+//			url: "/egworks/workorder/validatemb/"+workOrderId,
+//			cache: true,
+//		}).done(function(value) {
+//			if(value == '') {
+//				$('#errorMessage').hide();
+//				window.location = "/egworks/mbheader/create?workOrderId="+workOrderId;
+//			} else {
+//				var json = $.parseJSON(value);
+//				$('#errorMessage').append(json.mberror+ '</br>');
+//				$('#errorMessage').show();
+//			}
+//		});
 	}
 });

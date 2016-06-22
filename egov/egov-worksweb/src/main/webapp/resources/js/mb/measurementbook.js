@@ -37,40 +37,48 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.mb;
+$('#Save').click(function() {
+	var totalRows = $("#tblmilestone tbody tr").length;
+	var flag = false;
+	if(flag)
+		bootbox.alert('Completion Date should be greater than Schedule Start Date');
+	else {
+		if($('#mbHeader').valid()) {
+			var mbHeaderId = $('#id').val();
+			$('.loader-class').modal('show', {backdrop: 'static'});
+			$.ajax({
+				type: "POST",
+				url: "/egworks/measurementbook/create/" + mbHeaderId,
+				cache: true,
+				dataType: "json",
+				"data": getFormData(jQuery('form')),
+				success: function (message) {
+					$('#measurementBookDiv').remove();
+					$('#successMessage').html(message);
+					$('#successPage').show();
+				},
+				error: function (error) {
+					console.log(error.responseText.slice(0,-2));
+					var json = $.parseJSON(error.responseText.slice(0,-2));
+					
+					$.each(json, function(key, value){
+						$('#errorMessage').append(value + '</br>');
+					});
+					$('#errorMessage').show();
+				}
+			});
+			$('.loader-class').modal('hide');
+		}
+		else
+			return false;
+	}
+	
+	return false;
+});
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-@Controller
-@RequestMapping(value = "/workorder/searchform")
-public class SearchWorkOrderForMBHeaderController {
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
-        model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
-        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
-        final List<String> validActionList = new ArrayList<String>();
-        validActionList.add("Save");
-        validActionList.add("Forward");
-        model.addAttribute("validActionList", validActionList);
-        return "workorder-search";
-    }
-
-}
+$('#searchAndAdd').click(function() {
+	var workOrderEstimateId = $('#workOrderEstimateId').val();
+	var workOrderNumber = $('#workOrderNumber').val();
+	
+	window.open("/egworks/measurementbook/searchactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});

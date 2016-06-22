@@ -39,12 +39,16 @@
  */
 package org.egov.works.letterofacceptance.service;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,4 +81,21 @@ public class WorkOrderActivityService {
         return workOrderActivityRepository.save(workOrderActivity);
     }
 
+    public List<WorkOrderActivity> searchActivities(Long workOrderEstimateId, String description, String itemCode) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
+                .createAlias("woa.workOrderEstimate", "woe")
+                .createAlias("activity", "act");
+//                .createAlias("act.schedule", "schedule")
+//                .createAlias("act.nonSor", "nonSor");
+        if(workOrderEstimateId != null)
+            criteria.add(Restrictions.eq("woe.id", 11L));
+        if(!description.equals(""))
+            criteria.add(
+                    Restrictions.or(Restrictions.ilike("schedule.description", description),
+                            Restrictions.ilike("nonSor.description", description)));
+        if(!itemCode.equals(""))
+            criteria.add(Restrictions.ilike("schedule.code", itemCode));
+
+        return criteria.list();
+    }
 }

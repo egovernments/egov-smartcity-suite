@@ -50,6 +50,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
@@ -57,6 +58,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -85,6 +87,12 @@ public class MBHeaderService {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
+    
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -133,6 +141,8 @@ public class MBHeaderService {
 
     @Transactional
     public MBHeader update(final MBHeader mbHeader) {
+        mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
+        mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
     }

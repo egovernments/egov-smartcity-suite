@@ -37,38 +37,35 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div id="searchFormDiv">
-	<form:form name="abstractEstimateForm" role="form" modelAttribute="searchRequestLetterOfAcceptance"
-		id="searchRequestLetterOfAcceptance"	class="form-horizontal form-groups-bordered">
-		<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
-		<div class="row">
-			<div class="col-md-12">
-				<jsp:include page="workorder-searchform.jsp" />
-			</div>
-		</div>
-		
-		<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-					<a href='javascript:void(0)' class='btn btn-default'
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.letterofacceptance.search" />
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><input type="checkbox" id="selectall"></th>
+					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.sor.nonsor.type" /></th>
+					<th><spring:message code="lbl.sorcode" /></th>
+					<th><spring:message code="lbl.category.type" /></th>
+					<th><spring:message code="lbl.uom" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type='button' class='btn btn-primary' id="btnmodifyloa">
+				<spring:message code='lbl.modifyloa' />
+			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
-				</div>
 		</div>
-	</form:form>
-	<jsp:include page="workorder-searchResult.jsp" />
-	<script src="<c:url value='/resources/js/mb/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>
-</div>
-<div id="successPage" hidden="true">
-	<jsp:include page="mb-success.jsp"/>
-</div>
-<div id="measurementBookDiv" hidden="true">
-	<jsp:include page="measurementBook-form.jsp"/>
+	</div>
 </div>

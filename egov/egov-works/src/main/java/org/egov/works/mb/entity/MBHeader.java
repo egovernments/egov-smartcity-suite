@@ -184,6 +184,10 @@ public class MBHeader extends StateAware {
     @OrderBy("id")
     @OneToMany(mappedBy = "mbHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBDetails.class)
     private List<MBDetails> mbDetails = new ArrayList<MBDetails>(0);
+    
+    private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
+    
+    private transient List<MBDetails> nonSorMbDetails = new ArrayList<MBDetails>(0);
 
     @Transient
     private String owner;
@@ -392,6 +396,22 @@ public class MBHeader extends StateAware {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public List<MBDetails> getSorMbDetails() {
+        return sorMbDetails;
+    }
+
+    public void setSorMbDetails(List<MBDetails> sorMbDetails) {
+        this.sorMbDetails = sorMbDetails;
+    }
+
+    public List<MBDetails> getNonSorMbDetails() {
+        return nonSorMbDetails;
+    }
+
+    public void setNonSorMbDetails(List<MBDetails> nonSorMbDetails) {
+        this.nonSorMbDetails = nonSorMbDetails;
     }
 
 }

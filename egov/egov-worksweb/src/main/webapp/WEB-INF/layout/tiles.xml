@@ -320,5 +320,10 @@
         <put-attribute name="page-title" value="title.searchview.mbheader" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/mbheader-searchform.jsp"/>
      </definition>
+     
+     <definition name="workorderactivity-searchform" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchview.workorderactivity" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/searchWorkOrderActivity-form.jsp"/>
+     </definition>
 
 </tiles-definitions>

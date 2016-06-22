@@ -45,13 +45,11 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.milestone.entity.TrackMilestoneActivity;
 import org.egov.works.workorder.entity.WorkOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonArray;
@@ -62,9 +60,6 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class TrackMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final Milestone milestone, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
