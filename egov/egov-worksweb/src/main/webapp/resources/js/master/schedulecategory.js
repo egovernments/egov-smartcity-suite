@@ -42,16 +42,16 @@ function createNewScheduleCategory() {
 }
 
 function methodTest() {
-	var categoryName = document.getElementById("code").value;
-	var categoryCode = document.getElementById("description").value;
+	var categoryCode = document.getElementById("code").value;
+	var categoryName = document.getElementById("description").value;
+	if (categoryCode == '') {
+        showMessage('schedulecategory_error', 'Category Code is Required');
+        return false;
+    }
 	if (categoryName == '') {
         showMessage('schedulecategory_error', 'Category Name is Required');
         return false;
 
-    }
-	if (categoryCode == '') {
-        showMessage('schedulecategory_error', 'Category Code is Required');
-        return false;
     }
 	return true;
 }
