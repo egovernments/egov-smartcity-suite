@@ -39,28 +39,106 @@
  */
 package org.egov.lcms.masters.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
-import org.egov.lcms.utils.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-@Unique(fields = { "judgmentType", "code" }, id = "id", tableName = "EGLC_JUDGMENTTYPE_MASTER", columnName = {
-		"JUDGMENTTYPE", "CODE" }, message = "masters.judgmentType.isunique")
-public class JudgmentType extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
+@Entity
+@Table(name = "EGLC_JUDGMENTTYPE_MASTER")
+@Unique(id = "id", tableName = "EGLC_JUDGMENTTYPE_MASTER", columnName = { "code",
+		"judgmentType" }, enableDfltMsg = true)
+@SequenceGenerator(name = JudgmentType.SEQ_JUDGMENTTYPE, sequenceName = JudgmentType.SEQ_JUDGMENTTYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class JudgmentType extends AbstractAuditable {
+
 	private static final long serialVersionUID = 1L;
+	public static final String SEQ_JUDGMENTTYPE = "SEQ_EGLC_JUDGMENTTYPE_MASTER";
 
-	@Required(message = "masters.code.null")
-	@Length(max = 8, message = "masters.code.length")
-	@OptionalPattern(regex = "[0-9A-Za-z-]*", message = "masters.code.alpha2")
+	@Id
+	@GeneratedValue(generator = SEQ_JUDGMENTTYPE, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	@NotNull
+	@SafeHtml
+	@Length(min = 1, max = 8)
+	@Audited
 	private String code;
+
+	@NotNull
+	@SafeHtml
+	@Length(min = 1, max = 50)
+	@Audited
+	@Column(name = "judgmenttype")
+	private String name;
+
+	@SafeHtml
+	@Length(min = 3, max = 256)
+	private String description;
+
+	@Min(1)
+	@Max(1000)
+	private Long orderNumber;
+
+	@NotNull
 	private Boolean active;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
+
+	public Long getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(final Long orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
 	public Boolean getActive() {
 		return active;
@@ -70,73 +148,4 @@ public class JudgmentType extends BaseModel {
 		this.active = active;
 	}
 
-	@Required(message = "masters.judgmentType.null")
-	@Length(max = 32, message = "masters.judgmentType.length")
-	@OptionalPattern(regex = LcmsConstants.mixedChar, message = "masters.judgmentType.mixedChar")
-	private String judgmentType;
-
-	@Length(max = 128, message = "masters.description.length")
-	private String description;
-	@Max(value = 1000, message = "masters.orderNumber.length")
-	private Long orderNumber;
-
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(final String code) {
-		this.code = code;
-	}
-
-	/**
-	 * @return the judgmentType
-	 */
-	public String getJudgmentType() {
-		return judgmentType;
-	}
-
-	/**
-	 * @param judgmentType
-	 *            the judgmentType to set
-	 */
-	public void setJudgmentType(final String judgmentType) {
-		this.judgmentType = judgmentType;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @param description
-	 *            the description to set
-	 */
-	public void setDescription(final String description) {
-		this.description = description;
-	}
-
-	/**
-	 * @return the order_Number
-	 */
-	public Long getOrderNumber() {
-		return orderNumber;
-	}
-
-	/**
-	 * @param order_Number
-	 *            the order_Number to set
-	 */
-	public void setOrderNumber(final Long orderNumber) {
-		this.orderNumber = orderNumber;
-	}
 }

@@ -208,5 +208,29 @@
 	<put-attribute name="body" value="/WEB-INF/views/application/legalcasedetails-view.jsp"/>
 </definition>
 
+<definition name="judgmenttype-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmenttype.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-new.jsp"/>
+</definition>
+
+<definition name="judgmenttype-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmenttype.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-view.jsp"/>
+</definition>
+
+<definition name="judgmenttype-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmenttype.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-edit.jsp"/>
+</definition>
+
+<definition name="judgmenttype-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmenttype.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-result.jsp"/>
+</definition>
+
+<definition name="judgmenttype-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmenttype.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-search.jsp"/>
+</definition>
 
 </tiles-definitions>

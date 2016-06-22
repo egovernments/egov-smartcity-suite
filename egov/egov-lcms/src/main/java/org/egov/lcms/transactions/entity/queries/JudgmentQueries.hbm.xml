@@ -6,7 +6,7 @@
 -->
 <hibernate-mapping>
 
- <query name="getJudgmentByLcnumber">
+ <!-- <query name="getJudgmentByLcnumber">
     <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.legalcase and lc.lcNumber=? order by jd.id desc]]></query>
  <query name="getJudgmentByLcnumberNotByJudgmentId">
     <![CDATA[select jd from Judgment jd,Legalcase lc where lc.id=jd.legalcase and lc.lcNumber=? and jd.id!=? order by jd.id desc]]></query>
@@ -28,5 +28,5 @@
     <![CDATA[from Judgment jd where jd.legalcase.id=?]]></query>
  <query name="getJudgmentForParentId">
     <![CDATA[from Judgment j where j.parent.id=? order by j.id]]></query>
- 
+  -->
  </hibernate-mapping>
