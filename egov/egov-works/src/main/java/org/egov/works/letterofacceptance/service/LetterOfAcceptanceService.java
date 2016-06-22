@@ -42,7 +42,9 @@ package org.egov.works.letterofacceptance.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -541,12 +543,16 @@ public class LetterOfAcceptanceService {
     private void getWorkOrdersWhereBoqIsCreated(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             StringBuilder queryStr) {
         queryStr.append(
-                " select distinct wo from WorkOrder wo where wo.egwStatus.code = :woStatus and wo.id  not in (select distinct(cbr.workOrder.id) from ContractorBillRegister as cbr where upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType ) and wo.id in (select mh.workOrder.id from MBHeader mh left outer join mh.egBillregister as br where mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus))  ");
+                " select distinct wo from WorkOrder wo where wo.egwStatus.code = :woStatus and wo.id  not in (select distinct(cbr.workOrder.id) from ContractorBillRegister as cbr where upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType ) and wo.id in (select mh.workOrder.id from MBHeader mh left outer join mh.egBillregister as br where mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ");
 
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
-                queryStr.append(
-                        " and wo.id in (select workOrder.id from WorkOrderEstimate where estimate.lineEstimateDetails.lineEstimate.executingDepartment.id =:executingDepartment ) ");
+                if (searchRequestLetterOfAcceptance.getMbRefNumber() != null)
+                    queryStr.append(" and upper(mh.mbRefNo) =:mbRefNo ) ");
+                else
+                    queryStr.append(")");
+            queryStr.append(
+                    " and wo.id in (select workOrder.id from WorkOrderEstimate where estimate.lineEstimateDetails.lineEstimate.executingDepartment.id =:executingDepartment ) ");
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 queryStr.append(" and wo.workOrderNumber =:workOrderNumber ");
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
@@ -557,8 +563,7 @@ public class LetterOfAcceptanceService {
                 queryStr.append(" and upper(wo.name) =:name ");
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
                 queryStr.append(" and upper(wo.estimateNumber) =:estimateNumber ");
-            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                queryStr.append(" and exists (select workOrder from MBHeader where upper(mbRefNo) =:mbRefNo) ");
+
         }
 
     }
@@ -587,32 +592,38 @@ public class LetterOfAcceptanceService {
     }
 
     public List<String> getApprovedWorkOrdersForCreateContractorBill(final String workOrderNumber) {
+        Set<String> result = new HashSet<String>();
         final List<String> results = letterOfAcceptanceRepository.findWorkOrderNumberForContractorBill(
                 "%" + workOrderNumber + "%", WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString());
         results.addAll(letterOfAcceptanceRepository.findWorkOrderNumberForContractorBillWithMB(
                 "%" + workOrderNumber + "%", WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString()));
-        return results;
+        result.addAll(results);
+        return new ArrayList<String>(result);
 
     }
 
     public List<String> getApprovedEstimateNumbersForCreateContractorBill(final String estimateNumber) {
+        Set<String> result = new HashSet<String>();
         final List<String> results = letterOfAcceptanceRepository.findEstimateNumberForContractorBill("%" + estimateNumber + "%",
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         results.addAll(letterOfAcceptanceRepository.findEstimateNumberForContractorBillWithMB("%" + estimateNumber + "%",
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString()));
-        return results;
+        result.addAll(results);
+        return new ArrayList<String>(result);
     }
 
     public List<String> getApprovedContractorsForCreateContractorBill(final String contractorname) {
+        Set<String> result = new HashSet<String>();
         final List<String> results = letterOfAcceptanceRepository.findContractorForContractorBill("%" + contractorname + "%",
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
         results.addAll(letterOfAcceptanceRepository.findContractorForContractorBillWithMB("%" + contractorname + "%",
                 WorksConstants.APPROVED, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                 BillTypes.Final_Bill.toString()));
-        return results;
+        result.addAll(results);
+        return new ArrayList<String>(result);
     }
 
     public Boolean validateContractorBillInWorkflowForWorkorder(final Long workOrderId) {
