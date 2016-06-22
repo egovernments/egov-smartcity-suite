@@ -37,8 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.tl.entity;
 
-public enum RateTypeEnum {
-    Flat_by_Range, Percentage, Unit_by_Range;
+package org.egov.tl.repository;
+
+import org.egov.tl.entity.License;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface LicenseRepository extends JpaRepository<License, Long>{
+
+    List<License> findByOldLicenseNumber(String oldLicenseNumber);
+
+    License findByLicenseNumber(String licenseNumber);
+
+    License findByApplicationNumber(String applicationNumber);
 }

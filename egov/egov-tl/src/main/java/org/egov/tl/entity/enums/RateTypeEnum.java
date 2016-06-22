@@ -38,64 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.entity.enums;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.search.annotations.DocumentId;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "egtl_document_type")
-@SequenceGenerator(name = LicenseDocumentType.SEQUENCE, sequenceName = LicenseDocumentType.SEQUENCE, allocationSize = 1)
-public class LicenseDocumentType extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -4917193602014054096L;
-    public static final String SEQUENCE = "seq_egtl_document_type";
-
-    @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
-    private Long id;
-    private String name;
-    private boolean mandatory;
-    private String applicationType;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isMandatory() {
-        return mandatory;
-    }
-
-    public void setMandatory(final boolean mandatory) {
-        this.mandatory = mandatory;
-    }
-
-    public String getApplicationType() {
-        return applicationType;
-    }
-
-    public void setApplicationType(final String applicationType) {
-        this.applicationType = applicationType;
-    }
+public enum RateTypeEnum {
+    Flat_by_Range, Percentage, Unit_by_Range;
 }

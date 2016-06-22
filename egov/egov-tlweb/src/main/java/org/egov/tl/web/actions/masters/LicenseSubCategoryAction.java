@@ -55,7 +55,7 @@ import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.LicenseType;
-import org.egov.tl.entity.RateTypeEnum;
+import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.masters.LicenseCategoryService;

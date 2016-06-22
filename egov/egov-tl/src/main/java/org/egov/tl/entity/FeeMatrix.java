@@ -56,6 +56,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,38 +66,45 @@ import java.util.List;
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3119126267277124321L;
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "natureOfBusiness", nullable = false)
+    @JoinColumn(name = "natureOfBusiness")
     private NatureOfBusiness natureOfBusiness;
-    
+
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "licenseCategory", nullable = false)
+    @JoinColumn(name = "licenseCategory")
     private LicenseCategory licenseCategory;
-    
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subCategory", nullable = false)
+    @JoinColumn(name = "subCategory")
     private LicenseSubCategory subCategory;
-    
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "licenseAppType", nullable = false)
+    @JoinColumn(name = "licenseAppType")
     private LicenseAppType licenseAppType;
-    
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feeType", nullable = false)
+    @JoinColumn(name = "feeType")
     private FeeType feeType;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "financialYear", nullable = false)
+    @JoinColumn(name = "financialYear")
     private CFinancialYear financialYear;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitOfMeasurement", nullable = false)
+    @JoinColumn(name = "unitOfMeasurement")
     private UnitOfMeasurement unitOfMeasurement;
 
     private String uniqueNo;
