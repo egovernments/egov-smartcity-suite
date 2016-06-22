@@ -165,10 +165,12 @@ function validateEndDate()
 {
 	var isSuccess=true;
 	$('.EndDate').each(function(i){
+		var endDate = '';
 		var idx=$(this).data('idx');
 		var startDate=$('.StartDate[data-idx="'+ idx +'"]').data('datepicker').date;
-		var endDate=$(this).data('datepicker').date;
-		if(startDate>endDate)
+		if($(this).val() != "")
+			var endDate=$(this).data('datepicker').date;
+		if($(this).val() != "" && startDate>endDate)
 		{
 			isSuccess=false;
 			var message = document.getElementById('validateDate').value;
