@@ -92,7 +92,7 @@ public class JudgmentTypeController {
 			prepareNewForm(model);
 			return JUDGMENTTYPE_NEW;
 		}
-		judgmentTypeService.create(judgmentType);
+		judgmentTypeService.persist(judgmentType);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.success", null, null));
 		return "redirect:/judgmenttype/result/" + judgmentType.getId();
 	}
@@ -112,7 +112,7 @@ public class JudgmentTypeController {
 			prepareNewForm(model);
 			return JUDGMENTTYPE_EDIT;
 		}
-		judgmentTypeService.update(judgmentType);
+		judgmentTypeService.persist(judgmentType);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.judgmentType.update", null, null));
 		return "redirect:/judgmenttype/result/" + judgmentType.getId();
 	}

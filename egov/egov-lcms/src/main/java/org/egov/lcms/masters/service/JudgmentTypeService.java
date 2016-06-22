@@ -72,12 +72,7 @@ public class JudgmentTypeService {
 	}
 
 	@Transactional
-	public JudgmentType create(final JudgmentType judgmentType) {
-		return judgmentTypeRepository.save(judgmentType);
-	}
-
-	@Transactional
-	public JudgmentType update(final JudgmentType judgmentType) {
+	public JudgmentType persist(final JudgmentType judgmentType) {
 		return judgmentTypeRepository.save(judgmentType);
 	}
 
