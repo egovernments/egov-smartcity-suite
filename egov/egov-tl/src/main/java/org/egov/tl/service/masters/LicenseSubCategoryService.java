@@ -40,12 +40,19 @@
 
 package org.egov.tl.service.masters;
 
+import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.entity.LicenseType;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
+import org.egov.tl.service.FeeTypeService;
+import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -54,10 +61,37 @@ public class LicenseSubCategoryService {
     
     @Autowired
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
+
+    @Autowired
+    private LicenseCategoryService licenseCategoryService;
+
+    @Autowired
+    @Qualifier("entityQueryService")
+    private PersistenceService entityQueryService;
+
+    @Autowired
+    private FeeTypeService feeTypeService;
+
+    @Autowired
+    private UnitOfMeasurementService unitOfMeasurementService;
     
     @Transactional
-    public LicenseSubCategory create(LicenseSubCategory licenseSubCategory){
-        return  licenseSubCategoryRepository.save(licenseSubCategory);
+    public LicenseSubCategory create(LicenseSubCategory subCategory, List<LicenseSubCategoryDetails> details, Long categoryId){
+        if(categoryId!=null){
+            subCategory.setCategory(licenseCategoryService.findById(categoryId));
+        }
+        LicenseType licenseType=(LicenseType)entityQueryService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
+        subCategory.setLicenseType(licenseType);
+        for (LicenseSubCategoryDetails scDetails : details) {
+            if(scDetails!=null){
+                scDetails.setSubCategory(subCategory);
+                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
+                scDetails.setRateType(scDetails.getRateType());
+                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId()));
+                subCategory.addLicenseSubCategoryDetails(scDetails);
+            }
+        }
+        return  licenseSubCategoryRepository.save(subCategory);
     }
 
     public List<LicenseSubCategory> findAllSubCategoryByCategory(final Long categoryId) {

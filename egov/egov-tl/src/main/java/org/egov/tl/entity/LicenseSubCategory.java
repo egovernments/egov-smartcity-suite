@@ -58,8 +58,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
@@ -104,7 +104,7 @@ public class LicenseSubCategory extends AbstractAuditable {
 
     @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
     @Valid
-    private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<LicenseSubCategoryDetails>();
+    private Set<LicenseSubCategoryDetails> licenseSubCategoryDetails = new HashSet<LicenseSubCategoryDetails>();
 
     public Long getId() {
         return id;
@@ -166,12 +166,30 @@ public class LicenseSubCategory extends AbstractAuditable {
         getLicenseSubCategoryDetails().add(licenseSubCategoryDetail);
     }
 
-    public List<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
+    public Set<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
         return licenseSubCategoryDetails;
     }
 
-    public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
+    public void setLicenseSubCategoryDetails(Set<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final LicenseSubCategory that = (LicenseSubCategory) o;
+
+        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null) return false;
+        return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getCode() != null ? getCode().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        return result;
+    }
 }
