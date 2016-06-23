@@ -51,7 +51,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, Long> {
 
-    @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:currentDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:currentDate and rates.validity.endDate is null)) order by sch.code")
+    @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom inner join fetch sch.scheduleCategory as categories where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:currentDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:currentDate and rates.validity.endDate is null)) order by sch.code")
     List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
             @Param("ids") final List<Long> ids, @Param("currentDate") final Date currentDate);
 

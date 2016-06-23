@@ -174,7 +174,8 @@ $(document).ready(function(){
 	                    uomid: ct.uom.id,
 	                    estimateRate: ct.sorRates[0].rate.value,
 	                    summary: ct.summary,
-	                    displayResult: ct.code+' : '+ct.summary
+	                    categoryCode: ct.scheduleCategory.code,
+	                    displayResult: ct.code+' : '+ct.summary+' : '+ct.scheduleCategory.code 
 	                };
 	            });
 	        }

@@ -146,6 +146,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
+					<th><spring:message code="lbl.sor.category" /></th>
 					<th><spring:message code="lbl.code" /></th>
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
@@ -166,10 +167,10 @@
 					<tr id="message" hidden="true">
 				</c:if>
 					<c:if test="${isServiceVATRequired == true }">
-						<td colspan="11"><spring:message code="msg.sor.table"/></td>
+						<td colspan="12"><spring:message code="msg.sor.table"/></td>
 					</c:if>
 					<c:if test="${isServiceVATRequired == false }">
-						<td colspan="9"><spring:message code="msg.sor.table"/></td>
+						<td colspan="10"><spring:message code="msg.sor.table"/></td>
 					</c:if>
 				</tr>
 				<c:choose>
@@ -179,6 +180,9 @@
 								<span class="spansorslno">1</span>
 								<form:hidden path="sorActivities[0].id" id="activityid_0" class="activityid" />
 								<form:hidden path="sorActivities[0].schedule.id" id="id_0" class="sorhiddenid" />
+							</td>
+							<td>
+								<span class="categoryCode_0"></span>
 							</td>
 							<td>
 								<span class="code_0"></span>
@@ -226,6 +230,9 @@
 										<form:hidden path="sorActivities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
 									</td>
 									<td>
+										<span class="categoryCode_${item.index }">${activity.schedule.scheduleCategory.code }</span>
+									</td>
+									<td>
 										<span class="code_${item.index }">${activity.schedule.code }</span>
 									</td>
 									<td align="left">
@@ -267,7 +274,7 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="6" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="7" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="sorEstimateTotal">0.00</span> </td>
 					<td hidden="true" class="emptytd"></td>
 					<td hidden="true" class="text-right serviceVatAmt"> <span id="serviceVatAmtTotal">0.00</span> </td>
