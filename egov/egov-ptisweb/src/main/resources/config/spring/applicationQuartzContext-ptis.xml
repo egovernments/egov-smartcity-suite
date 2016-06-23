@@ -55,6 +55,7 @@
 				<ref bean="bulkBillGenerationCronTrigger3" />
 				<ref bean="bulkBillGenerationCronTrigger4" />
 				<ref bean="demandActivationJobTrigger"/>
+				<ref bean="mutationApplicationUpdateJobTrigger"/>
 	    	</list>
 		</property>	
 		<property name="applicationContextSchedulerContextKey" value="applicationQuartzContext-ptis" /> 
@@ -257,5 +258,42 @@
     </bean>
      
     <!-- END DemandActivationJob -->
+
+	<!-- description for MutationApplicationUpdateJob -->
+
+	<bean name="mutationApplicationUpdateJobScheduler" id="mutationApplicationUpdateJobScheduler"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="group" value="PTIS_MUTATION_WORKFLOW_UPDATION_JOB_GROUP" />
+		<property name="name" value="PTISMutationApplicationUpdateJob" />
+		<property name="durability" value="true" />
+		<property name="jobClass"
+			value="org.egov.ptis.scheduler.MutationApplicationUpdateJob" />
+		<property name="requestsRecovery" value="false" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="jobBeanName" value="mutationApplicationUpdateJob" />
+				<entry key="userName" value="egovernments" />
+				<entry key="transactional" value="true" />
+				<entry key="moduleName" value="ptis" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="mutationApplicationUpdateJob" class="org.egov.ptis.scheduler.MutationApplicationUpdateJob"
+		lazy-init="true" scope="prototype">
+	</bean>
+
+	<!-- This job will be triggered everyday at 12:45 AM -->
+	<bean id="mutationApplicationUpdateJobTrigger" name="mutationApplicationUpdateJobTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="mutationApplicationUpdateJobScheduler" />
+		<property name="group" value="PTIS_MUTATION_WORKFLOW_UPDATION_JOB_GROUP" />
+		<property name="name" value="PTISMutationApplicationUpdateJob" />
+		<property name="cronExpression" value="0 */10 * * * ?" />
+		<!-- <property name="cronExpression" value="0 45 0 * * ?" /> -->
+		<property name="misfireInstructionName" value="MISFIRE_INSTRUCTION_DO_NOTHING" />
+	</bean>
+	<!-- END MutationApplicationUpdateJob -->
+    
 </beans>
 
