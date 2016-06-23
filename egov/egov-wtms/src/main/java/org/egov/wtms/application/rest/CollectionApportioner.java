@@ -42,23 +42,31 @@ package org.egov.wtms.application.rest;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CollectionApportioner {
 
     public static final String STRING_FULLTAX = "FULLTAX";
     public static final String STRING_ADVANCE = "ADVANCE";
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     public CollectionApportioner() {
 
@@ -92,9 +100,9 @@ public class CollectionApportioner {
         }
         if (balance.isGreaterThanZero()) {
             LOGGER.error("Apportioning failed: excess payment!");
-            throw new ValidationException(Arrays.asList(new ValidationError(
-                    "Paid Amount is greater than Total Amount to be paid",
-                    "Paid Amount is greater than Total Amount to be paid")));
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Paid Amount is greater than Total Amount to be paid",
+                            "Paid Amount is greater than Total Amount to be paid")));
         }
 
         LOGGER.info("receiptDetails after apportioning: " + receiptDetails);
@@ -106,13 +114,25 @@ public class CollectionApportioner {
         LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
         LOGGER.info("billDetails before reApportion " + billDetails);
         Amount balance = new Amount(amountPaid);
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
         BigDecimal crAmountToBePaid = BigDecimal.ZERO;
 
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
-            receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
+            if (billDetail.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
+                receiptDetail.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
+            else if (billDetail.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                    .compareTo(finYear.getStartingDate()) < 0)
+                receiptDetail.setPurpose(PURPOSE.ARREAR_AMOUNT.toString());
+            else if (billDetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                    .compareTo(finYear.getStartingDate()) >= 0
+                    && billDetail.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                            .compareTo(finYear.getEndingDate()) < 0)
+                receiptDetail.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
+            else
+                receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
@@ -146,8 +166,8 @@ public class CollectionApportioner {
 
         if (balance.isGreaterThanZero()) {
             LOGGER.error("reApportion failed: excess payment!");
-            throw new ValidationException(Arrays.asList(
-                    new ValidationError("Paid Amount is greater than Total Amount to be paid",
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Paid Amount is greater than Total Amount to be paid",
                             "Paid Amount is greater than Total Amount to be paid")));
         }
 
