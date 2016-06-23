@@ -41,23 +41,47 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_MSTR_UNITOFMEASURE")
+@SequenceGenerator(name = UnitOfMeasurement.SEQUENCE, sequenceName = UnitOfMeasurement.SEQUENCE, allocationSize = 1)
+@Unique(fields = {"name", "code"})
 public class UnitOfMeasurement extends AbstractAuditable {
-    private static final long serialVersionUID = 1L;
-    
+
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
+    private static final long serialVersionUID = -3990672464573945978L;
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
-    @Required(message = "tradelic.uommaster.name.null")
-    @Length(max = 50, message = "tradelic.uommaster.name.length")
+
+    @NotBlank(message = "tradelic.uommaster.name.null")
+    @Length(min = 1, max = 50, message = "tradelic.uommaster.name.length")
     private String name;
 
-    @Required(message = "tradelic.uommaster.code.null")
-    @Length(max = 50, message = "tradelic.uommaster.code.length")
+    @NotBlank(message = "tradelic.uommaster.code.null")
+    @Length(min = 1, max = 50, message = "tradelic.uommaster.code.length")
     private String code;
-    
+
     private boolean active;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -81,14 +105,6 @@ public class UnitOfMeasurement extends AbstractAuditable {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-    
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-            this.id = id;
     }
 
 }

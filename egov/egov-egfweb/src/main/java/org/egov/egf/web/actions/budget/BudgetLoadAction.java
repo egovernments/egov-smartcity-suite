@@ -119,6 +119,7 @@ public class BudgetLoadAction extends BaseFormAction {
     private String budgetOriginalFileName;
     private String budgetOutPutFileName;
     private String timeStamp;
+    private String budgetUploadError = "Upload the Budget Data as shown in the Download Template format";
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -250,8 +251,9 @@ public class BudgetLoadAction extends BaseFormAction {
                     "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
             outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
                     "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
-            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
-                    e.getMessage())));
+            throw new ValidationException(Arrays.asList(new ValidationError(budgetUploadError,
+                    budgetUploadError)));
+
         }
 
         return "result";

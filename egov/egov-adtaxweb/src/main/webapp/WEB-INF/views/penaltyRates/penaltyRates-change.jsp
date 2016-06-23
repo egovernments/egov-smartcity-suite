@@ -96,12 +96,12 @@
 									</td>	
 								</tr>
 							</c:forEach>
-							<script>
-								$( "#penaltyRatesTable tr:last .delete-button").show();
-								$( "#penaltyRatesTable tr:last .range-to").prop("readonly", false);
-							</script>
 						</tbody>
 					</table>
+					<script>
+								$( "#penaltyRatesTable tr:last .delete-button").show();
+								$( "#penaltyRatesTable tr:last .range-to").prop("readonly", false);
+					</script>
 					<div class="form-group">
 						<div class="text-center">
 							<button type="button" id="btn-addRow" class="btn btn-primary btn-addRow"><spring:message code="lbl.adtax.addRow"></spring:message></button>

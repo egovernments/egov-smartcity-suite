@@ -74,7 +74,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
 
     @Override
     public String execute() throws IOException {
-        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
+        final License license = tradeLicenseService.getLicenseById(licenseId);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
@@ -93,7 +93,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
             licenseId = Long.valueOf((Long) getSession().get("model.id"));
             getSession().remove("model.id");
         }
-        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
+        final License license = tradeLicenseService.getLicenseById(licenseId);
         licenseBill.setLicense(license);
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");

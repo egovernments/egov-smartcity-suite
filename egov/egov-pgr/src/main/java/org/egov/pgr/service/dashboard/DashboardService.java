@@ -51,10 +51,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.pgr.repository.dashboard.DashboardRepository;
@@ -192,28 +194,54 @@ public class DashboardService {
     public Map<String, Object> topComplaints() {
         final DateTime currentDate = new DateTime();
 
-        final List<Object> dataHolder5 = constructListOfMonthPlaceHolder(currentDate.minusMonths(6), currentDate, "MMM");
+        final List<Object> dataHolderNumber = constructListOfMonthPlaceHolder(currentDate.minusMonths(5),
+                currentDate.plusMonths(1),
+                "MM");
+        final List<Object> dataHolderString = constructListOfMonthPlaceHolder(currentDate.minusMonths(5),
+                currentDate.plusMonths(1), "MMM");
         final List<Object[]> topFiveCompTypeData = dashboardRepository.fetchTopComplaintsBetween(
-                startOfGivenDate(currentDate.minusMonths(6).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
-        final List<Object> dataHolder = new LinkedList<Object>();
-        int index = 0;
-        final Map<String, Object> data = new HashMap<String, Object>();
-        final List<Integer> compCount = new ArrayList<Integer>();
+                startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
+        final List<Object[]> topFiveCompTypeCurrentMonth = dashboardRepository.fetchTopComplaintsForCurrentMonthBetween(
+                startOfGivenDate(currentDate.minusMonths(5).withDayOfMonth(1)).toDate(), endOfGivenDate(currentDate).toDate());
+        final Map<Object, Object> constructResultPlaceholder = new LinkedHashMap<Object, Object>();
+        final Map<Object, Object> actualdata = new LinkedHashMap<Object, Object>();
+        for (final Object complaintType : topFiveCompTypeCurrentMonth)
+            for (final Object month : dataHolderNumber)
+                constructResultPlaceholder.put(month + "-" + complaintType, BigInteger.ZERO);
         for (final Object[] top5CompType : topFiveCompTypeData)
+            actualdata.put(top5CompType[0] + "-" + top5CompType[2], top5CompType[1]);
+        final Map<Object, Object> newdata = new LinkedHashMap<Object, Object>();
+        for (final Object placeholderMapKey : constructResultPlaceholder.keySet())
+            if (actualdata.get(placeholderMapKey) == null)
+                newdata.put(placeholderMapKey, BigInteger.ZERO);
+            else
+                newdata.put(placeholderMapKey, actualdata.get(placeholderMapKey));
+        final Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<String, Object>();
+
+        final List<Object> dataHolder = new LinkedList<Object>();
+        final List<Object> compCount = new ArrayList<Object>();
+        final Iterator<Entry<Object, Object>> entries = newdata.entrySet().iterator();
+        int index = 0;
+        while (entries.hasNext()) {
+            final Map<String, Object> tmpdata = new LinkedHashMap<String, Object>();
+            final Entry<Object, Object> entry = entries.next();
             if (index < 5) {
-                compCount.add(((BigDecimal) top5CompType[1]).intValue());
+                compCount.add(entry.getValue());
                 index++;
-            } else {
-                compCount.add(((BigDecimal) top5CompType[1]).intValue());
-                data.put("name", String.valueOf(top5CompType[2]));
-                data.put("data", new LinkedList<Integer>(compCount));
-                dataHolder.add(new LinkedHashMap<String, Object>(data));
+            } else if (index == 5) {
+                compCount.add(entry.getValue());
+                final String[] parts = entry.getKey().toString().split("-");
+                tmpdata.put("name", parts[1]);
+                tmpdata.put("data", new LinkedList<Object>(compCount));
+                final HashMap<String, Object> ctypeCountMap = new LinkedHashMap<String, Object>();
+                ctypeCountMap.putAll(tmpdata);
+                dataHolder.add(ctypeCountMap);
                 index = 0;
                 compCount.clear();
-                data.clear();
+                tmpdata.clear();
             }
-        final Map<String, Object> topFiveCompDataHolder = new LinkedHashMap<String, Object>();
-        topFiveCompDataHolder.put("year", dataHolder5);
+        }
+        topFiveCompDataHolder.put("year", dataHolderString);
         topFiveCompDataHolder.put("series", dataHolder);
 
         return topFiveCompDataHolder;
