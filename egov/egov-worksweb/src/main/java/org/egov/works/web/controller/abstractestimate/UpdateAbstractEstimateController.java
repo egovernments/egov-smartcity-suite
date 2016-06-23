@@ -193,7 +193,11 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
                 return "redirect:/abstractestimate/update/" + updatedAbstractEstimate.getId() + "?mode=save";
 
-            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
+            if(approvalPosition == null)
+                return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
+                    + "&approvalPosition=";
+            else
+                return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
                     + "&approvalPosition=" + approvalPosition;
         }
     }
