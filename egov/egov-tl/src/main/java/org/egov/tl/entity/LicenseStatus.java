@@ -40,30 +40,53 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class LicenseStatus implements java.io.Serializable {
+@Entity
+@Table(name = "EGTL_MSTR_STATUS")
+@SequenceGenerator(name = LicenseStatus.SEQUENCE, sequenceName = LicenseStatus.SEQUENCE, allocationSize = 1)
+public class LicenseStatus extends AbstractPersistable<Long> {
 
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_STATUS";
     private static final long serialVersionUID = 22395010799520683L;
 
-    private Integer ID = null;
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
 
-    private String name = null;
+    @NotBlank
+    @Length(min = 1, max = 256)
+    @Column(name = "STATUS_NAME")
+    private String name;
 
-    private Date lastUpdatedTimeStamp = null;
+    @Length(max = 32)
+    @Column(name = "CODE")
+    private String statusCode;
 
-    private String statusCode = null;
+    @Column(name = "IS_ACTIVE")
     private boolean active;
+
+    @Column(name = "ORDER_ID")
     private Integer orderId;
 
-    public Integer getID() {
-        return ID;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setID(final Integer id) {
-        ID = id;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -72,14 +95,6 @@ public class LicenseStatus implements java.io.Serializable {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public Date getLastUpdatedTimeStamp() {
-        return lastUpdatedTimeStamp;
-    }
-
-    public void setLastUpdatedTimeStamp(final Date lastUpdatedTimeStamp) {
-        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
     }
 
     public String getStatusCode() {
@@ -107,57 +122,18 @@ public class LicenseStatus implements java.io.Serializable {
     }
 
     @Override
-    public boolean equals(final Object that)
-    {
-        if (that == null)
-            return false;
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (this == that)
-            return true;
+        final LicenseStatus that = (LicenseStatus) o;
 
-        if (that.getClass() != this.getClass())
-            return false;
-        final LicenseStatus thatPropStatus = (LicenseStatus) that;
+        return getName().equals(that.getName());
 
-        if (getID() != null && thatPropStatus.getID() != null)
-        {
-            if (getID().equals(thatPropStatus.getID()))
-                return true;
-            else
-                return false;
-        }
-        else if (getName() != null && thatPropStatus.getName() != null)
-        {
-            if (getName().equals(thatPropStatus.getName()))
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
     }
 
-    /**
-     * @return Returns the hashCode
-     */
     @Override
-    public int hashCode()
-    {
-        int hashCode = 0;
-        if (getID() != null)
-            hashCode += getID().hashCode();
-        if (getName() != null)
-            hashCode += getName().hashCode();
-        return hashCode;
-    }
-
-    /**
-     * @return Returns the boolean after validating the current object
-     */
-    public boolean validate()
-    {
-        if (getName() == null)
-            throw new ApplicationRuntimeException("In LicenseStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
-        return true;
+    public int hashCode() {
+        return getName().hashCode();
     }
 }

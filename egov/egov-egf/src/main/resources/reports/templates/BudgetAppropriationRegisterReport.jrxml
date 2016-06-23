@@ -1,45 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-06-16T11:11:09 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7097aa43-97ca-42a4-ad10-8a0434139cf9">
 	<parameter name="bgname" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[]]>
@@ -89,59 +51,50 @@
 	<title>
 		<band height="23" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="288" height="22"/>
+				<reportElement x="0" y="0" width="288" height="22" uuid="2cb4ef7f-c632-4554-b22a-34e80fbfffb5"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Budget Appropriation Register Report for]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="288" y="1" width="406" height="22"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{bgname}]]></textFieldExpression>
+				<reportElement x="288" y="1" width="406" height="22" uuid="8bc8f194-2169-435f-be7f-54e566c2bbbe"/>
+				<textFieldExpression><![CDATA[$P{bgname}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="24" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="86" height="20"/>
-				<textElement/>
+				<reportElement x="0" y="0" width="86" height="20" uuid="277108ec-aa4d-4754-ba9a-7a658e5efff9"/>
 				<text><![CDATA[Sl. No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="269" y="0" width="75" height="20"/>
-				<textElement/>
+				<reportElement x="269" y="0" width="75" height="20" uuid="4114bc74-60fe-4317-8853-ea7e3b1d8c19"/>
 				<text><![CDATA[Voucher Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="344" y="0" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="344" y="0" width="100" height="20" uuid="dbee9817-f4dc-49b0-8577-525cd205ac50"/>
 				<text><![CDATA[Voucher Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="444" y="0" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="444" y="0" width="100" height="20" uuid="0faccf52-3386-4829-bceb-c03e9b6b901b"/>
 				<text><![CDATA[Amount]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="544" y="0" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="544" y="0" width="100" height="20" uuid="71d11fca-c219-44f9-8131-5f679f511d20"/>
 				<text><![CDATA[Cumulative]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="169" y="0" width="100" height="20"/>
-				<textElement/>
+				<reportElement x="169" y="0" width="100" height="20" uuid="4e7963f2-97e5-4950-b4af-7ca4d0a00686"/>
 				<text><![CDATA[Bill Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="86" y="0" width="83" height="20"/>
-				<textElement/>
+				<reportElement x="86" y="0" width="83" height="20" uuid="1765c9de-c2e3-4e4d-9343-b168a22e5cd8"/>
 				<text><![CDATA[Bill Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="644" y="0" width="86" height="20"/>
-				<textElement/>
+				<reportElement x="644" y="0" width="86" height="20" uuid="1f0f25c8-6120-4ec3-a378-b719da09f7d2"/>
 				<text><![CDATA[Balance Available]]></text>
 			</staticText>
 		</band>
@@ -149,44 +102,36 @@
 	<detail>
 		<band height="27" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="3" width="86" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{serailNumber}]]></textFieldExpression>
+				<reportElement x="0" y="3" width="86" height="20" uuid="672d0fd3-7e17-4661-ae2c-0935112b37d8"/>
+				<textFieldExpression><![CDATA[$F{serailNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="86" y="3" width="83" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{billDate}]]></textFieldExpression>
+				<reportElement x="86" y="3" width="83" height="20" uuid="37068398-af7b-4081-b541-2ff9f81ff48d"/>
+				<textFieldExpression><![CDATA[$F{billDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="169" y="3" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{billNumber}]]></textFieldExpression>
+				<reportElement x="169" y="3" width="100" height="20" uuid="a24518f7-fe99-4c5a-9bc1-e3e35e1a5b0a"/>
+				<textFieldExpression><![CDATA[$F{billNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="442" y="3" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{billAmount}]]></textFieldExpression>
+				<reportElement x="442" y="3" width="100" height="20" uuid="bb0ab5b8-b61f-47ec-880e-87ca736d987c"/>
+				<textFieldExpression><![CDATA[$F{billAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="542" y="3" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cumulativeAmount}]]></textFieldExpression>
+				<reportElement x="542" y="3" width="100" height="20" uuid="2229b171-031c-4503-9d41-cab5464ebdd8"/>
+				<textFieldExpression><![CDATA[$F{cumulativeAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="642" y="3" width="88" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{balanceAvailableAmount}]]></textFieldExpression>
+				<reportElement x="642" y="3" width="88" height="20" uuid="2b9aaaa5-9703-42bd-a9a0-5bc2af365964"/>
+				<textFieldExpression><![CDATA[$F{balanceAvailableAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="269" y="3" width="75" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{voucherNumber}]]></textFieldExpression>
+				<reportElement x="269" y="3" width="75" height="20" uuid="a29836ed-9eda-4636-a516-eb9ff428e8e0"/>
+				<textFieldExpression><![CDATA[$F{voucherNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="344" y="3" width="100" height="20"/>
-				<textElement/>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{voucherDate}]]></textFieldExpression>
+				<reportElement x="344" y="3" width="100" height="20" uuid="46103c32-201d-4000-aab6-9ef76b6a0ecf"/>
+				<textFieldExpression><![CDATA[$F{voucherDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

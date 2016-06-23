@@ -90,7 +90,7 @@ public class SearchTradeAction extends BaseFormAction {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
-
+    private Boolean isCancelled;
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -126,7 +126,7 @@ public class SearchTradeAction extends BaseFormAction {
         String result = null;
         final List<TradeLicense> licenses = tradeLicenseService
                 .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
-                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
+                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo, isCancelled);
         resultList = prepareOutput(licenses);
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -293,4 +293,13 @@ public class SearchTradeAction extends BaseFormAction {
     public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
 }

@@ -40,46 +40,26 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.utils.DateUtils;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
+@Entity
+@Table(name = "egtl_trade_license")
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
-    private List<LicenseDocument> documents = new ArrayList<>();
-
-    @Override
-    public String generateLicenseNumber(final Serializable runningNumber) {
-        return this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
-    }
 
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append("TradeLicense Number " +getLicenseNumber() +" and ");
-       details.append(String.format(" Application Number %s with application date %s.", applicationNumber ,
-                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date())))));
+            details.append("Trade License Number ").append(getLicenseNumber()).append(" and ");
+        details.append("App No. ").append(applicationNumber).append(" dated ").append(formatter.format(applicationDate));
+        details.append("<br/> Remarks : ").append(this.getState().getComments());
         return details.toString();
     }
-    
-    @Override
-    @NotAudited
-    public List<LicenseDocument> getDocuments() {
-        return documents;
-    }
-
-    @Override
-    public void setDocuments(final List<LicenseDocument> documents) {
-        this.documents = documents;
-    }
-
 }

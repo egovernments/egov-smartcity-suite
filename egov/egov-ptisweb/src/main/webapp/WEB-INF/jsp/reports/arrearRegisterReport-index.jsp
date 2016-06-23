@@ -154,6 +154,8 @@
 		 <td><input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();"/></td>
 		</tr>
 	</div>
+	<br />
+	<s:text name="reports.note.text" />
 	</s:form>
 	</body>
 </html>

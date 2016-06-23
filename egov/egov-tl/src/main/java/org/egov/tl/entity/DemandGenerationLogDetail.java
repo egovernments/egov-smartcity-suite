@@ -61,8 +61,8 @@ import javax.persistence.Table;
 @SequenceGenerator(name = DemandGenerationLogDetail.SEQ, sequenceName = DemandGenerationLogDetail.SEQ, allocationSize = 1)
 public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 3192204759105538672L;
     public static final String SEQ = "seq_egtl_demandgenerationlogdetail";
+    private static final long serialVersionUID = 3192204759105538672L;
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)

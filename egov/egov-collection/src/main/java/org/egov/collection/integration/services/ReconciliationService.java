@@ -100,6 +100,7 @@ public class ReconciliationService {
                 newReceiptDetail.setCramount(receiptDetail.getCramount());
                 newReceiptDetail.setAccounthead(receiptDetail.getAccounthead());
                 newReceiptDetail.setDramount(receiptDetail.getDramount());
+                newReceiptDetail.setPurpose(receiptDetail.getPurpose());
                 existingReceiptDetails.add(newReceiptDetail);
             }
 

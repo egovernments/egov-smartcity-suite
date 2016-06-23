@@ -43,6 +43,9 @@ import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcT
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
@@ -98,8 +101,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
-    private static final String STRING_SERVICE_CODE = "PT";
-    private static final String STRING_MUTATION_SERVICE_CODE = "PTMF";
     private BasicProperty basicProperty;
     private Long userId;
     EgBillType egBillType;
@@ -140,6 +141,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private String pgType;
     private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
     private Boolean mutationFeePayment = Boolean.FALSE;
+    private Boolean vacantLandTaxPayment = Boolean.FALSE;
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
@@ -264,9 +266,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public String getServiceCode() {
         if (isMutationFeePayment())
-            return STRING_MUTATION_SERVICE_CODE;
+            return SERVICE_CODE_MUTATION;
+        else if (isVacantLandTaxPayment())
+            return SERVICE_CODE_VACANTLANDTAX;
         else
-            return STRING_SERVICE_CODE;
+            return SERVICE_CODE_PROPERTYTAX;
     }
 
     @Override
@@ -568,7 +572,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setMutationFeePayment(final boolean mutationFeePayment) {
         this.mutationFeePayment = mutationFeePayment;
     }
-
+    
     public void setMutationApplicationNo(final String mutationApplicationNo) {
         this.mutationApplicationNo = mutationApplicationNo;
     }
@@ -610,4 +614,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         this.propertyTaxUtil = propertyTaxUtil;
     }
 
+    public boolean isVacantLandTaxPayment() {
+        return vacantLandTaxPayment;
+    }
+
+    public void setVacantLandTaxPayment(final boolean vacantLandTaxPayment) {
+        this.vacantLandTaxPayment = vacantLandTaxPayment;
+    }
 }

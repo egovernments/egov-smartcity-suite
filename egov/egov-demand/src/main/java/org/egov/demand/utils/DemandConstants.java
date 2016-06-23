@@ -46,4 +46,13 @@ public interface DemandConstants {// TODO use a class, not an interface
 	String COLLECTIONTYPE_FIELD = "F"; // F Stands for Field Collection
 	String COLLECTIONTYPE_COUNTER = "C"; // F Stands for Counter Collection
 	String COLLECTIONTYPE_ONLINE = "O"; // F Stands for Online Collection
+	
+	// Demand Reason Category Types
+	
+    public static final String DEMAND_REASON_CATEGORY_TAX="TAX"; // Includes both Current and Arrear Tax
+	public static final String DEMAND_REASON_CATEGORY_FEE="Fee";
+	public static final String DEMAND_REASON_CATEGORY_REBATE="REBATE"; // Rebate
+	public static final String DEMAND_REASON_CATEGORY_ADVANCE="ADVANCE"; // Advance 
+	public static final String DEMAND_REASON_CATEGORY_PENALTY="PENALTY"; // Cheque Bounce Penalty 
+	public static final String DEMAND_REASON_CATEGORY_FINES="FINES"; // Interest on Current and Arrear Tax
 }

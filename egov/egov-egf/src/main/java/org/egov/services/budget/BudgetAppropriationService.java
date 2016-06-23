@@ -68,6 +68,7 @@ import java.util.Map;
 
 @Transactional(readOnly = true)
 public class BudgetAppropriationService extends PersistenceService {
+	@Autowired
     private FinancialYearDAO financialYearDAO;
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired

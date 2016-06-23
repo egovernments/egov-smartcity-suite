@@ -50,7 +50,8 @@ $( "#add-row" ).click(function( event ) {
 	resultContent=   content.replace(/0/g,rowCount-1);   
 	$(resultContent).find("input").val("");
 	$('#result > tbody:last').append("<tr>"+resultContent+"</tr>"); 
-	$('#result tr:last').find("input").val("");   
+	$('#result tr:last').find("input").val(""); 
+	$('.fromRange').attr("readonly", true); 
 	intiUOMFromData(prevUOMFromVal);  
 	patternvalidation(); 
 });    

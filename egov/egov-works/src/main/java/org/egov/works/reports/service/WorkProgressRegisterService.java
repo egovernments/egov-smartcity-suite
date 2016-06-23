@@ -95,7 +95,7 @@ public class WorkProgressRegisterService {
                 criteria.add(Restrictions.eq("winCode",
                         workProgressRegisterSearchRequest.getWorkIdentificationNumber()).ignoreCase());
             if (workProgressRegisterSearchRequest.getContractor() != null) {
-                criteria.createAlias("contractor", "contractor ");
+                criteria.createAlias("contractor", "contractor");
                 criteria.add(Restrictions.or(Restrictions.ilike("contractor.code",
                         workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE),
                         Restrictions.ilike("contractor.name",

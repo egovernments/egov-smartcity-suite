@@ -283,10 +283,11 @@ function getSchemelist(fund)
     populatefundSourceId({subSchemeId:-1})
 }
 
-function getBankBranchList(fund){
-        var serviceName=dom.get("serviceName").value;
-        if(fund.options[fund.selectedIndex].value!="-1"){
-            populatebankBranchMaster({serviceName:serviceName,fundId:fund.options[fund.selectedIndex].value});
+function getBankBranchList(){
+        var serviceId=dom.get("serviceId").value;
+        var fundId=dom.get("fundId").value;
+        if(fundId!="-1" && serviceId!="-1"){
+            populatebankBranchMaster({serviceId:serviceId,fundId:fundId});
         }
         else{
             if(document.getElementById("bankBranchMaster")!=null){
@@ -721,7 +722,7 @@ var totaldbamt=0,totalcramt=0;
           </tr>
 	       <tr> <td width="4%" class="bluebox2">&nbsp;</td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
-		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
+		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="49" name="paidBy" value="%{payeeName}" /></td>
 		   <td width="21%" class="bluebox2"><s:text name="challan.payeeAddress"/></td>
 		   <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="255" onkeyup="return ismaxlength(this)"/></td>
 	    </tr>
@@ -750,7 +751,9 @@ var totaldbamt=0,totalcramt=0;
        	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceId" id="serviceId" cssClass="selectwk"
-	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);"/>
+	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);getBankBranchList();"/>
+	 <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
+                url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
         </td>
          
        
@@ -763,7 +766,7 @@ var totaldbamt=0,totalcramt=0;
           <td width="4%" class="bluebox">&nbsp;</td>
            <s:if test="%{shouldShowHeaderField('fund')}">
           <td width="21%" class="bluebox"><s:text name="miscreceipt.fund"/><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
-          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundId" id="fundId" cssClass="selectwk" onChange="setFundId();getSchemelist(this);getBankBranchList(this);" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
+          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundId" id="fundId" cssClass="selectwk" onChange="setFundId();getSchemelist(this);getBankBranchList();" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
           <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />

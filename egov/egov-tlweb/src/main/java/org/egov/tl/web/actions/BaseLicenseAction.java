@@ -237,7 +237,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
             final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf", Constants.FILESTORE_MODULECODE);
             license().setDigiSignedCertFileStoreId(fileStore.getFileStoreId());
-            licenseService().licensePersitenceService().persist(license());
+            licenseService().save(license());
             setFileStoreIds(fileStore.getFileStoreId());
             setUlbCode(ApplicationThreadLocals.getCityCode());
         }

@@ -78,7 +78,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="container-fluid">
+		<!-- <div class="container-fluid">
 			<div class="row">
 				<div class="col-xs-12">
 					<a href="/ptis/dashboard/home" class="xa">
@@ -115,6 +115,6 @@
 
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </header>

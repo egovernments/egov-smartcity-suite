@@ -45,23 +45,24 @@
  */
 package org.egov.dao.budget;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.model.budget.BudgetDetail;
-import org.egov.model.budget.BudgetGroup;
-import org.egov.model.budget.BudgetUsage;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.model.budget.BudgetDetail;
+import org.egov.model.budget.BudgetGroup;
+import org.egov.model.budget.BudgetUsage;
 
 /**
  * @author Administrator
  *
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
-public interface BudgetDetailsDAO  {
+public interface BudgetDetailsDAO {
     public boolean consumeEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, Integer departmentid,
             Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
             List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
@@ -116,13 +117,17 @@ public interface BudgetDetailsDAO  {
     public BigDecimal getPlannigBudgetBy(Integer fundId, Integer deptId, Date asOnDate);
 
     public BigDecimal getPlanningBudgetUsage(BudgetDetail bd);
-    BudgetDetail  findById(Number  id, boolean lock);
 
-   List<  BudgetDetail  > findAll();
+    BudgetDetail findById(Number id, boolean lock);
 
+    List<BudgetDetail> findAll();
 
-     BudgetDetail   create(  BudgetDetail   entity);
-     BudgetDetail   update(  BudgetDetail   entity);
+    BudgetDetail create(BudgetDetail entity);
 
-   void delete(  BudgetDetail   entity);
+    BudgetDetail update(BudgetDetail entity);
+
+    void delete(BudgetDetail entity);
+
+    public List<CFunction> getFunctionsByFundAndDepartment(final Integer fund, final Long department)
+            throws ValidationException;
 }

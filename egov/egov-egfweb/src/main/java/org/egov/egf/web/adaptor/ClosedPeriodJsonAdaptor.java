@@ -41,7 +41,7 @@ package org.egov.egf.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.commons.ClosedPeriod;
+import org.egov.egf.model.ClosedPeriod;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

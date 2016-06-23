@@ -125,7 +125,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
-        @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
+        @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
+        @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
+                "namespace", "/create", "indexNumber", "${assessmentNum}", "modifyRsn", "EDIT_DATA_ENTRY", "modelId", "${activePropertyId}" })})
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -175,6 +177,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
     private boolean isDemandActive;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private String activePropertyId;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -269,6 +272,38 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
         }
+        if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_MODIFY_DATA_ENTRY)){
+        	Property activeProperty = basicProperty.getProperty();
+        	//Allow modification only for properties where source is Data Entry
+        	if(!basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        		addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+        	}
+        	
+        	if(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        		//Validate if any other type of transactions are performed on the property
+        		if(basicProperty.getPropertySet().size()>1){
+        			addActionError(getText("edit.dataEntry.transaction.error"));
+                    return COMMON_FORM;
+        		}
+        		//Validate if collection is done for the property. If done, then do not allow modification
+        		if(!activeProperty.getPtDemandSet().isEmpty()){
+            		BigDecimal arrearCollection = BigDecimal.ZERO;
+            		BigDecimal currentCollection = BigDecimal.ZERO;
+            		Map<String, BigDecimal> demandCollectionMap = propertyTaxUtil.getDemandAndCollection(activeProperty);
+            		if(!demandCollectionMap.isEmpty()){
+            			arrearCollection = demandCollectionMap.get(ARR_COLL_STR);
+            			currentCollection = demandCollectionMap.get(CURR_COLL_STR);
+            			if(arrearCollection.compareTo(BigDecimal.ZERO) > 0 || currentCollection.compareTo(BigDecimal.ZERO) > 0){
+            				addActionError(getText("edit.dataEntry.collection.done.error"));
+                            return COMMON_FORM;
+            			}
+            		}
+            	}
+        	}
+        	activePropertyId = basicProperty.getActiveProperty().getId().toString();
+        }
+        
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
         if (hasChildPropertyUnderWorkflow) {
             addActionError(getText("error.msg.child.underworkflow"));
@@ -301,7 +336,12 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-            return APPLICATION_TYPE_EDIT_DEMAND;
+        	if(!basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        		addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+        	} else {
+        		return APPLICATION_TYPE_EDIT_DEMAND;
+        	}
         }
 
         if (basicProperty.getProperty().getIsExemptedFromTax()
@@ -1073,4 +1113,12 @@ public class SearchPropertyAction extends BaseFormAction {
     public void setBasicProperty(BasicProperty basicProperty) {
         this.basicProperty = basicProperty;
     }
+
+	public String getActivePropertyId() {
+		return activePropertyId;
+	}
+
+	public void setActivePropertyId(String activePropertyId) {
+		this.activePropertyId = activePropertyId;
+	}
 }

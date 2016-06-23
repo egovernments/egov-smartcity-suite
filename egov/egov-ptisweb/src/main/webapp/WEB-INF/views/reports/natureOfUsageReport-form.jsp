@@ -114,6 +114,8 @@
 			</div>
 		</form:form>
 		<div >
+			<br />
+			<spring:message code="reports.note.text" />
 			<div id="natureOfUsage-header" class="col-md-12 table-header text-left">
 				<spring:message code="lbl.natureOfUsage.report.details" />
 			</div>

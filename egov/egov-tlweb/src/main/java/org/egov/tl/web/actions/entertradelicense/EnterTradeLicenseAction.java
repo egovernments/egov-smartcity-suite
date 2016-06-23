@@ -167,6 +167,8 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         addDropdownData("categoryList", licenseCategoryService.findAll());
         addDropdownData("subCategoryList", tradeLicense.getCategory() == null ? Collections.emptyList()
                 : licenseSubCategoryService.findAllSubCategoryByCategory(tradeLicense.getCategory().getId()));
+        if (license().getAgreementDate() != null)
+            setShowAgreementDtl(true);
     }
 
     @Override

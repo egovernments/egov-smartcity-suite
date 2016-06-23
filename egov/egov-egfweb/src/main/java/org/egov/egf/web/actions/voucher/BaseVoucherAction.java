@@ -115,9 +115,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected UserService userMngr;
     protected EisUtilService eisService;
     protected AssignmentService assignmentService;
-    @Autowired
-    @Qualifier("persistenceService")
-    protected PersistenceService persistenceService;
+   
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
     protected SecurityUtils securityUtils;
@@ -196,7 +194,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
     @Deprecated
     protected void getHeaderMandateFields() {
-        final List<AppConfig> appConfigList = persistenceService
+        final List<AppConfig> appConfigList = this.persistenceService
                 .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
         for (final AppConfig appConfig : appConfigList)
             for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {

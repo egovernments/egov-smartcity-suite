@@ -42,22 +42,17 @@ package org.egov.tl.web.actions.integration;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
-import org.egov.commons.dao.InstallmentDao;
-import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBill;
 import org.egov.tl.service.integration.LicenseBillService;
-import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseNumberGenerator;
+import org.egov.tl.utils.LicenseNumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @ParentPackage("egov")
 public class LicenseBillCollectAction extends BaseFormAction {
@@ -71,32 +66,23 @@ public class LicenseBillCollectAction extends BaseFormAction {
     private LicenseBillService licenseBillService;
     
     @Autowired
-    private ModuleService moduleService;
-    
-    @Autowired
-    private LicenseNumberGenerator licenseNumberGenerator;
-    
-    @Autowired
-    private InstallmentDao installmentDao;
-    
+    private LicenseNumberUtils licenseNumberUtils;
+
     @Autowired
     @Qualifier("tradeLicenseService")
     private TradeLicenseService tradeLicenseService;
 
     @Override
     public String execute() throws IOException {
-        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
+        final License license = tradeLicenseService.getLicenseById(licenseId);
         if (license.isPaid()) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>License Fee already collected !</center>");
             return null;
         }
-        final SimpleDateFormat formatYear = new SimpleDateFormat("yyyy");
-        final String currentInstallmentYear = formatYear.format(installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(Constants.TRADELICENSE_MODULENAME), new Date()).getInstallmentYear());
         licenseBill.setLicense(license);
-        licenseBill.setReferenceNumber(licenseNumberGenerator.generateBillNumber(currentInstallmentYear));
+        licenseBill.setReferenceNumber(licenseNumberUtils.generateBillNumber());
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");
         return SUCCESS;
@@ -107,7 +93,7 @@ public class LicenseBillCollectAction extends BaseFormAction {
             licenseId = Long.valueOf((Long) getSession().get("model.id"));
             getSession().remove("model.id");
         }
-        final License license = tradeLicenseService.licensePersitenceService().findById(licenseId, false);
+        final License license = tradeLicenseService.getLicenseById(licenseId);
         licenseBill.setLicense(license);
         licenseBillService.setLicense(license);
         collectXML = URLEncoder.encode(licenseBillService.getBillXML(licenseBill), "UTF-8");

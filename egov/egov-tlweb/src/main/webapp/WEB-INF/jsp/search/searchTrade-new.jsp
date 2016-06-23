@@ -76,6 +76,10 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    <div class="col-sm-3 add-margin">
 							       <s:textfield name="applicationNumber" id="applicationNumber" value="%{applicationNumber}"  cssClass="form-control" />
 							    </div>
+							    <label class="col-sm-2 control-label text-right"><s:text name='search.license.cancelled' /></label>
+								<div class="col-sm-3 add-margin">
+									<s:checkbox id="isCancelled" name="isCancelled" />
+								</div>
 							</div>
 							
 							<div class="form-group">

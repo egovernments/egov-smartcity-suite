@@ -39,34 +39,21 @@
  */
 package org.egov.collection.utils;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import org.egov.collection.autonumber.ChallanNumberGenerator;
+import org.egov.collection.autonumber.ReceiptNumberGenerator;
+import org.egov.collection.autonumber.RemittanceNumberGenerator;
 import org.egov.collection.entity.Challan;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.DateUtils;
-import org.hibernate.exception.SQLGrammarException;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class CollectionsNumberGenerator {
-    @Autowired
-    private ScriptService scriptService;
-    private CollectionsUtil collectionsUtil;
 
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
-
-    @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     /**
      * This method generates the receipt number for the given receipt header
@@ -75,13 +62,9 @@ public class CollectionsNumberGenerator {
      * @return a <code>String</code> representing the receipt number
      */
     public String generateReceiptNumber(final ReceiptHeader receiptHeader) {
-        final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(new Date());
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(receiptHeader.getReceiptdate());
-        final String strObj = "SQ_RECEIPTHEADER_" + financialYear.getFinYearRange().replace("-", "_");
-        final String result = formattedDate + '/' + financialYear.getFinYearRange() + '/'
-                + sequenceNumberGenerator.getNextSequence(strObj);
-        return result;
+        final ReceiptNumberGenerator receiptNumberGen = beanResolver
+                .getAutoNumberServiceFor(ReceiptNumberGenerator.class);
+        return receiptNumberGen.generateReceiptNumber(receiptHeader);
     }
 
     /**
@@ -91,29 +74,14 @@ public class CollectionsNumberGenerator {
      * @return a <code>String</code> representing the challan number
      */
     public String generateChallanNumber(final Challan challan, final CFinancialYear financialYear) {
-
-        final String APP_NUMBER_SEQ_PREFIX = "SQ_CHALLAN%s";
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(new Date());
-
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        Serializable sequenceNumber;
-        try {
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
-        }
-
-        final String result = formattedDate + "/" + financialYear.getFinYearRange() + "/" + sequenceNumber;
-        return result;
+        final ChallanNumberGenerator challanNumberGen = beanResolver
+                .getAutoNumberServiceFor(ChallanNumberGenerator.class);
+        return challanNumberGen.generateChallanNumber(challan, financialYear);
     }
-
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
+    
+    public String generateRemittanceNumber(final CFinancialYear financialYear) {
+        final RemittanceNumberGenerator remittanceNumberGen = beanResolver
+                .getAutoNumberServiceFor(RemittanceNumberGenerator.class);
+        return remittanceNumberGen.generateRemittanceNumber(financialYear);
     }
 }

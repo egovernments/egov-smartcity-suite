@@ -40,16 +40,46 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
-/**
- * will hold the each license Sub types eg: For Electrical License there are sub type like 1. Contractor 2. Supplier etc.,
- */
-public class LicenseSubType extends BaseModel {
-    private static final long serialVersionUID = 1L;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_MSTR_LICENSE_SUB_TYPE")
+@SequenceGenerator(name = LicenseSubType.SEQUENCE, sequenceName = LicenseSubType.SEQUENCE, allocationSize = 1)
+public class LicenseSubType extends AbstractPersistable<Long> {
+
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_LICENSE_SUB_TYPE";
+    private static final long serialVersionUID = 8068459202225556155L;
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String name;
+
     private String code;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_LICENSE_TYPE")
     private LicenseType licenseType;
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
     public LicenseType getLicenseType() {
         return licenseType;

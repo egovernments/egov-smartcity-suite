@@ -199,7 +199,7 @@
 									headerValue="----Choose----" /></td>
 							<td class="bluebox"><s:text name="subLedger.entityDetails" /><span
 								class="mandatory"></span></td>
-							<td class="bluebox"><s:textfield id="accEntitycode"
+							<td class="bluebox"><s:textfield id="accEntitycode" placeholder="Enter first three characters"
 									name="accEntitycode" autocomplete="off"
 									onfocus='autocompleteEntityDetails(this);'
 									onblur='splitEntityDetails(this);' /> <s:textfield

@@ -39,10 +39,10 @@
  */
 package org.egov.demand.model;
 
-import org.egov.commons.Installment;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.egov.commons.Installment;
 
 /**
  * EgBillDetails entity.
@@ -50,165 +50,174 @@ import java.util.Date;
  * @author MyEclipse Persistence Tools
  */
 
-public class EgBillDetails implements java.io.Serializable,
-		Comparable<EgBillDetails> {
+public class EgBillDetails implements java.io.Serializable, Comparable<EgBillDetails> {
 
-	// Fields
+    // Fields
 
-	private Long id;
-	private EgBill egBill;
-	private Date createDate;
-	private Date modifiedDate;
-	private String glcode;
-	private BigDecimal collectedAmount;
-	private Integer orderNo;
-	private String functionCode;
-	private BigDecimal crAmount;
-	private BigDecimal drAmount;
-	private String description;
-	private Installment egInstallmentMaster;
-	private Integer additionalFlag;
-	private EgDemandReason egDemandReason;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private EgBill egBill;
+    private Date createDate;
+    private Date modifiedDate;
+    private String glcode;
+    private BigDecimal collectedAmount;
+    private Integer orderNo;
+    private String functionCode;
+    private BigDecimal crAmount;
+    private BigDecimal drAmount;
+    private String description;
+    private Installment egInstallmentMaster;
+    private Integer additionalFlag;
+    private EgDemandReason egDemandReason;
+    private String purpose;
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EgBillDetails [glcode=").append(glcode)
-				.append(", collectedAmount=").append(collectedAmount)
-				.append(", orderNo=").append(orderNo).append(", functionCode=")
-				.append(functionCode).append(", crAmount=").append(crAmount)
-				.append(", drAmount=").append(drAmount)
-				.append(", description=").append(description)
-				.append(", additionalFlag=").append(additionalFlag)
-				.append(", egDemandReason=").append(egDemandReason).append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("EgBillDetails [glcode=").append(glcode).append(", collectedAmount=").append(collectedAmount)
+                .append(", orderNo=").append(orderNo).append(", functionCode=").append(functionCode)
+                .append(", crAmount=").append(crAmount).append(", drAmount=").append(drAmount).append(", description=")
+                .append(description).append(", additionalFlag=").append(additionalFlag).append(", egDemandReason=")
+                .append(egDemandReason).append(purpose).append("]");
+        return builder.toString();
+    }
 
-	/**
-	 * The "orderNo" field is used as the key to sort bill details.
-	 */
-	@Override
-	public int compareTo(EgBillDetails other) {
-		return this.orderNo.compareTo(other.orderNo);
-	}
+    /**
+     * The "orderNo" field is used as the key to sort bill details.
+     */
+    @Override
+    public int compareTo(EgBillDetails other) {
+        return this.orderNo.compareTo(other.orderNo);
+    }
 
-	/**
-	 * Returns the difference between the CR and DR amount.
-	 */
-	public BigDecimal balance() {
-		return crAmount.subtract(drAmount);
-	}
+    /**
+     * Returns the difference between the CR and DR amount.
+     */
+    public BigDecimal balance() {
+        return crAmount.subtract(drAmount);
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Integer getOrderNo() {
-		return orderNo;
-	}
+    public Integer getOrderNo() {
+        return orderNo;
+    }
 
-	public void setOrderNo(Integer orderNo) {
-		this.orderNo = orderNo;
-	}
+    public void setOrderNo(Integer orderNo) {
+        this.orderNo = orderNo;
+    }
 
-	public Long getId() {
-		return this.id;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public EgBill getEgBill() {
-		return this.egBill;
-	}
+    public EgBill getEgBill() {
+        return this.egBill;
+    }
 
-	public void setEgBill(EgBill egBill) {
-		this.egBill = egBill;
-	}
+    public void setEgBill(EgBill egBill) {
+        this.egBill = egBill;
+    }
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
 
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
-	}
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
 
-	public String getGlcode() {
-		return glcode;
-	}
+    public String getGlcode() {
+        return glcode;
+    }
 
-	public void setGlcode(String glcode) {
-		this.glcode = glcode;
-	}
+    public void setGlcode(String glcode) {
+        this.glcode = glcode;
+    }
 
-	public String getFunctionCode() {
-		return functionCode;
-	}
+    public String getFunctionCode() {
+        return functionCode;
+    }
 
-	public void setFunctionCode(String functionCode) {
-		this.functionCode = functionCode;
-	}
+    public void setFunctionCode(String functionCode) {
+        this.functionCode = functionCode;
+    }
 
-	public BigDecimal getCrAmount() {
-		return crAmount;
-	}
+    public BigDecimal getCrAmount() {
+        return crAmount;
+    }
 
-	public void setCrAmount(BigDecimal crAmount) {
-		this.crAmount = crAmount;
-	}
+    public void setCrAmount(BigDecimal crAmount) {
+        this.crAmount = crAmount;
+    }
 
-	public BigDecimal getDrAmount() {
-		return drAmount;
-	}
+    public BigDecimal getDrAmount() {
+        return drAmount;
+    }
 
-	public void setDrAmount(BigDecimal drAmount) {
-		this.drAmount = drAmount;
-	}
+    public void setDrAmount(BigDecimal drAmount) {
+        this.drAmount = drAmount;
+    }
 
-	public BigDecimal getCollectedAmount() {
-		return collectedAmount;
-	}
+    public BigDecimal getCollectedAmount() {
+        return collectedAmount;
+    }
 
-	public void setCollectedAmount(BigDecimal collectedAmount) {
-		this.collectedAmount = collectedAmount;
-	}
+    public void setCollectedAmount(BigDecimal collectedAmount) {
+        this.collectedAmount = collectedAmount;
+    }
 
-	public Installment getEgInstallmentMaster() {
-		return egInstallmentMaster;
-	}
+    public Installment getEgInstallmentMaster() {
+        return egInstallmentMaster;
+    }
 
-	public void setEgInstallmentMaster(Installment egInstallmentMaster) {
-		this.egInstallmentMaster = egInstallmentMaster;
-	}
+    public void setEgInstallmentMaster(Installment egInstallmentMaster) {
+        this.egInstallmentMaster = egInstallmentMaster;
+    }
 
-	public Integer getAdditionalFlag() {
-		return additionalFlag;
-	}
+    public Integer getAdditionalFlag() {
+        return additionalFlag;
+    }
 
-	public void setAdditionalFlag(Integer additionalFlag) {
-		this.additionalFlag = additionalFlag;
-	}
+    public void setAdditionalFlag(Integer additionalFlag) {
+        this.additionalFlag = additionalFlag;
+    }
 
-	public EgDemandReason getEgDemandReason() {
-		return egDemandReason;
-	}
+    public EgDemandReason getEgDemandReason() {
+        return egDemandReason;
+    }
 
-	public void setEgDemandReason(EgDemandReason egDemandReason) {
-		this.egDemandReason = egDemandReason;
-	}
+    public void setEgDemandReason(EgDemandReason egDemandReason) {
+        this.egDemandReason = egDemandReason;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
 
 }

@@ -110,6 +110,8 @@ $(document).ready(function(e){
 		$('#submitButtonId').click(function(e){
 			var i= 0;
 			var j=0;
+			 var installmentsecond = $("#current2HalfInstallment").val();
+			  var installmentfirst =$("#current1HalfInstallment").val();
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
@@ -137,6 +139,18 @@ $(document).ready(function(e){
 				  e.preventDefault();
 				  return false;
 			  }
+			  if(installment==installmentfirst &&  actamount == 0)
+			  {
+			  bootbox.alert('Enter Demand of Current Year First installment ' +installmentfirst );
+			  e.preventDefault();
+			  return false;
+			  }
+		  if(installment==installmentsecond &&  actamount == 0)
+		  {
+		  bootbox.alert('Enter Demand of Current Year Second installment ' +installmentsecond);
+		  e.preventDefault();
+		  return false;
+		  }
 			});
 			if(i==j)
 			  {

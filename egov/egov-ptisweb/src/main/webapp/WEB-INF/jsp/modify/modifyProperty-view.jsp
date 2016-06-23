@@ -232,7 +232,7 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
 						jQuery('tr.appurtenant').hide();
-						jQuery('tr.superStructureRow').hide();
+					//	jQuery('tr.superStructureRow').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -243,7 +243,7 @@
 						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
 						jQuery('tr.appurtenant').show();
-						jQuery('tr.superStructureRow').show();
+					//	jQuery('tr.superStructureRow').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}

@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -83,6 +84,8 @@ import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.rest.WaterTaxDue;
 import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.application.service.collection.WaterConnectionBillable;
+import org.egov.wtms.autonumber.BillReferenceNumberGenerator;
+import org.egov.wtms.autonumber.MeterDemandNoticeNumberGenerator;
 import org.egov.wtms.masters.entity.DonationDetails;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.WaterRatesDetails;
@@ -112,11 +115,14 @@ public class ConnectionDemandService {
     private EntityManager entityManager;
 
     @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+
+    @Autowired
     private DonationDetailsService donationDetailsService;
 
     @Autowired
     private DonationHeaderService donationHeaderService;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -285,7 +291,7 @@ public class ConnectionDemandService {
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount
-                    .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
+                            .put(WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE, detail.getAmount().doubleValue());
                 else if (WaterTaxConstants.WATERTAX_DONATION_CHARGE.equals(detail.getEgDemandReason()
                         .getEgDemandReasonMaster().getCode()))
                     splitAmount.put(WaterTaxConstants.WATERTAX_DONATION_CHARGE, detail.getAmount().doubleValue());
@@ -449,10 +455,10 @@ public class ConnectionDemandService {
                 .setParameter("currInstallmentDate", currInstallment.getToDate());
         return query.list();
     }
-    
+
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand,
             final WaterConnectionDetails waterConnectionDetails) {
-       final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
@@ -473,6 +479,9 @@ public class ConnectionDemandService {
         final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                 .getBean("waterConnectionBillable");
         final WaterConnectionDetails waterConnectionDetails;
+        final BillReferenceNumberGenerator billRefeNumber = beanResolver
+                .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
+
         if (applicationTypeCode != null
                 && (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE) || applicationTypeCode
                         .equals(WaterTaxConstants.RECONNECTIONCONNECTION)))
@@ -498,7 +507,7 @@ public class ConnectionDemandService {
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
 
-        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateBillNumber(currentInstallmentYear));
+        waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO));
 
         final String billXml = connectionBillService.getBillXML(waterConnectionBillable);
@@ -528,8 +537,8 @@ public class ConnectionDemandService {
      * @param waterConnectionDetails
      * @param billAmount
      * @param currentDate
-     * @return Updates WaterConnectionDetails after Meter Entry Demand
-     *         Calculettion and Update Previous Bill and Generates New Bill
+     * @return Updates WaterConnectionDetails after Meter Entry Demand Calculettion and Update Previous Bill and Generates New
+     * Bill
      */
     @Transactional
     public WaterConnectionDetails updateDemandForMeteredConnection(final WaterConnectionDetails waterConnectionDetails,
@@ -570,8 +579,7 @@ public class ConnectionDemandService {
     /**
      * @param waterConnectionDetails
      * @param demandDeatilslist
-     * @return creation or updating demand and demanddetails for data Entry
-     *         Screen
+     * @return creation or updating demand and demanddetails for data Entry Screen
      */
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
@@ -585,8 +593,8 @@ public class ConnectionDemandService {
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<EgDemandDetails>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
-            && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
-            && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
+                    && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
+                    && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
                 demandObj.setAmtCollected(getTotalCollectedAmountForDemand(demanddetailBean,
                         demandObj.getAmtCollected()));
@@ -659,10 +667,8 @@ public class ConnectionDemandService {
 
     /**
      * @param consumerCode
-     * @return Generates Eg_bill Entry and saved with Demand and As of now we
-     *         are generating Bill and its in XML format because no Method to
-     *         just to generate Bill and Save as of now in
-     *         connectionBillService.
+     * @return Generates Eg_bill Entry and saved with Demand and As of now we are generating Bill and its in XML format because no
+     * Method to just to generate Bill and Save as of now in connectionBillService.
      */
     @Transactional
     public String generateBillForMeterAndMonthly(final String consumerCode) {
@@ -674,10 +680,13 @@ public class ConnectionDemandService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+        final MeterDemandNoticeNumberGenerator meterDemandNotice = beanResolver
+                .getAutoNumberServiceFor(MeterDemandNoticeNumberGenerator.class);
+
         waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
         waterConnectionBillable.setAssessmentDetails(assessmentDetails);
         waterConnectionBillable.setUserId(ApplicationThreadLocals.getUserId());
-        waterConnectionBillable.setReferenceNumber(waterTaxNumberGenerator.generateMeterDemandNoticeNumber());
+        waterConnectionBillable.setReferenceNumber(meterDemandNotice.generateMeterDemandNoticeNumber());
         waterConnectionBillable.setBillType(getBillTypeByCode(WaterTaxConstants.BILLTYPE_MANUAL));
 
         final String billObj = connectionBillService.getBillXML(waterConnectionBillable);
@@ -824,10 +833,8 @@ public class ConnectionDemandService {
 
     /**
      * @param waterConnectionDetails
-     * @param givenDate
-     *            It Checks the Meter Entry Exist For the Entred Date Month and
-     *            Returns True if It Exists and checks with Demand Current
-     *            Installment
+     * @param givenDate It Checks the Meter Entry Exist For the Entred Date Month and Returns True if It Exists and checks with
+     * Demand Current Installment
      */
     public Boolean meterEntryAllReadyExistForCurrentMonth(final WaterConnectionDetails waterConnectionDetails,
             final Date givenDate) {
@@ -838,9 +845,9 @@ public class ConnectionDemandService {
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
                 && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
             if (installment != null
-            && installment.getInstallmentNumber().equals(
-                    waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
-                    .getInstallmentNumber()))
+                    && installment.getInstallmentNumber().equals(
+                            waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgInstallmentMaster()
+                                    .getInstallmentNumber()))
                 currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }

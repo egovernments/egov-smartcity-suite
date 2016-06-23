@@ -104,6 +104,7 @@ public class PropertyAckNoticeInfo {
     private String meesevaNo;
     private String newOwnerGuardianRelation;
     private String oldOwnerGuardianRelation;
+    private String ownerTypeForReport;
     
 
 	public String getCreationReason() {
@@ -585,4 +586,13 @@ public class PropertyAckNoticeInfo {
 	public void setOldOwnerGuardianRelation(String oldOwnerGuardianRelation) {
 		this.oldOwnerGuardianRelation = oldOwnerGuardianRelation;
 	}
+
+	public String getOwnerTypeForReport() {
+		return ownerTypeForReport;
+	}
+
+	public void setOwnerTypeForReport(String ownerTypeForReport) {
+		this.ownerTypeForReport = ownerTypeForReport;
+	}
+	
 }

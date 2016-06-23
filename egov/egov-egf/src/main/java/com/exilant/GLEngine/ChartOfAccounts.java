@@ -1,6 +1,6 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ *    accountability and the service delivery of the government organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
  *
@@ -40,48 +40,7 @@
 //Source file: D:\\SUSHMA\\PROJECTS\\E-GOV\\ENGINEDESIGN\\com\\exilant\\GLEngine\\ChartOfAccounts.java
 package com.exilant.GLEngine;
 
-//
 
-import com.exilant.eGov.src.transactions.ExilPrecision;
-import com.exilant.exility.common.DataCollection;
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.dataservice.DataExtractor;
-import org.apache.log4j.Logger;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CGeneralLedgerDetail;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.ChartOfAccountDetailService;
-import org.egov.dao.budget.BudgetDetailsHibernateDAO;
-import org.egov.dao.recoveries.TdsHibernateDAO;
-import org.egov.deduction.model.EgRemittanceGldtl;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.model.recoveries.Recovery;
-import org.egov.services.voucher.VoucherService;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.BooleanType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.infinispan.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -98,6 +57,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CGeneralLedger;
+import org.egov.commons.CGeneralLedgerDetail;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.ChartOfAccountDetailService;
+import org.egov.dao.budget.BudgetDetailsHibernateDAO;
+import org.egov.dao.recoveries.TdsHibernateDAO;
+import org.egov.deduction.model.EgRemittanceGldtl;
+import org.egov.infra.cache.impl.ApplicationCacheManager;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.model.recoveries.Recovery;
+import org.egov.services.voucher.VoucherService;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exilant.eGov.src.transactions.ExilPrecision;
+import com.exilant.exility.common.DataCollection;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.dataservice.DataExtractor;
+
 /**
  * This Singleton class contains all the account codes for the organization
  */
@@ -106,7 +106,7 @@ import java.util.Set;
  */
 @Transactional(readOnly = true)
 // @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) this should be singleton only
-@Service()
+@Service
 public class ChartOfAccounts {
 
 	static ChartOfAccounts singletonInstance;
@@ -126,6 +126,8 @@ public class ChartOfAccounts {
 
 	@Autowired
 	private TdsHibernateDAO tdsHibernateDAO;
+	@Autowired
+	private CoaCache coaCache;
 
 	@Autowired
 	@Qualifier("persistenceService")
@@ -146,7 +148,9 @@ public class ChartOfAccounts {
 	@Qualifier("voucherService")
 	private VoucherService voucherService;
 
-	private static Cache<Object, Object> cache;
+	// private static Cache<Object, Object> cache;
+	@Autowired
+	private ApplicationCacheManager applicationCacheManager;
 	@Autowired
 	private BudgetDetailsHibernateDAO budgetDetailsDAO;
 
@@ -159,10 +163,6 @@ public class ChartOfAccounts {
 	@Autowired
 	private RequiredValidator rv;
 
-	public ChartOfAccounts() {
-		cache = EgovMasterDataCaching.getCACHE_MANAGER().getCache();
-	}
-
 	@Deprecated
 	public static ChartOfAccounts getInstance() throws TaskFailedException {
 		if (LOGGER.isDebugEnabled())
@@ -171,90 +171,22 @@ public class ChartOfAccounts {
 		return singletonInstance;
 	}
 
-	public void reLoadAccountData() throws TaskFailedException {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("reLoadAccountData called");
+	public void loadAccountData() throws TaskFailedException {
 
-		loadAccountData();
-
-	}
-
-	void loadAccountData() throws TaskFailedException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("loadAccountData called");
-		/*
-		 * 1.Loads all the account codes and details of that as GLAccount
-		 * objects in theGLAccountCode,theGLAccountId HashMap's
-		 */
-		if (getGlAccountCodes() != null)
-			getGlAccountCodes().clear();
-		if (getGlAccountIds() != null)
-			getGlAccountIds().clear();
-		if (getAccountDetailType() != null)
-			getAccountDetailType().clear();
-		// Temporary place holders
-		final HashMap glAccountCodes = new HashMap();
-		final HashMap glAccountIds = new HashMap();
-		final HashMap accountDetailType = new HashMap();
 
-		DataExtractor.getExtractor();
-
-		String sql = "select id as \"id\",name as  \"name\",tableName as \"tableName\","
-				+ "description as \"description\",columnName as \"columnName\",attributeName as \"attributeName\""
-				+ ",nbrOfLevels as  \"nbrOfLevels\" from AccountDetailType";
-
-		final Session currentSession = persistenceService.getSession();
-		SQLQuery createSQLQuery = currentSession.createSQLQuery(sql);
-		createSQLQuery
-				.addScalar("id", IntegerType.INSTANCE)
-				.addScalar("name")
-				.addScalar("tableName")
-				.addScalar("description")
-				.addScalar("columnName")
-				.addScalar("attributeName")
-				.setResultTransformer(
-						Transformers.aliasToBean(AccountDetailType.class));
-		List<AccountDetailType> accountDetailTypeList = new ArrayList<AccountDetailType>();
-		List<GLAccount> glAccountCodesList = new ArrayList<GLAccount>();
-		new ArrayList<GLAccount>();
-
-		accountDetailTypeList = createSQLQuery.list();
-		for (final AccountDetailType type : accountDetailTypeList)
-			accountDetailType.put(type.getAttributeName(), type);
-		sql = "select ID as \"ID\", glCode as \"glCode\" ,name as \"name\" ,"
-				+ "isActiveForPosting as \"isActiveForPosting\" ,classification as \"classification\", functionReqd as \"functionRequired\" from chartofaccounts ";
-		createSQLQuery = currentSession.createSQLQuery(sql);
-		createSQLQuery
-				.addScalar("ID", IntegerType.INSTANCE)
-				.addScalar("glCode")
-				.addScalar("name")
-				.addScalar("isActiveForPosting", BooleanType.INSTANCE)
-				.addScalar("classification", LongType.INSTANCE)
-				.addScalar("functionRequired", BooleanType.INSTANCE)
-				.setResultTransformer(Transformers.aliasToBean(GLAccount.class));
-
-		glAccountCodesList = createSQLQuery.list();
-		for (final GLAccount type : glAccountCodesList)
-			glAccountCodes.put(type.getCode(), type);
-		for (final GLAccount type : glAccountCodesList)
-			glAccountIds.put(type.getId(), type);
-		loadParameters(glAccountCodes, glAccountIds);
+		HashMap<String, HashMap> hm = null;
 		try {
-			final HashMap<String, HashMap> hm = new HashMap<String, HashMap>();
-			hm.put(ACCOUNTDETAILTYPENODE, accountDetailType);
-			hm.put(GLACCCODENODE, glAccountCodes);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("Loading size:" + glAccountCodes.size());
-			hm.put(GLACCIDNODE, glAccountIds);
-			// cache.put(ROOTNODE+"/"+FilterName.get(),ACCOUNTDETAILTYPENODE,accountDetailType);
-			// cache.put(ROOTNODE+"/"+FilterName.get(),GLACCCODENODE,glAccountCodes);
-			// cache.put(ROOTNODE+"/"+FilterName.get(),GLACCIDNODE,glAccountIds);
-			cache.put(ROOTNODE + "/" + ApplicationThreadLocals.getDomainName(),
-					hm);
-		} catch (final Exception e) {
-			LOGGER.error(EXP + e.getMessage(), e);
-			throw new TaskFailedException();
+			hm = (HashMap<String, HashMap>) applicationCacheManager
+					.get(ROOTNODE);
+			
+		} catch (Exception e1) {
 
+		}
+		if (hm == null) {
+
+			coaCache.loadAccountData();
 		}
 	}
 
@@ -381,7 +313,9 @@ public class ChartOfAccounts {
 			LOGGER.info(txn.getGlCode() + " is activefor posting :"
 					+ glAcc.isActiveForPosting());
 		if (!glAcc.isActiveForPosting())
-			return false;
+            throw new TaskFailedException("The COA(GlCode) " + txn.getGlCode()
+                    + "  used is not active for posting. Kindly modify COA from detailed code screen and then proceed for creating voucher");
+      
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("Classification....:" + glAcc.getClassification());
 		if (glAcc.getClassification() != 4) {
@@ -522,7 +456,9 @@ public class ChartOfAccounts {
 				dbAmt += Double.parseDouble(txn.getDrAmount());
 				crAmt += Double.parseDouble(txn.getCrAmount());
 			}
-		} catch (final Exception e) {
+		}  catch (final TaskFailedException e) {
+            throw new TaskFailedException(e.getMessage());
+        }catch (final Exception e) {
 			LOGGER.error(e.getMessage());
 
 			return false;
@@ -596,7 +532,7 @@ public class ChartOfAccounts {
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))
-				throw new ValidationException("Budgetary check  failed for "
+				throw new ValidationException("Budgetary check failed for "
 						+ txnObj.getGlCode(), "Budgetary check is failed for "
 						+ txnObj.getGlCode());
 		}
@@ -606,15 +542,11 @@ public class ChartOfAccounts {
 	@Transactional
 	public boolean postTransaxtions(final Transaxtion txnList[],
 			final String vDate) throws Exception, ValidationException {
+
 		if (!checkBudget(txnList))
 			throw new Exception("Budgetary check is failed");
 		// if objects are lost load them
-		if (getGlAccountCodes() == null || getGlAccountIds() == null
-				|| getAccountDetailType() == null
-				|| getGlAccountCodes().size() == 0
-				|| getGlAccountIds().size() == 0
-				|| getAccountDetailType().size() == 0)
-			reLoadAccountData();
+		loadAccountData();
 		try {
 			if (!validPeriod(vDate))
 				throw new TaskFailedException(
@@ -626,7 +558,7 @@ public class ChartOfAccounts {
 			throw new TaskFailedException(e.getMessage());
 		}
 		System.out.println(entityManager.getFlushMode());
-		entityManager.flush();
+		// entityManager.flush();
 		if (!postInGL(txnList))
 			return false;
 		return true;
@@ -665,7 +597,7 @@ public class ChartOfAccounts {
 			final Transaxtion txn = element;
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("GL Code is :" + txn.getGlCode()
-						+ "  Debit Amount :"
+						+ " Debit Amount :"
 						+ Double.parseDouble(txn.getDrAmount())
 						+ " Credit Amt :"
 						+ Double.parseDouble(txn.getCrAmount()));
@@ -1279,14 +1211,18 @@ public class ChartOfAccounts {
 	/**
 	 * @return Returns the getAccountDetailType().
 	 */
-	public static HashMap getAccountDetailType() {
-		LOGGER.debug("in getAccountDetailType():jndi name is :"
-				+ ApplicationThreadLocals.getDomainName());
+	public HashMap getAccountDetailType() {
+		LOGGER.debug("in getAccountDetailType():jndi name is :");
 		HashMap retMap = null;
 		try {
 			HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-			cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/"
-					+ ApplicationThreadLocals.getDomainName());
+			try {
+				cacheValuesHashMap = (HashMap) applicationCacheManager
+						.get(ROOTNODE);
+			} catch (Exception e) {
+				// return null;
+
+			}
 			if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
 				retMap = (HashMap) cacheValuesHashMap
 						.get(ACCOUNTDETAILTYPENODE);
@@ -1301,14 +1237,17 @@ public class ChartOfAccounts {
 	/**
 	 * @return Returns the getGlAccountCodes().
 	 */
-	public static HashMap getGlAccountCodes() {
-		LOGGER.debug("in getGlAccountCodes():jndi name is :"
-				+ ApplicationThreadLocals.getDomainName());
+	public HashMap getGlAccountCodes() {
+		LOGGER.debug("in getGlAccountCodes():jndi name is :");
 		HashMap retMap = null;
 		try {
 			HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-			cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/"
-					+ ApplicationThreadLocals.getDomainName());
+			try {
+				cacheValuesHashMap = (HashMap) applicationCacheManager
+						.get(ROOTNODE);
+			} catch (Exception e) {
+				// return null;
+			}
 			if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
 				retMap = (HashMap) cacheValuesHashMap.get(GLACCCODENODE);
 			if (retMap != null)
@@ -1324,14 +1263,18 @@ public class ChartOfAccounts {
 	/**
 	 * @return Returns the getGlAccountIds().
 	 */
-	public static HashMap getGlAccountIds() {
-		LOGGER.debug("in getGlAccountIds():jndi name is :"
-				+ ApplicationThreadLocals.getDomainName());
+	public HashMap getGlAccountIds() {
+		LOGGER.debug("in getGlAccountIds():jndi name is :");
 		HashMap retMap = null;
 		try {
 			HashMap cacheValuesHashMap = new HashMap<Object, Object>();
-			cacheValuesHashMap = (HashMap) cache.get(ROOTNODE + "/"
-					+ ApplicationThreadLocals.getDomainName());
+			try {
+				cacheValuesHashMap = (HashMap) applicationCacheManager
+						.get(ROOTNODE);
+			} catch (Exception e) {
+				// not yet initialised
+				// return null;
+			}
 			if (cacheValuesHashMap != null && !cacheValuesHashMap.isEmpty())
 				retMap = (HashMap) cacheValuesHashMap.get(GLACCIDNODE);
 
@@ -1351,10 +1294,6 @@ public class ChartOfAccounts {
 		else
 			return false;
 
-	}
-
-	public void setCacheInstance(final Cache<Object, Object> cacheInstance) {
-		cache = cacheInstance;
 	}
 
 	public boolean isClosedForPosting(final String date)
@@ -1389,13 +1328,13 @@ public class ChartOfAccounts {
 		} catch (final HibernateException e) {
 			isClosed = true;
 			LOGGER.error(
-					"Exception occured while getting the data  "
+					"Exception occured while getting the data "
 							+ e.getMessage(),
 					new HibernateException(e.getMessage()));
 		} catch (final Exception e) {
 			isClosed = true;
 			LOGGER.error(
-					"Exception occured while getting the data  "
+					"Exception occured while getting the data "
 							+ e.getMessage(), new Exception(e.getMessage()));
 		}
 		return isClosed;

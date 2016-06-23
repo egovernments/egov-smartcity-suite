@@ -39,49 +39,35 @@
  */
 package org.egov.wtms.utils;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.wtms.application.service.WaterConnectionService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.exception.SQLGrammarException;
+import org.egov.wtms.autonumber.ConsumerNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WaterTaxNumberGenerator {
-    private static final String CONSUMER_NUMBER_SEQ_PREFIX = "SEQ_CONSUMER_NUMBER";
-    private static final String WORKORDER_NUMBER_SEQ_PREFIX = "SEQ_WORKORDER_NUMBER";
-    private static final String METERDEMANDNOTICE_NUMBER_SEQ_PREFIX = "SEQ_METERNOTICE_NUMBER";
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
-
-    @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
     private WaterConnectionService waterConnectionService;
+
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Transactional
     public String getNextConsumerNumber() {
         Boolean cosumerCodeExists = true;
         String consumerCode = null;
+        final ConsumerNumberGenerator consumerGen = beanResolver.getAutoNumberServiceFor(ConsumerNumberGenerator.class);
+
         while (cosumerCodeExists) {
-            consumerCode = generateConsumerNumber();
+            consumerCode = consumerGen.generateConsumerNumber();
             if (waterConnectionService.findByConsumerCode(consumerCode) != null) {
                 cosumerCodeExists = true;
                 continue;
@@ -94,67 +80,51 @@ public class WaterTaxNumberGenerator {
         return consumerCode;
     }
 
-    @Transactional
-    public String generateConsumerNumber() {
-        try {
-            final String sequenceName = CONSUMER_NUMBER_SEQ_PREFIX;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s%06d", waterTaxUtils.getCityCode(), sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Consumer Number", e);
-        }
-    }
+    /*
+     * @Transactional public String generateConsumerNumber() { try { final
+     * String sequenceName = CONSUMER_NUMBER_SEQ_PREFIX; Serializable
+     * sequenceNumber; try { sequenceNumber =
+     * sequenceNumberGenerator.getNextSequence(sequenceName); } catch (final
+     * SQLGrammarException e) { sequenceNumber =
+     * dbSequenceGenerator.createAndGetNextSequence(sequenceName); } return
+     * String.format("%s%06d", waterTaxUtils.getCityCode(), sequenceNumber); }
+     * catch (final SQLException e) { throw new ApplicationRuntimeException(
+     * "Error occurred while generating Consumer Number", e); } }
+     */
+    /*
+     * @Transactional public String generateWorkOrderNumber() { try { final
+     * String sequenceName = WORKORDER_NUMBER_SEQ_PREFIX; Serializable
+     * sequenceNumber; try { sequenceNumber =
+     * sequenceNumberGenerator.getNextSequence(sequenceName); } catch (final
+     * SQLGrammarException e) { sequenceNumber =
+     * dbSequenceGenerator.createAndGetNextSequence(sequenceName); } return
+     * String.format("%s%06d", "", sequenceNumber); } catch (final SQLException
+     * e) { throw new ApplicationRuntimeException(
+     * "Error occurred while generating Consumer Number", e); } }
+     */
 
-    @Transactional
-    public String generateWorkOrderNumber() {
-        try {
-            final String sequenceName = WORKORDER_NUMBER_SEQ_PREFIX;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s%06d", "", sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Consumer Number", e);
-        }
-    }
+    /*
+     * @Transactional public String generateMeterDemandNoticeNumber() { try {
+     * final String sequenceName = METERDEMANDNOTICE_NUMBER_SEQ_PREFIX;
+     * Serializable sequenceNumber; try { sequenceNumber =
+     * sequenceNumberGenerator.getNextSequence(sequenceName); } catch (final
+     * SQLGrammarException e) { sequenceNumber =
+     * dbSequenceGenerator.createAndGetNextSequence(sequenceName); } return
+     * String.format("%s%06d", "", sequenceNumber); } catch (final SQLException
+     * e) { throw new ApplicationRuntimeException(
+     * "Error occurred while generating meter Generate Number", e); } }
+     */
 
-    @Transactional
-    public String generateMeterDemandNoticeNumber() {
-        try {
-            final String sequenceName = METERDEMANDNOTICE_NUMBER_SEQ_PREFIX;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s%06d", "", sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating meter Generate Number", e);
-        }
-    }
-
-    public String generateBillNumber(final String installmentYear) {
-        try {
-            final String sequenceName = WaterTaxConstants.WATER_CONN_BILLNO_SEQ + installmentYear;
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s%06d", "", sequenceNumber);
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating water connection charges bill Number ", e);
-        }
-    }
-
+    /*
+     * public String generateBillNumber(final String installmentYear) { try {
+     * final String sequenceName = WaterTaxConstants.WATER_CONN_BILLNO_SEQ +
+     * installmentYear; Serializable sequenceNumber; try { sequenceNumber =
+     * sequenceNumberGenerator.getNextSequence(sequenceName); } catch (final
+     * SQLGrammarException e) { sequenceNumber =
+     * dbSequenceGenerator.createAndGetNextSequence(sequenceName); } return
+     * String.format("%s%06d", "", sequenceNumber); } catch (final SQLException
+     * e) { throw new ApplicationRuntimeException(
+     * "Error occurred while generating water connection charges bill Number ",
+     * e); } }
+     */
 }

@@ -80,7 +80,7 @@
 		</div>
 
 	</s:form>
-  <Script>
+	<Script>
 function validate()
 {
   document.forms[0].action='autoReconciliation-generateReport.action';

@@ -52,11 +52,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- * @author subhash
- *
- */
 @Entity
 @Table(name = "egtl_document")
 @SequenceGenerator(name = LicenseDocument.SEQ_EGTL_DOCUMENT, sequenceName = LicenseDocument.SEQ_EGTL_DOCUMENT, allocationSize = 1)
@@ -64,25 +59,37 @@ public class LicenseDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = 7655384098687964458L;
     public static final String SEQ_EGTL_DOCUMENT = "seq_egtl_document";
+
     @Id
     @GeneratedValue(generator = SEQ_EGTL_DOCUMENT, strategy = GenerationType.SEQUENCE)
     @DocumentId
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "type")
     private LicenseDocumentType type;
+
     private String description;
+
     @Temporal(TemporalType.DATE)
     private Date docDate;
+
     private boolean enclosed;
+
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egtl_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="license")
+    private License license;
+
     @Transient
     private List<File> uploads = new ArrayList<>();
+
     @Transient
     private List<String> uploadsFileName = new ArrayList<>();
+
     @Transient
     private List<String> uploadsContentType = new ArrayList<>();
 
@@ -158,5 +165,13 @@ public class LicenseDocument extends AbstractAuditable {
 
     public void setUploadsContentType(final List<String> uploadsContentType) {
         this.uploadsContentType = uploadsContentType;
+    }
+
+    public License getLicense() {
+        return license;
+    }
+
+    public void setLicense(final License license) {
+        this.license = license;
     }
 }

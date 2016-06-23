@@ -130,6 +130,7 @@ public final class CollectionConstants {
 	public static final String MODULE_NAME_COLLECTIONS_CONFIG = "Collection";
 	public static final String MODULE_NAME_INSTRUMENTHEADER = "Instrument";
 	public static final String MODULE_NAME_ONLINEPAYMENT = "OnlinePayment";
+	public static final String MODULE_NAME_REMITTANCE = "Remittance";
 	public static final String MODULE_NAME_PROPERTYTAX = "Property Tax";
 
 	// AppConfig Values
@@ -137,7 +138,6 @@ public final class CollectionConstants {
 	public static final String APPCONFIG_VALUE_CHALLANVALIDUPTO = "CHALLANVALIDUPTO";
 	public static final String APPCONFIG_VALUE_ISBILLNUMREQD = "ISBILLNUMREQD";
 	public static final String APPCONFIG_VALUE_ISSERVICEREQD = "ISSERVICEREQD";
-	public static final String APPCONFIG_VALUE_RECEIPTVOUCHERTYPEFORCHEQUEDDCARD = "RECEIPTVOUCHERTYPEFORCHEQUEDDCARD";
 	public static final String APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD = "REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD";
 	public static final String APPCONFIG_VALUE_PAYEEFORMISCRECEIPTS = "PayeeForMiscReceipts";
 	public static final String APPCONFIG_VALUE_USERECEIPTDATEFORCONTRA = "USERECEIPTDATEFORCONTRA";
@@ -178,6 +178,7 @@ public final class CollectionConstants {
 	public static final String QUERY_ACTIVE_SERVICE_CATEGORY = "ACTIVE_SERVICE_CATEGORY";
 	public static final String QUERY_SERVICE_CATEGORY_BY_CODE = "SERVICE_CATEGORY_BY_CODE";
 	public static final String QUERY_SERVICE_BY_CATEGORY_FOR_TYPE = "SERVICE_BY_CATEGORY_FOR_TYPE";
+	public static final String QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED = "RECEIPT_BY_ID_AND_STATUSNOTCANCELLED";
 
 	// named queries (other modules)
 	public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -549,10 +550,9 @@ public final class CollectionConstants {
 	public static final String SERVICETYPETOBANK_ID = "id";
 	
 	public static final String STATUS_OF_RECEIPTS = "STATUS_OF_RECEIPTS";
-
-
-
-
-
-
+        public static final String REMITTANCE_NUMBER_PREFIX = "REM";
+        
+     // Remittance Status codes
+        public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
+        public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
 }

@@ -146,27 +146,34 @@ function callajaxdatatableForDrilDownReport() {
 							"sTitle" : "Boundary Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						} ],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -302,28 +309,35 @@ function callAjaxByDepartment() {
 							"sTitle" : "Department Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -412,28 +426,35 @@ function callAjaxByComplaintType() {
 							"sTitle" : "Grievance Type Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						}, {
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -520,28 +541,35 @@ function callAjaxByUserNameType() {
 							"sTitle" : "User name-Position Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						}, {
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
