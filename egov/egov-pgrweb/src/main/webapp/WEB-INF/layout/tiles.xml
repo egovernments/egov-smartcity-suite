@@ -239,4 +239,9 @@
         <put-attribute name="page-title" value="lbl.bulkrouter.generation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/bulkrouter/bulkRouter-new.jsp"/>
     </definition>
+    
+    <definition name="bulkEscalation-new" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.bulkescalation.generation" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkEscalation-new.jsp"/>
+    </definition>
 </tiles-definitions>

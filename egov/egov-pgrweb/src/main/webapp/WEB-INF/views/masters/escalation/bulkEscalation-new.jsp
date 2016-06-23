@@ -48,65 +48,41 @@
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
 		</c:if>
-		<form:form id="bulkRouter" name="bulkRouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="bulkRouterGenerator" action="save">
+		<form:form id="bulkEscalation" name="bulkEscalation" method="post" class="form-horizontal form-groups-bordered" modelAttribute="bulkEscalationGenerator" action="save">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
-						<spring:message code="lbl.router.heading.create"/>
+						<spring:message code="title.escalation"/>
 					</div>
 				</div> 
 				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label">
-							<spring:message code="lbl.category"/><span class="mandatory"></span></label>
-						<div class="col-sm-6 add-margin">
-							<form:select path="complaintTypeCategory" id="complaintTypeCategory"
-								cssClass="form-control" required="required">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${categories}" itemValue="id" itemLabel="name" />
-							</form:select>
+						<label class="col-sm-3 control-label">
+						<spring:message code="lbl.escalation.heading.fromPosition" /><span class="mandatory"></span></label>
+						<div class="col-sm-6">
+							<input id="fromposition" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
+							<form:hidden path="toPosition" id="topositionId"/>
+							<form:errors path="toPosition" cssClass="error-msg" />
+							<div class="error-msg positionerror all-errors display-hide"></div>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">
 							<spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:select style="overflow:auto;" multiple="true" path="complaintTypes" id="complaintTypes" cssClass="form-control" required="required">
-								<form:options items="${complaintTypeCategory.complaintTypes}" itemLabel="name" itemValue="id"/>
+							<form:select path="complaintTypes" id="complaintTypes"
+								cssClass="form-control" required="required" style="height:250px">
+								<form:options items="${complainttypes}" itemValue="id" itemLabel="name" />
 							</form:select>
 						</div>
 					</div>
-					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label">
-							<spring:message code="lbl.router.boundaryType"/><span class="mandatory"></span></label>
-						<div class="col-sm-6 add-margin">
-							<form:select path="boundaryType" id="boundaryType"
-								cssClass="form-control" required="required">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${boundaryTypes}" itemValue="id" itemLabel="name" />
-							</form:select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label">
-							<spring:message code="lbl.router.boundary"/><span class="mandatory"></span></label>
-						<div class="col-sm-6 add-margin">
-						<form:select multiple="true" path="boundaries" id="boundaries" cssClass="form-control" required="required">
-							<form:options items="${boundaries}" itemLabel="name" itemValue="id"/>
-						</form:select>
-						</div>
-					</div>
-					<div class="form-group">
+					<div class="form-group" >
 						<label class="col-sm-3 control-label">
-						<spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
+						<spring:message code="lbl.escalation.heading.toPosition" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="position" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="position" id="positionId"/>
-							<form:errors path="position" cssClass="error-msg" />
+							<input id="toposition" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
+							<form:hidden path="fromPosition" id="frompositionId"/>
+							<form:errors path="fromPosition" cssClass="error-msg" />
 							<div class="error-msg positionerror all-errors display-hide"></div>
 						</div>
 					</div>
@@ -114,14 +90,14 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-primary" id="routerSearch"><spring:message code="lbl.search"/></button>
+					<button type="button" class="btn btn-primary" id="escalationSearch"><spring:message code="lbl.search"/></button>
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div><br>
-			<table class="table table-bordered datatable dt-responsive" id="bulk_router_table"></table><br>
+			<table class="table table-bordered datatable dt-responsive" id="bulk_escalation_table"></table><br>
 			<div class="row hide data-save">
 				<div class="text-center">
-					<button type="button" class="btn btn-primary" id="routersave"><spring:message code="lbl.save"/></button>
+					<button type="button" class="btn btn-primary" id="escalationsave"><spring:message code="lbl.save"/></button>
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div>
@@ -133,4 +109,4 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/js/app/bulkRouterGeneration.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/app/bulkEscalationGeneration.js?rnd=${app_release_no}'/>"></script>
