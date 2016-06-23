@@ -62,6 +62,10 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
 
     List<MBHeader> findByWorkOrder_id(final Long workOrderId);
 
+    @Query("select mbh from MBHeader as mbh left outer join mbh.egBillregister as br where mbh.workOrderEstimate.id =:workOrderEstimateId and mbh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ")
+    List<MBHeader> findByWorkOrderEstimateId(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("mhStatus") String mhStatus,@Param("billStatus") String billStatus);
+
+    
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEquals(final WorkOrder workOrder, final String statusCode);
 
     List<MBHeader> findByEgBillregisterAndEgwStatus_codeEquals(final ContractorBillRegister contractorBillRegister,
@@ -71,7 +75,7 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
 
     MBHeader findByWorkOrderEstimate_IdAndEgwStatus_codeEquals(final Long WorkOrderEstimateId, final String statusCode);
 
-    @Query("select mbh from MBHeader as mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and egwStatus.code not in (:status1, :status2, :status3)")
+    @Query("select mbh from MBHeader as mbh where mbh.workOrderEstimate.id =:workOrderEstimateId and egwStatus.code not in (:status1, :status2, :status3)")
     MBHeader findByWorkOrderEstimateAndStatus(@Param("workOrderEstimateId") Long workOrderEstimateId,
             @Param("status1") String status1, @Param("status2") String status2, @Param("status3") String status3);
 

@@ -464,27 +464,31 @@ public class LetterOfAcceptanceService {
         return criteria.list();
     }
 
-    public List<WorkOrder> searchLetterOfAcceptanceForContractorBill(
+    public List<WorkOrderEstimate> searchLetterOfAcceptanceForContractorBill(
             final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
+        List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
         StringBuilder queryStr = new StringBuilder(500);
         /*
          * This block will get LOA's where BOQ is created and final bill is not created
          */
         getWorkOrdersWhereBoqIsCreated(searchRequestLetterOfAcceptance, queryStr);
         Query query = setParameterForLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance, queryStr);
-        workOrderList = query.getResultList();
+        query.setParameter("offlineStatus", WorkOrder.OfflineStatuses.WORK_COMMENCED.toString().toLowerCase());
+        query.setParameter("objectType", WorksConstants.WORKORDER);
+        workOrderEstimateList = query.getResultList();
 
         /*
          * This block will get LOA's where BOQ is not created and final bill is not created
          */
-        searchRequestLetterOfAcceptance.setMbRefNumber("");
-        queryStr = new StringBuilder(500);
-        getWorkOrdersWhereBoqIsNotCreated(searchRequestLetterOfAcceptance, queryStr);
-        query = setParameterForLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance, queryStr);
-        workOrderList.addAll(query.getResultList());
+        if (searchRequestLetterOfAcceptance.getMbRefNumber() == null
+                || searchRequestLetterOfAcceptance.getMbRefNumber().isEmpty()) {
+            queryStr = new StringBuilder(500);
+            getWorkOrdersWhereBoqIsNotCreated(searchRequestLetterOfAcceptance, queryStr);
+            query = setParameterForLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance, queryStr);
+            workOrderEstimateList.addAll(query.getResultList());
+        }
 
-        return workOrderList;
+        return workOrderEstimateList;
     }
 
     private Query setParameterForLetterOfAcceptanceForContractorBill(
@@ -506,7 +510,7 @@ public class LetterOfAcceptanceService {
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 qry.setParameter("toWorkOrderDate", searchRequestLetterOfAcceptance.getToDate());
             if (searchRequestLetterOfAcceptance.getName() != null)
-                qry.setParameter("name", searchRequestLetterOfAcceptance.getName().toUpperCase());
+                qry.setParameter("contractorName", searchRequestLetterOfAcceptance.getName().toUpperCase());
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
                 qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
             if (searchRequestLetterOfAcceptance.getMbRefNumber() != null
@@ -520,22 +524,10 @@ public class LetterOfAcceptanceService {
     private void getWorkOrdersWhereBoqIsNotCreated(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             StringBuilder queryStr) {
         queryStr.append(
-                " select distinct wo from WorkOrder wo where wo.egwStatus.code = :woStatus and wo.id not in (select cbr.workOrder.id from ContractorBillRegister as cbr where upper(cbr.billstatus) != :billStatus and cbr.billtype = :billType ) and wo.id not in (select workOrderEstimate.workOrder.id from WorkOrderActivity) ");
+                " select distinct woe from WorkOrderEstimate woe where woe.workOrder.egwStatus.code = :woStatus and not exists (select cbr.workOrderEstimate from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and  upper(cbr.billstatus) != :billStatus and cbr.billtype = :billType and cbr.workOrderEstimate.id is not null) and  not exists (select workOrderEstimate  from WorkOrderActivity where woe.id =workOrderEstimate.id ) ");
 
         if (searchRequestLetterOfAcceptance != null) {
-            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
-                queryStr.append(
-                        " and wo.id in (select workOrder.id from WorkOrderEstimate where estimate.lineEstimateDetails.lineEstimate.executingDepartment.id =:executingDepartment ) ");
-            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                queryStr.append(" and wo.workOrderNumber =:workOrderNumber ");
-            if (searchRequestLetterOfAcceptance.getFromDate() != null)
-                queryStr.append(" and wo.workOrderDate >=:fromWorkOrderDate ");
-            if (searchRequestLetterOfAcceptance.getToDate() != null)
-                queryStr.append(" and wo.workOrderDate <=:toWorkOrderDate ");
-            if (searchRequestLetterOfAcceptance.getName() != null)
-                queryStr.append(" and upper(wo.name) =:name ");
-            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                queryStr.append(" and upper(wo.estimateNumber) =:estimateNumber ");
+            getSubQuery(searchRequestLetterOfAcceptance, queryStr);
         }
 
     }
@@ -543,28 +535,39 @@ public class LetterOfAcceptanceService {
     private void getWorkOrdersWhereBoqIsCreated(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             StringBuilder queryStr) {
         queryStr.append(
-                " select distinct wo from WorkOrder wo where wo.egwStatus.code = :woStatus and wo.id  not in (select distinct(cbr.workOrder.id) from ContractorBillRegister as cbr where upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType ) and wo.id in (select mh.workOrder.id from MBHeader mh left outer join mh.egBillregister as br where mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ");
-
+                " select distinct woe from WorkOrderEstimate woe where woe.workOrder.egwStatus.code = :woStatus and  not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType and cbr.workOrderEstimate.id is not null) ");
+        queryStr.append(" and exists (select workOrderEstimate  from WorkOrderActivity where woe.id =workOrderEstimate.id ) ");
+        queryStr.append(
+                " and  exists (select mh.workOrderEstimate from MBHeader mh left outer join mh.egBillregister as br where woe.id = mh.workOrderEstimate.id and mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ");
+        queryStr.append(
+                " and exists ( select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and os.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType ) ) ");
         if (searchRequestLetterOfAcceptance != null) {
-            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
-                if (searchRequestLetterOfAcceptance.getMbRefNumber() != null)
-                    queryStr.append(" and upper(mh.mbRefNo) =:mbRefNo ) ");
-                else
-                    queryStr.append(")");
-            queryStr.append(
-                    " and wo.id in (select workOrder.id from WorkOrderEstimate where estimate.lineEstimateDetails.lineEstimate.executingDepartment.id =:executingDepartment ) ");
-            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                queryStr.append(" and wo.workOrderNumber =:workOrderNumber ");
-            if (searchRequestLetterOfAcceptance.getFromDate() != null)
-                queryStr.append(" and wo.workOrderDate >=:fromWorkOrderDate ");
-            if (searchRequestLetterOfAcceptance.getToDate() != null)
-                queryStr.append(" and wo.workOrderDate <=:toWorkOrderDate ");
-            if (searchRequestLetterOfAcceptance.getName() != null)
-                queryStr.append(" and upper(wo.name) =:name ");
-            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-                queryStr.append(" and upper(wo.estimateNumber) =:estimateNumber ");
+
+            if (searchRequestLetterOfAcceptance.getMbRefNumber() != null)
+                queryStr.append(" and upper(mh.mbRefNo) =:mbRefNo ) ");
+            else
+                queryStr.append(")");
+
+            getSubQuery(searchRequestLetterOfAcceptance, queryStr);
 
         }
+
+    }
+
+    private void getSubQuery(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, StringBuilder queryStr) {
+        if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+            queryStr.append(
+                    " and woe.estimate.executingDepartment.id =:executingDepartment ");
+        if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+            queryStr.append(" and woe.workOrder.workOrderNumber =:workOrderNumber ");
+        if (searchRequestLetterOfAcceptance.getFromDate() != null)
+            queryStr.append(" and woe.workOrder.workOrderDate >=:fromWorkOrderDate ");
+        if (searchRequestLetterOfAcceptance.getToDate() != null)
+            queryStr.append(" and woe.workOrder.workOrderDate <=:toWorkOrderDate ");
+        if (searchRequestLetterOfAcceptance.getName() != null)
+            queryStr.append(" and upper(woe.workOrder.contractor.name) =:contractorName ");
+        if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+            queryStr.append(" and upper(woe.workOrder.estimateNumber) =:estimateNumber ");
 
     }
 

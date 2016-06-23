@@ -53,6 +53,7 @@ import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -134,17 +135,17 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajaxsearch-loaforcontractorbill", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchForContractorBill(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> searchLoaList = letterOfAcceptanceService
+        final List<WorkOrderEstimate> searchWorkOrderEstimateList = letterOfAcceptanceService
                 .searchLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLetterOfAcceptanceToCreateContractorBillJson(searchLoaList))
+                .append(toSearchLetterOfAcceptanceToCreateContractorBillJson(searchWorkOrderEstimateList))
                 .append("}").toString();
         return result;
     }
 
     public Object toSearchLetterOfAcceptanceToCreateContractorBillJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceToCreateContractorBillJson)
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceToCreateContractorBillJson)
                 .create();
         final String json = gson.toJson(object);
         return json;

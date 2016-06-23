@@ -87,10 +87,10 @@ public class MBHeaderService {
 
     @Autowired
     private WorksUtils worksUtils;
-    
+
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-    
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
@@ -107,8 +107,8 @@ public class MBHeaderService {
         return mbHeaderRepository.findOne(id);
     }
 
-    public List<MBHeader> getMBHeadersByWorkOrderId(final Long workOrderId) {
-        return mbHeaderRepository.findByWorkOrder_id(workOrderId);
+    public List<MBHeader> getApprovedMBsForContractorBillByWorkOrderEstimateId(final Long workOrderEstimateId) {
+        return mbHeaderRepository.findByWorkOrderEstimateId(workOrderEstimateId, WorksConstants.APPROVED, WorksConstants.CANCELLED);
     }
 
     public List<MBHeader> getMBHeadersByWorkOrder(final WorkOrder workOrder) {
