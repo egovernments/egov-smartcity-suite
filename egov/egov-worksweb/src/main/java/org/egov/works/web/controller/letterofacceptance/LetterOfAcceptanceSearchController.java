@@ -133,6 +133,7 @@ public class LetterOfAcceptanceSearchController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
         List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
+        setDropDownValues(model);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
         for(final EgwStatus egwStatus : egwStatuses) {
             if(!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS) &&

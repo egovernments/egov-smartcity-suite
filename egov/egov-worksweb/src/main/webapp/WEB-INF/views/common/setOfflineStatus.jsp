@@ -133,7 +133,14 @@
 							<form:errors path="offlineStatuses[${item.index}].statusDate" cssClass="add-margin error-msg" />
 						</td>
 						<td>
-							<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+						<c:choose>
+							<c:when test="${offlineStat.id != null }">
+								<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+							</c:when>
+						<c:otherwise>
+							<span name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+						</c:otherwise>
+						</c:choose>
 						</td>
 					</tr>
 					</c:forEach>

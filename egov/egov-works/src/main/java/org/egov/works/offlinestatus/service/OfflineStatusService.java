@@ -49,9 +49,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.repository.OfflineStatusRepository;
-import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,10 +63,19 @@ public class OfflineStatusService {
 
     @Autowired
     private OfflineStatusRepository offlineStatusRepository;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @Transactional
-    public void create(final OfflineStatus offlineStatus) {
-        offlineStatusRepository.save(offlineStatus);
+    public void create(final List<OfflineStatus> offlineStatuses, final Long ObjectId,final String ObjectType) {
+        for (final OfflineStatus status : offlineStatuses)
+            if (status.getId() == null) {
+                status.setObjectId(ObjectId);
+                status.setObjectType(ObjectType);
+                status.setEgwStatus(worksUtils.getStatusById(status.getEgwStatus().getId()));
+                offlineStatusRepository.save(status);
+            }
     }
 
     public List<OfflineStatus> getOfflineStatusByObjectIdAndType(final Long objectId, final String objectType) {

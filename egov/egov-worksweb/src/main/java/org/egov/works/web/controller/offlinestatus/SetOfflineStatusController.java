@@ -52,7 +52,6 @@ import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +79,6 @@ public class SetOfflineStatusController {
     
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
-    @Autowired
-    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/setstatus-loa/{workOrderId}", method = RequestMethod.GET)
     public String setOffLineStatus(final Model model, @PathVariable final Long workOrderId,
@@ -158,14 +154,8 @@ public class SetOfflineStatusController {
             model.addAttribute("workOrder", workOrder);
             return "setstatus-form";
         }
-        for (final OfflineStatus status : workOrder.getOfflineStatuses())
-            if (status.getId() == null) {
-                status.setObjectId(workOrder.getId());
-                status.setObjectType(WorksConstants.WORKORDER);
-                status.setEgwStatus(worksUtils.getStatusById(status.getEgwStatus().getId()));
-                offlineStatusService.create(status);
-            }
-        
+        List<OfflineStatus> offlineStatuses = workOrder.getOfflineStatuses();
+        offlineStatusService.create(offlineStatuses, workOrder.getId(), WorksConstants.WORKORDER);
         model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
                 new String[] { "" }, null));
         return "setstatus-success";
