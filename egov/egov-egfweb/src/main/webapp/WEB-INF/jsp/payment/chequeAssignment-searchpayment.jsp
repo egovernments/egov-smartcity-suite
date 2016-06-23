@@ -145,17 +145,14 @@
 							<td style="text-align: right" class="blueborderfortdnew"><s:select
 									name="chequeAssignmentList[%{#s.index}].serialNo"
 									id="chequeAssignmentList[%{#s.index}].serialNo"
-									list="chequeSlNoMap"
+									class="serialNo" list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
-									size="6"
-									maxLength="6"
-									id="chequeNumber%{#s.index}"
+									size="6" maxLength="6" id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-									onchange="validateReassignSurrenderChequeNumber(this)"
-									 /></td>
+									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -170,15 +167,15 @@
 							<td style="text-align: right" class="blueborderfortdnew"><s:select
 									name="chequeAssignmentList[%{#s.index}].serialNo"
 									id="chequeAssignmentList[%{#s.index}].serialNo"
-									list="chequeSlNoMap"
+									class="serialNo" list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
-									size="6" 
+									size="6"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-									maxLength="6"/></td>
+									maxLength="6" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -202,20 +199,21 @@
 							class="mandatory1">*</span> <s:select
 								name="vouchermis.departmentid" id="departmentid"
 								list="dropdownData.departmentList" listKey="id" listValue="name"
-								headerKey="-1" headerValue="----Choose----"
-								value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
+								value="%{voucherHeader.vouchermis.departmentid.id}"
+								onChange="populateYearcode(this);" /></td>
 
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
 								class="mandatory1">*</span> <s:select name="serialNo"
-									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
+									id="serialNo" class="serialNo" list="chequeSlNoMap"
+									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
 									size="6" value="%{chequeNo}"
-									onchange="validateReassignSurrenderChequeNumber(this)" 
-									onkeypress='return event.charCode >= 48 && event.charCode <= 57'/></td>
+									onchange="validateReassignSurrenderChequeNumber(this)"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
@@ -233,7 +231,8 @@
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
 								class="mandatory1">*</span> <s:select name="serialNo"
-									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
+									id="serialNo" class="serialNo" list="chequeSlNoMap"
+									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
 								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
@@ -582,6 +581,34 @@
 					document.getElementById('selectedRows').value=0;
 				}
 			}
+
+			function  populateYearcode(departmentid){
+				console.log('departmentid'+departmentid.value);
+				console.log('bankaccount'+document.getElementById('bankaccount').value);
+				jQuery.ajax({
+					url: "/EGF/voucher/common-ajaxYearCode.action?departmentId="+departmentid.value+"&bankaccount="+document.getElementById('bankaccount').value,
+					method: 'GET',
+				    async : false,
+				    
+					success: function(data)
+					   {
+						//console.log("inside success") ;  
+						jQuery('.serialNo').empty();
+						var output = '';
+						//console.log("inside data"+data+"---"+data.ResultSet+"---"+data.ResultSet.Result) ;  
+						for(i=0;i<data.ResultSet.Result.length;i++){
+							output = output+ '<option value=' + data.ResultSet.Result[i].Value + '>'
+							+ data.ResultSet.Result[i].Text+ '</option>';
+						  }
+						jQuery('.serialNo').append(output);  
+					   },
+					error: function(jqXHR, textStatus, errorThrown)
+					  {
+						console.log("inside Failure"+errorThrown) ;  
+					  }         
+				});
+
+		    }
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
 		<s:if
