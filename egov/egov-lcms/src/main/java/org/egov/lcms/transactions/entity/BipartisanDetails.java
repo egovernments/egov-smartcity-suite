@@ -59,7 +59,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.masters.entity.GovernmentDept;
+import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
@@ -95,18 +95,18 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
     @ManyToOne
     @Valid
     @JoinColumn(name = "respondentgovtdept")
-    private GovernmentDept governmentDept;
+    private GovernmentDepartment governmentDepartment;
     @Column(name = "isrespondentgovernment", nullable = false)
     private Boolean isrespondentgovernment = false;
     @Column(name = "serialnumber")
     private Long serialNumber;
 
-    public GovernmentDept getGovernmentDept() {
-        return governmentDept;
+    public GovernmentDepartment getGovernmentDepartment() {
+        return governmentDepartment;
     }
 
-    public void setGovernmentDept(final GovernmentDept governmentDept) {
-        this.governmentDept = governmentDept;
+    public void setGovernmentDepartment(final GovernmentDepartment governmentDepartment) {
+        this.governmentDepartment = governmentDepartment;
     }
 
     public boolean getIsrespondentgovernment() {
@@ -169,7 +169,7 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsrespondentgovernment() && getGovernmentDept() == null)
+        if (getIsrespondentgovernment() && getGovernmentDepartment() == null)
             if (getIsrepondent())
                 errors.add(new ValidationError("govtDept", "respondent.govtDept.select"));
             else

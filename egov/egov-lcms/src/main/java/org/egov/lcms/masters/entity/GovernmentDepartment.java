@@ -46,78 +46,54 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGLC_GOVERNMENTDEPARTMENT")
-@SequenceGenerator(name = GovernmentDept.SEQ_EGLC_GOVERNMENTDEPARTMENT, sequenceName = GovernmentDept.SEQ_EGLC_GOVERNMENTDEPARTMENT, allocationSize = 1)
-@Unique(fields = "name", id = "id", tableName = "EGLC_GOVERNMENTDEPARTMENT", columnName = "NAME", message = "masters.name.isunique")
-public class GovernmentDept extends AbstractAuditable {
-    /**
-     * Serial version uid
-     */
+@SequenceGenerator(name = GovernmentDepartment.SEQ_EGLC_GOVERNMENTDEPARTMENT, sequenceName = GovernmentDepartment.SEQ_EGLC_GOVERNMENTDEPARTMENT, allocationSize = 1)
+@Unique(id = "id", tableName = "EGLC_GOVERNMENTDEPARTMENT", columnName = "NAME", enableDfltMsg = true)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class GovernmentDepartment extends AbstractAuditable {
+
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_GOVERNMENTDEPARTMENT = "SEQ_EGLC_GOVERNMENTDEPARTMENT";
 
     @Id
     @GeneratedValue(generator = SEQ_EGLC_GOVERNMENTDEPARTMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-     @Length(max = 32, message = "masters.name.length")
-    @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.name.mixedChar2")
-    private String name;
-    
-    @Length(max = 32, message = "masters.name.length")
-    @OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "masters.code.mixedChar2")
+
+    @Audited
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 8)
     private String code;
-    private Boolean active;
 
-    public Boolean getActive() {
-        return active;
-    }
+    @Audited
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String name;
 
-    public void setActive(final Boolean active) {
-        this.active = active;
-    }
+    @SafeHtml
+    @Length(min = 3, max = 256)
+    private String description;
 
-    @Length(max = 128, message = "masters.description.length")
-    private String Description;
-    @Max(value = 1000, message = "masters.orderNumber.length")
+    @Min(1)
+    @Max(1000)
     private Long orderNumber;
 
-    public GovernmentDept() {
-    }
-
-    public GovernmentDept(final String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(final String description) {
-        Description = description;
-    }
-
-    public Long getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(final Long orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+    @NotNull
+    @Audited
+    private Boolean active;
 
     @Override
     public Long getId() {
@@ -133,9 +109,40 @@ public class GovernmentDept extends AbstractAuditable {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
-    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
+
 }

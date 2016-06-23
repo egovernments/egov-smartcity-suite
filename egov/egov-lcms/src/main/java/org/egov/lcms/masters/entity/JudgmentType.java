@@ -61,7 +61,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGLC_JUDGMENTTYPE_MASTER")
 @Unique(id = "id", tableName = "EGLC_JUDGMENTTYPE_MASTER", columnName = { "code",
-		"judgmentType" }, enableDfltMsg = true)
+		"judgmenttype" }, enableDfltMsg = true)
 @SequenceGenerator(name = JudgmentType.SEQ_JUDGMENTTYPE, sequenceName = JudgmentType.SEQ_JUDGMENTTYPE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
 		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
@@ -96,6 +96,7 @@ public class JudgmentType extends AbstractAuditable {
 	private Long orderNumber;
 
 	@NotNull
+	@Audited
 	private Boolean active;
 
 	@Override

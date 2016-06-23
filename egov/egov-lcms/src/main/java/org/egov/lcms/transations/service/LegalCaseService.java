@@ -45,7 +45,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lcms.masters.entity.GovernmentDept;
+import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
 import org.egov.lcms.transactions.repository.GovernmentDeptRepository;
@@ -104,8 +104,8 @@ public class LegalCaseService {
     }
     private void prepareBipartsanDetails(final Legalcase legalcase) {
         final BipartisanDetails bipartObj = new BipartisanDetails();
-        final GovernmentDept govtDept = governmentDeptRepository.findByCode("L011");
-        bipartObj.setGovernmentDept(govtDept);
+        final GovernmentDepartment govtDept = governmentDeptRepository.findByCode("L011");
+        bipartObj.setGovernmentDepartment(govtDept);
         bipartObj.setIsrepondent(Boolean.TRUE);
         bipartObj.setIsrespondentgovernment(Boolean.TRUE);
         bipartObj.setName("bipart1");

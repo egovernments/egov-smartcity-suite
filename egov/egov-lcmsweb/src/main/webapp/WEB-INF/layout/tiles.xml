@@ -232,5 +232,30 @@
 	<put-attribute name="page-title" value="title.judgmenttype.search" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-search.jsp"/>
 </definition>
+<definition name="governmentdepartment-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.governmentdepartment.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-new.jsp"/>
+</definition>
+
+<definition name="governmentdepartment-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.governmentdepartment.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-view.jsp"/>
+</definition>
+
+<definition name="governmentdepartment-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.governmentdepartment.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-edit.jsp"/>
+</definition>
+
+<definition name="governmentdepartment-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.governmentdepartment.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-result.jsp"/>
+</definition>
+
+<definition name="governmentdepartment-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.governmentdepartment.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>
