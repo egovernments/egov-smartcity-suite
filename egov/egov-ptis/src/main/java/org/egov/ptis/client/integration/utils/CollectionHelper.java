@@ -182,7 +182,6 @@ public class CollectionHelper {
         List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
         Collections.sort(billDetails);
 
-<<<<<<< HEAD
         if(isMutationFeePayment){
         	for (EgBillDetails billDet : billDetails) {
 	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
@@ -199,12 +198,6 @@ public class CollectionHelper {
 	        }
         	SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
         			receiptDetails);
-=======
-        for (EgBillDetails billDet : billDetails) {
-            receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
-                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
-                    billDet.getDescription()));
->>>>>>> develop
         }
         
         boolean isActualDemand = false;
