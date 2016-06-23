@@ -48,7 +48,7 @@ $(document).ready(function() {
 });
 
 function addNewStatus() {
-	if($('#workOrder').valid()){
+	if($('#offlineStatuses').valid()){
 	var rowcount = $("#tblsetstatus tbody tr").length;
 	if (rowcount < 6) {
 		if (document.getElementById('statusRow') != null) {
@@ -192,7 +192,7 @@ function getRow(obj) {
 
 var addedOfflineStatus = new Array();
 
-function cheackOfflineStatus(offlineStatuses) {
+function checkOfflineStatus(offlineStatuses) {
 	if(offlineStatuses.value==""){
 		resetAddedOverheads();
 	}else
@@ -213,7 +213,7 @@ function cheackOfflineStatus(offlineStatuses) {
 function validateForm(){
 	$(".offlineStatusValue").removeAttr('disabled');
 	$(".statusdate").removeAttr('disabled');
-	if($('#workOrder').valid())
+	if($('#offlineStatuses').valid())
 		return false;
 }
 
@@ -255,7 +255,6 @@ initializeDatePicker();
 function initializeDatePicker(){
 	
 	$('.statusdate').datepicker().off('changeDate');
-	
 	jQuery( ".statusdate" ).datepicker({ 
 		format: 'dd/mm/yyyy',
 		autoclose:true,

@@ -45,7 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <input type="hidden" value="<spring:message code="error.offlinestatus.status.loadate" />" id="errorStatusLOADate" />
 <input type="hidden" value="<spring:message code="error.offlinestatus.status.date" />" id="errorStatusDate" />
-<form:form id="workOrder" name="workOrder" role="form" action="/egworks/offlinestatus/offlinestatus-save" modelAttribute="workOrder" class="form-horizontal form-groups-bordered">
+<form:form id="offlineStatuses" name="offlineStatuses" role="form" action="/egworks/offlinestatus/offlinestatus-save" modelAttribute="workOrder" class="form-horizontal form-groups-bordered">
 	<div class="row">
 	<spring:hasBindErrors name="workOrder">
 		<div class="alert alert-danger col-md-10 col-md-offset-1">
@@ -62,7 +62,6 @@
 			<div class="panel-title"><spring:message code="lbl.setstatus" /></div>
 		</div>
 		<div class="panel-body">
-	<c:if test="${mode == 'newWorkOrder'}">
 		<div class="form-group">
 			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.workordernumber"/></div>
 			<div class="col-sm-3 add-margin view-content">
@@ -73,7 +72,6 @@
 				<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy" />
 			</div>
 		</div>
-	</c:if>
 	
 		<jsp:include page="/WEB-INF/views/common/setOfflineStatus.jsp" />
 		

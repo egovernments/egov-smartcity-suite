@@ -66,7 +66,7 @@
 						<td>
 						<c:choose>
 						<c:when test="${offlineStatuses.id != null }">
-							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="cheackOfflineStatus(this);"  required="required">
+							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  required="required">
 							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
 							 	<c:forEach var="status" items="${egwStatus}">
 							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
@@ -74,7 +74,7 @@
 							</form:select>
 						</c:when>
 						<c:otherwise>
-							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="cheackOfflineStatus(this);"  required="required">
+							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  required="required">
 							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
 							 	<c:forEach var="status" items="${egwStatus}">
 							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
@@ -103,7 +103,7 @@
 						<td>
 						<c:choose>
 						<c:when test="${offlineStat.id != null }">
-							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="cheackOfflineStatus(this);"  disabled="true" required="required">
+							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  disabled="true" required="required">
 							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
 							 	<c:forEach var="status" items="${egwStatus}">
 							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
@@ -111,7 +111,7 @@
 							</form:select>
 						</c:when>
 						<c:otherwise>
-							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="cheackOfflineStatus(this);" required="required">
+							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);" required="required">
 							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
 							 	<c:forEach var="status" items="${egwStatus}">
 							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
@@ -135,7 +135,7 @@
 						<td>
 							<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 						</td>
-						</tr>
+					</tr>
 					</c:forEach>
 				</c:otherwise>
 			</c:choose>

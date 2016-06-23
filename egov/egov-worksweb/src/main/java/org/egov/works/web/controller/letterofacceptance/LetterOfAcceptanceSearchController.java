@@ -39,6 +39,10 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
@@ -55,8 +59,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/searchletterofacceptance")
 public class LetterOfAcceptanceSearchController {
@@ -68,7 +70,7 @@ public class LetterOfAcceptanceSearchController {
     private LineEstimateService lineEstimateService;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusDAO;
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -87,7 +89,7 @@ public class LetterOfAcceptanceSearchController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
-        model.addAttribute("egwStatus", egwStatusDAO.getStatusByModule(WorksConstants.WORKORDER));
+        model.addAttribute("egwStatus", egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER));
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
 
     }
@@ -124,6 +126,23 @@ public class LetterOfAcceptanceSearchController {
         setDropDownValues(model);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "letterofacceptancetomodify-search";
+    }
+    
+    @RequestMapping(value = "/setloaofflinestatus", method = RequestMethod.GET)
+    public String showLOAToSetOfflineStatus(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) throws ApplicationException {
+        List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for(final EgwStatus egwStatus : egwStatuses) {
+            if(!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS) &&
+                    !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED) &&
+                    !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
+                newEgwStatuses.add(egwStatus);
+        }
+        model.addAttribute("egwStatus", newEgwStatuses);
+        model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        return "setofflinestatus-search";
     }
 
 }

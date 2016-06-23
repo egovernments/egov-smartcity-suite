@@ -98,7 +98,7 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxloanumber-milestone?workOrderNumber=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxsearch-loanumber?workOrderNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {

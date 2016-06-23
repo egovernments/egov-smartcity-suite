@@ -82,7 +82,7 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxloanumber-milestone?workOrderNumber=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxsearch-loanumber?workOrderNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {
@@ -143,7 +143,7 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/offlinestatus/ajaxestimatenumbers?estimateNumber=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxestimatenumbers-loa?estimateNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {
@@ -171,7 +171,7 @@ function callAjaxSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/offlinestatus/ajaxsearch-loa",
+					url : "/egworks/letterofacceptance/ajaxsearch-loatosetofflinestatus",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -194,7 +194,7 @@ function callAjaxSearch() {
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					$('td:eq(8)', row).html(
 							'<a href="javascript:void(0);" onclick="setStatus(\''
-									+ data.id + '\')">Set Status</a>');
+									+ data.id + '\')">Set work status for LOA</a>');
 					return row;
 				},
 				aaSorting : [],
@@ -231,7 +231,7 @@ function callAjaxSearch() {
 					"sClass" : "text-center","autoWidth": "false"
 				}, {
 					"data" : "",
-					"sClass" : "text-left","width": "7%"
+					"sClass" : "text-left","width": "10%"
 				} ]
 			});
 }

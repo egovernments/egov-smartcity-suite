@@ -39,6 +39,7 @@
  */
 package org.egov.works.workorder.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -50,6 +51,7 @@ import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Criteria;
@@ -175,6 +177,14 @@ public class WorkOrderEstimateService {
     public List<String> getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(final String EstimateNumber) {
         return workOrderEstimateRepository.findEstimatesByWorkOrderStatus("%" + EstimateNumber + "%",
                 WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
+    }
+    
+    public List<String> getEstimateNumbersForApprovedLoa(final String estimateNumber) {
+        final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateRepository.findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(estimateNumber,WorksConstants.APPROVED);
+        final List<String> results = new ArrayList<String>();
+        for (final WorkOrderEstimate details : workOrderEstimates)
+            results.add(details.getEstimate().getEstimateNumber());
+        return results;
     }
 
 }

@@ -50,6 +50,7 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.web.adaptor.LetterOfAcceptanceForMilestoneJSONAdaptor;
 import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
+import org.egov.works.web.adaptor.SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -95,6 +96,9 @@ public class AjaxLetterOfAcceptanceController {
     
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;  
+    
+    @Autowired
+    private SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor searchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -198,8 +202,8 @@ public class AjaxLetterOfAcceptanceController {
         return json;
     }
     
-    @RequestMapping(value = "/ajaxloanumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findLoaNumbersForMilestone(@RequestParam final String workOrderNumber) {
+    @RequestMapping(value = "/ajaxsearch-loanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findApprovedLoaNumbers(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.findLoaWorkOrderNumberForMilestone(workOrderNumber);
     }
     
@@ -276,4 +280,26 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody List<String> findWorkOrderForMBHeader(@RequestParam final String workOrderNo) {
         return workOrderEstimateService.findWorkOrderForMBHeader(workOrderNo);
     } 
+    
+    @RequestMapping(value = "/ajaxsearch-loatosetofflinestatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchLoaToSetOfflineStatus(final Model model,
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrderEstimate> searchLoaList = letterOfAcceptanceService
+                .searchLetterOfAcceptanceForOfflineStatus(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJsonToSetOfflineStatus(searchLoaList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchLetterOfAcceptanceJsonToSetOfflineStatus(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceForOfflineStatusJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxestimatenumbers-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findApprovedEstimateNumbersForLOA(@RequestParam final String estimateNumber) {
+        return workOrderEstimateService.getEstimateNumbersForApprovedLoa(estimateNumber);
+    }
 }

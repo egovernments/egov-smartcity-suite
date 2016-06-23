@@ -41,6 +41,7 @@ package org.egov.works.workorder.repository;
 
 import java.util.List;
 
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -68,4 +69,8 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
     
     @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code in(:status1,:status2)")
     List<String> findEstimatesByWorkOrderStatus(@Param("estimateNumber") String estimateNumber,@Param("status1") String status1,@Param("status2") String status2);
+
+    List<WorkOrderEstimate> findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(final String estimateNumber,
+            final String statusCode);
+
 }

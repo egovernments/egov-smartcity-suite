@@ -59,6 +59,7 @@ public class SearchRequestLetterOfAcceptance {
     private Long typeOfWork;
     private Long subTypeOfWork;
     private String contractor;
+    private String contractorName;
 
     public SearchRequestLetterOfAcceptance() {
     }
@@ -183,4 +184,11 @@ public class SearchRequestLetterOfAcceptance {
         this.fileNumber = fileNumber;
     }
 
+    public String getContractorName() {
+        return contractorName;
+    }
+
+    public void setContractorName(String contractorName) {
+        this.contractorName = contractorName;
+    }
 }

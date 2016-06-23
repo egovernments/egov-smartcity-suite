@@ -95,10 +95,10 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.contractor" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name" id="contractorSearch"
+							<form:input path="contractorName" id="contractorSearch"
 								class="form-control"
 								placeholder="Type first 3 letters of Contractor Name Or Code" />
-							<form:errors path="name" cssClass="add-margin error-msg" />
+							<form:errors path="contractorName" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.department" /></label>
@@ -184,4 +184,4 @@
 	});
 </script>
 <script
-	src="<c:url value='/resources/js/loasetstatus.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/js/searchletterofacceptanceforofflinestatus.js?rnd=${app_release_no}'/>"></script>

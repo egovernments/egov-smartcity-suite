@@ -958,4 +958,61 @@ public class LetterOfAcceptanceService {
         workOrder.setDocumentDetails(documentDetailsList);
         return workOrder;
     }
+    
+    public List<Long> getWorkOrdersForLoaStatus(final String offlineStatus) {
+        return letterOfAcceptanceRepository.findWorkOrderForLoaStatus(offlineStatus,WorksConstants.WORKORDER);
+    }
+
+    public List<WorkOrderEstimate> searchLetterOfAcceptanceForOfflineStatus(
+            final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
+                .addOrder(Order.asc("woewo.workOrderDate"))
+                .createAlias("woe.workOrder", "woewo")
+                .createAlias("woe.estimate", "woestimate")
+                .createAlias("woestimate.executingDepartment", "woestimatedept")               
+                .createAlias("woewo.contractor", "woc")
+                .createAlias("woewo.egwStatus", "status");
+
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                criteria.add(
+                        Restrictions.eq("woewo.workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber()).ignoreCase());
+            
+            if (searchRequestLetterOfAcceptance.getFromDate() != null)
+                criteria.add(Restrictions.ge("woewo.workOrderDate", searchRequestLetterOfAcceptance.getFromDate()));
+            
+            if (searchRequestLetterOfAcceptance.getToDate() != null)
+                criteria.add(Restrictions.le("woewo.workOrderDate", searchRequestLetterOfAcceptance.getToDate()));
+            
+            if (searchRequestLetterOfAcceptance.getName() != null)
+                criteria.add(Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getContractorName()).ignoreCase());
+            
+            if (searchRequestLetterOfAcceptance.getFileNumber() != null)
+                criteria.add(
+                        Restrictions.ilike("woewo.fileNumber", searchRequestLetterOfAcceptance.getFileNumber(), MatchMode.ANYWHERE));
+            
+            if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("woestimate.estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber()).ignoreCase());
+            
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null)
+                criteria.add(Restrictions.eq("woestimatedept.id", searchRequestLetterOfAcceptance.getDepartmentName()));
+            
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
+                // TODO if workorder status set to offlinestatus this query can be removed 
+                final List<Long> workOrderIds = letterOfAcceptanceRepository
+                        .findWorkOrderForLoaStatus(searchRequestLetterOfAcceptance.getEgwStatus(),WorksConstants.WORKORDER);
+                if (workOrderIds.isEmpty())
+                    workOrderIds.add(null);
+                criteria.add(Restrictions.or(
+                        Restrictions.in("woewo.id", workOrderIds),
+                        Restrictions.or(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()))));
+
+            }
+            criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
+
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+    
 }
