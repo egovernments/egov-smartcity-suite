@@ -80,7 +80,7 @@
 				</div>
 				<div class="row">
        				<div class="text-center">
-       					<button type="button" class="btn btn-primary" id="deactivation" /><spring:message code="lbl.deactivate"></spring:message></button>
+       					<input type="submit" class="btn btn-primary" id="deactivation" />
           		    	<button type="reset" id="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
           		    	<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
           			</div>

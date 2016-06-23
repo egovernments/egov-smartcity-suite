@@ -50,6 +50,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
@@ -181,6 +182,7 @@ public class CollectionHelper {
         List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
         Collections.sort(billDetails);
 
+<<<<<<< HEAD
         if(isMutationFeePayment){
         	for (EgBillDetails billDet : billDetails) {
 	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
@@ -197,22 +199,23 @@ public class CollectionHelper {
 	        }
         	SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
         			receiptDetails);
+=======
+        for (EgBillDetails billDet : billDetails) {
+            receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
+                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
+                    billDet.getDescription()));
+>>>>>>> develop
         }
         
         boolean isActualDemand = false;
         for (EgBillDetails billDet : bill.getEgBillDetails()) {
             for (ReceiptDetail rd : receiptDetails) {
-                // FIX ME
                 if ((billDet.getGlcode().equals(rd.getAccounthead().getGlcode()))
                         && (billDet.getDescription().equals(rd.getDescription()))) {
-                	isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
+                    isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
                             billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
-                            billDet.getDescription(), isActualDemand /*
-                                                            * billDet.
-                                                            * getAdditionalFlag
-                                                            * ()
-                                                            */);
+                            billDet.getDescription(), isActualDemand, PURPOSE.valueOf(billDet.getPurpose()));
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }

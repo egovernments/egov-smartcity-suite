@@ -40,62 +40,187 @@
 
 package org.egov.tl.entity;
 
+import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public abstract class License extends StateAware {
+@Entity
+@Table(name = "EGTL_LICENSE")
+@Inheritance(strategy = InheritanceType.JOINED)
+@SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
+@Unique(fields = {"licenseNumber", "applicationNumber"}, enableDfltMsg = true, isSuperclass = true)
+@NamedQuery(name = "LICENSE_BY_APPLICATION_NO", query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
+public class License extends StateAware {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4621190785979222546L;
 
+    public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
+    public static final String BY_APPLICATION_NO = "LICENSE_BY_APPLICATION_NO";
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    @Expose
     protected Long id;
-    @Required(message = "license.applicationdate.err.required")
-    protected Date applicationDate;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 128)
+    @Column(name = "APPL_NUM")
+    @Audited
     protected String applicationNumber;
-    protected EgwStatus egwStatus;
-    protected Boundary boundary;
-    protected Boundary parentBoundary;
-    protected NatureOfBusiness natureOfBusiness;
-    protected Date dateOfExpiry;
-    protected boolean isActive;
-    protected LicenseDemand licenseDemand;
-    protected Licensee licensee;
+
+    @SafeHtml
+    @Length(max = 50)
+    @Column(name = "LICENSE_NUMBER")
     protected String licenseNumber;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 256)
+    @Column(name = "NAME_OF_ESTAB")
+    @Audited
     protected String nameOfEstablishment;
+
+    @SafeHtml
+    @Length(max = 50)
+    @Column(name = "OLD_LICENSE_NUMBER")
     protected String oldLicenseNumber;
+
+    @SafeHtml
+    @Length(max = 512)
+    @Column(name = "REMARKS")
     protected String remarks;
-    protected LicenseStatus status;
-    protected String tempLicenseNumber;
-    @NotNull
-    protected LicenseSubCategory tradeName;
-    protected LicenseAppType licenseAppType;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 120)
+    @Column(name = "OWNERSHIP_TYPE")
+    @Audited
     protected String ownershipType;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 250)
+    @Column(name = "ADDRESS")
+    @Audited
     protected String address;
+
+    @SafeHtml
+    @Length(max = 100)
+    @Column(name = "TEMP_LICENSE_NUMBER")
+    protected String tempLicenseNumber;
+
+    @SafeHtml
+    @Length(max = 50)
+    @Column(name = "AGREEMENT_DOCUMENT_NO")
+    @Audited
+    protected String agreementDocNo;
+
+    @SafeHtml
+    @Length(max = 40)
+    @Column(name = "digisignedcertfilestoreid")
+    protected String digiSignedCertFileStoreId;
+
+    @SafeHtml
+    @Length(max = 64)
+    @Column(name = "ASSESSMENTNO")
+    protected String assessmentNo;
+
     @NotNull
-    private LicenseCategory category;
-    private BigDecimal tradeArea_weight;
-    private boolean legacy;
-    private Date commencementDate;
+    @Column(name = "APPL_DATE")
+    @Temporal(TemporalType.DATE)
+    @Audited
+    protected Date applicationDate;
 
-    private Date agreementDate;
-    private String agreementDocNo;
-    private String digiSignedCertFileStoreId;
-    private String assessmentNo;
-    public abstract String generateLicenseNumber(Serializable runningNumber);
+    @Column(name = "COMMENCEMENTDATE")
+    @Temporal(TemporalType.DATE)
+    @Audited
+    protected Date commencementDate;
 
-    public abstract List<LicenseDocument> getDocuments();
+    @Column(name = "AGREEMENT_DATE")
+    @Temporal(TemporalType.DATE)
+    @Audited
+    protected Date agreementDate;
 
-    public abstract void setDocuments(List<LicenseDocument> documents);
+    @Column(name = "DATEOFEXPIRY")
+    @Temporal(TemporalType.DATE)
+    protected Date dateOfExpiry;
+
+    @Column(name = "IS_ACTIVE")
+    protected boolean isActive;
+
+    @Column(name = "ISLEGACY")
+    protected boolean legacy;
+
+    @Column(name = "TRADE_AREA_WEIGHT")
+    @Audited
+    protected BigDecimal tradeArea_weight;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EGWSTATUSID")
+    protected EgwStatus egwStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_ADM_BNDRY")
+    protected Boundary boundary;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_PARENT_BNDRY")
+    protected Boundary parentBoundary;
+
+    @ManyToOne
+    @JoinColumn(name = "NATUREOFBUSINESS")
+    protected NatureOfBusiness natureOfBusiness;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_demand")
+    protected LicenseDemand licenseDemand;
+
+    @Valid
+    @OneToOne(mappedBy = "license", cascade = CascadeType.ALL)
+    protected Licensee licensee;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_STATUS")
+    protected LicenseStatus status;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "ID_SUB_CATEGORY")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    protected LicenseSubCategory tradeName;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "licenseAppType")
+    protected LicenseAppType licenseAppType;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "ID_CATEGORY")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    protected LicenseCategory category;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
+    protected List<LicenseDocument> documents = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -115,7 +240,6 @@ public abstract class License extends StateAware {
         this.licenseDemand = licenseDemand;
     }
 
-    @Audited
     public Date getApplicationDate() {
         return applicationDate;
     }
@@ -124,7 +248,6 @@ public abstract class License extends StateAware {
         this.applicationDate = applicationDate;
     }
 
-    @Audited
     public String getApplicationNumber() {
         return applicationNumber;
     }
@@ -173,7 +296,6 @@ public abstract class License extends StateAware {
         this.licenseNumber = licenseNumber;
     }
 
-    @Audited
     public String getNameOfEstablishment() {
         return nameOfEstablishment;
     }
@@ -214,7 +336,6 @@ public abstract class License extends StateAware {
         this.tempLicenseNumber = tempLicenseNumber;
     }
 
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public LicenseSubCategory getTradeName() {
         return tradeName;
     }
@@ -227,7 +348,6 @@ public abstract class License extends StateAware {
         this.isActive = isActive;
     }
 
-    @Audited
     public String getAddress() {
         return address;
     }
@@ -236,7 +356,6 @@ public abstract class License extends StateAware {
         this.address = address;
     }
 
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     public LicenseCategory getCategory() {
         return category;
     }
@@ -245,7 +364,6 @@ public abstract class License extends StateAware {
         this.category = category;
     }
 
-    @Audited
     public String getOwnershipType() {
         return ownershipType;
     }
@@ -254,7 +372,6 @@ public abstract class License extends StateAware {
         this.ownershipType = ownershipType;
     }
 
-    @Audited
     public BigDecimal getTradeArea_weight() {
         return tradeArea_weight;
     }
@@ -287,7 +404,6 @@ public abstract class License extends StateAware {
         this.legacy = legacy;
     }
 
-    @Audited
     public Date getCommencementDate() {
         return commencementDate;
     }
@@ -312,7 +428,6 @@ public abstract class License extends StateAware {
         this.parentBoundary = parentBoundary;
     }
 
-    @Audited
     public Date getAgreementDate() {
         return agreementDate;
     }
@@ -321,7 +436,6 @@ public abstract class License extends StateAware {
         this.agreementDate = agreementDate;
     }
 
-    @Audited
     public String getAgreementDocNo() {
         return agreementDocNo;
     }
@@ -368,4 +482,16 @@ public abstract class License extends StateAware {
         this.assessmentNo = assessmentNo;
     }
 
+    public List<LicenseDocument> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(final List<LicenseDocument> documents) {
+        this.documents = documents;
+    }
+
+    @Override
+    public String getStateDetails() {
+        return "";
+    }
 }

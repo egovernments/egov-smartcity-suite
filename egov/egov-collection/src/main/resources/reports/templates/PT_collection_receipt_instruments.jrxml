@@ -87,7 +87,7 @@
 	<detail>
 		<band height="105" splitType="Stretch">
 			<staticText>
-				<reportElement positionType="Float" x="0" y="0" width="38" height="45" uuid="3ae1dd16-52c7-45bd-80fc-454a765e2869">
+				<reportElement positionType="Float" x="0" y="0" width="70" height="45" uuid="3ae1dd16-52c7-45bd-80fc-454a765e2869">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -96,13 +96,13 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Mode]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="97" y="0" width="101" height="45" uuid="93638e31-cf7a-43c7-bd3c-2968330024e7">
+				<reportElement positionType="Float" x="299" y="0" width="249" height="45" uuid="93638e31-cf7a-43c7-bd3c-2968330024e7">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -112,42 +112,39 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Bank Name & Branch]]></text>
 			</staticText>
 			<textField>
-				<reportElement positionType="Float" x="0" y="45" width="38" height="60" uuid="d218538b-5885-4e54-992e-f76565296e91">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
+				<reportElement positionType="Float" x="0" y="45" width="70" height="60" uuid="d218538b-5885-4e54-992e-f76565296e91"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instrumentType}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="38" y="45" width="59" height="60" uuid="6afe92cc-b512-4e95-bd90-c303ae4d9871"/>
+				<reportElement positionType="Float" x="70" y="45" width="229" height="60" uuid="6afe92cc-b512-4e95-bd90-c303ae4d9871"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No:\n" + $F{instrumentNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No:\n" + $F{instrumentNumber}  + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan No:\n" + $F{transactionNumber} + "\nDated:\n" + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No: " + $F{instrumentNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No: " + $F{instrumentNumber}  + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No: " + $F{transactionNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan No: " + $F{transactionNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="97" y="45" width="101" height="60" isPrintWhenDetailOverflows="true" uuid="8c8a7296-0eaa-44aa-bd50-a0b112775d1c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="299" y="45" width="249" height="60" isPrintWhenDetailOverflows="true" uuid="8c8a7296-0eaa-44aa-bd50-a0b112775d1c">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -156,26 +153,24 @@
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bankName} == null ? "NA" :$F{bankBranchName} == null ? $F{bankName} :$F{bankName} + ", "+$F{bankBranchName}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement positionType="Float" x="38" y="0" width="59" height="45" uuid="e34aaf8e-7e54-40ca-87f6-928937d0ff7a">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
+			<staticText>
+				<reportElement positionType="Float" x="70" y="0" width="229" height="45" uuid="e9bae7f4-db62-4f49-8089-2ba0a97d1fc8"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
 					<bottomPen lineWidth="0.5"/>
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Chq/DD/\nTxn No. & Date"]]></textFieldExpression>
-			</textField>
+				<text><![CDATA[Cheque / DD / Bank Challan / Online Transaction Number & Date]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

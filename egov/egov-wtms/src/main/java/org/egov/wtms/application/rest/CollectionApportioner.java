@@ -39,19 +39,20 @@
  */
 package org.egov.wtms.application.rest;
 
-import org.apache.log4j.Logger;
-import org.egov.collection.entity.ReceiptDetail;
-import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
-import org.egov.demand.model.EgBillDetails;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.demand.model.EgBillDetails;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 
 public class CollectionApportioner {
 
@@ -100,7 +101,7 @@ public class CollectionApportioner {
     }
 
     public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
-            FunctionHibernateDAO functionDAO, ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
+            final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
         final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
         LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
         LOGGER.info("billDetails before reApportion " + billDetails);
@@ -111,12 +112,12 @@ public class CollectionApportioner {
         for (final EgBillDetails billDetail : billDetails) {
             final String glCode = billDetail.getGlcode();
             final ReceiptDetail receiptDetail = new ReceiptDetail();
+            receiptDetail.setPurpose(PURPOSE.OTHERS.toString());
             receiptDetail.setOrdernumber(Long.valueOf(billDetail.getOrderNo()));
             receiptDetail.setDescription(billDetail.getDescription());
             receiptDetail.setIsActualDemand(true);
-            if (billDetail.getFunctionCode() != null) {
+            if (billDetail.getFunctionCode() != null)
                 receiptDetail.setFunction(functionDAO.getFunctionByCode(billDetail.getFunctionCode()));
-            }
             receiptDetail.setAccounthead(chartOfAccountsDAO.getCChartOfAccountsByGlCode(glCode));
             receiptDetail.setCramountToBePaid(balance.amount);
             receiptDetail.setDramount(BigDecimal.ZERO);
@@ -174,7 +175,7 @@ public class CollectionApportioner {
             return isGreaterThan(BigDecimal.ZERO);
         }
 
-        private boolean isLessThanOrEqualTo(BigDecimal bd) {
+        private boolean isLessThanOrEqualTo(final BigDecimal bd) {
             return amount.compareTo(bd) <= 0;
         }
 

@@ -198,6 +198,7 @@
 		<module>egov-adtax</module>
 		<module>egov-wtms</module>
 		<module>egov-tl</module> 
+		<module>egov-commonsweb</module>
 		<module>egov-eisweb</module>
 		<module>egov-egiweb</module>
 		<module>egov-egfweb</module>
@@ -214,7 +215,9 @@
 		 <module>egov-tlweb</module> 
 		<module>egov-ear</module>
 		<module>egov-restapi</module>
-	</modules>
+    <module>egov-council</module>
+    <module>egov-councilweb</module>
+  </modules>
 
 	<dependencyManagement>
 		<dependencies>

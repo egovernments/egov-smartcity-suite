@@ -61,11 +61,11 @@ import java.util.List;
 @Entity
 @Table(name = "egtl_demandgenerationlog")
 @SequenceGenerator(name = DemandGenerationLog.SEQ, sequenceName = DemandGenerationLog.SEQ, allocationSize = 1)
-@Unique(fields = { "installmentYear" }, enableDfltMsg = true)
+@Unique(fields = {"installmentYear"}, enableDfltMsg = true)
 public class DemandGenerationLog extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3323170307345697375L;
     public static final String SEQ = "seq_egtl_demandgenerationlog";
+    private static final long serialVersionUID = 3323170307345697375L;
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)

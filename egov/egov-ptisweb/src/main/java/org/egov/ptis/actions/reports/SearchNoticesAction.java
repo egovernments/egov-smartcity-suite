@@ -45,6 +45,7 @@ import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -70,6 +71,7 @@ import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.notice.PtNotice;
@@ -115,8 +117,8 @@ public class SearchNoticesAction extends SearchFormAction {
     private static final long serialVersionUID = 1L;
     protected static final String SUCCESS = "success";
     private static final String ERROR = "error";
-    private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp";
-    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp";
+    private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv";
+    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv";
     private static final String ORDER_BY = " order by notice.noticeDate desc";
     private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
     private String ownerName;
@@ -144,7 +146,7 @@ public class SearchNoticesAction extends SearchFormAction {
     protected FileStoreService fileStoreService;
     @Autowired
     private BoundaryService boundaryService;
-
+  
     public SearchNoticesAction() {
         super();
     }
@@ -177,12 +179,9 @@ public class SearchNoticesAction extends SearchFormAction {
         target = "searchresult";
         super.search();
         noticeList = searchResult.getList();
-        if (noticeList != null && !noticeList.isEmpty()) {
-            LOGGER.debug("Number of notices before owner name (if input given) filter : " + noticeList.size());
-            searchOwnerNamePropType();
-        }
+       
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of notices after owner name (if input given) filter : " + noticeList.size());
+            LOGGER.debug("Number of notices : " + noticeList.size());
             LOGGER.debug("Exit from search method");
         }
 
@@ -441,54 +440,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return propTypeMstr.getType();
     }
 
-    /**
-     * @param noticeList
-     *            This method removes the notices from the list which do not
-     *            match the selected Owner Name and Property Type
-     */
-    private void searchOwnerNamePropType() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into searchOwnerNamePropType method");
-            LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : "
-                    + propertyType);
-            LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
-                    + (noticeList != null ? noticeList.size() : ZERO));
-        }
-        if (ownerName != null && !ownerName.equals("") || propertyType != null && !propertyType.equals("-1")) {
-            final List<PtNotice> noticeRmvList = new ArrayList<PtNotice>();
-            for (final PtNotice notice : noticeList) {
-                final Property prop = notice.getBasicProperty().getProperty();
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Property : " + prop);
-                if (ownerName != null && !ownerName.equals("")) {
-                    boolean isOwnerExist = true;
-                    // TODO PHOENIX If all owner other than current owner is
-                    // required then iterate over Mutation
-                    for (final PropertyOwnerInfo propOwner : notice.getBasicProperty().getPropertyOwnerInfo())
-                        if (!getOwnerName().equalsIgnoreCase(propOwner.getOwner().getName())) {
-                            noticeRmvList.add(notice);
-                            isOwnerExist = false;
-                            break;
-                        }
-                    if (!isOwnerExist)
-                        continue;
-                }
-                if (propertyType != null && !propertyType.equals("-1"))
-                    if (!getPropType(getPropertyType()).equals(
-                            prop.getPropertyDetail().getPropertyTypeMaster().getType()))
-                        noticeRmvList.add(notice);
-            }
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("searchOwnerNamePropType : Number of notices to be removed : "
-                        + (noticeRmvList != null ? noticeRmvList.size() : ZERO));
-            noticeList.removeAll(noticeRmvList);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("searchOwnerNamePropType : Number of notices after removal: "
-                        + (noticeList != null ? noticeList.size() : ZERO));
-            ((EgovPaginatedList) searchResult).setFullListSize(noticeList.size());
-        }
-    }
-
+    
     /**
      * @param basicProperty
      * @return
@@ -517,7 +469,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into prepareQuery method");
             LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
         }
-
+        
         final Map<String, Object> map = getCriteriaString();
 
         return new SearchQueryHQL(prepareSearchQuery(map.get("criteriaString")),
@@ -541,11 +493,17 @@ public class SearchNoticesAction extends SearchFormAction {
         StringBuilder criteriaString = new StringBuilder();
         criteriaString = new StringBuilder(" where notice.noticeType = ?");
         params.add(noticeType);
-
+        
+      
         // To show only the active Demand Bill
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
-            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo ");
-
+            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
+        else
+            criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
+        if (ownerName != null && !ownerName.equals("")) {
+            criteriaString.append(" and pmv.ownerName like ?");
+            params.add("%"+ownerName+"%");
+        }
         if (zoneId != null && !zoneId.equals(-1l)) {
             criteriaString.append(" and bp.propertyID.zone.id = ?");
             params.add(zoneId);
@@ -554,7 +512,10 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString.append(" and bp.propertyID.ward.id = ?");
             params.add(wardId);
         }
-
+        if (propertyType != null && !propertyType.equals("-1")) {
+            criteriaString.append(" and pmv.propTypeMstrID.id = ?");
+            params.add(Long.parseLong(propertyType));
+        }
         if (noticeNumber != null && !noticeNumber.equals("")) {
             criteriaString.append(" and notice.noticeNo = ?");
             params.add(noticeNumber);
@@ -571,7 +532,7 @@ public class SearchNoticesAction extends SearchFormAction {
             params.add(nextDate.getTime());
         }
         if (indexNumber != null && !indexNumber.equals("")) {
-            criteriaString.append(" and bp.upicNo = ?");
+            criteriaString.append(" and pmv.propertyId = ?");
             params.add(indexNumber);
         }
         if (houseNumber != null && !houseNumber.equals("")) {

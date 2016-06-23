@@ -1142,8 +1142,6 @@ public class PropertyExternalService {
         final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(mutationReasonCode);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
-        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
-                null, null, null));
         // Set isBillCreated property value as false
         basicProperty.setIsBillCreated(PropertyTaxConstants.STATUS_BILL_NOTCREATED);
 

@@ -1416,5 +1416,7 @@ public interface PropertyTaxConstants {
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
  
-    
+    public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
+    public static final String SERVICE_CODE_PROPERTYTAX = "PT";
+    public static final String SERVICE_CODE_MUTATION = "PTMF";
 }

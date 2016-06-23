@@ -195,7 +195,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
      * @param ownerAddress
      */
     public void updateOwners(Property property, BasicProperty basicProp, Address ownerAddress) {
-		int orderNo = property.getBasicProperty().getPropertyOwnerInfo().size();
+		int orderNo = 0;
+		basicProp.getPropertyOwnerInfo().clear();
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
             
             if (ownerInfo != null) {

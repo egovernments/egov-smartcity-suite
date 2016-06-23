@@ -82,6 +82,7 @@ public class WaterTaxConstants {
     public static final String REVENUE_WARD = "WARD";
     public static final String SYSTEM = "SYSTEM";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String  EDITCOLLECTION ="EDITCOLLECTION";
    
     
     

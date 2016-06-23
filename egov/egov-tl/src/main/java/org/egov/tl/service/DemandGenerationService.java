@@ -58,6 +58,7 @@ import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.utils.Constants;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +104,9 @@ public class DemandGenerationService {
 
     @Autowired
     public DemandGenerationLogService demandGenerationLogService;
+
+    @PersistenceContext
+    public EntityManager entityManager;
 
     public List<CFinancialYear> financialYearList() {
         return cFinancialYearRepository.getAllFinancialYears();
@@ -164,8 +170,8 @@ public class DemandGenerationService {
 
     private void batchUpdateFlush(final int batchUpdateCount, final int batchSize) {
         if (batchUpdateCount % batchSize == 0) {
-            tradeLicenseService.licensePersitenceService().getSession().flush();
-            tradeLicenseService.licensePersitenceService().getSession().clear();
+            entityManager.unwrap(Session.class).flush();
+            entityManager.unwrap(Session.class).flush();
         }
     }
 
@@ -229,7 +235,7 @@ public class DemandGenerationService {
             license.getLicenseDemand().setEgInstallmentMaster(currentInstallment);
         }
         tradeLicenseService.recalculateBaseDemand(license.getLicenseDemand());
-        tradeLicenseService.licensePersitenceService().persist(license);
+        tradeLicenseService.save(license);
     }
 
     public Map<EgDemandReason, EgDemandDetails> getReasonWiseDemandDetails(final EgDemand currentDemand) {

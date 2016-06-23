@@ -40,22 +40,81 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-public class Licensee extends BaseModel {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_LICENSEE")
+@SequenceGenerator(name = Licensee.SEQUENCE, sequenceName = Licensee.SEQUENCE, allocationSize = 1)
+public class Licensee extends AbstractAuditable {
     private static final long serialVersionUID = 6723590685484215531L;
-    @Required(message = "licensee.name.err.required")
+
+    public static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
+
+    @NotBlank(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
+    @SafeHtml
+    @Column(name = "APPLICANT_NAME")
     private String applicantName;
+
+    @SafeHtml
+    @Length(max = 256)
+    @Column(name = "FATHER_SPOUSE_NAME")
     private String fatherOrSpouseName;
+
+    @SafeHtml
+    @Length(max = 16)
+    @Column(name = "MOBILE_PHONENUMBER")
     private String mobilePhoneNumber;
+
+    @SafeHtml
+    @Length(max = 16)
+    @Column(name = "UNIQUEID")
     private String uid;
+
+    @SafeHtml
+    @Length(max = 64)
+    @Column(name = "EMAIL_ID")
     private String emailId;
+
+    @NotBlank
+    @Length(min = 1, max = 250)
+    @SafeHtml
+    @Column(name = "ADDRESS")
     private String address;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_LICENSE")
     private License license;
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
 
     public String getMobilePhoneNumber() {
         return mobilePhoneNumber;

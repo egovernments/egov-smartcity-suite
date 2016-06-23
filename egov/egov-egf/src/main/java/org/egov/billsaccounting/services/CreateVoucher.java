@@ -1270,8 +1270,7 @@ public class CreateVoucher {
 				LOGGER.error(ERR, e);
 				throw new ApplicationRuntimeException(e.getMessage());
 			}
-			vh.setCreatedBy(userMngr.getUserById(Long.valueOf(ApplicationThreadLocals
-					.getUserId())));
+			voucherService.applyAuditing(vh);
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("++++++++++++++++++" + vh.toString());
 			voucherService.persist(vh);
@@ -1288,6 +1287,7 @@ public class CreateVoucher {
 				sourcePath.append(vh.getVouchermis().getSourcePath()).append(
 						vh.getId().toString());
 				vh.getVouchermis().setSourcePath(sourcePath.toString());
+				voucherService.applyAuditing(vh);
 				voucherService.update(vh);
 			}
 

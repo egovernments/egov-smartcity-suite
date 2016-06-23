@@ -547,7 +547,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);
-        propService.setWFPropStatValActive(basicProp);
+        if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+	        basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROP_CREATE_RSN, null, null,
+	                null, null, getParentIndex()));
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
@@ -795,8 +797,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
-                null, null, getParentIndex()));
         basicProperty.setBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
@@ -1137,8 +1137,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-updateDataEntry")
     public String updateDataEntry() {
-    	if(StringUtils.isNotBlank(propertyCategory))
-    		property.getPropertyDetail().setCategoryType(propertyCategory);
     	if (LOGGER.isDebugEnabled())
             LOGGER.debug("update data entry: Property updation started, Property: " + property + ", UpicNo: " + basicProp.getUpicNo()
             		+ ", zoneId: " + zoneId + ", wardId: " + wardId + ", blockId: " + blockId + ", areaOfPlot: " + areaOfPlot
@@ -1146,7 +1144,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     + propTypeId + ", propUsageId: " + propUsageId + ", propOccId: " + propOccId);
     	validate();
         if (hasErrors()){
-        	populateFormData();
+        	upicNo = indexNumber;
             return EDIT_DATA_ENTRY;
         }
     	basicProp.setRegdDocDate(property.getBasicProperty().getRegdDocDate());

@@ -251,6 +251,10 @@
 			<artifactId>jasperreports-javaflow</artifactId>
 		</dependency>
 		<dependency>
+		    <groupId>commons-javaflow</groupId>
+		    <artifactId>commons-javaflow</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 		</dependency>

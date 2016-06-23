@@ -58,6 +58,7 @@ public class DashboardHomeController {
     public String home() {
         return "home";
     }
+
     @RequestMapping("/erpReports")
     public String erpReports() {
         return "erpReports";
@@ -65,7 +66,7 @@ public class DashboardHomeController {
 
 
     @RequestMapping("/{moduleName}")
-    public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {
+    public String kibanaDashboard(@PathVariable final String moduleName, final Model model) {
         final String kibanaURL = dashboardProperties.getProperty("kibana.url." + moduleName);
         if (StringUtils.isNotBlank(kibanaURL)) {
             model.addAttribute("kibanaurl",kibanaURL.replaceAll("<city_name>", ApplicationThreadLocals.getCityName()));

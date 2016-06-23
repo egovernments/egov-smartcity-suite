@@ -56,72 +56,86 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name="egtl_feematrix_detail")
-@SequenceGenerator(name=FeeMatrixDetail.SEQ,sequenceName=FeeMatrixDetail.SEQ, allocationSize = 1)
+@Table(name = "egtl_feematrix_detail")
+@SequenceGenerator(name = FeeMatrixDetail.SEQ, sequenceName = FeeMatrixDetail.SEQ, allocationSize = 1)
 public class FeeMatrixDetail extends AbstractPersistable<Long> {
-	public static final String SEQ="seq_egtl_feematrix_detail";
-    private static final long serialVersionUID = 1L;
-	
-	@Id
+    public static final String SEQ = "seq_egtl_feematrix_detail";
+    private static final long serialVersionUID = -1477850420070873621L;
+
+    @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	 private Long id;
-	
-	@ManyToOne
-    @JoinColumn(name = "feeMatrix", nullable = false)
-	private FeeMatrix feeMatrix;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "feeMatrix")
+    private FeeMatrix feeMatrix;
 
     private Integer uomFrom;
 
     private Integer uomTo;
-    
+
     private Double percentage;
+
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
-  
+
     private BigDecimal amount;
-	public Long getId() {
-		return id;
-	}
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Integer getUomFrom() {
-		return uomFrom;
-	}
-	public void setUomFrom(Integer uomFrom) {
-		this.uomFrom = uomFrom;
-	}
-	public Integer getUomTo() {
-		return uomTo;
-	}
-	public void setUomTo(Integer uomTo) {
-		this.uomTo = uomTo;
-	}
-	public Double getPercentage() {
-		return percentage;
-	}
-	public void setPercentage(Double percentage) {
-		this.percentage = percentage;
-	}
-	public Date getFromDate() {
-		return fromDate;
-	}
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-	
-	public BigDecimal getAmount() {
-		return amount;
-	}
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-	public FeeMatrix getFeeMatrix() {
-		return feeMatrix;
-	}
-	public void setFeeMatrix(FeeMatrix feeMatrix) {
-		this.feeMatrix = feeMatrix;
-	}
-	
+
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getUomFrom() {
+        return uomFrom;
+    }
+
+    public void setUomFrom(Integer uomFrom) {
+        this.uomFrom = uomFrom;
+    }
+
+    public Integer getUomTo() {
+        return uomTo;
+    }
+
+    public void setUomTo(Integer uomTo) {
+        this.uomTo = uomTo;
+    }
+
+    public Double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(Double percentage) {
+        this.percentage = percentage;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public FeeMatrix getFeeMatrix() {
+        return feeMatrix;
+    }
+
+    public void setFeeMatrix(FeeMatrix feeMatrix) {
+        this.feeMatrix = feeMatrix;
+    }
+
 }

@@ -40,6 +40,16 @@
 
 package org.egov.pgr.repository.dashboard;
 
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -47,15 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 @Repository
 @SuppressWarnings("all")
@@ -120,36 +121,40 @@ public class DashboardRepository {
         return qry.list();
     }
 
-    public List<Object[]> fetchTopComplaintsBetween(Date fromDate,  Date toDate) {
+    public List<Object[]> fetchTopComplaintsBetween(final Date fromDate, final Date toDate) {
         return fetchDateRangeData("pgr.top.comp.types", fromDate, toDate);
-    }
-    
+    } 
+
     private List<Object[]> fetchDateRangeData(final String query, final Date fromDate, final Date toDate) {
         final SQLQuery qry = getQuery(query);
         qry.setParameter("fromDate", fromDate);
         qry.setParameter("toDate", toDate);
         return qry.list();
     }
-    
+
     public List<Object[]> fetchGISCompPerPropertyWardWise() {
-		final SQLQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
-		return qry.list();
-	}
-    
+        final SQLQuery qry = getQuery("pgr.comp.per.property.six.month.wardwise");
+        return qry.list();
+    }
+
     public List<Object[]> fetchGISCompRedressedWardWise() {
-    	final SQLQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
-    	return qry.list();
+        final SQLQuery qry = getQuery("pgr.comp.redressed.six.month.wardwise");
+        return qry.list();
     }
-    
+
     public List<Object[]> fetchGISRegCompWardWise() {
-    	final SQLQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
-    	return qry.list();
+        final SQLQuery qry = getQuery("pgr.comp.reg.six.month.wardwise");
+        return qry.list();
     }
-    
 
     private SQLQuery getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
                 .createSQLQuery(dashboardSQLSource.getMessage(sqlKey, null, Locale.getDefault()));
+    }
+
+    public List<Object[]> fetchTopComplaintsForCurrentMonthBetween(final Date fromDate, final Date toDate) {
+        return fetchDateRangeData("pgr.top.comp.types.current.month", fromDate, toDate);
+
     }
 
 }

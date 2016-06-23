@@ -40,18 +40,46 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-@Unique(fields = { "name" }, id = "id", tableName = "EGTL_MSTR_BUSINESS_NATURE", columnName = { "NAME" }, message = "masters.tradenature.isunique")
-public class NatureOfBusiness extends BaseModel {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_MSTR_BUSINESS_NATURE")
+@SequenceGenerator(name = NatureOfBusiness.SEQUENCE, sequenceName = NatureOfBusiness.SEQUENCE, allocationSize = 1)
+@Unique(fields = {"name"}, message = "masters.tradenature.isunique")
+@NamedQuery(name = "NATUREOFBUSINESS_BY_NAME", query = "select nfb FROM NatureOfBusiness nfb where name =:name")
+public class NatureOfBusiness extends AbstractPersistable<Long> {
+    public static final String BY_NAME = "NATUREOFBUSINESS_BY_NAME";
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_BUSINESS_NATURE";
     private static final long serialVersionUID = 5631753833454331638L;
-    @Required(message = "tradelic.master.tradenature.null")
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotBlank(message = "tradelic.master.tradenature.null")
     @Length(max = 256, message = "masters.tradenature.length")
     private String name;
-    public static final String BY_NAME = "NATUREOFBUSINESS_BY_NAME";
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -60,5 +88,4 @@ public class NatureOfBusiness extends BaseModel {
     public void setName(final String name) {
         this.name = name;
     }
-
 }

@@ -53,9 +53,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -70,8 +68,9 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseChecklistHelper;
+import org.egov.tl.utils.LicenseNumberUtils;
 import org.hibernate.CacheMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -81,9 +80,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,16 +102,13 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     @Qualifier("entityQueryService")
-    protected PersistenceService persistenceService;
+    protected PersistenceService entityQueryService;
 
     @Autowired
     protected InstallmentHibDao installmentDao;
 
     @Autowired
-    protected SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    protected ApplicationNumberGenerator applicationNumberGenerator;
+    protected LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
     protected AssignmentService assignmentService;
@@ -130,7 +124,7 @@ public abstract class AbstractLicenseService<T extends License> {
     protected PersistenceService<LicenseDocumentType, Long> licenseDocumentTypeService;
 
     @Autowired
-    private TradeLicenseUpdateIndexService updateIndexService;
+    protected TradeLicenseUpdateIndexService updateIndexService;
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -143,11 +137,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected SimpleWorkflowService<T> licenseWorkflowService;
 
-    protected PersistenceService<T, Long> licensePersitenceService;
-
-    public AbstractLicenseService(PersistenceService<T, Long> licensePersitenceService) {
-        this.licensePersitenceService = licensePersitenceService;
-    }
+    @Autowired
+    protected LicenseRepository licenseRepository;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -159,38 +150,33 @@ public abstract class AbstractLicenseService<T extends License> {
 
     protected abstract void sendEmailAndSMS(T license, String currentAction);
 
-    public PersistenceService<T, Long> licensePersitenceService() {
-        return this.licensePersitenceService;
-    }
-
     public void setLicenseWorkflowService(SimpleWorkflowService<T> licenseWorkflowService) {
         this.licenseWorkflowService = licenseWorkflowService;
     }
 
     public T getLicenseById(Long id) {
-        return this.licensePersitenceService.findById(id, false);
+        return (T) this.licenseRepository.findOne(id);
     }
 
     @Transactional
     public void create(T license, WorkflowBean workflowBean) {
-        license.setLicenseAppType((LicenseAppType) persistenceService.find("from  LicenseAppType where name='New' "));
+        license.setLicenseAppType((LicenseAppType) entityQueryService.find("from  LicenseAppType where name='New' "));
         raiseNewDemand(license);
         license.getLicensee().setLicense(license);
-        license.setStatus((LicenseStatus) this.persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
+        license.setStatus((LicenseStatus) this.entityQueryService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACKNOWLEDGED));
-        EgwStatus statusChange = (EgwStatus) this.persistenceService.find(
+        EgwStatus statusChange = (EgwStatus) this.entityQueryService.find(
                 "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                 Constants.APPLICATION_STATUS_CREATED_CODE);
         license.setEgwStatus(statusChange);
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
-        licensePersitenceService.applyAuditing(license);
-        processAndStoreDocument(license.getDocuments());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        processAndStoreDocument(license.getDocuments(), license);
         transitionWorkFlow(license, workflowBean);
         license.getState().setCreatedBy(license.getCreatedBy());
         license.getState().setCreatedDate(new Date());
         license.getState().setLastModifiedBy(license.getCreatedBy());
         license.getState().setLastModifiedDate(new Date());
-        licensePersitenceService.persist(license);
+        licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);
 
@@ -269,22 +255,21 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void createLegacyLicense(T license, Map<Integer, Integer> legacyInstallmentwiseFees,
                                     Map<Integer, Boolean> legacyFeePayStatus) {
-        if (!licensePersitenceService.findAllBy("from License where oldLicenseNumber = ?", license.getOldLicenseNumber())
+        if (!licenseRepository.findByOldLicenseNumber(license.getOldLicenseNumber())
                 .isEmpty())
             throw new ValidationException("TL-001", "TL-001", license.getOldLicenseNumber());
         this.addLegacyDemand(legacyInstallmentwiseFees, legacyFeePayStatus, license);
-        processAndStoreDocument(license.getDocuments());
-        license.setLicenseAppType((LicenseAppType) persistenceService.find("from  LicenseAppType where name='New' "));
+        processAndStoreDocument(license.getDocuments(), license);
+        license.setLicenseAppType((LicenseAppType) entityQueryService.find("from  LicenseAppType where name='New' "));
         license.getLicensee().setLicense(license);
-        license.setStatus((LicenseStatus) this.persistenceService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
+        license.setStatus((LicenseStatus) this.entityQueryService.find("from org.egov.tl.entity.LicenseStatus where name=? ",
                 Constants.LICENSE_STATUS_ACTIVE));
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         license.setLegacy(true);
         license.setActive(true);
-        licensePersitenceService.applyAuditing(license);
-        license.generateLicenseNumber(this.getNextRunningLicenseNumber("egtl_license_number"));
+        license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
         this.validityService.applyLicenseValidity(license);
-        licensePersitenceService.persist(license);
+        licenseRepository.save(license);
     }
 
     private void addLegacyDemand(Map<Integer, Integer> legacyInstallmentwiseFees,
@@ -322,9 +307,8 @@ public abstract class AbstractLicenseService<T extends License> {
     public void updateLegacyLicense(T license, Map<Integer, Integer> updatedInstallmentFees,
                                     Map<Integer, Boolean> legacyFeePayStatus) {
         this.updateLegacyDemand(license, updatedInstallmentFees, legacyFeePayStatus);
-        licensePersitenceService.applyAuditing(license);
-        processAndStoreDocument(license.getDocuments());
-        licensePersitenceService.persist(license);
+        processAndStoreDocument(license.getDocuments(), license);
+        licenseRepository.save(license);
     }
 
     private void updateLegacyDemand(T license, Map<Integer, Integer> updatedInstallmentFees,
@@ -382,18 +366,14 @@ public abstract class AbstractLicenseService<T extends License> {
         }
     }
 
-    public Serializable getNextRunningLicenseNumber(String sequenceName) {
-        return this.sequenceNumberGenerator.getNextSequence(sequenceName);
-    }
-
     @Transactional
     public void renew(T license, WorkflowBean workflowBean) {
-        license.setApplicationNumber(this.applicationNumberGenerator.generate());
+        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.findFeeList(license), license);
-        LicenseStatus status = (LicenseStatus) this.persistenceService.find(
+        LicenseStatus status = (LicenseStatus) this.entityQueryService.find(
                 "from org.egov.tl.entity.LicenseStatus where name=? ", Constants.LICENSE_STATUS_ACKNOWLEDGED);
         license.setStatus(status);
-        EgwStatus statusChange = (EgwStatus) this.persistenceService.find(
+        EgwStatus statusChange = (EgwStatus) this.entityQueryService.find(
                 "from org.egov.commons.EgwStatus where moduletype=? and code=?", Constants.TRADELICENSEMODULE,
                 Constants.APPLICATION_STATUS_CREATED_CODE);
         license.setEgwStatus(statusChange);
@@ -401,15 +381,14 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         User currentUser = this.securityUtils.getCurrentUser();
         if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-            pos = (Position) this.persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+            pos = (Position) this.entityQueryService.find("from Position where id=?", workflowBean.getApproverPositionId());
         WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
         license.reinitiateTransition().start().withSenderName(currentUser.getUsername() + "::" + currentUser.getName())
                 .withComments(workflowBean.getApproverComments())
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(pos)
                 .withNextAction(wfmatrix.getNextAction());
-        licensePersitenceService.applyAuditing(license);
-        this.licensePersitenceService.persist(license);
+        this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);
     }
@@ -448,10 +427,10 @@ public abstract class AbstractLicenseService<T extends License> {
                     .withDateInfo(currentDate.toDate());
         else {
             if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = (Position) this.persistenceService.find("from Position where id=?", workflowBean.getApproverPositionId());
+                pos = (Position) this.entityQueryService.find("from Position where id=?", workflowBean.getApproverPositionId());
             if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 Assignment commissionerUsr = this.assignmentService.getPrimaryAssignmentForUser(user.getId());
-                pos = (Position) this.persistenceService.find("from Position where id=?", commissionerUsr.getPosition().getId());
+                pos = (Position) this.entityQueryService.find("from Position where id=?", commissionerUsr.getPosition().getId());
             }
             if (null == license.getState()) {
                 WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
@@ -481,9 +460,10 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void processAndStoreDocument(List<LicenseDocument> documents) {
+    public void processAndStoreDocument(List<LicenseDocument> documents, License license) {
         documents.forEach(document -> {
             if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
+                document.setLicense(license);
                 int fileCount = 0;
                 for (File file : document.getUploads()) {
                     FileStoreMapper fileStore = this.fileStoreService.store(file,
@@ -493,25 +473,24 @@ public abstract class AbstractLicenseService<T extends License> {
                 }
             }
             document.setType(this.licenseDocumentTypeService.load(document.getType().getId(), LicenseDocumentType.class));
-            this.persistenceService.applyAuditing(document);
         });
     }
 
     public List<LicenseDocumentType> getDocumentTypesByTransaction(String transaction) {
-        return this.persistenceService.findAllBy("from LicenseDocumentType where applicationType = ?",
+        return this.entityQueryService.findAllBy("from LicenseDocumentType where applicationType = ?",
                 transaction);
     }
 
     public List<NatureOfBusiness> getAllNatureOfBusinesses() {
-        return this.persistenceService.findAllBy("from NatureOfBusiness order by name");
+        return this.entityQueryService.findAllBy("from NatureOfBusiness order by name");
     }
 
     public T getLicenseByLicenseNumber(String licenseNumber) {
-        return this.licensePersitenceService.find("from License where licenseNumber=?", licenseNumber);
+        return (T)this.licenseRepository.findByLicenseNumber(licenseNumber);
     }
 
     public T getLicenseByApplicationNumber(String applicationNumber) {
-        return this.licensePersitenceService.find("from License where applicationNumber=?", applicationNumber);
+        return (T)this.licenseRepository.findByApplicationNumber(applicationNumber);
     }
 
     public List<Installment> getLastFiveYearInstallmentsForLicense() {
@@ -548,9 +527,14 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     public List<T> getAllLicensesByNatureOfBusiness(String natureOfBusiness) {
-        return this.licensePersitenceService.getSession().createCriteria(License.class)
+        return this.entityQueryService.getSession().createCriteria(License.class)
                 .createAlias("natureOfBusiness", "nb", JoinType.LEFT_OUTER_JOIN).add(Restrictions.eq("nb.name", natureOfBusiness))
                 .setCacheMode(CacheMode.IGNORE).list();
+    }
+
+    @Transactional
+    public void save(License license) {
+        licenseRepository.save(license);
     }
 
 }
