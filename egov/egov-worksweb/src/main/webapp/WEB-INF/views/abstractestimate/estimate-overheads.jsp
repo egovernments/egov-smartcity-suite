@@ -56,6 +56,7 @@
 		<table class="table table-bordered" id="overheadTable">
 			<thead>
 				<tr>
+					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.name"/></th>
 					<th><spring:message code="lbl.percentage"/></th>
 					<th><spring:message code="lbl.amount"/></th>
@@ -66,6 +67,7 @@
 				<c:choose>
 					<c:when test="${abstractEstimate.overheadValues.size() == 0}">
 						<tr id="overheadRow">
+							<td><span id="sno" class="spansno" data-sno>1</span>
 							<td>
 								<form:select path="" data-first-option="false" name="overheadValues[0].name" id="overheadValues[0].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
 									<form:option value="">
@@ -127,6 +129,7 @@
 					<c:otherwise>
 						<c:forEach items="${abstractEstimate.overheadValues}" var="overheadValue" varStatus="item">
 							<tr id="overheadRow">
+								<td><span id="sno" class="spansno" data-sno><c:out value="${item.index + 1}"/></span>
 								<td>
 									<form:select path="" data-first-option="false" name="overheadValues[${item.index }].name" id="overheadValues[${item.index }].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
 										<form:option value="">
@@ -219,9 +222,9 @@
 		</table>
 		<table class="table table-bordered" >
 			<tr>
-				<td width="64.5%" style="text-align:right"><spring:message code="lbl.total" /></td>
+				<td width="66.5%" style="text-align:right"><spring:message code="lbl.total" /></td>
 				<td class="text-right"> <span id="overheadTotalAmount">0.00</span> </td>
-				<td width="10%"></td>
+				<td width="8.8%"></td>
 			</tr>
 		</table>
 		<div class="panel-title">
