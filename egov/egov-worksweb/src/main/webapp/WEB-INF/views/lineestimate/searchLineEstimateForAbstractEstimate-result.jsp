@@ -38,25 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-		<form:form name="lineEstimateSearchForm" role="form" action="" modelAttribute="lineEstimatesForAbstractEstimate" id="lineEstimatesearchform" class="form-horizontal form-groups-bordered">
-			<div class="row">
-				<div class="col-md-12">
-					<jsp:include page="searchLineEstimateForAbstractEstimate-form.jsp"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12 text-center">
-					<button type='button' class='btn btn-primary' id="btnsearch">
-						<spring:message code='lbl.search' />
-					</button>
-				</div>
-			</div>
-		</form:form>  
-<jsp:include page="lineEstimateForAbstractEstimate-searchresults.jsp"/>
-
-<script src="<c:url value='/resources/js/lineestimate/searchlineestimateforabstractestimatehelper.js?rnd=${app_release_no}'/>"></script>
+<div class="display-hide report-section">
+	<div class="table-header text-left">
+		<spring:message code="title.lineestimate.search" /></div>
+	<div id="errorMessage" style="display: none;"><spring:message code="error.lineestimate.ae.search" /></div>
+	<div class="form-group report-table-container">
+		<table class="table table-bordered table-responsive table-hover"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.selectonly" /></th>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.proceedingnumber" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.nameofthework" /></th>
+					<th><spring:message code="lbl.workidentificationnumber" /></th>
+					<th><spring:message code="lbl.createdby" /></th>
+					<th><spring:message code="lbl.adminsanctionby" /></th>
+					<th><spring:message code="lbl.adminsanctionedamount" /></th>
+				</tr>
+			</thead>
+			<tbody class="no-pointer">
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 text-center">
+			<button type='button' class='btn btn-primary' id="btncreateae">
+				<spring:message code='lbl.createae' />
+			</button> &nbsp;
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+		</div>
+	</div>
+</div>

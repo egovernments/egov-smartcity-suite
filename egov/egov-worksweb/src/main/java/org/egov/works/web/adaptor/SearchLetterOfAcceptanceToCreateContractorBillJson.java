@@ -46,11 +46,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,10 +58,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 @Component
-public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonSerializer<WorkOrder> {
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
+public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonSerializer<WorkOrderEstimate> {
 
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
@@ -72,42 +67,41 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
     private MBHeaderService mBHeaderService;
 
     @Override
-    public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final JsonObject jsonObject = new JsonObject();
-        if (workOrder != null) {
-            if (workOrder.getWorkOrderNumber() != null)
-                jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
+        if (workOrderEstimate.getWorkOrder().getWorkOrderNumber() != null) {
+            if (workOrderEstimate.getWorkOrder().getWorkOrderNumber() != null)
+                jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
             else
                 jsonObject.addProperty("workOrderNumber", "");
-            if (workOrder.getWorkOrderDate() != null)
-                jsonObject.addProperty("workOrderDate", formatter.format(workOrder.getWorkOrderDate()));
+            if (workOrderEstimate.getWorkOrder().getWorkOrderDate() != null)
+                jsonObject.addProperty("workOrderDate", formatter.format(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
             else
                 jsonObject.addProperty("workOrderDate", "");
-            if (workOrder.getContractor() != null) {
-                jsonObject.addProperty("contractor", workOrder.getContractor().getName());
-                jsonObject.addProperty("contractorcode", workOrder.getContractor().getCode());
+            if (workOrderEstimate.getWorkOrder().getContractor() != null) {
+                jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
+                jsonObject.addProperty("contractorcode", workOrderEstimate.getWorkOrder().getContractor().getCode());
             } else {
                 jsonObject.addProperty("contractor", "");
                 jsonObject.addProperty("contractorcode", "");
             }
 
-            if (workOrder.getEstimateNumber() != null) {
-                jsonObject.addProperty("estimateNumber", workOrder.getEstimateNumber());
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-                final String nameOfWork = led.getNameOfWork();
-                jsonObject.addProperty("nameOfWork", nameOfWork);
-                final String workIdentificationNumber = led.getProjectCode().getCode();
-                jsonObject.addProperty("workIdentificationNumber", workIdentificationNumber);
+            if (workOrderEstimate.getEstimate().getEstimateNumber() != null) {
+                jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
+                jsonObject.addProperty("nameOfWork", workOrderEstimate.getEstimate().getName());
+                jsonObject.addProperty("workIdentificationNumber", workOrderEstimate.getEstimate().getProjectCode().getCode());
             } else
                 jsonObject.addProperty("estimateNumber", "");
 
-            jsonObject.addProperty("isMileStoneCreated", letterOfAcceptanceService.checkIfMileStonesCreated(workOrder));
-            jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
+            jsonObject.addProperty("isMileStoneCreated",
+                    letterOfAcceptanceService.checkIfMileStonesCreated(workOrderEstimate.getWorkOrder()));
+            jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
 
-            jsonObject.addProperty("id", workOrder.getId());
-            if (workOrder.getId() != null) {
-                List<MBHeader> mbHeaders = mBHeaderService.getMBHeadersByWorkOrderId(workOrder.getId());
+            jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
+            if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates() != null) {
+                List<MBHeader> mbHeaders = mBHeaderService
+                        .getApprovedMBsForContractorBillByWorkOrderEstimateId(workOrderEstimate.getId());
                 if (!mbHeaders.isEmpty()) {
                     String mbRefNumbers = "";
                     BigDecimal mbAmount = BigDecimal.ZERO;
@@ -123,8 +117,8 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
                     jsonObject.addProperty("mbAmount", "NA");
                 }
             }
-            if (workOrder.getWorkOrderEstimates() != null)
-                jsonObject.addProperty("aeId", workOrder.getWorkOrderEstimates().get(0).getEstimate().getId());
+            if (workOrderEstimate.getEstimate() != null)
+                jsonObject.addProperty("aeId", workOrderEstimate.getEstimate().getId());
         }
         return jsonObject;
     }

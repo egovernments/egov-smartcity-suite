@@ -108,7 +108,7 @@ public class SearchLineEstimateController {
         model.addAttribute("lineEstimatesForAbstractEstimate", lineEstimatesForAbstractEstimate);
         model.addAttribute("lineEstimateCreatedByUsers", lineEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
-        return "searchLineEstimateForAbstractEstimate-form";
+        return "searchLineEstimateForAbstractEstimate-search";
     }
 
     private void setDropDownValues(final Model model) {

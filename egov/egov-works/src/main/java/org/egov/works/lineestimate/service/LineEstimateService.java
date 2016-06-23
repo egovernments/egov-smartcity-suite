@@ -323,8 +323,8 @@ public class LineEstimateService {
             filterConditions.append(" and lineEstimate.createdBy.id =:createdBy ");
         if (lineEstimatesForAbstractEstimate.getWorkIdentificationNumber() != null)
             filterConditions.append(" and upper(projectCode.code) =:projectCode ");
-
-        filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
+        if (lineEstimatesForAbstractEstimate.isSpillOverFlag())
+            filterConditions.append(" and lineEstimate.spillOverFlag =:spillOverFlag ");
 
         // Getting LineEstimateDetails where LineEstimate status is ADMINISTRATIVE_SANCTIONED or TECHNICAL_SANCTIONED and
         // AbstractEstimate,WorkOrder is
@@ -376,7 +376,8 @@ public class LineEstimateService {
             Query query) {
         query.setParameter("wostatus", WorksConstants.CANCELLED_STATUS);
         query.setParameter("aestatus", WorksConstants.CANCELLED_STATUS);
-        query.setParameter("spillOverFlag", lineEstimatesForAbstractEstimate.isSpillOverFlag());
+        if (lineEstimatesForAbstractEstimate.isSpillOverFlag())
+            query.setParameter("spillOverFlag", lineEstimatesForAbstractEstimate.isSpillOverFlag());
         if (lineEstimatesForAbstractEstimate.getAdminSanctionNumber() != null)
             query.setParameter("adminSanctionNumber", lineEstimatesForAbstractEstimate.getAdminSanctionNumber());
         if (lineEstimatesForAbstractEstimate.getExecutingDepartment() != null)
@@ -412,9 +413,9 @@ public class LineEstimateService {
 
     public List<String> findEstimateNumbersForAbstractEstimate(final String name) {
         List<String> lineEstimateNumbers = new ArrayList<String>();
-        lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name + "%",
+        lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name.toUpperCase() + "%",
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
-        lineEstimateNumbers.addAll(lineEstimateDetailsRepository.findEstimateNumbersForAbstractEstimate("%" + name + "%",
+        lineEstimateNumbers.addAll(lineEstimateDetailsRepository.findEstimateNumbersForAbstractEstimate("%" + name.toUpperCase() + "%",
                 LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS));
 
         return lineEstimateNumbers;

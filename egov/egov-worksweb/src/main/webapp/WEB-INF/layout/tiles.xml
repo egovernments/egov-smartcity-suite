@@ -246,9 +246,9 @@
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
     </definition>
     
-    <definition name="searchLineEstimateForAbstractEstimate-form" extends="base_layout">
+    <definition name="searchLineEstimateForAbstractEstimate-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.createae" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-header.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForAbstractEstimate-search.jsp"/>
     </definition>
     
     <definition name="newAbstractEstimate-form" extends="base_layout">
