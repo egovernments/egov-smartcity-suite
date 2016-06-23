@@ -40,6 +40,8 @@
 
 
 jQuery('#btnsearch').click(function(e) {
+	fromDate = "";
+	toDate = "";
 	if($('#fromDate').val() != "") {
 		fromDate = $('#fromDate').data('datepicker').date;
 	}

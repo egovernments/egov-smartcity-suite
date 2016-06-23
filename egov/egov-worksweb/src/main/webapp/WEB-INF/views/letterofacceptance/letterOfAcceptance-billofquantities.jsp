@@ -57,6 +57,8 @@
 					<c:when test="${abstractEstimate.activities.size() != 0}">
 						<c:forEach items="${abstractEstimate.getSORActivities()}" var="sorDtls" varStatus="item">
 								<tr >
+									<c:set var="slNo" value="${0}" scope="session" />
+									<c:set var="slNo" value="${item.index + 1}" />  
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
 									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
@@ -72,7 +74,8 @@
 						</c:forEach>
 						<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
 								<tr >
-									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+									<c:set var="slNo" value="${ slNo + 1 }" />  
+									<td><span class="spansno"><c:out value="${slNo}" /></span></td>
 									<td></td>
 									<td></td>
 									<td><c:out value="${nonSorDtls.quantity}"></c:out></td>

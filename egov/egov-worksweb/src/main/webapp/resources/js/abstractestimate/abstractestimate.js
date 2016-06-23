@@ -1812,7 +1812,7 @@ function getUnitRate(uom,estimateRate){
 	var exceptionalUOMArray = $.makeArray( exceptionalUOMValues );
 	$.map( exceptionalUOMArray, function( val, i ) {
 		if(val.split(",")[0] == uom)
-			unitRate = parseFloat( parseFloat(estimateRate) * parseFloat( val.split(",")[1] ) / 100).toFixed(2);
+			unitRate = parseFloat( parseFloat(estimateRate) / parseFloat( val.split(",")[1] )).toFixed(2);
 	});
 	if(unitRate!=0)
 		return unitRate;
