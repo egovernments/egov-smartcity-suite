@@ -177,6 +177,7 @@ $(document).ready(function(){
 	    		$('.number-sign button').html('<span class="sign-text">-</span> &nbsp;<span class="caret"></span>');
 	    	else
 	    		$('.number-sign button').html('<span class="sign-text">+</span> &nbsp;<span class="caret"></span>');
+	    	calculateAgreementAmount();	
 		}
 
 		function assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage){

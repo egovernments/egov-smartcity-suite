@@ -109,7 +109,9 @@
 					</c:when>
 					<c:otherwise>
 						<%-- <button type="button" id="viewAEPdf" class="btn btn-primary"><spring:message code="lbl.viewpdf" /></button> --%>
-	                    <a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
+						<c:if test="${abstractEstimate.state !=null && !abstractEstimate.state.value.equalsIgnoreCase('NEW')}">
+	                    	<a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
+	                    </c:if>
 	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</c:otherwise>
 				</c:choose>

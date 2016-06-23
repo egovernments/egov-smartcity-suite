@@ -335,6 +335,7 @@ public class LetterOfAcceptanceService {
         WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
                 : null;
         if (workOrderEstimate != null) {
+            workOrderEstimate.getAssetValues().clear();
             for (AssetsForEstimate assetsForEstimate : workOrderEstimate.getEstimate().getAssetValues()) {
                 assetsForWorkOrder = new AssetsForWorkOrder();
                 assetsForWorkOrder.setAsset(assetsForEstimate.getAsset());
@@ -356,6 +357,7 @@ public class LetterOfAcceptanceService {
         WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates() != null ? workOrder.getWorkOrderEstimates().get(0)
                 : null;
         if (workOrderEstimate != null) {
+            workOrderEstimate.getWorkOrderActivities().clear();
             for (Activity activity : workOrderEstimate.getEstimate().getActivities()) {
                 workOrderActivity = new WorkOrderActivity();
                 if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
@@ -365,7 +367,7 @@ public class LetterOfAcceptanceService {
                     workOrderActivity.setApprovedRate(activity.getRate());
                 workOrderActivity.setApprovedQuantity(activity.getQuantity());
                 workOrderActivity
-                        .setApprovedQuantity(workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
+                        .setApprovedAmount(workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
                 workOrderActivity.setActivity(activity);
                 workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
                 if (activity.getSchedule() != null)

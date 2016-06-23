@@ -696,7 +696,7 @@ public class EstimateService {
                 criteria.add(Restrictions.ilike("pc.code", searchAbstractEstimate.getWorkIdentificationNumber(),
                         MatchMode.ANYWHERE));
             if (searchAbstractEstimate.getStatus() != null)
-                criteria.add(Restrictions.eq("status.code", searchAbstractEstimate.getStatus()).ignoreCase());
+                criteria.add(Restrictions.eq("status.id", Integer.valueOf(searchAbstractEstimate.getStatus())));
             if (searchAbstractEstimate.getCreatedBy() != null)
                 criteria.add(Restrictions.eq("createdBy.id", searchAbstractEstimate.getCreatedBy()));
             if (searchAbstractEstimate.getFromDate() != null)

@@ -101,13 +101,11 @@ function callAjaxSearch() {
 		                },
 		                {
 				             "sExtends": "xls",
-				             "mColumns": [ 1,2,3,4,5,6,7,8],
                              "sPdfMessage": "Search Abstract Estimate",
                              "sTitle": "Search Abstract Estimate"
 			             },
 			             {
 				             "sExtends": "print",
-				             "mColumns": [ 1,2,3,4,5,6,7,8],
                              "sPdfMessage": "Search Abstract Estimate",
                              "sTitle": "Search Abstract Estimate"
 			             }],
@@ -116,12 +114,13 @@ function callAjaxSearch() {
 					return row;
 				},
 				aaSorting: [],				
-				columns : [ {
-					"data" : "lineestimateNumber",
-					"render" : function(data, type, row) {
-						return '<a href="javascript:void(0);" onclick="openLineEstimate('+row.leId+');" data-hiddenele="lineestimateNumber" data-eleval="'
-								+ data + '">' + data + '</a>';
-						}
+				columns : [
+				   {
+						"data" : "lineestimateNumber",
+						"render" : function(data, type, row) {
+							return '<a href="javascript:void(0);" onclick="openLineEstimate('+row.leId+');" data-hiddenele="lineestimateNumber" data-eleval="'
+									+ data + '">' + data + '</a>';
+							}
 					} ,
 					{
 						"data" : "estimateNumberAndDate",
