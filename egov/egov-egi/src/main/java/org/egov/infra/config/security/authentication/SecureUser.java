@@ -57,7 +57,7 @@ public class SecureUser implements UserDetails {
     private final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
     public SecureUser(User user) {
-        if(user == null) {
+        if (user == null) {
             throw new UsernameNotFoundException("User not found");
         } else {
             this.user = user;
@@ -76,7 +76,7 @@ public class SecureUser implements UserDetails {
     }
 
     public boolean isAccountNonLocked() {
-        return this.user.isActive();
+        return !this.user.isAccountLocked();
     }
 
     public boolean isCredentialsNonExpired() {
@@ -94,15 +94,15 @@ public class SecureUser implements UserDetails {
     public String getUsername() {
         return this.user.getUsername();
     }
-    
+
     public Long getUserId() {
         return this.user.getId();
     }
-    
+
     public UserType getUserType() {
         return this.user.getType();
     }
-    
+
     public User getUser() {
         return this.user;
     }

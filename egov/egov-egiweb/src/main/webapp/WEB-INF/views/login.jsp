@@ -53,6 +53,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -195,24 +196,32 @@
 								<c:if test="${param.error}">
 								<div class="form-group">
 									<div class="text-center error-msg font-12">
+                                        <c:set var="security_message" value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
 										<c:choose>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of {0} for this principal exceeded'}">
+										<c:when test="${security_message == 'Maximum sessions of {0} for this principal exceeded'}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User account has expired'}">
+										<c:when test="${security_message == 'User account has expired'}">
 											<spring:message code="msg.cred.exprd1"/>
 											<a href="javascript:void(0);" data-toggle="modal"
 											   data-target="#fpassword" data-backdrop="static">
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Inactive User'}">
+										<c:when test="${security_message == 'Inactive User'}">
 		     							 	<div class="form-group signin-leftpadding">
 												<a href="/portal/citizen/register?activation=true" class="btn btn-custom btn-block btn-login signin-submit">
 												<spring:message code="msg.acc.not.activated"/>
 												</a> 
 											</div>
 	     								</c:when>
+										<c:when test="${security_message == 'User account is locked'}">
+											<spring:message code="msg.acc.locked"/>
+										</c:when>
+										<c:when test="${fn:contains(security_message, 'Too many attempts')}">
+                                            <c:set var="attempts" value="${fn:substringAfter(security_message, 'Too many attempts')}" />
+											<spring:message code="msg.acc.toomany.attempt" arguments="${attempts}"/>
+										</c:when>
 										<c:otherwise>
 											<spring:message code="msg.cred.invalid"/>
 										</c:otherwise>

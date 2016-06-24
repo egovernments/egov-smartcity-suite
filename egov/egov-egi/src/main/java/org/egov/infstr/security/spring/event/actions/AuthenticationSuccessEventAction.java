@@ -40,9 +40,10 @@
 
 package org.egov.infstr.security.spring.event.actions;
 
+import org.egov.infra.config.security.authentication.SecureUser;
 import org.egov.infra.security.audit.entity.SystemAudit;
+import org.egov.infra.security.audit.service.LoginAttemptService;
 import org.egov.infra.security.audit.service.SystemAuditService;
-import org.egov.infra.security.utils.SecurityConstants;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
@@ -51,10 +52,10 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * This class will get called when Authentication is successful. Now this class
- * only Logs the User Login information.
- **/
+import static org.egov.infra.security.utils.SecurityConstants.IPADDR_FIELD;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.USERAGENT_FIELD;
+
 @Service
 public class AuthenticationSuccessEventAction implements ApplicationSecurityEventAction<InteractiveAuthenticationSuccessEvent> {
 
@@ -62,18 +63,30 @@ public class AuthenticationSuccessEventAction implements ApplicationSecurityEven
     private SystemAuditService systemAuditService;
 
     @Autowired
+    private LoginAttemptService loginAttemptService;
+
+    @Autowired
     private SecurityUtils securityUtils;
 
     @Override
     public void doAction(final InteractiveAuthenticationSuccessEvent authorizedEvent) {
+        auditLoginDetails(authorizedEvent);
+        resetFailedLoginAttempt(authorizedEvent);
+    }
+
+    private void auditLoginDetails(InteractiveAuthenticationSuccessEvent authorizedEvent) {
         HashMap<String, String> creds = ((HashMap<String, String>) authorizedEvent.getAuthentication().getCredentials());
         final SystemAudit systemAudit = new SystemAudit();
         systemAudit.setLoginTime(new Date(authorizedEvent.getTimestamp()));
         systemAudit.setUser(securityUtils.getCurrentUser());
-        systemAudit.setIpAddress(creds.get("ipAddress"));
-        systemAudit.setUserAgentInfo(creds.get("userAgentInfo"));
+        systemAudit.setIpAddress(creds.get(IPADDR_FIELD));
+        systemAudit.setUserAgentInfo(creds.get(USERAGENT_FIELD));
         systemAuditService.createOrUpdateSystemAudit(systemAudit);
         final String loginLogID = systemAudit.getId().toString();
-        creds.put(SecurityConstants.LOGIN_LOG_ID, loginLogID);
+        creds.put(LOGIN_LOG_ID, loginLogID);
+    }
+
+    private void resetFailedLoginAttempt(InteractiveAuthenticationSuccessEvent authorizedEvent) {
+        loginAttemptService.resetFailedAttempt(((SecureUser) authorizedEvent.getAuthentication().getPrincipal()).getUsername());
     }
 }

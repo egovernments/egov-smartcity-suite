@@ -38,20 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.utils;
+package org.egov.infra.security.audit.repository;
 
-public interface SecurityConstants {
+import org.egov.infra.security.audit.entity.LoginAttempt;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    String LOCATION_FIELD = "locationId";
-    String IPADDR_FIELD = "ipAddress";
-    String USERAGENT_FIELD = "userAgentInfo";
-    String LOGINTYPE = "loginType";
-    String PWD_FIELD = "j_password";
-    String USERNAME_FIELD = "j_username";
-    String LOGIN_LOG_ID = "loginLogId";
-    String LOGIN_URI = "/login";
-    String PUBLIC_URI = "/public";
-    int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
-    int LOGIN_LOCK_HOURS = 24;
+@Repository
+public interface LoginAttemptRepository extends JpaRepository<LoginAttempt, Long> {
 
+    LoginAttempt findByUsername(String username);
 }

@@ -38,20 +38,69 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.utils;
+package org.egov.infra.security.audit.entity;
 
-public interface SecurityConstants {
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
-    String LOCATION_FIELD = "locationId";
-    String IPADDR_FIELD = "ipAddress";
-    String USERAGENT_FIELD = "userAgentInfo";
-    String LOGINTYPE = "loginType";
-    String PWD_FIELD = "j_password";
-    String USERNAME_FIELD = "j_username";
-    String LOGIN_LOG_ID = "loginLogId";
-    String LOGIN_URI = "/login";
-    String PUBLIC_URI = "/public";
-    int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
-    int LOGIN_LOCK_HOURS = 24;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.util.Date;
 
+@Entity
+@Table(name = "eg_loginattempt")
+@SequenceGenerator(name = LoginAttempt.SEQUENCE, sequenceName = LoginAttempt.SEQUENCE, allocationSize = 1)
+public class LoginAttempt extends AbstractPersistable<Long> {
+
+    static final String SEQUENCE = "SEQ_EG_LOGINATTEMPT";
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    private String username;
+
+    private Integer failedAttempts;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModifiedOn;
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public Integer getFailedAttempts() {
+        return failedAttempts;
+    }
+
+    public void setFailedAttempts(final Integer failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public Date getLastModifiedOn() {
+        return lastModifiedOn;
+    }
+
+    public void setLastModifiedOn(final Date lastModifiedOn) {
+        this.lastModifiedOn = lastModifiedOn;
+    }
 }
