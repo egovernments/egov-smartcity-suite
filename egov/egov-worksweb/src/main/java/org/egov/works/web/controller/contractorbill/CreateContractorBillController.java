@@ -151,7 +151,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
         model.addAttribute("billTypes", BillTypes.values());
-        model.addAttribute("assets", BillTypes.values());
     }
 
     @RequestMapping(value = "/contractorbill-save", method = RequestMethod.POST)
@@ -402,7 +401,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final String nextDesign) {
         String message = "";
 
-        if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.CREATED.toString())) {
+        if (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(ContractorBillRegister.BillStatus.CREATED.toString())) {
             if (StringUtils.isNotBlank(contractorBillRegister.getEgBillregistermis().getBudgetaryAppnumber()))
                 message = messageSource.getMessage("msg.contractorbill.create.success.with.budgetappropriation",
                         new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign,
@@ -412,15 +411,18 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 message = messageSource.getMessage("msg.contractorbill.create.success",
                         new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
 
-        } else if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
+        } else if (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(ContractorBillRegister.BillStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.contractorbill.approved.success",
                     new String[] { contractorBillRegister.getBillnumber() }, null);
-        else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+        else if (contractorBillRegister.getState().getValue().equalsIgnoreCase(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.contractorbill.reject",
                     new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
-        else if (contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_CANCELLED))
+        else if (contractorBillRegister.getState().getValue().equalsIgnoreCase(WorksConstants.WF_STATE_CANCELLED))
             message = messageSource.getMessage("msg.contractorbill.cancel",
                     new String[] { contractorBillRegister.getBillnumber() }, null);
+        else if (contractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.contractorbill.forward.success",
+                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
 
         return message;
     }

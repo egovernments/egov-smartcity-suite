@@ -163,6 +163,22 @@
 						<c:out default="N/A" value="${lineEstimateDetails.projectCode.code}" />
 					</div>
 				</div>
+				<c:if test="${billAssetValue !=null }">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.assetcode" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<c:out value="${billAssetValue.asset.code}" /> 
+						</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.assetname" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<c:out value="${billAssetValue.asset.name}" />
+						</div>
+					</div>
+				</c:if>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.mb.referencenumber" />

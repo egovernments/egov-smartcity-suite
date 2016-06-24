@@ -39,6 +39,19 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
@@ -62,6 +75,7 @@ import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,18 +87,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -117,7 +119,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     @RequestMapping(value = "/update/{contractorBillRegisterId}", method = RequestMethod.GET)
     public String updateContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
         // if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
         setDropDownValues(model);
@@ -130,7 +132,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             final BindingResult errors,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request,
             @RequestParam("file") final MultipartFile[] files)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         String mode = "";
         String workFlowAction = "";
@@ -242,7 +244,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
-        if (contractorBillRegister.getMbHeader() != null) {
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()
+                && contractorBillRegister.getMbHeader() != null) {
             if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
 
@@ -334,11 +338,15 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         final WorkOrder workOrder = contractorBillRegister.getWorkOrder();
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-
+        final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
+        model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
+        if (newcontractorBillRegister.getAssetDetailsList() != null && !newcontractorBillRegister.getAssetDetailsList().isEmpty())
+            model.addAttribute("billAssetValue", newcontractorBillRegister.getAssetDetailsList().get(0));
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
@@ -358,7 +366,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     @RequestMapping(value = "/view/{contractorBillRegisterId}", method = RequestMethod.GET)
     public String viewContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
         final String responsePage = loadViewData(model, request, contractorBillRegister);
         model.addAttribute("createdbybydesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
@@ -423,7 +431,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)
                 && StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
-            billdetails.setId(new Integer(netPayableAccountId));
+            //billdetails.setId(new Integer(netPayableAccountId));
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister

@@ -52,8 +52,6 @@ import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -106,13 +104,7 @@ public class ContractorBillRegisterService {
     private final ContractorBillRegisterRepository contractorBillRegisterRepository;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
     private WorksUtils worksUtils;
-
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
     @Qualifier("workflowService")
@@ -218,6 +210,7 @@ public class ContractorBillRegisterService {
 
         if (contractorBillRegister.getStatus().getCode()
                 .equals(ContractorBillRegister.BillStatus.REJECTED.toString())) {
+
             if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
                 populateAndSaveMBHeader(contractorBillRegister);
             else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
@@ -291,8 +284,7 @@ public class ContractorBillRegisterService {
             egBillRegisterMis.setSubScheme(lineEstimateDetails.getLineEstimate().getSubScheme());
 
         egBillRegisterMis.setEgDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
-        final CFinancialYear financialYear = financialYearHibernateDAO
-                .getFinancialYearByDate(contractorBillRegister.getBilldate());
+        final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(contractorBillRegister.getBilldate());
         egBillRegisterMis.setFinancialyear(financialYear);
         egBillRegisterMis.setLastupdatedtime(new Date());
         return egBillRegisterMis;
@@ -376,20 +368,20 @@ public class ContractorBillRegisterService {
                     .equals(ContractorBillRegister.BillStatus.CREATED.toString())
                     && contractorBillRegister.getState() != null
                     && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
-                contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.APPROVED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.REJECTED.toString()));
             else if (contractorBillRegister.getStatus().getCode()
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-                contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.CANCELLED.toString()));
             else if (contractorBillRegister.getStatus().getCode()
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
-                contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.CREATED.toString()));
 
     }
@@ -476,18 +468,26 @@ public class ContractorBillRegisterService {
                 mbHeader.setCreatedDate(existingMBHeader.getCreatedDate());
             }
             mbHeader.setMbAmount(contractorBillRegister.getBillamount());
-            mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+            mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                     MBHeader.MeasurementBookStatus.CREATED.toString()));
             mbHeader.setEgBillregister(contractorBillRegister);
             mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
             mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
             mbHeaderService.create(mbHeader);
+        } else {
+            List<MBHeader> mBHeaders = contractorBillRegister.getWorkOrderEstimate().getMbHeaders();
+            if (mBHeaders != null && !mBHeaders.isEmpty()) {
+                for (MBHeader mh : mBHeaders) {
+                    mh.setEgBillregister(contractorBillRegister);
+                    mbHeaderService.create(mh);
+                }
+            }
         }
     }
 
     private void approveMBHeader(final ContractorBillRegister contractorBillRegister) {
         final MBHeader mbHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
-        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+        mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                 MBHeader.MeasurementBookStatus.APPROVED.toString()));
         mbHeaderService.create(mbHeader);
     }
@@ -559,7 +559,7 @@ public class ContractorBillRegisterService {
 
     @Transactional
     public ContractorBillRegister cancel(final ContractorBillRegister contractorBillRegister) {
-        contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
+        contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                 ContractorBillRegister.BillStatus.CANCELLED.toString()));
         contractorBillRegister.setBillstatus(ContractorBillRegister.BillStatus.CANCELLED.toString());
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(contractorBillRegister);

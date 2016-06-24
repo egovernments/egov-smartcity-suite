@@ -78,9 +78,9 @@
 <c:if test="${workOrderEstimate.workOrderActivities.size() > 0 }">
 	<c:if test="${workOrderEstimate.assetValues.size() > 0}">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.assetcodeorname" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.assetcodeorname" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="" data-first-option="false" name="assetDetailsList[0].asset" id="assetDetailsList[0].asset" class="form-control" onchange="getAssetName(this);">
+				<form:select path="assetDetailsList[0].asset" data-first-option="false" name="assetDetailsList[0].asset" id="assetDetailsList[0].asset" class="form-control" required="required" value = "${asset.id}">
 					<c:if test="${assetValues.size() == 1 }">
 						<c:forEach var="assetValue" items="${assetValues}">
 							<form:option value="${assetValue.asset.id}" selected = "selected"><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
@@ -89,7 +89,14 @@
 					<c:if test="${assetValues.size() > 1 }">
 						<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 						<c:forEach var="assetValue" items="${assetValues}">
-							<form:option value="${assetValue.asset.id}" ><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
+							<c:choose>
+								<c:when test="${billAssetValue !=null &&  assetValue.asset.id == billAssetValue.asset.id }">
+									<form:option value="${assetValue.asset.id}" selected = "selected" ><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
+								</c:when>
+								<c:otherwise>
+									<form:option value="${assetValue.asset.id}" ><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
+								</c:otherwise>
+							</c:choose>
 						</c:forEach>
 					</c:if>
 				</form:select>

@@ -109,7 +109,7 @@ $(document).ready(function(){
 					return false;
 				}
 			}	
-			if($('#mbDate').val() != '') { 
+			if($('#mbDate').val() != '' && $('#mbDate').val()!==undefined) { 
 				var workOrderDate = $('#workOrderDate').data('datepicker').date;
 				var mbDate = $('#mbDate').data('datepicker').date;
 				if(workOrderDate > mbDate) {
@@ -314,11 +314,11 @@ function calculateNetPayableAmount(){
 }	
 
 function validateMBPageNumbers() { 
-	if(($('#fromPageNo').val() != '' && $('#fromPageNo').val() == 0) || ($('#toPageNo').val() != '' && $('#toPageNo').val() == 0)) {
+	if(($('#fromPageNo').val()!==undefined && $('#toPageNo').val()!==undefined && $('#fromPageNo').val() != '' && $('#fromPageNo').val() == 0) || ($('#toPageNo').val() != '' && $('#toPageNo').val() == 0)) {
 		bootbox.alert("MB Page Numbers should be greater than Zero!");
 		return false;
 	}
-	if($('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && eval($('#fromPageNo').val()) > eval($('#toPageNo').val())) {
+	if($('#fromPageNo').val()!==undefined && $('#toPageNo').val()!==undefined && $('#fromPageNo').val() != '' && $('#toPageNo').val() != '' && eval($('#fromPageNo').val()) > eval($('#toPageNo').val())) {
 		bootbox.alert("MB From Page Number cannot be greater than MB To Page Number!");
 		return false;
 	}

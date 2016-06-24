@@ -47,8 +47,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -91,6 +93,9 @@ public class WorksUtils {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -241,9 +246,15 @@ public class WorksUtils {
             exceptionaluoms = exceptionaluoms + appVal.getValue() + ":";
         return exceptionaluoms;
     }
-    
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusById(final Integer id) {
         return egwStatusHibernateDAO.findById(id, true);
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public CFinancialYear getFinancialYearByDate(final Date billdate) {
+        return financialYearHibernateDAO.getFinancialYearByDate(billdate);
+    }
+
 }
