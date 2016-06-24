@@ -57,16 +57,12 @@ import org.egov.demand.model.EgBillDetails;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CollectionApportioner {
 
     public static final String STRING_FULLTAX = "FULLTAX";
     public static final String STRING_ADVANCE = "ADVANCE";
     private static final Logger LOGGER = Logger.getLogger(CollectionApportioner.class);
-
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
 
     public CollectionApportioner() {
 
@@ -109,7 +105,8 @@ public class CollectionApportioner {
     }
 
     public List<ReceiptDetail> reConstruct(final BigDecimal amountPaid, final List<EgBillDetails> billDetails,
-            final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO) {
+            final FunctionHibernateDAO functionDAO, final ChartOfAccountsHibernateDAO chartOfAccountsDAO,
+            final FinancialYearDAO financialYearDAO) {
         final List<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
         LOGGER.info("receiptDetails before reApportion amount " + amountPaid + ": " + receiptDetails);
         LOGGER.info("billDetails before reApportion " + billDetails);
