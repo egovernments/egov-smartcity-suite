@@ -77,6 +77,7 @@ import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,6 +104,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
+    @Qualifier("schemeService")
     private SchemeService schemeService;
 
     @Autowired
