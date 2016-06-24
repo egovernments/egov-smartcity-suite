@@ -41,6 +41,19 @@ public class CouncilQualification extends AbstractAuditable {
         
     @NotNull
     private Boolean isActive;
+    
+    
+    @Length(min = 2, max = 100)
+    private String description;
+
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Long getId() {
         return id;
@@ -73,5 +86,6 @@ public class CouncilQualification extends AbstractAuditable {
     public void setCode(String code) {
         this.code = code;
     }
+
 
 }

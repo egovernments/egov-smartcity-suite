@@ -50,4 +50,6 @@ public class CouncilMemberService {
     public List<CouncilMember> search(CouncilMember councilMember) {
         return councilMemberRepository.findAll();
     }
+    
+    
 }
