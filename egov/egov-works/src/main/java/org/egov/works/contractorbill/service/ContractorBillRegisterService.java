@@ -170,13 +170,23 @@ public class ContractorBillRegisterService {
             final LineEstimateDetails lineEstimateDetails, final MultipartFile[] files, final Long approvalPosition,
             final String approvalComent, final String additionalRule, final String workFlowAction) throws IOException {
 
-        contractorBillRegister.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
+        contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                 ContractorBillRegister.BillStatus.CREATED.toString()));
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
         contractorBillRegister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
         final EgBillregistermis egBillRegisterMis = setEgBillRegisterMis(contractorBillRegister, lineEstimateDetails);
         contractorBillRegister.setEgBillregistermis(egBillRegisterMis);
 
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()
+                && !contractorBillRegister.getWorkOrderEstimate().getAssetValues().isEmpty()) {
+            contractorBillRegister.getAssetDetailsList().get(0).setAmount(contractorBillRegister.getBillamount());
+            contractorBillRegister.getAssetDetailsList().get(0)
+                    .setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
+            contractorBillRegister.getAssetDetailsList().get(0).setEgbill(contractorBillRegister);
+            contractorBillRegister.getAssetDetailsList().get(0).setCoa(contractorBillRegister.getWorkOrderEstimate().getEstimate()
+                    .getLineEstimateDetails().getLineEstimate().getBudgetHead().getMaxCode());
+        }
         try {
             checkBudgetAndGenerateBANumber(contractorBillRegister);
         } catch (final ValidationException e) {
@@ -456,20 +466,23 @@ public class ContractorBillRegisterService {
 
     private void populateAndSaveMBHeader(final ContractorBillRegister contractorBillRegister) {
         final MBHeader mbHeader = contractorBillRegister.getMbHeader();
-        MBHeader existingMBHeader = null;
-        if (contractorBillRegister.getMbHeader() != null && contractorBillRegister.getMbHeader().getId() != null)
-            existingMBHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
-        if (existingMBHeader != null) {
-            mbHeader.setCreatedBy(existingMBHeader.getCreatedBy());
-            mbHeader.setCreatedDate(existingMBHeader.getCreatedDate());
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
+            MBHeader existingMBHeader = null;
+            if (contractorBillRegister.getMbHeader() != null && contractorBillRegister.getMbHeader().getId() != null)
+                existingMBHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
+            if (existingMBHeader != null) {
+                mbHeader.setCreatedBy(existingMBHeader.getCreatedBy());
+                mbHeader.setCreatedDate(existingMBHeader.getCreatedDate());
+            }
+            mbHeader.setMbAmount(contractorBillRegister.getBillamount());
+            mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                    MBHeader.MeasurementBookStatus.CREATED.toString()));
+            mbHeader.setEgBillregister(contractorBillRegister);
+            mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
+            mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
+            mbHeaderService.create(mbHeader);
         }
-        mbHeader.setMbAmount(contractorBillRegister.getBillamount());
-        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
-                MBHeader.MeasurementBookStatus.CREATED.toString()));
-        mbHeader.setEgBillregister(contractorBillRegister);
-        mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
-        mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
-        mbHeaderService.create(mbHeader);
     }
 
     private void approveMBHeader(final ContractorBillRegister contractorBillRegister) {

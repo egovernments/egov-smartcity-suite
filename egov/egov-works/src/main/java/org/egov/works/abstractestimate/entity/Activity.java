@@ -247,16 +247,12 @@ public class Activity extends AbstractAuditable {
     }
 
     public double getConversionFactor() {
-        if (schedule == null)
-            return Double.valueOf(1);
-        else {
             final double masterRate = estimateRate;
             final double unitRate = rate;
             if (unitRate > 0 && masterRate > 0)
                 return unitRate / masterRate;
             else
                 return Double.valueOf(1);
-        }
     }
 
     public List<ValidationError> validate() {

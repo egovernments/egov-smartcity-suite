@@ -542,7 +542,7 @@ public class LetterOfAcceptanceService {
         queryStr.append(
                 " and  exists (select mh.workOrderEstimate from MBHeader mh left outer join mh.egBillregister as br where woe.id = mh.workOrderEstimate.id and mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ");
         queryStr.append(
-                " and exists ( select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and os.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType ) ) ");
+                " and exists ( select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType ) ) ");
         if (searchRequestLetterOfAcceptance != null) {
 
             if (searchRequestLetterOfAcceptance.getMbRefNumber() != null)

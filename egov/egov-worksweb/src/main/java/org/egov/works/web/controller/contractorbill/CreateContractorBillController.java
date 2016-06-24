@@ -124,8 +124,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             final Model model, final HttpServletRequest request) {
         final String loaNumber = request.getParameter("loaNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getApprovedWorkOrder(loaNumber);
+        final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
         setDropDownValues(model);
+        model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
@@ -138,6 +140,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             contractorBillRegister.setBilldate(new Date());
 
         model.addAttribute("workOrder", workOrder);
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
         return "contractorBill-form";
@@ -148,6 +151,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
         model.addAttribute("billTypes", BillTypes.values());
+        model.addAttribute("assets", BillTypes.values());
     }
 
     @RequestMapping(value = "/contractorbill-save", method = RequestMethod.POST)
@@ -309,7 +313,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                         .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
-        if (contractorBillRegister.getMbHeader() != null) {
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()
+                && contractorBillRegister.getMbHeader() != null) {
             if (StringUtils.isBlank(contractorBillRegister.getMbHeader().getMbRefNo()))
                 resultBinder.rejectValue("mbHeader.mbRefNo", "error.mbrefno.required");
 
@@ -427,8 +433,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             if (egBilldetails.getGlcodeid() != null)
                 contractorBillRegister
                         .addEgBilldetailes(
-                        getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
-                                request));
+                                getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
+                                        request));
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAmount)) {
@@ -437,7 +443,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister
                     .addEgBilldetailes(
-                    getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
+                            getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
         }
 
         return contractorBillRegister;

@@ -39,22 +39,59 @@
  */
 package org.egov.works.models.contractorBill;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.egov.asset.model.Asset;
 import org.egov.commons.CChartOfAccounts;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 
-import java.math.BigDecimal;
-
-public class AssetForBill extends BaseModel {
+@Entity
+@Table(name = "EGW_CONTRACTORBILL_ASSETS")
+@SequenceGenerator(name = AssetForBill.SEQ_EGW_CONTRACTORBILL_ASSETS, sequenceName = AssetForBill.SEQ_EGW_CONTRACTORBILL_ASSETS, allocationSize = 1)
+public class AssetForBill extends AbstractAuditable {
 
     private static final long serialVersionUID = 843200459454395328L;
+
+    public static final String SEQ_EGW_CONTRACTORBILL_ASSETS = "SEQ_EGW_CONTRACTORBILL_ASSETS";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_CONTRACTORBILL_ASSETS, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ASSET_ID")
     private Asset asset;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COA_ID")
     private CChartOfAccounts coa;
+    
+    @Column(name="narration")
     private String description;
+    
+    @NotNull
     private BigDecimal amount;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BILLREGISTER_ID")
     private ContractorBillRegister egbill;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKORDER_ESTIMATE_ID")
     private WorkOrderEstimate workOrderEstimate;
 
     public BigDecimal getAmount() {
@@ -103,6 +140,14 @@ public class AssetForBill extends BaseModel {
 
     public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
         this.workOrderEstimate = workOrderEstimate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

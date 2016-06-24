@@ -46,30 +46,99 @@
 <form:hidden path="mbHeader.workOrder.id"  value="${workOrder.id}" /> 
 <form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
 <form:hidden path="mbHeader.egBillregister.id"  value="${contractorBillRegister.id}" />
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="mbRefNo" path="mbHeader.mbRefNo" maxlength="32" required="required" />
-		<form:errors path="mbHeader.mbRefNo" cssClass="add-margin error-msg" />		
+<c:if test="${workOrderEstimate.workOrderActivities.size() == 0 }">
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="mbRefNo" path="mbHeader.mbRefNo" maxlength="32" required="required" />
+			<form:errors path="mbHeader.mbRefNo" cssClass="add-margin error-msg" />		
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mb.pagenumber" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+				<div class="col-sm-6">
+					<form:input class="form-control patternvalidation" data-pattern="number" id="fromPageNo" path="mbHeader.fromPageNo" maxlength="4" required="required" placeholder="From" />
+					<form:errors path="mbHeader.fromPageNo" cssClass="add-margin error-msg" />	
+				</div>
+				<div class="col-sm-6">
+					<form:input class="form-control patternvalidation" data-pattern="number" id="toPageNo" path="mbHeader.toPageNo" maxlength="4" required="required" placeholder="To" />
+					<form:errors path="mbHeader.toPageNo" cssClass="add-margin error-msg" /> 
+				</div>
+		</div>
 	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mb.pagenumber" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-			<div class="col-sm-6">
-				<form:input class="form-control patternvalidation" data-pattern="number" id="fromPageNo" path="mbHeader.fromPageNo" maxlength="4" required="required" placeholder="From" />
-				<form:errors path="mbHeader.fromPageNo" cssClass="add-margin error-msg" />	
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.date" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:input id="mbDate" path="mbHeader.mbDate" class="form-control datepicker" data-date-end-date="0d" required="required"  />
+			<form:errors path="mbHeader.mbDate" cssClass="add-margin error-msg" />
+			<input type="hidden" id="errorMBDate" value="<spring:message code='error.validate.mbdate.lessthan.loadate' />" />
+		</div>
+	</div>
+</c:if>
+<c:if test="${workOrderEstimate.workOrderActivities.size() > 0 }">
+	<c:if test="${workOrderEstimate.assetValues.size() > 0}">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.assetcodeorname" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="" data-first-option="false" name="assetDetailsList[0].asset" id="assetDetailsList[0].asset" class="form-control" onchange="getAssetName(this);">
+					<c:if test="${assetValues.size() == 1 }">
+						<c:forEach var="assetValue" items="${assetValues}">
+							<form:option value="${assetValue.asset.id}" selected = "selected"><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
+						</c:forEach>
+					</c:if>
+					<c:if test="${assetValues.size() > 1 }">
+						<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+						<c:forEach var="assetValue" items="${assetValues}">
+							<form:option value="${assetValue.asset.id}" ><c:out value="${assetValue.asset.code}" /> - <c:out value="${assetValue.asset.name}" /></form:option>
+						</c:forEach>
+					</c:if>
+				</form:select>
+				<form:errors path="assetDetailsList[0].asset" cssClass="add-margin error-msg" />	
 			</div>
-			<div class="col-sm-6">
-				<form:input class="form-control patternvalidation" data-pattern="number" id="toPageNo" path="mbHeader.toPageNo" maxlength="4" required="required" placeholder="To" />
-				<form:errors path="mbHeader.toPageNo" cssClass="add-margin error-msg" /> 
-			</div>
 	</div>
-</div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.date" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:input id="mbDate" path="mbHeader.mbDate" class="form-control datepicker" data-date-end-date="0d" required="required"  />
-		<form:errors path="mbHeader.mbDate" cssClass="add-margin error-msg" />
-		<input type="hidden" id="errorMBDate" value="<spring:message code='error.validate.mbdate.lessthan.loadate' />" />
-	</div>
-</div>
+	</c:if>
+	</br>
+	</br>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.slNo" /></th>
+				<th><spring:message code="lbl.mb.referencenumber" /></th>
+				<th><spring:message code="lbl.mb.pagenumber" /></th>
+				<th><spring:message code="lbl.mb.date" /></th>
+				<th><spring:message code="lbl.mbamount" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:choose>
+				<c:when test="${workOrderEstimate.mbHeaders.size() != 0}">
+					<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mbDtls" varStatus="item">
+							<tr >
+								<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+								<td><a href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
+								<td><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></td>
+								<td><c:out value="${mbDtls.mbDate}"></c:out></td>
+								<td class="text-right"><c:out value="${mbDtls.mbAmount}"></c:out></td>
+							</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+				</c:otherwise>
+			</c:choose> 
+		</tbody>
+		<tfoot>
+			<c:set var="mbtotal" value="${0}" scope="session" />
+			<c:if test="${workOrderEstimate.mbHeaders.size() != 0}">
+				<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mb">
+					<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />  
+				</c:forEach>
+			</c:if>
+			<tr>
+			<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
+			<td class="text-right">
+				<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbtotal}" /></fmt:formatNumber></span>
+			</td>
+			</tr>
+		</tfoot>
+	</table>
+</c:if>
