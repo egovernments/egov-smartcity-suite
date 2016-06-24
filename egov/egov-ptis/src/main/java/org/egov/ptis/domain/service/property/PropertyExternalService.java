@@ -1792,6 +1792,7 @@ public class PropertyExternalService {
                 	assessmentDetails.setTotalTaxDue(totalTaxDue);
                 }
         	}
+        	assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
         	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
     			assessmentDetails.setIsMutationFeePaid("Y");
     			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
@@ -1800,7 +1801,6 @@ public class PropertyExternalService {
     	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
     	        receiptDate = (Date) qry.getSingleResult();
     	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
-    	        assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
     		}
     		else
     			assessmentDetails.setIsMutationFeePaid("N");
