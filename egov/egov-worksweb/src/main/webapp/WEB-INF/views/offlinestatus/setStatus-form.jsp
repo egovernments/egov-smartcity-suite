@@ -91,3 +91,11 @@
 	</div>
 </div>
 </form:form>
+<script>
+	$('#save').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>

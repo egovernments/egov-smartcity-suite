@@ -44,7 +44,8 @@ $(document).ready(function() {
 	$('.offlineStatuses').trigger('change');
 	resetAddedOverheads();
 	$('#isOfflineStatusValuesLoading').val('false');
-	
+	initializeDatePicker();
+		
 });
 
 function addNewStatus() {
@@ -211,22 +212,25 @@ function checkOfflineStatus(offlineStatuses) {
 }
 
 function validateForm(){
-	$(".offlineStatusValue").removeAttr('disabled');
-	$(".statusdate").removeAttr('disabled');
-	if($('#offlineStatuses').valid())
+	if($('#offlineStatuses').valid()){
+		$(".offlineStatusValue").removeAttr('disabled');
+		$(".statusdate").removeAttr('disabled');
 		return false;
+	}
 }
 
 function validateStatusDates(obj){
+	var resultLength = jQuery('#tblsetstatus tr').length-1;
 	var workOrderDate=new Date($('#workOrderDate').val());
-	var statusDate = $(obj).data('datepicker').date
-	if(statusDate<workOrderDate)
+	var statusDate = $(obj).data('datepicker').date;
+	if(resultLength == 1 && statusDate<workOrderDate)
 	{
 		var message = document.getElementById('errorStatusLOADate').value;
 		bootbox.alert(message);
 		$(obj).datepicker("setDate", new Date());
 		$(obj).datepicker('update');
 		$(obj).val('');
+		i++;
 		return false;	
 	}
 	
@@ -249,8 +253,6 @@ function validateStatusDates(obj){
 	}
 	
 }
-
-initializeDatePicker();
 
 function initializeDatePicker(){
 	
