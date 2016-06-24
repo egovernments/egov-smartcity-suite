@@ -72,7 +72,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">LC Number<span class="mandatory"></span>: </label>
-<div class="col-sm-2 add-margin text-center"><form:select path="lcNumberType" data-first-option="false"
+<div class="col-sm-2 add-margin text-center"><form:select path="lcNumberType" data-first-option="false" id="lcNumberType" name="lcNumberType"
 			cssClass="form-control" required="required" onChange="checkLCType();">
 			<form:option value="">
 				<spring:message code="lbls.select" />

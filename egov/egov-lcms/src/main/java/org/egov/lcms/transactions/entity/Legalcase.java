@@ -47,6 +47,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -72,6 +74,7 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
+import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.utils.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
@@ -178,7 +181,8 @@ public class Legalcase extends AbstractAuditable {
     @Column(name = "representedby")
     private String representedby;
     @Column(name = "lcNumberType")
-    private String lcNumberType;
+    @Enumerated(EnumType.STRING)
+    private LCNumberType lcNumberType;
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseDisposal> legalcaseDisposal = new ArrayList<LegalcaseDisposal>(0);
 
@@ -611,11 +615,13 @@ public class Legalcase extends AbstractAuditable {
         this.representedby = representedby;
     }
 
-    public String getLcNumberType() {
+    
+
+    public LCNumberType getLcNumberType() {
         return lcNumberType;
     }
 
-    public void setLcNumberType(final String lcNumberType) {
+    public void setLcNumberType(LCNumberType lcNumberType) {
         this.lcNumberType = lcNumberType;
     }
 

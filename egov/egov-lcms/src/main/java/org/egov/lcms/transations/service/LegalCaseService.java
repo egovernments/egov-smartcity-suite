@@ -50,6 +50,7 @@ import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
 import org.egov.lcms.transactions.repository.GovernmentDeptRepository;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
+import org.egov.lcms.utils.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -94,11 +95,11 @@ public class LegalCaseService {
 
     @Transactional
     public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(legalcase.getCasenumber()+legalcase.getWpYear());
+        legalcase.setCasenumber(legalcase.getCasenumber()+"/"+legalcase.getWpYear());
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
-        legalcase.setStatus(getStatusByCodeAndModuleType("CREATED", "LCMS"));
+        legalcase.setStatus(getStatusByCodeAndModuleType(LcmsConstants.LEGALCASE_STATUS_CREATED, "LCMS"));
         prepareBipartsanDetails(legalcase);
         return legalCaseRepository.save(legalcase);
     }

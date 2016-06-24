@@ -70,14 +70,15 @@
 					<div class="col-xs-3 add-margin">Case Number</div>
 					<div class="col-xs-3 add-margin view-content"><c:out value="${legalcase.casenumber}" /></div>
 				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin">Lc Number</div>
 					<div class="col-xs-3 add-margin view-content">
 					 <c:out value="${legalcase.lcNumber}" />
-                      
-                    </div>
+                     </div>
                     <div class="col-xs-3 add-margin">Case Date</div>  
 					<div class="col-xs-3 add-margin view-content">
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${legalcase.caseDate}" var="docsDate"/><c:out value="${legalcase.caseDate}" />
+					</div>
 					</div>
 					</div>
 					

@@ -118,7 +118,7 @@ public class LcmsConstants {
 	public static final String LEGALCASE_STATUS_CODE_FILINGOFDOCUMENTS = "FILING_OF_DOCUMENTS";
 	public static final String LEGALCASE_STATUS_ORDER = "ORDER";
 	public static final String LEGALCASE_STATUS_HEARING = "HEARING";
-	public static final String LEGALCASE_STATUS_CREATED = "Created";
+	public static final String LEGALCASE_STATUS_CREATED = "LCCREATED";
 	public static final String LEGALCASE_STATUS_JUDGMENT = "Judgment";
 	public static final String LEGALCASE_STATUS_CLOSE = "Close Case";
 	public static final String LEGALCASE_STATUS_HEARING_REPLYTOTI = "HEARING_REPLY_TO_TI";
