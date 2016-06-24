@@ -553,17 +553,23 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Override
     public void validate() {
-        if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
-            addActionError(getText("mandatory.trRsnId"));
-        else if (propertyMutation.getMutationReason().getMutationName()
-                .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
-                && StringUtils.isBlank(propertyMutation.getSaleDetail()))
-            addActionError(getText("mandatory.saleDtl"));
-        if (propertyMutation.isRegistrationDone()) {
+        if (PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+            if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
+                addActionError(getText("mandatory.trRsnId"));
+            else if (propertyMutation.getMutationReason().getMutationName()
+                    .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
+                    && StringUtils.isBlank(propertyMutation.getSaleDetail()))
+                addActionError(getText("mandatory.saleDtl"));
             if (propertyMutation.getDeedDate() == null)
                 addActionError("Registration Document Date should not be empty");
             if (StringUtils.isBlank(propertyMutation.getDeedNo()))
                 addActionError("Registration Document Number should not be empty");
+        }
+        if (propertyMutation.getPartyValue() == null || propertyMutation.getPartyValue().equals("")) {
+            addActionError(getText("mandatory.party.value"));
+        }
+        if (propertyMutation.getDepartmentValue() == null || propertyMutation.getDepartmentValue().equals("")) {
+            addActionError(getText("mandatory.department.value"));
         }
         boolean anyDocIsMandatory = false;
         for (final DocumentType docTypes : documentTypes)

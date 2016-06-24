@@ -1419,4 +1419,6 @@ public interface PropertyTaxConstants {
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";
     public static final String SERVICE_CODE_MUTATION = "PTMF";
+    
+    public static final String MUTATION_TYPE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
 }

@@ -60,6 +60,9 @@
 function submit(obj) {
 	var type = obj.id;
   	var assessmentNo = '<s:property value = "%{assessmentNo}"/>';
+  	var meesevaApplicationNumber = '<s:property value = "%{meesevaApplicationNumber}"/>';
+  	var meesevaServiceCode = '<s:property value = "%{meesevaServiceCode}"/>';
+  	var applicationType = '<s:property value = "%{applicationType}"/>';
 	jQuery('<form>.').attr({
 		method: 'post',
 		action: '/ptis/property/transfer/new.action',
@@ -74,7 +77,26 @@ function submit(obj) {
 	    id: 'assessmentNo',
 	    name: 'assessmentNo',
 	    value: assessmentNo
-	})).appendTo( document.body ).submit();
+	}))
+	.append(jQuery('<input>').attr({
+	    type: 'hidden',
+	    id: 'meesevaApplicationNumber',
+	    name: 'meesevaApplicationNumber',
+	    value: meesevaApplicationNumber
+	}))
+	.append(jQuery('<input>').attr({
+	    type: 'hidden',
+	    id: 'meesevaServiceCode',
+	    name: 'meesevaServiceCode',
+	    value: meesevaServiceCode
+	}))
+	.append(jQuery('<input>').attr({
+	    type: 'hidden',
+	    id: 'applicationType',
+	    name: 'applicationType',
+	    value: applicationType
+	}))
+	.appendTo( document.body ).submit();
 } 
   
 </script>

@@ -57,7 +57,6 @@
 	function loadOnStartUp() {
 		var saleDetails = '<s:property value="%{saleDetail}"/>';
 		enableBlock();
-		enableRegistrationDetails();
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
@@ -117,8 +116,8 @@
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" id="assessmentNo"
 								value="%{basicproperty.upicNo}" /></td>
-						<td class="bluebox">&nbsp;</td>
-						<td style="width: 25%;">&nbsp;</td>
+						<td class="bluebox"><s:text name="applNumber"/></td>
+						<td style="width: 25%;"><span class="bold"><s:property value="%{applicationNo}"/></span></td>
 					</tr>
 					<tr>
 						<td class="bluebox2">&nbsp;</td>
@@ -218,51 +217,39 @@
 						</td>
 					</tr>
 					<%@ include file="transfereeDetailsForm.jsp"%>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox">
-							<s:checkbox name="partialMutation" id="partialMutation" value="%{partialMutation}"/>
-							<s:text name="label.is.mutation.partial"/>
-						</td>
-						<td class="greybox">
-							<s:checkbox name="registrationDone" id="registrationDone" value="%{registrationDone}" onchange="enableRegistrationDetails();"/>
-							<s:text name="label.is.reg.done"/>
-						</td>
-						<td class="greybox">&nbsp;</td>
-						<td class="greybox">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="transferreason"></s:text> <span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:select name="mutationReason"
-								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
-								listValue="mutationName" headerKey="-1"
-								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
-						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
-								name="saleDetail" id="saleDetail"
-								onchange="return validateMaxLength(this);"
-								onblur="trim(this,this.value);"></s:textarea></td>
-					</tr>
-
-					<tr class="documentDetRow">
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="docNum" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64"
-								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-						<td class="greybox"><s:text name="docDate" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:date name="deedDate" var="docDate"
-								format="dd/MM/yyyy" /> <s:textfield name="deedDate"
-								id="deedDate" maxlength="10" value="%{docDate}"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
-					</tr>
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="transferreason"></s:text> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:select name="mutationReason"
+									id="transRsnId" list="dropdownData.MutationReason" listKey="id"
+									listValue="mutationName" headerKey="-1"
+									headerValue="%{getText('default.select')}"
+									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
+							<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
+									name="saleDetail" id="saleDetail"
+									onchange="return validateMaxLength(this);"
+									onblur="trim(this,this.value);"></s:textarea></td>
+						</tr>
+						<tr class="documentDetRow">
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="docNum" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:textfield name="deedNo" id="docNum"
+									maxlength="64"
+									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
+							<td class="greybox"><s:text name="docDate" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:date name="deedDate" var="docDate"
+									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
+									id="deedDate" maxlength="10" value="%{docDate}"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
+						</tr>
+					</s:if>
 					<tr>
 						<td class="greybox2">&nbsp;</td>
 						<td class="greybox"><s:text name="label.parties.value" /> :</td>
@@ -327,16 +314,6 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
-			}
-		}
-		function enableRegistrationDetails() {
-			var obj = document.getElementById("registrationDone");
-			if (obj.checked) {
-				jQuery("tr.documentDetRow").show();
-			} else {
-				jQuery("#docNum").val("");
-				jQuery("#deedDate").val("");
-				jQuery("tr.documentDetRow").hide();
 			}
 		}
 

@@ -57,7 +57,6 @@
 	jQuery("#loadingMask").remove();
 	function loadOnStartUp() {
 		enableBlock();
-		enableRegistrationDetails();
 		try {
 			jQuery(".datepicker").datepicker({
 				format : "dd/mm/yyyy",
@@ -203,59 +202,47 @@
 						</td>
 					</tr>
 					<%@ include file="transfereeDetailsForm.jsp"%>
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="transferreason"></s:text> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:select name="mutationReason"
+									id="transRsnId" list="dropdownData.MutationReason" listKey="id"
+									listValue="mutationName" headerKey="-1"
+									headerValue="%{getText('default.select')}"
+									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
+							<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
+									name="saleDetail" id="saleDetail"
+									onchange="return validateMaxLength(this);"
+									onblur="trim(this,this.value);"></s:textarea></td>
+						</tr>
+						<tr class="documentDetRow">
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="docNum" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:textfield name="deedNo" id="docNum"
+									maxlength="64"
+									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
+							<td class="greybox"><s:text name="docDate" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox"><s:date name="deedDate" var="docDate"
+									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
+									id="deedDate" maxlength="10" value="%{docDate}"
+									autocomplete="off"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
+						</tr>
+					</s:if>
 					<tr>
 						<td class="greybox2">&nbsp;</td>
-						<td class="greybox">
-							<s:checkbox name="partialMutation" id="partialMutation" value="%{partialMutation}"/>
-							<s:text name="label.is.mutation.partial"/>
-						</td>
-						<td class="greybox">
-							<s:checkbox name="registrationDone" id="registrationDone" value="%{registrationDone}" onchange="enableRegistrationDetails();"/>
-							<s:text name="label.is.reg.done"/>
-						</td>
-						<td class="greybox">&nbsp;</td>
-						<td class="greybox">&nbsp;</td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="transferreason"></s:text> <span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:select name="mutationReason"
-								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
-								listValue="mutationName" headerKey="-1"
-								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
-						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
-								name="saleDetail" id="saleDetail"
-								onchange="return validateMaxLength(this);"
-								onblur="trim(this,this.value);"></s:textarea></td>
-					</tr>
-
-					<tr class="documentDetRow">
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="docNum" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64"
-								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-						<td class="greybox"><s:text name="docDate" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:date name="deedDate" var="docDate"
-								format="dd/MM/yyyy" /> <s:textfield name="deedDate"
-								id="deedDate" maxlength="10" value="%{docDate}"
-								autocomplete="off"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
-					</tr>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="label.parties.value" /> :</td>
+						<td class="greybox"><s:text name="label.parties.value" /><span class="mandatory1">*</span> :</td>
 						<td class="greybox">
 							<s:textfield name="partyValue" value="%{partyValue}" id="partyValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
 						</td>
-						<td class="greybox"><s:text name="label.department.value" />:</td>
+						<td class="greybox"><s:text name="label.department.value" /><span class="mandatory1">*</span> :</td>
 						<td class="greybox">
 							<s:textfield name="departmentValue" value="%{departmentValue}" id="departmentValue" maxlength="16" onblur="validNumber(this);checkZero(this);" />
 						</td>
@@ -321,16 +308,6 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
-			}
-		}
-		function enableRegistrationDetails() {
-			var obj = document.getElementById("registrationDone");
-			if (obj.checked) {
-				jQuery("tr.documentDetRow").show();
-			} else {
-				jQuery("#docNum").val("");
-				jQuery("#deedDate").val("");
-				jQuery("tr.documentDetRow").hide();
 			}
 		}
 	</script>
