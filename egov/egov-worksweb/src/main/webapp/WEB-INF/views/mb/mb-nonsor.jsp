@@ -44,7 +44,7 @@
 		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">
-		<table class="table table-bordered" style="overflow: auto;" id="tblnonsor">
+		<table class="table table-bordered" style="overflow: auto;" id="tblNonSor">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slNo" /></th>
@@ -63,20 +63,14 @@
 				</tr>
 			</thead>
 			<tbody id="nonSorTable">
-				<tr id="message">
+				<tr id="nonSorMessage">
 					<td colspan="15"><spring:message code="msg.mb.sor.table"/></td>
 				</tr>
 				<tr id="nonSorRow" class="nonSorRow" nonsorinvisible="true" hidden="true" align="center">
 					<td>
-						<span class="spanslno">1</span>
+						<span class="spannonsorslno">1</span>
 						<input type="hidden" name="nonSorMbDetails[0].id" id="nonSorMbDetails_0" class="nonSorMbDetailsId" />
 						<input type="hidden" name="nonSorMbDetails[0].workOrderActivity.id" id="nonSorWorkOrderActivity_0" class="nonSorWorkOrderActivity" />
-					</td>
-					<td>
-						<span class="nonSorCategory_0"></span>
-					</td>
-					<td>
-						<span class="nonSorCode_0"></span>
 					</td>
 					<td align="left">
 						<span class="nonSorSummary_0"></span>
@@ -90,12 +84,14 @@
 					</td>
 					<td>
 						<span class="nonSorApprovedRate_0"></span>
+						<span class="nonSorUnitRate_0" hidden="true"></span>
 					</td>
 					<td>
 						<span class="nonSorCumulativePreviousEntry_0"></span>
 					</td>
 					<td>
-						<input name="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+						<input name="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+						<input type="hidden" name="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
 					</td>
 					<td>
 						<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
@@ -104,7 +100,7 @@
 						<span class="nonSorAmountCurrentEntry_0"></span>
 					</td>
 					<td>
-						<span class="nonSorAmountIncludingCurrentEntry_0"></span>
+						<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_0"></span>
 					</td>
 					<td>
 						<span class="nonSorApprovedAmount_0"></span>
@@ -113,18 +109,31 @@
 						<textarea name="nonSorMbDetails[0].remarks" id="nonSorRemarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></textarea>
 					</td>
 					<td>
-						<span class="add-padding nonSorDelete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+						<span class="add-padding nonSorDelete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 					</td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right"> <span id="nonSorEstimateTotal">0.00</span> </td>
+					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
+					<td class="text-right"> <span id="nonSorTotal">0.00</span> </td>
+					<td></td>
 					<td></td>
 					<td></td>
 				</tr>
 			</tfoot>
 		</table>
+	</div>
+</div>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-body custom-form">
+		<div class="form-group">
+			<label class="col-sm-5 control-label text-right">
+			    <spring:message code="lbl.total.mbamount" /><span class="mandatory"></span>
+			</label>
+			<div class="col-sm-2 add-margin">
+				<input name="mbAmount" id="mbAmount" class="form-control" readonly="readonly" required="required"/>
+			</div>
+		</div>
 	</div>
 </div>

@@ -38,6 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
+	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
@@ -110,7 +111,8 @@
 						<span class="cumulativePreviousEntry_0"></span>
 					</td>
 					<td>
-						<input name="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+						<input name="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+						<input type="hidden" name="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
 					</td>
 					<td>
 						<span class="cumulativeIncludingCurrentEntry_0"></span>
@@ -119,7 +121,7 @@
 						<span class="amountCurrentEntry_0"></span>
 					</td>
 					<td>
-						<span class="amountIncludingCurrentEntry_0"></span>
+						<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_0"></span>
 					</td>
 					<td>
 						<span class="approvedAmount_0"></span>
@@ -134,8 +136,9 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="12" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right"> <span id="sorEstimateTotal">0.00</span> </td>
+					<td colspan="11" class="text-right"><spring:message code="lbl.total" /></td>
+					<td class="text-right"> <span id="sorTotal">0.00</span> </td>
+					<td></td>
 					<td></td>
 					<td></td>
 				</tr>

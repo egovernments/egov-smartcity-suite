@@ -55,6 +55,7 @@
 	<input type="hidden" name="id" id="id">
 	<input type="hidden" name="workOrder.id" id="workOrderId">
 	<input type="hidden" name="workOrderEstimate.id" id="workOrderEstimateId">
+	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	

@@ -61,8 +61,8 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btnmodifyloa">
-				<spring:message code='lbl.modifyloa' />
+			<button type='button' class='btn btn-primary' id="btnadd">
+				<spring:message code='lbl.add' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>

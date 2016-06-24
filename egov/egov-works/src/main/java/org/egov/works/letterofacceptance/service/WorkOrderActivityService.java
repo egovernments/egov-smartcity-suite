@@ -88,12 +88,12 @@ public class WorkOrderActivityService {
 //                .createAlias("act.schedule", "schedule")
 //                .createAlias("act.nonSor", "nonSor");
         if(workOrderEstimateId != null)
-            criteria.add(Restrictions.eq("woe.id", 11L));
-        if(!description.equals(""))
+            criteria.add(Restrictions.eq("woe.id", workOrderEstimateId));
+        if(description != null && !description.equals(""))
             criteria.add(
                     Restrictions.or(Restrictions.ilike("schedule.description", description),
                             Restrictions.ilike("nonSor.description", description)));
-        if(!itemCode.equals(""))
+        if(itemCode != null && !itemCode.equals(""))
             criteria.add(Restrictions.ilike("schedule.code", itemCode));
 
         return criteria.list();

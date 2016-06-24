@@ -51,6 +51,8 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
+import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
@@ -93,6 +95,9 @@ public class MBHeaderService {
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
+    
+    @Autowired
+    private WorkOrderActivityService workOrderActivityService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -143,8 +148,22 @@ public class MBHeaderService {
     public MBHeader update(final MBHeader mbHeader) {
         mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
         mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
+        mergeSorAndNonSorMBDetails(mbHeader);
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
+    }
+
+    private void mergeSorAndNonSorMBDetails(MBHeader mbHeader) {
+        for(final MBDetails mbDetails : mbHeader.getSorMbDetails()) {
+            mbDetails.setMbHeader(mbHeader);
+            mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+            mbHeader.addMbDetails(mbDetails);
+        }
+        for(final MBDetails mbDetails : mbHeader.getNonSorMbDetails()) {
+            mbDetails.setMbHeader(mbHeader);
+            mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+            mbHeader.addMbDetails(mbDetails);
+        }
     }
 
     @Transactional

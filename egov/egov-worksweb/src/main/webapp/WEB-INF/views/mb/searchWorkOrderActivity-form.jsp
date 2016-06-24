@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 		<form name="SearchRequest" role="form" action="" id="SearchRequest" class="form-horizontal form-groups-bordered">
+			<input type="hidden" id="errorSelect" value="<spring:message code='msg.select.workorderactivity' />">
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="searchWorkOrderActivity-header.jsp"/>

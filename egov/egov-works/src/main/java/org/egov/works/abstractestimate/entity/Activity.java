@@ -104,8 +104,10 @@ public class Activity extends AbstractAuditable {
 
     @NotNull(message = "activity.rate.not.null")
     @Column(name = "unitrate")
+    @GreaterThan(value = 0, message = "activity.rate.non.negative")
     private double rate = 0.0;
 
+    @GreaterThan(value = 0, message = "activity.estimaterate.non.negative")
     private double estimateRate = 0.0;
 
     @NotNull(message = "activity.quantity.not.null")

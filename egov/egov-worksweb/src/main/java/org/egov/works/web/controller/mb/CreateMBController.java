@@ -66,7 +66,7 @@ public class CreateMBController {
     }
 
     @RequestMapping(value = "/create/{workOrderId}", method = RequestMethod.POST)
-    public @ResponseBody String create(@ModelAttribute("milestone") final MBHeader mbHeader,
+    public @ResponseBody String create(@ModelAttribute("mbHeader") final MBHeader mbHeader,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
             throws ApplicationException, IOException {

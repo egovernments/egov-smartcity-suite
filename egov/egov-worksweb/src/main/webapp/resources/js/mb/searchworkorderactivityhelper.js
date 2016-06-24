@@ -38,8 +38,11 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 jQuery('#btnsearch').click(function(e) {
+	$('#selectall').prop('checked', false);
 	callAjaxSearch();
 });
+
+var $activities = "";
 
 function getFormData($form) {
 	var unindexed_array = $form.serializeArray();
@@ -75,18 +78,50 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
 					if(data.id != null)
-						$('td:eq(1)',row).html('<input type="checkbox" class="select" id="select" data="'+ data.id +'">');
+						$('td:eq(1)',row).html('<input type="checkbox" name="selectActivity" class="selectActivity" data="'+ data.id +'">');
 					if(data.summary != null)
 						$('td:eq(2)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
 				},
 				aaSorting : [],
 				columns : [ { 
 						"data" : "", "sClass" : "text-center"} , {
-						"data" : "", "sClass" : "text-center"} ,{
+						"data" : "", "sClass" : "text-center", "bSortable": false} ,{
 						"data" : "", "sClass" : "text-center"},{
 						"data" : "sorNonSorType", "sClass" : "text-center"},{
 						"data" : "sorCode", "sClass" : "text-right"},{
 						"data" : "categoryType", "sClass" : "text-center"},{
-						"data" : "uom", "sClass" : "text-center"}]  
+						"data" : "uom", "sClass" : "text-center"}],
+				"fnInitComplete": function(oSettings, json) {
+					$activities = json;
+			    }
 			});
 }
+
+$(document).ready(function() {
+	$('#selectall').click(function(event) {
+	    if(this.checked) {
+	        $('.selectActivity').each(function() {
+	            this.checked = true;
+	        });
+	    }else{
+	        $('.selectActivity').each(function() {
+	            this.checked = false;
+	        });         
+	    }
+	});
+	
+	$('#btnadd').click(function() {
+		var selectedActivities = "";
+		$('.selectActivity').each(function() {
+			if(this.checked)
+				selectedActivities += $(this).attr('data') + ",";
+		});
+		if(selectedActivities == "") {
+			bootbox.alert($('#errorSelect').val());
+			return;
+		} else {
+			window.opener.populateActivities($activities, selectedActivities);
+			window.close();
+		}
+	});
+});

@@ -81,9 +81,11 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
             jsonObject.addProperty("uom", "");
         jsonObject.addProperty("approvedQuantity", workOrderActivity.getApprovedQuantity());
         jsonObject.addProperty("approvedRate", workOrderActivity.getApprovedRate());
+        jsonObject.addProperty("approvedAmount", workOrderActivity.getApprovedAmount());
         jsonObject.addProperty("unitRate", workOrderActivity.getActivity().getRate());
         jsonObject.addProperty("conversionFactor", workOrderActivity.getActivity().getConversionFactor());
-        jsonObject.addProperty("cumulativePreviousEntry", "");
+        // TODO replace with cumulative upto previous entry
+        jsonObject.addProperty("cumulativePreviousEntry", workOrderActivity.getApprovedQuantity());
 
         jsonObject.addProperty("id", workOrderActivity.getId());
         return jsonObject;

@@ -50,12 +50,12 @@
 			<div class="alert text-center" style="color:red;">
 				<c:out value="${errorMessage }" />
 			</div>
-				<div class="col-sm-12 text-center">
+				<!-- <div class="col-sm-12 text-center">
 			<div class="row">
 					<input type="submit" name="closeButton" id="closeButton"
 						value="Close" Class="btn btn-default" onclick="window.close();" />
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>
