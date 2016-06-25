@@ -122,11 +122,11 @@ function callAjaxSearch() {
 								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
 										+ data.aeId + '\')">'
 										+ data.estimateNumber + '</a>');
-						$('td:eq(3)', row).html(
+						$('td:eq(4)', row).html(
 								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 										+ data.id + '\')">'
 										+ data.workOrderNumber + ' -- ' + data.workOrderDate + '</a>');
-						$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+						$('td:eq(5)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting : [],
@@ -138,18 +138,18 @@ function callAjaxSearch() {
 					"data" : "estimateNumber",
 					"sClass" : "text-left","width": "13.5%"
 				}, {
+					"data" : "nameOfWork",
+					"sClass" : "text-left","sWidth": "15%"
+					
+				},{
 					"data" : "workOrderNumber",
 					"sClass" : "text-left","width": "13.5%"
 				}, {
 					"data" : "contractor",
 					"sClass" : "text-left","sWidth": "15%",
 						 "render":function(data, type, full, meta){
-						       return full.contractorcode + "/" + full.contractor;
+						       return  full.contractor + "/" + full.contractorcode;
 						    } 
-				}, {
-					"data" : "nameOfWork",
-					"sClass" : "text-left","sWidth": "15%"
-					
 				}, {
 					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"

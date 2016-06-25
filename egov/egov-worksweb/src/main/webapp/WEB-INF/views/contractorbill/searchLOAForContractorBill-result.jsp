@@ -55,9 +55,9 @@
 					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
+					<th><spring:message code="lbl.nameofthework" /></th>
 					<th><spring:message code="lbl.loanumberanddate" /></th>
 					<th><spring:message code="lbl.contractornamecode" /></th>
-					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th>
 					<th><spring:message code="lbl.mb.referencenumbers" /></th>
 					<th><spring:message code="lbl.mbamount" /></th>

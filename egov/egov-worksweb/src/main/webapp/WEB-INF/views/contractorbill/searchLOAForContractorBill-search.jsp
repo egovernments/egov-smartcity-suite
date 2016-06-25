@@ -76,14 +76,14 @@
 								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.fromdate" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:input path="fromDate" class="form-control datepicker"
+									<form:input path="fromDate" class="form-control datepicker" placeholder="LOA from date"
 										id="fromDate" data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="fromDate" cssClass="add-margin error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.todate" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:input path="toDate" class="form-control datepicker"
+									<form:input path="toDate" class="form-control datepicker" placeholder="LOA to date"
 										id="toDate" data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="toDate" cssClass="add-margin error-msg" />
 								</div>
