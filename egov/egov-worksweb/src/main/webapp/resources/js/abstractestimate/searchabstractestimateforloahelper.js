@@ -101,6 +101,8 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.estimateNumber +'"/>');
 					$('td:eq(1)',row).html(index+1);
+					if(data.estimateNumber != null)
+						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.aeId +'\')">' + data.estimateNumber + '</a>');
 					if(data.adminSanctionNumber != null)
 						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
@@ -212,3 +214,7 @@ $(document).ready(function(){
 		source : workIdNumber.ttAdapter()
 	});
 });
+
+function openAbstractEstimate(id) {
+	window.open("/egworks/abstractestimate/view/"+ id , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

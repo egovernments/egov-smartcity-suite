@@ -52,7 +52,7 @@
 					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
-					<th><spring:message code="lbl.nameofwork" /></th>
+					<th><spring:message code="lbl.nameofthework" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.createdby" /></th>
 					<th><spring:message code="lbl.adminsanctionby" /></th>

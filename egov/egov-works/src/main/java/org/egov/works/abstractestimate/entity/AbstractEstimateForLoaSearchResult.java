@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 public class AbstractEstimateForLoaSearchResult {
     private Long id;
     private Long leId;
+    private Long aeId;
     private String adminSanctionNumber;
     private String estimateNumber;
     private String nameOfWork;
@@ -143,6 +144,14 @@ public class AbstractEstimateForLoaSearchResult {
 
     public void setLeId(Long leId) {
         this.leId = leId;
+    }
+
+    public Long getAeId() {
+        return aeId;
+    }
+
+    public void setAeId(Long aeId) {
+        this.aeId = aeId;
     }
     
 }

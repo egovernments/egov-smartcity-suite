@@ -137,7 +137,7 @@ public class SearchAbstractEstimateController {
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
         model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
         model.addAttribute("departments", departments);
-        return "searchAbstractEstimateForLoa-form";
+        return "searchAbstractEstimateForLoa-search";
     }
 
     private void setDropDownValues(final Model model) {

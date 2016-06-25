@@ -723,6 +723,7 @@ public class EstimateService {
         if (!lineEstimateNumbers.isEmpty()) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
                     .createAlias("createdBy", "createdBy").createAlias("lineEstimateDetails", "lineEstimateDetails")
+                    .createAlias("egwStatus", "aeStatus")
                     .createAlias("lineEstimateDetails.lineEstimate", "lineEstimate")
                     .createAlias("lineEstimateDetails.lineEstimate.status", "status")
                     .createAlias("lineEstimateDetails.projectCode", "projectCode");
@@ -752,6 +753,9 @@ public class EstimateService {
                             .ignoreCase());
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
                 criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+                criteria.add(Restrictions.or(
+                        Restrictions.eq("aeStatus.code", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()),
+                        Restrictions.eq("aeStatus.code", AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString())));
                 if (abstractEstimateForLoaSearchRequest.isSpillOverFlag())
                     criteria.add(Restrictions.eq("lineEstimate.spillOverFlag",
                             abstractEstimateForLoaSearchRequest.isSpillOverFlag()));
@@ -771,6 +775,7 @@ public class EstimateService {
         for (final AbstractEstimate ae : abstractEstimates) {
             final AbstractEstimateForLoaSearchResult result = new AbstractEstimateForLoaSearchResult();
             result.setId(ae.getLineEstimateDetails().getLineEstimate().getId());
+            result.setAeId(ae.getId());
             result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
             result.setCreatedBy(ae.getLineEstimateDetails().getLineEstimate().getCreatedBy().getName());
             result.setEstimateAmount(ae.getLineEstimateDetails().getEstimateAmount());

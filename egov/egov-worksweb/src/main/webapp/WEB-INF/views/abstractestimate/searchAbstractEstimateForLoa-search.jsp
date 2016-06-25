@@ -52,7 +52,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimateno" /></label>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 									<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
@@ -122,7 +122,7 @@
 				</div>
 			</div>
 		</form:form>  
-<jsp:include page="searchAbstractEstimateForLoa-results.jsp"/>
+<jsp:include page="searchAbstractEstimateForLoa-result.jsp"/>
 <script>
 	$('#btnsearch').click(function(e) {
 		if ($('form').valid()) {
