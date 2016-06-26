@@ -504,8 +504,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             infoBean.setMeesevaNo(property.getApplicationNo());
         }
         infoBean.setNoticeDate(new Date());
-
+        String ownerType=basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
+        String owner="";
+        if(ownerType.equalsIgnoreCase("Vacant Land")){
+        	owner="(On Land)";
+     	}
+        infoBean.setOwnerTypeForReport(owner);
         propertyNotice.setOwnerInfo(infoBean);
+       
     }
 
     /**

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -38,31 +36,38 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.egov.tl.entity.LicenseCategory" table="EGTL_MSTR_CATEGORY">
-		<id column="ID" name="id" type="long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGTL_MSTR_CATEGORY</param>
-			</generator>
-		</id>
-		<property  name="createdDate" type="java.util.Date">
-			<column length="7" name="CREATEDDATE" not-null="true" />
-		</property>
-		<property  name="lastModifiedDate" type="java.util.Date">
-			<column name="LASTMODIFIEDDATE" not-null="true" />
-		</property>
-		<many-to-one class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" name="createdBy"
-			not-null="true" />
-		<many-to-one class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY" fetch="select" name="lastModifiedBy"
-			not-null="true" />
-		<property  name="name" type="java.lang.String">
-			<column length="256" name="NAME" not-null="true" unique="true" />
-		</property>
-		<property  name="code" type="java.lang.String">
-			<column length="256" name="CODE" not-null="true" unique="true" />
-		</property>
-	</class>
-</hibernate-mapping>
+  --%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center no-float">
+							<c:if test="${not empty message}">
+                    			<strong><spring:message code="${message}"/></strong>
+                			</c:if>
+				</div>
+			</div>
+			<form:form id="appconfigForm" method="post"
+				class="form-horizontal form-groups-bordered">
+				<div class="panel-body">			
+
+					<div class="row text-center">
+						<div class="row">
+							<div class="text-center">
+								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form:form>
+
+		</div>
+	</div>
+</div>
+

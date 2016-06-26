@@ -38,9 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-05-24T10:15:21 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-06-24T12:19:23 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="52"/>
@@ -68,7 +68,7 @@
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{ownerInfo}.getOwnerAddress()+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the above mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["To\nSri / Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style>\nAddress: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerAddress())+"</style>\n\n\tTake Notice that by virtue of the power vested with Commissioner, the Assessment in respect of Door No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerInfo}.getDoorNo()+"</style> situated at <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getLocalityName())+"</style> in this Corporation, has until further notice been fixed as mentioned below for reasons specified with effect from the half year commencing w.e.f. 1st "+$P{ownerInfo}.getInstallmentYear()+" as shown hereunder. \n\n\tIn case you are dissatisfied with the assessment now fixed, you can present Complaint to the Commissioner or to any Officer authorized by the Commissioner within 15 days from the date of service of this notice. If no complaint against the assessment is presented within the above mentioned period of 15 days, the assessment will be final and no further claim/ objection will be entertained."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="36" y="94" width="478" height="10" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
@@ -89,7 +89,7 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="10" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["(Special Notice of Property Tax Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["(Special Notice of Property Tax "+$P{ownerInfo}.getOwnerTypeForReport()+"Assessment/ Revision)\n(Issued U/S 220(2) of Municipal Corporation Act, 1955(Formerly GHMC Act, 1955))"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="282" y="270" width="231" height="15" uuid="5538b6f9-3bc6-428d-b383-f6233a5bb0a1"/>

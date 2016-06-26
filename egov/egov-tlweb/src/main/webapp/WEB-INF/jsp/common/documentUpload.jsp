@@ -48,7 +48,8 @@
 	
 	// checklist should be checked before attaching document
 	function verifyChecklist(obj){
-		if(!jQuery(obj).parent().parent().find('input[type="checkbox"]').is(":checked")){
+		//if(!jQuery(obj).parent().parent().find('input[type="checkbox"]').is(":checked")){
+		if(!jQuery(obj).closest('.form-group').find('input[type="checkbox"]').is(":checked")){
 			bootbox.alert("Please Check the Check List before attaching.");
 			return false; 
 		}

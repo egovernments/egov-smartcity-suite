@@ -85,20 +85,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Autowired
     private LicenseUtils licenseUtils;
 
-    public TradeLicenseService(final PersistenceService<TradeLicense, Long> licensePersitenceService) {
-        super(licensePersitenceService);
-    }
-
     @Override
     protected NatureOfBusiness getNatureOfBusiness() {
-        final NatureOfBusiness natureOfBusiness = (NatureOfBusiness) persistenceService
+        final NatureOfBusiness natureOfBusiness = (NatureOfBusiness) entityQueryService
                 .find("from org.egov.tl.entity.NatureOfBusiness where   name='Permanent'");
         return natureOfBusiness;
     }
 
     @Override
     protected Module getModuleName() {
-        final Module module = (Module) persistenceService
+        final Module module = (Module) entityQueryService
                 .find("from org.egov.infra.admin.master.entity.Module where parentModule is null and name=?",
                         "Trade License");
         return module;
@@ -117,21 +113,21 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Override
     protected LicenseAppType getLicenseApplicationTypeForRenew() {
-        final LicenseAppType appType = (LicenseAppType) persistenceService
+        final LicenseAppType appType = (LicenseAppType) entityQueryService
                 .find("from org.egov.tl.entity.LicenseAppType where   name='Renew'");
         return appType;
     }
 
     @Override
     protected LicenseAppType getLicenseApplicationType() {
-        final LicenseAppType appType = (LicenseAppType) persistenceService
+        final LicenseAppType appType = (LicenseAppType) entityQueryService
                 .find("from org.egov.tl.entity.LicenseAppType where   name='New'");
         return appType;
     }
 
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
-        licensePersitenceService().persist(license);
+        licenseRepository.save(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);
     }
@@ -152,7 +148,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         }
         if (BUTTONAPPROVE.equals(workFlowAction) || Constants.BUTTONFORWARD.equals(workFlowAction)
                 && license.getState().getValue().contains(Constants.WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING)) {
-            final LicenseStatus activeStatus = (LicenseStatus) persistenceService
+            final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
                     .find("from org.egov.tl.entity.LicenseStatus where code='UWF'");
             license.setStatus(activeStatus);
             if (Constants.BUTTONFORWARD.equals(workFlowAction) && license.getEgwStatus() != null
@@ -161,7 +157,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                         Constants.APPLICATION_STATUS_INSPE_CODE);
         }
         if (Constants.GENERATECERTIFICATE.equals(workFlowAction)) {
-            final LicenseStatus activeStatus = (LicenseStatus) persistenceService
+            final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
                     .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
             license.setStatus(activeStatus);
             // setting license to non-legacy, old license number will be the only tracking
@@ -174,11 +170,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 && license.getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
             if (license.getLicenseAppType() != null
                     && license.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
-                final LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
                         .find("from org.egov.tl.entity.LicenseStatus where code='ACT'");
                 license.setStatus(activeStatus);
             } else {
-                final LicenseStatus activeStatus = (LicenseStatus) persistenceService
+                final LicenseStatus activeStatus = (LicenseStatus) entityQueryService
                         .find("from org.egov.tl.entity.LicenseStatus where code='CAN'");
                 license.setStatus(activeStatus);
             }
@@ -236,25 +232,25 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<TradeLicense> getTradeLicenseForGivenParam(final String paramValue, final String paramType) {
         List<TradeLicense> licenseList = new ArrayList<>();
         if (paramType.equals(Constants.SEARCH_BY_APPNO))
-            licenseList = licensePersitenceService.findAllBy("from License where upper(applicationNumber) like ?", "%"
+            licenseList = entityQueryService.findAllBy("from License where upper(applicationNumber) like ?", "%"
                     + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_LICENSENO))
-            licenseList = licensePersitenceService.findAllBy("from License where  upper(licenseNumber) like ?", "%"
+            licenseList = entityQueryService.findAllBy("from License where  upper(licenseNumber) like ?", "%"
                     + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_OLDLICENSENO))
-            licenseList = licensePersitenceService.findAllBy("from License where  upper(oldLicenseNumber) like ?", "%"
+            licenseList = entityQueryService.findAllBy("from License where  upper(oldLicenseNumber) like ?", "%"
                     + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_TRADETITLE))
-            licenseList = licensePersitenceService.findAllBy("from License where  upper(nameOfEstablishment) like ?",
+            licenseList = entityQueryService.findAllBy("from License where  upper(nameOfEstablishment) like ?",
                     "%" + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_TRADEOWNERNAME))
-            licenseList = licensePersitenceService.findAllBy(
+            licenseList = entityQueryService.findAllBy(
                     "from License where  upper(licensee.applicantName) like ?", "%" + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_PROPERTYASSESSMENTNO))
-            licenseList = licensePersitenceService.findAllBy("from License where  upper(assessmentNo) like ?", "%"
+            licenseList = entityQueryService.findAllBy("from License where  upper(assessmentNo) like ?", "%"
                     + paramValue.toUpperCase() + "%");
         else if (paramType.equals(Constants.SEARCH_BY_MOBILENO))
-            licenseList = licensePersitenceService.findAllBy("from License where  licensee.mobilePhoneNumber like ?",
+            licenseList = entityQueryService.findAllBy("from License where  licensee.mobilePhoneNumber like ?",
                     "%" + paramValue + "%");
         return licenseList;
     }
@@ -262,7 +258,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<TradeLicense> searchTradeLicense(final String applicationNumber, final String licenseNumber,
             final String oldLicenseNumber, final Long categoryId, final Long subCategoryId, final String tradeTitle,
             final String tradeOwnerName, final String propertyAssessmentNo, final String mobileNo, final Boolean isCancelled) {
-        final Criteria searchCriteria = persistenceService.getSession().createCriteria(TradeLicense.class);
+        final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
 

@@ -55,14 +55,19 @@ import javax.persistence.Table;
 @SequenceGenerator(name = PenaltyRates.SEQ, sequenceName = PenaltyRates.SEQ, allocationSize = 1)
 public class PenaltyRates extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1329581042965327280L;
     public static final String SEQ = "SEQ_EGTL_PENALTYRATES";
+    private static final long serialVersionUID = 1329581042965327280L;
+
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     private Long fromRange;
+
     private Long toRange;
+
     private Double rate;
+
     @ManyToOne
     @JoinColumn(name = "licenseAppType")
     private LicenseAppType licenseAppType;

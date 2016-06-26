@@ -42,7 +42,6 @@ package org.egov.egf.web.actions.payment;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -71,6 +70,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
@@ -110,8 +110,8 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -249,6 +249,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Boolean nonSubledger = false;
     private FinancialYearDAO financialYearDAO;
     private boolean containsRTGS = false;
+    private List<CFinancialYear> yearCodeList;
+    private Long departmentId;
 
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
@@ -791,17 +793,30 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     @SuppressWarnings("unchecked")
     private Map<String, String> loadChequeSerialNo(final Integer acc) {
-
         chequeSlNoMap = new LinkedHashMap<String, String>();
-        final List<Object[]> cheueSlList = persistenceService
-                .getSession()
-                .createSQLQuery(
-                        "select distinct(serialNo) ,fs.financialyear from  egf_account_cheques ac,financialyear fs where ac.serialno = fs.id and  bankAccountId="
-                                + acc
-                                + " order by serialNo desc ").list();
-        if (cheueSlList != null)
-            for (final Object[] s : cheueSlList)
-                chequeSlNoMap.put(s[0], s[1]);
+        try
+        {
+            if (bankaccount != null)
+            {
+                final List<Object[]> yearCodeList = persistenceService
+                        .findAllBy(
+                                "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                        + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where name = 'Accounts')"
+                                        + " order by serialNo desc ", bankaccount);
+
+                if (yearCodeList != null)
+                {
+                    for (final Object[] s : yearCodeList)
+                        chequeSlNoMap.put(s[0], s[1]);
+                }
+            }
+        } catch (final HibernateException e) {
+            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
+                    new HibernateException(e.getMessage()));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting year code " + e.getMessage(),
+                    new HibernateException(e.getMessage()));
+        }
         return chequeSlNoMap;
     }
 
@@ -2552,6 +2567,22 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     public void setDeptNonMandatory(Boolean deptNonMandatory) {
         this.deptNonMandatory = deptNonMandatory;
+    }
+
+    public List<CFinancialYear> getYearCodeList() {
+        return yearCodeList;
+    }
+
+    public void setYearCodeList(List<CFinancialYear> yearCodeList) {
+        this.yearCodeList = yearCodeList;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
 }

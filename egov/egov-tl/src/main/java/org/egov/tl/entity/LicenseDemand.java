@@ -45,17 +45,19 @@ import org.egov.demand.model.EgDemand;
 import java.util.Date;
 
 public class LicenseDemand extends EgDemand {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8850906441323607906L;
     private License license;
     private Date renewalDate;
     private char isLateRenewal;
-  
+
     public License getLicense() {
         return license;
     }
+
     public void setLicense(final License license) {
         this.license = license;
     }
+
     public Date getRenewalDate() {
         return renewalDate;
     }

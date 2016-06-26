@@ -40,11 +40,12 @@ transport.tcp.port: 9300 ## This is the default port
 ```
 
 #### Building Source
-1. Clone the eGov repository
+1. Clone the eGov repository (development is done on the `develop` branch.
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
 $ git clone https://github.com/egovernments/eGov.git
+$ git checkout develop
 ```
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
@@ -87,7 +88,7 @@ $ git clone https://github.com/egovernments/eGov.git
  ```
 One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
 
-  Database properties are defined in the `persistence-config.properties`.
+  Database properties are defined in the `persistence-config.properties`. **Do not update this at all.**
 
   ```properties
   db.url=jdbc:postgresql://localhost:5432/postgres
@@ -99,7 +100,7 @@ One can override any default settings available in `/egov/egov-egi/src/main/reso
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
- mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=<driver_class_fqn> -Ddb.url=<jdbc_url>
+ mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=org.postgresql.Driver -Ddb.url=<jdbc_url>
  ```
 
 #### Redis Server Setup
@@ -231,7 +232,12 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 2. Intellij Deployment
 
-* TODO - Contribution welcome
+* Install Intellij
+* Open project
+* In project settings set JDK to 1.8
+* Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
+* Open the Jboss run configuration and edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
+* Run
 
 ##### 3. Database Migration Procedure
 

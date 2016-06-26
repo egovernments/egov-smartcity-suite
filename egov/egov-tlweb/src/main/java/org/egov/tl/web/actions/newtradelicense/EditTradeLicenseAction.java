@@ -170,7 +170,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
             this.tradeLicenseService.transitionWorkFlow(this.tradeLicense, this.workflowBean);
         if (!this.isOldLicense)
             this.processWorkflow(NEW);
-        this.tradeLicenseService.processAndStoreDocument(this.tradeLicense.getDocuments());
+        this.tradeLicenseService.processAndStoreDocument(this.tradeLicense.getDocuments(), this.tradeLicense);
 
         LicenseAppType newAppType = (LicenseAppType) this.persistenceService.find("from  LicenseAppType where name='New' ");
         this.tradeLicense.setLicenseAppType(newAppType);

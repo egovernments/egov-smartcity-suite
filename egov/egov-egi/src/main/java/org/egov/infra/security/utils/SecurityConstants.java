@@ -42,15 +42,16 @@ package org.egov.infra.security.utils;
 
 public interface SecurityConstants {
 
-	public static final String[] SQL_INJ_BLK_LIST = { "--", ";--", ";", "/*", "*/", "*", "@@", "@", "char", "nchar", "varchar", "nvarchar", "grant", "all", "union", "permissions", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
-			"end", "exec", "execute", "fetch", "insert", "kill", "join", "inner", "outer", "open", "select", "sys", "sysobjects", "syscolumns", "table", "update" };
-	public static final String LOCATION_FIELD = "locationId";
-	public static final String IPADDR_FIELD = "ipAddress";
-	public static final String LOGINTYPE = "loginType";
-	public static final String PWD_FIELD = "j_password";
-	public static final String USERNAME_FIELD = "j_username";
-	public static final String LOGIN_LOG_ID = "loginLogId";
-	public static final String LOGIN_URI = "/login";
-	public static final String PUBLIC_URI = "/public";
-	
+    String LOCATION_FIELD = "locationId";
+    String IPADDR_FIELD = "ipAddress";
+    String USERAGENT_FIELD = "userAgentInfo";
+    String LOGINTYPE = "loginType";
+    String PWD_FIELD = "j_password";
+    String USERNAME_FIELD = "j_username";
+    String LOGIN_LOG_ID = "loginLogId";
+    String LOGIN_URI = "/login";
+    String PUBLIC_URI = "/public";
+    int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
+    int LOGIN_LOCK_HOURS = 24;
+
 }

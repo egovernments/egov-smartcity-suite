@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<%@ page contentType="text/json"%><%@ taglib prefix="s"
+	uri="/WEB-INF/tags/struts-tags.tld"%><%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,34 +37,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.egov.tl.entity.LicenseSubCategoryDetails" table="egtl_subcategory_details">
-		<id column="ID" name="id" type="long">
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_egtl_subcategory_details</param>
-			</generator>
-		</id>
-				
-		<many-to-one name="subCategory" class="org.egov.tl.entity.LicenseSubCategory" fetch="select">
-            <column name="subcategory_id" precision="22" scale="0" not-null="true" />
-        </many-to-one>
-        
-		<many-to-one name="feeType" class="org.egov.tl.entity.FeeType" fetch="select">
-			<column name="feetype_id" not-null="true"/>
-		</many-to-one>
-		
-		<many-to-one name="uom" class="org.egov.tl.entity.UnitOfMeasurement" fetch="select">
-			<column name="uom_id" not-null="true"/>
-		</many-to-one>
-				
-		<property name="rateType" column="RATETYPE" not-null="true">
-             <type name="org.hibernate.type.EnumType">       
-                     <param name="enumClass">org.egov.tl.entity.RateTypeEnum</param>
-                     <param name="useNamed">true</param>
-             </type>  
-        </property> 
-	</class>
-</hibernate-mapping>
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="yearCodeList" status="status">{"Text":"<s:property value="%{finYearRange}" />", "Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

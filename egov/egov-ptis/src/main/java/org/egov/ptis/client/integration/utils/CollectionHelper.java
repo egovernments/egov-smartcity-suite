@@ -50,8 +50,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
-import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -73,15 +73,17 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.constants.PropertyTaxConstants;
 
 /**
- * Performs collections operations: (1) Fetch the details of a given receipt; (2) Execute a collection for a particular bill and
- * amount.; (3) Search for existing payment ref no.
+ * Performs collections operations: (1) Fetch the details of a given receipt;
+ * (2) Execute a collection for a particular bill and amount.; (3) Search for
+ * existing payment ref no.
  */
 public class CollectionHelper {
     private static final Logger LOG = Logger.getLogger(CollectionHelper.class);
     private EgBill bill;
 
     /**
-     * Use this constructor when you're only interested in getting the details of a receipt.
+     * Use this constructor when you're only interested in getting the details
+     * of a receipt.
      */
     public CollectionHelper() {
     }
@@ -164,8 +166,9 @@ public class CollectionHelper {
     }
 
     /**
-     * Apportions the paid amount amongst the appropriate GL codes and returns the collections object that can be sent to the
-     * collections API for processing.
+     * Apportions the paid amount amongst the appropriate GL codes and returns
+     * the collections object that can be sent to the collections API for
+     * processing.
      * 
      * @param bill
      * @param amountPaid
@@ -179,8 +182,7 @@ public class CollectionHelper {
         Collections.sort(billDetails);
 
         for (EgBillDetails billDet : billDetails) {
-            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
-                    BigDecimal.ZERO, // billDet.getCrAmount(),
+            receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
                     billDet.getDescription()));
         }
@@ -191,13 +193,12 @@ public class CollectionHelper {
         boolean isActualDemand = false;
         for (EgBillDetails billDet : bill.getEgBillDetails()) {
             for (ReceiptDetail rd : receiptDetails) {
-                // FIX ME
                 if ((billDet.getGlcode().equals(rd.getAccounthead().getGlcode()))
                         && (billDet.getDescription().equals(rd.getDescription()))) {
                     isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
                             billDet.getOrderNo(), rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(),
-                            billDet.getDescription(), isActualDemand, PURPOSE.OTHERS);
+                            billDet.getDescription(), isActualDemand, PURPOSE.valueOf(billDet.getPurpose()));
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
                     break;
                 }
@@ -209,7 +210,8 @@ public class CollectionHelper {
     }
 
     /**
-     * Populates a BillInfo object from the bill -- the GL codes, descripion and dr/cr amounts.
+     * Populates a BillInfo object from the bill -- the GL codes, descripion and
+     * dr/cr amounts.
      * 
      * @param bill
      * @return

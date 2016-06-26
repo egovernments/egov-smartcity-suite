@@ -231,7 +231,7 @@ label.error {
 }
 .page-container.horizontal-menu .search {
   position: fixed;
-  top: 63px;
+  top: 64px;
   left: 0;
   z-index: 10;
   width: 250px;
@@ -242,15 +242,6 @@ label.error {
   width: 250px;
   color: #fff;
   background: #6b4f2c;
-}
-.page-container.horizontal-menu .search #searchtree::-webkit-input-placeholder {
-  color: #fff;
-}
-.page-container.horizontal-menu .search #searchtree:-moz-placeholder {
-  color: #fff;
-}
-.page-container.horizontal-menu .search #searchtree::-moz-placeholder {
-  color: #fff;
 }
 .page-container.horizontal-menu .search .searchicon {
   position: absolute;
@@ -516,18 +507,6 @@ label.error {
   width: calc(100% - 250px);
   padding-bottom: 40px;
 }
-.inline-main-content #inboxsearch {
-  padding: 5px 18px 5px 10px;
-}
-.inline-main-content .cleartext {
-  float: right;
-  margin-right: 4px;
-  margin-top: -22px;
-  color: #6b4f2c;
-  cursor: pointer;
-  font-size: 16px;
-  display: none;
-}
 .table-header {
   font-size: 20px;
 }
@@ -543,6 +522,7 @@ label.error {
 }
 .nav-pills > li a {
   padding: 5px;
+  font-size: 12px;
 }
 .nav-pills > li a span {
   margin: 0 3px;
@@ -1764,7 +1744,6 @@ label.error {
 .panel-primary .panel-body.custom-form {
   padding: 0;
 }
-/*datatable overrided properties*/
 .table thead:first-child > tr:first-child th {
   background: #f2851f;
   color: #fff;
@@ -1777,6 +1756,7 @@ label.error {
 .table tbody tr:hover {
   background: #f7f7f7;
 }
+/*datatable overrided properties*/
 @media (max-width: 768px) {
   table.dataTable {
     display: block;

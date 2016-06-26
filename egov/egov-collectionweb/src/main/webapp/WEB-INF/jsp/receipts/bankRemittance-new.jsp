@@ -191,7 +191,7 @@
 			doLoadingMask('#loadingMask');
 			jQuery('#finYearId').prop("disabled", false);
 			document.bankRemittanceForm.action = "bankRemittance-create.action";
-			document.bankRemittanceForm.submit();
+			return true;
 		}
 		
 
@@ -215,7 +215,7 @@
 		}
 		jQuery('#finYearId').prop("disabled", false);
 		document.bankRemittanceForm.action = "bankRemittance-listData.action?bankAccountId="+dom.get("accountNumberId").value;
-		document.bankRemittanceForm.submit();
+		return true;
 		}
 
 	function onChangeDeparment(approverDeptId) {
@@ -376,7 +376,7 @@
 						</tr>
 					</table>
 					<div class="buttonbottom">
-							<input name="search" type="button" class="buttonsubmit"
+							<input name="search" type="submit" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 					<logic:notEmpty name="paramList">
@@ -515,7 +515,7 @@
 						<s:text name="common.mandatoryfields" />
 					</div>
 					<div class="buttonbottom">
-						<input name="button32" type="button" class="buttonsubmit"
+						<input name="button32" type="submit" class="buttonsubmit"
 							id="button32" value="Remit to Bank" onclick="return validate()" />
 						&nbsp; <input name="buttonClose" type="button" class="button"
 							id="button" value="Close" onclick="window.close()" />

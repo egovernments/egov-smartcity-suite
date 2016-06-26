@@ -54,8 +54,7 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
-import org.egov.tl.entity.LicenseType;
-import org.egov.tl.entity.RateTypeEnum;
+import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.masters.LicenseCategoryService;
@@ -86,9 +85,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public static final String VIEW = "view";
 	private Map<Long, String> licenseCategoryMap;
 	private Map<Long, String> licenseSubCategoryMap;
-	@Autowired
-	@Qualifier("persistenceService")
-	private PersistenceService persistenceService;
 	@Autowired
 	@Qualifier("licenseSubCategoryService")
 	private LicenseSubCategoryService licenseSubCategoryService;
@@ -180,38 +176,19 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	@Action(value = "/masters/licenseSubCategory-save")
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
-			if(categoryId!=null){
-				subCategory.setCategory(licenseCategoryService.findById(categoryId));
-			}
-			LicenseType licenseType=(LicenseType)persistenceService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
-			subCategory.setLicenseType(licenseType);
-			subCategory.getLicenseSubCategoryDetails().clear();
-			populateSubCategoryDetails();
-			subCategory = licenseSubCategoryService.create(subCategory);
+			subCategory = licenseSubCategoryService.create(subCategory, subCategoryMappingDetails, categoryId);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
 			throw new ValidationException(valEx.getErrors());
 		}
 		if (userMode.equalsIgnoreCase(NEW))
-			addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.save.success"));
+			addActionMessage(subCategory.getName()+" "+getText("license.subcategory.save.success"));
 		else if (userMode.equalsIgnoreCase(EDIT))
-			addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.edit.success"));
+			addActionMessage(subCategory.getName()+" "+getText("license.subcategory.edit.success"));
 		userMode = SUCCESS;
 		return NEW;
 	}
 	
-	protected void populateSubCategoryDetails() {
-	        for (LicenseSubCategoryDetails scDetails : subCategoryMappingDetails) {
-	            if(scDetails!=null){
-	                scDetails.setSubCategory(subCategory);
-	                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
-	                scDetails.setRateType(scDetails.getRateType());
-	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId())); 
-        	        subCategory.addLicenseSubCategoryDetails(scDetails);
-	            }
-	        } 
-	    }
-
 	public String getUserMode() {
 		return userMode;
 	}

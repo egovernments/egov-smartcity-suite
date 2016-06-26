@@ -39,13 +39,14 @@
  */
 package org.egov.eis.repository;
 
+import java.util.List;
+
 import org.egov.eis.entity.PositionHierarchy;
+import org.egov.pims.commons.Position;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author Vaibhav.K
@@ -68,12 +69,17 @@ public interface PositionHierarchyRepository extends JpaRepository<PositionHiera
     @Query(" from PositionHierarchy P where P.fromPosition.id=:fromPosition and P.objectType.id=:objectType  order by  P.objectSubType ")
     List<PositionHierarchy> getListOfPositionHeirarchyByFromPositionAndObjectType(
             @Param("fromPosition") Long fromPosition, @Param("objectType") Integer objectType);
-    
+
     @Query(" from PositionHierarchy P where P.fromPosition.id=:fromPosition and P.objectType.id=:objectType and P.objectSubType=:objectSubType")
-        List<PositionHierarchy> getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(
-            @Param("fromPosition") Long fromPosition, @Param("objectType") Integer objectType, @Param("objectSubType") String objectSubType);
-    
+    List<PositionHierarchy> getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(
+            @Param("fromPosition") Long fromPosition, @Param("objectType") Integer objectType,
+            @Param("objectSubType") String objectSubType);
+
     @Query(" from PositionHierarchy P where  P.objectType.id=:objectType ")
     List<PositionHierarchy> getListOfPositionHeirarchyByObjectType(@Param("objectType") Integer objectType);
-    
+
+    @Query("select ph from PositionHierarchy ph where ph.objectType.id=:objectType and ph.objectSubType in :complaintTypes and ph.fromPosition = :fromPosition")
+    public List<PositionHierarchy> findPositionHierarchyByComplaintTypesAndFromPosition(@Param("objectType") Integer objectType,
+            @Param("complaintTypes") List<String> complaintTypes, @Param("fromPosition") Position fromPosition);
+
 }

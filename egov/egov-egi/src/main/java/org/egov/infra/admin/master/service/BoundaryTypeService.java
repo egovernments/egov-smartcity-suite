@@ -40,14 +40,15 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+import java.util.Set;
+
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -124,8 +125,12 @@ public class BoundaryTypeService {
     public List<BoundaryType> getNonRootBoundaryTypesByHierarchyType(final HierarchyType hierarchyType) {
         return boundaryTypeRepository.findAllByHierarchyTypeWhenParentIsNotNull(hierarchyType);
     }
-    
-    public List<BoundaryType> getBoundaryTypeByHierarchyTypeName(String name) {
+
+    public List<BoundaryType> getBoundaryTypeByHierarchyTypeName(final String name) {
         return boundaryTypeRepository.findByHierarchyTypeName(name);
+    }
+
+    public List<BoundaryType> getBoundaryTypeByHierarchyTypeNames(final Set<String> names) {
+        return boundaryTypeRepository.findByHierarchyTypeNames(names);
     }
 }
