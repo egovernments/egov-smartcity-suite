@@ -148,6 +148,8 @@ public class MBHeaderService {
     public MBHeader update(final MBHeader mbHeader) {
         mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
         mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
+        mbHeader.setEgwStatus(
+                worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.APPROVED.toString()));
         mergeSorAndNonSorMBDetails(mbHeader);
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
