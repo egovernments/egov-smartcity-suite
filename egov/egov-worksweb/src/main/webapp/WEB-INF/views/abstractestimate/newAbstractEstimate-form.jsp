@@ -52,7 +52,7 @@
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	
-	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
+	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 
 	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 	

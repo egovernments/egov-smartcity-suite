@@ -182,6 +182,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (errors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
+            model.addAttribute("removedActivityIds", removedActivityIds);
 
             return loadViewData(model, request, abstractEstimate, abstractEstimate.getLineEstimateDetails());
         } else {

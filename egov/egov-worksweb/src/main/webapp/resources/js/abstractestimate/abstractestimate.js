@@ -1075,6 +1075,7 @@ function clearActivities(){
 				$('.rate_0').html('');
 				$('.description_0').html('');
 				$('#sorRow').prop("hidden",true);
+				$('#sorRow').attr('sorinvisible', 'true');
 			} else {
 				sortbl.deleteRow(3);
 			}
@@ -1099,6 +1100,7 @@ function clearActivities(){
 				$('.nonSorVatAmt').html('');
 				$('.nonSorTotal').html('');
 				$('#nonSorRow').prop("hidden",true);
+				$('#nonSorRow').attr('nonsorinvisible', 'true');
 				$('#nonSorMessage').removeAttr("hidden");
 			} else {
 				nonsortbl.deleteRow(3);
@@ -1122,6 +1124,7 @@ function getActivitiesForTemplate(id){
 				if(index==0){
 					$('#message').prop("hidden",true);
 					$('#sorRow').removeAttr("hidden");
+					$('#sorRow').removeAttr('sorinvisible');
 				}else{
 					if(estimateTemplateActivity.schedule != null){
 						var key = $("#tblsor tbody tr:visible[id='sorRow']").length - 1;
@@ -1138,6 +1141,7 @@ function getActivitiesForTemplate(id){
 						if(!nonSorCheck){
 							$('#nonSorMessage').prop("hidden",true);
 							$('#nonSorRow').removeAttr("hidden");
+							$('#nonSorRow').removeAttr('nonsorinvisible');
 						}
 						if(nonSorCheck) {
 							var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;

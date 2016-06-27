@@ -804,11 +804,15 @@ public class EstimateService {
         for (final Activity activity : abstractEstimate.getSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
+            if(activity.getRate() <= 0)
+                errors.reject("error.rates.zero", "error.rates.zero");
         }
 
         for (final Activity activity : abstractEstimate.getNonSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
+            if(activity.getRate() <= 0)
+                errors.reject("error.rates.zero", "error.rates.zero");
         }
     }
 
