@@ -68,7 +68,7 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
-		
+		<script src='https://www.google.com/recaptcha/api.js'></script>
 		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -215,8 +215,16 @@
 												</a> 
 											</div>
 	     								</c:when>
-										<c:when test="${security_message == 'User account is locked'}">
+										<c:when test="${fn:contains(security_message, 'User account is locked')}">
 											<spring:message code="msg.acc.locked"/>
+											<div class="form-group">
+												<div class="input-group" style="margin:0 auto;">
+													<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
+													<c:if test="${fn:contains(security_message, 'Recaptcha Invalid')}">
+                                                        <spring:message code="err.recaptcha.invalid"/>
+													</c:if>
+												</div>
+											</div>
 										</c:when>
 										<c:when test="${fn:contains(security_message, 'Too many attempts')}">
                                             <c:set var="attempts" value="${fn:substringAfter(security_message, 'Too many attempts')}" />

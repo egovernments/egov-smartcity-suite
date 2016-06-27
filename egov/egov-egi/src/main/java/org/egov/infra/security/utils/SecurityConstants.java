@@ -52,6 +52,4 @@ public interface SecurityConstants {
     String LOGIN_URI = "/login";
     String PUBLIC_URI = "/public";
     int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
-    int LOGIN_LOCK_HOURS = 24;
-
 }

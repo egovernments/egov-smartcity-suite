@@ -44,7 +44,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.audit.entity.LoginAttempt;
 import org.egov.infra.security.audit.repository.LoginAttemptRepository;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +51,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOCK_HOURS;
 import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_ALLOWED;
 
 @Transactional
@@ -93,19 +91,13 @@ public class LoginAttemptService {
     public void resetFailedAttempt(String username) {
         LoginAttempt loginAttempt = getLoginAttempt(username);
         if (loginAttempt != null) {
-            resetAccountLock(username, loginAttempt);
+            loginAttempt.setFailedAttempts(0);
+            loginAttempt.setLastModifiedOn(new Date());
+            loginAttemptRepository.save(loginAttempt);
+            User user = userService.getUserByUsername(username);
+            user.setAccountLocked(false);
+            userService.updateUser(user);
         }
-    }
-
-    public boolean checkAndResetAccountLock(String username) {
-        LoginAttempt loginAttempt = getLoginAttempt(username);
-        if (loginAttempt != null) {
-            if (new DateTime().isAfter(new DateTime(loginAttempt.getLastModifiedOn()).plusHours(LOGIN_LOCK_HOURS))) {
-                resetAccountLock(username, loginAttempt);
-                return true;
-            }
-        }
-        return false;
     }
 
     @Transactional(readOnly = true)
@@ -113,12 +105,4 @@ public class LoginAttemptService {
         return loginAttemptRepository.findByUsername(username);
     }
 
-    private void resetAccountLock(final String username, final LoginAttempt loginAttempt) {
-        loginAttempt.setFailedAttempts(0);
-        loginAttempt.setLastModifiedOn(new Date());
-        loginAttemptRepository.save(loginAttempt);
-        User user = userService.getUserByUsername(username);
-        user.setAccountLocked(false);
-        userService.updateUser(user);
-    }
 }

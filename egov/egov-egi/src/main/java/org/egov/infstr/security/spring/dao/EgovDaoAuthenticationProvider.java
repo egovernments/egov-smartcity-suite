@@ -42,6 +42,7 @@ package org.egov.infstr.security.spring.dao;
 
 import org.egov.infra.security.audit.entity.LoginAttempt;
 import org.egov.infra.security.audit.service.LoginAttemptService;
+import org.egov.infra.security.utils.RecaptchaUtils;
 import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,7 +53,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -83,8 +87,15 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
             }
             throw e;
         } catch (LockedException le) {
-            if (loginAttemptService.checkAndResetAccountLock(authentication.getName())) {
-                return super.authenticate(authentication);
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            if(request.getParameter("g-recaptcha-response") != null) {
+                if (RecaptchaUtils.captchaIsValid(request)) {
+                    this.loginAttemptService.resetFailedAttempt(authentication.getName());
+                    return super.authenticate(authentication);
+                } else {
+                    throw new LockedException(le.getMessage()+" - Recaptcha Invalid");
+                }
             }
             throw le;
         }
