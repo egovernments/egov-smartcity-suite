@@ -1,0 +1,2 @@
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('SEQ_EG_ACTION'), 'modifyCrossHierarchy', '/crossHierarchy/update', NULL, (select id from eg_module where name='Boundary Module'), 1, 'Cross Hierarchy', true, 'egi', 0, 1, now(), 1, now(), 1);
+Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='modifyCrossHierarchy'));

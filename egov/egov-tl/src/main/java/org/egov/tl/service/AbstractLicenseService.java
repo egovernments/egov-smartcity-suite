@@ -172,10 +172,6 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license.getDocuments(), license);
         transitionWorkFlow(license, workflowBean);
-        license.getState().setCreatedBy(license.getCreatedBy());
-        license.getState().setCreatedDate(new Date());
-        license.getState().setLastModifiedBy(license.getCreatedBy());
-        license.getState().setLastModifiedDate(new Date());
         licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         updateIndexService.updateTradeLicenseIndexes(license);

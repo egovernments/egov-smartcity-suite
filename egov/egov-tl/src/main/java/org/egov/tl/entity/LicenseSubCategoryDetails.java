@@ -123,4 +123,23 @@ public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
         this.feeType = feeType;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
+
+        if (getSubCategory() != null ? !getSubCategory().equals(that.getSubCategory()) : that.getSubCategory() != null)
+            return false;
+        return getFeeType() != null ? getFeeType().equals(that.getFeeType()) : that.getFeeType() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getSubCategory() != null ? getSubCategory().hashCode() : 0;
+        result = 31 * result + (getFeeType() != null ? getFeeType().hashCode() : 0);
+        return result;
+    }
 }

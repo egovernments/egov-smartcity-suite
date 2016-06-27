@@ -43,9 +43,11 @@
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
+		
 		<script>
-	
-			function validateLicenseForm(obj) {
+		
+		function validateLicenseForm(obj) {
+				var adhaar = document.getElementById('adhaarId').value;
 				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					window.scroll(0, 0); 
@@ -121,9 +123,19 @@
 				if(!verifyDocAttachment()){
 					return false;
 				}
-    			/* if(validateForm_newTradeLicense()==false) { 
-    				return false;
-    			}  */else { 
+				var adhaar = document.getElementById('adhaarId').value;
+				var mobileno= document.getElementById('mobilePhoneNumber').value;
+				if(adhaar.length > 0 && adhaar.length < 12){
+					jQuery('#adhaarError').removeClass("hide");
+					document.getElementById("adhaarId").focus();
+					return false;
+				}
+				if(mobileno.length > 0 && mobileno.length < 10){
+					jQuery('#mobileError').removeClass("hide");
+					document.getElementById("mobilePhoneNumber").focus();
+					return false;
+				}
+				else { 
 					return true;    	              
     			 } 
   			}

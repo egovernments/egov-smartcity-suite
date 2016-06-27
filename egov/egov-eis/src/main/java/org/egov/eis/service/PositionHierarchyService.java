@@ -41,6 +41,7 @@ package org.egov.eis.service;
 
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.repository.PositionHierarchyRepository;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,6 +111,12 @@ public class PositionHierarchyService {
         else if(fromPositionId==0 && objectId!=0 && objectSubType==null) 
             return positionHierarchyRepository.getListOfPositionHeirarchyByObjectType(objectId);
         else return Collections.emptyList();
+    }
+    
+    public List<PositionHierarchy> getListOfPositionHeirarchyByPositionObjectTypeSubType(final Integer objectType,
+            final List<String> compTypeCodes, final Position fromPositionId) {
+        return positionHierarchyRepository.findPositionHierarchyByComplaintTypesAndFromPosition(objectType, compTypeCodes,
+                fromPositionId);
     }
     
 }

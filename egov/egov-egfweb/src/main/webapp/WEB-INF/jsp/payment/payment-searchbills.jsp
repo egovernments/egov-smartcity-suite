@@ -190,8 +190,8 @@ function search()
 	}else{
 		 document.getElementById("search").innerHTML="";
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
-		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
-		document.forms[0].submit();
+		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
+		document.form2.submit();
 		
 	}
 	

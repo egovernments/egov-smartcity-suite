@@ -275,7 +275,7 @@ b, label, strong{
     
     .search{
     	position:fixed;
-    	top:63px;
+    	top:64px;
     	left:0;
     	z-index:10;
     	width:250px;
@@ -287,21 +287,6 @@ b, label, strong{
     		color:@whitecolor;
     		background:@basecolor;
     	}
-    	
-    	#searchtree::-webkit-input-placeholder
-		{
-		  color:@whitecolor;
-		}
-		
-		#searchtree:-moz-placeholder
-		{
-		  color:@whitecolor;
-		}
-		
-		#searchtree::-moz-placeholder 
-		{
-		  color:@whitecolor;
-		}
 		
     	.searchicon{
 		    position: absolute;
@@ -618,20 +603,6 @@ b, label, strong{
     overflow-x: hidden;
     width: ~"calc(100% - 250px)";
     padding-bottom: 40px;
-    
-    #inboxsearch{
-    	padding: 5px 18px 5px 10px;
-    }
-    
-    .cleartext {
-	    float: right;
-	    margin-right: 4px;
-	    margin-top: -22px;
-	    color: @basecolor;
-	    cursor:pointer;
-	    .font-size(16px);
-	    display:none;
-	}
         
 }
 
@@ -654,6 +625,7 @@ b, label, strong{
     
     a {
         padding: 5px;
+        font-size: 12px;
         
         span{
         	margin: 0 3px;
@@ -1945,7 +1917,6 @@ b, label, strong{
     }
 }
 
-/*datatable overrided properties*/
 .table{
     
     thead:first-child > tr:first-child{
@@ -1970,6 +1941,7 @@ b, label, strong{
      
 }
 
+/*datatable overrided properties*/
 table.dataTable{
 
     @media (max-width: 768px){

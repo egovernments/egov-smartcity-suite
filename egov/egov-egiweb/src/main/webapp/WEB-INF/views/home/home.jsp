@@ -225,12 +225,14 @@
 					<div class="row main-space" id="worklist">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Worklist
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="inboxsearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<div class="row">
@@ -254,12 +256,14 @@
 					<div class="row main-space display-hide" id="drafts">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Drafts
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="draftsearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_drafts" style="width:100%;">
@@ -279,13 +283,14 @@
 					<div class="row main-space display-hide" id="notifications">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Notifications
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="notifysearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_notify" style="width:100%;">

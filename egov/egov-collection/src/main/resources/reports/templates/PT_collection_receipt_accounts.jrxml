@@ -181,7 +181,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="9" isBold="false"/>
+						<font fontName="Times New Roman" size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Amount Paid (Rs.)]]></text>
 				</staticText>
@@ -197,7 +197,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Arrears]]></text>
 				</staticText>
@@ -213,7 +213,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Current]]></text>
 				</staticText>
@@ -229,7 +229,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Interest]]></text>
 				</staticText>
@@ -245,7 +245,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Advance]]></text>
 				</staticText>
@@ -260,7 +260,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Total]]></text>
 				</staticText>
@@ -276,7 +276,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{arrearTotal}.equals(BigDecimal.ZERO)?$V{arrearTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -291,7 +291,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{currentTotal}.equals(BigDecimal.ZERO)?$V{currentTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -307,7 +307,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{penaltyTotal}.equals(BigDecimal.ZERO)?$V{penaltyTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -323,7 +323,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{advance}.equals(BigDecimal.ZERO)?$V{advance}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -338,7 +338,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{totalAmount}.equals(BigDecimal.ZERO)?$V{totalAmount} - $V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -357,7 +357,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Paid: Amount (in words): " + ReportUtil.amountInWords($V{totalAmount} - $V{rebate})]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Amount Paid (in words): " + ReportUtil.amountInWords($V{totalAmount} - $V{rebate})]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement positionType="Float" x="315" y="20" width="75" height="30" uuid="37655b30-f977-4ed8-8e7f-f2ca88fb0089">
@@ -370,7 +370,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9" isBold="false"/>
+						<font size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Rebate]]></text>
 				</staticText>
@@ -386,7 +386,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{rebate}.equals(BigDecimal.ZERO)?$V{rebate}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -403,7 +403,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="9" isBold="false"/>
+						<font fontName="Times New Roman" size="11" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Balance]]></text>
 				</staticText>
@@ -418,7 +418,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{arrearTotalBalance}]]></textFieldExpression>
 				</textField>
@@ -435,7 +435,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{currentTotalBalance} > 0 ? $V{currentTotalBalance} : BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -450,7 +450,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{penaltyTotalBalance}]]></textFieldExpression>
 				</textField>
@@ -466,7 +466,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -481,7 +481,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -497,7 +497,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{totalAmountBalance} > 0 ? $V{totalAmountBalance} : BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -529,7 +529,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[!$V{chequeBounceTotal}.equals(BigDecimal.ZERO)?$V{chequeBounceTotal}:BigDecimal.ZERO]]></textFieldExpression>
 				</textField>
@@ -545,7 +545,7 @@
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8" isBold="false"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{chequeBounceTotalBalance}]]></textFieldExpression>
 				</textField>

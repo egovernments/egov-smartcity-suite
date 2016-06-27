@@ -14,6 +14,19 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilQualification.name}</div>
+						</div>
+					</div>
+						<div class="panel-body custom">
+						<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.description" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilQualification.description}</div>
+						</div>
+					</div>
+						<div class="panel-body custom">
+						<div class="row add-border">	
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.isactive" />
 						</div>
