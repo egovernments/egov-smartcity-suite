@@ -60,7 +60,8 @@ jQuery('#btnsearch').click(function(e) {
 
 jQuery('#btncreateloa').click(function(e) {
 	var workOrderId = $('input[name=selectCheckbox]:checked').val();
-	var workOrderNumber = $('input[name=selectCheckbox]:checked').attr('data');
+	var workOrderNumber = $('input[name=selectCheckbox]:checked').attr('data').split(':')[0];
+	var woeId = $('input[name=selectCheckbox]:checked').attr('data').split(':')[1];
 	if(workOrderId == null) {
 		var message = $('#errorMessage').html();
 		bootbox.alert(message);
@@ -75,7 +76,7 @@ jQuery('#btncreateloa').click(function(e) {
 				if (!response) {
 					bootbox.alert("There is a bill created for this work identification number " +workOrderNumber+ " which is not approved yet.Please approve it and proceed for creating a new one");
 				} else {
-					window.location = "/egworks/contractorbill/newform?loaNumber=" + workOrderNumber;
+					window.location = "/egworks/contractorbill/newform?woeId=" + woeId;
 				}
 			},
 			error : function(response) {
@@ -116,7 +117,7 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					if (data.estimateNumber != null)
-						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderNumber +' name="selectCheckbox" value="'+ data.id +'"/>');
+						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderNumber + ':' + data.woeId  +' name="selectCheckbox" value="'+ data.id +'"/>');
 						$('td:eq(1)', row).html(index + 1);
 						$('td:eq(2)', row).html(
 								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''

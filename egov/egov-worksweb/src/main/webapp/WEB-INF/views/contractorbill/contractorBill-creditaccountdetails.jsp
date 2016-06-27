@@ -89,7 +89,7 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" begin="1">
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable}">
 								<tr id="deductionRow">
 									<td>

@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<form:hidden path="mbHeader.workOrder.id"  value="${workOrder.id}" /> 
+<form:hidden path="mbHeader.workOrder.id"  value="${workOrderEstimate.workOrder.id}" /> 
 <form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
 <form:hidden path="mbHeader.egBillregister.id"  value="${contractorBillRegister.id}" />
 <c:if test="${workOrderEstimate.workOrderActivities.size() == 0 }">

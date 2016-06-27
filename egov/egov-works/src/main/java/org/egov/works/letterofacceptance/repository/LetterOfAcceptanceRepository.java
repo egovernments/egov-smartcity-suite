@@ -97,22 +97,22 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findContractorForContractorBillWithMB(@Param("contractorname") String contractorname,
             @Param("approvedStatus") String approvedStatus, @Param("status") String status, @Param("billtype") String billtype);
 
-    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
+    @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     List<String> getDistinctNonCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus,
             @Param("billtype") String finalBill);
 
-    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrder.id = :workOrderId and upper(cbr.billstatus) not in (:billstatus1,:billstatus2)")
+    @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrderEstimate.workOrder.id = :workOrderId and upper(cbr.billstatus) not in (:billstatus1,:billstatus2)")
     List<String> getContractorBillInWorkflowForWorkorder(@Param("workOrderId") Long workOrderId,
             @Param("billstatus1") String billstatus1, @Param("billstatus2") String billstatus2);
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber)")
     List<String> findWorkIdentificationNumberToCreateMilestone(@Param("code") String code);
 
-    @Query("select sum(br.billamount) from EgBillregister as br where br.workOrder.id = (select id from WorkOrder as wo where wo.workOrderNumber = :workOrderNumber and wo.egwStatus.code = :status) and br.billstatus != :billStatus")
+    @Query("select sum(br.billamount) from EgBillregister as br where br.workOrderEstimate.workOrder.id = (select id from WorkOrder as wo where wo.workOrderNumber = :workOrderNumber and wo.egwStatus.code = :status) and br.billstatus != :billStatus")
     Double getGrossBillAmountOfBillsCreated(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status,
             @Param("billStatus") String billstatus);
 
-    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
+    @Query("select distinct(wo.workOrderNumber) from WorkOrder as wo where wo.egwStatus.code = :workOrderStatus and not exists (select distinct(cbr.workOrderEstimate.workOrder) from ContractorBillRegister as cbr where wo.id = cbr.workOrderEstimate.workOrder.id and upper(cbr.billstatus) != :status and cbr.billtype = :billtype)")
     List<String> findWorkOrderNumbersToModifyLoa(@Param("workOrderStatus") String workOrderStatus, @Param("status") String status,
             @Param("billtype") String billtype);
 

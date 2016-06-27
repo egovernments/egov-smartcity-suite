@@ -160,7 +160,7 @@
 										<form:hidden path="nonSorActivities[${item.index }].uom.id" value="${activity.uom.id }" id="nonSorUomid_${item.index }" class="uomhiddenid"/>
 									</td>
 									<td align="right">
-										<form:input path="nonSorActivities[${item.index }].estimateRate" id="nonSorEstimateRate_${item.index }" value="${activity.rate }" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
+										<form:input path="nonSorActivities[${item.index }].estimateRate" id="nonSorEstimateRate_${item.index }" value="${activity.estimateRate }" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 										<form:hidden path="nonSorActivities[${item.index }].rate" id="nonSorRate_${item.index }" class="activityRate form-control table-input text-right nonSorRate"  />
 									</td>
 									<td>

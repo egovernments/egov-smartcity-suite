@@ -197,7 +197,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/workIdNumbersForLoa?name=%QUERY',
+            url: '/egworks/lineestimate/workIdNumbersForEstimate?name=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {

@@ -64,6 +64,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -182,14 +183,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
         if (contractorBillRegister.getStatus().getCode().equals(ContractorBillRegister.BillStatus.REJECTED.toString())
                 && workFlowAction.equals(WorksConstants.FORWARD_ACTION)) {
-            final WorkOrder workOrder = contractorBillRegister.getWorkOrder();
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                    .findByEstimateNumber(workOrder.getEstimateNumber());
 
-            validateInput(contractorBillRegister, lineEstimateDetails, errors, request);
+            validateInput(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
             contractorBillRegister.getEgBilldetailes().clear();
 
-            contractorBillRegister = addBillDetails(contractorBillRegister, lineEstimateDetails, errors, request);
+            contractorBillRegister = addBillDetails(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
         }
 
@@ -217,23 +215,24 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         }
     }
 
-    private void validateInput(final ContractorBillRegister contractorBillRegister, final LineEstimateDetails lineEstimateDetails,
+    private void validateInput(final ContractorBillRegister contractorBillRegister, final WorkOrderEstimate workOrderEstimate,
             final BindingResult resultBinder,
             final HttpServletRequest request) {
 
         BigDecimal totalBillAmountIncludingCurrentBill = contractorBillRegister.getBillamount();
         final BigDecimal totalBillAmount = contractorBillRegisterService
-                .getTotalBillAmountByWorkOrderAndNotContractorBillRegister(contractorBillRegister.getWorkOrder(),
+                .getTotalBillAmountByWorkOrderAndNotContractorBillRegister(contractorBillRegister.getWorkOrderEstimate(),
                         contractorBillRegister.getId());
         if (totalBillAmount != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill.add(totalBillAmount);
-        if (lineEstimateDetails.getLineEstimate().isBillsCreated() && lineEstimateDetails.getGrossAmountBilled() != null)
+        
+        if (workOrderEstimate.getEstimate().getLineEstimateDetails()!=null && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isBillsCreated() && workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled() != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
-                    .add(lineEstimateDetails.getGrossAmountBilled());
-        if (totalBillAmountIncludingCurrentBill.doubleValue() > contractorBillRegister.getWorkOrder().getWorkOrderAmount())
+                    .add(workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled());
+        if (totalBillAmountIncludingCurrentBill.doubleValue() > workOrderEstimate.getWorkOrder().getWorkOrderAmount())
             resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount",
                     new String[] { String.valueOf(totalBillAmountIncludingCurrentBill),
-                            String.valueOf(contractorBillRegister.getWorkOrder().getWorkOrderAmount()) },
+                            String.valueOf(workOrderEstimate.getWorkOrder().getWorkOrderAmount()) },
                     null);
 
         if (StringUtils.isBlank(contractorBillRegister.getBilltype()))
@@ -241,7 +240,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (contractorBillRegister.getEgBillregistermis() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate() != null
                 && contractorBillRegister.getEgBillregistermis().getPartyBillDate()
-                        .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
+                        .before(workOrderEstimate.getWorkOrder().getWorkOrderDate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.validate.partybilldate.lessthan.loadate");
 
         if (contractorBillRegister.getWorkOrderEstimate() != null
@@ -271,7 +270,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
             if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getMbHeader().getMbDate()
-                            .before(contractorBillRegister.getWorkOrder().getWorkOrderDate()))
+                            .before(workOrderEstimate.getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
         }
 
@@ -335,14 +334,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-
-        final WorkOrder workOrder = contractorBillRegister.getWorkOrder();
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-        final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
-        model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
-        model.addAttribute("workOrderEstimate", workOrderEstimate);
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
-        model.addAttribute("workOrder", workOrder);
+        model.addAttribute("assetValues", contractorBillRegister.getWorkOrderEstimate().getAssetValues());
+        model.addAttribute("workOrderEstimate", contractorBillRegister.getWorkOrderEstimate());
 
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         if (newcontractorBillRegister.getAssetDetailsList() != null && !newcontractorBillRegister.getAssetDetailsList().isEmpty())
@@ -416,14 +409,14 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     }
 
     private ContractorBillRegister addBillDetails(final ContractorBillRegister contractorBillRegister,
-            final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder, final HttpServletRequest request) {
+            final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder, final HttpServletRequest request) {
         if (contractorBillRegister.getBillDetailes() == null || contractorBillRegister.getBillDetailes().isEmpty())
             resultBinder.reject("error.contractorbill.accountdetails.required", "error.contractorbill.accountdetails.required");
         for (final EgBilldetails egBilldetails : contractorBillRegister.getBillDetailes())
             if (egBilldetails.getGlcodeid() != null)
                 contractorBillRegister
                         .addEgBilldetailes(
-                                getBillDetails(contractorBillRegister, egBilldetails, lineEstimateDetails, resultBinder,
+                                getBillDetails(contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder,
                                         request));
         final String netPayableAccountId = request.getParameter("netPayableAccountId");
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
@@ -436,15 +429,15 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister
                     .addEgBilldetailes(
-                            getBillDetails(contractorBillRegister, billdetails, lineEstimateDetails, resultBinder, request));
+                            getBillDetails(contractorBillRegister, billdetails, workOrderEstimate, resultBinder, request));
         }
 
         return contractorBillRegister;
     }
 
     private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
-            final LineEstimateDetails lineEstimateDetails, final BindingResult resultBinder, final HttpServletRequest request) {
-        egBilldetails.setFunctionid(new BigDecimal(lineEstimateDetails.getLineEstimate().getFunction().getId()));
+            final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder, final HttpServletRequest request) {
+        egBilldetails.setFunctionid(new BigDecimal(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction().getId()));
         boolean isDebit = false;
         CChartOfAccounts coa = null;
         if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))
@@ -479,7 +472,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     if (projectCodeAccountDetailType != null)
                         egBilldetails.addEgBillPayeedetail(getEgPayeeDetails(
                                 egBilldetails, projectCodeAccountDetailType.getId(), egBilldetails.getDebitamount(), isDebit,
-                                Integer.valueOf(lineEstimateDetails.getProjectCode().getId()
+                                Integer.valueOf(workOrderEstimate.getEstimate().getProjectCode().getId()
                                         .toString())));
                 } else {
                     contractorAccountDetailType = chartOfAccountsHibernateDAO.getAccountDetailTypeIdByName(coa.getGlcode(),
@@ -488,7 +481,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         egBilldetails.getEgBillPaydetailes().add(
                                 getEgPayeeDetails(egBilldetails, contractorAccountDetailType.getId(),
                                         egBilldetails.getCreditamount(), isDebit,
-                                        Integer.valueOf(billregister.getWorkOrder().getContractor().getId().toString())));
+                                        Integer.valueOf(workOrderEstimate.getWorkOrder().getContractor().getId().toString())));
 
                 }
                 if (projectCodeAccountDetailType == null && contractorAccountDetailType == null)

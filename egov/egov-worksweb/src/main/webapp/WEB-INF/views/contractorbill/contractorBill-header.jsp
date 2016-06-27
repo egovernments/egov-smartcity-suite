@@ -52,7 +52,7 @@
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
 	<c:choose>
-		<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag }">
+		<c:when test="${workOrderEstimate.estimate.lineEstimateDetails!=null && workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" />
@@ -82,11 +82,11 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.partyname" /></label>
 	<div class="col-sm-3 add-margin" style="margin-bottom: 0;">
-			<input type="text" id="contractorName" value="${workOrder.contractor.name}" class="form-control" disabled > 
+			<input type="text" id="contractorName" value="${workOrderEstimate.workOrder.contractor.name}" class="form-control" disabled > 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.code" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="contractorCode" value="${workOrder.contractor.code}" disabled>
+		<input type="text" class="form-control" id="contractorCode" value="${workOrderEstimate.workOrder.contractor.code}" disabled>
 	</div>
 </div>
 
@@ -107,29 +107,29 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="loaNumber" name="loaNumber" value="${workOrder.workOrderNumber}" readonly="true"> 
+		<input type="text" class="form-control" id="loaNumber" name="loaNumber" value="${workOrderEstimate.workOrder.workOrderNumber}" readonly="true"> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.agreement.amount" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control text-right" id="workOrderAmount" value="${workOrder.workOrderAmount}" disabled> 
+		<input type="text" class="form-control text-right" id="workOrderAmount" value="${workOrderEstimate.workOrder.workOrderAmount}" disabled> 
 	</div>
 </div>
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="fund" value="${lineEstimateDetails.lineEstimate.fund.name}" disabled> 
+		<input type="text" class="form-control" id="fund" value="${workOrderEstimate.estimate.financialDetails[0].fund.name}" disabled> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.function" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="function" value="${lineEstimateDetails.lineEstimate.function.name}" disabled> 
+		<input type="text" class="form-control" id="function" value="${workOrderEstimate.estimate.financialDetails[0].function.name}" disabled> 
 	</div>
 </div>
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 	<div class="col-sm-3 add-margin">	
-		<input type="text" class="form-control" id="department" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" disabled>
+		<input type="text" class="form-control" id="department" value="${workOrderEstimate.estimate.executingDepartment.name}" disabled>
 	</div>
     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" /></label>
     <div class="col-sm-3 add-margin">
@@ -141,10 +141,10 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="projectCode" value="${lineEstimateDetails.projectCode.code}" disabled> 
+		<input type="text" class="form-control" id="projectCode" value="${workOrderEstimate.estimate.projectCode.code}" disabled> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" class="form-control" id="estimateNumber" value="${lineEstimateDetails.estimateNumber}" disabled> 
+		<input type="text" class="form-control" id="estimateNumber" value="${workOrderEstimate.estimate.estimateNumber}" disabled> 
 	</div>
 </div>

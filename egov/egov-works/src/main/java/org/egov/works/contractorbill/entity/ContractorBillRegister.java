@@ -63,7 +63,6 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 
 @Entity
@@ -77,10 +76,6 @@ public class ContractorBillRegister extends EgBillregister {
     }
 
     private Integer billSequenceNumber;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workOrder", nullable = false)
-    private WorkOrder workOrder;
 
     @Temporal(TemporalType.DATE)
     private Date approvedDate;
@@ -177,14 +172,6 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setBillActions(final List<String> billActions) {
         this.billActions = billActions;
-    }
-
-    public WorkOrder getWorkOrder() {
-        return workOrder;
-    }
-
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
     }
 
     public List<StatutoryDeductionsForBill> getStatutoryDeductionsList() {

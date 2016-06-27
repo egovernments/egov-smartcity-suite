@@ -76,7 +76,6 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -166,7 +165,8 @@ public class ContractorBillRegisterService {
                 ContractorBillRegister.BillStatus.CREATED.toString()));
         contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
         contractorBillRegister.setExpendituretype(WorksConstants.BILL_EXPENDITURE_TYPE);
-        final EgBillregistermis egBillRegisterMis = setEgBillRegisterMis(contractorBillRegister, lineEstimateDetails);
+        final EgBillregistermis egBillRegisterMis = setEgBillRegisterMis(contractorBillRegister,
+                contractorBillRegister.getWorkOrderEstimate());
         contractorBillRegister.setEgBillregistermis(egBillRegisterMis);
 
         if (contractorBillRegister.getWorkOrderEstimate() != null
@@ -268,22 +268,22 @@ public class ContractorBillRegisterService {
     }
 
     private EgBillregistermis setEgBillRegisterMis(final ContractorBillRegister contractorBillRegister,
-            final LineEstimateDetails lineEstimateDetails) {
+            final WorkOrderEstimate workOrderEstimate) {
         final EgBillregistermis egBillRegisterMis = contractorBillRegister.getEgBillregistermis();
         egBillRegisterMis.setEgBillregister(contractorBillRegister);
-        egBillRegisterMis.setPayto(contractorBillRegister.getWorkOrder().getContractor().getName());
-        egBillRegisterMis.setFieldid(lineEstimateDetails.getLineEstimate().getWard());
+        egBillRegisterMis.setPayto(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName());
+        egBillRegisterMis.setFieldid(workOrderEstimate.getEstimate().getWard());
 
-        if (lineEstimateDetails.getLineEstimate().getFund() != null)
-            egBillRegisterMis.setFund(lineEstimateDetails.getLineEstimate().getFund());
-        if (lineEstimateDetails.getLineEstimate().getFunction() != null)
-            egBillRegisterMis.setFunction(lineEstimateDetails.getLineEstimate().getFunction());
-        if (lineEstimateDetails.getLineEstimate().getScheme() != null)
-            egBillRegisterMis.setScheme(lineEstimateDetails.getLineEstimate().getScheme());
-        if (lineEstimateDetails.getLineEstimate().getSubScheme() != null)
-            egBillRegisterMis.setSubScheme(lineEstimateDetails.getLineEstimate().getSubScheme());
+        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFund() != null)
+            egBillRegisterMis.setFund(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFund());
+        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction() != null)
+            egBillRegisterMis.setFunction(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction());
+        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getScheme() != null)
+            egBillRegisterMis.setScheme(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getScheme());
+        if (workOrderEstimate.getEstimate().getFinancialDetails().get(0).getSubScheme() != null)
+            egBillRegisterMis.setSubScheme(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getSubScheme());
 
-        egBillRegisterMis.setEgDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
+        egBillRegisterMis.setEgDepartment(workOrderEstimate.getEstimate().getExecutingDepartment());
         final CFinancialYear financialYear = worksUtils.getFinancialYearByDate(contractorBillRegister.getBilldate());
         egBillRegisterMis.setFinancialyear(financialYear);
         egBillRegisterMis.setLastupdatedtime(new Date());
@@ -390,7 +390,10 @@ public class ContractorBillRegisterService {
             final SearchRequestContractorBill searchRequestContractorBill) {
         // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
-                .createAlias("workOrder", "cbrwo").createAlias("cbrwo.contractor", "cbrwocont");
+                .createAlias("workOrderEstimate", "workOrderEstimate")
+                .createAlias("workOrderEstimate.estimate", "estimate")
+                .createAlias("workOrderEstimate.workOrder", "cbrwo")
+                .createAlias("cbrwo.contractor", "cbrwocont");
 
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillFromDate() != null)
@@ -410,7 +413,7 @@ public class ContractorBillRegisterService {
                                 searchRequestContractorBill.getWorkIdentificationNumber());
                 if (estimateNumbersforWIN.isEmpty())
                     estimateNumbersforWIN.add("");
-                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforWIN));
+                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbersforWIN));
             }
             if (searchRequestContractorBill.getContractorName() != null)
                 criteria.add(Restrictions.eq("cbrwocont.name", searchRequestContractorBill.getContractorName())
@@ -420,12 +423,12 @@ public class ContractorBillRegisterService {
                         .getEstimateNumberForDepartment(searchRequestContractorBill.getDepartment());
                 if (estimateNumbers.isEmpty())
                     estimateNumbers.add("");
-                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbers));
+                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbers));
             }
             if (searchRequestContractorBill.isSpillOverFlag()) {
                 final List<String> estimateNumbersforSpillOverFlag = lineEstimateService
                         .getEstimateNumbersForSpillOverFlag(searchRequestContractorBill.isSpillOverFlag());
-                criteria.add(Restrictions.in("cbrwo.estimateNumber", estimateNumbersforSpillOverFlag));
+                criteria.add(Restrictions.in("estimate.estimateNumber", estimateNumbersforSpillOverFlag));
             }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -444,8 +447,8 @@ public class ContractorBillRegisterService {
         return results;
     }
 
-    public BigDecimal getTotalBillAmountByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrder,
+    public BigDecimal getTotalBillAmountByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
+        return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatus(workOrderEstimate,
                 ContractorBillRegister.BillStatus.CANCELLED.toString());
     }
 
@@ -497,17 +500,17 @@ public class ContractorBillRegisterService {
         mbHeaderService.cancel(mbHeader);
     }
 
-    public BigDecimal getTotalBillAmountByWorkOrderAndNotContractorBillRegister(final WorkOrder workOrder,
+    public BigDecimal getTotalBillAmountByWorkOrderAndNotContractorBillRegister(final WorkOrderEstimate workOrderEstimate,
             final Long id) {
         return contractorBillRegisterRepository.findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(
-                workOrder, ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
+                workOrderEstimate, ContractorBillRegister.BillStatus.CANCELLED.toString(), id);
     }
 
     public List<ContractorBillRegister> searchContractorBillsToCancel(
             final SearchRequestContractorBill searchRequestContractorBill) {
         // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
-                .createAlias("workOrder", "cbrwo").createAlias("cbrwo.contractor", "cbrwocont");
+                .createAlias("workOrderEstimate.workOrder", "cbrwo").createAlias("cbrwo.contractor", "cbrwocont");
 
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillNumber() != null)

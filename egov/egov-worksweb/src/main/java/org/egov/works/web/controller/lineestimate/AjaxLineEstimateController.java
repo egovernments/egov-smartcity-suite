@@ -214,7 +214,6 @@ public class AjaxLineEstimateController {
         return json;
     }
 
-
     public Object toSearchLineEstimateForAbstractEstimateResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(LineEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
@@ -254,7 +253,12 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/workIdNumbersForLoa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String name) {
-        return lineEstimateService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(name);
+        return lineEstimateService.findWorkIdentificationNumbersToSearchEstimatesForLoa(name);
+    }
+
+    @RequestMapping(value = "/workIdNumbersForEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findworkIdNumbersToSearchEstimates(@RequestParam final String name) {
+        return lineEstimateService.findWorkIdentificationNumbersToSearchEstimates(name);
     }
 
     @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -54,12 +54,12 @@
 					<c:if test="${mode != 'view' && mode != 'readOnly' }">
 						<jsp:include page="lineEstimateHeader.jsp"/>
 						<jsp:include page="lineEstimateDetails.jsp"/>
-						<jsp:include page="../common/uploadDocuments.jsp"/>
 					</c:if>
 					<c:if test="${mode == 'view' || mode == 'readOnly' }">
 						<jsp:include page="lineEstimateHeader-view.jsp"/>
 						<jsp:include page="lineEstimateDetails-view.jsp"/>
 					</c:if>
+					<jsp:include page="../common/uploadDocuments.jsp"/>
 				</div>
 			</div>
 		<c:if test="${lineEstimate.status.code == 'BUDGET_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' || lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }" >

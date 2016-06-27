@@ -59,24 +59,24 @@
 <div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<c:if test="${mode != 'view' }">
+			<c:if test="${mode != 'view' && mode != 'readOnly'}">
 				<spring:message code="lbl.upload.document" />
 			</c:if>
-			<c:if test="${mode == 'view' }">
+			<c:if test="${mode == 'view' || mode == 'readOnly'}">
 				<spring:message code="lbl.documents" />
 			</c:if>
 		</div>
 	</div>
 	<c:if test="${documentDetails != null &&  !documentDetails.isEmpty()}">
 		<c:forEach items="${documentDetails}" var="documentDtls">
-			<a href="/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS">${documentDtls.fileStore.fileName }</a><br />
+			&nbsp; &nbsp; <a href="/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS">${documentDtls.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
-	<c:if test="${mode == 'view' && documentDetails.isEmpty()}">
-		<spring:message code="msg.no.documents" />
+	<c:if test="${(mode == 'view'|| mode == 'readOnly' ) && documentDetails.isEmpty()}">
+		&nbsp; &nbsp; <spring:message code="msg.no.documents" />
 	</c:if>
 	<input type="hidden" value="${fn:length(documentDetails)}" id="documentsSize">
-	<c:if test="${mode != 'view' }">
+	<c:if test="${mode != 'view' && mode != 'readOnly' }">
 		<div>
 			<table width="100%">
 				<c:if test="${documentDetails != null &&  fn:length(documentDetails) lt 4}">

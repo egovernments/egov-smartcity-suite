@@ -53,7 +53,6 @@ import org.egov.asset.service.AssetService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetGroupDAO;
@@ -88,7 +87,6 @@ import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
@@ -128,9 +126,6 @@ public class EstimateService {
     private final AbstractEstimateRepository abstractEstimateRepository;
 
     private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
     private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
@@ -401,8 +396,8 @@ public class EstimateService {
     public MultiYearEstimate populateMultiYearEstimate(final AbstractEstimate abstractEstimate) {
         final MultiYearEstimate multiYearEstimate = new MultiYearEstimate();
         multiYearEstimate.setAbstractEstimate(abstractEstimate);
-        multiYearEstimate.setFinancialYear(financialYearHibernateDAO
-                .getFinYearByDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
+        multiYearEstimate.setFinancialYear(worksUtils
+                .getFinancialYearByDate(abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateDate()));
         multiYearEstimate.setPercentage(100);
         return multiYearEstimate;
     }
@@ -718,21 +713,22 @@ public class EstimateService {
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
 
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
-                .findEstimateNumbersToSearchAbstractEstimatesForLoa(WorksConstants.CANCELLED_STATUS);
+                .findEstimateNumbersToSearchAbstractEstimatesForLoa(
+                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase(),
+                        WorksConstants.CANCELLED_STATUS);
 
         if (!lineEstimateNumbers.isEmpty()) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
                     .createAlias("createdBy", "createdBy").createAlias("lineEstimateDetails", "lineEstimateDetails")
                     .createAlias("egwStatus", "aeStatus")
                     .createAlias("lineEstimateDetails.lineEstimate", "lineEstimate")
-                    .createAlias("lineEstimateDetails.lineEstimate.status", "status")
-                    .createAlias("lineEstimateDetails.projectCode", "projectCode");
+                    .createAlias("projectCode", "projectCode");
             if (abstractEstimateForLoaSearchRequest != null) {
                 if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
                     criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber",
                             abstractEstimateForLoaSearchRequest.getAdminSanctionNumber()));
                 if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
-                    criteria.add(Restrictions.eq("lineEstimate.executingDepartment.id",
+                    criteria.add(Restrictions.eq("executingDepartment.id",
                             abstractEstimateForLoaSearchRequest.getExecutingDepartment()));
                 if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
                     criteria.add(
@@ -752,10 +748,8 @@ public class EstimateService {
                             .eq("projectCode.code", abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber())
                             .ignoreCase());
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
-                criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
-                criteria.add(Restrictions.or(
-                        Restrictions.eq("aeStatus.code", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()),
-                        Restrictions.eq("aeStatus.code", AbstractEstimate.EstimateStatus.TECH_SANCTIONED.toString())));
+                Restrictions.eq("upper(aeStatus.code)",
+                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase());
                 if (abstractEstimateForLoaSearchRequest.isSpillOverFlag())
                     criteria.add(Restrictions.eq("lineEstimate.spillOverFlag",
                             abstractEstimateForLoaSearchRequest.isSpillOverFlag()));
@@ -804,14 +798,14 @@ public class EstimateService {
         for (final Activity activity : abstractEstimate.getSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
-            if(activity.getRate() <= 0)
+            if (activity.getRate() <= 0)
                 errors.reject("error.rates.zero", "error.rates.zero");
         }
 
         for (final Activity activity : abstractEstimate.getNonSorActivities()) {
             if (activity.getQuantity() <= 0)
                 errors.reject("error.quantity.zero", "error.quantity.zero");
-            if(activity.getRate() <= 0)
+            if (activity.getRate() <= 0)
                 errors.reject("error.rates.zero", "error.rates.zero");
         }
     }

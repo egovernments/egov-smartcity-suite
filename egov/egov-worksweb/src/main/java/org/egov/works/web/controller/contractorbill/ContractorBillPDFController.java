@@ -129,8 +129,7 @@ public class ContractorBillPDFController {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             new DecimalFormat("#.##");
             final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                    .findByEstimateNumber(contractorBillRegister.getWorkOrder()
-                            .getEstimateNumber());
+                    .findByEstimateNumber(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
 
@@ -139,14 +138,14 @@ public class ContractorBillPDFController {
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("contractorName", contractorBillRegister.getWorkOrder().getContractor().getName() != null
-                    ? contractorBillRegister.getWorkOrder().getContractor().getName() : "");
-            reportParams.put("contractorCode", contractorBillRegister.getWorkOrder().getContractor().getCode() != null
-                    ? contractorBillRegister.getWorkOrder().getContractor().getCode() : "");
-            reportParams.put("bankAcc", contractorBillRegister.getWorkOrder().getContractor().getBank() != null
-                    ? contractorBillRegister.getWorkOrder().getContractor().getBankaccount() : "N/A");
-            reportParams.put("panNo", !contractorBillRegister.getWorkOrder().getContractor().getPanNumber().isEmpty()
-                    ? contractorBillRegister.getWorkOrder().getContractor().getPanNumber() : "N/A");
+            reportParams.put("contractorName", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
+                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
+            reportParams.put("contractorCode", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
+                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
+            reportParams.put("bankAcc", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBank() != null
+                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBankaccount() : "N/A");
+            reportParams.put("panNo", !contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber().isEmpty()
+                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber() : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
             reportParams.put("win", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());

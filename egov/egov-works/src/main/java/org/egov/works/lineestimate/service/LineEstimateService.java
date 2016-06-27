@@ -405,7 +405,8 @@ public class LineEstimateService {
     }
 
     public List<String> findEstimateNumbersForLoa(final String name) {
-        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name.toUpperCase() + "%",
+        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa(
+                "%" + name.toUpperCase() + "%",
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return lineEstimateNumbers;
@@ -415,8 +416,9 @@ public class LineEstimateService {
         List<String> lineEstimateNumbers = new ArrayList<String>();
         lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa("%" + name.toUpperCase() + "%",
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
-        lineEstimateNumbers.addAll(lineEstimateDetailsRepository.findEstimateNumbersForAbstractEstimate("%" + name.toUpperCase() + "%",
-                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS));
+        lineEstimateNumbers
+                .addAll(lineEstimateDetailsRepository.findEstimateNumbersForAbstractEstimate("%" + name.toUpperCase() + "%",
+                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS));
 
         return lineEstimateNumbers;
     }
@@ -430,25 +432,37 @@ public class LineEstimateService {
     }
 
     public List<String> findAdminSanctionNumbersForLoa(final String name) {
-        final List<String> adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa("%" + name.toUpperCase() + "%",
-                LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
+        final List<String> adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa(
+                "%" + name.toUpperCase() + "%",
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return adminSanctionNumbers;
     }
 
     public List<String> findAdminSanctionNumbersForAbstractEstimate(final String name) {
         List<String> adminSanctionNumbers = new ArrayList<String>();
-        adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa("%" + name.toUpperCase() + "%",
+        adminSanctionNumbers = lineEstimateDetailsRepository.findAdminSanctionNumbersForAbstractEstimate(
+                "%" + name.toUpperCase() + "%",
                 LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
-        adminSanctionNumbers.addAll(lineEstimateDetailsRepository.findAdminSanctionNumbersForLoa("%" + name.toUpperCase() + "%",
-                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS));
+        adminSanctionNumbers
+                .addAll(lineEstimateDetailsRepository.findAdminSanctionNumbersForAbstractEstimate("%" + name.toUpperCase() + "%",
+                        LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS));
         return adminSanctionNumbers;
     }
 
-    public List<String> findWorkIdentificationNumbersToSearchLineEstimatesForLoa(final String name) {
+    public List<String> findWorkIdentificationNumbersToSearchEstimatesForLoa(final String name) {
         final List<String> workIdNumbers = lineEstimateDetailsRepository
-                .findWorkIdentificationNumbersToSearchLineEstimatesForLoa("%" + name.toUpperCase() + "%",
-                        WorksConstants.CANCELLED_STATUS);
+                .findWorkIdentificationNumbersToSearchEstimatesForLoa("%" + name.toUpperCase() + "%",
+                        WorksConstants.CANCELLED_STATUS,
+                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase());
+
+        return workIdNumbers;
+    }
+
+    public List<String> findWorkIdentificationNumbersToSearchEstimates(final String name) {
+        final List<String> workIdNumbers = lineEstimateDetailsRepository
+                .findWorkIdentificationNumbersToSearchEstimates("%" + name.toUpperCase() + "%",
+                        WorksConstants.CANCELLED_STATUS, LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
 
         return workIdNumbers;
     }

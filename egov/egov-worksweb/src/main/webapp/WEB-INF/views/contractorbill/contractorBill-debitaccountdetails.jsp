@@ -60,12 +60,12 @@
 					<c:when test="${billDetailsMap == null || billDetailsMap == ''}"> 
 						<tr>
 							<td>
-								<input type="text" id="debitGlcode" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.glcode}" class="form-control" readonly="readonly"required"> 
-								<form:hidden path="billDetailes[0].glcodeid"  name="billDetailes[0].glcodeid" id="debitGlcodeId" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.id}" /> 
+								<input type="text" id="debitGlcode" value="${workOrderEstimate.estimate.financialDetails[0].budgetGroup.minCode.glcode}" class="form-control" readonly="readonly"required"> 
+								<form:hidden path="billDetailes[0].glcodeid"  name="billDetailes[0].glcodeid" id="debitGlcodeId" value="${workOrderEstimate.estimate.financialDetails[0].budgetGroup.minCode.id}" /> 
 								<form:errors path="billDetailes[0].glcodeid" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<input type="text" id="debitAccountHead" value="${lineEstimateDetails.lineEstimate.budgetHead.minCode.name}" class="form-control" readonly="readonly" > 
+								<input type="text" id="debitAccountHead" value="${workOrderEstimate.estimate.financialDetails[0].budgetGroup.minCode.name}" class="form-control" readonly="readonly" > 
 							</td>
 							<td>
 								<form:input path="billDetailes[0].debitamount" id="debitamount" name="billDetailes[0].debitamount" data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right debitamount" onblur="calculateNetPayableAmount();" maxlength="12" required="required" />

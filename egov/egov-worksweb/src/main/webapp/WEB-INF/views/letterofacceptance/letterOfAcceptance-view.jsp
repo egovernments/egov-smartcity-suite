@@ -67,6 +67,7 @@
 				</div>
 			</c:if>
 		</div>
+		<jsp:include page="../common/uploadDocuments.jsp"/>
 	<div class="row">
 		<div class="col-sm-12 text-center">
 		<c:choose>

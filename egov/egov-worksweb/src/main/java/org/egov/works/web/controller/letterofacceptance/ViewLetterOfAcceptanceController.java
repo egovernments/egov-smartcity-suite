@@ -82,6 +82,7 @@ public class ViewLetterOfAcceptanceController {
         model.addAttribute("workOrder", newWorkOrder);
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("mode", "view");
+        model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
         return "letterOfAcceptance-view";
     }
 
