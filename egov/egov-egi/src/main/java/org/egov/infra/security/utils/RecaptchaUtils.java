@@ -41,39 +41,56 @@
 package org.egov.infra.security.utils;
 
 import com.google.gson.GsonBuilder;
+import net.tanesha.recaptcha.ReCaptchaImpl;
+import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@Service
 public class RecaptchaUtils {
     
     private static final Logger LOG = LoggerFactory.getLogger(RecaptchaUtils.class);
     
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
-    
 
-    public static boolean captchaIsValid(final HttpServletRequest request) {
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
+    public boolean captchaIsValid(final HttpServletRequest request) {
         try {
-            final HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
-            final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-            urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));
-            urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
-            urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
-            post.setEntity(new UrlEncodedFormEntity(urlParameters));
-            final String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent());
-            return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
-        } catch (UnsupportedOperationException | IOException e) {
+            if ("high".equals(applicationProperties.getProperty("captcha.strength"))) {
+                final HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
+                final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+                urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));
+                urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
+                urlParameters.add(new BasicNameValuePair("remoteip", request.getRemoteAddr()));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                final String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent());
+                return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
+            } else {
+                String remoteAddr = request.getRemoteAddr();
+                ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
+                reCaptcha.setPrivateKey((String) request.getSession().getAttribute("siteSecret"));
+                String challenge = request.getParameter("recaptcha_challenge_field");
+                String uresponse = request.getParameter("recaptcha_response_field");
+                ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);
+                return reCaptchaResponse.isValid();
+            }
+        } catch (Exception e) {
             LOG.error("Recaptcha verification failed", e);
             return false;
         }

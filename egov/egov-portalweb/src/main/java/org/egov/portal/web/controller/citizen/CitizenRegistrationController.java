@@ -61,8 +61,12 @@ import javax.validation.Valid;
 public class CitizenRegistrationController {
 
     private final CitizenService citizenService;
+
     @Autowired
     private ValidatorUtils validatorUtils;
+
+    @Autowired
+    private RecaptchaUtils recaptchaUtils;
 
     @Autowired
     public CitizenRegistrationController(final CitizenService citizenService) {
@@ -82,7 +86,7 @@ public class CitizenRegistrationController {
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
-        if (!RecaptchaUtils.captchaIsValid(request))
+        if (!recaptchaUtils.captchaIsValid(request))
             errors.rejectValue("active", "error.recaptcha.verification");
         if (errors.hasErrors())
             return "signup";
