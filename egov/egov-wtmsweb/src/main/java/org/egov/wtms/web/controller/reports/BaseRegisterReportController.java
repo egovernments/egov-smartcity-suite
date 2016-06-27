@@ -56,8 +56,8 @@ import org.egov.wtms.application.entity.BaseRegisterResult;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,9 +86,6 @@ public class BaseRegisterReportController {
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
     private ConnectionDemandService connectionDemandService;
 
     @ModelAttribute("wards")
@@ -110,8 +107,8 @@ public class BaseRegisterReportController {
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void springPaginationDataTableUpdate(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException {
+    public @ResponseBody void springPaginationDataTableUpdate(final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ParseException {
         String ward = "";
 
         if (null != request.getParameter("ward"))
@@ -127,25 +124,27 @@ public class BaseRegisterReportController {
         IOUtils.write(result, response.getWriter());
     }
 
-    public String getDuePeriodFrom(final String consumerCode)
-    {
+    public String getDuePeriodFrom(final String consumerCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
+                .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
         Installment currInstallment = null;
-        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
-            currInstallment = connectionDemandService.getCurrentInstallment(
-                    WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-        else
-            currInstallment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
-                    WaterTaxConstants.MONTHLY, new Date());
+        if (waterConnectionDetails != null) {
+            if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
+                currInstallment = connectionDemandService
+                        .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+            else
+                currInstallment = connectionDemandService.getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
+                        WaterTaxConstants.MONTHLY, new Date());
+            return currInstallment.getDescription();
+        } else
+            return "";
 
-        return currInstallment.getDescription();
     }
 
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(BaseRegisterResult.class,
-                new BaseRegisterResultAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(BaseRegisterResult.class, new BaseRegisterResultAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
