@@ -147,7 +147,8 @@ public class TrackMilestoneController {
                     flag = true;
                 }
                 if(tma.getCompletionDate() != null)
-                    if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())) {
+                    if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())
+                            && tma.getRemarks() == null) {
                         jsonObject.addProperty("reasonForDelay_" + count,
                                 messageSource.getMessage("error.trackmilestone.reasonfordelay.mandatory",
                                         new String[] {}, null));

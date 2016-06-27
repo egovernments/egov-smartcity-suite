@@ -123,6 +123,7 @@ $('#save').click(function() {
 					$('#successPage').show();
 				},
 				error: function (error) {
+					$('#errorMessage').html("");
 					console.log(error.responseText.slice(0,-2));
 					var json = $.parseJSON(error.responseText.slice(0,-2));
 					
