@@ -285,7 +285,7 @@
 					<textFieldExpression><![CDATA["Paid From "+(($V{from_which_half}=="1")?"01-04-"+$V{from_year}:"01-10-"+$V{from_year})+" to "+($V{to_which_half}=="1"?("30-09-"+((Integer.parseInt($V{to_date}.substring(0,$V{to_date}.indexOf('-'))))-1)):"31-03-"+$V{to_date}.substring(0,$V{to_date}.indexOf('-')))+(($V{totalamounttobepaid}-$V{totalpaid})>0 ?"(Partially)":"")]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="0" y="3" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="7d8e32dd-c298-45bc-a2c1-12e1b1aa4849">
+					<reportElement positionType="Float" x="-2" y="3" width="38" height="15" isPrintWhenDetailOverflows="true" uuid="7d8e32dd-c298-45bc-a2c1-12e1b1aa4849">
 						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
@@ -294,12 +294,11 @@
 					<text><![CDATA[Period :]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="3" y="27" width="97" height="15" isPrintWhenDetailOverflows="true" uuid="f142d4da-f93f-4b1e-a0d1-6d2a837f713e">
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<reportElement positionType="Float" x="-2" y="27" width="117" height="15" isPrintWhenDetailOverflows="true" uuid="f142d4da-f93f-4b1e-a0d1-6d2a837f713e">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Times New Roman" size="11" isBold="true"/>
+						<font size="11" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Amount Payable]]></text>
 				</staticText>
