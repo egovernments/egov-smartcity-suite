@@ -160,9 +160,12 @@ $(document).ready(function(){
 	        url: '/egworks/abstractestimate/ajaxsor-byschedulecategories?code=',
 	        replace: function (url, query) {
 	        		var scheduleCategories = $('#scheduleCategory').val();
+	        		var estimateDate = $('#estimateDate').val();
 	        		if(scheduleCategories == null)
 	        			bootbox.alert($('#msgschedulecategory').val());
-	        	    return url + query + '&scheduleCategories=' + scheduleCategories;
+	        		if(estimateDate == "" || estimateDate == null)
+	        			bootbox.alert($('#msgestimatedate').val());
+	        	    return url + query + '&scheduleCategories=' + scheduleCategories + "&estimateDate=" + estimateDate;
 	        	},
 	        filter: function (data) {
 	            return $.map(data, function (ct) {
@@ -172,7 +175,7 @@ $(document).ready(function(){
 	                    description: ct.description,
 	                    uom: ct.uom.uom,
 	                    uomid: ct.uom.id,
-	                    estimateRate: ct.sorRates[0].rate.value,
+	                    estimateRate: parseFloat(ct.sorRate).toFixed(2),
 	                    summary: ct.summary,
 	                    categoryCode: ct.scheduleCategory.code,
 	                    displayResult: ct.code+' : '+ct.summary+' : '+ct.scheduleCategory.code 
@@ -1504,21 +1507,19 @@ function validateWorkFlowApprover(name) {
 		flag = validateSORDetails();
 		
 		if($('#abstractEstimate').valid()) {
-			$('.activityRate').each(function() {
+			$('.nonSorEstimateRate').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
 			$('.estimateRate').each(function() {
-				if (parseFloat($(this).val()) <= 0)
+				if (parseFloat($(this).html()) <= 0)
 					flag = false;
 			});
 			if (!flag) {
 				bootbox.alert($('#errorrateszero').val());
 				return false;
 			}
-		}
-		
-		if($('#abstractEstimate').valid()) {
+			
 			$('.quantity').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
@@ -1531,8 +1532,7 @@ function validateWorkFlowApprover(name) {
 				bootbox.alert($('#errorquantityzero').val());
 				return false;
 			}
-		}
-		
+		}		
 	}
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
@@ -1593,22 +1593,24 @@ function validateWorkFlowApprover(name) {
 		flag = validateSORDetails();
 		
 		if($('#abstractEstimate').valid()) {
-			$('.activityRate').each(function() {
+			$('.nonSorEstimateRate').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
 			$('.estimateRate').each(function() {
-				if (parseFloat($(this).val()) <= 0)
+				if (parseFloat($(this).html()) <= 0)
 					flag = false;
 			});
 			if (!flag) {
 				bootbox.alert($('#errorrateszero').val());
 				return false;
 			}
-		}
-		
-		if($('#abstractEstimate').valid()) {
+			
 			$('.quantity').each(function() {
+				if (parseFloat($(this).val()) <= 0)
+					flag = false;
+			});
+			$('.nonSorQuantity').each(function() {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});

@@ -176,7 +176,7 @@ public class ScheduleOfRate extends BaseModel {
         if (estimateDate == null)
             throw new ApplicationRuntimeException("no.rate.for.date");
         for (final SORRate rate : sorRates)
-            if (isWithin(rate.getValidity(), estimateDate))
+            if (rate != null && isWithin(rate.getValidity(), estimateDate))
                 return rate;
         throw new ApplicationRuntimeException("no.rate.for.date");
     }

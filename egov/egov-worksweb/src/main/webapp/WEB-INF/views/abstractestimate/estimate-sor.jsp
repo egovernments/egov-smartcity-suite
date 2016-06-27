@@ -47,6 +47,7 @@
 	</div>
 	<div class="form-group">
 		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
+		<input type="hidden" id="msgestimatedate" value="<spring:message code='error.abstractestimate.estimate.date' />">
 		<input type="hidden" id="erroradded" value="<spring:message code='error.sor.added' />">
 		<input type="hidden" id="errorrateszero" value="<spring:message code='error.rates.zero' />">
 		<input type="hidden" id="errorquantityzero" value="<spring:message code='error.quantity.zero' />">

@@ -118,9 +118,9 @@ public class AjaxAbstractEstimateController {
 
     @RequestMapping(value = "/ajaxsor-byschedulecategories", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategories(@RequestParam("code") final String code,
-            @RequestParam("scheduleCategories") final String scheduleCategories) {
+            @RequestParam("scheduleCategories") final String scheduleCategories, @RequestParam("estimateDate") final Date estimateDate) {
         if (!scheduleCategories.equals("null")) {
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories, estimateDate);
         }
         return null;
     }

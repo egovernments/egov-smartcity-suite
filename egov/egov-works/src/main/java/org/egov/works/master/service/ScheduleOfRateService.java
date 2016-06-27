@@ -135,14 +135,18 @@ public class ScheduleOfRateService {
         return scheduleOfRateRepository.findOne(id);
     }
 
-    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids) {
+    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids, final Date estimateDate) {
         List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
         String[] split = ids.split(",");
         for (String s : split)
             scheduleOfCategoryIds.add(Long.parseLong(s));
-
-        return scheduleOfRateRepository.findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(),
-                scheduleOfCategoryIds, new Date());
+        final List<ScheduleOfRate> scheduleOfRates = scheduleOfRateRepository
+                .findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(),
+                scheduleOfCategoryIds, estimateDate);
+        for(final ScheduleOfRate rate : scheduleOfRates)
+            rate.setSorRateValue(rate.getRateOn(estimateDate).getRate().getValue());
+        
+        return scheduleOfRates;
     }
 
     // TODO: Need to remove this method after getting better alternate option
