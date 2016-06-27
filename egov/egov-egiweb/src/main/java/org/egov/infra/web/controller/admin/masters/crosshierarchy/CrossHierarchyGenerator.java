@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.controller.admin.masters.crossHierarchy;
+package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
 import java.util.List;
 

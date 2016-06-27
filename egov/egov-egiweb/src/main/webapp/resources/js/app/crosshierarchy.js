@@ -48,9 +48,20 @@ function populateBoundary(dropdown) {
 $(document).ready(function()
 {
 
-$('#save').click(function(e){  
-	
-				  document.forms["crossHierarchyForm"].submit();//submit it
+$('#crosshierarchysave').unbind('click').bind('click', function(e) {
+	var selectedBoundary = $('#multiselect_to option:selected').length;
+	if(selectedBoundary > 0){
+	   bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function(result) {
+		  if(result){
+			  document.forms["crossHierarchyForm"].submit();//submit it
+		  }else{
+			  //leave it.. Don't submit
+		  }
+		}); 
+	}
+	else{
+	   bootbox.alert("Select mapped Location");
+	}
 		
 });
 });

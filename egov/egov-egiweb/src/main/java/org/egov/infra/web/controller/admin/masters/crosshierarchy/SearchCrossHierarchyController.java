@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.crossHierarchy;
+package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/crossHierarchy/update")
+@RequestMapping("/crosshierarchy/update")
 public class SearchCrossHierarchyController {
 
     private static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
@@ -95,7 +95,7 @@ public class SearchCrossHierarchyController {
         if (errors.hasErrors())
             return "crossHierarchy-list";
 
-        return "redirect:/crossHierarchy/update/" + crossHierarchy.getParent().getName() + ","
+        return "redirect:/crosshierarchy/update/" + crossHierarchy.getParent().getName() + ","
                 + crossHierarchy.getParentType().getName();
     }
 
