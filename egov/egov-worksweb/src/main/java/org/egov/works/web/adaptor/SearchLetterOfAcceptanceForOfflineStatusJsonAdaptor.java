@@ -41,8 +41,14 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
+import org.egov.works.models.tender.OfflineStatus;
+import org.egov.works.offlinestatus.service.OfflineStatusService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -52,6 +58,9 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
+    
+    @Autowired
+    private OfflineStatusService offlineStatusService; 
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -83,11 +92,12 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
             else
                 jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
             
-            
+            List<OfflineStatus> offlinestatusses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
             jsonObject.addProperty("lineEstimateId", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
+            jsonObject.addProperty("statusSize", offlinestatusses.size());
 
         }
         return jsonObject;

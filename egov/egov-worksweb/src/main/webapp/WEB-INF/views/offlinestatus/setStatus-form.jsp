@@ -59,15 +59,24 @@
 	<input type="hidden" id="workOrderDate" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="yyyy-MM-dd" />' />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
-			<div class="panel-title"><spring:message code="lbl.setstatus" /></div>
+			<div class="panel-title">
+				<c:choose>
+					<c:when test="${offlineStatusSize != 6 }">
+						<spring:message code="lbl.setstatus" />
+					</c:when>
+					<c:otherwise>
+						<spring:message code="lbl.viewstatus" />
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 		<div class="panel-body">
 		<div class="form-group">
-			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.workordernumber"/></div>
+			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.loanumber"/></div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${workOrder.workOrderNumber}"></c:out>
 			</div>
-			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.workorderapprovedon"/></div>
+			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.loadate"/></div>
 			<div class="col-sm-3 add-margin view-content">
 				<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy" />
 			</div>
@@ -80,10 +89,12 @@
 	
 <div class="row">
 	<div class="col-sm-12 text-center">
+	<c:if test="${offlineStatusSize != 6 }" >
 		<form:button type="submit" name="submit" id="save"
 			class="btn btn-primary" value="Save" onclick="validateForm();">
 			<spring:message code="lbl.save" />
 		</form:button>
+	</c:if>
 		<form:button type="button" class="btn btn-default" id="button2"
 			onclick="window.close();">
 			<spring:message code="lbl.close" />

@@ -45,6 +45,7 @@
 <script src="<c:url value='/resources/js/offlinestatus.js?rnd=${app_release_no}'/>"></script>
 
 		<input type="hidden" value="${workOrder.offlineStatuses.size() }" id="statusSize" />
+		<input type="hidden" value="${offlineStatusSize }" id="offlineStatusSize" />
 		<input type="hidden" value="true" id="isOfflineStatusValuesLoading" />
 		<table class="table table-bordered" id="tblsetstatus">
 			<thead>
@@ -52,7 +53,9 @@
 					<th><spring:message code="lbl.slno"/></th>
 					<th><spring:message code="lbl.status"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.date"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.action"/></th>
+					<c:if test="${offlineStatusSize != 6 }" >
+						<th><spring:message code="lbl.action"/></th>
+					</c:if>
 				</tr>
 			</thead>
 			<tbody id="setStatusTbl">
@@ -88,9 +91,11 @@
 							<form:input path="offlineStatuses[0].statusDate" id="offlineStatuses[0].statusDate" data-inputmask="'mask': 'd/m/y'" name="offlineStatuses[0].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate statusdatedisable"	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d"  required="required" />
 							<form:errors path="offlineStatuses[0].statusDate" cssClass="add-margin error-msg" />
 						</td>
-						<td>
-							<span name="spandelete" data-idx="0" class="add-padding spandelete"  id="spandelete_0" onclick="deleteSetStatus(this);" readonly="true" ><i class="fa fa-trash spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-						</td>
+						<c:if test="${offlineStatusSize != 6 }" >
+							<td>
+								<span name="spandelete" data-idx="0" class="add-padding spandelete"  id="spandelete_0" onclick="deleteSetStatus(this);" readonly="true" ><i class="fa fa-trash spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+							</td>
+						</c:if>
 					</tr>
 				</c:when>
 				<c:otherwise>
@@ -132,24 +137,28 @@
 						</c:choose>
 							<form:errors path="offlineStatuses[${item.index}].statusDate" cssClass="add-margin error-msg" />
 						</td>
-						<td>
-						<c:choose>
-							<c:when test="${offlineStat.id != null }">
-								<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-							</c:when>
-						<c:otherwise>
-							<span name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-						</c:otherwise>
-						</c:choose>
-						</td>
+						<c:if test="${offlineStatusSize != 6 }" >
+							<td>
+							<c:choose>
+								<c:when test="${offlineStat.id != null }">
+									<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								</c:when>
+								<c:otherwise>
+									<span name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								</c:otherwise>
+							</c:choose>
+							</td>
+						</c:if>
 					</tr>
 					</c:forEach>
 				</c:otherwise>
 			</c:choose>
 				</tbody>
 		</table>
+		<c:if test="${offlineStatusSize != 6 }" >
 			<div id="offlineStatus">
 			</div>
 			<div class="col-sm-12 text-center">
 				<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addNewStatus()"><spring:message code="lbl.addstatus" /></button>
 			</div>
+		</c:if>

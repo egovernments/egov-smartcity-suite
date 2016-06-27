@@ -86,10 +86,13 @@ public class SetOfflineStatusController {
             throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(workOrderId);
         final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrder.getId(),WorksConstants.WORKORDER);
+        int offlineStatusSize = offlineStatuses.size();
         workOrder.setOfflineStatuses(offlineStatuses);
         setDropDownValues(model);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("mode", "newWorkOrder");
+        model.addAttribute("offlineStatusSize", offlineStatusSize);
+
         return "setstatus-form";
     }
 

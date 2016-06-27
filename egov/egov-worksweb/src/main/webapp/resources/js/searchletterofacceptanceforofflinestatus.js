@@ -192,9 +192,15 @@ function callAjaxSearch() {
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+					if (data.statusSize != 6){
 					$('td:eq(8)', row).html(
 							'<a href="javascript:void(0);" onclick="setStatus(\''
 									+ data.id + '\')">Set work status for LOA</a>');
+					} else {
+						$('td:eq(8)', row).html(
+								'<a href="javascript:void(0);" onclick="setStatus(\''
+										+ data.id + '\')">View work status for LOA</a>');
+					}
 					return row;
 				},
 				aaSorting : [],
