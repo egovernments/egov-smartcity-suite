@@ -47,9 +47,6 @@ $budgetHeadId=0;
 $(document).ready(function(){
 	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
-	if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') {
-		$('#actionButtons').prepend("<a href='javascript:void(0)' class='btn btn-primary' onclick='renderPdf()'>View Proceedings</a>");
-	}
 	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
@@ -60,12 +57,6 @@ $(document).ready(function(){
 	getFunctionsByFundAndDepartment();
 	getBudgetHeads();
 	$( "input[name$='estimateAmount']" ).each(function(){
-		var value = parseFloat(roundTo($(this).val()));
-		if(value != 0)
-			$(this).val(roundTo($(this).val()));
-	});
-	
-	$( "input[name$='actualEstimateAmount']" ).each(function(){
 		var value = parseFloat(roundTo($(this).val()));
 		if(value != 0)
 			$(this).val(roundTo($(this).val()));
@@ -96,52 +87,8 @@ function renderPdf() {
 $('.btn-primary').click(function(){
 	var button = $(this).attr('id');
 	if (button != null && button == 'Approve') {
-		var flag = true;
 		$('#approvalComent').removeAttr('required');
-		
-		var lineEstimateStatus = $('#lineEstimateStatus').val();
-		if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED') {
-			var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
-			var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
-			var technicalSanctionNumber = $('#technicalSanctionNumber').val();
-			
-			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
-				bootbox.alert($('#errorTechDate').val());
-				$('#technicalSanctionDate').val("");
-				return false;
-			}
-
-			var message = $('#errorActualAmount').val() + " ";
-
-			if(technicalSanctionDate != '' && technicalSanctionNumber != '') {
-				$("input[name$='actualEstimateAmount']")
-				.each(
-						function() {
-							var index = getRow(this).rowIndex - 1;
-							var estimateAmount = $(
-									'#estimateAmount' + index).html();
-							var actualAmount = $(
-									'#actualEstimateAmount' + index).val();
-							if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-								var estimateNumber = $(
-										'#estimateNumber' + index).val();
-								message += estimateNumber + ", ";
-								flag = false;
-							}
-						});
-				message = message.replace(/,\s*$/, ". ");
-				message += $('#errorActualAmountContinued').val();
-				if (!flag) {
-					bootbox.alert(message);
-					return false;
-				}
-			}
-		}
-		
-		if(!flag)
-			return false;
-	}
-	else {
+	} else {
 		return validateWorkFlowApprover(button);
 	}
 });
@@ -357,18 +304,6 @@ function getLineEstimateDate() {
 
 function validateEstimateAmount() {
 	$( "input[name$='estimateAmount']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
-
-function validateActualEstimateAmount() {
-	$( "input[name$='actualEstimateAmount']" ).on("keyup", function(){
 	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
 	        val = this.value;
 	    

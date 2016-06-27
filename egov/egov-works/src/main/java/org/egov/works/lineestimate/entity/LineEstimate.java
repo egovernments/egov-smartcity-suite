@@ -237,6 +237,8 @@ public class LineEstimate extends StateAware {
 
     private String cancellationRemarks;
 
+    private boolean abstractEstimateCreated;
+
     @Override
     public Long getId() {
         return id;
@@ -558,5 +560,13 @@ public class LineEstimate extends StateAware {
 
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
+    }
+
+    public boolean isAbstractEstimateCreated() {
+        return abstractEstimateCreated;
+    }
+
+    public void setAbstractEstimateCreated(final boolean abstractEstimateCreated) {
+        this.abstractEstimateCreated = abstractEstimateCreated;
     }
 }

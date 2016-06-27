@@ -53,6 +53,7 @@ $(document).ready(function(){
 	$functionId = $('#functionId').val();
 	getFunctionsByFundAndDepartment();
 	getBudgetHeads();
+	
 	if($("#isBillsCreatedInput").val() == 'true') {
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
@@ -62,6 +63,7 @@ $(document).ready(function(){
 					$(this).show();
 		});
 	}
+
 	$('#designation').val($('#designationValue').val());
 	$('#designation').trigger('change');
 	
@@ -104,62 +106,9 @@ $('#Save').click(function(){
 	});
 	if (button != null && button == 'Save' && !status) {
 		var flag = true;
-		
-		var adminSanctionDate = $('#adminSanctionDate').data('datepicker').date;
-		var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
-		var technicalSanctionNumber = $('#technicalSanctionNumber').val();
-		
-		if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
-			bootbox.alert($('#errorTechDate').val());
-			$('#technicalSanctionDate').val("");
-			return false;
-		}
-
-		var message = $('#errorActualAmount').val() + " ";
-
-		$("input[name$='actualEstimateAmount']")
-		.each(
-				function() {
-					var index = getRow(this).rowIndex - 1;
-					var estimateAmount = $(
-							'#estimateAmount' + index).val();
-					var actualAmount = $(
-							'#actualEstimateAmount' + index).val();
-					if (parseFloat(estimateAmount.trim()) < parseFloat(actualAmount)) {
-						var estimateNumber = $(
-								'#estimateNumber' + index).val();
-						message += estimateNumber + ", ";
-						flag = false;
-					}
-				});
-		message = message.replace(/,\s*$/, ". ");
-		message += $('#errorActualAmountContinued').val();
-		if (!flag) {
-			bootbox.alert(message);
-			return false;
-		}
-		
-		message = $('#errorGrossBilledAmount').val() + " ";
-		
-		$("input[name$='grossAmountBilled']")
-		.each(
-				function() {
-					var index = getRow(this).rowIndex - 1;
-					var grossBilledAmount = $(
-							'#grossAmountBilled' + index).val();
-					var actualAmount = $(
-							'#actualEstimateAmount' + index).val();
-					if (parseFloat(grossBilledAmount) > parseFloat(actualAmount)) {
-						var estimateNumber = $(
-								'#estimateNumber' + index).val();
-						message += estimateNumber + ", ";
-						flag = false;
-					}
-				});
-		message = message.replace(/,\s*$/, ". ");
-		message += $('#errorActualAmountContinued').val();
-		if (!flag) {
-			bootbox.alert(message);
+				
+		if($('#isWorkOrderCreated').prop("checked") == true && $('#isAbstractEstimateCreated').prop("checked") == false) {
+			bootbox.alert($('#msgAbstractEstimateCreated').val());
 			return false;
 		}
 		

@@ -593,10 +593,7 @@ public class LineEstimateService {
                     setAdminSanctionByAndDate(lineEstimate);
                     for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
                         lineEstimateDetailService.setProjectCode(led);
-                } else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()) &&
-                        !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
-                    setTechnicalSanctionBy(lineEstimate);
-                }
+                } 
                 if (lineEstimate.getStatus().getCode()
                         .equals(LineEstimateStatus.CHECKED.toString()) && !workFlowAction.equals(WorksConstants.REJECT_ACTION)) {
                     final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -642,10 +639,6 @@ public class LineEstimateService {
         lineEstimate.setAdminSanctionBy(securityUtils.getCurrentUser());
     }
 
-    private void setTechnicalSanctionBy(final LineEstimate lineEstimate) {
-        lineEstimate.setTechnicalSanctionBy(securityUtils.getCurrentUser());
-    }
-
     private void doBudgetoryAppropriation(final LineEstimate lineEstimate) {
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
@@ -686,11 +679,6 @@ public class LineEstimateService {
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
-            else if (lineEstimate.getStatus().getCode()
-                    .equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString())
-                    && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
-                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.REJECTED.toString()));
@@ -864,7 +852,7 @@ public class LineEstimateService {
     @Transactional
     public LineEstimate createSpillOver(final LineEstimate lineEstimate, final MultipartFile[] files) throws IOException {
         lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                LineEstimateStatus.TECHNICAL_SANCTIONED.toString()));
+                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()));
         lineEstimate.setSpillOverFlag(true);
 
         final List<Assignment> assignments = assignmentService
@@ -989,6 +977,11 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
         return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(councilResolutionNumber,
                 WorksConstants.CANCELLED_STATUS);
+    }
+    
+    public LineEstimateDetails findByEstimateNumberForLoaPDF(final String estimateNumber) {
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber,
+                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
     }
 
 }

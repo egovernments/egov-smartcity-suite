@@ -50,10 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -75,7 +73,6 @@ import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
-import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -101,12 +98,6 @@ public class CreateSpillOverLineEstimateController {
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
-
-    @Autowired
     private SchemeService schemeService;
 
     @Autowired
@@ -122,9 +113,6 @@ public class CreateSpillOverLineEstimateController {
     private DesignationService designationService;
 
     @Autowired
-    private ProjectCodeService projectCodeService;
-
-    @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
@@ -132,10 +120,10 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
 
@@ -164,16 +152,15 @@ public class CreateSpillOverLineEstimateController {
 
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
-        validateTechSanctionDetails(lineEstimate, errors);
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
                 WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
         final AppConfigValues value = values.get(0);
         if (value.getValue().equalsIgnoreCase("Y"))
             validateBudgetAmount(lineEstimate, errors);
-        
+
         validateBudgetHead(lineEstimate, errors);
-        
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
@@ -187,18 +174,17 @@ public class CreateSpillOverLineEstimateController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+            for (final CChartOfAccountDetail detail : accountDetails)
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
-                errors.reject("error.budgethead.validate","error.budgethead.validate");
-            }
+            if (!check)
+                errors.reject("error.budgethead.validate", "error.budgethead.validate");
 
         }
 
@@ -207,14 +193,15 @@ public class CreateSpillOverLineEstimateController {
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            
+
             final LineEstimateDetails estimateNumber = lineEstimateDetailService
                     .getLineEstimateDetailsByEstimateNumber(led.getEstimateNumber());
-            if(lineEstimate.getCouncilResolutionNumber() != null){
-            final LineEstimate councilResolutionNumber = lineEstimateService
-                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
-            if (councilResolutionNumber != null)
-                errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber", "error.councilresolutionnumber.unique");
+            if (lineEstimate.getCouncilResolutionNumber() != null) {
+                final LineEstimate councilResolutionNumber = lineEstimateService
+                        .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
+                if (councilResolutionNumber != null)
+                    errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber",
+                            "error.councilresolutionnumber.unique");
             }
             final LineEstimateDetails workIdentificationNumber = lineEstimateDetailService
                     .getLineEstimateDetailsByProjectCode(led.getProjectCode().getCode());
@@ -223,22 +210,6 @@ public class CreateSpillOverLineEstimateController {
             if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
-        }
-    }
-
-    private void validateTechSanctionDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        if (lineEstimate.getTechnicalSanctionDate() == null)
-            errors.rejectValue("technicalSanctionDate", "error.techdate.notnull");
-        if (lineEstimate.getTechnicalSanctionDate() != null
-                && lineEstimate.getTechnicalSanctionDate().before(lineEstimate.getAdminSanctionDate()))
-            errors.rejectValue("technicalSanctionDate", "error.technicalsanctiondate");
-        if (lineEstimate.getTechnicalSanctionNumber() == null)
-            errors.rejectValue("technicalSanctionNumber", "error.technumber.notnull");
-        if (lineEstimate.getTechnicalSanctionNumber() != null) {
-            final LineEstimate existingLineEstimate = lineEstimateService.getLineEstimateByTechnicalSanctionNumber(lineEstimate
-                    .getTechnicalSanctionNumber());
-            if (existingLineEstimate != null)
-                errors.rejectValue("technicalSanctionNumber", "error.technumber.unique");
         }
     }
 
@@ -288,8 +259,7 @@ public class CreateSpillOverLineEstimateController {
         final LineEstimate lineEstimate = lineEstimateService.getLineEstimateByLineEstimateNumber(lineEstimateNumber);
 
         model.addAttribute("message", messageSource.getMessage("msg.spillover.lineestimate.success",
-                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber(),
-                        lineEstimate.getTechnicalSanctionNumber() },
+                new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getAdminSanctionNumber() },
                 null));
 
         return new ModelAndView("lineestimate-success");
@@ -337,4 +307,5 @@ public class CreateSpillOverLineEstimateController {
              */
         }
     }
+
 }

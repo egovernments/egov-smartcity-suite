@@ -110,7 +110,7 @@ public class LetterOfAcceptancePDFController {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final DecimalFormat df = new DecimalFormat("0.00");
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(workOrder
+            final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumberForLoaPDF(workOrder
                     .getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -141,7 +141,7 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
             reportParams.put("WINCode", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("amountOfEstimate",
-                    lineEstimateDetails.getActualEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("headOfAccount", lineEstimateDetails.getLineEstimate().getBudgetHead().getName());
             reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
 

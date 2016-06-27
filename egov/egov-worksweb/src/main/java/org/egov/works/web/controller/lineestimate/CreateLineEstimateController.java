@@ -354,12 +354,9 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()))
             message = messageSource.getMessage(
                     "msg.lineestimate.adminsanction.success",
-                    new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign,
+                    new String[] { lineEstimate.getLineEstimateNumber(),
                             lineEstimate.getAdminSanctionNumber() },
                     null);
-        else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.TECHNICAL_SANCTIONED.toString()))
-            message = messageSource.getMessage("msg.lineestimate.techsanction.success",
-                    new String[] { lineEstimate.getLineEstimateNumber(), lineEstimate.getTechnicalSanctionNumber() }, null);
         else if (lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.lineestimate.reject",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);

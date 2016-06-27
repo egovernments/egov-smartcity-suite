@@ -39,6 +39,15 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
@@ -46,7 +55,6 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -85,15 +93,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class UpdateLineEstimateController extends GenericWorkFlowController {
@@ -105,9 +104,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
     private SchemeService schemeService;
@@ -211,9 +207,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
                 && request.getParameter("approvalPosition") != null
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()))
-            validateTechSanctionDetails(lineEstimate, errors);
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.BUDGET_SANCTIONED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString()))
@@ -328,22 +321,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             /*
              * for (final ValidationError error : e.getErrors()) errors.reject(error.getMessage());
              */
-        }
-    }
-
-    private void validateTechSanctionDetails(final LineEstimate lineEstimate, final BindingResult errors) {
-        if (lineEstimate.getTechnicalSanctionDate() == null)
-            errors.rejectValue("technicalSanctionDate", "error.techdate.notnull");
-        if (lineEstimate.getTechnicalSanctionDate() != null
-                && lineEstimate.getTechnicalSanctionDate().before(lineEstimate.getAdminSanctionDate()))
-            errors.rejectValue("technicalSanctionDate", "error.technicalsanctiondate");
-        if (lineEstimate.getTechnicalSanctionNumber() == null)
-            errors.rejectValue("technicalSanctionNumber", "error.technumber.notnull");
-        if (lineEstimate.getTechnicalSanctionNumber() != null) {
-            final LineEstimate existingLineEstimate = lineEstimateService.getLineEstimateByTechnicalSanctionNumber(lineEstimate
-                    .getTechnicalSanctionNumber());
-            if (existingLineEstimate != null)
-                errors.rejectValue("technicalSanctionNumber", "error.technumber.unique");
         }
     }
 

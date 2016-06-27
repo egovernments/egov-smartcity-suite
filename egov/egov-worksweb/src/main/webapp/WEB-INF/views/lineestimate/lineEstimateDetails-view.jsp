@@ -53,14 +53,20 @@
 					<c:if test="${mode == 'readOnly' && lineEstimate.spillOverFlag == 'true' }">
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.abstractestimate.created" /></label>
+							<div class="col-sm-1 add-margin">
+								<form:checkbox path="abstractEstimateCreated" id="isAbstractEstimateCreated"
+									value="${lineEstimate.abstractEstimateCreated}" disabled="true" />
+							</div>
+							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.workorder.created" /></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-1 add-margin">
 								<form:checkbox path="workOrderCreated" id="isWorkOrderCreated"
 									value="${lineEstimate.workOrderCreated}" disabled="true" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bills.created" /></span> </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-1 add-margin">
 								<form:checkbox path="billsCreated" id="isBillsCreated"
 									value="${lineEstimate.billsCreated }" disabled="true" />
 							</div>

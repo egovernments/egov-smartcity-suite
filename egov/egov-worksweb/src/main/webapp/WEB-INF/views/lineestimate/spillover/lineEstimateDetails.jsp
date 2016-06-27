@@ -42,18 +42,24 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <input type="hidden" id="msgWorkOrderCreated" value="<spring:message code="error.workordercreated.required" />" />
+<input type="hidden" id="msgAbstractEstimateCreated" value="<spring:message code="error.abstractestimate.required" />" />
+
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="lbl.workdetails" /></div>
 	</div>
 	<div class="form-group" >
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimate.created" /></label>
+		<div class="col-sm-1 add-margin">
+			<form:checkbox path="abstractEstimateCreated" id="isAbstractEstimateCreated" />
+		</div>
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workorder.created" /></label>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-1 add-margin">
 			<form:checkbox path="workOrderCreated" id="isWorkOrderCreated" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bills.created" /></span>
 		</label>
-		<div class="col-sm-3 add-margin">
+		<div class="col-sm-1 add-margin">
 			<form:checkbox path="billsCreated" id="isBillsCreated" />
 			<input id="isBillsCreatedInput" type="hidden" value="${lineEstimate.billsCreated }" />
 		</div>
@@ -68,7 +74,6 @@
 					<th><spring:message code="lbl.estimatenumber"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.workidnumber"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.actualamount"/><span class="mandatory"></span></th>
 					<th class="thGrossAmount" style="display: none;"><spring:message code="lbl.grossamount"/><span class="mandatory"></th>
 					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
@@ -99,10 +104,6 @@
 							<td>
 								<form:input path="lineEstimateDetails[0].projectCode.code" name="lineEstimateDetails[0].projectCode.code" onblur="validateWINNumber(this);" data-errormsg="WIN Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
 								<form:errors path="lineEstimateDetails[0].projectCode.code" cssClass="add-margin error-msg" />
-							</td>
-							<td>
-								<form:input path="lineEstimateDetails[0].actualEstimateAmount" id="actualEstimateAmount0" data-errormsg="Actual Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);"/>
-								<form:errors path="lineEstimateDetails[0].actualEstimateAmount" cssClass="add-margin error-msg" />
 							</td>
 							<td class="tdGrossAmount" style="display: none;">
 								<form:input path="lineEstimateDetails[0].grossAmountBilled" name="lineEstimateDetails[0].grossAmountBilled" id="grossAmountBilled0" data-errormsg="Gross Amount Billed is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right grossAmountBilled"/>
@@ -145,10 +146,6 @@
 								<td>
 									<form:input path="lineEstimateDetails[${item.index}].projectCode.code" name="lineEstimateDetails[${item.index}].projectCode.code" data-errormsg="WIN Number is mandatory!" onblur="validateWINNumber(this);" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].projectCode.code" cssClass="add-margin error-msg" />
-								</td>
-								<td>
-									<form:input path="lineEstimateDetails[${item.index}].actualEstimateAmount" id="actualEstimateAmount${item.index}" data-errormsg="Actual Amount is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right estimateAmount" onkeyup="calculateActualEstimatedAmountTotal(this);" onblur="calculateActualEstimatedAmountTotal(this);" required="required"/>
-									<form:errors path="lineEstimateDetails[${item.index}].actualEstimateAmount" cssClass="add-margin error-msg" />
 								</td>
 								<td class="tdGrossAmount" style="display: none;">
 									<form:input path="lineEstimateDetails[${item.index}].grossAmountBilled" name="lineEstimateDetails[${item.index}].grossAmountBilled" id="grossAmountBilled${item.index}" data-errormsg="Gross Amount Billed is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="1" class="form-control table-input text-right grossAmountBilled" />
