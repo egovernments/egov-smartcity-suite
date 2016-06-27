@@ -40,9 +40,20 @@
 $(document).ready(function(){
 	
 	$(".show-ManualLcNumber").hide(); 
+	$("#bipartisanDetails[0].governmentDepartment").prop("disabled", true);
+
 	
 });
+function enableGovtDept()
+{
+	var govtcheck=$('#activeid').val() ;
+	if(govtcheck==true)
+		{
+		$("#bipartisanDetails[0].governmentDepartment").prop("disabled", false);
 
+		}
+	
+}
 
 function checkLCType()
 {

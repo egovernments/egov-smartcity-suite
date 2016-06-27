@@ -11,11 +11,13 @@ import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
+import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
+import org.egov.lcms.masters.service.GovernmentDepartmentService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.utils.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class GenericLegalCaseController {
 
     @Autowired
     private CaseTypeMasterService caseTypeMasterService;
+    
+    @Autowired
+    private GovernmentDepartmentService governmentDepartmentService;
 
     @Autowired
     private PetitionTypeMasterService petitiontypeMasterService;
@@ -44,6 +49,10 @@ public class GenericLegalCaseController {
 
     public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
         return courtMasterService.findAll();
+    }
+    
+    public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
+        return governmentDepartmentService.findAll();
     }
 
     public @ModelAttribute("sectionlist") List<String> getFunctionaryList() {

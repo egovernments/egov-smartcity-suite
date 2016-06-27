@@ -40,15 +40,15 @@
 package org.egov.lcms.transations.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
-import org.egov.lcms.transactions.repository.GovernmentDeptRepository;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
 import org.egov.lcms.utils.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,19 +61,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class LegalCaseService {
 
     private final LegalcaseRepository legalCaseRepository;
-    
 
-    @Autowired
-    private GovernmentDeptRepository governmentDeptRepository;
-    
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
-
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
-    
 
     @Autowired
     public LegalCaseService(final LegalcaseRepository legalCaseRepository) {
@@ -88,14 +82,14 @@ public class LegalCaseService {
     public Legalcase getLegalCseByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
-    
+
     public Legalcase getLegalCseByCaseNumber(final String caseNumber) {
         return legalCaseRepository.findByCasenumber(caseNumber);
     }
 
     @Transactional
     public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(legalcase.getCasenumber()+"/"+legalcase.getWpYear());
+        legalcase.setCasenumber(legalcase.getCasenumber() + "/" + legalcase.getWpYear());
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
@@ -103,22 +97,24 @@ public class LegalCaseService {
         prepareBipartsanDetails(legalcase);
         return legalCaseRepository.save(legalcase);
     }
+
     private void prepareBipartsanDetails(final Legalcase legalcase) {
-        final BipartisanDetails bipartObj = new BipartisanDetails();
-        final GovernmentDepartment govtDept = governmentDeptRepository.findByCode("L011");
-        bipartObj.setGovernmentDepartment(govtDept);
-        bipartObj.setIsrepondent(Boolean.TRUE);
-        bipartObj.setIsrespondentgovernment(Boolean.TRUE);
-        bipartObj.setName("bipart1");
-        bipartObj.setSerialNumber(231232l);
-        bipartObj.setLegalcase(legalcase);
-        legalcase.getBipartisanDetails().add(bipartObj);
+        final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
+        for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()) {
+            bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
+            bipartObj.setLegalcase(legalcase);
+            partitionDetails.add(bipartObj);
+        }
+        legalcase.getBipartisanDetails().clear();
+        legalcase.setBipartisanDetails(partitionDetails);
+
     }
+
     @Transactional
     public Legalcase updateLegalCase(final Legalcase legalCase) {
         return legalCaseRepository.save(legalCase);
     }
-    
+
     public Functionary getFunctionaryByCode(final String[] funcString) {
         final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
         return funcObj;

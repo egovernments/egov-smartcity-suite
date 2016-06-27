@@ -40,11 +40,15 @@
 
 package org.egov.lcms.web.controller.transactions;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.masters.entity.enums.LCNumberType;
+import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.LegalcaseDepartment;
 import org.egov.lcms.transations.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.transations.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +74,8 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
     public String newForm(@ModelAttribute final Legalcase legalcase, final Model model,
             final HttpServletRequest request) {
         model.addAttribute("legalcase", legalcase);
+        model.addAttribute("bipartisanDetails",new ArrayList<BipartisanDetails>());
+        model.addAttribute("legalcaseDepartment",new ArrayList<LegalcaseDepartment>());
         model.addAttribute("mode", "create");
         return "legalCase-newForm";
     }

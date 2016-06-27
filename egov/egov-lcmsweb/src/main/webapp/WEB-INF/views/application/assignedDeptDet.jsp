@@ -38,52 +38,43 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-<div class="row">
-	<div class="col-md-12">
-		<form:form method="post" action=""
-			modelAttribute="legalcase" id="newlegalcaseForm"
-			class="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-
-			<form:hidden id="mode" path="" value="${mode}" />
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.createlegal" />
-					</div>
-				</div>
-				<div class="panel-body custom-form ">
-				<%@ include file="legalcasedetails.jsp"%>
-				<%@ include file="petitiondetails.jsp"%>
-				<%-- <%@ include file="assignedDeptDet.jsp"%> --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	<div class="panel-heading " align="text-center">
+				<div class="panel-title">
+					Assigned Department
+				</div>					
+			</div>
+			<table class="table table-striped table-bordered" id="estimateDetails">
+					<thead>
+					      <tr>
+					     <th class="text-center">Is Primary Dept</th>
+							<th class="text-center">Department :<span class="mandatory"></span></th>
+							<th class="text-center">Assigned To :<span class="mandatory"></span></th>
+							<th class="text-center">Date Of Receipt Of PWR (DD/MM/YYYY)<span class="mandatory"></span></th>
+							<th class="text-center">Add/Delete Department</th>
+					      </tr>
+				         </thead>
+					<tbody>
+					      <tr class="">
+					      	<td class="text-center"><input type ="checkbox" id="activeid" name="legalcaseDepartment[0].isPrimaryDepartment" id="legalcaseDepartment[0].isPrimaryDepartment"  /></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right" data-pattern="alphanumerichyphenbackslash" name="legalcaseDepartment[0].department.name" id="legalcaseDepartment[0].department.name" maxlength="50" ></td>
+							<td class="text-right"><input type="text" class="form-control table-input" name="legalcaseDepartment[0].positionAndEmpName" id="legalcaseDepartment[0].positionAndEmpName" maxlength="256"></td>
+							<td class="text-right"><input type="text"  name="legalcaseDepartment[0].receiptOfPwr" id="legalcaseDepartment[0].receiptOfPwr"
+							class="form-control datepicker"
+			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
+			data-date-end-date="-1d" 
+			data-inputmask="'mask': 'd/m/y'"  ></td>
+							<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
+					      </tr>
+					     
+					     
+					</tbody>
+				</table>
 				
-					<%-- <jsp:include page="legalcasedetails.jsp"></jsp:include> --%>
-
-				</div>
-			</div>
-
-			<div class="buttonbottom" align="center">
-				<div class="form-group text-center">
-					<button type="submit" class="btn btn-primary" value="Save"
-						id="buttonid">
-						<spring:message code="lbl.save.button" />
-					</button>
-					<a onclick="self.close()" class="btn btn-default"
-						href="javascript:void(0)"><spring:message
-							code="lbl.close.button" /></a>
-				</div>
-			</div>
-		</form:form>
-	</div>
-</div>
-
-<script
-	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+	
+	
+	
+	
+	
