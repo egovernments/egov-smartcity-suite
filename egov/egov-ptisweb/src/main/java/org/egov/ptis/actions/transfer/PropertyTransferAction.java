@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
@@ -46,7 +48,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_PARTIAL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
@@ -681,7 +685,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(NATURE_TITLE_TRANSFER);
+                        .withNatureOfTask(getNatureOfTask());
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
@@ -830,6 +834,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         messagingService.sendEmail(transferorEmailId, subject, emailBodyTransferor);
         messagingService.sendEmail(transfereeEmailId, subject, emailBodyTransferee);
+    }
+    
+    private String getNatureOfTask() {
+        String nature = ADDTIONAL_RULE_REGISTERED_TRANSFER.equals(getAdditionalRule())
+                ? NATURE_REGISTERED_TRANSFER
+                : ADDTIONAL_RULE_FULL_TRANSFER.equals(getAdditionalRule())
+                        ? NATURE_FULL_TRANSFER
+                        : PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER
+                                .equals(getAdditionalRule())
+                                        ? NATURE_PARTIAL_TRANSFER
+                                        : "PropertyMutation";
+        return nature;
     }
 
     public BigDecimal getCurrentPropertyTax() {

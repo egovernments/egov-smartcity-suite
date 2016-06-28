@@ -1326,6 +1326,9 @@ public interface PropertyTaxConstants {
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String NATURE_GENERAL_REVISION_PETITION = "General Revision Petition";
+    public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
+    public static final String NATURE_FULL_TRANSFER = "Full Transfer";
+    public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
