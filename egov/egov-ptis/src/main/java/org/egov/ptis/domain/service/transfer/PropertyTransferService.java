@@ -326,6 +326,21 @@ public class PropertyTransferService {
         ackBean.setUlbLogo(cityLogo);
         ackBean.setMunicipalityName(cityName);
         ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
+        if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER)){
+        	ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
+        	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
+                     .getResolutionTime().toString());
+        }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)){
+        	ackBean.setApplicationType(PropertyTaxConstants.PARTT);
+        	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
+        	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "PARTIAL TRANSFER")
+                     .getResolutionTime().toString());
+        }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)){
+        	ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
+        	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
+        	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
+                     .getResolutionTime().toString());
+        }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
@@ -336,8 +351,8 @@ public class PropertyTransferService {
             ackBean.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
         }
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
-        ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
-                .getResolutionTime().toString());
+       // ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
+         //       .getResolutionTime().toString());
 
         final ReportRequest reportInput = new ReportRequest("transferProperty_ack", ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);

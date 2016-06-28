@@ -77,7 +77,7 @@
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_CLERK_APPROVED.equalsIgnoreCase(model.state.value)}">
+					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value)}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
 						</s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />

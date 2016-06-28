@@ -1424,4 +1424,10 @@ public interface PropertyTaxConstants {
     public static final String SERVICE_CODE_MUTATION = "PTMF";
     
     public static final String MUTATION_TYPE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
+    public static final String PARTT="Transfer of ownership of part of property which needs to be registered in Registration and Stamps Office";
+    public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
+    public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
+    
+    public static final String TTTEXT="of the registration is completed in Registration and Stamps Office";
+    
 }
