@@ -39,35 +39,26 @@
  */
 jQuery(document).ready(function(){
 	
-	var fileformatsincludeforimage = ['jpeg','jpg','png']; 
-	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','xml'];  
+    var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','zip','rar'];
 	
-	
-	jQuery('.upload-file').change(function(e){		
+	jQuery('.upload-file').change(function(e){
 		/*validation for file upload*/
 		myfile= jQuery( this ).val();
-		var docname = jQuery(this).parent().parent().find('.docname').html();
 		var ext = myfile.split('.').pop();
+        validate_file(fileformatsinclude, ext, jQuery(this));
 
-		if(docname == 'photo'){
-			validate_file(fileformatsincludeforimage, ext, jQuery( this ));	
-		}else{
-			validate_file(fileformatsinclude, ext, jQuery( this ));
-		}
-		
 		var fileInput = jQuery(this);
-   		var maxSize = 2097152; //file size  in bytes(2MB)
-		var inMB = maxSize/1024/1024;
+   		var maxSize = 4194304; //file size  in bytes(4MB)
 		if(fileInput.get(0).files.length){
 			var fileSize = this.files[0].size; // in bytes
 			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
 			if(charlen > 50){
-				bootbox.alert('File length should not exceed 50 characters!');
+				bootbox.alert('Document name should not exceed 50 characters!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;			
 			} 
 			else if(fileSize > maxSize){
-				bootbox.alert('File size should not exceed '+ inMB +' MB!');
+				bootbox.alert('File size should not exceed 4 MB!');
 				fileInput.replaceWith(fileInput.val('').clone(true));
 				return false;
 			}			
@@ -75,14 +66,16 @@ jQuery(document).ready(function(){
 	});
 	
 	function validate_file(fileformat, ext, obj){
-		if(jQuery.inArray(ext.toLowerCase(), fileformat) > -1){
-			//do something    
+		if(jQuery.inArray(ext.toLowerCase(), fileformat) == -1){
+            bootbox.alert("Please upload "+fileformat+" format documents only");
+            obj.val('');
+            return false;
 		}
-		else{
-			bootbox.alert("Please upload "+fileformat+" format documents only");
-			obj.val('');
-			return false;
-		}	
 	}
 	
 });
+
+function viewDocument(fileStoreId) {
+	var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGTL";
+	window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
+}

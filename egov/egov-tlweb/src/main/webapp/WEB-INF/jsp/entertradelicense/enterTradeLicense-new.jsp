@@ -79,8 +79,8 @@
 										<s:text name='page.title.entertrade' /> 
 								</div>
                                 <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                                 </ul>
                             </div>
                             
@@ -144,7 +144,7 @@
 												</table>
 											</div>
                                     	</div>
-	                                    <div class="tab-pane fade" id="tradeattachments"> 
+	                                    <div class="tab-pane fade" id="tradeattachments">
 											<%@include file="../common/documentUpload.jsp" %>
 	                                    </div>
                             		</div>
