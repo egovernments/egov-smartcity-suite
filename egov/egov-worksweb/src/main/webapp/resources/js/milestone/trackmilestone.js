@@ -146,7 +146,7 @@ function makeCompletionMandatory(currentStatus) {
 	rowcount = getRow(currentStatus).rowIndex - 1;
 	if($(currentStatus).val() == 'COMPLETED') {
 		$('#completionDate_' + rowcount).attr('required', 'required');
-		$('#completionDate_' + rowcount).removeAttr('readonly');
+		$('#completionDate_' + rowcount).removeAttr('disabled');
 		$('#completedPercentage_' + rowcount).attr('readonly', 'true');
 		$('#completedPercentage_' + rowcount).val(100);
 		$('#completedPercentage_' + rowcount).removeAttr('required');
@@ -155,7 +155,7 @@ function makeCompletionMandatory(currentStatus) {
 		$('#completedPercentage_' + rowcount).attr('readonly', 'true');
 		$('#completedPercentage_' + rowcount).removeAttr('required');
 		$('#completionDate_' + rowcount).val("");
-		$('#completionDate_' + rowcount).attr('readonly', 'true');
+		$('#completionDate_' + rowcount).attr('disabled', 'disabled');
 		$('#reasonForDelay_' + rowcount).removeAttr('required');
 		$('#reasonForDelay_' + rowcount).val("");
 		$('#reasonForDelay_' + rowcount).attr('readonly', 'true');
@@ -163,7 +163,7 @@ function makeCompletionMandatory(currentStatus) {
 	} else {
 		$('#completedPercentage_' + rowcount).removeAttr('readonly');
 		$('#completionDate_' + rowcount).val("");
-		$('#completionDate_' + rowcount).attr('readonly', 'true');
+		$('#completionDate_' + rowcount).attr('disabled', 'disabled');
 		$('#reasonForDelay_' + rowcount).removeAttr('required');
 		$('#reasonForDelay_' + rowcount).val("");
 		$('#reasonForDelay_' + rowcount).attr('readonly', 'true');
