@@ -240,8 +240,8 @@ function validateStatusDates(obj){
 		
 		var statusDate = document.getElementById('offlineStatuses['+ (rIndex-1) + '].statusDate').value;
 		var currentDate = document.getElementById('offlineStatuses['+ (rIndex) + '].statusDate').value;
-		if(currentDate < statusDate )
-		{
+		if(new Date((currentDate.split('/').reverse().join('-'))).getTime() < new Date((statusDate.split('/').reverse().join('-'))).getTime())
+		{	
 			var message = document.getElementById('errorStatusDate').value;
 			$(obj).datepicker("setDate", new Date());
 			$(obj).val('');
