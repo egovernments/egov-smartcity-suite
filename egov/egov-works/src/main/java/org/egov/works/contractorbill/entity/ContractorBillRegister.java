@@ -105,6 +105,15 @@ public class ContractorBillRegister extends EgBillregister {
     private List<EgBilldetails> billDetailes = new ArrayList<EgBilldetails>(0);
 
     @Transient
+    private List<EgBilldetails> statutoryDeductionDetailes = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> otherDeductionDetailes = new ArrayList<EgBilldetails>(0);
+
+    @Transient
+    private List<EgBilldetails> retentionDeductionDetailes = new ArrayList<EgBilldetails>(0);
+
+    @Transient
     private Long approvalDepartment;
 
     @Transient
@@ -267,4 +276,29 @@ public class ContractorBillRegister extends EgBillregister {
     public void setWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
         this.workOrderEstimate = workOrderEstimate;
     }
+
+    public List<EgBilldetails> getStatutoryDeductionDetailes() {
+        return statutoryDeductionDetailes;
+    }
+
+    public void setStatutoryDeductionDetailes(List<EgBilldetails> statutoryDeductionDetailes) {
+        this.statutoryDeductionDetailes = statutoryDeductionDetailes;
+    }
+
+    public List<EgBilldetails> getOtherDeductionDetailes() {
+        return otherDeductionDetailes;
+    }
+
+    public void setOtherDeductionDetailes(List<EgBilldetails> otherDeductionDetailes) {
+        this.otherDeductionDetailes = otherDeductionDetailes;
+    }
+
+    public List<EgBilldetails> getRetentionDeductionDetailes() {
+        return retentionDeductionDetailes;
+    }
+
+    public void setRetentionDeductionDetailes(List<EgBilldetails> retentionDeductionDetailes) {
+        this.retentionDeductionDetailes = retentionDeductionDetailes;
+    }
+
 }

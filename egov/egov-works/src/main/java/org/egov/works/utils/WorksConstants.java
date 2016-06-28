@@ -284,6 +284,8 @@ public class WorksConstants {
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
+    
+    public static final String CONTRACTOR_DEDUCTIONS_PURPOSE = "Contractor Deductions";
 
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
 

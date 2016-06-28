@@ -89,7 +89,7 @@
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-			<spring:message  code="lbl.deductions"/>
+			<spring:message  code="lbl.statutorydeductions"/>
 	</div>
 </div>
 
@@ -104,7 +104,42 @@
 			</thead>
 			<tbody>
 			<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
-				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable}"> 
+				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && creditBillDetails.isStatutoryDeduction}"> 
+					<tr id="deductionRow">
+						<td>
+							<c:out value="${creditBillDetails.glcode}" /> 
+						</td>
+						<td>
+							<c:out value="${creditBillDetails.accountHead}" /> 
+						</td>
+						<td class="text-right">
+							<fmt:formatNumber maxFractionDigits="2" minFractionDigits="2" groupingUsed="false" value="${creditBillDetails.amount}" />
+						</td>					
+					</tr>
+				</c:if>
+			</c:forEach>
+			</tbody>
+		</table>
+</div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+			<spring:message  code="lbl.otherdeductions"/>
+	</div>
+</div>
+
+<div style="padding: 0 15px;">
+		<table class="table table-bordered" id="tblcreditdetails-view">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.account.head"/></th>
+					<th><spring:message code="lbl.credit.amount"/></th>
+				</tr>
+			</thead>
+			<tbody>
+			<c:forEach items="${billDetailsMap}" var="creditBillDetails" varStatus="item">
+				<c:if test="${!creditBillDetails.isDebit && !creditBillDetails.isNetPayable && !creditBillDetails.isStatutoryDeduction}"> 
 					<tr id="deductionRow">
 						<td>
 							<c:out value="${creditBillDetails.glcode}" /> 

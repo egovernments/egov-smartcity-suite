@@ -40,10 +40,14 @@
 $detailsRowCount = $('#detailsSize').val();
 $(document).ready(function(){
 	
-	creditGlcode_initialize();	
+	otherDeductionCreditGlcode_initialize();	
 	replaceBillTypeChar();
 	calculateNetPayableAmount();
 	
+	if($("#mbTotalAmount").html()){
+		$("#debitamount").val($("#mbTotalAmount").html());
+		$("#debitamount").prop("readonly",true);
+	}
 	// TODO: remove this condition
 	if($('#hiddenbilldate').val() != '') {
 		$('#billdate').datepicker('setDate',new Date($('#hiddenbilldate').val()));	
@@ -175,70 +179,26 @@ $(document).ready(function(){
 	
 });
 
-function addDeductionRow() { 
+function addStatutoryDeductionRow() { 
 	
-	$('.creditGlcode').typeahead('destroy');
-	
-	var rowcount = $("#tblcreditdetails tbody tr").length;
+	var rowcount = $("#tblstatutorydeductioncreditdetails tbody tr").length;
 	if (rowcount < 30) {
-		if (document.getElementById('deductionRow') != null) {
-			// get Next Row Index to Generate
-			var nextIdx = 0;
-			if($detailsRowCount == 0 || $detailsRowCount == '')
-				nextIdx = $("#tblcreditdetails tbody tr").length;
-			else
-				nextIdx = $detailsRowCount++;
-			nextIdx++;
-			// validate status variable for exiting function
-			var isValid = 1;// for default have success value 0
+		if (document.getElementById('statutorydeductionrow') != null) {
+			addRow('tblstatutorydeductioncreditdetails','statutorydeductionrow');
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
 
-			// validate existing rows in table
-			$("#tblcreditdetails tbody tr").find('input').each(
-					function() {
-						if (($(this).data('optional') === 0)
-								&& (!$(this).val()) && !($(this).attr('name')===undefined)) { 
-							$(this).focus();
-							bootbox.alert($(this).data('errormsg'));
-							isValid = 0;// set validation failure
-							return false;
-						}
-			});
-			if (isValid === 0) {
-				return false;
-			}
-			
-			// Generate all textboxes Id and name with new index
-			$("#deductionRow").clone().find("input, errors").each(
-			function() {	
-				if ($(this).data('server')) {
-					$(this).removeAttr('data-server');
-				}
-				
-				$(this).attr(
-						{
-							'name' : function(_, name) {
-								if(!($(this).attr('name')===undefined))
-									return name.replace(/\d+/, nextIdx); 
-							},
-							'id' : function(_, id) {
-								if(!($(this).attr('id')===undefined))
-									return id.replace(/\d+/, nextIdx); 
-							},
-							'data-idx' : function(_,dataIdx)
-							{
-								return nextIdx;
-							}
-						});
+function addOtherDeductionRow() { 
 	
-					// if element is static attribute hold values for next row, otherwise it will be reset
-					if (!$(this).data('static')) {
-						$(this).val('');
-					}
-	
-			}).end().appendTo("#tblcreditdetails tbody");		
-			
-			creditGlcode_initialize();
-			
+	$('.otherDeductionCreditGlcode').typeahead('destroy');
+	var rowcount = $("#tblotherdeductioncreditdetails tbody tr").length;
+	if (rowcount < 30) {
+		if (document.getElementById('otherdeductionrow') != null) {
+			addRow('tblotherdeductioncreditdetails','otherdeductionrow');
+			otherDeductionCreditGlcode_initialize();
 		}
 	} else {
 		  bootbox.alert('limit reached!');
@@ -256,47 +216,25 @@ function getRow(obj) {
 	return null;
 }
 
-function deleteDeductionRow(obj) {
-    var rIndex = getRow(obj).rowIndex;
-    
-    var id = $(getRow(obj)).children('td:first').children('input:first').val();
-    //To get all the deleted rows id
-    var aIndex = rIndex - 1;
-	var tbl=document.getElementById('tblcreditdetails');	
-	var rowcount=$("#tblcreditdetails tbody tr").length;
+function deleteStatutoryDeductionRow(obj) {
+	var rowcount=$("#tblstatutorydeductioncreditdetails tbody tr").length;
     if(rowcount<=1) {
 		bootbox.alert("This row can not be deleted");
 		return false;
 	} else {
-		tbl.deleteRow(rIndex);
-		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
-		//regenerate index existing inputs in table row
-		$("#tblcreditdetails tbody tr").each(function() {
-		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors").each(function() {
-					   $(this).attr({
-					      'name': function(_, name) {
-					    	  if(!($(this).attr('name')===undefined))
-					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'id': function(_, id) {
-					    	  if(!($(this).attr('id')===undefined))
-					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-						  'data-idx' : function(_,dataIdx)
-						  {
-							  return idx;
-						  }
-					   });
-			    });
-				idx++;
-			}
-		});
+		deleteRow(obj,'tblstatutorydeductioncreditdetails');
+		calculateNetPayableAmount();
+		return true;
+	}	
+}
+
+function deleteOtherDeductionRow(obj) {
+	var rowcount=$("#tblotherdeductioncreditdetails tbody tr").length;
+    if(rowcount<=1) {
+		bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
+		deleteRow(obj,'tblotherdeductioncreditdetails');
 		calculateNetPayableAmount();
 		return true;
 	}	
@@ -377,12 +315,12 @@ function roundTo(value, decimals, decimal_padding) {
 }
 
 
-function creditGlcode_initialize() {
+function otherDeductionCreditGlcode_initialize() {
 	 var custom = new Bloodhound({
 	    datumTokenizer: function(d) { return d.tokens; },
 	    queryTokenizer: Bloodhound.tokenizers.whitespace,
 		   remote: {
-	            url: '/egworks/contractorbill/ajaxdeduction-coa?searchQuery=%QUERY',
+	            url: '/egworks/contractorbill/ajaxotherdeduction-coa?searchQuery=%QUERY',
 	            filter: function (data) {
 	                return $.map(data, function (ct) {
 	                    return {
@@ -398,7 +336,7 @@ function creditGlcode_initialize() {
 
     custom.initialize();
 
-    $('.creditGlcode').typeahead({
+    $('.otherDeductionCreditGlcode').typeahead({
     	hint : true,
 		highlight : true,
 		minLength : 3
@@ -407,15 +345,15 @@ function creditGlcode_initialize() {
           displayKey: 'glcodesearch',
           source: custom.ttAdapter()
     }).on('typeahead:selected typeahead:autocompleted', function (event, data) {
-    	$(this).parents("tr:first").find('.creditaccountheadname').val(data.name);
-    	$(this).parents("tr:first").find('.creditglcodeid').val(data.id);    
+    	$(this).parents("tr:first").find('.otherdeductionname').val(data.name);
+    	$(this).parents("tr:first").find('.otherdeductionid').val(data.id);    
     });
 }
 
 function resetCreditAccountDetails(obj){
 	if(obj.value=='') {
-		$(obj).parents("tr:first").find('.creditglcodeid').val('');
-		$(obj).parents("tr:first").find('.creditaccountheadname').val('');
+		$(obj).parents("tr:first").find('.otherdeductionid').val('');
+		$(obj).parents("tr:first").find('.otherdeductionname').val('');
 	}
 }
 
@@ -426,4 +364,113 @@ function renderPDF(){
 
 function viewMB(id) {
 	window.open("/egworks/mb/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+
+function addRow(tableName,rowName) { 
+	
+	var rowcount = $("#"+tableName+" tbody tr").length;
+	if (rowcount < 30) {
+		if (document.getElementById(rowName) != null) {
+			// get Next Row Index to Generate
+			var nextIdx = 0;
+				nextIdx = $("#"+tableName+" tbody tr").length;
+			// validate status variable for exiting function
+			var isValid = 1;// for default have success value 0
+
+			// validate existing rows in table
+			$("#"+tableName+" tbody tr").find('input,select').each(
+					function() {
+						if (($(this).data('optional') === 0)
+								&& (!$(this).val()) && !($(this).attr('name')===undefined)) { 
+							$(this).focus();
+							bootbox.alert($(this).data('errormsg'));
+							isValid = 0;// set validation failure
+							return false;
+						}
+			});
+			if (isValid === 0) {
+				return false;
+			}
+			
+			// Generate all textboxes Id and name with new index
+			$("#"+rowName+"").clone().find("input,select,errors").each(
+			function() {	
+				if ($(this).data('server')) {
+					$(this).removeAttr('data-server');
+				}
+				
+				$(this).attr(
+						{
+							'name' : function(_, name) {
+								if(!($(this).attr('name')===undefined))
+									return name.replace(/\d+/, nextIdx); 
+							},
+							'id' : function(_, id) {
+								if(!($(this).attr('id')===undefined))
+									return id.replace(/\d+/, nextIdx); 
+							},
+							'data-idx' : function(_,dataIdx)
+							{
+								return nextIdx;
+							}
+						});
+	
+					// if element is static attribute hold values for next row, otherwise it will be reset
+					if (!$(this).data('static')) {
+						$(this).val('');
+					}
+	
+			}).end().appendTo("#"+tableName+" tbody");		
+			
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
+
+function deleteRow(obj,tableName) {
+    var rIndex = getRow(obj).rowIndex;
+    
+    var id = $(getRow(obj)).children('td:first').children('input:first').val();
+    //To get all the deleted rows id
+    var aIndex = rIndex - 1;
+	var tbl=document.getElementById(tableName);	
+	var rowcount=$("#"+tableName+" tbody tr").length;
+    if(rowcount<=1) {
+		bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
+		tbl.deleteRow(rIndex);
+		//starting index for table fields
+		var idx=parseInt($detailsRowCount);
+		//regenerate index existing inputs in table row
+		$("#"+tableName+" tbody tr").each(function() {
+		
+			hiddenElem=$(this).find("input:hidden");
+			
+			if(!$(hiddenElem).val())
+			{
+				$(this).find("input, errors").each(function() {
+					   $(this).attr({
+					      'name': function(_, name) {
+					    	  if(!($(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'id': function(_, id) {
+					    	  if(!($(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+						  'data-idx' : function(_,dataIdx)
+						  {
+							  return idx;
+						  }
+					   });
+			    });
+				idx++;
+			}
+		});
+		return true;
+	}	
 }

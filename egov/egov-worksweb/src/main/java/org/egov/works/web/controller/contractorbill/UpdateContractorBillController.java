@@ -186,8 +186,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
             validateInput(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
             contractorBillRegister.getEgBilldetailes().clear();
-
-            contractorBillRegister = addBillDetails(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors, request);
+            contractorBillRegisterService.mergeDeductionDetails(contractorBillRegister);
+            contractorBillRegister = addBillDetails(contractorBillRegister, contractorBillRegister.getWorkOrderEstimate(), errors,
+                    request);
             contractorBillRegister.setPassedamount(contractorBillRegister.getBillamount());
         }
 
@@ -225,8 +226,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         contractorBillRegister.getId());
         if (totalBillAmount != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill.add(totalBillAmount);
-        
-        if (workOrderEstimate.getEstimate().getLineEstimateDetails()!=null && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isBillsCreated() && workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled() != null)
+
+        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
+                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isBillsCreated()
+                && workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled() != null)
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
                     .add(workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled());
         if (totalBillAmountIncludingCurrentBill.doubleValue() > workOrderEstimate.getWorkOrder().getWorkOrderAmount())
@@ -310,6 +313,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
+        model.addAttribute("statutoryDeductionAccounCodes",  chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
         model.addAttribute("billTypes", BillTypes.values());
     }
 
@@ -371,8 +375,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final List<Map<String, Object>> billDetailsList = new ArrayList<Map<String, Object>>();
         Map<String, Object> billDetails = new HashMap<String, Object>();
 
-        final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
+        final List<CChartOfAccounts> contractorNetPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
+        final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE);
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
             if (egBilldetails.getDebitamount() != null) {
                 billDetails = new HashMap<String, Object>();
@@ -393,15 +399,21 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 billDetails.put("accountHead", coa.getName());
                 billDetails.put("amount", egBilldetails.getCreditamount());
                 billDetails.put("isDebit", false);
-                if (contractorPayableAccountList != null && !contractorPayableAccountList.isEmpty()
-                        && contractorPayableAccountList.contains(coa)) {
+                if (contractorNetPayableAccountList != null && !contractorNetPayableAccountList.isEmpty()
+                        && contractorNetPayableAccountList.contains(coa)) {
                     billDetails.put("isNetPayable", true);
                     model.addAttribute("netPayableAccountId", egBilldetails.getId());
                     model.addAttribute("netPayableAccountCode", coa.getId());
                     model.addAttribute("netPayableAmount", egBilldetails.getCreditamount());
-                } else
+                } else {
                     billDetails.put("isNetPayable", false);
-
+                    if (contractorDeductionAccountList != null && !contractorDeductionAccountList.isEmpty()
+                            && contractorDeductionAccountList.contains(coa)) {
+                        billDetails.put("isStatutoryDeduction", true);
+                    } else {
+                        billDetails.put("isStatutoryDeduction", false);
+                    }
+                }
             }
             billDetailsList.add(billDetails);
         }
@@ -424,7 +436,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)
                 && StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
-            //billdetails.setId(new Integer(netPayableAccountId));
+            // billdetails.setId(new Integer(netPayableAccountId));
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister
@@ -437,7 +449,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     private EgBilldetails getBillDetails(final ContractorBillRegister billregister, final EgBilldetails egBilldetails,
             final WorkOrderEstimate workOrderEstimate, final BindingResult resultBinder, final HttpServletRequest request) {
-        egBilldetails.setFunctionid(new BigDecimal(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction().getId()));
+        egBilldetails.setFunctionid(
+                new BigDecimal(workOrderEstimate.getEstimate().getFinancialDetails().get(0).getFunction().getId()));
         boolean isDebit = false;
         CChartOfAccounts coa = null;
         if (!(BigDecimal.ZERO.compareTo(egBilldetails.getGlcodeid()) == 0))

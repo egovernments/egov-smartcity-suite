@@ -43,12 +43,15 @@ import java.util.List;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.adaptor.SearchContractorBillJsonAdaptor;
 import org.egov.works.web.adaptor.SearchContractorBillsToCancelJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,7 +75,8 @@ public class AjaxContractorBillController {
     private SearchContractorBillJsonAdaptor searchContractorBillJsonAdaptor;
 
     @Autowired
-    private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    @Qualifier("chartOfAccountsService")
+    private ChartOfAccountsService chartOfAccountsService;
 
     @Autowired
     private SearchContractorBillsToCancelJsonAdaptor searchContractorBillsToCancelJsonAdaptor;
@@ -104,9 +108,12 @@ public class AjaxContractorBillController {
         return contractorBillRegisterService.getApprovedContractorsForCreateContractorBill(contractorname);
     }
 
-    @RequestMapping(value = "/ajaxdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajaxotherdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String searchQuery) {
-        return chartOfAccountsHibernateDAO.findDetailedAccountCodesByGlcodeOrNameLike(searchQuery);
+        String[] purposeNames = new String[2];
+        purposeNames[0] = WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE;
+        purposeNames[1] = WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE;
+        return chartOfAccountsService.findOtherDeductionAccountCodesByGlcodeOrNameLike(searchQuery, purposeNames);
     }
 
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

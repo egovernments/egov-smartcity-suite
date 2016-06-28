@@ -68,11 +68,6 @@
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>
-			<c:if test="${mode == 'view' || mode == 'readOnly' }">
-				<c:if test="${!lineEstimate.documentDetails.isEmpty() }">
-					<jsp:include page="../common/uploadDocuments.jsp" />
-				</c:if>
-			</c:if>
 			<c:if test="${!workflowHistory.isEmpty()}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">

@@ -55,11 +55,87 @@
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.deductions" />
+		<spring:message code="lbl.statutorydeductions" />
 	</div>
-	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.billDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
+	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
 	<div class="panel-body">
-		<table class="table table-bordered" id="tblcreditdetails">
+		<table class="table table-bordered" id="tblstatutorydeductioncreditdetails">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.account.code"/></th>
+					<th><spring:message code="lbl.credit.amount"/></th>
+					<th><spring:message code="lbl.action"/></th> 					
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+						<tr id="statutorydeductionrow">
+							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input"  >
+									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+										<c:forEach var="coa" items="${statutoryDeductionAccounCodes}">
+											<form:option value="${coa.id}">
+												<c:out value="${coa.glcode} - ${coa.name}" />
+											</form:option>
+										</c:forEach>
+								</form:select>
+								<form:hidden path="statutoryDeductionDetailes[0].glcodeid"  name="statutoryDeductionDetailes[0].glcodeid" id="statutoryDeductionDetailes[0].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input statutorydeductionid"/> 
+								<form:errors path="statutoryDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
+							</td>
+							<td>
+								<form:input path="statutoryDeductionDetailes[0].creditamount" id="statutoryDeductionDetailes[0].creditamount" name="statutoryDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:errors path="statutoryDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
+							</td> 
+							<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
+							 <span class="add-padding" onclick="deleteStatutoryDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && billDetail.isStatutoryDeduction}">
+								<tr id="deductionRow">
+									<td>
+										<form:select path="statutoryDeductionDetailes[${item.index }].glcodeid" data-first-option="false" name="statutoryDeductionDetailes[${item.index }].creditGlcode" id="statutoryDeductionDetailes[${item.index }].creditGlcode"  class="form-control table-input" >
+											<form:option value=""> <spring:message code="lbl.select" /> </form:option>
+											<c:forEach var="coa" items="${statutoryDeductionAccounCodes}">
+												<c:if test="${billDetail.glcodeId == coa.id }">
+													<form:option value="${coa.id}" selected="selected">
+														<c:out value="${coa.glcode} - ${coa.name}" />
+													</form:option>
+												</c:if>
+												<c:if test="${billDetail.glcodeId != coa.id }">
+													<form:option value="${coa.id}">
+														<c:out value="${coa.glcode} - ${coa.name}" />
+													</form:option>
+												</c:if>
+											</c:forEach>
+										</form:select> 
+										<form:hidden path="statutoryDeductionDetailes[${item.index }].glcodeid" name="statutoryDeductionDetailes[${item.index }].glcodeid" value="${billDetail.glcodeId}" id="statutoryDeductionDetailes[${item.index }].glcodeid" class="form-control table-input hidden-input creditglcodeid"/> 
+										<form:errors path="statutoryDeductionDetailes[${item.index }].glcodeid" cssClass="add-margin error-msg" /> 
+									</td>
+									<td>
+										<form:input path="statutoryDeductionDetailes[${item.index }].creditamount" id="statutoryDeductionDetailes[${item.index }].creditamount" name="statutoryDeductionDetailes[${item.index }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:errors path="statutoryDeductionDetailes[${item.index }].creditamount" cssClass="add-margin error-msg" /> 
+									</td> 
+									<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
+									 <span class="add-padding" onclick="deleteStatutoryDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+								</tr>
+							</c:if>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.otherdeductions" />
+	</div>
+	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
+	<div class="panel-body">
+		<table class="table table-bordered" id="tblotherdeductioncreditdetails">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.account.code"/></th>
@@ -71,42 +147,41 @@
 			<tbody>
 				<c:choose>
 					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
-						<tr id="deductionRow">
+						<tr id="otherdeductionrow">
 							<td>
-								<input type="text" id="billDetailes[1].creditGlcode" name="billDetailes[1].creditGlcode" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
-								<form:hidden path="billDetailes[1].glcodeid"  name="billDetailes[1].glcodeid" id="billDetailes[1].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input creditglcodeid"/> 
-								<form:errors path="billDetailes[1].glcodeid" cssClass="add-margin error-msg" /> 
+								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input patternvalidation otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+								<form:hidden path="otherDeductionDetailes[0].glcodeid"  name="otherDeductionDetailes[0].glcodeid" id="otherDeductionDetailes[0].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input otherdeductionid"/> 
+								<form:errors path="otherDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<input type="text" id="billDetailes[1].creditAccountHead" name="billDetailes[1].creditAccountHead" value="${billDetailes[1].creditAccountHead}" class="form-control creditaccountheadname" disabled>  
+								<input type="text" id="otherDeductionDetailes[0].creditAccountHead" name="otherDeductionDetailes[0].creditAccountHead" value="${otherDeductionDetailes[0].creditAccountHead}" class="form-control otherdeductionname" disabled>  
 							</td>
 							<td>
-								<form:input path="billDetailes[1].creditamount" id="billDetailes[1].creditamount" name="billDetailes[1].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
-								<form:errors path="billDetailes[1].creditamount" cssClass="add-margin error-msg" /> 
+								<form:input path="otherDeductionDetailes[0].creditamount" id="otherDeductionDetailes[0].creditamount" name="otherDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:errors path="otherDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
-							<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
-							 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+							<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
+							 <span class="add-padding" onclick="deleteOtherDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 						</tr>
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
-							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable}">
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction}">
 								<tr id="deductionRow">
 									<td>
-										<%-- <form:hidden path="billDetailes[${item.index }].id" value="${billDetail.id}"/> --%>
-										<input type="text" id="billDetailes[${item.index }].creditGlcode" name="billDetailes[${item.index }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
-										<form:hidden path="billDetailes[${item.index }].glcodeid" name="billDetailes[${item.index }].glcodeid" value="${billDetail.glcodeId}" id="billDetailes[${item.index }].glcodeid" class="form-control table-input hidden-input creditglcodeid"/> 
-										<form:errors path="billDetailes[${item.index }].glcodeid" cssClass="add-margin error-msg" /> 
+										<input type="text" id="otherDeductionDetailes[${item.index }].creditGlcode" name="otherDeductionDetailes[${item.index }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation  otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+										<form:hidden path="otherDeductionDetailes[${item.index }].glcodeid" name="otherDeductionDetailes[${item.index }].glcodeid" value="${billDetail.glcodeId}" id="otherDeductionDetailes[${item.index }].glcodeid" class="form-control table-input hidden-input otherdeductionid"/> 
+										<form:errors path="otherDeductionDetailes[${item.index }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<input type="text" id="billDetailes[${item.index }].creditAccountHead" name="billDetailes[${item.index }].creditAccountHead" value="${billDetail.accountHead}" class="form-control creditaccountheadname" disabled>  
+										<input type="text" id="otherDeductionDetailes[${item.index }].creditAccountHead" name="otherDeductionDetailes[${item.index }].creditAccountHead" value="${billDetail.accountHead}" class="form-control otherdeductionname" disabled>  
 									</td>
 									<td>
-										<form:input path="billDetailes[${item.index }].creditamount" id="billDetailes[${item.index }].creditamount" name="billDetailes[${item.index }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
-										<form:errors path="billDetailes[${item.index }].creditamount" cssClass="add-margin error-msg" /> 
+										<form:input path="otherDeductionDetailes[${item.index }].creditamount" id="otherDeductionDetailes[${item.index }].creditamount" name="otherDeductionDetailes[${item.index }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:errors path="otherDeductionDetailes[${item.index }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
-									<td class="text-center"><span style="cursor:pointer;" onclick="addDeductionRow();"><i class="fa fa-plus"></i></span>
-									 <span class="add-padding" onclick="deleteDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
+									<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
+									 <span class="add-padding" onclick="deleteOtherDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 								</tr>
 							</c:if>
 						</c:forEach>
@@ -114,9 +189,7 @@
 				</c:choose>
 			</tbody>
 		</table>
-	<%-- 	<div class="col-sm-12 text-center">
-			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addDeductionRow()"><spring:message code="lbl.addrow" /></button>
-		</div> --%>
+	</div>
 </div>
 
 <div class="panel-heading custom_form_panel_heading">

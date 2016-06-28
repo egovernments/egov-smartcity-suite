@@ -225,7 +225,10 @@ public class ContractorBillRegisterService {
                 contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
                 contractorBillRegister.getEgBillregistermis()
                         .setSourcePath("/egworks/contractorbill/view/" + contractorBillRegister.getId());
-                approveMBHeader(contractorBillRegister);
+                if (contractorBillRegister.getWorkOrderEstimate() != null
+                        && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
+                    approveMBHeader(contractorBillRegister);
+                }
             }
         }
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
@@ -581,4 +584,14 @@ public class ContractorBillRegisterService {
                 WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
     }
 
+    public void mergeDeductionDetails(final ContractorBillRegister contractorBillRegister) {
+        for (EgBilldetails billDetails : contractorBillRegister.getStatutoryDeductionDetailes())
+            if (billDetails.getId() == null) {
+                contractorBillRegister.getBillDetailes().add(billDetails);
+            }
+        for (EgBilldetails billDetails : contractorBillRegister.getOtherDeductionDetailes())
+            if (billDetails.getId() == null) {
+                contractorBillRegister.getBillDetailes().add(billDetails);
+            }
+    }
 }

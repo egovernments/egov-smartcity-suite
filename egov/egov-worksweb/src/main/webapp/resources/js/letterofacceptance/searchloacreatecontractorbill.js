@@ -127,7 +127,7 @@ function callAjaxSearch() {
 								'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 										+ data.id + '\')">'
 										+ data.workOrderNumber + ' -- ' + data.workOrderDate + '</a>');
-						$('td:eq(5)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+						$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting : [],

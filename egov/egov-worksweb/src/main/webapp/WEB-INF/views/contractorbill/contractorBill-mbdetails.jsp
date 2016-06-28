@@ -142,8 +142,7 @@
 			</c:if>
 			<tr>
 			<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
-			<td class="text-right">
-				<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbtotal}" /></fmt:formatNumber></span>
+			<td class="text-right"><div id="mbTotalAmount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbtotal}" /></fmt:formatNumber></div>
 			</td>
 			</tr>
 		</tfoot>
