@@ -43,7 +43,7 @@
 			<spring:message code="header.assetDetails" />
 		</div>
 	</div>
-	<div class="alert alert-danger">Select the nature of work before adding asset details</div>
+	<div class="alert alert-danger"><spring:message code="msg.alert.selectnaruteofusage" /></div>
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblassetdetails">
 			<thead>
