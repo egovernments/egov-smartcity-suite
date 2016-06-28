@@ -220,18 +220,20 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private void populateActivities() {
         template.getMilestoneTemplateActivities().clear();
         for (final MilestoneTemplateActivity activity : templateActivities) {
-            if (activity != null)
+            if (activity != null){
                 template.addMilestoneTemplateActivity(activity);
-            activity.setMilestoneTemplate(template);
-
+                activity.setMilestoneTemplate(template);
+                activity.setCreatedBy(worksService.getCurrentLoggedInUser());
+                activity.setCreatedDate(new Date());
+                activity.setLastModifiedBy(worksService.getCurrentLoggedInUser());
+                activity.setLastModifiedDate(new Date());
+            }
+                
             // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting
             // triggered on update of estimate for child objects
             template.setCreatedBy(worksService.getCurrentLoggedInUser());
             template.setCreatedDate(new Date());
-            activity.setCreatedBy(worksService.getCurrentLoggedInUser());
-            activity.setCreatedDate(new Date());
-            activity.setLastModifiedBy(worksService.getCurrentLoggedInUser());
-            activity.setLastModifiedDate(new Date());
+            
         }
     }
 
