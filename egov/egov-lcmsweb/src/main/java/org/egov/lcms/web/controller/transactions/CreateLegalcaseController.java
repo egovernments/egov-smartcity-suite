@@ -40,15 +40,11 @@
 
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.masters.entity.enums.LCNumberType;
-import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
-import org.egov.lcms.transactions.entity.LegalcaseDepartment;
 import org.egov.lcms.transations.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.transations.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,36 +57,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application/create/")
+@RequestMapping(value = "/application/")
 public class CreateLegalcaseController extends GenericLegalCaseController {
 
     @Autowired
     private LegalCaseService legalCaseService;
-    
+
     @Autowired
     private LegalCaseNumberGenerator legalCaseNumberGenerator;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "create/", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final Legalcase legalcase, final Model model,
             final HttpServletRequest request) {
         model.addAttribute("legalcase", legalcase);
-        model.addAttribute("bipartisanDetails",new ArrayList<BipartisanDetails>());
-        model.addAttribute("legalcaseDepartment",new ArrayList<LegalcaseDepartment>());
         model.addAttribute("mode", "create");
         return "legalCase-newForm";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Legalcase legalcase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
-        if(legalcase.getLcNumberType() !=null && legalcase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-        {
+        if (legalcase.getLcNumberType() != null && legalcase.getLcNumberType().equals(LCNumberType.AUTOMATED))
             legalcase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        }
         else
-        {
-            legalcase.setLcnumber(legalcase.getLcNumber()+legalcase.getWpYear());
-        }
+            legalcase.setLcnumber(legalcase.getLcNumber() + legalcase.getWpYear());
         if (errors.hasErrors())
             return "legalCase-newForm";
         legalCaseService.createLegalCase(legalcase);
@@ -99,7 +89,5 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
         model.addAttribute("mode", "create");
         return "legalcasedetails-view";
     }
-
-    
 
 }

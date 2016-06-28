@@ -37,11 +37,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-	<div class="panel-heading " align="text-center">
+	<div class="panel-heading " >
 				<div class="panel-title">
 					Assigned Department
 				</div>					
@@ -58,14 +57,32 @@
 				         </thead>
 					<tbody>
 					      <tr class="">
-					      	<td class="text-center"><input type ="checkbox" id="activeid" name="legalcaseDepartment[0].isPrimaryDepartment" id="legalcaseDepartment[0].isPrimaryDepartment"  /></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right" data-pattern="alphanumerichyphenbackslash" name="legalcaseDepartment[0].department.name" id="legalcaseDepartment[0].department.name" maxlength="50" ></td>
-							<td class="text-right"><input type="text" class="form-control table-input" name="legalcaseDepartment[0].positionAndEmpName" id="legalcaseDepartment[0].positionAndEmpName" maxlength="256"></td>
-							<td class="text-right"><input type="text"  name="legalcaseDepartment[0].receiptOfPwr" id="legalcaseDepartment[0].receiptOfPwr"
-							class="form-control datepicker"
-			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-			data-date-end-date="-1d" 
-			data-inputmask="'mask': 'd/m/y'"  ></td>
+					      	<td class="text-center"><form:checkbox  path="legalcaseDepartment[0].isPrimaryDepartment" name="legalcaseDepartment[0].isPrimaryDepartment" id="legalcaseDepartment[0].isPrimaryDepartment"  /></td>
+								<td class="text-center">
+								<form:input id="departmentName" type="text" class="form-control " autocomplete="off" path="legalcaseDepartment[0].department.name"
+												name="legalcaseDepartment[0].department.name"
+													value="${legalcaseDepartment[0].department.name}"  placeholder="Department"/>
+													<input type="hidden" id="departmentId" value=""/>
+												<c:forEach items="${departments}" var="department">
+													<a onclick="setDepartmentId(<c:out value="${department.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+															value="${department.name }" /> </a>
+												</c:forEach>
+												</td>
+							<td class="text-right">
+							<form:input id="positionName" type="text" class="form-control " autocomplete="off" path="legalcaseDepartment[0].position.name"
+												name="legalcase.legalcaseDepartment[0].position.name"
+													value="${legalcase.legalcaseDepartment[0].position.name}"  placeholder=""/>
+													<input type="hidden" id="positionId" value=""/>
+												<c:forEach items="${departments}" var="position">
+													<a onclick="setPositionId(<c:out value="${position.id}"/>)" href="javascript:void(0)" class="btn btn-secondary btn-xs tag-element freq-ct"><c:out
+															value="${position.name }" /> </a>
+												</c:forEach></td>
+							<td class="text-right">
+							<form:input type="text" name="legalcaseDepartment[0].dateofreceiptofpwr" path="legalcaseDepartment[0].dateofreceiptofpwr"
+							class="form-control datepicker" data-date-end-date="0d" 
+								id="legalcaseDepartment[0].dateofreceiptofpwr" data-inputmask="'mask': 'd/m/y'"
+								/>
+							</td>
 							<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 					      </tr>
 					     
@@ -73,8 +90,10 @@
 					</tbody>
 				</table>
 				
-	
-	
-	
+	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 	
 	

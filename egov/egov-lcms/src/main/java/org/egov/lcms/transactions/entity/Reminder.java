@@ -109,10 +109,10 @@ public class Reminder extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (legalCaseDepartment != null && legalCaseDepartment.getReceiptOfPwr() != null
-                && !getDate().before(legalCaseDepartment.getReceiptOfPwr()))
+        if (legalCaseDepartment != null && legalCaseDepartment.getDateofreceiptofpwr() != null
+                && !getDate().before(legalCaseDepartment.getDateofreceiptofpwr()))
             errors.add(new ValidationError("date", "date.less.receiptOfPwr", getFormattedDate(),
-                    sdf.format(legalCaseDepartment.getReceiptOfPwr())));
+                    sdf.format(legalCaseDepartment.getDateofreceiptofpwr())));
         else if (legalCaseDepartment != null && legalCaseDepartment.getLegalcase().getCasedate() != null
                 && !getDate().after(legalCaseDepartment.getLegalcase().getCasedate()))
             errors.add(new ValidationError("date", "date.greater.casedate", getFormattedDate(),

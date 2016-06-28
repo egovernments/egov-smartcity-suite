@@ -41,7 +41,85 @@ $(document).ready(function(){
 	
 	$(".show-ManualLcNumber").hide(); 
 	$("#bipartisanDetails[0].governmentDepartment").prop("disabled", true);
-
+	var department = new Bloodhound({
+		datumTokenizer: function (datum) {
+			return Bloodhound.tokenizers.whitespace(datum.value);
+		},
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		remote: {
+			url: '/lcms/legalcase/ajax/departments?departmentName=%QUERY',
+			filter: function (data) {
+				return $.map(data, function (department) {
+					return {
+						name: department.name,
+						value: department.id
+						
+					};
+				});
+			}
+		}
+	});
+	
+	// Initialize the Bloodhound suggestion engine
+	department.initialize();
+	// Instantiate the Typeahead UI
+	
+	var typeaheadobj =$('#departmentName').typeahead({
+		  hint: false,
+		  highlight: false,
+		  minLength: 1
+		}, {
+			displayKey: 'name',
+			source: department.ttAdapter()
+		});
+	
+		//typeaheadWithEventsHandling(typeaheadobj, '#departmentId'); 
+		
+		
+		$("#departmentName").blur(function (){
+			var desigId = $("#departmentName").val();
+			if(null!=desigId || ''!=desigId){
+				$('.designationerror').hide();
+			}
+			else
+				$("#departmentId").val("");
+		});
+		var assignPosition = new Bloodhound({
+			datumTokenizer: function (datum) {
+				return Bloodhound.tokenizers.whitespace(datum.value);
+			},
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			remote: {
+				url: '/lcms/legalcase/ajax/positions',
+				replace: function(url, uriEncodedQuery) {
+					return url + '?positionName='+uriEncodedQuery+'&departmentName='+ $("#departmentName").val();
+					
+				},
+				filter: function (data) {
+					return $.map(data, function (position) {
+						return {
+							name: position.name,
+							value: position.id
+							
+						};
+					});
+				}
+			}
+		});
+		
+		// Initialize the Bloodhound suggestion engine
+		assignPosition.initialize();
+		// Instantiate the Typeahead UI
+		
+		var typeaheadobj =$('#positionName').typeahead({
+			  hint: false,
+			  highlight: false,
+			  minLength: 1
+			}, {
+				displayKey: 'name',
+				source: assignPosition.ttAdapter()
+			});
+		
 	
 });
 function enableGovtDept()

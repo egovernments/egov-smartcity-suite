@@ -54,13 +54,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.pims.commons.Position;
@@ -68,7 +66,7 @@ import org.egov.pims.commons.Position;
 @Entity
 @Table(name = "EGLC_LEGALCASE_DEPT")
 @SequenceGenerator(name = LegalcaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, sequenceName = LegalcaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, allocationSize = 1)
-public class LegalcaseDepartment extends AbstractAuditable {
+public class LegalcaseDepartment extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_DEPT = "SEQ_EGLC_LEGALCASE_DEPT";
@@ -76,29 +74,32 @@ public class LegalcaseDepartment extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_DEPT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
+    
+    @ManyToOne(fetch=FetchType.LAZY)
     @NotNull
-    @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private Legalcase legalcase;
+    
     @DateFormat(message = "invalid.fieldvalue.dateOfReceipt")
-    private Date receiptOfPwr;
-    @ManyToOne
+    @JoinColumn(name = "dateofreceiptofpwr")
+    private Date dateofreceiptofpwr;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
     @NotNull
-    @Valid
-    @JoinColumn(name = "DEPARTMENT", nullable = false)
-    @Required(message = "case.dept.null")
+    @JoinColumn(name = "DEPARTMENT")
     private Department department;
+    
     @ManyToOne
     @NotNull
-    @Valid
-    @JoinColumn(name = "POSITION", nullable = false)
-    @Required(message = "case.position.null")
+    @JoinColumn(name = "POSITION")
     private Position position;
-    private String positionAndEmpName;
+    
+    @JoinColumn(name = "isprimarydepartment")
     private boolean isPrimaryDepartment;
+    
     @OneToMany(mappedBy = "legalCaseDepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reminder> legalcaseReminders = new ArrayList<Reminder>();
+    
     @DateFormat(message = "invalid.fieldvalue.assignOnDate")
     private Date assignOn;
 
@@ -110,13 +111,6 @@ public class LegalcaseDepartment extends AbstractAuditable {
         this.isPrimaryDepartment = isPrimaryDepartment;
     }
 
-    public Date getReceiptOfPwr() {
-        return receiptOfPwr;
-    }
-
-    public void setReceiptOfPwr(final Date receiptOfPwr) {
-        this.receiptOfPwr = receiptOfPwr;
-    }
 
     public Legalcase getLegalcase() {
         return legalcase;
@@ -150,7 +144,7 @@ public class LegalcaseDepartment extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getLegalcase() != null && !DateUtils.compareDates(getReceiptOfPwr(), legalcase.getCasedate()))
+        if (getLegalcase() != null && !DateUtils.compareDates(getDateofreceiptofpwr(), legalcase.getCasedate()))
             errors.add(new ValidationError("dateOfReceipt", "dateOfReceipt.less.casedate"));
         if (legalcase != null && !DateUtils.compareDates(getAssignOn(), legalcase.getCasedate()))
             errors.add(new ValidationError("assignOnDate", "assignOn.less.casedate"));
@@ -158,12 +152,13 @@ public class LegalcaseDepartment extends AbstractAuditable {
         return errors;
     }
 
-    public String getPositionAndEmpName() {
-        return positionAndEmpName;
+
+    public Date getDateofreceiptofpwr() {
+        return dateofreceiptofpwr;
     }
 
-    public void setPositionAndEmpName(final String positionAndEmpName) {
-        this.positionAndEmpName = positionAndEmpName;
+    public void setDateofreceiptofpwr(Date dateofreceiptofpwr) {
+        this.dateofreceiptofpwr = dateofreceiptofpwr;
     }
 
     public Department getDepartment() {

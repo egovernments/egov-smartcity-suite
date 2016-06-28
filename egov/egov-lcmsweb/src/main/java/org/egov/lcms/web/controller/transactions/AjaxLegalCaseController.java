@@ -37,64 +37,48 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.web.controller.transactions;
 
-package org.egov.infra.admin.master.service;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.repository.DepartmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * @author subhash
- */
-
-@Service
-@Transactional(readOnly = true)
-public class DepartmentService {
-
-    private final DepartmentRepository departmentRepository;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.pims.commons.Position;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+@Controller
+@RequestMapping(value = "/legalcase/")
+public class AjaxLegalCaseController {
 
     @Autowired
-    public DepartmentService(final DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
+    private DepartmentService departmentService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Department> getAllDepartmentsByNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String departmentName) {
+        return departmentService.getAllDepartmentsByNameLike(departmentName);
+
     }
 
-    @Transactional
-    public void createDepartment(final Department department) {
-        departmentRepository.save(department);
+    @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String departmentName,
+            @RequestParam final String positionName) {
+        final Department deptObj = departmentService.getDepartmentByName(departmentName);
+        return positionMasterService.getPageOfPositionsByDeptAndName(deptObj.getId(), positionName);
+
     }
 
-    @Transactional
-    public void updateDepartment(final Department department) {
-        departmentRepository.save(department);
-    }
-
-    public Department getDepartmentById(final Long id) {
-        return departmentRepository.findOne(id);
-    }
-
-    public Department getDepartmentByName(final String name) {
-        return departmentRepository.findByNameUpperCase(name.toUpperCase());
-    }
-
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-    }
-
-    public Department getDepartmentByCode(final String code) {
-        return departmentRepository.findByCode(code);
-    }
-    public List<Department> getAllDepartmentsByNameLike(final String name) {
-        return departmentRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    @Transactional
-    public void deleteDepartment(final Department department) {
-        departmentRepository.delete(department);
-    }
 }

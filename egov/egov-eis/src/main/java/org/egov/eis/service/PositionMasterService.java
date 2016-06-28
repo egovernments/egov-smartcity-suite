@@ -141,7 +141,11 @@ public class PositionMasterService {
         }
         return true;
     }
+    public List<Position> getPageOfPositionsByDeptAndName(final Long departmentId, final String positionName) {
 
+        return positionMasterRepository.findPositionBydepartmentAndNameContainingIgnoreCase(departmentId, positionName.toUpperCase());
+        
+    }
     public List<Position> getPageOfPositions(final Long departmentId, final Long designationId) {
 
         if (departmentId != 0 && designationId != 0)

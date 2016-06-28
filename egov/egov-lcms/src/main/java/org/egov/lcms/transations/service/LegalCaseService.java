@@ -46,9 +46,12 @@ import java.util.List;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.LegalcaseDepartment;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
 import org.egov.lcms.utils.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,12 @@ public class LegalCaseService {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
@@ -94,12 +103,13 @@ public class LegalCaseService {
         final Functionary funcObj = getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
         legalcase.setStatus(getStatusByCodeAndModuleType(LcmsConstants.LEGALCASE_STATUS_CREATED, "LCMS"));
-        prepareBipartsanDetails(legalcase);
+        prepareLegalcaseDetails(legalcase);
         return legalCaseRepository.save(legalcase);
     }
 
-    private void prepareBipartsanDetails(final Legalcase legalcase) {
+    private void prepareLegalcaseDetails(final Legalcase legalcase) {
         final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
+        final List<LegalcaseDepartment> legalcaseDetails = new ArrayList<LegalcaseDepartment>();
         for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()) {
             bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
             bipartObj.setLegalcase(legalcase);
@@ -107,6 +117,15 @@ public class LegalCaseService {
         }
         legalcase.getBipartisanDetails().clear();
         legalcase.setBipartisanDetails(partitionDetails);
+        for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
+
+            legaldeptObj.setLegalcase(legalcase);
+            legaldeptObj.setDepartment(departmentService.getDepartmentByName(legaldeptObj.getDepartment().getName()));
+            legaldeptObj.setPosition(positionMasterService.getPositionByName(legaldeptObj.getPosition().getName()));
+            legalcaseDetails.add(legaldeptObj);
+        }
+        legalcase.getLegalcaseDepartment().clear();
+        legalcase.setLegalcaseDepartment(legalcaseDetails);
 
     }
 

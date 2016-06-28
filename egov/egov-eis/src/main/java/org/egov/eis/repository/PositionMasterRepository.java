@@ -69,6 +69,10 @@ public interface PositionMasterRepository extends JpaRepository<Position, Long> 
     @Query("select cr from Position cr where cr.deptDesig.department.id=:departmentId ")
     List<Position> findPositionBydepartment(@Param("departmentId") Long departmentId);
 
+    @Query("select cr from Position cr where cr.deptDesig.department.id=:departmentId and cr.name like :positionName||'%'")
+    List<Position> findPositionBydepartmentAndNameContainingIgnoreCase(@Param("departmentId") Long 
+            departmentId,@Param("positionName") String positionName);
+    
     @Query("select cr from Position cr where  cr.deptDesig.designation.id=:designationId")
     List<Position> findPositionByDesignation(@Param("designationId") Long designationId);
     

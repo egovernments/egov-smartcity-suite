@@ -230,3 +230,6 @@
 		</div>
 </div>
 
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
