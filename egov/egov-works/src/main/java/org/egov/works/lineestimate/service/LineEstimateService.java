@@ -979,9 +979,4 @@ public class LineEstimateService {
                 WorksConstants.CANCELLED_STATUS);
     }
     
-    public LineEstimateDetails findByEstimateNumberForLoaPDF(final String estimateNumber) {
-        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimateNumber,
-                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString());
-    }
-
 }

@@ -48,6 +48,10 @@ $(document).ready(function(){
 	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
 	
+	if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') {
+		$('#actionButtons').prepend("<a href='javascript:void(0)' class='btn btn-primary' onclick='renderPdf()'>View Proceedings</a>");
+	}
+	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
