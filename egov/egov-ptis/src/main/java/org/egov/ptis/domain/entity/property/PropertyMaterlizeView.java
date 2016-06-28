@@ -94,11 +94,11 @@ public class PropertyMaterlizeView implements Serializable {
     private String categoryType;
     private String regdDocNo;
     private Date regdDocDate; 
-    private String pattano;
-    private BigDecimal marketvalue;   
-    private BigDecimal capitalvalue;  
-    private Date assessmentdate;
-    private Date lastupdated;
+    private String pattaNo;
+    private BigDecimal marketValue;
+    private BigDecimal capitalValue;
+    private Date assessmentDate;
+    private Date lastUpdated;
 
 
     public Integer getBasicPropertyID() {
@@ -451,44 +451,43 @@ public class PropertyMaterlizeView implements Serializable {
         this.regdDocDate = regdDocDate;
     }
 
-    public String getPattano() {
-        return pattano;
+    public BigDecimal getMarketValue() {
+        return marketValue;
     }
 
-    public void setPattano(String pattano) {
-        this.pattano = pattano;
+    public void setMarketValue(final BigDecimal marketValue) {
+        this.marketValue = marketValue;
     }
 
-    public BigDecimal getMarketvalue() {
-        return marketvalue;
+    public String getPattaNo() {
+        return pattaNo;
     }
 
-    public void setMarketvalue(BigDecimal marketvalue) {
-        this.marketvalue = marketvalue;
+    public void setPattaNo(final String pattaNo) {
+        this.pattaNo = pattaNo;
     }
 
-    public BigDecimal getCapitalvalue() {
-        return capitalvalue;
+    public BigDecimal getCapitalValue() {
+        return capitalValue;
     }
 
-    public void setCapitalvalue(BigDecimal capitalvalue) {
-        this.capitalvalue = capitalvalue;
+    public void setCapitalValue(final BigDecimal capitalValue) {
+        this.capitalValue = capitalValue;
     }
 
-    public Date getAssessmentdate() {
-        return assessmentdate;
+    public Date getAssessmentDate() {
+        return assessmentDate;
     }
 
-    public void setAssessmentdate(Date assessmentdate) {
-        this.assessmentdate = assessmentdate;
+    public void setAssessmentDate(final Date assessmentDate) {
+        this.assessmentDate = assessmentDate;
     }
 
-    public Date getLastupdated() {
-        return lastupdated;
+    public Date getLastUpdated() {
+        return lastUpdated;
     }
 
-    public void setLastupdated(Date lastupdated) {
-        this.lastupdated = lastupdated;
+    public void setLastUpdated(final Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
-
 }
