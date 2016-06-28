@@ -73,12 +73,20 @@
 							${casetypeMaster.notes}</div>
 					</div>
 					<div class="row add-border">
-
+					
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.active" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${casetypeMaster.active}</div>
+							<c:choose>
+								<c:when test="${casetypeMaster.active == 'true'}">
+									<c:out value="YES" />
+								</c:when>
+								<c:otherwise>
+									<c:out value="NO" />
+								</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 				</div>
 			</div>
