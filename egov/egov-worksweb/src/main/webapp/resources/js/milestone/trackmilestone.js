@@ -55,12 +55,12 @@ function validatePercentage(completedPercentage) {
 	} else {
 		rowcount = getRow(completedPercentage).rowIndex - 1;
 		var percentage = $('.percentage_' + rowcount).html().trim();
-		$('#actualPercentage_' + rowcount).val((completedPercentage.value / 100) * percentage);
+		$('#actualPercentage_' + rowcount).val(parseFloat((completedPercentage.value / 100) * percentage).toFixed(2));
 	}
 	var total = 0;
 	$('.actualPercentage').each(function() {
 		if($(this).val() != '')
-			total = parseFloat(total) + parseFloat($(this).val());
+			total = parseFloat(parseFloat(total) + parseFloat($(this).val())).toFixed(2);
 	});
 	$('#totalActualPercentage').html(total);
 }
@@ -109,6 +109,9 @@ $('#save').click(function() {
 		bootbox.alert('Completion Date should be greater than Schedule Start Date');
 	else {
 		if($('#trackMilestoneForm').valid()) {
+			$('.completionDate').each(function() {
+				$(this).removeAttr('disabled');
+			});
 			var milestoneId = $('#id').val();
 			$('.loader-class').modal('show', {backdrop: 'static'});
 			$.ajax({
@@ -123,6 +126,9 @@ $('#save').click(function() {
 					$('#successPage').show();
 				},
 				error: function (error) {
+					for(var key = 0; key < totalRows; key++) {
+						$('#currentStatus_' + key).trigger('change');
+					}
 					$('#errorMessage').html("");
 					console.log(error.responseText.slice(0,-2));
 					var json = $.parseJSON(error.responseText.slice(0,-2));
@@ -169,6 +175,8 @@ function makeCompletionMandatory(currentStatus) {
 		$('#reasonForDelay_' + rowcount).attr('readonly', 'true');
 		$('#completionDate_' + rowcount).removeAttr('required');
 		$('#completedPercentage_' + rowcount).attr('required', 'required');
+		if($('#completedPercentage_' + rowcount).val() == 100)
+			$('#completedPercentage_' + rowcount).val(0);
 	}
 	$('#completedPercentage_' + rowcount).trigger('blur');
 }

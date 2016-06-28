@@ -54,17 +54,17 @@
 		<table class="table table-bordered" id="tblmilestone">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.stageordernumber" /></th>
-					<th><spring:message code="lbl.stagedescription" /></th>
-					<th><spring:message code="lbl.percentage.stage" /></th>
+					<th width="3%"><spring:message code="lbl.stageordernumber" /></th>
+					<th width="20%"><spring:message code="lbl.stagedescription" /></th>
+					<th width="5%"><spring:message code="lbl.percentage.stage" /></th>
 					<th><spring:message code="lbl.schedulestartdate" /></th>
 					<th><spring:message code="lbl.scheduleenddate" /></th>
-					<th><spring:message code="lbl.currentstatus.stage" /><span
+					<th width="20%"><spring:message code="lbl.currentstatus.stage" /><span
 						class="mandatory"></span></th>
-					<th><spring:message code="lbl.completed.percentage.stage" /></th>
-					<th><spring:message code="lbl.actual.percentage.stage" /></th>
+					<th width="5%"><spring:message code="lbl.completed.percentage.stage" /></th>
+					<th width="5%"><spring:message code="lbl.actual.percentage.stage" /></th>
 					<th><spring:message code="lbl.completion.date" /></th>
-					<th><spring:message code="lbl.reason.for.delay" /></th>
+					<th width="20%"><spring:message code="lbl.reason.for.delay" /></th>
 				</tr>
 			</thead>
 			<tbody id="milestoneDetailsTbl">
@@ -89,9 +89,6 @@
 					<td class="">
 						<select name="trackMilestone[0].activities[0].status" data-first-option="false" id="currentStatus_0" class="form-control"
 						required="required" onchange="makeCompletionMandatory(this);">
-							<option value="">
-								<spring:message code="lbl.select" />
-							</option>
 							<c:forEach items="${currentStatus}" var="cs">
 								<option value="${cs }">${cs.toString() }</option>
 							</c:forEach>
