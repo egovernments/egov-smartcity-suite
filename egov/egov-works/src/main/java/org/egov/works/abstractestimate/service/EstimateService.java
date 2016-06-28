@@ -681,8 +681,8 @@ public class EstimateService {
     public List<AbstractEstimate> searchAbstractEstimates(final SearchAbstractEstimate searchAbstractEstimate) {
         if (searchAbstractEstimate != null) {
             final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
-                    .createAlias("lineEstimateDetails", "led").createAlias("egwStatus", "status")
-                    .createAlias("led.projectCode", "pc");
+                    .createAlias("egwStatus", "status")
+                    .createAlias("projectCode", "pc");
             if (searchAbstractEstimate.getAbstractEstimateNumber() != null)
                 criteria.add(Restrictions.eq("estimateNumber", searchAbstractEstimate.getAbstractEstimateNumber()));
             if (searchAbstractEstimate.getDepartment() != null)

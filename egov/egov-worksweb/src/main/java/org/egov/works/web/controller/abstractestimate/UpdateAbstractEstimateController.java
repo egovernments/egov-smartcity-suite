@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,6 +115,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             final HttpServletRequest request, @RequestParam(value = "mode", required = false) final String mode)
             throws ApplicationException {
         final AbstractEstimate abstractEstimate = getAbstractEstimate(abstractEstimateId);
+        abstractEstimate.setEstimateValue(abstractEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
 

@@ -59,7 +59,7 @@ import com.google.gson.JsonSerializer;
 public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstimate> {
 
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    
+
     @Autowired
     private WorksUtils worksUtils;
 
@@ -83,27 +83,28 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
             else
                 jsonObject.addProperty("estimateNumber", "");
 
-            if (abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber() != null)
+            if (abstractEstimate.getLineEstimateDetails() != null
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber() != null)
                 jsonObject.addProperty("lineestimateNumber",
                         abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber());
             else
                 jsonObject.addProperty("lineestimateNumber", "");
 
-            if (abstractEstimate.getLineEstimateDetails().getEstimateNumber() != null
+            if (abstractEstimate.getEstimateNumber() != null
                     && abstractEstimate.getEstimateDate() != null)
                 jsonObject.addProperty("estimateNumberAndDate",
-                        abstractEstimate.getLineEstimateDetails().getEstimateNumber() + " - " + sdf.format(abstractEstimate.getEstimateDate()));
+                        abstractEstimate.getEstimateNumber() + " - " + sdf.format(abstractEstimate.getEstimateDate()));
             else
                 jsonObject.addProperty("estimateNumberAndDate", "");
 
-            if (abstractEstimate.getLineEstimateDetails().getProjectCode() != null)
+            if (abstractEstimate.getProjectCode() != null)
                 jsonObject.addProperty("workIdentificationNumber",
-                        abstractEstimate.getLineEstimateDetails().getProjectCode().getCode());
+                        abstractEstimate.getProjectCode().getCode());
             else
                 jsonObject.addProperty("workIdentificationNumber", "");
 
-            if (abstractEstimate.getLineEstimateDetails().getEstimateAmount() != null)
-                jsonObject.addProperty("estimateAmount", abstractEstimate.getLineEstimateDetails().getEstimateAmount().setScale(2,
+            if (abstractEstimate.getEstimateValue() != null)
+                jsonObject.addProperty("estimateAmount", abstractEstimate.getEstimateValue().setScale(2,
                         BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("estimateAmount", "");

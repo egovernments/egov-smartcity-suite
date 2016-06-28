@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
-	calculateAgreementAmount();
+	
 	if($('#engineerInchargeId').val()!="")
 		$('#engineerIncharge').val($('#engineerInchargeId').val());
 	var contractorSearch = new Bloodhound({
@@ -81,7 +81,7 @@ $(document).ready(function(){
 			
 		});
 		
-		if($('#tenderFinalizedPercentage').val() <= 0) 
+		if($('#tenderFinalizedPercentage').val() == 0) 
 			$('#tenderFinalizedPercentage').val('');
 		if($('#workOrderAmount').val() <= 0) 
 			$('#workOrderAmount').val('');
@@ -92,6 +92,8 @@ $(document).ready(function(){
 		if($('#defectLiabilityPeriod').val() <= 0) 
 			$('#defectLiabilityPeriod').val('');
 		$('#estimateAmount').val(roundTo($('#estimateAmount').val()));
+		
+		calculateAgreementAmount();
 		
 		$('#save').click(function() {
 			var flag = false;
@@ -156,7 +158,10 @@ $(document).ready(function(){
 				//Application has to read apply the Tender finalized percentage on each and every SOR and arrive at the Agreement value.
 			if($('#percentage_on_estimaterate_or_workvalue').val() == 'Yes'){
 		    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
-		    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
+		    	if($('#percentageSign').val()=='-')
+		    		$('#tenderFinalizedPer').html($('#percentageSign').val()+tenderFinalizedPercentage);
+		    	else
+		    		$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
 				if(tenderFinalizedPercentage != ''){
 				    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
 				    	var agreementAmount = eval($('#workValue').val())+(eval($('#workValue').val())*percentageVal)/100;

@@ -62,13 +62,13 @@
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
 									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
-									<td><c:out value="${sorDtls.quantity}"></c:out></td>
+									<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out></td>
 								 	<td>
 								 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
 								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td><c:out value="${sorDtls.estimateRate}"></c:out></td>
+								 	<td class="text-right"><c:out value="${sorDtls.estimateRate}"></c:out></td>
 								 	<td class="text-right"><c:out value="${sorDtls.getAmount().value}"></c:out></td>
 								</tr>
 						</c:forEach>
@@ -78,10 +78,10 @@
 									<td><span class="spansno"><c:out value="${slNo}" /></span></td>
 									<td></td>
 									<td></td>
-									<td><c:out value="${nonSorDtls.quantity}"></c:out></td>
+									<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
-								 	<td><c:out value="${nonSorDtls.estimateRate}"></c:out></td>
+								 	<td class="text-right"><c:out value="${nonSorDtls.estimateRate}"></c:out></td>
 								 	<td class="text-right"><c:out value="${nonSorDtls.getAmount().value}"></c:out></td>
 								</tr>
 						</c:forEach>
@@ -103,7 +103,7 @@
 				<tr>
 					<td colspan="7" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="boqTotal"><fmt:formatNumber type="number" minFractionDigits="2" maxFractionDigits="2" value="${total}" /></span></td>
+					<td class="text-right"><span id="boqTotal">${total}</span></td>
 				</tr>
 				<tr>
 					<td colspan="7" class="text-right"><spring:message

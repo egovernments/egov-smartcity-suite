@@ -15,7 +15,7 @@
 		</div> 
 	
 		<div class="col-xs-3 add-margin view-content">
-			<c:out value="${abstractEstimate.estimateDate}"></c:out>
+			<fmt:formatDate pattern="dd/MM/yyyy" value="${abstractEstimate.estimateDate}" />
 		</div>
 	</div>	
 	<div class="row add-border">
