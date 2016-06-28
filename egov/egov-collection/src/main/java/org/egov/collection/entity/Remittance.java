@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.egov.commons.Bankaccount;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.EgwStatus;
@@ -67,6 +68,7 @@ public class Remittance extends StateAware implements Auditable {
     private EgwStatus status;
     private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<RemittanceDetail>(0);
     private Set<ReceiptHeader> collectionRemittance = new HashSet<ReceiptHeader>(0);
+    private Bankaccount bankAccount;
 
     @Override
     public Long getId() {
@@ -161,6 +163,14 @@ public class Remittance extends StateAware implements Auditable {
 
     public void setRemittanceDetails(Set<RemittanceDetail> remittanceDetails) {
         this.remittanceDetails = remittanceDetails;
+    }
+
+    public Bankaccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(Bankaccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
 
