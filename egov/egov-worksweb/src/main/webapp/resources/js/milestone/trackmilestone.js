@@ -109,11 +109,20 @@ $('#save').click(function() {
 		bootbox.alert('Completion Date should be greater than Schedule Start Date');
 	else {
 		if($('#trackMilestoneForm').valid()) {
+			flag = false;
+			for(var key = 0; key < totalRows; key++) {
+				if($('#currentStatus_' + key).val() != 'COMPLETED' && $('#completedPercentage_' + key).val() >= 100)
+					flag = true;
+			}
+			if(flag) {
+				bootbox.alert($('#notCompletedPercentageError').val());
+				return false;
+			}
+			var milestoneId = $('#id').val();
+			$('.loader-class').modal('show', {backdrop: 'static'});
 			$('.completionDate').each(function() {
 				$(this).removeAttr('disabled');
 			});
-			var milestoneId = $('#id').val();
-			$('.loader-class').modal('show', {backdrop: 'static'});
 			$.ajax({
 				type: "POST",
 				url: "/egworks/milestone/track/" + milestoneId,

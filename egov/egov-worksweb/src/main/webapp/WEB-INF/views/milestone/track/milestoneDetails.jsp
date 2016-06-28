@@ -48,6 +48,7 @@
 			<spring:message code="lbl.milestonedetails" />
 		</div>
 	</div>
+	<input type="hidden" id="notCompletedPercentageError" value='<spring:message code="error.trackmilestone.not.completed.percentage.hundred" />' />
 	<div class="panel-body">
 		<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true">
 		</div>
