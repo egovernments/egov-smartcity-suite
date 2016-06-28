@@ -91,6 +91,7 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
 					$('td:eq(1)',row).html(index+1);
+					$('td:eq(4)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
 					if(data.workOrderNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.workIdentificationNumber != null)

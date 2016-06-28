@@ -72,5 +72,8 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
 
     List<WorkOrderEstimate> findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(final String estimateNumber,
             final String statusCode);
+    
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe, WorkOrderActivity as woa where woe.id = woa.workOrderEstimate ")
+    List<String> findWorkOrderNumbersWhereBOQExists();
 
 }

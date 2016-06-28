@@ -180,10 +180,13 @@ function callAjaxSearch() {
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html(index+1);
+					$('td:eq(5)',row).html(parseFloat(Math.round(data.agreemantAmount * 100) / 100).toFixed(2));
+					$('td:eq(8)',row).html(parseFloat(Math.round(data.mbamount * 100) / 100).toFixed(2));
 					if(data.workOrderNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.estimateNumber != null)
 						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="viewAbstractEstimate(\''+ data.estimateId +'\')">' + data.estimateNumber + '</a>');
+					
 				},
 				aaSorting : [],
 				columns : [ { 
@@ -209,8 +212,3 @@ function viewWorkOrder(workOrderid) {
 function viewAbstractEstimate(estimateId) {
 	window.open("/egworks/abstractestimate/view/" + estimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-
-
-$(document).on('click', '#resultTable tr', function() {
-	//Add view mbheader
-});
