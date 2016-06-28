@@ -101,12 +101,12 @@ $(document).ready(function(){
 				}
 			});
 			if(!flag && $('#spillOverFlag').val() == 'true' && $('#workOrderCreated').val() == 'true') {
-				var technicalSanctionDate = $('#technicalSanctionDate').data('datepicker').date;
+				var estimateAdminSanctionDate = $('#estimateAdminSanctionDate').data('datepicker').date;
 				var fileDate = $('#fileDate').data('datepicker').date;
 				var workOrderDate = $('#workOrderDate').data('datepicker').date;
 				
-				if(fileDate < technicalSanctionDate) {
-					bootbox.alert($('#errorFileDate').val());
+				if(fileDate < estimateAdminSanctionDate) {
+					bootbox.alert('File date cannot be prior to Estimate Admin Sanction date ' +$('#estimateAdminSanctionDate').val());
 					return false;
 				}
 				if(workOrderDate < fileDate) {

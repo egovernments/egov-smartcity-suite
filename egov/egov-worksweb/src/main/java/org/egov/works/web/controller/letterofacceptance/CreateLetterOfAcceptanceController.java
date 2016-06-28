@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.letterofacceptance;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -152,13 +152,14 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)
-    public String create(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model, final BindingResult resultBinder,
-            final HttpServletRequest request, @RequestParam("file") final MultipartFile[] files,
-            @RequestParam String workFlowAction, @RequestParam String mode) throws IOException {
+    public String create(@ModelAttribute("workOrder") final WorkOrder workOrder, final Model model,
+            final BindingResult resultBinder, final HttpServletRequest request,
+            @RequestParam("file") final MultipartFile[] files, @RequestParam String workFlowAction,
+            @RequestParam final String mode) throws IOException {
         final AbstractEstimate abstractEstimate = estimateService
                 .getAbstractEstimateByEstimateNumber(workOrder.getEstimateNumber());
 
-        if (mode == null || (mode != null && !mode.equalsIgnoreCase("edit"))) {
+        if (mode == null || mode != null && !mode.equalsIgnoreCase("edit")) {
             final WorkOrder existingWorkOrder = letterOfAcceptanceService
                     .getWorkOrderByEstimateNumber(workOrder.getEstimateNumber());
 
@@ -197,17 +198,18 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                     && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
                     && !abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()
                     || !abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
-                LetterOfAcceptanceNumberGenerator l = beanResolver
+                final LetterOfAcceptanceNumberGenerator l = beanResolver
                         .getAutoNumberServiceFor(LetterOfAcceptanceNumberGenerator.class);
                 final String workOrderNumber = l.getNextNumber(workOrderEstimate);
                 workOrder.setWorkOrderNumber(workOrderNumber);
             }
-            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files, approvalPosition, approvalComment,
-                    null, workFlowAction, abstractEstimate);
+            final WorkOrder savedWorkOrder = letterOfAcceptanceService.create(workOrder, files, approvalPosition,
+                    approvalComment, null, workFlowAction, abstractEstimate);
 
             String pathVars = "";
 
-            if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
+            if (abstractEstimate != null
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
                     && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
                 pathVars = savedWorkOrder.getId().toString();
             else
@@ -218,17 +220,18 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         }
     }
 
-    private void loadViewData(Model model, AbstractEstimate abstractEstimate, WorkOrder workOrder, HttpServletRequest request) {
+    private void loadViewData(final Model model, final AbstractEstimate abstractEstimate, WorkOrder workOrder,
+            final HttpServletRequest request) {
         setDropDownValues(model, abstractEstimate);
         model.addAttribute("stateType", workOrder.getClass().getSimpleName());
-        WorkflowContainer workflowContainer = new WorkflowContainer();
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, workOrder, workflowContainer);
         List<String> validActions = Collections.emptyList();
         if (workOrder.getId() != null) {
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
                     workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(), workflowContainer.getPendingActions(),
-                    workOrder.getCreatedDate());
+                    workflowContainer.getAdditionalRule(), workOrder.getState().getValue(),
+                    workflowContainer.getPendingActions(), workOrder.getCreatedDate());
             model.addAttribute("contractorSearch", workOrder.getContractor().getName());
             model.addAttribute("contractorCode", workOrder.getContractor().getCode());
         } else
@@ -280,8 +283,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         return new ModelAndView("letterOfAcceptance-success", "workOrder", workOrder);
     }
 
-    private String getMessageByStatus(final WorkOrder workOrder, final String approverName,
-            final String nextDesign) {
+    private String getMessageByStatus(final WorkOrder workOrder, final String approverName, final String nextDesign) {
         String message = "";
 
         if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS))
@@ -335,8 +337,11 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
         if (wo != null)
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
-        if (workOrder.getFileDate().before(abstractEstimate.getEstimateDate()))
-            resultBinder.rejectValue("fileDate", "error.loa.filedate");
+        if (workOrder.getFileDate().before(abstractEstimate.getApprovedDate())) {
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            resultBinder.rejectValue("fileDate", "error.loa.filedate",
+                    new String[] { formatter.format(abstractEstimate.getApprovedDate()) }, null);
+        }
         if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }

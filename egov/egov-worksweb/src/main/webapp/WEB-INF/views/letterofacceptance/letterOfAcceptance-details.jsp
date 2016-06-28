@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<input type="hidden" id="technicalSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${abstractEstimate.lineEstimateDetails.lineEstimate.technicalSanctionDate }" pattern="dd/MM/yyyy"/>' />
+<input type="hidden" id="estimateAdminSanctionDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${abstractEstimate.approvedDate}" pattern="dd/MM/yyyy"/>' />
 <input type="hidden" id="errorFileDate" value="<spring:message code='error.loa.filedate'/>">
 <input type="hidden" id="errorWorkOrderDate" value="<spring:message code='error.loa.workorderdate'/>">
 <input type="hidden" id="spillOverFlag" value="${abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag }">

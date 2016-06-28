@@ -59,7 +59,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of Work Order Number" />
+							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of LOA Number" />
 							<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
 						</div>
 					</div>
