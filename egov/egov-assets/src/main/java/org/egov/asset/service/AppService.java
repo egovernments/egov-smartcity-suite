@@ -53,7 +53,8 @@ public class AppService {
     private AppConfigValueService appConfigValuesService;
 
     /**
-     * This method will return the value in AppConfigValue table for the given module and key.
+     * This method will return the value in AppConfigValue table for the given
+     * module and key.
      *
      * @param moduleName
      * @param key
@@ -64,8 +65,8 @@ public class AppService {
     }
 
     /**
-     * This method assumes that there will be one value for module and key. Return value in app config if found, otherwise return
-     * null.
+     * This method assumes that there will be one value for module and key.
+     * Return value in app config if found, otherwise return null.
      *
      * @param moduleName
      * @param key
@@ -73,12 +74,12 @@ public class AppService {
      */
     public String getUniqueAppConfigValue(final String moduleName, final String key) {
         final List<AppConfigValues> resultList = getAppConfigValue(moduleName, key);
-        return resultList.get(0).getValue();
+        return resultList != null && !resultList.isEmpty() ? resultList.get(0).getValue() : "";
     }
 
     /**
-     * This method assumes that there will be one value for Asset module. Return value in app config if found, otherwise return
-     * null.
+     * This method assumes that there will be one value for Asset module. Return
+     * value in app config if found, otherwise return null.
      *
      * @param moduleName
      * @param key
