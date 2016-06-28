@@ -165,7 +165,7 @@ function calculateTotalPercentage(){
 }
 
 function isNumberKey(elem) {
-	var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+	var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
     val = jQuery(elem).val();
 
 	if(!valid){

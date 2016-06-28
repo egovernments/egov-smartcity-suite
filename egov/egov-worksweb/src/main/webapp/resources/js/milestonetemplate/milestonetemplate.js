@@ -106,7 +106,7 @@ function validateFormBeforeSubmit() {
         
         var percentage = document.getElementsByClassName("selectamountwk");
         for(var i = 0; i < percentage.length; i++){
-           if(percentage.item(i).value == '') {
+           if(percentage.item(i).value == '' || percentage.item(i).value == 0) {
            	var message = document.getElementById('tempPercentage').value;
             showMessage('milestonetemplateerror', message);
             window.scrollTo(0, 0);
