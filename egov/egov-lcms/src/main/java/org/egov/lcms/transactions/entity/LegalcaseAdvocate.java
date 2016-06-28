@@ -89,11 +89,13 @@ public class LegalcaseAdvocate extends AbstractAuditable {
     @JoinColumn(name = "legalcase", nullable = false)
     private Legalcase legalcase;
     @Required(message = "advocate.legalcase.null")
+    
     @ManyToOne
     @NotNull
     @Valid
-    @JoinColumn(name = "ADVOCATEMASTER", nullable = false)
-    private AdvocateMaster eglcAdvocateMaster;
+    @JoinColumn(name = "advocatemaster", nullable = false)
+    private AdvocateMaster advocateMaster;
+    
     @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
     private Date assignedtodate;
@@ -159,12 +161,13 @@ public class LegalcaseAdvocate extends AbstractAuditable {
         this.legalcase = legalcase;
     }
 
-    public AdvocateMaster getEglcAdvocateMaster() {
-        return eglcAdvocateMaster;
+
+    public AdvocateMaster getAdvocateMaster() {
+        return advocateMaster;
     }
 
-    public void setEglcAdvocateMaster(final AdvocateMaster eglcAdvocateMaster) {
-        this.eglcAdvocateMaster = eglcAdvocateMaster;
+    public void setAdvocateMaster(AdvocateMaster advocateMaster) {
+        this.advocateMaster = advocateMaster;
     }
 
     public Date getAssignedtodate() {

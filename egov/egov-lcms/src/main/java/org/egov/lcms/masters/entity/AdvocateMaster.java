@@ -42,346 +42,325 @@ package org.egov.lcms.masters.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.utils.EntityType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
+import org.egov.lcms.transactions.entity.LegalcaseAdvocate;
 import org.egov.lcms.utils.LcmsConstants;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * EglcAdvocateMaster entity.
- *
- * @author MyEclipse Persistence Tools
- */
-
-@Unique(fields = { "advocateName", "mobileNumber", "pannumber" }, id = "id", columnName = { "ADVOCATE_NAME",
-		"MOBILE_NUMBER", "PANNUMBER" }, tableName = "EGLC_ADVOCATE_MASTER", message = "advocate.mobNo.isunique")
-public class AdvocateMaster extends BaseModel implements EntityType {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-
-	@Required(message = "advocate.name.null")
-	@Length(max = 32, message = "advocate.name.length")
-	@OptionalPattern(regex = "[0-9a-zA-Z-&, .]+", message = "advocate.name.text2")
-	private String advocateName;
-	@Length(max = 128, message = "advocate.addr.length")
-	private String advocateAddr;
-	@OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "advocate.phNo.text")
-	private String contactPhone;
-	private String advocateSpecialty;
-	@OptionalPattern(regex = LcmsConstants.lengthCheckForMobileNo, message = "advocate.mobileNo.length")
-	private String mobileNumber;
-	@OptionalPattern(regex = LcmsConstants.email, message = "advocate.email.invalid")
-	private String email;
-
-	@Required(message = "advocate.fee.req")
-	@Min(value = 1, message = "advocate.fee.min")
-	// @Max(value=999999999999,message="advocate.fee.max")
-	private Long monthlyRenumeration;
-
-	private Boolean isRetaineradvocate;
-	private String firmname;
-	@Required(message = "advocate.passno.null")
-	@Length(max = 10, message = "advocate.pannumber.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.pannumber.text")
-	private String pannumber;
-	private Boolean isActive;
-	private boolean isSenioradvocate;
-	private String salutation;
-	private String paymentmode;
-
-	@Length(max = 50, message = "advocate.bankaccount.lenght")
-	private String bankaccount;
-
-	@Length(max = 11, message = "advocate.ifsccode.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.ifsccode.text")
-	private String ifsccode;
-
-	@Length(max = 10, message = "advocate.tinumber.length")
-	@OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.tinumber.text")
-	private String tinumber;
-
-	private Bank eglBank;
-	private boolean isPay;
-	private Long approvedFee;
-	private String remarks;
-
-	private Bankbranch eglbankbranch;
-
-	public boolean getIsPay() {
-		return isPay;
-	}
-
-	public void setIsPay(final boolean isPay) {
-		this.isPay = isPay;
-	}
-
-	public Long getApprovedFee() {
-		return approvedFee;
-	}
-
-	public void setApprovedFee(final Long approvedFee) {
-		this.approvedFee = approvedFee;
-	}
-
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
-
-	public Bank getEglBank() {
-		return eglBank;
-	}
-
-	public void setEglBank(final Bank eglBank) {
-		this.eglBank = eglBank;
-	}
-
-	public Bankbranch getEglbankbranch() {
-		return eglbankbranch;
-	}
-
-	public void setEglbankbranch(final Bankbranch eglbankbranch) {
-		this.eglbankbranch = eglbankbranch;
-	}
-
-	public String getSalutation() {
-		return salutation;
-	}
-
-	public void setSalutation(final String salutation) {
-		this.salutation = salutation;
-	}
-
-	public String getAdvocateName() {
-		return advocateName;
-	}
-
-	public void setAdvocateName(final String advocateName) {
-		this.advocateName = advocateName;
-	}
-
-	public String getAdvocateAddr() {
-		return advocateAddr;
-	}
-
-	public void setAdvocateAddr(final String advocateAddr) {
-		this.advocateAddr = advocateAddr;
-	}
-
-	public String getContactPhone() {
-		return contactPhone;
-	}
-
-	public void setContactPhone(final String contactPhone) {
-		this.contactPhone = contactPhone;
-	}
-
-	public String getAdvocateSpecialty() {
-		return advocateSpecialty;
-	}
-
-	public void setAdvocateSpecialty(final String advocateSpecialty) {
-		this.advocateSpecialty = advocateSpecialty;
-	}
-
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
-
-	public void setMobileNumber(final String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(final String email) {
-		this.email = email;
-	}
-
-	public String getFirmname() {
-		return firmname;
-	}
-
-	public void setFirmname(final String firmname) {
-		this.firmname = firmname;
-	}
-
-	public String getPannumber() {
-		return pannumber;
-	}
-
-	public void setPannumber(final String pannumber) {
-		this.pannumber = pannumber;
-	}
-
-	public Boolean getIsRetaineradvocate() {
-		return isRetaineradvocate;
-	}
-
-	public void setIsRetaineradvocate(final Boolean isRetaineradvocate) {
-		this.isRetaineradvocate = isRetaineradvocate;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public boolean getIsSenioradvocate() {
-		return isSenioradvocate;
-	}
-
-	public void setIsSenioradvocate(final boolean isSenioradvocate) {
-		this.isSenioradvocate = isSenioradvocate;
-	}
-
-	public String getPaymentmode() {
-		return paymentmode;
-	}
-
-	public void setPaymentmode(final String paymentmode) {
-		this.paymentmode = paymentmode;
-	}
-
-	@Override
-	public String getBankaccount() {
-		return bankaccount;
-	}
-
-	public void setBankaccount(final String bankaccount) {
-		this.bankaccount = bankaccount;
-	}
-
-	@Override
-	public String getIfsccode() {
-		return ifsccode;
-	}
-
-	public void setIfsccode(final String ifsccode) {
-		this.ifsccode = ifsccode;
-	}
-
-	public String getTinumber() {
-		return tinumber;
-	}
-
-	public void setTinumber(final String tinumber) {
-		this.tinumber = tinumber;
-	}
-
-	public void setSenioradvocate(final boolean isSenioradvocate) {
-		this.isSenioradvocate = isSenioradvocate;
-	}
-
-	@Override
-	public List<ValidationError> validate() {
-		final List<ValidationError> errors = new ArrayList<ValidationError>();
-		/*
-		 * if("Cheque".equals(paymentmode)) { if(this.eglBank==null) {
-		 * errors.add(new ValidationError(ERROR_KEY,"advocate.err.bankname")); }
-		 * if(StringUtils.isBlank(bankaccount)) { errors.add(new
-		 * ValidationError(ERROR_KEY,"advocate.err.bankaccount")); }
-		 * if(this.eglbankbranch==null) { errors.add(new
-		 * ValidationError(ERROR_KEY,"advocate.err.bankbranch")); } } else
-		 */
-		if ("RTGS".equals(paymentmode)) {
-			if (eglBank == null)
-				errors.add(new ValidationError(LcmsConstants.ERROR_KEY, "advocate.err.bankname"));
-
-			if (StringUtils.isBlank(bankaccount))
-				errors.add(new ValidationError(LcmsConstants.ERROR_KEY, "advocate.err.bankaccount"));
-			if (eglbankbranch == null)
-				errors.add(new ValidationError(LcmsConstants.ERROR_KEY, "advocate.err.bankbranch"));
-
-			if (StringUtils.isBlank(ifsccode))
-				errors.add(new ValidationError(LcmsConstants.ERROR_KEY, "advocate.err.ifsccode"));
-
-			if (StringUtils.isBlank(tinumber))
-				errors.add(new ValidationError(LcmsConstants.ERROR_KEY, "advocate.err.tinumbe"));
-		}
-
-		return errors;
-	}
-
-	@Override
-	public String getBankname() {
-		// TODO Auto-generated method stub
-		return eglBank.getName();
-	}
-
-	@Override
-	public String getCode() {
-		// TODO Auto-generated method stub\
-		return advocateName;
-	}
-
-	@Override
-	public String getModeofpay() {
-		// TODO Auto-generated method stub
-		return paymentmode;
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return advocateName;
-	}
-
-	@Override
-	public String getPanno() {
-		// TODO Auto-generated method stub
-		return pannumber;
-	}
-
-	@Override
-	public String getTinno() {
-		// TODO Auto-generated method stub
-		return tinumber;
-	}
-
-	public Long getMonthlyRenumeration() {
-		return monthlyRenumeration;
-	}
-
-	public void setMonthlyRenumeration(final Long monthlyRenumeration) {
-		this.monthlyRenumeration = monthlyRenumeration;
-	}
-
-	@Override
-	public Integer getEntityId() {
-		return Integer.valueOf(id.toString());
-	}
-
-	@Override
-	public String getEntityDescription() {
-
-		return getName();
-	}
-
-	@Override
-	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+@Entity
+@Table(name = "eglc_advocate_master")
+@Unique(id = "id", tableName = "eglc_advocate_master", columnName = { "name", "mobilenumber", "pannumber" }, fields = {
+        "name", "mobileNumber", "panNumber" }, enableDfltMsg = true)
+@SequenceGenerator(name = AdvocateMaster.SEQ_ADVOCATE_MASTER, sequenceName = AdvocateMaster.SEQ_ADVOCATE_MASTER, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class AdvocateMaster extends AbstractAuditable {
+
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_ADVOCATE_MASTER = "SEQ_EGLC_ADVOCATE_MASTER";
+
+    @Id
+    @GeneratedValue(generator = SEQ_ADVOCATE_MASTER, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Audited
+    private String salutation;
+
+    @NotNull
+    @Length(min = 3, max = 100)
+    @Audited
+    private String name;
+
+    @Length(min = 3, max = 128)
+    @Audited
+    private String address;
+
+    @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "advocate.phNo.text")
+    @Audited
+    private String contactPhone;
+
+    @Audited
+    private String specilization;
+
+    @OptionalPattern(regex = LcmsConstants.lengthCheckForMobileNo, message = "advocate.mobileNo.length")
+    @Audited
+    private String mobileNumber;
+
+    @Audited
+    private String email;
+
+    @NotNull
+    @Min(value = 1)
+    @Audited
+    private Long monthlyRenumeration;
+
+    @NotNull
+    @Audited
+    private Boolean isRetaineradvocate;
+
+    @Audited
+    private String firmName;
+
+    @NotNull
+    @Length(max = 10)
+    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.pannumber.text")
+    @Audited
+    private String panNumber;
+
+    @Audited
+    @NotNull
+    private Boolean isActive;
+
+    @Audited
+    @NotNull
+    private boolean isSenioradvocate;
+
+    @Audited
+    private String paymentmode;
+
+    @Length(max = 50)
+    @Audited
+    private String bankaccount;
+
+    @Length(max = 11)
+    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.ifsccode.text")
+    @Audited
+    private String ifsccode;
+
+    @Length(max = 10)
+    @Audited
+    private String tinumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bankname")
+    @NotAudited
+    private Bank bankName;
+
+    @Audited
+    private Long fee;
+
+    @Length(max = 256)
+    @Audited
+    private String remarks;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bankbranch")
+    @NotAudited
+    private Bankbranch bankBranch;
+
+    @OneToMany(mappedBy = "advocateMaster", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LegalcaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalcaseAdvocate>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getSalutation() {
+        return salutation;
+    }
+
+    public void setSalutation(final String salutation) {
+        this.salutation = salutation;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(final String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
+    }
+
+    public String getSpecilization() {
+        return specilization;
+    }
+
+    public void setSpecilization(final String specilization) {
+        this.specilization = specilization;
+    }
+
+    public String getFirmName() {
+        return firmName;
+    }
+
+    public void setFirmName(final String firmName) {
+        this.firmName = firmName;
+    }
+
+    public String getPanNumber() {
+        return panNumber;
+    }
+
+    public void setPanNumber(final String panNumber) {
+        this.panNumber = panNumber;
+    }
+
+    public Bank getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(final Bank bankName) {
+        this.bankName = bankName;
+    }
+
+    public Long getFee() {
+        return fee;
+    }
+
+    public void setFee(final Long fee) {
+        this.fee = fee;
+    }
+
+    public Bankbranch getBankBranch() {
+        return bankBranch;
+    }
+
+    public void setBankBranch(final Bankbranch bankBranch) {
+        this.bankBranch = bankBranch;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getBankaccount() {
+        return bankaccount;
+    }
+
+    public void setBankaccount(final String bankaccount) {
+        this.bankaccount = bankaccount;
+    }
+
+    public String getIfsccode() {
+        return ifsccode;
+    }
+
+    public void setIfsccode(final String ifsccode) {
+        this.ifsccode = ifsccode;
+    }
+
+    public String getTinumber() {
+        return tinumber;
+    }
+
+    public void setTinumber(final String tinumber) {
+        this.tinumber = tinumber;
+    }
+
+    public void setSenioradvocate(final boolean isSenioradvocate) {
+        this.isSenioradvocate = isSenioradvocate;
+    }
+
+    public Boolean getIsRetaineradvocate() {
+        return isRetaineradvocate;
+    }
+
+    public void setIsRetaineradvocate(final Boolean isRetaineradvocate) {
+        this.isRetaineradvocate = isRetaineradvocate;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean getIsSenioradvocate() {
+        return isSenioradvocate;
+    }
+
+    public void setIsSenioradvocate(final boolean isSenioradvocate) {
+        this.isSenioradvocate = isSenioradvocate;
+    }
+
+    public String getPaymentmode() {
+        return paymentmode;
+    }
+
+    public void setPaymentmode(final String paymentmode) {
+        this.paymentmode = paymentmode;
+    }
+
+    public Long getMonthlyRenumeration() {
+        return monthlyRenumeration;
+    }
+
+    public void setMonthlyRenumeration(final Long monthlyRenumeration) {
+        this.monthlyRenumeration = monthlyRenumeration;
+    }
+
+    public List<LegalcaseAdvocate> getEglcLegalcaseAdvocates() {
+        return eglcLegalcaseAdvocates;
+    }
+
+    public void setEglcLegalcaseAdvocates(final List<LegalcaseAdvocate> eglcLegalcaseAdvocates) {
+        this.eglcLegalcaseAdvocates = eglcLegalcaseAdvocates;
+    }
 
 }

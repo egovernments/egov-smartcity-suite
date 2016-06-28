@@ -257,5 +257,30 @@
 	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-search.jsp"/>
 </definition>
 
+<definition name="advocatemaster-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-new.jsp"/>
+</definition>
+
+<definition name="advocatemaster-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-view.jsp"/>
+</definition>
+
+<definition name="advocatemaster-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-edit.jsp"/>
+</definition>
+
+<definition name="advocatemaster-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-result.jsp"/>
+</definition>
+
+<definition name="advocatemaster-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-search.jsp"/>
+</definition>
+
 
 </tiles-definitions>
