@@ -101,9 +101,10 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
             @Param("adminSanctionstatus") String adminSanctionstatus,
             @Param("technicalSanctionstatus") String technicalSanctionstatus);
 
-    @Query("select distinct(led.lineEstimate.createdBy) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :department and led.lineEstimate.status.code = :lineEstimateStatus and not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) = :workOrderStatus)")
+    @Query("select distinct(led.lineEstimate.createdBy) from LineEstimateDetails as led where led.lineEstimate.executingDepartment.id = :department and led.lineEstimate.status.code in(:lineEstimateStatus1, :lineEstimateStatus2 ) and not exists (select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where led.estimateNumber = woe.estimate.estimateNumber and upper(woe.workOrder.egwStatus.code) = :workOrderStatus)")
     List<User> findCreatedByForCancelLineEstimateByDepartment(@Param("department") Long department,
-            @Param("lineEstimateStatus") String lineEstimateStatus, @Param("workOrderStatus") String workOrderStatus);
+            @Param("lineEstimateStatus1") String lineEstimateStatus1, @Param("lineEstimateStatus2") String lineEstimateStatus2,
+            @Param("workOrderStatus") String workOrderStatus);
 
     LineEstimateDetails findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(String workIdentificationNumber, String status);
 

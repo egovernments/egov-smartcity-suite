@@ -906,9 +906,9 @@ public class LineEstimateService {
         return lineEstimateDetailsRepository.findEstimateNumbersForSpillOverFlag(spillOverFlag);
     }
 
-    public List<User> getCreatedByUsersForCancelLineEstimateByDepartment(final Long department) {
+    public List<User> getLineEstimateCreatedByUsersForCancelLineEstimateByDepartment(final Long department) {
         return lineEstimateDetailsRepository.findCreatedByForCancelLineEstimateByDepartment(department,
-                LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.APPROVED);
+                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.APPROVED);
     }
 
     public List<LineEstimate> searchLineEstimatesToCancel(final LineEstimateSearchRequest lineEstimateSearchRequest) {
@@ -935,7 +935,9 @@ public class LineEstimateService {
         if (lineEstimateSearchRequest.isSpillOverFlag()) {
             criteria.add(Restrictions.eq("spillOverFlag", lineEstimateSearchRequest.isSpillOverFlag()));
         }
-        criteria.add(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()).ignoreCase());
+        criteria.add(Restrictions.or(Restrictions.eq("status.code", LineEstimateStatus.TECHNICAL_SANCTIONED.toString()).ignoreCase(),
+                Restrictions.eq("status.code", LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString()).ignoreCase()));
+        
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
