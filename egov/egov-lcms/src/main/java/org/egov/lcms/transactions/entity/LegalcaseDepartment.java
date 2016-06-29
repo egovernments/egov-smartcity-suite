@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -81,7 +82,7 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
     private Legalcase legalcase;
     
     @DateFormat(message = "invalid.fieldvalue.dateOfReceipt")
-    @JoinColumn(name = "dateofreceiptofpwr")
+    @Column(name = "dateofreceiptofpwr")
     private Date dateofreceiptofpwr;
     
     @ManyToOne(fetch=FetchType.LAZY)
@@ -94,7 +95,7 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
     @JoinColumn(name = "POSITION")
     private Position position;
     
-    @JoinColumn(name = "isprimarydepartment")
+    @Column(name = "isprimarydepartment")
     private boolean isPrimaryDepartment;
     
     @OneToMany(mappedBy = "legalCaseDepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

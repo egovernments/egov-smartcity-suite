@@ -41,6 +41,7 @@ package org.egov.lcms.transations.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
@@ -49,9 +50,12 @@ import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.LegalcaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalcaseDepartment;
+import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
 import org.egov.lcms.utils.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +83,9 @@ public class LegalCaseService {
     private FunctionaryHibernateDAO functionaryDAO;
 
     @Autowired
+    private AdvocateMasterService advocateMasterService;
+
+    @Autowired
     public LegalCaseService(final LegalcaseRepository legalCaseRepository) {
         this.legalCaseRepository = legalCaseRepository;
 
@@ -88,11 +95,11 @@ public class LegalCaseService {
         return legalCaseRepository.findOne(Id);
     }
 
-    public Legalcase getLegalCseByLcNumber(final String lcnumber) {
+    public Legalcase getLegalCaseByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
 
-    public Legalcase getLegalCseByCaseNumber(final String caseNumber) {
+    public Legalcase getLegalCaseByCaseNumber(final String caseNumber) {
         return legalCaseRepository.findByCasenumber(caseNumber);
     }
 
@@ -110,6 +117,9 @@ public class LegalCaseService {
     private void prepareLegalcaseDetails(final Legalcase legalcase) {
         final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
         final List<LegalcaseDepartment> legalcaseDetails = new ArrayList<LegalcaseDepartment>();
+        final List<LegalcaseAdvocate> legalAdvocateDetails = new ArrayList<LegalcaseAdvocate>();
+        final List<Pwr> pwrList = new ArrayList<Pwr>();
+
         for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()) {
             bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
             bipartObj.setLegalcase(legalcase);
@@ -126,6 +136,26 @@ public class LegalCaseService {
         }
         legalcase.getLegalcaseDepartment().clear();
         legalcase.setLegalcaseDepartment(legalcaseDetails);
+
+        for (final LegalcaseAdvocate legalAdvocateObj : legalcase.getEglcLegalcaseAdvocates()) {
+            legalAdvocateObj.setLegalcase(legalcase);
+            legalAdvocateObj.setAdvocateMaster(
+                    advocateMasterService.findByName(legalAdvocateObj.getAdvocateMaster().getName()));
+            legalAdvocateObj.setEglcSeniorAdvocateMaster(
+                    advocateMasterService.findByName(legalAdvocateObj.getEglcSeniorAdvocateMaster().getName()));
+            legalAdvocateObj.setIsActive(Boolean.TRUE);
+            legalAdvocateDetails.add(legalAdvocateObj);
+        }
+        legalcase.getEglcLegalcaseAdvocates().clear();
+        legalcase.setEglcLegalcaseAdvocates(legalAdvocateDetails);
+
+        for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
+            legalpwr.setLegalcase(legalcase);
+            legalpwr.setCaFilingdate(new Date());
+            pwrList.add(legalpwr);
+        }
+        legalcase.getEglcPwrs().clear();
+        legalcase.setEglcPwrs(pwrList);
 
     }
 

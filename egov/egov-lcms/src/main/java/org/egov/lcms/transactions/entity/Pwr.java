@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,10 +53,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -70,7 +70,7 @@ import org.egov.lcms.utils.LcmsConstants;
 @Entity
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_1PWR, sequenceName = Pwr.SEQ_EGLC_1PWR, allocationSize = 1)
-public class Pwr extends AbstractAuditable {
+public class Pwr extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_1PWR = "seq_eglc_pwr";
@@ -79,18 +79,21 @@ public class Pwr extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_1PWR, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
     private Legalcase legalcase;
+    @Transient
     private String uploadPwr;
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
+    @Column(name="cafilingdate")
     private Date caFilingdate;
+    @Transient
     private String uploadCa;
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
+    @Column(name="caduedate")
     private Date caDueDate;
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Column(name="pwrduedate")
     private Date pwrDueDate;
 
     public Legalcase getLegalcase() {
@@ -109,11 +112,13 @@ public class Pwr extends AbstractAuditable {
         this.uploadPwr = uploadPwr;
     }
 
+  
+
     public Date getCaFilingdate() {
         return caFilingdate;
     }
 
-    public void setCaFilingdate(final Date caFilingdate) {
+    public void setCaFilingdate(Date caFilingdate) {
         this.caFilingdate = caFilingdate;
     }
 

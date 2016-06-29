@@ -41,12 +41,13 @@ package org.egov.lcms.web.controller.transactions;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-
 import java.util.List;
 
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.lcms.masters.entity.AdvocateMaster;
+import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -55,6 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 @Controller
 @RequestMapping(value = "/legalcase/")
 public class AjaxLegalCaseController {
@@ -65,11 +67,22 @@ public class AjaxLegalCaseController {
     @Autowired
     private PositionMasterService positionMasterService;
 
+    @Autowired
+    private AdvocateMasterService advocateMasterService;
+
     @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Department> getAllDepartmentsByNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName) {
         return departmentService.getAllDepartmentsByNameLike(departmentName);
 
+    }
+
+    @RequestMapping(value = "ajax/advocateSearch", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<AdvocateMaster> getAllAdvocatesByNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String advocateName,
+            @RequestParam final Boolean isSeniorAdvocate) {
+
+        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
     }
 
     @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)

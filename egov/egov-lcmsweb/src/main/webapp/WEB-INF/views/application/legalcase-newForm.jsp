@@ -61,10 +61,9 @@
 				</div>
 				<div class="panel-body custom-form ">
 				<%@ include file="legalcasedetails.jsp"%>
-				<%@ include file="petitiondetails.jsp"%>
-				<%@ include file="assignedDeptDet.jsp"%>
-				
-					<%-- <jsp:include page="legalcasedetails.jsp"></jsp:include> --%>
+				<%@ include file="legalcase-petitiondetails.jsp"%>
+				<%@ include file="legalcase-assignedDeptDet.jsp"%>
+				<%@ include file="legalcase-standingCouncil.jsp" %>
 
 				</div>
 			</div>
@@ -83,7 +82,15 @@
 		</form:form>
 	</div>
 </div>
+				
+	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
+<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 	<script src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+	<script src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	

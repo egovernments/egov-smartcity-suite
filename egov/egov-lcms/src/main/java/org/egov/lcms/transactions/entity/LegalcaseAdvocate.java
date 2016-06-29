@@ -43,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,14 +53,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -75,7 +75,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
 @SequenceGenerator(name = LegalcaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalcaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
-public class LegalcaseAdvocate extends AbstractAuditable {
+public class LegalcaseAdvocate extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
@@ -85,27 +85,25 @@ public class LegalcaseAdvocate extends AbstractAuditable {
     private Long id;
     @ManyToOne
     @NotNull
-    @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private Legalcase legalcase;
-    @Required(message = "advocate.legalcase.null")
-    
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @Valid
     @JoinColumn(name = "advocatemaster", nullable = false)
     private AdvocateMaster advocateMaster;
-    
+
     @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
     private Date assignedtodate;
     @DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodateForsenior.date")
+    // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
+    // message = "invalid.assignedtodateForsenior.date")
+    @Column(name = "seniorassignedtodate")
     private Date assignedtodateForsenior;
     @DateFormat(message = "invalid.fieldvalue.vakalaatDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
     private Date vakalatdate;
-    private Long isActive;
+    private Boolean isActive;
     @Length(max = 32, message = "ordernumber.length")
     @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
     private String ordernumber;
@@ -113,43 +111,40 @@ public class LegalcaseAdvocate extends AbstractAuditable {
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
     private Date orderdate;
     @ManyToOne
-    @NotNull
-    @Valid
-    @JoinColumn(name = "SENIORADVOCATE", nullable = false)
+    @JoinColumn(name = "senioradvocate")
     private AdvocateMaster eglcSeniorAdvocateMaster;
     @Length(max = 32, message = "ordernumberJunior.length")
+    @JoinColumn(name = "ordernumberjunior")
     private String ordernumberJunior;
     @DateFormat(message = "invalid.fieldvalue.juniororderDate")
+    @Column(name = "orderdatejunior")
     private Date orderdateJunior;
     @ManyToOne
-    @NotNull
-    @Valid
-    @JoinColumn(name = "JUNIORSTAGE", nullable = false)
+    @JoinColumn(name = "JUNIORSTAGE")
     private CaseStage juniorStage;
     @ManyToOne
-    @NotNull
-    @Valid
-    @JoinColumn(name = "SENIORSTAGE", nullable = false)
+    @JoinColumn(name = "SENIORSTAGE")
     private CaseStage seniorStage;
     @Length(max = 256, message = "reassignmentJunior.length")
-    private String reassignmentJuniorReason;
+    private String reassignmentreasonjunior;
     @Length(max = 256, message = "reassignmentSenior.length")
-    private String reassignmentSeniorReason;
-    private long changeAdvocate, changeSeniorAdvocate;
+    private String reassignmentreasonsenior;
+    private Boolean changeAdvocate = Boolean.FALSE;
+    private Boolean changeSeniorAdvocate = Boolean.FALSE;
 
-    public long getChangeAdvocate() {
+    public Boolean getChangeAdvocate() {
         return changeAdvocate;
     }
 
-    public void setChangeAdvocate(final long changeAdvocate) {
+    public void setChangeAdvocate(final Boolean changeAdvocate) {
         this.changeAdvocate = changeAdvocate;
     }
 
-    public long getChangeSeniorAdvocate() {
+    public Boolean getChangeSeniorAdvocate() {
         return changeSeniorAdvocate;
     }
 
-    public void setChangeSeniorAdvocate(final long changeSeniorAdvocate) {
+    public void setChangeSeniorAdvocate(final Boolean changeSeniorAdvocate) {
         this.changeSeniorAdvocate = changeSeniorAdvocate;
     }
 
@@ -161,12 +156,11 @@ public class LegalcaseAdvocate extends AbstractAuditable {
         this.legalcase = legalcase;
     }
 
-
     public AdvocateMaster getAdvocateMaster() {
         return advocateMaster;
     }
 
-    public void setAdvocateMaster(AdvocateMaster advocateMaster) {
+    public void setAdvocateMaster(final AdvocateMaster advocateMaster) {
         this.advocateMaster = advocateMaster;
     }
 
@@ -186,11 +180,11 @@ public class LegalcaseAdvocate extends AbstractAuditable {
         this.vakalatdate = vakalatdate;
     }
 
-    public Long getIsActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(final Long isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
@@ -298,19 +292,20 @@ public class LegalcaseAdvocate extends AbstractAuditable {
         this.seniorStage = seniorStage;
     }
 
-    public String getReassignmentJuniorReason() {
-        return reassignmentJuniorReason;
+    public String getReassignmentreasonjunior() {
+        return reassignmentreasonjunior;
     }
 
-    public void setReassignmentJuniorReason(final String reassignmentJuniorReason) {
-        this.reassignmentJuniorReason = reassignmentJuniorReason;
+    public void setReassignmentreasonjunior(final String reassignmentreasonjunior) {
+        this.reassignmentreasonjunior = reassignmentreasonjunior;
     }
 
-    public String getReassignmentSeniorReason() {
-        return reassignmentSeniorReason;
+    public String getReassignmentreasonsenior() {
+        return reassignmentreasonsenior;
     }
 
-    public void setReassignmentSeniorReason(final String reassignmentSeniorReason) {
-        this.reassignmentSeniorReason = reassignmentSeniorReason;
+    public void setReassignmentreasonsenior(final String reassignmentreasonsenior) {
+        this.reassignmentreasonsenior = reassignmentreasonsenior;
     }
+
 }

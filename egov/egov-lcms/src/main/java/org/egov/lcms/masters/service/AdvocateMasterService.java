@@ -93,6 +93,10 @@ public class AdvocateMasterService {
     public AdvocateMaster findByName(final String name) {
         return advocateMasterRepository.findByName(name);
     }
+   
+    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name,final Boolean isSeniorAdvocate) {
+        return advocateMasterRepository.findByNameContainingIgnoreCaseAndIsSeniorAdvocate(name,isSeniorAdvocate);
+    }
 
     public AdvocateMaster findOne(final Long id) {
         return advocateMasterRepository.findOne(id);

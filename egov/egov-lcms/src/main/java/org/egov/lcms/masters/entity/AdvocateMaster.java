@@ -39,10 +39,6 @@
  */
 package org.egov.lcms.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -50,7 +46,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -61,7 +56,6 @@ import org.egov.commons.Bankbranch;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.lcms.transactions.entity.LegalcaseAdvocate;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
@@ -169,9 +163,6 @@ public class AdvocateMaster extends AbstractAuditable {
     @JoinColumn(name = "bankbranch")
     @NotAudited
     private Bankbranch bankBranch;
-
-    @OneToMany(mappedBy = "advocateMaster", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalcaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalcaseAdvocate>(0);
 
     @Override
     public Long getId() {
@@ -355,12 +346,5 @@ public class AdvocateMaster extends AbstractAuditable {
         this.monthlyRenumeration = monthlyRenumeration;
     }
 
-    public List<LegalcaseAdvocate> getEglcLegalcaseAdvocates() {
-        return eglcLegalcaseAdvocates;
-    }
-
-    public void setEglcLegalcaseAdvocates(final List<LegalcaseAdvocate> eglcLegalcaseAdvocates) {
-        this.eglcLegalcaseAdvocates = eglcLegalcaseAdvocates;
-    }
 
 }

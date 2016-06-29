@@ -149,7 +149,7 @@ public class Legalcase extends AbstractAuditable {
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
     @Column(name = "isSenioradvrequired")
-    private Boolean isSenioradvrequired = true;
+    private Boolean isSenioradvrequired ;
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
