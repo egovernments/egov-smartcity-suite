@@ -200,11 +200,16 @@ public class MilestoneTemplateAction extends SearchFormAction {
         if (null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() == 0)
             addFieldError("milestone.activity.missing", getText("milestone.activity.missing"));
         Double percentage = 0.0;
-        for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities())
+        for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()){
+            if (templateActivities.getPercentage() == null || templateActivities.getPercentage() == 0){
+                addFieldError("milestoneTemplateActivity.percentage.null", getText("milestoneTemplateActivity.percentage.null"));
+                break;
+            }
             if (templateActivities.getPercentage() != null)
                 percentage += templateActivities.getPercentage();
         if (percentage != 100)
             addFieldError("milestone.activity.total.percentage", getText("milestone.activity.total.percentage"));
+        }
     }
 
     protected void populateCategoryList(
