@@ -261,7 +261,7 @@ public class WorkProgressRegisterPDFController {
                 if (wpr.getBilltype() != null)
                     pdf.setBilltype(wpr.getBilltype());
                 else
-                    pdf.setBilltype("");
+                    pdf.setBilltype("NA");
                 if (wpr.getBillamount() != null)
                     pdf.setBillamount(wpr.getBillamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
@@ -278,10 +278,13 @@ public class WorkProgressRegisterPDFController {
                     pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillPaidSoFar("NA");
-                if (wpr.getBalanceValueOfWorkToBill() != null)
-                    pdf.setBalanceValueOfWorkToBill(
-                            wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
+                if (wpr.getBalanceValueOfWorkToBill() != null) {
+                    if (wpr.getBilltype() != null && wpr.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL))
+                        pdf.setBalanceValueOfWorkToBill("NA");
+                    else
+                        pdf.setBalanceValueOfWorkToBill(
+                                wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                } else
                     pdf.setBalanceValueOfWorkToBill("NA");
 
                 dataRunDate = formatter.format(wpr.getCreatedDate());
