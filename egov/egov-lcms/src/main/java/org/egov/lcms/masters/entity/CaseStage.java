@@ -39,31 +39,64 @@
  */
 package org.egov.lcms.masters.entity;
 
-import org.egov.infstr.models.BaseModel;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 
-public class CaseStage extends BaseModel {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "eglc_case_stage")
+@SequenceGenerator(name = CaseStage.SEQ_CASESTAGE, sequenceName = CaseStage.SEQ_CASESTAGE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+public class CaseStage extends AbstractAuditable {
+    private static final long serialVersionUID = 796823780349590496L;
+    public static final String SEQ_CASESTAGE = "SEQ_EGLC_CASE_STAGE";
 
-	private String stage;
-	private Boolean active;
+    @Id
+    @GeneratedValue(generator = SEQ_CASESTAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public Boolean getActive() {
-		return active;
-	}
+    @NotNull
+    @Length(min = 3, max = 100)
+    @Audited
+    private String stage;
+    @NotNull
+    @Audited
+    private Boolean active;
 
-	public void setActive(final Boolean active) {
-		this.active = active;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getStage() {
-		return stage;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setStage(final String stage) {
-		this.stage = stage;
-	}
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
+
+    public String getStage() {
+        return stage;
+    }
+
+    public void setStage(final String stage) {
+        this.stage = stage;
+    }
 
 }
