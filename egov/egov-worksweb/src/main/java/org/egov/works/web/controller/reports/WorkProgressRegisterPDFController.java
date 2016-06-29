@@ -46,6 +46,7 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -279,7 +280,7 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setTotalBillPaidSoFar("NA");
                 if (wpr.getBalanceValueOfWorkToBill() != null) {
-                    if (wpr.getBilltype() != null && wpr.getBilltype().equalsIgnoreCase(WorksConstants.FINAL_BILL))
+                    if (wpr.getBilltype() != null && wpr.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
                         pdf.setBalanceValueOfWorkToBill("NA");
                     else
                         pdf.setBalanceValueOfWorkToBill(
