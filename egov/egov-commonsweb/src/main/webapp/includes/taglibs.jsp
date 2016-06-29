@@ -46,13 +46,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="sx" uri="/WEB-INF/taglib/struts-dojo-tags.tld" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-decorator.tld" prefix="decorator"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-page.tld" prefix="page"%>
-<%@ taglib uri="/WEB-INF/taglib/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/taglib/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-nested.tld" prefix="nested" %>
