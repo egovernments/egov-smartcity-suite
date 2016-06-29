@@ -46,6 +46,7 @@
 	<property name="ireport.y" value="218"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
 	<parameter name="approvedDate" class="java.lang.String"/>
 	<parameter name="assessmentNo" class="java.lang.String"/>
