@@ -41,7 +41,6 @@ package org.egov.ptis.domain.dao.property;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,5 +108,14 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
         	qry.setParameter("assessmentNo", assessmentNo);
         PropertyMutation propertyMutation =  (PropertyMutation) qry.uniqueResult();
 		return propertyMutation;
+	}
+	
+	@Override
+	public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo) {
+	    String query = "from PropertyMutation where basicProperty.upicNo = :assessmentNo order by mutationDate desc";
+	    Query qry = getCurrentSession().createQuery(query);
+	    qry.setParameter("assessmentNo", assessmentNo);
+	    PropertyMutation propertyMutation = (PropertyMutation) qry.list().get(0);
+	    return propertyMutation;
 	}
 }

@@ -154,7 +154,6 @@ public class PropertyTitleTransferService {
 	 /**
      * This method loads the assessment details.
      * 
-     * @param applicationNo - Mutation Application Number
      * @param assessmentNumber - assessment number i.e. property id
      * @return
      * @throws JsonGenerationException
@@ -172,9 +171,9 @@ public class PropertyTitleTransferService {
         if (errorDetails != null) {
             responseJson = getJSONResponse(errorDetails);
         } else {
-	        RestAssessmentDetails assessmentDetails = propertyExternalService
-	                .loadAssessmentDetails(assessmentReq.getApplicationNo(),assessmentReq.getAssessmentNo());
-	        responseJson = getJSONResponse(assessmentDetails);
+            RestAssessmentDetails assessmentDetails = propertyExternalService
+                    .loadAssessmentDetails(assessmentReq.getAssessmentNo());
+            responseJson = getJSONResponse(assessmentDetails);
         }
         return responseJson;
     }

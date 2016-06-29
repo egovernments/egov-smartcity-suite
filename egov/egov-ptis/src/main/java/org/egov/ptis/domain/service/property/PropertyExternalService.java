@@ -1766,9 +1766,9 @@ public class PropertyExternalService {
      * @param assessmentNo
      * @return
      */
-    public RestAssessmentDetails loadAssessmentDetails(final String applicationNo, final String assessmentNo) {
+    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
-        PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(assessmentNo, applicationNo);
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
         if(propertyMutation != null){
         	basicProperty = propertyMutation.getBasicProperty();
         	if (basicProperty != null) {
@@ -1822,13 +1822,14 @@ public class PropertyExternalService {
         ErrorDetails errorDetails = null;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
                 .getAssessmentNo());
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(payPropertyTaxDetails.getAssessmentNo());
         propertyTaxBillable.setBasicProperty(basicProperty);
         ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(payPropertyTaxDetails.getPaymentAmount());
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
-        propertyTaxBillable.setMutationApplicationNo(payPropertyTaxDetails.getApplicationNo());
+        propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
         
@@ -1878,13 +1879,12 @@ public class PropertyExternalService {
     /**
      * Validate the payment amount entered for mutation
      * @param assessmentNo
-     * @param applicationNo
      * @param paymentAmount
      * @return boolean
      */
-    public boolean validateMutationFee(String assessmentNo, String applicationNo, BigDecimal paymentAmount){
+    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount){
     	boolean validFee = true;
-    	PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(assessmentNo, applicationNo);
+    	PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
     	if(propertyMutation != null){
     		if(paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0){
     			validFee = false;
@@ -1904,5 +1904,15 @@ public class PropertyExternalService {
     public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo){
     	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
     	return propertyMutation;
+    }
+    
+    /**
+     * Fetch PropertyMutation for given assessmentNo
+     * @param assessmentNo
+     * @return PropertyMutation
+     */
+    public PropertyMutation getLatestPropertyMutationByAssesmentNo(String assessmentNo){
+        PropertyMutation propertyMutation = propertyMutationDAO.getPropertyLatestMutationForAssessmentNo(assessmentNo);
+        return propertyMutation;
     }
 }

@@ -440,21 +440,16 @@ public class ValidationUtil {
         }
         
         if(isMutationFeePayment){
-        	if(StringUtils.isBlank(payPropTaxDetails.getApplicationNo())){
+        	if(!propertyExternalService.validateMutationFee(payPropTaxDetails.getAssessmentNo(), payPropTaxDetails.getPaymentAmount())){
         		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_APPLICATION_NO_REQUIRED);
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE);
         	}
-        	if(!propertyExternalService.validateMutationFee(payPropTaxDetails.getAssessmentNo(), payPropTaxDetails.getApplicationNo(), payPropTaxDetails.getPaymentAmount())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE);
-        	}
-        	PropertyMutation propertyMutation = propertyExternalService.getPropertyMutationByAssesmentNoAndApplicationNo(payPropTaxDetails.getAssessmentNo(), payPropTaxDetails.getApplicationNo());
+        	PropertyMutation propertyMutation = propertyExternalService.getLatestPropertyMutationByAssesmentNo(payPropTaxDetails.getAssessmentNo());
         	if(propertyMutation == null){
         		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);
-                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MUTATION_INVALID);
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MUTATION_INVALID);
         	}
         }
         
@@ -526,18 +521,12 @@ public class ValidationUtil {
     public ErrorDetails validateAssessmentDetailsRequest(AssessmentRequest assessmentRequest){
     	ErrorDetails errorDetails = null;
     	
-    	if(StringUtils.isBlank(assessmentRequest.getApplicationNo())){
-    		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(RestApiConstants.APPLICATION_NO_REQ_CODE);
-            errorDetails.setErrorMessage(RestApiConstants.APPLICATION_NO_REQ_MSG);
-            return errorDetails;
-    	}
     	if (!basicPropertyDAO.isAssessmentNoExist(assessmentRequest.getAssessmentNo())) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
         }
-    	PropertyMutation propertyMutation = propertyExternalService.getPropertyMutationByAssesmentNoAndApplicationNo(assessmentRequest.getAssessmentNo(), assessmentRequest.getApplicationNo());
+    	PropertyMutation propertyMutation = propertyExternalService.getLatestPropertyMutationByAssesmentNo(assessmentRequest.getAssessmentNo());
     	if(propertyMutation == null){
     		errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);

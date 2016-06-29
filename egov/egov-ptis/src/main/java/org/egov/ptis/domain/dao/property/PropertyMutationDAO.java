@@ -62,4 +62,11 @@ public interface PropertyMutationDAO {
 	 * @return PropertyMutation
 	 */
 	public PropertyMutation getPropertyMutationForAssessmentNoAndApplicationNumber(String assessmentNo, String applicationNo);
+	
+	/**
+         * Fetch the PropertyMutation for the given assessmentNo
+         * @param assessmentNo
+         * @return PropertyMutation
+         */
+        public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo);
 }
