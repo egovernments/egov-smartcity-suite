@@ -814,12 +814,11 @@ public class LetterOfAcceptanceService {
         return criteria.list();
     }
 
-    public List<WorkOrderEstimate> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
-                .createAlias("woe.workOrder", "wo")
+    public List<WorkOrder> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
+                .addOrder(Order.asc("workOrderDate"))
                 .createAlias("wo.contractor", "woc")
-                .createAlias("wo.egwStatus", "status")
-                .addOrder(Order.asc("wo.workOrderDate"));
+                .createAlias("wo.egwStatus", "status");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())

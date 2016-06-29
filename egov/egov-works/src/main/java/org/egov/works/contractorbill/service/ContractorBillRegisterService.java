@@ -513,7 +513,8 @@ public class ContractorBillRegisterService {
             final SearchRequestContractorBill searchRequestContractorBill) {
         // TODO Need TO handle in single query
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorBillRegister.class)
-                .createAlias("workOrderEstimate.workOrder", "cbrwo").createAlias("cbrwo.contractor", "cbrwocont");
+                .createAlias("workOrderEstimate", "workOrderEstimate")
+                .createAlias("workOrderEstimate.workOrder", "cbrwo");
 
         if (searchRequestContractorBill != null) {
             if (searchRequestContractorBill.getBillNumber() != null)

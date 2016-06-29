@@ -218,16 +218,16 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajaxsearch-loaformilestone", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchLoaToCreateMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> workOrder = letterOfAcceptanceService
+        final List<WorkOrderEstimate> workOrderEstimate = letterOfAcceptanceService
                 .getLoaForCreateMilestone(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorBillJson(workOrder))
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLOAForCreateMilestoneJson(workOrderEstimate))
                 .append("}").toString();
         return result;
     }
 
-    public Object toSearchContractorBillJson(final Object object) {
+    public Object toSearchLOAForCreateMilestoneJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, letterOfAcceptanceForMilestoneJSONAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, letterOfAcceptanceForMilestoneJSONAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

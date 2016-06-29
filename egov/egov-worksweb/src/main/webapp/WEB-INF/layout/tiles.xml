@@ -292,12 +292,12 @@
     </definition>
     
    	<definition name="setofflinestatus-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+		<put-attribute name="page-title" value="lbl.setofflinestatusforloa" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/letterOfAcceptance-search.jsp"/>
 	</definition>
       
     <definition name="setstatus-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.setstatus" cascade="true"/>
+		<put-attribute name="page-title" value="lbl.setofflinestatusforloa" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setStatus-form.jsp"/>
 	</definition>
 	
