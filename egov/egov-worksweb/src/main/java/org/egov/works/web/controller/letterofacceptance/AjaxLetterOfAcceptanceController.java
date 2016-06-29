@@ -52,6 +52,7 @@ import org.egov.works.web.adaptor.LetterOfAcceptanceForMilestoneJSONAdaptor;
 import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
+import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCancelJson;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -87,6 +88,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
+    
+    @Autowired
+    private SearchLetterOfAcceptanceToCancelJson searchLetterOfAcceptanceToCancelJson;
     
     @Autowired
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
@@ -250,7 +254,7 @@ public class AjaxLetterOfAcceptanceController {
 
     public Object toSearchLOAsToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceToCreateContractorBillJson)
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceToCancelJson)
                 .create();
         final String json = gson.toJson(object);
         return json;
