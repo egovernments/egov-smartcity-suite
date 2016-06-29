@@ -37,22 +37,31 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ page language="java" errorPage="/error/error.jsp" pageEncoding="UTF-8"  %>
-
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
-<%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/taglib/struts-dojo-tags.tld" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-decorator.tld" prefix="decorator"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-page.tld" prefix="page"%>
-<%@ taglib uri="/WEB-INF/taglib/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-nested.tld" prefix="nested" %>
+  <div class="main-content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"><spring:message
+								code="title.uom.category"/></div>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.category" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="category"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="25" required="required" />
+							<form:errors path="category" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.narration" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="narration"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="25" />
+							<form:errors path="narration" cssClass="error-msg" />
+						</div>
+					</div>
+				

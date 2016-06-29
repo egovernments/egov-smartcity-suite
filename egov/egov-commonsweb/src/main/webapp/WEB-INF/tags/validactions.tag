@@ -38,21 +38,19 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page language="java" errorPage="/error/error.jsp" pageEncoding="UTF-8"  %>
-
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ tag dynamic-attributes="true" isELIgnored="false"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/taglib/struts-dojo-tags.tld" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-decorator.tld" prefix="decorator"%>
-<%@ taglib uri="/WEB-INF/taglib/sitemesh-page.tld" prefix="page"%>
-<%@ taglib uri="/WEB-INF/taglib/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/taglib/struts-nested.tld" prefix="nested" %>
+
+<%@ attribute name="formName" required="true" %>
+
+<div class="buttonholderwk">
+<input type="hidden" name="actionName" id="actionName"/>	
+<s:iterator value="%{validActions}">
+  <s:submit type="submit" cssClass="buttonfinal" value="%{description}" id="%{name}" name="%{name}" method="moveEstimate" onclick="document.${formName}.actionName.value='%{name}'"/>
+</s:iterator>
+
+<s:if test="%{model.id==null}">
+	  <input type="reset" class="buttonfinal" value="CLEAR" id="button" name="button"/>
+  </s:if>
+  <input type="button" class="buttonfinal" value="CLOSE" id="closeButton" name="closeButton" onclick="window.close();"/>
+</div>

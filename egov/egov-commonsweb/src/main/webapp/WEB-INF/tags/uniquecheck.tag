@@ -1,5 +1,9 @@
-<?xml version="1.0"?>
-<!--
+<%@ tag body-content="empty" dynamic-attributes="true" isELIgnored="false" %>
+<%@ attribute name="id" required="true"%>
+<%@ attribute name="fields" required="true"%>
+<%@ attribute name="url" required="true"%>
+<%@ attribute name="fieldtoreset" required="false" %>
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,44 +41,29 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+  --%>
 
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 19, 2007 4:44:16 PM by Hibernate Tools 3.2.0.b9 -->
-<hibernate-mapping>
-    <class name="org.egov.common.entity.UOMCategory" table="EG_UOMCATEGORY" >
-    	<cache usage="transactional"/>
-        <id name="id" type="integer">
-            <column name="ID" precision="22" scale="0" />
-            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
-            <param name="sequence_name">seq_eg_uomcategory</param>
-            </generator>
-        </id>
-        <property name="category" type="string">
-            <column name="CATEGORY" length="30" not-null="true" unique="true" />
-        </property>
-        <property name="narration" type="string">
-            <column name="NARRATION" length="250" />
-        </property>
-        <property name="lastmodified" type="date">
-            <column name="LASTMODIFIED" length="7" not-null="true" />
-        </property>
-        <property name="createddate" type="date">
-            <column name="CREATEDDATE" length="7" not-null="true" />
-        </property>
-        <property name="createdby" type="big_decimal">
-            <column name="CREATEDBY" precision="22" scale="0" not-null="true" />
-        </property>
-        <property name="lastmodifiedby" type="big_decimal">
-            <column name="LASTMODIFIEDBY" precision="22" scale="0" />
-        </property>
-        <set name="Uoms" inverse="true" >
-        	<cache usage="transactional"/>        	
-            <key>
-                <column name="UOMCATEGORYID" precision="22" scale="0" not-null="true" />
-            </key>
-            <one-to-many class="org.egov.common.entity.UOM" />
-        </set>
-    </class>
-</hibernate-mapping>
+<script>
+
+ ${id}SuccessHandler=function(req,res){
+    var result =res.results[0].Value;
+    
+    if(result=='true'){
+    dom.get("${id}").style.display = "";
+	   if(document.getElementById('${fieldtoreset}')){
+	   	 dom.get("${fieldtoreset}").value = "";
+	   	 }
+	}
+    else
+    dom.get("${id}").style.display = "none";
+
+}
+ ${id}FailureHandler=function(){
+  alert('Connection Lost');
+
+}
+
+function populate${id}(params){
+    makeJSONCall(${fields},'${pageContext.request.contextPath}/${url}',params, ${id}SuccessHandler, ${id}FailureHandler) ;
+}
+</script>
