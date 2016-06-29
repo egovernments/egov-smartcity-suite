@@ -43,13 +43,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form method="post" action=""
-			modelAttribute="legalcase" id="newlegalcaseForm"
-			class="form-horizontal form-groups-bordered"
+		<form:form method="post" action="" modelAttribute="legalcase"
+			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
 			<form:hidden id="mode" path="" value="${mode}" />
@@ -60,10 +59,10 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-				<%@ include file="legalcasedetails.jsp"%>
-				<%@ include file="legalcase-petitiondetails.jsp"%>
-				<%@ include file="legalcase-assignedDeptDet.jsp"%>
-				<%@ include file="legalcase-standingCouncil.jsp" %>
+					<%@ include file="legalcasedetails.jsp"%>
+					<%@ include file="legalcase-petitiondetails.jsp"%>
+					<%@ include file="legalcase-assignedDeptDet.jsp"%>
+					<%@ include file="legalcase-standingCouncil.jsp"%>
 
 				</div>
 			</div>
@@ -82,15 +81,21 @@
 		</form:form>
 	</div>
 </div>
-				
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-	
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
-	<script src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
-	
+<script
+	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+
