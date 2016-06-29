@@ -82,4 +82,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select distinct(mbh.createdBy) from MBHeader as mbh")
     List<User> findMBHeaderCreatedByUsers();
 
+    MBHeader findByWorkOrderEstimate_IdAndEgwStatus_codeNot(final Long WorkOrderEstimateId, final String statusCode);
+    
+    @Query("select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity having mbd.workOrderActivity.id = :woActivityId")
+    Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status, @Param("woActivityId") final Long woActivityId);
 }

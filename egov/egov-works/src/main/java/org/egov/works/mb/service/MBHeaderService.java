@@ -250,5 +250,9 @@ public class MBHeaderService {
         }
         return jsonObject;
     }
+    
+    public Double getPreviousCumulativeQuantity(final Long mbHeaderId, final Long woActivityId) {
+        return mbHeaderRepository.getPreviousCumulativeQuantity(mbHeaderId, WorksConstants.CANCELLED, woActivityId);
+    }
 
 }
