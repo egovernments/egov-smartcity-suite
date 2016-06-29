@@ -41,6 +41,7 @@ package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +103,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             @RequestParam final Long lineEstimateDetailId, final Model model) {
         final LineEstimateDetails lineEstimateDetails = lineEstimateDetailService.getById(lineEstimateDetailId);
         populateDataForAbstractEstimate(lineEstimateDetails, model, abstractEstimate);
+        abstractEstimate.setEstimateDate(new Date());
         loadViewData(model, abstractEstimate, lineEstimateDetails);
 
         return "newAbstractEstimate-form";

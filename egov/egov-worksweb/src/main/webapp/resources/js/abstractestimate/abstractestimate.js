@@ -51,7 +51,6 @@ $(document).ready(function(){
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
-	getAbstractEstimateDate();
 	var workCategory = $('#workCategory').val();
 	if(workCategory != undefined && workCategory != '') {
 		$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
@@ -897,15 +896,6 @@ function validateQuantityInput(object) {
     }
 }
 
-
-function getAbstractEstimateDate() {
-	var dt = new Date(); 
-	var dd = dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate(); 
-	var mm = dt.getMonth() + 1;
-	var mm = mm < 10 ? "0" + mm : mm;
-	var yy = 1900 + dt.getYear();
-	jQuery('[name="estimateDate"]').val(dd+"/"+mm+"/"+yy);
-}
 
 function validateOverheads(){
 	var resultLength = jQuery('#overheadTable tr').length-1;
