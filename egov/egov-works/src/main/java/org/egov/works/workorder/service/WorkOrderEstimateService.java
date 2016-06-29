@@ -118,7 +118,6 @@ public class WorkOrderEstimateService {
 
         final List<String> workOrderNumbers = workOrderEstimateRepository.getCancelledWorkOrderNumbersByBillType(
                 ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
-        final List<String> workOrderNumbersBOQExists = workOrderEstimateRepository.findWorkOrderNumbersWhereBOQExists();
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderEstimate.class, "woe")
                 .createAlias("estimate", "e").createAlias("workOrder", "wo").createAlias("workOrder.contractor", "woc")
                 .createAlias("estimate.executingDepartment", "department").createAlias("workOrder.egwStatus", "status")
@@ -144,8 +143,6 @@ public class WorkOrderEstimateService {
                 criteria.add(Restrictions.eq("department.id", searchRequestLetterOfAcceptance.getDepartmentName()));
             if (!workOrderNumbers.isEmpty())
                 criteria.add(Restrictions.not(Restrictions.in("wo.workOrderNumber", workOrderNumbers)));
-            if (!workOrderNumbersBOQExists.isEmpty())
-                criteria.add(Restrictions.in("wo.workOrderNumber", workOrderNumbersBOQExists));
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
 

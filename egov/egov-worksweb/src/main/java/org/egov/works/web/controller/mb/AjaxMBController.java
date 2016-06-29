@@ -41,6 +41,7 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,10 +91,10 @@ public class AjaxMBController {
 
     @Autowired
     private SearchMBHeaderJsonAdaptor searchMBHeaderJsonAdaptor;
-    
+
     @Autowired
     private WorkOrderActivityService workOrderActivityService;
-    
+
     @Autowired
     private SearchWorkOrderActivityJsonAdaptor searchWorkOrderActivityJsonAdaptor;
 
@@ -102,8 +103,12 @@ public class AjaxMBController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
                 .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(workOrderEstimateList))
-                .append("}").toString();
+        final List<WorkOrderEstimate> resultList = new ArrayList<WorkOrderEstimate>();
+        for (final WorkOrderEstimate WorkOrderEstimate : workOrderEstimateList)
+            if (WorkOrderEstimate != null && !WorkOrderEstimate.getWorkOrderActivities().isEmpty())
+                resultList.add(WorkOrderEstimate);
+        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(resultList)).append("}")
+                .toString();
         return result;
     }
 
@@ -167,21 +172,23 @@ public class AjaxMBController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/measurementbook/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchWorkOrderActivities(final HttpServletRequest request) {
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
-        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService.searchActivities(workOrderEstimateId, description, itemCode);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}")
-                .toString();
+        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
+                .searchActivities(workOrderEstimateId, description, itemCode);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();
         return result;
     }
 
     public Object toSearchWorkOrderActivityResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderActivity.class, searchWorkOrderActivityJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderActivity.class, searchWorkOrderActivityJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }

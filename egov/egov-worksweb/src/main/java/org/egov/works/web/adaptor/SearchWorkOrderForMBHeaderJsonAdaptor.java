@@ -42,7 +42,6 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.stereotype.Component;
 
@@ -55,8 +54,8 @@ import com.google.gson.JsonSerializer;
 public class SearchWorkOrderForMBHeaderJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
 
     @Override
-    public JsonElement serialize(WorkOrderEstimate workOrderEstimate, Type typeOfSrc,
-            JsonSerializationContext context) {
+    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type typeOfSrc,
+            final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         jsonObject.addProperty("workOrderDate", sdf.format(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
