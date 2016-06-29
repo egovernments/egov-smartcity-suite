@@ -1,0 +1,1 @@
+SELECT setval('"seq_eg_uomcategory"',(SELECT MAX(ID) FROM eg_uomcategory ));
