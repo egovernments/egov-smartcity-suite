@@ -44,7 +44,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 	<div class="col-sm-3 add-margin">  
-		<form:input path="estimateNumber" name="estimateNumber" value="${abstractEstimate.estimateNumber}" type="text" class="form-control" readonly="true" /> 
+		<form:input path="estimateNumber" name="estimateNumber"  id = "estimateNumber" value="${abstractEstimate.estimateNumber}" type="text" class="form-control" disabled="true" /> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 	<div class="col-sm-3 add-margin">

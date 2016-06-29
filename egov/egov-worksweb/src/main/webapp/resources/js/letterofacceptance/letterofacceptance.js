@@ -83,6 +83,11 @@ $(document).ready(function(){
 		
 		if($('#tenderFinalizedPercentage').val() == 0) 
 			$('#tenderFinalizedPercentage').val('');
+		if($('#tenderFinalizedPercentage').val() < 0) {
+			$('#tenderFinalizedPercentage').val(Math.abs($('#tenderFinalizedPercentage').val()));
+			$('.number-sign button').html('<span class="sign-text">-</span> &nbsp;<span class="caret"></span>');
+			$('#percentageSign').val('-');
+		}
 		if($('#workOrderAmount').val() <= 0) 
 			$('#workOrderAmount').val('');
 		if($('#securityDeposit').val() <= 0) 
@@ -261,6 +266,8 @@ function validateWorkFlowApprover(name) {
 	}
 	
 	if(flag) {
+		$("#estimateNumber").removeAttr("disabled");
+		$("#workOrderDate").removeAttr("disabled");
 		document.forms[0].submit;
 		return true;
 	} else
