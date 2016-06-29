@@ -170,10 +170,11 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
                         "error.loa.exists.for.estimate");
         }
         validateInput(workOrder, resultBinder);
+        validateWorkOrderFileDate(workOrder, resultBinder, abstractEstimate);
 
         if (abstractEstimate != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag()
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated())
-            validateSpillOverInput(workOrder, resultBinder, abstractEstimate);
+            validateSpillOverInput(workOrder, resultBinder);
 
         if (resultBinder.hasErrors()) {
             loadViewData(model, abstractEstimate, workOrder, request);
@@ -331,13 +332,16 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     }
 
-    private void validateSpillOverInput(final WorkOrder workOrder, final BindingResult resultBinder,
-            final AbstractEstimate abstractEstimate) {
+    private void validateSpillOverInput(final WorkOrder workOrder, final BindingResult resultBinder) {
         if (StringUtils.isBlank(workOrder.getWorkOrderNumber()))
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.required");
         final WorkOrder wo = letterOfAcceptanceService.getWorkOrderByWorkOrderNumber(workOrder.getWorkOrderNumber());
         if (wo != null)
             resultBinder.rejectValue("workOrderNumber", "error.workordernumber.unique");
+    }
+
+    private void validateWorkOrderFileDate(final WorkOrder workOrder, final BindingResult resultBinder,
+            final AbstractEstimate abstractEstimate) {
         if (workOrder.getFileDate().before(abstractEstimate.getApprovedDate())) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             resultBinder.rejectValue("fileDate", "error.loa.filedate",
