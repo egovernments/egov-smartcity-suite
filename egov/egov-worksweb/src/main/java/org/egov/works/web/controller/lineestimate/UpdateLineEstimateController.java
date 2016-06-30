@@ -337,6 +337,13 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             if (checkLineEstimate != null)
                 errors.rejectValue("adminSanctionNumber", "error.adminsanctionnumber.unique");
         }
+        if (lineEstimate.getCouncilResolutionNumber() != null) {
+            final LineEstimate councilResolutionNumber = lineEstimateService
+                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
+            if (councilResolutionNumber != null)
+                errors.rejectValue("councilResolutionNumber",
+                        "error.councilresolutionnumber.unique");
+        }
     }
 
     private void setDropDownValues(final Model model) {
