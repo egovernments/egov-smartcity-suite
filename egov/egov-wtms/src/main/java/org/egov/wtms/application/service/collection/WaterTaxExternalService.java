@@ -52,8 +52,8 @@ import java.util.Map;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillAccountDetails;
-import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
@@ -102,7 +102,6 @@ import org.egov.wtms.masters.entity.WaterTaxDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -129,9 +128,6 @@ public class WaterTaxExternalService {
     private ConnectionDemandService connectionDemandService;
 
     @Autowired
-    private WaterTaxNumberGenerator waterTaxNumberGenerator;
-
-    @Autowired
     private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
@@ -148,7 +144,7 @@ public class WaterTaxExternalService {
 
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -161,8 +157,8 @@ public class WaterTaxExternalService {
                 .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
         WaterConnectionDetails waterConnectionDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
-                    .getApplicaionNumber());
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
@@ -176,16 +172,19 @@ public class WaterTaxExternalService {
         waterConnectionBillable.setUserId(2L);
         ApplicationThreadLocals.setUserId(2L);
         if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
-            currentInstallmentYear = formatYear.format(connectionDemandService.getCurrentInstallment(
-                    WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date()).getInstallmentYear());
+            currentInstallmentYear = formatYear.format(connectionDemandService
+                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
+                    .getInstallmentYear());
         else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType()))
-            currentInstallmentYear = formatYear.format(connectionDemandService.getCurrentInstallment(
-                    WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date()).getInstallmentYear());
+            currentInstallmentYear = formatYear.format(connectionDemandService
+                    .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date())
+                    .getInstallmentYear());
         else if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus())
                 && ConnectionType.METERED.equals(waterConnectionDetails.getConnectionType()))
-            currentInstallmentYear = formatYear.format(connectionDemandService.getCurrentInstallment(
-                    WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date()).getInstallmentYear());
+            currentInstallmentYear = formatYear.format(connectionDemandService
+                    .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY, new Date())
+                    .getInstallmentYear());
         waterConnectionBillable.setReferenceNumber(billRefeNumber.generateBillNumber(currentInstallmentYear));
         waterConnectionBillable.setBillType(connectionDemandService.getBillTypeByCode(BILLTYPE_MANUAL));
         waterConnectionBillable.setTransanctionReferenceNumber(payWaterTaxDetails.getTransactionId());
@@ -219,8 +218,8 @@ public class WaterTaxExternalService {
         WaterConnectionDetails waterConnectionDetails = null;
         ErrorDetails errorDetails = null;
         if (payWaterTaxDetails.getApplicaionNumber() != null && !"".equals(payWaterTaxDetails.getApplicaionNumber()))
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(payWaterTaxDetails
-                    .getApplicaionNumber());
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumber(payWaterTaxDetails.getApplicaionNumber());
         else if (payWaterTaxDetails.getConsumerNo() != null)
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(
                     payWaterTaxDetails.getConsumerNo(), ConnectionStatus.ACTIVE);
@@ -228,8 +227,8 @@ public class WaterTaxExternalService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(WaterTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
             errorDetails.setErrorMessage(WaterTaxConstants.WTAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX
-                    + (payWaterTaxDetails.getConsumerNo() != null ? payWaterTaxDetails.getConsumerNo() : payWaterTaxDetails
-                            .getApplicaionNumber())
+                    + (payWaterTaxDetails.getConsumerNo() != null ? payWaterTaxDetails.getConsumerNo()
+                            : payWaterTaxDetails.getApplicaionNumber())
                     + WaterTaxConstants.WTAXDETAILS_NOT_EXIST_ERR_MSG_SUFFIX);
             waterTaxDetails.setErrorDetails(errorDetails);
         } else {
@@ -240,14 +239,14 @@ public class WaterTaxExternalService {
             waterTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
 
             final List<PropertyOwnerInfo> propOwnerInfos = basicProperty.getPropertyOwnerInfo();
-            if (propOwnerInfos.size() > 0)
-            {
+            if (propOwnerInfos.size() > 0) {
                 waterTaxDetails.setOwnerName(propOwnerInfos.get(0).getOwner().getName());
                 waterTaxDetails.setMobileNo(propOwnerInfos.get(0).getOwner().getMobileNumber());
             }
 
-            final List<Object> list = ptDemandDAO.getTaxDetailsForWaterConnection(waterConnectionDetails.getConnection()
-                    .getConsumerCode(), waterConnectionDetails.getConnectionType().name());
+            final List<Object> list = ptDemandDAO.getTaxDetailsForWaterConnection(
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    waterConnectionDetails.getConnectionType().name());
             if (list.size() > 0)
                 waterTaxDetails.setTaxDetails(new ArrayList<RestPropertyTaxDetails>(0));
             String loopInstallment = "";
@@ -263,14 +262,12 @@ public class WaterTaxExternalService {
                 final Double col = (Double) data[3];
                 final BigDecimal demand = BigDecimal.valueOf(dmd.intValue());
                 final BigDecimal collection = BigDecimal.valueOf(col.doubleValue());
-                if (loopInstallment.isEmpty())
-                {
+                if (loopInstallment.isEmpty()) {
                     loopInstallment = installment;
                     arrearDetails = new RestPropertyTaxDetails();
                     arrearDetails.setInstallment(installment);
                 }
-                if (loopInstallment.equals(installment))
-                {
+                if (loopInstallment.equals(installment)) {
 
                     if (PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES.equalsIgnoreCase(taxType))
                         arrearDetails.setPenalty(demand.subtract(collection));
@@ -279,11 +276,11 @@ public class WaterTaxExternalService {
                     else
                         total = total.add(demand.subtract(collection));
 
-                } else
-                {
+                } else {
 
                     arrearDetails.setTaxAmount(total);
-                    arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
+                    arrearDetails.setTotalAmount(
+                            total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
                     waterTaxDetails.getTaxDetails().add(arrearDetails);
                     loopInstallment = installment;
                     arrearDetails = new RestPropertyTaxDetails();
@@ -299,10 +296,10 @@ public class WaterTaxExternalService {
                 }
 
             }
-            if (arrearDetails != null)
-            {
+            if (arrearDetails != null) {
                 arrearDetails.setTaxAmount(total);
-                arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
+                arrearDetails
+                        .setTotalAmount(total.add(arrearDetails.getPenalty()).add(arrearDetails.getChqBouncePenalty()));
                 waterTaxDetails.getTaxDetails().add(arrearDetails);
             }
 
@@ -353,8 +350,9 @@ public class WaterTaxExternalService {
     }
 
     /**
-     * Apportions the paid amount amongst the appropriate GL codes and returns the collections object that can be sent to the
-     * collections API for processing.
+     * Apportions the paid amount amongst the appropriate GL codes and returns
+     * the collections object that can be sent to the collections API for
+     * processing.
      *
      * @param bill
      * @param amountPaid
@@ -367,7 +365,7 @@ public class WaterTaxExternalService {
         final ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
         Collections.sort(billDetails);
-        final CFinancialYear finYear= financialYearDAO.getFinancialYearByDate(new Date());
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
         for (final EgBillDetails billDet : billDetails)
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
@@ -381,18 +379,29 @@ public class WaterTaxExternalService {
                 if (billDet.getGlcode().equals(rd.getAccounthead().getGlcode())
                         && billDet.getDescription().equals(rd.getDescription())) {
                     isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
+                    BillAccountDetails billAccDetails;
                     if (billDet.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
-                        billDet.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
-                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getToDate().compareTo(finYear.getStartingDate())<0)
-                        billDet.setPurpose(PURPOSE.ARREAR_AMOUNT.toString());
-                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate().compareTo(finYear.getStartingDate())>=0 && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate().compareTo(finYear.getEndingDate())<0 )
-                        billDet.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
+                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
+                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
+                                isActualDemand, PURPOSE.ADVANCE_AMOUNT);
+                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                            .compareTo(finYear.getStartingDate()) < 0)
+                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
+                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
+                                isActualDemand, PURPOSE.ARREAR_AMOUNT);
+                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                            .compareTo(finYear.getStartingDate()) >= 0
+                            && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                                    .compareTo(finYear.getEndingDate()) < 0)
+                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
+                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
+                                isActualDemand, PURPOSE.CURRENT_AMOUNT);
                     else
-                        billDet.setPurpose(PURPOSE.OTHERS.toString());
-                    final BillAccountDetails billAccDetails = new BillAccountDetails(billDet.getGlcode(),
-                            billDet.getOrderNo(), rd.getCramount(), rd.getDramount(),
-                            billDet.getFunctionCode(), billDet.getDescription(), isActualDemand, PURPOSE.OTHERS);
+                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
+                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
+                                isActualDemand, PURPOSE.OTHERS);
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
+
                     break;
                 }
         billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
@@ -472,11 +481,10 @@ public class WaterTaxExternalService {
         final Map<String, String> paymentDetailsMap = new HashMap<String, String>(0);
         paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payWaterTaxDetails.getPaymentAmount().toString());
         paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, payWaterTaxDetails.getPaidBy());
-        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode()
-                .toLowerCase())
-                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payWaterTaxDetails.getPaymentMode()
-                        .toLowerCase()))
-        {
+        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE
+                .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase())
+                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD
+                        .equalsIgnoreCase(payWaterTaxDetails.getPaymentMode().toLowerCase())) {
             paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payWaterTaxDetails.getChqddNo());
             paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE, payWaterTaxDetails.getChqddDate());
             paymentDetailsMap.put(ChequePayment.BRANCHNAME, payWaterTaxDetails.getBranchName());

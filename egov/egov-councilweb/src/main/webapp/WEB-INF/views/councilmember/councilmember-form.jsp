@@ -156,8 +156,28 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.photo" /> </span> </label>
 						<div class="col-sm-3 add-margin">
+						<c:choose>
+							<c:when test="${councilMember.photo != null}">
+							
 							<input type="file" id="attachments" name="attachments" data-id="1"	class="filechange inline btn" 	 />
-							<form:errors path="attachments" cssClass="error-msg" />
+									<form:errors path="attachments" cssClass="error-msg" />
+							
+							<form:hidden path="photo.id"	value="${councilMember.photo.id}" />
+					    	<form:hidden path="photo.fileStoreId"	value="${councilMember.photo.fileStoreId}" />
+									
+							<a href="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
+												data-gallery> <img class="img-width add-margin"  style="max-width: 25%; max-height: 25%;"
+												src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}" alt="councilMember.photo.fileName"/></a>
+							 
+							</a>
+						
+							</c:when>
+							<c:otherwise>
+								<input type="file" id="attachments" name="attachments" data-id="1"	class="filechange inline btn" 	 />
+									<form:errors path="attachments" cssClass="error-msg" />
+							</c:otherwise>
+						</c:choose>
+							
 						</div>
 					</div> 
 				</div>
