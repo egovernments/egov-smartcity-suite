@@ -42,10 +42,17 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<style>
+      .position_alert{
+        position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+    </style>
 <form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mBHeader" id="mBHeader" class="form-horizontal form-groups-bordered">
-
-<div class="new-page-header"><spring:message code="title.viewmbheader" /></div> 
+<div class="position_alert">
+			<spring:message code="lbl.tender.finalized.percentage" /> : <span><c:out value="${mBHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
+			<spring:message code="lbl.mbamount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mBHeader.mbAmount}"/></fmt:formatNumber>
+		</div>
+<div class="new-page-header"><spring:message code="title.viewmbheader" /></div>  
 	<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active">
@@ -66,3 +73,4 @@
 			</div>
 		</div>
 </form:form>
+<script src="<c:url value='/resources/js/mb/viewmeasurementbook.js?rnd=${app_release_no}'/>"></script>

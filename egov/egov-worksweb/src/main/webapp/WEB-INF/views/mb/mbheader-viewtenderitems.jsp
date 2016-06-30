@@ -39,124 +39,155 @@
   --%>
 
 <div class="panel panel-primary" data-collapsed="0"
-			style="text-align: left">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="title.mb.details" />
-				</div>
-			</div>
-		
-<!-- <div class="panel panel-primary" data-collapsed="0"> -->
-	<!-- <div class="panel-body"> -->
+	style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="title.mb.details" />
+		</div>
+	</div>
+	<p align="right">
+		<spring:message code="lbl.pagetotal" />
+		: <span class="text-right" id="pageTotal"></span>
+	</p>
 	<c:choose>
 		<c:when test="${mBHeader.mbDetails.size() != 0}">
-		<c:forEach items="${mBHeader.getMbDetails()}" var="mbsordetails" varStatus="item">
-		<c:choose>
-		<c:when test="${mbsordetails.workOrderActivity.activity.schedule != null }">
-		<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-body"> 
-		<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.sor" />
-				</div>
-			</div>
-		<table class="table table-bordered" id="tblsor">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slNo" /></th>
-					<th><spring:message code="lbl.sor.category" /></th>
-					<th><spring:message code="lbl.sorcode" /></th>
-					<th><spring:message code="lbl.description.item" /></th>
-					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.approved.quantity" /></th>
-					<th><spring:message code="lbl.approved.rate" /></th>
-					<th><spring:message code="lbl.cumulative.previous.entry" /></th>
-					<th><spring:message code="lbl.current.entry" /></th>
-					<th><spring:message	code="lbl.cumulative.quantity.current.entry" /></th>
-					<th><spring:message code="lbl.amount.current.entry" /></th>
-					<th><spring:message code="lbl.cumulative.amount.current.entry" /></th>
-					<th><spring:message code="lbl.approved.amount" /></th>
-					<th><spring:message code="lbl.remarks" /></th>
-				</tr>
-			</thead>
-			<tbody>
-						<tr >
-							<c:set var="slNo" value="${0}" scope="session" />
-							<c:set var="slNo" value="${item.index + 1}" />  
-							<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.activity.schedule.scheduleCategory.code}"></c:out></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.activity.schedule.code}"></c:out></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.activity.schedule.description}"></c:out></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.activity.uom.uom}"></c:out></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.approvedQuantity}"/></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.activity.estimateRate}"/></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.prevCumlvQuantity}"/></td>
-							<td><c:out value="${mbsordetails.quantity}"/></td> 
-							<td><c:out value="${mbsordetails.workOrderActivity.prevCumlvQuantity + mbsordetails.quantity}"/></td> 
-							<td></td>
-							<td></td>
-							<td><c:out value="${mbsordetails.workOrderActivity.approvedAmount}"/></td>
-							<td><c:out value="${mbsordetails.remarks}"/></td>
-						</tr>
-			</tbody>
-			<tfoot>
-			<c:set var="total" value="${0}" scope="session" />
-			</tfoot>
-		</table>
-		</div>
-		</div>
+			<c:forEach items="${mBHeader.getMbDetails()}" var="mbdetails" varStatus="item">
+				<c:choose>
+					<c:when
+						test="${mbdetails.workOrderActivity.activity.schedule != null }">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.sor" />
+									</div>
+								</div>
+								<table class="table table-bordered" id="tblsor">
+									<thead>
+										<tr>
+											<th><spring:message code="lbl.slNo" /></th>
+											<th><spring:message code="lbl.sor.category" /></th>
+											<th><spring:message code="lbl.sorcode" /></th>
+											<th><spring:message code="lbl.description.item" /></th>
+											<th><spring:message code="lbl.uom" /></th>
+											<th><spring:message code="lbl.approved.quantity" /></th>
+											<th><spring:message code="lbl.approved.rate" /></th>
+											<th><spring:message code="lbl.cumulative.previous.entry" /></th>
+											<th><spring:message code="lbl.current.entry" /></th>
+											<th><spring:message code="lbl.cumulative.quantity.current.entry" /></th>
+											<th><spring:message code="lbl.amount.current.entry" /></th>
+											<th><spring:message code="lbl.cumulative.amount.current.entry" /></th>
+											<th><spring:message code="lbl.approved.amount" /></th>
+											<th><spring:message code="lbl.remarks" /></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<c:set var="slNo" value="${1}" scope="session" />
+											<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+											<input type="hidden" name="unitrate" id="unitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
+											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.scheduleCategory.code}"></c:out></td>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.code}"></c:out></td>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.summary}"></c:out>
+												<a href="#" class="hintanchor"	title="'+ <c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out> +'"><i
+													class="fa fa-question-circle" aria-hidden="true"></i></a></td>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
+											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
+											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
+											<td><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
+											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
+											<td><c:out value="${mbdetails.quantity}" /></td>
+											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
+											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<input type="hidden" name="cumulativeQuantitycurrEnrty" id="cumulativeQuantitycurrEnrty"
+												value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" />
+											<td class="text-right"><span id="amountCurrentEntry"></span></td>
+											<td class="text-right"><span id="cumulativeAmountCurrentEntry"></span></td>
+											<td class="text-right"><span id="approvedAmount"></span></td>
+											<td><c:out value="${mbdetails.remarks}" /></td>
+											<s:set value="%{#slNo + 1}" var="count" />
+										</tr>
+									</tbody>
+									<tfoot>
+									<tfoot>
+										<tr>
+											<td colspan="11" class="text-right"><spring:message code="lbl.total" /></td>
+											<td class="text-right"><span data-pattern="decimalvalue"
+												id="sorTotal"></span></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message code="lbl.nonsor" />
+									</div>
+								</div>
+								<table class="table table-bordered" id="tblnonsor">
+									<thead>
+										<tr>
+											<th><spring:message code="lbl.slNo" /></th>
+											<th><spring:message code="lbl.description.item" /></th>
+											<th><spring:message code="lbl.uom" /></th>
+											<th><spring:message code="lbl.approved.quantity" /></th>
+											<th><spring:message code="lbl.approved.rate" /></th>
+											<th><spring:message code="lbl.cumulative.previous.entry" /></th>
+											<th><spring:message code="lbl.current.entry" /></th>
+											<th><spring:message code="lbl.cumulative.quantity.current.entry" /></th>
+											<th><spring:message code="lbl.amount.current.entry" /></th>
+											<th><spring:message code="lbl.cumulative.amount.current.entry" /></th>
+											<th><spring:message code="lbl.approved.amount" /></th>
+											<th><spring:message code="lbl.remarks" /></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<c:set var="slNo" value="${1}" scope="session" />
+											<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+											<input type="hidden" name="nonSorUnitrate" id="nonSorUnitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
+											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.summary}"></c:out>
+												<a href="#" class="hintanchor"
+												title="'+ <c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out> +'"><i
+													class="fa fa-question-circle" aria-hidden="true"></i></a></td>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
+											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
+											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
+											<td><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
+											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
+											<td><c:out value="${mbdetails.quantity}" /></td>
+											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />
+											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<input type="hidden" name="nonSorCumulativeQuantityCurrEnrty" id="nonSorCumulativeQuantityCurrEnrty"
+												value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" />
+											<td class="text-right"><span id="nonSorAmountCurrentEntry"></span></td>
+											<td class="text-right"><span id="nonSorCumulativeAmountCurrentEntry"></span></td>
+											<td class="text-right"><span id="nonSorApprovedAmount"></span></td>
+											<td><c:out value="${mbdetails.remarks}" /></td>
+											<s:set value="%{#slNo + 1}" var="count" />
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
+											<td class="text-right"><span data-pattern="decimalvalue"
+												id="nonSorTotal"></span></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
+			</c:forEach>
 		</c:when>
-		<c:otherwise>
-		<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-body"> 
-		<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.nonsor" />
-				</div>
-			</div>
-		<table class="table table-bordered" id="tblnonsor">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slNo" /></th>
-					<th><spring:message code="lbl.description.item" /></th>
-					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.approved.quantity" /></th>
-					<th><spring:message code="lbl.approved.rate" /></th>
-					<th><spring:message code="lbl.cumulative.previous.entry" /></th>
-					<th><spring:message code="lbl.current.entry" /></th>
-					<th><spring:message	code="lbl.cumulative.quantity.current.entry" /></th>
-					<th><spring:message code="lbl.amount.current.entry" /></th>
-					<th><spring:message code="lbl.cumulative.amount.current.entry" /></th>
-					<th><spring:message code="lbl.approved.amount" /></th>
-					<th><spring:message code="lbl.remarks" /></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr >
-				<c:set var="slNo" value="${0}" scope="session" />
-				<c:set var="slNo" value="${item.index + 1}" />  
-				<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.activity.schedule.description}"></c:out></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.activity.uom.uom}"></c:out></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.approvedQuantity}"/></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.activity.estimateRate}"/></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.prevCumlvQuantity}"/></td>
-				<td><c:out value="${mbsordetails.quantity}"/></td> 
-				<td><c:out value="${mbsordetails.workOrderActivity.prevCumlvQuantity + mbsordetails.quantity}"/></td> 
-				<td></td>
-				<td></td>
-				<td><c:out value="${mbsordetails.workOrderActivity.approvedAmount}"/></td>
-				<td><c:out value="${mbsordetails.remarks}"/></td>
-				</tr>
-				</tbody>
-				</table>
-				</div>
-				</div>
-		</c:otherwise>
-		</c:choose>
-		</c:forEach>
-		</c:when>
-		</c:choose>
-	<!-- </div> -->
-<!-- </div> -->
+	</c:choose>
 </div>
