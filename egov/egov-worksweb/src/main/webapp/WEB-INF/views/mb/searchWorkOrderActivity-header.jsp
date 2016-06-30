@@ -49,7 +49,7 @@
 	<div class="panel-body">
 		<div class="col-md-12 text-left">
 			<spring:message code="lbl.workordernumber" />: ${workOrderNo }
-		</div>
+		</div><br /><br />
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.item.code" /></label>
 			<div class="col-sm-3 add-margin">
@@ -58,6 +58,18 @@
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description.item" /></label>
 			<div class="col-sm-3 add-margin">
 				<input name="description" id="description" class="form-control"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sor.nonsor.type" /></label>
+			<div class="col-sm-3 add-margin">
+				<select name="sorType" data-first-option="false" id="sorType" class="form-control">
+					<option value="">
+						<spring:message code="lbl.select" />
+					</option>
+					<option value="SOR">SOR</option>
+					<option value="Non SOR">Non SOR</option>
+				</select>
 			</div>
 		</div>
 	</div>

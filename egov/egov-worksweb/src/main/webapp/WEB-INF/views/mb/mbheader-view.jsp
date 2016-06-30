@@ -53,12 +53,14 @@
         background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
       }
     </style>
-<form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mBHeader" id="mBHeader" class="form-horizontal form-groups-bordered">
+<form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mbHeader" id="mbHeader" class="form-horizontal form-groups-bordered">
+<input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
+<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 <div class="position_alert1">
-	<spring:message code="lbl.tender.finalizedperc" /> : <span><c:out value="${mBHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
+	<spring:message code="lbl.tender.finalizedperc" /> : <span><c:out value="${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
 	</div>
 	<div class="position_alert2">
-		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mBHeader.mbAmount}"/></fmt:formatNumber>
+		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbHeader.mbAmount}"/></fmt:formatNumber>
 	</div>
 <div class="new-page-header"><spring:message code="title.viewmbheader" /></div>  
 	<div class="panel-heading">
@@ -79,6 +81,34 @@
 			<div class="tab-pane" id="tenderitems">
 				<%@ include file="mbheader-viewtenderitems.jsp"%>
 			</div>
+			<div class="text-center">
+				<c:choose>
+					<c:when test="${mode == 'workflowView' }">
+						<c:if test="${!workflowHistory.isEmpty()}">
+							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<spring:message  code="lbl.apphistory"/>
+									</div>
+								</div>
+								<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+							</div>
+						</c:if>
+						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+						<div class="buttonbottom" align="center">
+							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+						</div>
+					</c:when>
+					<c:otherwise>
+	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</c:otherwise>
+				</c:choose>
+            </div>
 		</div>
 </form:form>
 <script src="<c:url value='/resources/js/mb/viewmeasurementbook.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<c:if test="${mode == 'edit' || mode == 'workflowView' }">
+	<script type="text/javascript"
+	src="<c:url value='/resources/js/mb/mbformsubmit.js?rnd=${app_release_no}'/>"></script>
+</c:if>

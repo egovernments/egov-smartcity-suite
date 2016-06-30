@@ -39,13 +39,19 @@
  */
 package org.egov.works.web.controller.mb;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,13 +61,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/workorder/searchform")
-public class SearchWorkOrderForMBHeaderController {
+public class SearchWorkOrderForMBHeaderController  extends GenericWorkFlowController{
 
     @Autowired
     private LineEstimateService lineEstimateService;
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
@@ -71,10 +80,20 @@ public class SearchWorkOrderForMBHeaderController {
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
-        final List<String> validActionList = new ArrayList<String>();
-        validActionList.add("Save");
-        validActionList.add("Forward");
-        model.addAttribute("validActionList", validActionList);
+        final MBHeader mbHeader = new MBHeader();
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        prepareWorkflow(model, mbHeader, workflowContainer);
+        List<String> validActions = Collections.emptyList();
+        validActions = customizedWorkFlowService.getNextValidActions(mbHeader.getStateType(),
+                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                mbHeader.getCreatedDate());
+        model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
+        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null)
+            model.addAttribute("nextAction", mbHeader.getState().getNextAction());
+        model.addAttribute("validActionList", validActions);
+        model.addAttribute("currentDate", new Date());
+        model.addAttribute("mbHeader", mbHeader);
         return "workorder-search";
     }
 

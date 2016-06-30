@@ -43,14 +43,9 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
-
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.mb.entity.MBHeader;
-import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -61,30 +56,11 @@ import com.google.gson.JsonSerializer;
 @Component
 public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
 
-    @Autowired
-    private MBHeaderService mbHeaderService;
-
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         final DecimalFormat df = new DecimalFormat("0.00");
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         if (workOrderEstimate != null) {
-            final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByWorkOrderEstimate(workOrderEstimate);
-            if (mbHeaders.size() > 0) {
-                final MBHeader mbHeader = mbHeaders.get(mbHeaders.size() - 1);
-
-                if (mbHeader != null) {
-                    jsonObject.addProperty("id", mbHeader.getId());
-                    jsonObject.addProperty("mbRefNo", mbHeader.getMbRefNo());
-                    jsonObject.addProperty("mbDate", sdf.format(mbHeader.getMbDate()));
-                    jsonObject.addProperty("fromPageNo", mbHeader.getFromPageNo());
-                    jsonObject.addProperty("toPageNo", mbHeader.getToPageNo());
-                    jsonObject.addProperty("contractorComments", mbHeader.getContractorComments());
-                    jsonObject.addProperty("mbAbstract", mbHeader.getMbAbstract());
-                }
-            }
-
             if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null) {
                 final AbstractEstimate estimate = workOrderEstimate.getEstimate();
                 jsonObject.addProperty("estimateNumber", estimate.getEstimateNumber());

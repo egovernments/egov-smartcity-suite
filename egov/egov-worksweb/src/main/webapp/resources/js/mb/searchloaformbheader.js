@@ -241,14 +241,14 @@ var workIdentificationNumber_typeahead = $('#workIdentificationNumber').typeahea
 });
 
 $('#btncreatemb').click(function(e) {
-	var workOrderId = $('input[name=selectCheckbox]:checked').val();
-	if(workOrderId == null) {
+	var workOrderEstimateId = $('input[name=selectCheckbox]:checked').val();
+	if(workOrderEstimateId == null) {
 		bootbox.alert("Please select atleast one work order to create Measurement book");
 	}
 	else {
 		$.ajax({
 			type: "GET",
-			url: "/egworks/workorder/validatemb/"+workOrderId,
+			url: "/egworks/workorder/validatemb/"+workOrderEstimateId,
 			cache: true,
 		}).done(function(value) {
 			if(value == '') {
@@ -257,22 +257,25 @@ $('#btncreatemb').click(function(e) {
 				$('.loader-class').modal('show', {backdrop: 'static'});
 				$.ajax({
 					type: "GET",
-					url: "/egworks/measurementbook/create/" + workOrderId,
+					url: "/egworks/measurementbook/create/" + workOrderEstimateId,
 					cache: true,
 					dataType: "json"
 				}).done(function(json) {
 					json = $.parseJSON(json);
 					console.log(json);
 					$.each(json, function(key, value){
-						if(key == "mbDate") {
-							$('#mbDate').val(value);
-							$('#mbDate').datepicker().off('changeDate');
-						}
+						if(key == "tenderFinalisedPercentage") {
+							if(value >= 0)
+								$('#tenderFinalisedPercentage').html('+' + value);
+							else
+								$('#tenderFinalisedPercentage').html(value);
+						} else if(key == 'estimateNumber' || key == 'nameOfWork' || key == 'projectCode' ||
+							key == 'workOrderNumber' || key == 'contractorName' || key == 'workOrderAssignedTo')
+							$('#' + key).html(value);
 						else
 							$('#' + key).val(value);
 					});
 				});
-//				$('#searchRequestLetterOfAcceptance').attr('hidden', 'true');
 				$('.title2').html('Create Measurement Book');
 				$('#measurementBookDiv').removeAttr('hidden');
 				$('.loader-class').modal('hide');

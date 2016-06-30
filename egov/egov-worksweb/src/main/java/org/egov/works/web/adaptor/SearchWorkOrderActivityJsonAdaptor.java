@@ -41,8 +41,12 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -52,6 +56,9 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOrderActivity> {
+    
+    @Autowired
+    private MBHeaderService mbHeaderService;
 
     @Override
     public JsonElement serialize(final WorkOrderActivity workOrderActivity, final Type typeOfSrc,
@@ -71,7 +78,7 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
                 jsonObject.addProperty("description", "");
                 jsonObject.addProperty("summary", "");
             }
-            jsonObject.addProperty("sorNonSorType", "NON SOR");
+            jsonObject.addProperty("sorNonSorType", "Non SOR");
             jsonObject.addProperty("sorCode", "");
             jsonObject.addProperty("categoryType", "");
         }
@@ -80,12 +87,21 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
         else
             jsonObject.addProperty("uom", "");
         jsonObject.addProperty("approvedQuantity", workOrderActivity.getApprovedQuantity());
+        jsonObject.addProperty("estimateRate", workOrderActivity.getActivity().getEstimateRate());
         jsonObject.addProperty("approvedRate", workOrderActivity.getApprovedRate());
         jsonObject.addProperty("approvedAmount", workOrderActivity.getApprovedAmount());
+        jsonObject.addProperty("activityAmount", workOrderActivity.getActivity().getAmount().getValue());
         jsonObject.addProperty("unitRate", workOrderActivity.getActivity().getRate());
         jsonObject.addProperty("conversionFactor", workOrderActivity.getActivity().getConversionFactor());
-        // TODO replace with cumulative upto previous entry
-        jsonObject.addProperty("cumulativePreviousEntry", workOrderActivity.getApprovedQuantity());
+        final List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByWorkOrder(workOrderActivity.getWorkOrderEstimate().getWorkOrder());
+        Double cumulativePreviousEntry = 0.0;
+        if(!mbHeaders.isEmpty())
+            cumulativePreviousEntry = mbHeaderService.getPreviousCumulativeQuantity(mbHeaders.get(mbHeaders.size() - 1).getId(), workOrderActivity.getId());
+        
+        if(cumulativePreviousEntry == null)
+            jsonObject.addProperty("cumulativePreviousEntry", 0);
+        else
+            jsonObject.addProperty("cumulativePreviousEntry", cumulativePreviousEntry);
 
         jsonObject.addProperty("id", workOrderActivity.getId());
         return jsonObject;

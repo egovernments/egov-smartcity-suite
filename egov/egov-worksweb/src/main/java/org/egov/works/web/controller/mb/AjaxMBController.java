@@ -120,12 +120,12 @@ public class AjaxMBController {
         return json;
     }
 
-    @RequestMapping(value = "/workorder/validatemb/{workOrderId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderId,
+    @RequestMapping(value = "/workorder/validatemb/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
-        mBHeaderService.validateMBInDrafts(workOrderId, jsonObject);
-        mBHeaderService.validateMBInWorkFlow(workOrderId, jsonObject);
+        mBHeaderService.validateMBInDrafts(workOrderEstimateId, jsonObject);
+        mBHeaderService.validateMBInWorkFlow(workOrderEstimateId, jsonObject);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";
@@ -178,10 +178,42 @@ public class AjaxMBController {
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
-        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .searchActivities(workOrderEstimateId, description, itemCode);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();
+        final String sorType = request.getParameter("sorType");
+        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService.searchActivities(workOrderEstimateId,
+                description, itemCode, sorType);
+        final List<WorkOrderActivity> activities = new ArrayList<WorkOrderActivity>();
+        if (description != null && !description.equals("")) {
+            for (final WorkOrderActivity woa : workOrderActivities) {
+                if ((woa.getActivity().getSchedule() != null
+                        && woa.getActivity().getSchedule().getDescription().toLowerCase().contains(description.toLowerCase())) ||
+                        woa.getActivity().getNonSor() != null && woa.getActivity().getNonSor().getDescription().toLowerCase()
+                                .contains(description.toLowerCase()))
+                    activities.add(woa);
+            }
+        }
+
+        if (!activities.isEmpty()) {
+            workOrderActivities.clear();
+            workOrderActivities.addAll(activities);
+        }
+
+        if (itemCode != null && !itemCode.equals("")) {
+            activities.clear();
+            for (final WorkOrderActivity woa : workOrderActivities) {
+                if (woa.getActivity().getSchedule() != null
+                        && woa.getActivity().getSchedule().getCode().toLowerCase().contains(itemCode.toLowerCase()))
+                    activities.add(woa);
+            }
+        }
+
+        if (!activities.isEmpty()) {
+            workOrderActivities.clear();
+            workOrderActivities.addAll(activities);
+        }
+
+        final String result = new StringBuilder("{ \"data\":").append(toSearchWorkOrderActivityResultJson(workOrderActivities))
+                .append("}")
+                .toString();
         return result;
     }
 

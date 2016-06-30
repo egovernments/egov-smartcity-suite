@@ -47,8 +47,8 @@
 		</div>
 	</div>
 	<c:choose>
-		<c:when test="${mBHeader.mbDetails.size() != 0}">
-			<c:forEach items="${mBHeader.getMbDetails()}" var="mbdetails" varStatus="item">
+		<c:when test="${mbHeader.mbDetails.size() != 0}">
+			<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
 				<c:choose>
 					<c:when
 						test="${mbdetails.workOrderActivity.activity.schedule != null }">

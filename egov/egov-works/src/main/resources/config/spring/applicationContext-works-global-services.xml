@@ -96,10 +96,16 @@
     <bean id="ContractorBillRegisterInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="ContractorBillRegisterPersistenceService"/>
     </bean>
-     <bean id="WorkOrderPersistenceService" parent="persistenceService">
+    <bean id="WorkOrderPersistenceService" parent="persistenceService">
         <property name="type" value="org.egov.works.workorder.entity.WorkOrder" />
     </bean>
     <bean id="WorkOrderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="WorkOrderPersistenceService"/>
+    </bean>
+    <bean id="MBHeaderPersistenceService" parent="persistenceService">
+        <property name="type" value="org.egov.works.mb.entity.MBHeader" />
+    </bean>
+    <bean id="MBHeaderInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="MBHeaderPersistenceService"/>
     </bean>
 </beans>

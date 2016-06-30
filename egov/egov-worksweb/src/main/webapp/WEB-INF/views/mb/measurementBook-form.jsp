@@ -47,19 +47,29 @@
       .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
+      .position_alert1{
+        position:absolute;top:15px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;width:215px;
+      }
+      .position_alert2{
+        position:absolute;top:15px;right:240px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+      .position_alert3{
+        background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
+      }
     </style>
-<form name="mbHeader" role="form" action="" method="post" id="mbHeader"
+<form:form modelAttribute="mbHeader" name="mbHeader" role="form" action="" method="post" id="mbHeader"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	
-	<input type="hidden" name="id" id="id">
-	<input type="hidden" name="workOrder.id" id="workOrderId">
-	<input type="hidden" name="workOrderEstimate.id" id="workOrderEstimateId">
-	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="" class="form-control table-input hidden-input"/>
+	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
+	<form:input path="workOrder.id" type="hidden" id="workOrderId" value="${mbHeader.workOrderEstimate.workOrder.id }" />
+	<form:input path="workOrderEstimate.id" type="hidden" id="workOrderEstimateId" value="${mbHeader.workOrderEstimate.id }" />
+	<input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
+	<input type="hidden" id="errorsornonsor" value="<spring:message code='error.mb.sor.nonsor.required' />">
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	
-	<div class="panel-title text-center" style="color: green;">
+	<div class="panel-title text-center" style="color: green;" id="successMessage">
 		<c:out value="${message}" /><br />
 	</div>
 	
@@ -67,14 +77,26 @@
 	</div>
 
 	<div class="main-content">
+		<div class="position_alert1">
+			<spring:message code="lbl.total.mbamount" /><span class="mandatory"></span> : &#8377 <span id="mbAmountSpan">${mbHeader.mbAmount }</span>
+			<form:hidden path="mbAmount" value="${mbHeader.mbAmount }" id="mbAmount" class="form-control"/>
+		</div>
+		<c:choose>
+			<c:when test="${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage >= 0 }">
+				<div class="position_alert2"><spring:message code="lbl.mb.finalised.tender" /> (&#37;) : <span id="tenderFinalisedPercentage"> +${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage }</span></div>
+			</c:when>
+			<c:otherwise>
+				<div class="position_alert2"><spring:message code="lbl.mb.finalised.tender" /> (&#37;) : <span id="tenderFinalisedPercentage"> ${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage }</span></div>
+			</c:otherwise>
+		</c:choose>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#mbheader"
 					data-tabidx=0><spring:message code="lbl.mbheader" /></a></li>
 				<li><a data-toggle="tab" href="#tenderedItems" data-tabidx=1><spring:message
 							code="lbl.tendered.items" /> </a></li>
-				<li><a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1><spring:message
-							code="lbl.nontendered.items" /> </a></li>
+				<%-- <li><a data-toggle="tab" href="#nonTenderedItems" data-tabidx=1><spring:message
+							code="lbl.nontendered.items" /> </a></li> --%>
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -85,9 +107,9 @@
 				<%@ include file="mb-sor.jsp"%>
 				<%@ include file="mb-nonsor.jsp"%>
 			</div>
-			<div class="tab-pane fade" id="nonTenderedItems">
+			<%-- <div class="tab-pane fade" id="nonTenderedItems">
 				<%@ include file="mb-nonTenderedItems.jsp"%>
-			</div>
+			</div> --%>
 			<c:if test="${!workflowHistory.isEmpty() && mode != null }">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
@@ -98,14 +120,18 @@
 					<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 				</div>
 			</c:if>
-			<%-- <jsp:include page="../common/commonWorkflowMatrix.jsp"/> --%>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</div>
 	</div>
-</form>
+</form:form>
 
 <script type="text/javascript"
 	src="<c:url value='/resources/js/mb/measurementbook.js?rnd=${app_release_no}'/>"></script>
 	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<c:if test="${mode == 'edit' || mode == 'workflowView' }">
+	<script type="text/javascript"
+	src="<c:url value='/resources/js/mb/mbformsubmit.js?rnd=${app_release_no}'/>"></script>
+</c:if>

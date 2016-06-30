@@ -38,9 +38,15 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
+
+$(document).ready(function(){
+	sorTotal();
+	nonSorTotal();
+});
+
 $('#searchAndAdd').click(function() {
 	var workOrderEstimateId = $('#workOrderEstimateId').val();
-	var workOrderNumber = $('#workOrderNumber').val();
+	var workOrderNumber = $('#workOrderNumber').html();
 	
 	window.open("/egworks/measurementbook/searchactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
@@ -95,19 +101,19 @@ function clearActivities(){
 	$('.sorMbDetailsId').each(function() {
 		if($(this).val() != "") {
 			var id = $(this).val();
-		    if(!$("#removedActivityIds").val()==""){
-				$("#removedActivityIds").val($("#removedActivityIds").val()+",");
+		    if(!$("#removedDetailIds").val()==""){
+				$("#removedDetailIds").val($("#removedDetailIds").val()+",");
 			}
-		    $("#removedActivityIds").val($("#removedActivityIds").val()+id);
+		    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
 		}
 	});
 	$('.nonSorMbDetailsId').each(function() {
 		if($(this).val() != "") {
 			var id = $(this).val();
-		    if(!$("#removedActivityIds").val()==""){
-				$("#removedActivityIds").val($("#removedActivityIds").val()+",");
+		    if(!$("#removedDetailIds").val()==""){
+				$("#removedDetailIds").val($("#removedDetailIds").val()+",");
 			}
-		    $("#removedActivityIds").val($("#removedActivityIds").val()+id);
+		    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
 		}
 	});
 	var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
@@ -174,7 +180,7 @@ function clearActivities(){
 	}
 	resetIndexes();
 	sorTotal();
-	NonSorTotal();
+	nonSorTotal();
 }
 
 function resetIndexes() {
@@ -182,7 +188,7 @@ function resetIndexes() {
 	
 	//regenerate index existing inputs in table row
 	$(".sorRow").each(function() {
-		$(this).find("input, span").each(function() {
+		$(this).find("input, span, select, textarea").each(function() {
 			if (!$(this).is('span')) {
 				$(this).attr({
 					'name' : function(_, name) {
@@ -209,7 +215,7 @@ function resetIndexes() {
 	idx = 0;
 	
 	$(".nonSorRow").each(function() {
-		$(this).find("input, span, select").each(function() {
+		$(this).find("input, span, select, textarea").each(function() {
 			if (!$(this).is('span')) {
 				$(this).attr({
 					'name' : function(_, name) {
@@ -292,9 +298,9 @@ function populateData(data, selectedActivities){
 						$('.description_' + sorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 						$('.uom_' + sorCount).html(workOrderActivity.uom);
 						$('.approvedQuantity_' + sorCount).html(workOrderActivity.approvedQuantity);
-						$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.approvedRate).toFixed(2));
+						$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
 						$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
-						$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.approvedAmount).toFixed(2));
+						$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 						$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
 						sorCount++;
 					}else{
@@ -303,9 +309,9 @@ function populateData(data, selectedActivities){
 						$('.nonSorDescription_' + nonSorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 						$('.nonSorUom_' + nonSorCount).html(workOrderActivity.uom);
 						$('.nonSorApprovedQuantity_' + nonSorCount).html(workOrderActivity.approvedQuantity);
-						$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.approvedRate).toFixed(2));
+						$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
 						$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
-						$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.approvedAmount).toFixed(2));
+						$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 						$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
 						nonSorCount++;
 					}
@@ -357,9 +363,9 @@ function populateData(data, selectedActivities){
 				$('.description_' + sorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 				$('.uom_' + sorCount).html(workOrderActivity.uom);
 				$('.approvedQuantity_' + sorCount).html(workOrderActivity.approvedQuantity);
-				$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.approvedRate).toFixed(2));
+				$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
 				$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
-				$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.approvedAmount).toFixed(2));
+				$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 				$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
 				sorCount++;
 			}else{
@@ -368,9 +374,9 @@ function populateData(data, selectedActivities){
 				$('.nonSorDescription_' + nonSorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 				$('.nonSorUom_' + nonSorCount).html(workOrderActivity.uom);
 				$('.nonSorApprovedQuantity_' + nonSorCount).html(workOrderActivity.approvedQuantity);
-				$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.approvedRate).toFixed(2));
+				$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
 				$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
-				$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.approvedAmount).toFixed(2));
+				$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 				$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
 				nonSorCount++;
 			}
@@ -387,10 +393,10 @@ function deleteSor(obj) {
 	var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
-    if(!$("#removedActivityIds").val()==""){
-		$("#removedActivityIds").val($("#removedActivityIds").val()+",");
+    if(!$("#removedDetailIds").val()==""){
+		$("#removedDetailIds").val($("#removedDetailIds").val()+",");
 	}
-    $("#removedActivityIds").val($("#removedActivityIds").val()+id);
+    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
 	
 	var tbl=document.getElementById('tblsor');	
 	var rowcount=$("#tblsor tbody tr").length;
@@ -432,10 +438,10 @@ function deleteNonSor(obj) {
     var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
-    if(!$("#removedActivityIds").val()==""){
-		$("#removedActivityIds").val($("#removedActivityIds").val()+",");
+    if(!$("#removedDetailIds").val()==""){
+		$("#removedDetailIds").val($("#removedDetailIds").val()+",");
 	}
-    $("#removedActivityIds").val($("#removedActivityIds").val()+id);
+    $("#removedDetailIds").val($("#removedDetailIds").val()+id);
     
 	var rowcount=$("#tblNonSor tbody tr").length;
 
@@ -497,7 +503,7 @@ function addRow(tableName,rowName) {
 		sno = nextIdx + 1;
 		
 		// Generate all textboxes Id and name with new index
-		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden").each(function() {	
+		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden, textarea").each(function() {	
 			var classval = jQuery(this).attr('class');
 			if (jQuery(this).data('server')) {
 				jQuery(this).removeAttr('data-server');
@@ -558,7 +564,7 @@ function deleteRow(tableName,obj){
 			//regenerate index existing inputs in table row
 			jQuery("#"+tableName+" tbody tr").each(function() {
 			
-					jQuery(this).find("input, select, errors, span, input:hidden").each(function() {
+					jQuery(this).find("input, select, errors, span, input:hidden, textarea").each(function() {
 						var classval = jQuery(this).attr('class');
 						if(classval == 'spansno') {
 							jQuery(this).text(sno);
@@ -604,11 +610,11 @@ function validateQuantityInput(object) {
 function calculateSorAmounts(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
 	
-	var approvedQuantity = parseFloat($('.approvedQuantity_' + rowcount).html().trim());
+	var cumulativePreviousEntry = parseFloat($('.cumulativePreviousEntry_' + rowcount).html().trim());
 	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
 	var unitRate = parseFloat($('#unitRate_' + rowcount).val().trim());
 	
-	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(approvedQuantity) + parseFloat(currentQuantity)).toFixed(2);
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(2);
 	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
 	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
 	
@@ -622,11 +628,11 @@ function calculateSorAmounts(currentObj) {
 function calculateNonSorAmounts(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
 	
-	var approvedQuantity = parseFloat($('.nonSorApprovedQuantity_' + rowcount).html().trim());
+	var cumulativePreviousEntry = parseFloat($('.nonSorCumulativePreviousEntry_' + rowcount).html().trim());
 	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
 	var unitRate = parseFloat($('#nonSorUnitRate_' + rowcount).val().trim());
 	
-	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(approvedQuantity) + parseFloat(currentQuantity)).toFixed(2);
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(2);
 	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
 	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
 	
@@ -666,7 +672,15 @@ function calculateTotalValue() {
 		nonSorTotal = 0.0;
 	
 	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(2);
-	$('#mbAmount').val(total);
+	$('#pageTotal').html(total);
+	
+	var tenderFinalisedPercentage = 0;
+	if($('#tenderFinalisedPercentage').html().trim() != '')
+		tenderFinalisedPercentage = parseFloat($('#tenderFinalisedPercentage').html());
+	var mbAmount = parseFloat(parseFloat(total) + (parseFloat(parseFloat(tenderFinalisedPercentage) / 100) * parseFloat(total))).toFixed(2);
+	
+	$('#mbAmount').val(mbAmount);
+	$('#mbAmountSpan').html(mbAmount);
 }
 
 function getFormData($form) {
@@ -680,70 +694,21 @@ function getFormData($form) {
 	return indexed_array;
 }
 
-$('#Save').click(function() {
-
-	$('#approvalDepartment').removeAttr('required');
-	$('#approvalDesignation').removeAttr('required');
-	$('#approvalPosition').removeAttr('required');
-	$('#approvalComent').removeAttr('required');
-	
-	flag = validateSORDetails();
-	
-	if($('#mbHeader').valid()) {
-		$('.quantity').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		if (!flag) {
-			bootbox.alert($('#errorquantitieszero').val());
-			return false;
-		}
-	}
-	
-	if($('#mbHeader').valid()) {
-		var workOrderId = $('#workOrderId').val();
-		$('.loader-class').modal('show', {backdrop: 'static'});
-		$.ajax({
-			type: "POST",
-			url: "/egworks/measurementbook/create/" + workOrderId,
-			cache: true,
-			dataType: "json",
-			"data": getFormData(jQuery('form')),
-			success: function (message) {
-//				$('#measurementBookDiv').remove();
-				$('#successMessage').html(message);
-				$('#successPage').show();
-			},
-			error: function (error) {
-				console.log(error.responseText.slice(0,-2));
-				var json = $.parseJSON(error.responseText.slice(0,-2));
-				
-				$.each(json, function(key, value){
-					$('#errorMessage').append(value + '</br>');
-				});
-				$('#errorMessage').show();
-			}
-		});
-		$('.loader-class').modal('hide');
-	}
-	else
-		return false;
-	
-	return false;
-});
-
 function validateSORDetails() {
 	if($('#mbHeader').valid()) {
 		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblsor');
-			tbl.deleteRow(2);
+			
+			$('#tblsor').find('input, textarea').each(function() {
+				$(this).attr('disabled', 'disabled');
+			});
 		}
 		
 		hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblNonSor');
-			tbl.deleteRow(2);
+			$('#tblNonSor').find('input, textarea').each(function() {
+				$(this).attr('disabled', 'disabled');
+			});
 		}
 		return true;
 	} else

@@ -44,18 +44,18 @@
 <div class="page-container" id="page-container">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="main-content">
-			<div class="alert text-center" style="color: green;" id="successMessage">
+			<div class="alert text-center" style="color: green;" id="forwardMessage">
 				${message}
 			</div>
 			<div class="alert text-center" style="color:red;">
 				<c:out value="${errorMessage }" />
 			</div>
-				<!-- <div class="col-sm-12 text-center">
-			<div class="row">
+			<div class="col-sm-12 text-center">
+				<div class="row">
 					<input type="submit" name="closeButton" id="closeButton"
 						value="Close" Class="btn btn-default" onclick="window.close();" />
 				</div>
-			</div> -->
+			</div>
 		</div>
 	</div>
 </div>

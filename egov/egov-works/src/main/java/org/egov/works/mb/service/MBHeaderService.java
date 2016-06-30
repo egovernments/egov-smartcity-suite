@@ -40,15 +40,24 @@
 package org.egov.works.mb.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
@@ -65,16 +74,23 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
 public class MBHeaderService {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(MBHeaderService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -98,6 +114,19 @@ public class MBHeaderService {
     
     @Autowired
     private WorkOrderActivityService workOrderActivityService;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<MBHeader> mbHeaderWorkflowService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -143,34 +172,127 @@ public class MBHeaderService {
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
     }
-
+    
     @Transactional
-    public MBHeader update(final MBHeader mbHeader) {
+    public MBHeader create(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
+            final String workFlowAction) {
         mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
         mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
-        mbHeader.setEgwStatus(
-                worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.APPROVED.toString()));
+        if (mbHeader.getState() == null) {
+            if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.CREATED.toString()));
+            else
+                mbHeader.setEgwStatus(worksUtils
+                        .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.NEW.toString()));
+        }
         mergeSorAndNonSorMBDetails(mbHeader);
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
+        
+        createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
+                workFlowAction);
+        
         return savedMBHeader;
     }
 
+    @Transactional
+    public MBHeader update(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
+            final String workFlowAction, final String removedDetailIds) {
+
+        if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
+                || mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()))
+                && !workFlowAction.equals(WorksConstants.CANCEL_ACTION)) {
+            mergeSorAndNonSorMBDetails(mbHeader);
+            List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
+            mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
+            mbHeader.setMbDetails(mbDetails);
+            for (final MBDetails details : mbHeader.getMbDetails())
+                details.setMbHeader(mbHeader);
+        }
+        
+        final MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);
+        
+        mbHeaderStatusChange(mbHeader, workFlowAction);
+        
+        createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
+                workFlowAction);
+        
+        return updatedMBHeader;
+    }
+    
+    private List<MBDetails> removeDeletedMBDetails(final List<MBDetails> mbDetails, final String removedDetailIds) {
+        final List<MBDetails> mbDetailsList = new ArrayList<MBDetails>();
+        if (null != removedDetailIds) {
+            final String[] ids = removedDetailIds.split(",");
+            final List<String> strList = new ArrayList<String>();
+            for (final String str : ids)
+                strList.add(str);
+            for (final MBDetails details : mbDetails)
+                if (details.getId() != null) {
+                    if (!strList.contains(details.getId().toString()))
+                        mbDetailsList.add(details);
+                } else
+                    mbDetailsList.add(details);
+        } else
+            return mbDetails;
+        return mbDetailsList;
+    }
+
     private void mergeSorAndNonSorMBDetails(MBHeader mbHeader) {
-        for(final MBDetails mbDetails : mbHeader.getSorMbDetails()) {
-            mbDetails.setMbHeader(mbHeader);
-            mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
-            mbHeader.addMbDetails(mbDetails);
-        }
-        for(final MBDetails mbDetails : mbHeader.getNonSorMbDetails()) {
-            mbDetails.setMbHeader(mbHeader);
-            mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
-            mbHeader.addMbDetails(mbDetails);
-        }
+        for (final MBDetails mbDetails : mbHeader.getSorMbDetails())
+            if (mbDetails.getId() == null) {
+                mbDetails.setMbHeader(mbHeader);
+                mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                mbHeader.addMbDetails(mbDetails);
+            } else
+                for (final MBDetails oldMBDetails : mbHeader.getSORMBDetails())
+                    if (oldMBDetails.getId().equals(mbDetails.getId()))
+                        updateMBDetails(oldMBDetails, mbDetails);
+        for (final MBDetails mbDetails : mbHeader.getNonSorMbDetails())
+            if (mbDetails.getId() == null) {
+                mbDetails.setMbHeader(mbHeader);
+                mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                mbHeader.addMbDetails(mbDetails);
+            } else
+                for (final MBDetails oldMBDetails : mbHeader.getNonSORMBDetails())
+                    if (oldMBDetails.getId().equals(mbDetails.getId()))
+                        updateMBDetails(oldMBDetails, mbDetails);
+    }
+    
+    private void updateMBDetails(MBDetails oldMBDetails, MBDetails mbDetails) {
+        oldMBDetails.setQuantity(mbDetails.getQuantity());
+        oldMBDetails.setRate(mbDetails.getRate());
+        oldMBDetails.setRemarks(mbDetails.getRemarks());
+    }
+
+    public void mbHeaderStatusChange(final MBHeader mbHeader, final String workFlowAction) {
+        if (null != mbHeader && null != mbHeader.getEgwStatus()
+                && null != mbHeader.getEgwStatus().getCode())
+            if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.NEW.toString()));
+            else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.CREATED.toString()));
+            else if (workFlowAction.equals(WorksConstants.APPROVE_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.APPROVED.toString()));
+            else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.REJECTED.toString()));
+            else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.CANCELLED.toString()));
+            else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
+                    && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.CREATED.toString()));
     }
 
     @Transactional
     public MBHeader cancel(final MBHeader mbHeader) {
-        mbHeader.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+        mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                 MBHeader.MeasurementBookStatus.CANCELLED.toString()));
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
@@ -250,9 +372,117 @@ public class MBHeaderService {
         }
         return jsonObject;
     }
-    
+
+    public Long getApprovalPositionByMatrixDesignation(final MBHeader mbHeader, Long approvalPosition,
+            final String additionalRule, final String mode, final String workFlowAction) {
+        final WorkFlowMatrix wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(),
+                null, null, additionalRule, mbHeader.getCurrentState().getValue(), null);
+        if (mbHeader.getEgwStatus() != null && mbHeader.getEgwStatus().getCode() != null)
+            if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CREATED.toString())
+                    && mbHeader.getState() != null)
+                if (mode.equals("edit"))
+                    approvalPosition = mbHeader.getState().getOwnerPosition().getId();
+                else
+                    approvalPosition = worksUtils.getApproverPosition(wfmatrix.getNextDesignation(),
+                            mbHeader.getState(), mbHeader.getCreatedBy().getId());
+        if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
+                && wfmatrix.getNextState().equals(WorksConstants.WF_STATE_CREATED))
+            approvalPosition = null;
+
+        return approvalPosition;
+    }
+
     public Double getPreviousCumulativeQuantity(final Long mbHeaderId, final Long woActivityId) {
         return mbHeaderRepository.getPreviousCumulativeQuantity(mbHeaderId, WorksConstants.CANCELLED, woActivityId);
     }
+    
+    public void createMBHeaderWorkflowTransition(final MBHeader mbHeader,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        if (LOG.isDebugEnabled())
+            LOG.debug(" Create WorkFlow Transition Started  ...");
+        final User user = securityUtils.getCurrentUser();
+        final DateTime currentDate = new DateTime();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+        final String currState = "";
+        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_MBHEADER;
+        WorkFlowMatrix wfmatrix = null;
 
+        if (null != mbHeader.getId())
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(mbHeader.getCreatedBy().getId());
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            if (wfInitiator.equals(userAssignment))
+                mbHeader.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+            else
+                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
+                        .withNatureOfTask(natureOfwork);
+        } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+                    additionalRule, WorksConstants.NEW, null);
+            if (mbHeader.getState() == null)
+                mbHeader.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+        } else {
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+                pos = positionMasterService.getPositionById(approvalPosition);
+            if (null == mbHeader.getState()) {
+                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+                        additionalRule, currState, null);
+                mbHeader.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+                        additionalRule, mbHeader.getCurrentState().getValue(), null);
+                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+            } else {
+                wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(), null, null,
+                        additionalRule, mbHeader.getCurrentState().getValue(), null);
+                mbHeader.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+            }
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug(" WorkFlow Transition Completed  ...");
+    }
+    
+    public void fillWorkflowData(final JsonObject jsonObject, final HttpServletRequest request, final MBHeader mbHeader) {
+        jsonObject.addProperty("stateType", mbHeader.getClass().getSimpleName());
+        if (mbHeader.getCurrentState() != null
+                && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
+            jsonObject.addProperty("currentState", mbHeader.getCurrentState().getValue());
+        if (mbHeader.getState() != null  && mbHeader.getState().getNextAction()!=null )
+            jsonObject.addProperty("nextAction", mbHeader.getState().getNextAction());
+
+        jsonObject.addProperty("id", mbHeader.getId());
+        
+        if(!mbHeader.getMbDetails().isEmpty()) {
+            final JsonArray jsonArray = new JsonArray();
+            for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
+                final JsonObject id = new JsonObject();
+                id.addProperty("id", mbDetails.getId());
+                if(mbDetails.getWorkOrderActivity().getActivity().getSchedule() != null)
+                    id.addProperty("sorType", "SOR");
+                else
+                    id.addProperty("sorType", "Non SOR");
+                
+                jsonArray.add(id);
+            }
+            jsonObject.add("detailIds", jsonArray);
+        } else {
+            jsonObject.add("detailIds", new JsonArray());
+        }
+    }
 }

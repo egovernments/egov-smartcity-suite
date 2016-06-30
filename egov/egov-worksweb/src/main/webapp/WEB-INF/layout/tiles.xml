@@ -330,5 +330,15 @@
         <put-attribute name="page-title" value="title.viewmbheader" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/mbheader-view.jsp"/>
      </definition>
+     
+     <definition name="mbHeader-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/measurementBook-form.jsp"/>
+     </definition>
+     
+     <definition name="mb-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/mb-success.jsp"/>
+    </definition>
 
 </tiles-definitions>  

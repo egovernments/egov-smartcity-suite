@@ -66,7 +66,7 @@ public class ViewMBController {
                 if (prevCumulativeAmount != null)
                     mBDetail.getWorkOrderActivity().setPrevCumlvQuantity(prevCumulativeAmount);
             }
-        model.addAttribute("mBHeader", mBHeader);
+        model.addAttribute("mbHeader", mBHeader);
         return "mbheader-view";
     }
 

@@ -63,55 +63,116 @@
 				</tr>
 			</thead>
 			<tbody id="nonSorTable">
-				<tr id="nonSorMessage">
+				<c:choose>
+					<c:when test="${mbHeader.nonSorMbDetails.size() == 0}">
+						<tr id="nonSorMessage">
+					</c:when>
+					<c:otherwise>
+						<tr id="nonSorMessage" hidden="true">
+					</c:otherwise>
+				</c:choose>
 					<td colspan="15"><spring:message code="msg.mb.sor.table"/></td>
 				</tr>
-				<tr id="nonSorRow" class="nonSorRow" nonsorinvisible="true" hidden="true" align="center">
-					<td>
-						<span class="spannonsorslno">1</span>
-						<input type="hidden" name="nonSorMbDetails[0].id" id="nonSorMbDetails_0" class="nonSorMbDetailsId" />
-						<input type="hidden" name="nonSorMbDetails[0].workOrderActivity.id" id="nonSorWorkOrderActivity_0" class="nonSorWorkOrderActivity" />
-					</td>
-					<td align="left">
-						<span class="nonSorSummary_0"></span>
-						<span class="hintanchor nonSorDescription_0"/></span>
-					</td>
-					<td>
-						<span class="nonSorUom_0"></span>
-					</td>
-					<td>
-						<span class="nonSorApprovedQuantity_0"></span>
-					</td>
-					<td>
-						<span class="nonSorApprovedRate_0"></span>
-						<span class="nonSorUnitRate_0" hidden="true"></span>
-					</td>
-					<td>
-						<span class="nonSorCumulativePreviousEntry_0"></span>
-					</td>
-					<td>
-						<input name="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-						<input type="hidden" name="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
-					</td>
-					<td>
-						<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="nonSorAmountCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="nonSorApprovedAmount_0"></span>
-					</td>
-					<td>
-						<textarea name="nonSorMbDetails[0].remarks" id="nonSorRemarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></textarea>
-					</td>
-					<td>
-						<span class="add-padding nonSorDelete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-					</td>
-				</tr>
+				<c:choose>
+					<c:when test="${mbHeader.nonSorMbDetails.size() == 0 }">
+						<tr id="nonSorRow" class="nonSorRow" nonsorinvisible="true" hidden="true" align="center">
+							<td>
+								<span class="spannonsorslno">1</span>
+								<form:input type="hidden" path="nonSorMbDetails[0].id" id="nonSorMbDetailsId_0" class="nonSorMbDetailsId" />
+								<form:input type="hidden" path="nonSorMbDetails[0].workOrderActivity.id" id="nonSorWorkOrderActivity_0" class="nonSorWorkOrderActivity" />
+							</td>
+							<td align="left">
+								<span class="nonSorSummary_0"></span>&nbsp
+								<span class="hintanchor nonSorDescription_0"/></span>
+							</td>
+							<td>
+								<span class="nonSorUom_0"></span>
+							</td>
+							<td>
+								<span class="nonSorApprovedQuantity_0"></span>
+							</td>
+							<td>
+								<span class="nonSorApprovedRate_0"></span>
+								<span class="nonSorUnitRate_0" hidden="true"></span>
+							</td>
+							<td>
+								<span class="nonSorCumulativePreviousEntry_0"></span>
+							</td>
+							<td>
+								<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+								<form:input type="hidden" path="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
+							</td>
+							<td>
+								<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="nonSorAmountCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="nonSorApprovedAmount_0"></span>
+							</td>
+							<td>
+								<form:textarea path="nonSorMbDetails[0].remarks" id="nonSorRemarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
+							</td>
+							<td>
+								<span class="add-padding nonSorDelete_0" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+							</td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${mbHeader.nonSorMbDetails}" var="details" varStatus="item">
+							<tr id="nonSorRow" class="nonSorRow" align="center">
+								<td>
+									<span class="spannonsorslno">${item.index + 1 }</span>
+									<form:input type="hidden" path="nonSorMbDetails[${item.index }].id" id="nonSorMbDetailsId_${item.index }" class="nonSorMbDetailsId" value="${details.id }" />
+									<form:input type="hidden" path="nonSorMbDetails[${item.index }].workOrderActivity.id" id="nonSorWorkOrderActivity_${item.index }" class="nonSorWorkOrderActivity" value="${details.workOrderActivity.id }" />
+								</td>
+								<td align="left">
+									<span class="nonSorSummary_${item.index }">${details.workOrderActivity.activity.nonSor.description }</span>&nbsp
+									<span class="hintanchor nonSorDescription_${item.index }"/><a href="#" class="hintanchor" title="${details.workOrderActivity.activity.nonSor.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
+								</td>
+								<td>
+									<span class="nonSorUom_${item.index }">${details.workOrderActivity.activity.nonSor.uom.uom }</span>
+								</td>
+								<td>
+									<span class="nonSorApprovedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="nonSorApprovedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
+									<span class="nonSorUnitRate_${item.index }" hidden="true">${details.rate }</span>
+								</td>
+								<td>
+									<span class="nonSorCumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
+								</td>
+								<td>
+									<span class="nonSorCumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="nonSorAmountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * details.quantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="nonSorApprovedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<form:textarea path="nonSorMbDetails[${item.index }].remarks" value="${details.remarks }" id="nonSorRemarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
+								</td>
+								<td>
+									<span class="add-padding nonSorDelete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 			<tfoot>
 				<tr>
@@ -123,17 +184,5 @@
 				</tr>
 			</tfoot>
 		</table>
-	</div>
-</div>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-body custom-form">
-		<div class="form-group">
-			<label class="col-sm-5 control-label text-right">
-			    <spring:message code="lbl.total.mbamount" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-2 add-margin">
-				<input name="mbAmount" id="mbAmount" class="form-control" readonly="readonly" required="required"/>
-			</div>
-		</div>
 	</div>
 </div>

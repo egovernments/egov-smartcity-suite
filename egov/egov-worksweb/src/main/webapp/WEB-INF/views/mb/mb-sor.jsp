@@ -40,6 +40,7 @@
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
 	<div class="panel-heading">
+		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
 			<div class="pull-right">
@@ -79,60 +80,124 @@
 				</tr>
 			</thead>
 			<tbody id="sorTable">
-				<tr id="message">
+				<c:if test="${mbHeader.sorMbDetails.size() == 0}">
+					<tr id="message">
+				</c:if>
+				<c:if test="${mbHeader.sorMbDetails.size() != 0}">
+					<tr id="message" hidden="true">
+				</c:if>
 					<td colspan="15"><spring:message code="msg.mb.sor.table"/></td>
 				</tr>
-				<tr id="sorRow" class="sorRow" sorinvisible="true" hidden="true" align="center">
-					<td>
-						<span class="spansorslno">1</span>
-						<input type="hidden" name="sorMbDetails[0].id" id="sorMbDetailsid_0" class="sorMbDetailsId" />
-						<input type="hidden" name="sorMbDetails[0].workOrderActivity.id" id="workOrderActivity_0" class="workOrderActivity" />
-					</td>
-					<td>
-						<span class="sorCategory_0"></span>
-					</td>
-					<td>
-						<span class="sorCode_0"></span>
-					</td>
-					<td align="left">
-						<span class="summary_0"></span>
-						<span class="hintanchor description_0"/></span>
-					</td>
-					<td>
-						<span class="uom_0"></span>
-					</td>
-					<td>
-						<span class="approvedQuantity_0"></span>
-					</td>
-					<td>
-						<span class="approvedRate_0"></span>
-					</td>
-					<td>
-						<span class="cumulativePreviousEntry_0"></span>
-					</td>
-					<td>
-						<input name="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-						<input type="hidden" name="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
-					</td>
-					<td>
-						<span class="cumulativeIncludingCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="amountCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_0"></span>
-					</td>
-					<td>
-						<span class="approvedAmount_0"></span>
-					</td>
-					<td>
-						<textarea name="sorMbDetails[0].remarks" id="remarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></textarea>
-					</td>
-					<td>
-						<span class="add-padding delete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-					</td>
-				</tr>
+				<c:choose>
+					<c:when test="${mbHeader.sorMbDetails.size() == 0}">
+						<tr id="sorRow" class="sorRow" sorinvisible="true" hidden="true" align="center">
+							<td>
+								<span class="spansorslno">1</span>
+								<form:input type="hidden" path="sorMbDetails[0].id" id="sorMbDetailsId_0" class="sorMbDetailsId" />
+								<form:input type="hidden" path="sorMbDetails[0].workOrderActivity.id" id="workOrderActivity_0" class="workOrderActivity" />
+							</td>
+							<td>
+								<span class="sorCategory_0"></span>
+							</td>
+							<td>
+								<span class="sorCode_0"></span>
+							</td>
+							<td align="left">
+								<span class="summary_0"></span>&nbsp
+								<span class="hintanchor description_0"/></span>
+							</td>
+							<td>
+								<span class="uom_0"></span>
+							</td>
+							<td>
+								<span class="approvedQuantity_0"></span>
+							</td>
+							<td>
+								<span class="approvedRate_0"></span>
+							</td>
+							<td>
+								<span class="cumulativePreviousEntry_0"></span>
+							</td>
+							<td>
+								<form:input path="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+								<form:input type="hidden" path="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
+							</td>
+							<td>
+								<span class="cumulativeIncludingCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="amountCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_0"></span>
+							</td>
+							<td>
+								<span class="approvedAmount_0"></span>
+							</td>
+							<td>
+								<form:textarea path="sorMbDetails[0].remarks" id="remarks_0" data-idx="0" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
+							</td>
+							<td>
+								<span class="add-padding delete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+							</td>
+						</tr>
+					</c:when>
+					<c:otherwise>
+						<c:forEach items="${mbHeader.sorMbDetails}" var="details" varStatus="item">
+							<tr id="sorRow" class="sorRow" align="center">
+								<td>
+									<span class="spansorslno">${item.index + 1 }</span>
+									<form:input type="hidden" path="sorMbDetails[${item.index }].id" id="sorMbDetailsId_${item.index }" class="sorMbDetailsId" value="${details.id }" />
+									<form:input type="hidden" path="sorMbDetails[${item.index }].workOrderActivity.id" id="workOrderActivity_${item.index }" class="workOrderActivity" value="${details.workOrderActivity.id }" />
+								</td>
+								<td>
+									<span class="sorCategory_${item.index }">${details.workOrderActivity.activity.schedule.code }</span>
+								</td>
+								<td>
+									<span class="sorCode_${item.index }">${details.workOrderActivity.activity.schedule.scheduleCategory.code }</span>
+								</td>
+								<td align="left">
+									<span class="summary_${item.index }">${details.workOrderActivity.activity.schedule.getSummary() }</span>&nbsp
+									<span class="hintanchor description_${item.index }"/><a href="#" class="hintanchor" title="${details.workOrderActivity.activity.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
+								</td>
+								<td>
+									<span class="uom_${item.index }">${details.workOrderActivity.activity.schedule.uom.uom }</span>
+								</td>
+								<td>
+									<span class="approvedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="approvedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="cumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<form:input type="hidden" path="sorMbDetails[${item.index }].rate" value="${details.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
+								</td>
+								<td>
+									<span class="cumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="amountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * details.quantity }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<span class="approvedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
+								</td>
+								<td>
+									<form:textarea path="sorMbDetails[${item.index }].remarks" value="${details.remarks }" id="remarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
+								</td>
+								<td>
+									<span class="add-padding delete_${item.index }" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
 			</tbody>
 			<tfoot>
 				<tr>

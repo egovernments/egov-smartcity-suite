@@ -41,6 +41,7 @@ package org.egov.works.mb.entity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,7 @@ import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
@@ -153,6 +155,10 @@ public class MBHeader extends StateAware {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "MB_DATE")
     private Date mbDate;
+    
+    @Column(name = "MB_ISSUED_DATE")
+    @Temporal(value = TemporalType.DATE)
+    private Date mbIssuedDate;
 
     // @Required(message = "mbheader.mbabstract.null")
     @Length(max = 400, message = "mbheader.mbabstract.length")
@@ -208,6 +214,12 @@ public class MBHeader extends StateAware {
     @Column(name = "APPROVED_DATE")
     @Temporal(value = TemporalType.DATE)
     private Date approvedDate;
+    
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
@@ -284,7 +296,9 @@ public class MBHeader extends StateAware {
     }
 
     public void setMbDetails(final List<MBDetails> mbDetails) {
-        this.mbDetails = mbDetails;
+        this.mbDetails.clear();
+        if(mbDetails != null)
+            this.mbDetails.addAll(mbDetails);
     }
 
     public void addMbDetails(final MBDetails mbDetails) {
@@ -294,7 +308,7 @@ public class MBHeader extends StateAware {
     // to show in inbox
     @Override
     public String getStateDetails() {
-        return "MbHeader : " + getMbRefNo();
+        return "MbHeader Number : " + getMbRefNo();
     }
 
     public ContractorBillRegister getEgBillregister() {
@@ -414,4 +428,37 @@ public class MBHeader extends StateAware {
         this.nonSorMbDetails = nonSorMbDetails;
     }
 
+    public Collection<MBDetails> getSORMBDetails() {
+        return CollectionUtils.select(mbDetails,
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getSchedule() != null);
+    }
+
+    public Collection<MBDetails> getNonSORMBDetails() {
+        return CollectionUtils.select(mbDetails,
+                mbDetail -> ((MBDetails) mbDetail).getWorkOrderActivity().getActivity().getNonSor() != null);
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public Date getMbIssuedDate() {
+        return mbIssuedDate;
+    }
+
+    public void setMbIssuedDate(Date mbIssuedDate) {
+        this.mbIssuedDate = mbIssuedDate;
+    }
 }

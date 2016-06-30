@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
@@ -53,13 +54,18 @@
 			    <spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="mbRefNo" id="mbRefNo" class="form-control" maxlength="16" required="required"/>
+				<form:input path="mbRefNo" id="mbRefNo" class="form-control" maxlength="16" required="required"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.mbentry.date" />
+			    <spring:message code="lbl.mbentry.date" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="mbDate" class="form-control datepicker" id="mbDate" data-inputmask="'mask': 'd/m/y'" />
+				<c:if test="${currentDate != null }">
+					<input name="mbDate" class="form-control datepicker" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" required="required" />
+				</c:if>
+				<c:if test="${currentDate == null }">
+					<form:input path="mbDate" class="form-control datepicker" id="mbDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+				</c:if>
 			</div>
 		</div>
 		<div class="form-group">
@@ -67,13 +73,13 @@
 			    <spring:message code="lbl.from.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="fromPageNo" id="fromPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
+				<form:input path="fromPageNo" id="fromPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.to.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="toPageNo" id="toPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
+				<form:input path="toPageNo" id="toPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -81,7 +87,7 @@
 			    <spring:message code="lbl.measurement.abstract" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<textarea name="mbAbstract" id="mbAbstract" class="form-control" maxlength="1056" required="required"></textarea>
+				<form:textarea path="mbAbstract" id="mbAbstract" class="form-control" maxlength="1056" required="required"></form:textarea>
 			</div>
 		</div>
 	</div>
@@ -98,13 +104,13 @@
 			    <spring:message code="lbl.estimatenumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="estimateNumber" id="estimateNumber" class="form-control" disabled="disabled" />
+				<span name="estimateNumber" id="estimateNumber">${mbHeader.workOrderEstimate.estimate.estimateNumber }</span>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.mb.nameofwork" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="nameOfWork" id="nameOfWork" class="form-control" disabled="disabled" />
+				<span name="nameOfWork" id="nameOfWork">${mbHeader.workOrderEstimate.estimate.lineEstimateDetails.nameOfWork }</span>
 			</div>
 		</div>
 		<div class="form-group">
@@ -112,13 +118,13 @@
 			    <spring:message code="lbl.workidnumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="projectCode" id="projectCode" class="form-control" disabled="disabled" />
+				<span name="projectCode" id="projectCode">${mbHeader.workOrderEstimate.estimate.lineEstimateDetails.projectCode.code }</span>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.loanumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="workOrderNumber" id="workOrderNumber" class="form-control" disabled="disabled" />
+				<span name="workOrderNumber" id="workOrderNumber">${mbHeader.workOrderEstimate.workOrder.workOrderNumber }</span>
 			</div>
 		</div>
 		<div class="form-group">
@@ -126,13 +132,13 @@
 			    <spring:message code="lbl.contractor.name" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="contractorName" id="contractorName" class="form-control" disabled="disabled"/>
+				<span name="contractorName" id="contractorName">${mbHeader.workOrderEstimate.workOrder.contractor.name }</span>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.work.assigned" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="workOrderAssignedTo" id="workOrderAssignedTo" class="form-control" disabled="disabled"/>
+				<span name="workOrderAssignedTo" id="workOrderAssignedTo">${mbHeader.workOrderEstimate.workOrder.engineerIncharge.name }</span>
 			</div>
 		</div>
 		<div class="form-group">
@@ -140,13 +146,13 @@
 			    <spring:message code="lbl.mb.issued.date" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<input name="mbIssuedDate" class="form-control datepicker" id="mbIssuedDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
+				<form:input path="mbIssuedDate" class="form-control datepicker" id="mbIssuedDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.contractor.comments" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<textarea name="contractorComments" id="contractorComments" class="form-control"></textarea>
+				<form:textarea path="contractorComments" id="contractorComments" class="form-control"></form:textarea>
 			</div>
 		</div>
 	</div>

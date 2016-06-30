@@ -72,3 +72,4 @@
 <div id="measurementBookDiv" hidden="true">
 	<jsp:include page="measurementBook-form.jsp"/>
 </div>
+<script src="<c:url value='/resources/js/mb/mbajaxsubmit.js?rnd=${app_release_no}'/>"></script>

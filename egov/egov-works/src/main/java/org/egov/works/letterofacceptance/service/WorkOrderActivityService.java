@@ -81,21 +81,20 @@ public class WorkOrderActivityService {
         return workOrderActivityRepository.save(workOrderActivity);
     }
 
-    public List<WorkOrderActivity> searchActivities(Long workOrderEstimateId, String description, String itemCode) {
+    public List<WorkOrderActivity> searchActivities(final Long workOrderEstimateId, final String description,
+            final String itemCode, final String sorType) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
                 .createAlias("woa.workOrderEstimate", "woe")
                 .createAlias("activity", "act");
-//                .createAlias("act.schedule", "schedule")
-//                .createAlias("act.nonSor", "nonSor");
         if(workOrderEstimateId != null)
             criteria.add(Restrictions.eq("woe.id", workOrderEstimateId));
-        if(description != null && !description.equals(""))
-            criteria.add(
-                    Restrictions.or(Restrictions.ilike("schedule.description", description),
-                            Restrictions.ilike("nonSor.description", description)));
-        if(itemCode != null && !itemCode.equals(""))
-            criteria.add(Restrictions.ilike("schedule.code", itemCode));
 
+        if(sorType != null && sorType.equalsIgnoreCase("SOR"))
+            criteria.add(Restrictions.isNotNull("act.schedule"));
+        
+        if(sorType != null && sorType.equalsIgnoreCase("Non Sor"))
+            criteria.add(Restrictions.isNull("act.schedule"));
+        
         return criteria.list();
     }
 }

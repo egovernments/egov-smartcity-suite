@@ -58,13 +58,13 @@
 						<spring:message code="lbl.mb.referencenumber" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.mbRefNo}"></c:out>
+						<c:out default="N/A" value="${mbHeader.mbRefNo}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.mbentry.date" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<fmt:formatDate value="${mBHeader.mbDate}" pattern="dd/MM/yyyy" />
+						<fmt:formatDate value="${mbHeader.mbDate}" pattern="dd/MM/yyyy" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -72,13 +72,13 @@
 						<spring:message code="lbl.from.page.number" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.fromPageNo}"></c:out>
+						<c:out default="N/A" value="${mbHeader.fromPageNo}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.to.page.number" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.toPageNo}"></c:out>
+						<c:out default="N/A" value="${mbHeader.toPageNo}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -86,7 +86,7 @@
 						<spring:message code="lbl.measurement.abstract" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.mbAbstract}"></c:out>
+						<c:out default="N/A" value="${mbHeader.mbAbstract}"></c:out>
 					</div>
 				</div>
 			</div>
@@ -109,13 +109,13 @@
 						<spring:message code="lbl.estimatenumber" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.estimate.estimateNumber}"></c:out>
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.estimate.estimateNumber}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.nameofthework" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.estimate.name}"></c:out>
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.estimate.name}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -123,13 +123,13 @@
 						<spring:message code="lbl.workidentificationnumber" /> 
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.estimate.projectCode.code}"></c:out>
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.estimate.projectCode.code}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.loanumber" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.workOrder.workOrderNumber}"></c:out>
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.workOrder.workOrderNumber}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -137,13 +137,13 @@
 						<spring:message code="lbl.contractor.name" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.workOrder.contractor.name}"></c:out>
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.workOrder.contractor.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.work.assigned" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.workOrderEstimate.workOrder.engineerIncharge.name}"></c:out> 
+						<c:out default="N/A" value="${mbHeader.workOrderEstimate.workOrder.engineerIncharge.name}"></c:out> 
 					</div>
 				</div>
 				<div class="row add-border">
@@ -151,13 +151,13 @@
 						<spring:message code="lbl.mb.issued.date" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<fmt:formatDate value="${mBHeader.approvedDate}" pattern="dd/MM/yyyy" />
+						<fmt:formatDate value="${mbHeader.approvedDate}" pattern="dd/MM/yyyy" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.contractor.comments" /> 
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mBHeader.contractorComments}"></c:out> 
+						<c:out default="N/A" value="${mbHeader.contractorComments}"></c:out> 
 					</div>
 				</div>
 			</div>

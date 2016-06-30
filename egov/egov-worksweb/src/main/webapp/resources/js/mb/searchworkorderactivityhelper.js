@@ -80,17 +80,19 @@ function callAjaxSearch() {
 					if(data.id != null)
 						$('td:eq(1)',row).html('<input type="checkbox" name="selectActivity" class="selectActivity" data="'+ data.id +'">');
 					if(data.summary != null)
-						$('td:eq(2)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
+						$('td:eq(4)',row).html('<span>'+ data.summary +'</span><span/><a href="#" class="hintanchor" title="'+ data.description +'"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>');
+					$('td:eq(7)',row).html(parseFloat(data.estimateRate).toFixed(2));
 				},
 				aaSorting : [],
 				columns : [ { 
 						"data" : "", "sClass" : "text-center"} , {
 						"data" : "", "sClass" : "text-center", "bSortable": false} ,{
-						"data" : "", "sClass" : "text-center"},{
-						"data" : "sorNonSorType", "sClass" : "text-center"},{
 						"data" : "sorCode", "sClass" : "text-right"},{
 						"data" : "categoryType", "sClass" : "text-center"},{
-						"data" : "uom", "sClass" : "text-center"}],
+						"data" : "", "sClass" : "text-center"},{
+						"data" : "sorNonSorType", "sClass" : "text-center"},{
+						"data" : "uom", "sClass" : "text-center"},{
+						"data" : "", "sClass" : "text-center"}],
 				"fnInitComplete": function(oSettings, json) {
 					$activities = json;
 			    }
