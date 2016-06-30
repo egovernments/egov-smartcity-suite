@@ -42,6 +42,7 @@ package org.egov.works.web.controller.mb;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -64,6 +65,10 @@ public class SearchWorkOrderForMBHeaderController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
+
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        if (departments != null && !departments.isEmpty())
+            searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         final List<String> validActionList = new ArrayList<String>();
