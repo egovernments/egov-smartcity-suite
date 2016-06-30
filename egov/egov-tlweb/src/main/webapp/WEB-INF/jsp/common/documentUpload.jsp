@@ -40,90 +40,46 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<script>
-	function viewDocument(fileStoreId) {
-		var sUrl = "/egi/downloadfile?fileStoreId="+fileStoreId+"&moduleName=EGTL";
-		window.open(sUrl,"window",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');	
-	}
-	
-	// checklist should be checked before attaching document
-	function verifyChecklist(obj){
-		if(!jQuery(obj).parent().parent().find('input[type="checkbox"]').is(":checked")){
-			bootbox.alert("Please Check the Check List before attaching.");
-			return false; 
-		}
-	}
-	
-	// Clear attached document on unselection of checklist
-	function checkFileAttachment(obj){
-		if(!jQuery(obj).is(":checked") && jQuery(obj).parent().parent().find('input[type="file"]').val()){
-			bootbox.confirm("Unselecting Check List will clear the Document attached?", function(result) {
-	            if (result) {
-	            	var fileobj = jQuery(obj).parent().parent().find('input[type="file"]');
-	            	fileobj.replaceWith(fileobj.val('').clone(true));
-	            }else{
-	            	jQuery(obj).prop('checked', true);
-	            }
-	        });
-		}
-	}  
-</script>
-<div class="panel-heading custom_form_panel_heading">
-    <div class="panel-title">Enclosed Documents</div>
+<div class="col-md-12">
+<div class="form-group view-content header-color hidden-xs">
+	<div class="col-sm-1"><s:text name="doctable.sno" /></div>
+    <div class="col-sm-3"><s:text name="doctable.docname" /></div>
+    <div class="col-sm-4"><s:text name="doctable.attach.doc" /></div>
+    <div class="col-sm-3"><s:text name="license.remarks" /></div>
 </div>
-<div class="form-group col-sm-12 view-content header-color hidden-xs">
-	<div class="col-sm-1 text-center"><s:text name="doctable.sno" /></div>
-    <div class="col-sm-5 text-center"><s:text name="doctable.docname" /></div>
-    <div class="col-sm-3 text-center"><s:text name="doctable.checklist"/></div>
-    <div class="col-sm-3 text-center"><s:text name="doctable.attach.doc" /></div>	
-</div>
-<table class="table" id="docAttachmentTab">  
-<s:iterator value="documentTypes" status="status" var="documentType">
+<s:iterator value="documentTypes" status="stat" var="documentType">
 	<div class="form-group">
-    	<div class="col-sm-1 text-center"><s:property value="#status.index + 1"/></div>
-        <div class="col-sm-5 text-center">
-        	<span class="docname"><s:property value="name" /></span><s:if test="mandatory"><span class="mandatory"></span></s:if>
-			<s:hidden name="documents[%{#status.index}].type.id" value="%{id}"/>
+    	<div class="col-sm-1">
+            <s:property value="#stat.index + 1"/>
+        </div>
+        <div class="col-sm-3">
+        	<span class="docname"><s:property value="name" /></span>
+            <s:if test="mandatory">
+                <span class="mandatory"></span>
+            </s:if>
+            <s:hidden name="documents[%{#stat.index}].type.id" value="%{id}"/>
+            <s:hidden name="documents[%{#stat.index}].type.name" value="%{name}"/>
 		</div>
-       	<div class="col-sm-3 text-center">
-       		<s:if test="mandatory">
-       			<s:checkbox name="documents[%{#status.index}].enclosed" id="checklist" onclick="checkFileAttachment(this);" required="true"/>
-       		</s:if>
-       		<s:else>
-       			<s:checkbox name="documents[%{#status.index}].enclosed" id="checklist" onclick="checkFileAttachment(this);" />
-       		</s:else>
+       	<div class="col-sm-4">
+            <s:file name="documents[%{#stat.index}].uploads" id="uploadFile%{#stat.index}" value="%{documents[#stat.index].uploads}" cssClass="file-ellipsis upload-file"/>
+            <script>
+                
+                <c:if test="${mandatory && empty documents[stat.index].files}">
+                    jQuery('#uploadFile${stat.index}').attr('required', true);
+                </c:if>
+            </script>
+            <s:iterator value="%{documents[#stat.index].files}">
+                <a href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
+                    <s:property value="%{fileName}"/>
+                </a>
+            </s:iterator>
+			<form:errors path="documents[%{#stat.index}].files" cssClass="add-margin error-msg" />
        	</div>
-       	<div class="col-sm-3 text-center">
-       		<s:if test="%{documents.isEmpty()}">
-       			<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file" required="true"/>
-				</s:if>
-				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file"/>
-				</s:else>
-			</s:if>
-			<s:elseif test="%{documents[#status.index].files.isEmpty()}">
-				<s:hidden name="documents[%{#status.index}].id"/>
-				<s:if test="mandatory">
-					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file" required="true"/>
-				</s:if>
-				<s:else>
-					<s:file name="documents[%{#status.index}].uploads" id="uploadFile" value="%{documents[#status.index].uploads}" onclick="return verifyChecklist(this);" cssClass="file-ellipsis upload-file"/>
-				</s:else>
-			</s:elseif>
-			<s:else>
-				<s:iterator value="%{documents[#status.index].files}">
-					<s:hidden name="documents[%{#status.index}].id"/>
-					<a href="javascript:viewDocument('<s:property value="fileStoreId"/>')"> 
- 						<s:property value="%{fileName}"/>
-					</a> 
-				</s:iterator>	
-			</s:else>
-			<form:errors path="documents[%{#status.index}].files" cssClass="add-margin error-msg" />
-			<%-- <div class="add-margin error-msg text-left" ><font size="2"><s:text name="lbl.mesg.document"/></font></div> --%>
-       	</div>
-   	</div>
+        <div class="col-sm-3">
+            <s:textarea name="documents[%{#stat.index}].description" cssClass="form-control" value="%{documents[#stat.index].description}"/>
+        </div>
+	</div>
 </s:iterator>
-</table>
+</div>
 
 <script src="<c:url value='/resources/js/app/documentupload.js?rnd=${app_release_no}'/>"></script> 

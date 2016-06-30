@@ -1,3 +1,3 @@
 <script>
-window.location=window.location+"${kibanaurl}";
+window.open("${kibanaurl}",'_self');
 </script>

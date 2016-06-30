@@ -7,7 +7,7 @@
 	id="councilMemberform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmember-form.jsp"%>
-	<input type="hidden" name="councilMember.id" value="${councilMember.id}" />
+	<%-- <input type="hidden" name="councilMember.id" value="${councilMember.id}" /> --%>
 	</div>
 	</div>
 	</div>

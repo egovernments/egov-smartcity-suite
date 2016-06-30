@@ -43,9 +43,11 @@
 <html>
 	<head>
 		<title><s:text name="page.title.newtrade" /></title>
+		
 		<script>
-	
-			function validateLicenseForm(obj) {
+		
+		function validateLicenseForm(obj) {
+				var adhaar = document.getElementById('adhaarId').value;
 				if (document.getElementById("mobilePhoneNumber").value == '' || document.getElementById("mobilePhoneNumber").value == null){
 					showMessage('newLicense_error', '<s:text name="newlicense.mobilephonenumber.null" />');
 					window.scroll(0, 0); 
@@ -118,32 +120,23 @@
 							return false;
 					}
 				} 
-				if(!verifyDocAttachment()){
+
+				var adhaar = document.getElementById('adhaarId').value;
+				var mobileno= document.getElementById('mobilePhoneNumber').value;
+				if(adhaar.length > 0 && adhaar.length < 12){
+					jQuery('#adhaarError').removeClass("hide");
+					document.getElementById("adhaarId").focus();
 					return false;
 				}
-    			/* if(validateForm_newTradeLicense()==false) { 
-    				return false;
-    			}  */else { 
+				if(mobileno.length > 0 && mobileno.length < 10){
+					jQuery('#mobileError').removeClass("hide");
+					document.getElementById("mobilePhoneNumber").focus();
+					return false;
+				}
+				else { 
 					return true;    	              
     			 } 
   			}
-
-			// verify whether document attached for selected check list
-  			function verifyDocAttachment(){
-  				var tbl=document.getElementById("docAttachmentTab");
-  			    var lastRow = (tbl.rows.length)-1;
-  			    for(var i=0;i<=lastRow;i++){
-  			    	var checkListval=getControlInBranch(tbl.rows[i],'checklist').checked;
-  			    	if(checkListval==true){
-  	  			    	if(getControlInBranch(tbl.rows[i],'uploadFile').value==''){
-	  	  			    	showMessage('newLicense_error', 'Please attach document for selected Check List'); 
-	  						window.scroll(0, 0); 
-	  						return false;
-  	  			    	}
-  	  			    }
-  	  			}
-  	  			return true;
-  	  		}
 
 			function onBodyLoad(){
   				var currentState=document.getElementById("currentWfstate").value;
@@ -291,7 +284,7 @@
         	
  		</script>
  		
- 			</head>
+	</head>
 	<body onload="onBodyLoad()">
 		<div id="newLicense_error" class="error-msg" style="display:none;" align="center"></div> 
                 <div class="row">
@@ -343,8 +336,8 @@
 							</s:else>
                             
                                  <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                                 </ul>
                             </div>
                             
@@ -355,7 +348,7 @@
 	                                         <%@ include file='../common/address.jsp'%>
 	                                         <%@ include file='../common/license.jsp'%>
 									</div>
-                                    <div class="tab-pane fade" id="tradeattachments"> 
+                                    <div class="tab-pane fade" id="tradeattachments">
                                     	<%@include file="../common/documentUpload.jsp" %>
                                     </div>
                                 </div>

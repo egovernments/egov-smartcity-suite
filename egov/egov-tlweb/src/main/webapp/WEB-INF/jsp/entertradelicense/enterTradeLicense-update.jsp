@@ -42,7 +42,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 	<head>
-		<title><s:text name="page.title.entertrade" /></title>
+		<title><s:text name="page.title.entertrade.update" /></title>
  	</head>
 	<body onload="showHideAgreement()">
 		<div id="enterLicense_error" class="error-msg" style="display:none;"></div>
@@ -72,14 +72,15 @@
 							<s:hidden id="applicationDate" name="applicationDate" />
 							<s:hidden name="id" id="id" />
 							<s:hidden name="licenseNumber"/>
+							<s:hidden name="feeTypeId" id="feeTypeId" />
                         <div class="panel panel-primary" data-collapsed="0">
                             <div class="panel-heading">
 								<div class="panel-title" style="text-align:center">
-										<s:text name='page.title.entertrade' /> 
+									<s:text name="page.title.entertrade.update" />
 								</div>
                                 <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                                 </ul>
                             </div>
                             

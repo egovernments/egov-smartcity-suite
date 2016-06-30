@@ -77,21 +77,17 @@ $(document).ready( function (){
 	
 	userlist.initialize();
 	
-	$('#user_name').typeahead({
-		hint: true,
-		highlight: true,
-		minLength: 3
-		}, {
-		displayKey: 'name',
-		source: userlist.ttAdapter()
-		}).on('typeahead:selected', function(event, data){     
-				$("#usernameId").val(data.value); 
-	    }).on('blur',function(event,data){
-	    	populateUserRoles(this);
-    		if($('#user_name').val() == ''){
-    			$("#usernameId").val('');
-    		}
-        });
+	var user_typeahead=$('#user_name').typeahead({
+        hint : true,
+        highlight : true,
+        minLength : 3
+    }, {
+        displayKey : 'name',
+        source : userlist.ttAdapter()
+    }).on('typeahead:selected', function(event, data){     
+		populateUserRoles(this);
+    });
+    typeaheadWithEventsHandling(user_typeahead, '#usernameId', '#rolesSelect');
 	
 });
 

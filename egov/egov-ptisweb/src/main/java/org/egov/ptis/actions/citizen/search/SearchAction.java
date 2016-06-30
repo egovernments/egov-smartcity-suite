@@ -39,7 +39,16 @@
  */
 package org.egov.ptis.actions.citizen.search;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -50,8 +59,6 @@ import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -64,21 +71,7 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -217,13 +210,24 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                     searchResultMap.put("currSecondHalfDemandDue", "0");
                     searchResultMap.put("arrDemandDue", "0");
                 } else {
-                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemand",
+                            pmv.getAggrCurrFirstHalfDmd() == null ? "0" : pmv.getAggrCurrFirstHalfDmd().toString());
                     searchResultMap.put("currFirstHalfDemandDue",
-                            pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
-                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                            (pmv.getAggrCurrFirstHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrFirstHalfDmd())
+                                    .subtract(pmv.getAggrCurrFirstHalfColl() == null ? BigDecimal.ZERO
+                                            : pmv.getAggrCurrFirstHalfColl())
+                                    .toString());
+                    searchResultMap.put("currSecondHalfDemand",
+                            pmv.getAggrCurrSecondHalfDmd() == null ? "0" : pmv.getAggrCurrSecondHalfDmd().toString());
                     searchResultMap.put("currSecondHalfDemandDue",
-                            pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl()).toString());
-                    searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
+                            (pmv.getAggrCurrSecondHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrSecondHalfDmd())
+                            .subtract(pmv.getAggrCurrSecondHalfColl() == null ? BigDecimal.ZERO
+                                    : pmv.getAggrCurrSecondHalfColl())
+                            .toString());
+                    searchResultMap.put("arrDemandDue", (pmv.getAggrArrDmd() == null ? BigDecimal.ZERO : pmv.getAggrArrDmd())
+                            .subtract(pmv.getAggrArrColl() == null ? BigDecimal.ZERO
+                                    : pmv.getAggrArrColl())
+                            .toString());
                 }
                 searchList.add(searchResultMap);
             }

@@ -150,7 +150,8 @@ public class FeeMatrixService<T extends License> {
 
         final List<FeeMatrixDetail> feeMatrixDetailList = new ArrayList<FeeMatrixDetail>();
         final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(applicationDate);
-        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().get(0).getUom().getId();
+        //TODO The following line of code will evaluate wrong when there are multiple subcategorydetails
+        final Long uomId = license.getTradeName().getLicenseSubCategoryDetails().iterator().next().getUom().getId();
         for (final FeeType fee : feeTypeService.findAll())
             if (fee.getFeeProcessType().equals(FeeType.FeeProcessType.RANGE))
                 switchLoop: switch (fee.getCode()) {

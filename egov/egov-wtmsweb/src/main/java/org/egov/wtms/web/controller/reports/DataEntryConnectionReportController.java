@@ -58,6 +58,7 @@ import org.egov.wtms.application.entity.DataEntryConnectionReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.DataEntryConnectionReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,8 +114,8 @@ public class DataEntryConnectionReportController {
         String result = null;
         for (final DataEntryConnectionReport dataEntryReport : dataEntryConnectionReportlist) {
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCode(dataEntryReport.getHscNo());
-            if (waterConnectionDetails.getExistingConnection() != null) {
+                    .findByApplicationNumberOrConsumerCodeAndStatus(dataEntryReport.getHscNo(),ConnectionStatus.ACTIVE);
+            if (waterConnectionDetails != null && waterConnectionDetails.getExistingConnection() != null) {
                 dataEntryReport.setDonationCharges(waterConnectionDetails.getExistingConnection().getDonationCharges());
                 dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
             }

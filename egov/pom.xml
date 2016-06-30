@@ -819,6 +819,11 @@
 				<artifactId>jsoup</artifactId>
 				<version>${jsoup-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>net.tanesha.recaptcha4j</groupId>
+				<artifactId>recaptcha4j</artifactId>
+				<version>0.0.7</version>
+			</dependency>
 			<!-- MISC END -->
 
 			<!-- SCRIPTING ENGINE STARTS -->
@@ -1138,6 +1143,10 @@
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>net.tanesha.recaptcha4j</groupId>
+            <artifactId>recaptcha4j</artifactId>
+        </dependency>
 		<!-- MISC ENDS -->
 
 		<!-- SCRIPTING ENGINE STARTS -->

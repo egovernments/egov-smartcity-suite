@@ -572,7 +572,7 @@ public class WaterTaxCollection extends TaxCollection {
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         final CollectionApportioner apportioner = new CollectionApportioner();
         billDetails.addAll(bill.getEgBillDetails());
-        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
+        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO , financialYearDAO);
     }
 
     @Override

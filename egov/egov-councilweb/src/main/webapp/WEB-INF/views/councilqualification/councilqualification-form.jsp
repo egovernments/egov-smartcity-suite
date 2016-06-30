@@ -16,6 +16,14 @@
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.description" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="description"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="100"  />
+							<form:errors path="description" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isactive" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:checkbox path="isActive" />
