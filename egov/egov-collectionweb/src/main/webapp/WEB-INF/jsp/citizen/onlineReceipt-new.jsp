@@ -397,7 +397,7 @@ function onLoad(){
 <body onload="onLoad();">
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"
-			action="OnlineReceiptAction.action">
+			action="onlineReceipt">
 			<div class="errorstyle" id="receipt_error_area"
 				style="display: none;"></div>
 			<div class="formmainbox">
