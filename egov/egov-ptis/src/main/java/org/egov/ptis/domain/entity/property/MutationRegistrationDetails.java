@@ -68,7 +68,7 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     private String southBoundary;
     private Double plinthArea;
     private Double plotArea;
-    
+    private String sroName;
     public String getTypeOfTransfer() {
         return typeOfTransfer;
     }
@@ -167,6 +167,12 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     }
     public void setBuyer(String buyer) {
         this.buyer = buyer;
+    }
+    public String getSroName() {
+        return sroName;
+    }
+    public void setSroName(String sroName) {
+        this.sroName = sroName;
     }
 
 }

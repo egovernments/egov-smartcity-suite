@@ -67,5 +67,6 @@
 		<property name="southBoundary" column="SOUTHBOUNDARY" />
 		<property name="plinthArea" column="PLINTHAREA" />
 		<property name="plotArea" column="PLOTAREA" />
+		<property name="sroName" column="SRONAME"></property>
 	</class>
 </hibernate-mapping>
