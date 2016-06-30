@@ -41,14 +41,11 @@
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">
 	<div class="panel-heading">
+	<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span class="text-right" id="pageTotal"></span></div>
 		<div class="panel-title">
 			<spring:message code="title.mb.details" />
 		</div>
 	</div>
-	<p align="right">
-		<spring:message code="lbl.pagetotal" />
-		: <span class="text-right" id="pageTotal"></span>
-	</p>
 	<c:choose>
 		<c:when test="${mBHeader.mbDetails.size() != 0}">
 			<c:forEach items="${mBHeader.getMbDetails()}" var="mbdetails" varStatus="item">
@@ -59,7 +56,7 @@
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
-										<spring:message code="lbl.sor" />
+										<spring:message code="title.sor" />
 									</div>
 								</div>
 								<table class="table table-bordered" id="tblsor">
@@ -111,8 +108,8 @@
 									<tfoot>
 									<tfoot>
 										<tr>
-											<td colspan="11" class="text-right"><spring:message code="lbl.total" /></td>
-											<td class="text-right"><span data-pattern="decimalvalue"
+											<td colspan="11" class="text-right view-content" ><spring:message code="lbl.total" /></td>
+											<td class="text-right view-content"><span data-pattern="decimalvalue"
 												id="sorTotal"></span></td>
 											<td></td>
 											<td></td>
@@ -127,7 +124,7 @@
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
-										<spring:message code="lbl.nonsor" />
+										<spring:message code="title.nonsor" />
 									</div>
 								</div>
 								<table class="table table-bordered" id="tblnonsor">
@@ -175,8 +172,8 @@
 									</tbody>
 									<tfoot>
 										<tr>
-											<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
-											<td class="text-right"><span data-pattern="decimalvalue"
+											<td colspan="9" class="text-right view-content"><spring:message code="lbl.total" /></td>
+											<td class="text-right view-content"><span data-pattern="decimalvalue"
 												id="nonSorTotal"></span></td>
 											<td></td>
 											<td></td>

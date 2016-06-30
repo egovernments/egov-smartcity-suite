@@ -43,15 +43,23 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <style>
-      .position_alert{
-        position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      .position_alert1{
+        position:absolute;top:15px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;width:215px;
+      }
+      .position_alert2{
+        position:absolute;top:15px;right:240px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+      .position_alert3{
+        background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
       }
     </style>
 <form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mBHeader" id="mBHeader" class="form-horizontal form-groups-bordered">
-<div class="position_alert">
-			<spring:message code="lbl.tender.finalized.percentage" /> : <span><c:out value="${mBHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
-			<spring:message code="lbl.mbamount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mBHeader.mbAmount}"/></fmt:formatNumber>
-		</div>
+<div class="position_alert1">
+	<spring:message code="lbl.tender.finalizedperc" /> : <span><c:out value="${mBHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
+	</div>
+	<div class="position_alert2">
+		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mBHeader.mbAmount}"/></fmt:formatNumber>
+	</div>
 <div class="new-page-header"><spring:message code="title.viewmbheader" /></div>  
 	<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
