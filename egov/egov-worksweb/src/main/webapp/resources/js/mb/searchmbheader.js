@@ -186,7 +186,11 @@ function callAjaxSearch() {
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.estimateNumber != null)
 						$('td:eq(1)',row).html('<a href="javascript:void(0);" onclick="viewAbstractEstimate(\''+ data.estimateId +'\')">' + data.estimateNumber + '</a>');
-					
+					$(row).on('click',
+							function() {
+						      window.open("/egworks/mb/view/" + data.mbheaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+							});
+					return row;
 				},
 				aaSorting : [],
 				columns : [ { 
