@@ -680,7 +680,7 @@ public class LetterOfAcceptanceService {
                 .createAlias("woe.estimate", "woeestimate")
                 .createAlias("woeestimate.lineEstimateDetails", "woeled")
                 .createAlias("woeled.lineEstimate", "lineestimate")
-                .createAlias("woeled.projectCode", "projectcode")
+                .createAlias("woeestimate.projectCode", "projectcode")
                 .createAlias("woeestimate.executingDepartment", "executingDepartment")
                 .createAlias("wo.contractor", "woc")
                 .createAlias("wo.egwStatus", "status")
@@ -704,11 +704,10 @@ public class LetterOfAcceptanceService {
                 criteria.add(Restrictions.le("lineestimate.adminSanctionDate",
                         searchRequestLetterOfAcceptance.getAdminSanctionToDate()));
             if (searchRequestLetterOfAcceptance.getTypeOfWork() != null)
-                criteria.add(Restrictions.eq("lineestimate.typeOfWork.id", searchRequestLetterOfAcceptance.getTypeOfWork()));
+                criteria.add(Restrictions.eq("woeestimate.parentCategory.id", searchRequestLetterOfAcceptance.getTypeOfWork()));
             if (searchRequestLetterOfAcceptance.getSubTypeOfWork() != null)
-                criteria.add(Restrictions.eq("lineestimate.subTypeOfWork.id", searchRequestLetterOfAcceptance.getSubTypeOfWork()));
+                criteria.add(Restrictions.eq("woeestimate.category.id", searchRequestLetterOfAcceptance.getSubTypeOfWork()));
         }
-        
         criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
