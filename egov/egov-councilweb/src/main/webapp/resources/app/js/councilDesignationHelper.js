@@ -27,7 +27,7 @@ function callAjaxSearch() {
 				"fnRowCallback": function (row, data, index) {
 						$(row).on('click', function() {
 				console.log(data.id);
-				window.open('/council/councildesignation/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
+				window.open('/council/councildesignation/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600,scrollbars=yes');
 			});
 				 },
 				"sPaginationType" : "bootstrap",
