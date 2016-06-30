@@ -50,18 +50,20 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lcms.utils.LcmsConstants;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eglc_advocate_master")
@@ -91,24 +93,29 @@ public class AdvocateMaster extends AbstractAuditable {
     @Audited
     private String address;
 
-    @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "advocate.phNo.text")
     @Audited
+    @Length(max = 20)
+    @SafeHtml
     private String contactPhone;
 
     @Audited
     private String specilization;
 
-    @OptionalPattern(regex = LcmsConstants.lengthCheckForMobileNo, message = "advocate.mobileNo.length")
     @Audited
+    @Length(min = 10, max = 10)
+    @SafeHtml
+    @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo, message = "Mobile Number is Invalid")
     private String mobileNumber;
 
     @Audited
+    @Email(regexp = LcmsConstants.email)
+    @SafeHtml
     private String email;
 
     @NotNull
     @Min(value = 1)
     @Audited
-    private Long monthlyRenumeration;
+    private double monthlyRenumeration;
 
     @NotNull
     @Audited
@@ -119,7 +126,6 @@ public class AdvocateMaster extends AbstractAuditable {
 
     @NotNull
     @Length(max = 10)
-    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.pannumber.text")
     @Audited
     private String panNumber;
 
@@ -139,7 +145,6 @@ public class AdvocateMaster extends AbstractAuditable {
     private String bankaccount;
 
     @Length(max = 11)
-    @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "advocate.ifsccode.text")
     @Audited
     private String ifsccode;
 
@@ -153,7 +158,7 @@ public class AdvocateMaster extends AbstractAuditable {
     private Bank bankName;
 
     @Audited
-    private Long fee;
+    private double fee;
 
     @Length(max = 256)
     @Audited
@@ -254,11 +259,11 @@ public class AdvocateMaster extends AbstractAuditable {
         this.bankName = bankName;
     }
 
-    public Long getFee() {
+    public double getFee() {
         return fee;
     }
 
-    public void setFee(final Long fee) {
+    public void setFee(final double fee) {
         this.fee = fee;
     }
 
@@ -338,13 +343,12 @@ public class AdvocateMaster extends AbstractAuditable {
         this.paymentmode = paymentmode;
     }
 
-    public Long getMonthlyRenumeration() {
+    public double getMonthlyRenumeration() {
         return monthlyRenumeration;
     }
 
-    public void setMonthlyRenumeration(final Long monthlyRenumeration) {
+    public void setMonthlyRenumeration(final double monthlyRenumeration) {
         this.monthlyRenumeration = monthlyRenumeration;
     }
-
 
 }

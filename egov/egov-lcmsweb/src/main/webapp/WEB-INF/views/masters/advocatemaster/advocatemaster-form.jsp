@@ -44,13 +44,15 @@
 				<div class="panel-heading">
 					<div class="panel-title">Advocate Master</div>
 				</div>
+
+
 				<div class="panel-body">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.name" />: <span class="mandatory"></span></label>
 						<div class="col-sm-2 col-md-1 add-margin">
 							<form:select path="salutation" id="salutation"
-								cssClass="form-control" cssErrorClass="form-control error" >
+								cssClass="form-control" cssErrorClass="form-control error" required="required" >
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -94,19 +96,19 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="contactPhone"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="20" />
+								data-pattern="numeric" maxlength="20" />
 							<form:errors path="contactPhone" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label"><spring:message
-								code="lbl.mobile" />:<span class="mandatory"></span></label>
+								code="lbl.mobilenumber" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="input-group">
 								<span class="input-group-addon">+91</span>
 								<form:input type="text" path="mobileNumber" id="mobileNumber"
-									data-inputmask="'mask': '9999999999'" required="required"
-									cssClass="form-control" maxlength="10"
+									data-inputmask="'mask': '9999999999'" required="required" 
+									cssClass="form-control" maxlength="10" data-pattern="numeric"
 									placeholder="Mobile Number" />
 							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg" />
@@ -152,18 +154,19 @@
 							</form:select>
 						</div>
 					</div>
-					<div class="form-group" >
-					<label class="col-sm-2 control-label text-right"><spring:message
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.paymentmode" />:<span class="mandatory"></span> </label>
-					<div class="col-sm-2 add-margin">
-		<form:select id="paymentmode" name="paymentmode" path="paymentmode"
-								cssClass="form-control" cssErrorClass="form-control error">
-								 <c:forEach items="${paymentModeList}" var="paymentmodevalue">
-                                    <form:option value="${paymentmodevalue}">${paymentmodevalue}</form:option>
-                                </c:forEach>
+						<div class="col-sm-2 add-margin">
+							<form:select id="paymentmode" name="paymentmode"
+								path="paymentmode" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<c:forEach items="${paymentModeList}" var="paymentmodevalue">
+									<form:option value="${paymentmodevalue}">${paymentmodevalue}</form:option>
+								</c:forEach>
 							</form:select>
-	</div>
-	</div> 
+						</div>
+					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.monthlyrenumeration" /> :<span class="mandatory"></span>
@@ -171,7 +174,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="monthlyRenumeration"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" required="required" />
+								data-pattern="decimalvalues" required="required" />
 							<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -200,49 +203,60 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.bankbranch" /> :<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-						<input type="hidden" id="bankBranchId" value="${advocateMaster.bankBranch.id }"/> 
-							<form:select path="bankBranch.id" id="bankBranch"
-								cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option> 
-								 <form:options items="${bankbranchs}" itemValue="id"
-									itemLabel="branchname" /> 
-							</form:select>
-							<form:errors path="bankBranch.id" cssClass="error-msg" />
+							<c:if test="${ mode == 'create'}">
+								<input type="hidden" id="bankBranchId"
+									value="${advocateMaster.bankBranch.id }" />
+								<form:select path="bankBranch.id" id="bankBranch"
+									cssClass="form-control" cssErrorClass="form-control error">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${bankbranchs}" itemValue="id"
+										itemLabel="branchname" />
+								</form:select>
+								<form:errors path="bankBranch.id" cssClass="error-msg" />
+							</c:if>
+							<c:if test="${mode == 'edit'}">
+								<select name="branchname" id="branchname" class="form-control">
+									<c:forEach items="${bankbranchlist}" var="bankBranchDropdown">
+										<option value="${bankBranchDropdown.branchname}">
+											${bankBranchDropdown.branchname}</option>
+									</c:forEach>
+								</select>
+							</c:if>
 						</div>
+					</div>
+					<div class="form-group" id="b2details">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.bankaccount" /> :<span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="bankaccount"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" maxlength="50" />
+							<form:errors path="bankaccount" cssClass="error-msg" />
 						</div>
-						<div class="form-group" id="b2details">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.bankaccount" />  :<span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="bankaccount"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="50" />
-								<form:errors path="bankaccount" cssClass="error-msg" />
-							</div>
 
+					</div>
+					<div class="form-group" id="b3details">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.ifsccode" /> :<span class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="ifsccode"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="11" />
+							<form:errors path="ifsccode" cssClass="error-msg" />
 						</div>
-						<div class="form-group" id="b3details">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.ifsccode" /> :<span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="ifsccode"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="11" />
-								<form:errors path="ifsccode" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.tinumber" /> :<span class="mandatory"></span> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="tinumber"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="10" />
-								<form:errors path="tinumber" cssClass="error-msg" />
-							</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.tinumber" /> :<span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="tinumber"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="10" />
+							<form:errors path="tinumber" cssClass="error-msg" />
+						</div>
 
-						</div>
-						<!-- <div class="form-group">
+					</div>
+					<!-- <div class="form-group">
 							
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.fee" /> </label>
@@ -264,5 +278,5 @@
 							</div>
 
 						</div> -->
-						<input type="hidden" name="advocateMaster"
-							value="${advocateMaster.id}" />
+					<input type="hidden" name="advocateMaster"
+						value="${advocateMaster.id}" />

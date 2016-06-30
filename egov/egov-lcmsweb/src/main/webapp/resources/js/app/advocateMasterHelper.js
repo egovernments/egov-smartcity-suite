@@ -38,13 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$bankBranchName =0;
 $(document).ready(function(){
 	
-	
-	$('#b1details').hide();
-	$('#b2details').hide();
-	$('#b3details').hide();
+	callbankdetails();
 	$('#paymentmode').change(function(){
 	callbankdetails();
 	});
@@ -108,7 +104,7 @@ function callbankdetails(){
     	$("#b2details").hide();
     	$("#b3details").hide();
 	}
-	else if ($('#paymentmode :selected').text().localeCompare("Cash") == 0 ) {  
+	else if ($('#paymentmode :selected').text().localeCompare("Cash") != -1) {  
 		$("#b1details").hide();
     	$("#b2details").hide();
     	$("#b3details").hide();
@@ -129,27 +125,24 @@ $('#bankId').blur(function(){
 		   $('#bankBranch').append($('<option>').text('Select from below').attr('value', ''));
 			return;
 			} else {
-			$.ajax({
+				$.ajax({
+					url: "/lcms/ajax-getAllBankBranchsByBank",     
 				type: "GET",
-				url: "/lcms/ajax-getAllBankBranchsByBank",
-				cache: true,
+				data: {
+					'bankId' : $('#bankId').val()
+				},
 				dataType: "json",
-				data:{'bankId' : $('#bankId').val()}
-			}).done(function(value) {
-				console.log(value);
-				$('#bankBranch').empty();
-				$('#bankBranch').append($("<option value=''>Select from below</option>"));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($bankBranchName)
-					{
-						if($bankBranchName==val.id)
-						{
-							selected="selected";
-						}
-					}
-				     $('#bankBranch').append($('<option>').text(val.branchname).attr('value', val.id));
-				});
+				success: function (response) {
+				    console.log("success"+response);
+					$('#bankBranch').empty();
+					$('#bankBranch').append($("<option value=''>Select from below</option>"));
+					$.each(response, function(index, value) {
+					$('#bankBranch').append($('<option>').text(value.branchname).attr('value', value.id))
+					});
+				}, 
+				error: function (response) {
+					console.log("failed");
+				}
 			});
-		}
+			}
 	});

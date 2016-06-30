@@ -44,6 +44,8 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="advocatemaster-form.jsp"%>
+	<input type="hidden" id="bankBranchId"
+								value="${advocateMaster.bankBranch.id }" />
 	<input type="hidden" name="advocateMaster" value="${advocateMaster.id}" />
 	</div>
 	</div>

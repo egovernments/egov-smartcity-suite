@@ -45,6 +45,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.commons.Bankbranch;
 import org.egov.commons.service.BankBranchService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
@@ -85,10 +86,7 @@ public class AdvocateMasterController {
     private BankService bankService;
     @Autowired
     @Qualifier("bankBranchService")
-    private BankBranchService bankbranchService;
-
-    @Autowired
-    BankBranchService bankBranchService;
+    private BankBranchService bankBranchService;
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("banks", bankService.findAll());
@@ -99,6 +97,7 @@ public class AdvocateMasterController {
     public String newForm(final Model model) {
         prepareNewForm(model);
         model.addAttribute("advocateMaster", new AdvocateMaster());
+        model.addAttribute("mode", "create");
         return ADVOCATEMASTER_NEW;
     }
 
@@ -114,7 +113,7 @@ public class AdvocateMasterController {
         else
             advocateMaster.setBankName(null);
         if (advocateMaster.getBankBranch() != null && advocateMaster.getBankBranch().getId() != null)
-            advocateMaster.setBankBranch(bankBranchService.findById(advocateMaster.getBankBranch().getId().longValue(), false));
+            advocateMaster.setBankBranch(bankBranchService.findById(advocateMaster.getBankBranch().getId(), false));
         else
             advocateMaster.setBankBranch(null);
         advocateMasterService.persist(advocateMaster);
@@ -126,7 +125,16 @@ public class AdvocateMasterController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
+        model.addAttribute("mode", "edit");
         prepareNewForm(model);
+        if (advocateMaster.getBankName() != null && advocateMaster.getBankBranch() != null) {
+            final Bankbranch bankbranch = bankBranchService.findById(advocateMaster.getBankBranch().getId(), false);
+            final List<Bankbranch> bankbranchList = new ArrayList<Bankbranch>();
+            bankbranchList.add(bankbranch);
+            advocateMaster.setBankBranch(bankbranch);
+            model.addAttribute("bankbranchlist", bankbranchList);
+        }
+
         model.addAttribute("advocateMaster", advocateMaster);
         return ADVOCATEMASTER_EDIT;
     }
@@ -143,7 +151,7 @@ public class AdvocateMasterController {
         else
             advocateMaster.setBankName(null);
         if (advocateMaster.getBankBranch() != null && advocateMaster.getBankBranch().getId() != null)
-            advocateMaster.setBankBranch(bankBranchService.findById(advocateMaster.getBankBranch().getId().longValue(), false));
+            advocateMaster.setBankBranch(bankBranchService.findById(advocateMaster.getBankBranch().getId(), false));
         else
             advocateMaster.setBankBranch(null);
 

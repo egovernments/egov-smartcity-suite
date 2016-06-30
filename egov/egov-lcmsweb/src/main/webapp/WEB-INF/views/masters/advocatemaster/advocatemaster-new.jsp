@@ -42,6 +42,7 @@
 <form:form role="form" action="create" modelAttribute="advocateMaster"
 	id="advocateMasterform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" id="mode" value="${mode}"/> 
 	<%@ include file="advocatemaster-form.jsp"%>
 	</div>
 	</div>
