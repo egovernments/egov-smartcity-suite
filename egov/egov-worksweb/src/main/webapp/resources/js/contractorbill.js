@@ -174,8 +174,11 @@ $(document).ready(function(){
 		}
 		$('.creditGlcode').removeAttr('required');
 		$('.creditAmount').removeAttr('required');
-		document.forms[0].submit;
-		return true;
+		if(validateDeductionGrids()){
+			document.forms[0].submit;
+		}
+		else
+			return false;
 	}
 	
 });
@@ -205,6 +208,19 @@ function addOtherDeductionRow() {
 		  bootbox.alert('limit reached!');
 	}
 }
+
+function addRetentionMoneyDeductionRow() { 
+	
+	var rowcount = $("#tblretentionmoneydeductioncreditdetails tbody tr").length;
+	if (rowcount < 30) {
+		if (document.getElementById('retentionmoneydeductionrow') != null) {
+			addRow('tblretentionmoneydeductioncreditdetails','retentionmoneydeductionrow');
+		}
+	} else {
+		  bootbox.alert('limit reached!');
+	}
+}
+
 
 function getRow(obj) {
 	if(!obj)return null;
@@ -236,6 +252,18 @@ function deleteOtherDeductionRow(obj) {
 		return false;
 	} else {
 		deleteRow(obj,'tblotherdeductioncreditdetails');
+		calculateNetPayableAmount();
+		return true;
+	}	
+}
+
+function deleteRetentionMoneyDeductionRow(obj) {
+	var rowcount=$("#tblretentionmoneydeductioncreditdetails tbody tr").length;
+    if(rowcount<=1) {
+		bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
+		deleteRow(obj,'tblretentionmoneydeductioncreditdetails');
 		calculateNetPayableAmount();
 		return true;
 	}	
@@ -474,4 +502,89 @@ function deleteRow(obj,tableName) {
 		});
 		return true;
 	}	
+}
+
+function calculateRetentionMoneyDeductionAmounts()
+{
+	var retentionMoneyPerForPartBill = $("#retentionMoneyPerForPartBill").val();
+	var retentionMoneyPerForFinalBill = $("#retentionMoneyPerForFinalBill").val();
+	var debitAmount = $("#debitamount").val();
+	var billType = $("#billtype").val();
+	var resultLength = $('#tblretentionmoneydeductioncreditdetails tr').length - 1;
+	var index;
+	for (var i = 1; i <= resultLength; i++) {
+		index = i - 1;
+		if(debitAmount=="")
+			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = "";
+		if(debitAmount!="" && billType!="" && billType == 'Part Bill')
+			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100);
+		else if(debitAmount !="" && billType!="" && billType == 'Final Bill')
+			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100);
+	}
+	
+}
+
+function calculateRetentionMoneyDeductionAmount(obj)
+{
+	var retentionMoneyPerForPartBill = $("#retentionMoneyPerForPartBill").val();
+	var retentionMoneyPerForFinalBill = $("#retentionMoneyPerForFinalBill").val();
+	var debitAmount = $("#debitamount").val();
+	var rIndex = getRow(obj).rowIndex;
+	rIndex--;
+	var billType = $("#billtype").val();
+	if(billType!="" && billType == 'Part Bill')
+		document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100);
+	else if(billType!="" && billType == 'Final Bill')
+		document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100);
+	
+}
+
+function validateDeductionGrids(){
+	var flag = true;
+	//Validating statutory deduction grid
+	var statutoryDeductionTblLength = $('#tblstatutorydeductioncreditdetails tr').length - 1;
+	var index;
+	for (var i = 1; i <= statutoryDeductionTblLength; i++) {
+		index = i - 1;
+		var accountCode = document.getElementById('statutoryDeductionDetailes[' + index + '].creditGlcode').value;
+
+		var amount = document.getElementById('statutoryDeductionDetailes[' + index + '].creditamount').value;
+		if(accountCode!="" && amount==""){
+			bootbox.alert("Credit Amount is mandatory for statutory deduction row: " +i );
+			return false;
+		}
+		
+	}
+	
+	//Validating other deduction grid
+	var statutoryDeductionTblLength = $('#tblotherdeductioncreditdetails tr').length - 1;
+	var index;
+	for (var i = 1; i <= statutoryDeductionTblLength; i++) {
+		index = i - 1;
+		var accountCode = document.getElementById('otherDeductionDetailes[' + index + '].glcodeid').value;
+
+		var amount = document.getElementById('otherDeductionDetailes[' + index + '].creditamount').value;
+		if(accountCode!="" && amount==""){
+			bootbox.alert("Credit Amount is mandatory for other deduction row: " +i );
+			return false;
+		}
+		
+	}
+	
+	//Validating retention deduction grid
+	var statutoryDeductionTblLength = $('#tblretentionmoneydeductioncreditdetails tr').length - 1;
+	var index;
+	for (var i = 1; i <= statutoryDeductionTblLength; i++) {
+		index = i - 1;
+		var accountCode = document.getElementById('retentionMoneyDeductionDetailes[' + index + '].creditGlcode').value;
+
+		var amount = document.getElementById('retentionMoneyDeductionDetailes[' + index + '].creditamount').value;
+		if(accountCode!="" && amount==""){
+			bootbox.alert("Credit Amount is mandatory for retention deduction row: " +i );
+			return false;
+		}
+		
+	}
+	
+	return true;
 }

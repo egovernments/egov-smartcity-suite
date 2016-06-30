@@ -69,7 +69,7 @@
 	</c:choose>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billtype" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="billtype" data-first-option="false" id="billtype" class="form-control" required="required">
+		<form:select path="billtype" data-first-option="false" id="billtype" class="form-control" required="required" onchange="calculateRetentionMoneyDeductionAmounts();">
 			<form:option value="">
 				<spring:message code="lbl.select" />
 			</form:option>

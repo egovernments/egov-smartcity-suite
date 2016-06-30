@@ -56,6 +56,8 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -112,6 +114,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
             @ModelAttribute("contractorBillRegister") final ContractorBillRegister contractorBillRegister,
@@ -123,7 +128,12 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         model.addAttribute("woeId", woeId);
-
+        final List<AppConfigValues> retentionMoneyPerForPartBillApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_PART_BILL);
+        final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
+        model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
+        model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
         model.addAttribute("mode", "edit");
@@ -141,7 +151,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
-        model.addAttribute("statutoryDeductionAccounCodes",  chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
+        model.addAttribute("statutoryDeductionAccounCodes",
+                chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
+        model.addAttribute("retentionMoneyDeductionAccounCodes",
+                chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
         model.addAttribute("billTypes", BillTypes.values());
     }
 
@@ -153,7 +166,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final String woeId = request.getParameter("woeId");
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(Long.valueOf(woeId));
         contractorBillRegister.setWorkOrderEstimate(workOrderEstimate);
-        
+
         contractorBillRegisterService.mergeDeductionDetails(contractorBillRegister);
 
         validateInput(contractorBillRegister, workOrderEstimate.getEstimate().getLineEstimateDetails(), resultBinder, request);
@@ -228,6 +241,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     + savedContractorBillRegister.getBillnumber();
         }
     }
+
     @RequestMapping(value = "/contractorbill-success", method = RequestMethod.GET)
     public String showContractorBillSuccessPage(@RequestParam("billNumber") final String billNumber, final Model model,
             final HttpServletRequest request) {

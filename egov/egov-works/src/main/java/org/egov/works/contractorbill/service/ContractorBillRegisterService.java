@@ -594,5 +594,9 @@ public class ContractorBillRegisterService {
             if (billDetails.getId() == null) {
                 contractorBillRegister.getBillDetailes().add(billDetails);
             }
+        for (EgBilldetails billDetails : contractorBillRegister.getRetentionMoneyDeductionDetailes())
+            if (billDetails.getId() == null) {
+                contractorBillRegister.getBillDetailes().add(billDetails);
+            }
     }
 }

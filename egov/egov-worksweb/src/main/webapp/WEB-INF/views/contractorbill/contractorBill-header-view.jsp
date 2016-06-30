@@ -126,7 +126,7 @@
 						<spring:message code="lbl.fund" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.estimate.financialDetails[0].fund.name}" /> 
+						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.fund.name}" /> 
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.estimatenumber" />
@@ -140,13 +140,13 @@
 						<spring:message code="lbl.function" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.estimate.financialDetails[0].function.name}" /> 
+						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.function.name}" /> 
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.department" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.estimate.executingDepartment.name}" />
+						<c:out default="N/A" value="${contractorBillRegister.egBillregistermis.egDepartment.name}" />
 					</div>
 				</div>
 				<div class="row add-border">

@@ -278,14 +278,20 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_BUDGETCHECK_REQUIRED = "budgetCheckRequired";
 
     public static final String APPCONFIG_KEY_EXCEPTIONALUOMS = "EXCEPTIONALUOMS";
-    
+
     public static final String APPCONFIG_KEY_SHOW_SERVICE_FIELDS = "SHOW_SERVICE_FIELDS";
+
+    public static final String APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_PART_BILL = "Retention money deduction percentage for Part Bill";
+
+    public static final String APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL = "Retention money deduction percentage for Final Bill";
 
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
 
     public static final String CONTRACTOR_NETPAYABLE_PURPOSE = "Creditors-Contractor Payable";
-    
+
     public static final String CONTRACTOR_DEDUCTIONS_PURPOSE = "Contractor Deductions";
+
+    public static final String RETENTION_MONEY_DEDUCTIONS_PURPOSE = "Retention Money";
 
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
 

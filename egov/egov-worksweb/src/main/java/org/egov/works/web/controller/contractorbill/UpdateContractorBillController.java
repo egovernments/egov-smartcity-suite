@@ -58,24 +58,23 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -109,6 +108,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -313,7 +315,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         model.addAttribute("netPayableAccounCodes", contractorPayableAccountList);
-        model.addAttribute("statutoryDeductionAccounCodes",  chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
+        model.addAttribute("statutoryDeductionAccounCodes",
+                chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE));
+        model.addAttribute("retentionMoneyDeductionAccounCodes",
+                chartOfAccountsHibernateDAO.getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
         model.addAttribute("billTypes", BillTypes.values());
     }
 
@@ -340,7 +345,12 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
         model.addAttribute("assetValues", contractorBillRegister.getWorkOrderEstimate().getAssetValues());
         model.addAttribute("workOrderEstimate", contractorBillRegister.getWorkOrderEstimate());
-
+        final List<AppConfigValues> retentionMoneyPerForPartBillApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_PART_BILL);
+        final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
+        model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
+        model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
         final ContractorBillRegister newcontractorBillRegister = getContractorBillDocuments(contractorBillRegister);
         if (newcontractorBillRegister.getAssetDetailsList() != null && !newcontractorBillRegister.getAssetDetailsList().isEmpty())
             model.addAttribute("billAssetValue", newcontractorBillRegister.getAssetDetailsList().get(0));
@@ -379,6 +389,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
         final List<CChartOfAccounts> contractorDeductionAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE);
+        final List<CChartOfAccounts> retentionMoneyDeductionAccountList = chartOfAccountsHibernateDAO
+                .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE);
         for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
             if (egBilldetails.getDebitamount() != null) {
                 billDetails = new HashMap<String, Object>();
@@ -412,6 +424,12 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         billDetails.put("isStatutoryDeduction", true);
                     } else {
                         billDetails.put("isStatutoryDeduction", false);
+                    }
+                    if (retentionMoneyDeductionAccountList != null && !retentionMoneyDeductionAccountList.isEmpty()
+                            && retentionMoneyDeductionAccountList.contains(coa)) {
+                        billDetails.put("isRetentionMoneyDeduction", true);
+                    } else {
+                        billDetails.put("isRetentionMoneyDeduction", false);
                     }
                 }
             }
