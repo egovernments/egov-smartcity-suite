@@ -181,7 +181,7 @@
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="appealNum" path="appealNum" />
-		<spring:message code="lbl.textmessage.previouscaseno" />
+		<div class="add-margin error-msg text-left"><font size="2"><spring:message code="lbl.textmessage.previouscaseno" /></font></div>
 		<form:errors path="appealNum" cssClass="add-margin error-msg" />
 	</div>
 </div>

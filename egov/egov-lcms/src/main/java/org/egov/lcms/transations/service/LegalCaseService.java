@@ -41,20 +41,28 @@ package org.egov.lcms.transations.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
 import org.egov.lcms.transactions.entity.LegalcaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalcaseDepartment;
+import org.egov.lcms.transactions.entity.LegalcaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
 import org.egov.lcms.utils.LcmsConstants;
@@ -62,6 +70,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,6 +81,10 @@ public class LegalCaseService {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+    
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -111,6 +124,7 @@ public class LegalCaseService {
         legalcase.setFunctionary(funcObj);
         legalcase.setStatus(getStatusByCodeAndModuleType(LcmsConstants.LEGALCASE_STATUS_CREATED, "LCMS"));
         prepareChildEntities(legalcase);
+        processAndStoreApplicationDocuments(legalcase);
         return legalCaseRepository.save(legalcase);
     }
 
@@ -133,7 +147,6 @@ public class LegalCaseService {
             bipartObjtemp.setLegalcase(legalcase);
             legalcase.getBipartisanDetails().add(bipartObjtemp);
         }
-        legalcase.setBipartisanDetails(partitionDetails);
         
         for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
 
@@ -166,7 +179,15 @@ public class LegalCaseService {
         legalcase.setEglcPwrs(pwrList);
 
     }
-
+    protected void processAndStoreApplicationDocuments(final Legalcase legalcase) {
+        if (!legalcase.getLegalcaseDocuments().isEmpty())
+            for (final LegalcaseDocuments applicationDocument : legalcase.getLegalcaseDocuments()) {
+                applicationDocument.setLegalcase(legalcase);
+                applicationDocument.setDocumentName("LegalCase");
+              applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+            }
+    }
+ 
     @Transactional
     public Legalcase updateLegalCase(final Legalcase legalCase) {
         return legalCaseRepository.save(legalCase);
@@ -179,5 +200,23 @@ public class LegalCaseService {
 
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
         return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
+    }
+    
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        else
+            return null;
     }
 }

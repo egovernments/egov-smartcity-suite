@@ -149,15 +149,18 @@ public class Legalcase extends AbstractAuditable {
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
     @Column(name = "isSenioradvrequired")
-    private Boolean isSenioradvrequired ;
+    private Boolean isSenioradvrequired;
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
-    
+
     @Transient
     private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Judgment> eglcJudgments = new ArrayList<Judgment>(0);
+
+    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LegalcaseDocuments> legalcaseDocuments = new ArrayList<LegalcaseDocuments>(0);
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
@@ -618,13 +621,11 @@ public class Legalcase extends AbstractAuditable {
         this.representedby = representedby;
     }
 
-    
-
     public LCNumberType getLcNumberType() {
         return lcNumberType;
     }
 
-    public void setLcNumberType(LCNumberType lcNumberType) {
+    public void setLcNumberType(final LCNumberType lcNumberType) {
         this.lcNumberType = lcNumberType;
     }
 
@@ -757,13 +758,12 @@ public class Legalcase extends AbstractAuditable {
     public void setAppealNum(final String appealNum) {
         this.appealNum = appealNum;
     }
-    
 
     public List<BipartisanDetails> getBipartisanDetailsBeanList() {
         return bipartisanDetailsBeanList;
     }
 
-    public void setBipartisanDetailsBeanList(List<BipartisanDetails> bipartisanDetailsBeanList) {
+    public void setBipartisanDetailsBeanList(final List<BipartisanDetails> bipartisanDetailsBeanList) {
         this.bipartisanDetailsBeanList = bipartisanDetailsBeanList;
     }
 
@@ -789,6 +789,14 @@ public class Legalcase extends AbstractAuditable {
 
     public void setWpYear(final String wpYear) {
         this.wpYear = wpYear;
+    }
+
+    public List<LegalcaseDocuments> getLegalcaseDocuments() {
+        return legalcaseDocuments;
+    }
+
+    public void setLegalcaseDocuments(final List<LegalcaseDocuments> legalcaseDocuments) {
+        this.legalcaseDocuments = legalcaseDocuments;
     }
 
 }

@@ -41,6 +41,7 @@ package org.egov.lcms.utils;
 
 public class LcmsConstants {
 	public static final String MODULE_TYPE_LEGALCASE = "Legal Case";
+	 public static final String FILESTORE_MODULECODE = "LCMS";
 	public static final String APPROVED_STATUS = "Approved";
 	public static final String CIVIL_COURT_KEY = "Civil Court";
 	public static final String EX_PARTE_KEY = "Ex-parte";

@@ -105,5 +105,3 @@
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
 </div>
-
-
