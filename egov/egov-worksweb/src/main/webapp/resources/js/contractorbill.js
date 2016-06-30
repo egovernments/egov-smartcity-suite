@@ -46,6 +46,7 @@ $(document).ready(function(){
 	
 	if($("#mbTotalAmount").html()){
 		$("#debitamount").val($("#mbTotalAmount").html());
+		$("#netPayableAmount").val($("#mbTotalAmount").html());
 		$("#debitamount").prop("readonly",true);
 	}
 	// TODO: remove this condition

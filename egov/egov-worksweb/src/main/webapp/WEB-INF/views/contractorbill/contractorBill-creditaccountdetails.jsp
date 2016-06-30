@@ -71,7 +71,7 @@
 				<c:choose>
 					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
 						<tr id="statutorydeductionrow">
-							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input"  >
+							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode"  >
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 										<c:forEach var="coa" items="${statutoryDeductionAccounCodes}">
 											<form:option value="${coa.id}">

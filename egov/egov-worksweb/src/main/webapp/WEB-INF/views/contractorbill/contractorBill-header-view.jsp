@@ -98,13 +98,13 @@
 						<spring:message code="lbl.partyname" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.contractor.name}"></c:out>
+						<c:out default="N/A" value="${workOrderEstimate.workOrder.contractor.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.contractor.code" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.contractor.code}"></c:out>
+						<c:out default="N/A" value="${workOrderEstimate.workOrder.contractor.code}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -112,13 +112,13 @@
 						<spring:message code="lbl.loanumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.workOrderNumber}" /> 
+						<c:out default="N/A" value="${workOrderEstimate.workOrder.workOrderNumber}" /> 
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.agreement.amount" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.workOrderAmount}" />
+						<c:out default="N/A" value="${workOrderEstimate.workOrder.workOrderAmount}" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -126,13 +126,13 @@
 						<spring:message code="lbl.fund" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.lineEstimate.fund.name}" /> 
+						<c:out default="N/A" value="${workOrderEstimate.estimate.financialDetails[0].fund.name}" /> 
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.estimatenumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.estimateNumber}" /> 
+						<c:out default="N/A" value="${workOrderEstimate.estimate.estimateNumber}" /> 
 					</div>
 				</div>
 				<div class="row add-border">
@@ -140,13 +140,13 @@
 						<spring:message code="lbl.function" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.lineEstimate.function.name}" /> 
+						<c:out default="N/A" value="${workOrderEstimate.estimate.financialDetails[0].function.name}" /> 
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.department" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.lineEstimate.executingDepartment.name}" />
+						<c:out default="N/A" value="${workOrderEstimate.estimate.executingDepartment.name}" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -160,7 +160,7 @@
 						<spring:message code="lbl.workidentificationnumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.projectCode.code}" />
+						<c:out default="N/A" value="${workOrderEstimate.estimate.projectCode.code}" />
 					</div>
 				</div>
 				<c:if test="${billAssetValue !=null }">

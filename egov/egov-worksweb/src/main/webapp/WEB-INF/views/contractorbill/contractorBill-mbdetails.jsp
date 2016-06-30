@@ -125,7 +125,7 @@
 								<td><a href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
 								<td><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></td>
 								<td><c:out value="${mbDtls.mbDate}"></c:out></td>
-								<td class="text-right"><c:out value="${mbDtls.mbAmount}"></c:out></td>
+								<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></td>
 							</tr>
 					</c:forEach>
 				</c:when>
