@@ -182,7 +182,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         List<InstrumentHeader> instrumentHeaderListCheque = new ArrayList<InstrumentHeader>();
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE).equals(
-                CollectionConstants.YES))
+                        CollectionConstants.YES))
             showRemitDate = true;
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
@@ -215,7 +215,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     cashQueryBuilder.append(receiptFundCondition);
                     cashQueryBuilder.append(receiptDepartmentCondition);
                     cashQueryBuilder
-                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     cashQueryBuilder.append(receiptSourceCondition);
                     final Object arguments[] = new Object[9];
                     arguments[0] = serviceName;
@@ -250,7 +250,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
                     chequeQueryBuilder.append(receiptSourceCondition);
@@ -375,14 +375,16 @@ public class RemittanceServiceImpl extends RemittanceService {
         remittance.setRemittanceDetails(new HashSet<RemittanceDetail>(remittanceDetailsList));
         remittancePersistService.persist(remittance);
         startWorkflow(remittance);
-        if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)) {
+        if (CollectionConstants.YES.equalsIgnoreCase(createVoucher)
+                && (totalCashVoucherAmt.compareTo(BigDecimal.ZERO) > 0
+                || totalChequeVoucherAmt.compareTo(BigDecimal.ZERO) > 0)) {
             voucherHeader = createVoucherForRemittance(cashInHandGLCode, chequeInHandGLcode, serviceGLCode,
                     functionCode, totalCashVoucherAmt, totalChequeVoucherAmt, voucherDate, fundCode);
             remittance.setVoucherHeader(voucherHeader);
             Boolean voucherTypeForChequeDDCard = false;
             if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
-                            CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+                    CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
                 voucherTypeForChequeDDCard = true;
             final Map<String, Object> instrumentDepositMap = financialsUtil.prepareForUpdateInstrumentDepositSQL();
             for (final InstrumentHeader instrumentHeaderCheque : instrumentHeaderListCheque)
@@ -456,13 +458,13 @@ public class RemittanceServiceImpl extends RemittanceService {
     private void startWorkflow(final Remittance remittance) {
         final Position position = collectionsUtil.getPositionOfUser(collectionsUtil.getLoggedInUser());
         remittance
-                .transition()
-                .start()
-                .withSenderName(
-                        collectionsUtil.getLoggedInUser().getUsername() + "::"
-                                + collectionsUtil.getLoggedInUser().getName())
-                .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
-                .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
+        .transition()
+        .start()
+        .withSenderName(
+                collectionsUtil.getLoggedInUser().getUsername() + "::"
+                        + collectionsUtil.getLoggedInUser().getName())
+                        .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
+                        .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
     }
 
     public List<RemittanceDetail> getRemittanceDetailsList(final BigDecimal creditAmount, final BigDecimal debitAmount,
