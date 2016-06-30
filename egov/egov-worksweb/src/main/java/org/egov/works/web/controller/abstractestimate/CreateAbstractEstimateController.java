@@ -152,6 +152,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             estimateService.loadModelValues(abstractEstimate.getLineEstimateDetails(), model, abstractEstimate);
+            abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
             loadViewData(model, abstractEstimate, abstractEstimate.getLineEstimateDetails());
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));

@@ -122,7 +122,7 @@
 			    <spring:message code="lbl.workdescription" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="description" name="description" class="form-control"  maxlength="1024" required="required"/>
+				<form:textarea path="description" id="description" name="description" class="form-control"  maxlength="1024" required="required"/>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>

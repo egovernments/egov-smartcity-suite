@@ -54,14 +54,14 @@
 					<div class="panel-heading"></div>
 					<div class="panel-body">
 						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" />.</div> 
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /> : </div> 
 							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 							<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
 							</div></c:if>
 							<input type="hidden" name="mode" value="${mode}" id="mode"/>
 							<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" />.
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> :
 							</div> 
 							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
@@ -69,22 +69,20 @@
 								<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
 							</div>
 							</c:if>
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" />.</div>
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" /> : </div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
 							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
 						</div>
-						<div class="row add-border">
+						
 						<c:if test="workOrder != null && workOrder.id != null">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>
+						<div class="row add-border">
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
 							<div class="col-md-2 col-xs-6 add-margin view-content">
 								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
 							</div>
-						</c:if>
-						<c:if test="${mode != null}">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" />.</div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377<span>${paymentsReleasedSoFar}</span></div>
-							</c:if>
 						</div>
+						</c:if>
+						
 					</div>
 				</div>
 			</div>
