@@ -53,7 +53,7 @@
 	enctype="multipart/form-data">
 	
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
-
+	
 	<div class="new-page-header"><spring:message code="lbl.createae" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
@@ -87,7 +87,7 @@
 			</div>
 			<div class="tab-pane fade" id="workdetails">
 				<%@ include file="estimate-sor.jsp"%>
-			  <%@ include file="estimate-nonsor.jsp"%>
+			    <%@ include file="estimate-nonsor.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="estimate-overheads.jsp"%>
@@ -114,6 +114,6 @@
 	</div>
 </form:form>
 <%@ include file="estimate-map.jsp"%>
-<script type="text/javascript"
-	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/loadmaps.js?rnd=${app_release_no}'/>"></script>

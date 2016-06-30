@@ -318,10 +318,9 @@ $(document).ready(function(){
 	generateSorSno();
 	generateSlno();
 	
-	$('.overheadValueName').trigger('change');
 	
 	resetAddedOverheads();
-	
+	calculateOverheadTotalAmount();
 	$('#isOverheadValuesLoading').val('false');
 });
 
@@ -346,7 +345,7 @@ var addedOverheads = new Array();
 function deleteOverheadRow(obj) {
 	var rIndex = getRow(obj).rowIndex;
 	var rowcount=jQuery("#overheadTable tbody tr").length;
-    if(rowcount<=1) {
+	if(rowcount<=1) {
     	bootbox.alert("This row can not be deleted");
 		return false;
 	} else {
@@ -354,7 +353,7 @@ function deleteOverheadRow(obj) {
 	    var total = $("#overheadTotalAmount").html();
 	    if(total==null || total=="")
 	    	total = 0;
-	    var amount = document.getElementById('overheadValues['+ (rIndex-1) + '].amount').value;
+	    var amount = document.getElementById('tempOverheadValues['+ (rIndex-1) + '].amount').value;
 	    if(amount==null || amount=="")
 	    	amount = 0;
 	    total = eval(total) - eval(amount);
@@ -375,9 +374,9 @@ function recalculateOverheads(){
 	var workValue = $('#workValue').val();
 	for (var i = 0; i < resultLength; i++) {
 		index = i;
-		var percentage = document.getElementById('overheadValues['
+		var percentage = document.getElementById('tempOverheadValues['
 				+ index + '].percentage').value;
-		var amount = document.getElementById('overheadValues['
+		var amount = document.getElementById('tempOverheadValues['
 				+ index + '].amount');
 		if(percentage!="")
 			amount.value = ((workValue*percentage)/100).toFixed(2);
@@ -391,13 +390,13 @@ function resetAddedOverheads(){
 	var index;
 	for (var i = 0; i < resultLength; i++) {
 		index = i;
-		var overheadvalue = document.getElementById('overheadValues['
+		var overheadvalue = document.getElementById('tempOverheadValues['
 				+ index + '].name').value;
 		if(overheadvalue!="")
 			addedOverheads.push(overheadvalue);
 		else{
-			document.getElementById('overheadValues['+ index + '].percentage').value = "";
-			document.getElementById('overheadValues['+ index + '].amount').value = 0;
+			document.getElementById('tempOverheadValues['+ index + '].percentage').value = "";
+			document.getElementById('tempOverheadValues['+ index + '].amount').value = 0;
 			calculateOverheadTotalAmount();
 		}
 	}
@@ -421,13 +420,13 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 					overheadId : overhead.value
 				},
 				success : function(data, textStatus, jqXHR) {
-					document.getElementById('overheadValues['+ index + '].overhead.id').value = data.overhead.id;
+					document.getElementById('tempOverheadValues['+ index + '].overhead.id').value = data.overhead.id;
 					if(data.percentage>0){
-						document.getElementById('overheadValues['+ index + '].percentage').value = data.percentage;
-						document.getElementById('overheadValues['+ index + '].amount').value = ((workValue*data.percentage)/100).toFixed(2);
+						document.getElementById('tempOverheadValues['+ index + '].percentage').value = data.percentage;
+						document.getElementById('tempOverheadValues['+ index + '].amount').value = ((workValue*data.percentage)/100).toFixed(2);
 					}else{
-						document.getElementById('overheadValues['+ index + '].percentage').value = "";
-						document.getElementById('overheadValues['+ index + '].amount').value = data.lumpsumAmount;
+						document.getElementById('tempOverheadValues['+ index + '].percentage').value = "";
+						document.getElementById('tempOverheadValues['+ index + '].amount').value = data.lumpsumAmount;
 					}
 					calculateOverheadTotalAmount();
 				},
@@ -436,14 +435,14 @@ function getPercentageOrLumpsumByOverhead(overhead) {
 				}
 			});
 		}else{
-			document.getElementById('overheadValues['+ index + '].percentage').value = "";
-			document.getElementById('overheadValues['+ index + '].amount').value = 0;
+			document.getElementById('tempOverheadValues['+ index + '].percentage').value = "";
+			document.getElementById('tempOverheadValues['+ index + '].amount').value = 0;
 			calculateOverheadTotalAmount();
 		}
 	}else{
 		var index =overhead.name.substring(overhead.name.indexOf("[")+1,overhead.name.indexOf("]")); 
-		document.getElementById('overheadValues['+ index + '].percentage').value = "";
-		document.getElementById('overheadValues['+ index + '].amount').value = 0;
+		document.getElementById('tempOverheadValues['+ index + '].percentage').value = "";
+		document.getElementById('tempOverheadValues['+ index + '].amount').value = 0;
 		overhead.value= "";
 		calculateOverheadTotalAmount();
 		bootbox.alert("The overhead is already added");
@@ -458,7 +457,7 @@ function calculateOverheadTotalAmount(){
 	var total = 0;
 	for (var i = 0; i < resultLength; i++) {
 		index = i;
-		var amount = document.getElementById('overheadValues['
+		var amount = document.getElementById('tempOverheadValues['
 				+ index + '].amount').value;
 		if(amount==null || amount=="")
 			amount = 0;
@@ -902,13 +901,13 @@ function validateOverheads(){
 	var index;
 	for (var i = 0; i < resultLength; i++) {
 		index = i;
-		var overheadvalue = document.getElementById('overheadValues['
+		var overheadvalue = document.getElementById('tempOverheadValues['
 				+ index + '].name').value;
-		var amount = document.getElementById('overheadValues['
+		var amount = document.getElementById('tempOverheadValues['
 				+ index + '].amount').value;
 		if(overheadvalue!=""){
 			if(amount=="" || amount<=0){
-				document.getElementById('overheadValues['+ index + '].amount').focus();
+				document.getElementById('tempOverheadValues['+ index + '].amount').focus();
 				bootbox.alert("Amount is requried for overheads line:  "+(index+1));
 				return false;
 			}
@@ -1637,7 +1636,7 @@ function validateSORDetails() {
 		}
 		var overheadTableLength = jQuery('#overheadTable tr').length-1;
 		if(overheadTableLength == 1){
-			var overhead = document.getElementById('overheadValues[0].overhead.id').value;
+			var overhead = document.getElementById('tempOverheadValues[0].overhead.id').value;
 			if(overhead==""){
 				var tbl=document.getElementById('overheadTable');
 				tbl.deleteRow(1);

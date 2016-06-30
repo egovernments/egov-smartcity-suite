@@ -68,8 +68,10 @@
 					<c:when test="${abstractEstimate.overheadValues.size() == 0}">
 						<tr id="overheadRow">
 							<td><span id="sno" class="spansno" data-sno>1</span>
+								<form:hidden path="tempOverheadValues[0].id"  name="tempOverheadValues[0].id" id="tempOverheadValues[0].id"  class="form-control table-input hidden-input"/>
+							</td>
 							<td>
-								<form:select path="" data-first-option="false" name="overheadValues[0].name" id="overheadValues[0].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
+								<form:select path="" data-first-option="false" name="tempOverheadValues[0].name" id="tempOverheadValues[0].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -111,15 +113,15 @@
 										</c:forEach>
 									</c:forEach>
 								</form:select> 
-								<form:hidden path="overheadValues[0].overhead.id"  name="overheadValues[0].overhead.id" id="overheadValues[0].overhead.id"  class="form-control table-input hidden-input"/> 
-								<form:errors path="overheadValues[0].overhead.id" cssClass="add-margin error-msg" /> 
+								<form:hidden path="tempOverheadValues[0].overhead.id"  name="tempOverheadValues[0].overhead.id" id="tempOverheadValues[0].overhead.id"  class="form-control table-input hidden-input"/>
+								<form:errors path="tempOverheadValues[0].overhead.id" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<input type="text" id="overheadValues[0].percentage" name="overheadValues[0].percentage"  class="form-control" disabled>  
+								<input type="text" id="tempOverheadValues[0].percentage" name="tempOverheadValues[0].percentage"  class="form-control" disabled>  
 							</td>
 							<td>
-								<form:input path="overheadValues[0].amount" id="overheadValues[0].amount" name="overheadValues[0].amount"  data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
-								<form:errors path="overheadValues[0].amount" cssClass="add-margin error-msg" /> 
+								<form:input path="tempOverheadValues[0].amount" id="tempOverheadValues[0].amount" name="tempOverheadValues[0].amount"  data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
+								<form:errors path="tempOverheadValues[0].amount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center">
 								<button type="button" onclick="deleteOverheadRow(this);" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete</button>
@@ -130,11 +132,14 @@
 						<c:forEach items="${abstractEstimate.overheadValues}" var="overheadValue" varStatus="item">
 							<tr id="overheadRow">
 								<td><span id="sno" class="spansno" data-sno><c:out value="${item.index + 1}"/></span>
+								<form:hidden path="tempOverheadValues[${item.index }].id"  name="tempOverheadValues[${item.index }].id" id="tempOverheadValues[${item.index }].id" value="${overheadValue.id }"  class="form-control table-input hidden-input"/>
+								</td>
 								<td>
-									<form:select path="" data-first-option="false" name="overheadValues[${item.index }].name" id="overheadValues[${item.index }].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
+									<form:select path="" data-first-option="false" name="tempOverheadValues[${item.index }].name" id="tempOverheadValues[${item.index }].name" class="form-control overheadValueName" onchange="getPercentageOrLumpsumByOverhead(this);">
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
+										<c:set var="percentage" value="" scope="session"/>
 										<c:forEach var="overhead" items="${overheads}">
 											<c:forEach var="overheadrate" items="${overhead.overheadRates}">
 											<c:set var="estDate" value="<%=new java.util.Date()%>" scope="session"/>
@@ -147,6 +152,7 @@
 															<c:choose>
 																<c:when test="${overheadrate.percentage > 0}">
 																	<c:if test="${overhead.id == overheadValue.overhead.id }">
+																		<c:set var="percentage" value="${overheadrate.percentage}"/>
 																		<form:option value="${overhead.id}" selected="selected">
 																			<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
 																		</form:option>
@@ -173,6 +179,7 @@
 														</c:when>
 														<c:otherwise>
 															<c:if test="${overhead.id == overheadValue.overhead.id }">
+																<c:set var="percentage" value="${overheadrate.percentage}"/>
 																<form:option value="${overhead.id}" selected="selected">
 																	<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
 																</form:option>
@@ -188,6 +195,7 @@
 												<c:otherwise>
 													<c:if test="${overhead.id == overheadValue.overhead.id }">
 														<form:option value="${overhead.id}" selected="selected">
+															<c:set var="percentage" value="${overheadrate.percentage}"/>
 															<c:out value="${overhead.name}" /> <c:out value="${overheadrate.percentage}" /> %
 														</form:option>
 													</c:if>
@@ -201,15 +209,15 @@
 											</c:forEach>
 										</c:forEach>
 									</form:select> 
-									<form:hidden path="overheadValues[${item.index }].overhead.id"  name="overheadValues[${item.index }].overhead.id" id="overheadValues[${item.index }].overhead.id"  class="form-control table-input hidden-input"/> 
-									<form:errors path="overheadValues[${item.index }].overhead.id" cssClass="add-margin error-msg" /> 
+									<form:hidden path="tempOverheadValues[${item.index }].overhead.id"  name="tempOverheadValues[${item.index }].overhead.id" value="${overheadValue.overhead.id}" id="tempOverheadValues[${item.index }].overhead.id"  class="form-control table-input hidden-input"/>
+									<form:errors path="tempOverheadValues[${item.index }].overhead.id" cssClass="add-margin error-msg" /> 
 								</td>
 								<td>
-									<input type="text" id="overheadValues[${item.index }].percentage" name="overheadValues[${item.index }].percentage"  class="form-control" disabled>  
+									<input type="text" id="tempOverheadValues[${item.index }].percentage" name="tempOverheadValues[${item.index }].percentage"  class="form-control" disabled value="${percentage}">  
 								</td>
 								<td>
-									<form:input path="overheadValues[${item.index }].amount" id="overheadValues[${item.index }].amount" name="overheadValues[${item.index }].amount"  data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
-									<form:errors path="overheadValues[${item.index }].amount" cssClass="add-margin error-msg" /> 
+									<form:input path="tempOverheadValues[${item.index }].amount" id="tempOverheadValues[${item.index }].amount" value="${overheadValue.amount }" name="tempOverheadValues[${item.index }].amount"  data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right" onblur="calculateOverheadTotalAmount();"  maxlength="12" />
+									<form:errors path="tempOverheadValues[${item.index }].amount" cssClass="add-margin error-msg" /> 
 								</td> 
 								<td class="text-center">
 									<button type="button" onclick="deleteOverheadRow(this);" class="btn btn-xs btn-secondary delete-row"><span class="glyphicon glyphicon-trash"></span> Delete</button>

@@ -152,7 +152,7 @@
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
 					<th><spring:message code="lbl.rate" /></th>
-					<th><spring:message code="lbl.estimatedquantity" /><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.estimatedquantity" /><span class="mandatory" ></span></th>
 					<th><spring:message code="lbl.estimatedamount" /></th>
 					<th hidden="true" id="serviceVatHeader"><spring:message code="lbl.service.vat" /></th>
 					<th hidden="true" id="vatAmountHeader"><spring:message code="lbl.service.vat.amount" /></th>

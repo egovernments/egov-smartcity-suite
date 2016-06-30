@@ -126,6 +126,4 @@
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-	
-<script src="<c:url value='/resources/js/loadmaps.js?rnd=${app_release_no}'/>"></script>
 		

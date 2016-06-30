@@ -236,6 +236,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OverheadValue.class)
     private List<OverheadValue> overheadValues = new ArrayList<OverheadValue>(0);
 
+    @Transient
+    private List<OverheadValue> tempOverheadValues = new ArrayList<OverheadValue>(0);
+
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = AssetsForEstimate.class)
@@ -777,4 +780,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setNonSorActivities(List<Activity> nonSorActivities) {
         this.nonSorActivities = nonSorActivities;
     }
+
+    public List<OverheadValue> getTempOverheadValues() {
+        return tempOverheadValues;
+    }
+
+    public void setTempOverheadValues(List<OverheadValue> tempOverheadValues) {
+        this.tempOverheadValues = tempOverheadValues;
+    }
+    
+    
 }

@@ -111,7 +111,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -246,10 +245,9 @@ public class EstimateService {
             multiYearEstimate.setAbstractEstimate(abstractEstimate);
         for (final FinancialDetail financialDetail : abstractEstimate.getFinancialDetails())
             financialDetail.setAbstractEstimate(abstractEstimate);
-        for (final OverheadValue obj : abstractEstimate.getOverheadValues()) {
-            obj.setAbstractEstimate(abstractEstimate);
-            obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
-        }
+
+        createOverheadValues(abstractEstimate);
+
         for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
             assetsForEstimate.setAbstractEstimate(abstractEstimate);
             assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
@@ -338,10 +336,13 @@ public class EstimateService {
         abstractEstimateFromDB.setLastModifiedBy(securityUtils.getCurrentUser());
 
         abstractEstimateFromDB.getOverheadValues().clear();
-        for (final OverheadValue value : newAbstractEstimate.getOverheadValues()) {
-            value.setAbstractEstimate(abstractEstimateFromDB);
-            value.setOverhead(overheadService.getOverheadById(value.getOverhead().getId()));
-            abstractEstimateFromDB.addOverheadValue(value);
+        for (final OverheadValue value : newAbstractEstimate.getTempOverheadValues()) {
+            OverheadValue newOverheadValue = null;
+            newOverheadValue = new OverheadValue();
+            newOverheadValue.setOverhead(overheadService.getOverheadById(value.getOverhead().getId()));
+            newOverheadValue.setAmount(value.getAmount());
+            newOverheadValue.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateFromDB.getOverheadValues().add(newOverheadValue);
         }
 
         abstractEstimateRepository.save(abstractEstimateFromDB);
@@ -488,9 +489,9 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate updateAbstractEstimateDetails(final AbstractEstimate abstractEstimate,
+    public AbstractEstimate updateAbstractEstimateDetails(AbstractEstimate abstractEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final MultipartFile[] files, @RequestParam final String removedActivityIds)
+            final String workFlowAction, final MultipartFile[] files, final String removedActivityIds)
             throws ValidationException, IOException {
         AbstractEstimate updatedAbstractEstimate = null;
 
@@ -502,10 +503,9 @@ public class EstimateService {
                 multiYearEstimate.setAbstractEstimate(abstractEstimate);
             for (final FinancialDetail financialDetail : abstractEstimate.getFinancialDetails())
                 financialDetail.setAbstractEstimate(abstractEstimate);
-            for (final OverheadValue obj : abstractEstimate.getOverheadValues()) {
-                obj.setAbstractEstimate(abstractEstimate);
-                obj.setOverhead(overheadService.getOverheadById(obj.getOverhead().getId()));
-            }
+
+            createOverheadValues(abstractEstimate);
+
             for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
                 assetsForEstimate.setAbstractEstimate(abstractEstimate);
                 assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
@@ -542,6 +542,18 @@ public class EstimateService {
                 additionalRule, workFlowAction);
 
         return updatedAbstractEstimate;
+    }
+
+    private void createOverheadValues(AbstractEstimate abstractEstimate) {
+        OverheadValue newOverheadValue = null;
+        abstractEstimate.getOverheadValues().clear();
+        for (final OverheadValue overheadValue : abstractEstimate.getTempOverheadValues()) {
+            newOverheadValue = new OverheadValue();
+            newOverheadValue.setOverhead(overheadService.getOverheadById(overheadValue.getOverhead().getId()));
+            newOverheadValue.setAmount(overheadValue.getAmount());
+            newOverheadValue.setAbstractEstimate(abstractEstimate);
+            abstractEstimate.getOverheadValues().add(newOverheadValue);
+        }
     }
 
     private List<Activity> removeDeletedActivities(final List<Activity> activities, final String removedActivityIds) {
