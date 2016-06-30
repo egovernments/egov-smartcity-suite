@@ -2676,7 +2676,6 @@ public class PropertyService {
     public void updateAssessmentSeq() {
         String maxAssessmentno = (String) propPerServ.getSession().createSQLQuery("select right(max(propertyid),6) from egpt_basic_property ").uniqueResult();
         Integer nextVal = Integer.parseInt(maxAssessmentno);
-        nextVal++;
         String query = (String) propPerServ.getSession().createSQLQuery("SELECT setval('seq_egpt_assessment_number'," + nextVal + ")").uniqueResult().toString();
     }
 

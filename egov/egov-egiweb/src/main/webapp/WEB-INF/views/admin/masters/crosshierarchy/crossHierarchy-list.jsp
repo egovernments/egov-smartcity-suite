@@ -55,7 +55,7 @@
 						<div class="panel-heading">
 							<div class="panel-title">
 								<strong><spring:message
-										code="title.crossHierarchy.mapping" /></strong>
+										code="title.crosshierarchy.mapping" /></strong>
 							</div>
 						</div> 
 						

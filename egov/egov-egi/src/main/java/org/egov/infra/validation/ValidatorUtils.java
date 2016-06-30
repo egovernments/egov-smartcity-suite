@@ -56,9 +56,9 @@ public class ValidatorUtils {
     @Autowired
     public ValidatorUtils(ApplicationProperties applicationProperties) {
         String passwordStrength = applicationProperties.passwordStrength();
-        if ("HIGH".equals(passwordStrength)) {
+        if ("high".equals(passwordStrength)) {
             PASSWORD_PATTERN = Pattern.compile(Constants.STRONG_PASSWORD);
-        } else if ("MEDIUM".equals(passwordStrength)) {
+        } else if ("medium".equals(passwordStrength)) {
             PASSWORD_PATTERN = Pattern.compile(Constants.MEDIUM_PASSWORD);
         } else {
             PASSWORD_PATTERN = Pattern.compile(Constants.LOW_PASSWORD);

@@ -70,6 +70,8 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
     @Autowired
     private LoginAttemptService loginAttemptService;
 
+    @Autowired
+    private RecaptchaUtils recaptchaUtils;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -89,8 +91,8 @@ public class EgovDaoAuthenticationProvider extends DaoAuthenticationProvider {
         } catch (LockedException le) {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
-            if(request.getParameter("g-recaptcha-response") != null) {
-                if (RecaptchaUtils.captchaIsValid(request)) {
+            if(request.getParameter("g-recaptcha-response") != null || request.getParameter("recaptcha_response_field") != null ) {
+                if (recaptchaUtils.captchaIsValid(request)) {
                     this.loginAttemptService.resetFailedAttempt(authentication.getName());
                     return super.authenticate(authentication);
                 } else {

@@ -43,6 +43,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 public class PropertyMaterlizeView implements Serializable {
@@ -90,6 +91,15 @@ public class PropertyMaterlizeView implements Serializable {
     private String mobileNumber;
     private Boolean isActive;
     private Boolean isUnderCourtCase;
+    private String categoryType;
+    private String regdDocNo;
+    private Date regdDocDate; 
+    private String pattaNo;
+    private BigDecimal marketValue;
+    private BigDecimal capitalValue;
+    private Date assessmentDate;
+    private Date lastUpdated;
+
 
     public Integer getBasicPropertyID() {
         return basicPropertyID;
@@ -417,4 +427,67 @@ public class PropertyMaterlizeView implements Serializable {
         this.isUnderCourtCase = isUnderCourtCase;
     }
 
+    public String getCategoryType() {
+        return categoryType;
+    }
+
+    public void setCategoryType(String categoryType) {
+        this.categoryType = categoryType;
+    }
+
+    public String getRegdDocNo() {
+        return regdDocNo;
+    }
+
+    public void setRegdDocNo(String regdDocNo) {
+        this.regdDocNo = regdDocNo;
+    }
+
+    public Date getRegdDocDate() {
+        return regdDocDate;
+    }
+
+    public void setRegdDocDate(Date regdDocDate) {
+        this.regdDocDate = regdDocDate;
+    }
+
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
+
+    public void setMarketValue(final BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
+
+    public String getPattaNo() {
+        return pattaNo;
+    }
+
+    public void setPattaNo(final String pattaNo) {
+        this.pattaNo = pattaNo;
+    }
+
+    public BigDecimal getCapitalValue() {
+        return capitalValue;
+    }
+
+    public void setCapitalValue(final BigDecimal capitalValue) {
+        this.capitalValue = capitalValue;
+    }
+
+    public Date getAssessmentDate() {
+        return assessmentDate;
+    }
+
+    public void setAssessmentDate(final Date assessmentDate) {
+        this.assessmentDate = assessmentDate;
+    }
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(final Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

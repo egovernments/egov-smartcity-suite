@@ -57,8 +57,6 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
-		<script src='https://www.google.com/recaptcha/api.js'></script>
-		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -166,13 +164,11 @@
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<div class="input-group" style="margin:0 auto;">
-									<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
-									<form:errors path="active" cssClass="add-margin error-msg font-12"/>
-								</div>
-								
-							</div>
+                            <div class="add-margin">
+                                <spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+                                <c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
+                                <form:errors path="active" cssClass="add-margin error-msg font-12"/>
+                            </div>
 							<div class="form-group signup-leftpadding">
 								<button type="submit" class="btn btn-custom btn-block btn-login signup-submit">
 									<spring:message code="btn.signup" />
