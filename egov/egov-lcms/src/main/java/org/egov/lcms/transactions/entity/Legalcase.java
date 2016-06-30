@@ -152,6 +152,9 @@ public class Legalcase extends AbstractAuditable {
     private Boolean isSenioradvrequired ;
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
+    
+    @Transient
+    private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Judgment> eglcJudgments = new ArrayList<Judgment>(0);
@@ -753,6 +756,15 @@ public class Legalcase extends AbstractAuditable {
 
     public void setAppealNum(final String appealNum) {
         this.appealNum = appealNum;
+    }
+    
+
+    public List<BipartisanDetails> getBipartisanDetailsBeanList() {
+        return bipartisanDetailsBeanList;
+    }
+
+    public void setBipartisanDetailsBeanList(List<BipartisanDetails> bipartisanDetailsBeanList) {
+        this.bipartisanDetailsBeanList = bipartisanDetailsBeanList;
     }
 
     public String getFunctionaryCode() {

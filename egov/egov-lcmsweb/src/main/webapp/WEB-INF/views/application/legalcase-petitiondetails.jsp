@@ -94,6 +94,64 @@
 		</tr>
 	</tbody>
 </table>
+
+
+<div class="panel-heading">
+	<div class="panel-title">
+		<spring:message code="lbl.bipartisanDetails.respondant" />
+	</div>
+</div>
+<table class="table table-striped table-bordered" id="estimateDetails">
+	<thead>
+		<tr>
+			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+			<th class="text-center"><spring:message code="lbl.name" /><span
+				class="mandatory"></span></th>
+			<th class="text-center"><spring:message code="lbl.discription" /></th>
+			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
+			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			<th class="text-center"><spring:message
+					code="lbl.add/delete_pet" /></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="">
+			<td class="text-center"><input type="checkbox" id="activeid"
+				name="bipartisanDetailsBeanList[0].isrespondentgovernment"
+				id="bipartisanDetailsBeanList[0].isrespondentgovernment"
+				onblur="enableGovtDept()" /></td>
+			<td class="text-right"><input type="text"
+				class="form-control table-input text-right"
+				data-pattern="alphanumerichyphenbackslash"
+				name="bipartisanDetailsBeanList[0].name"
+				id="bipartisanDetailsBeanList[0].name" maxlength="50"
+				required="required"></td>
+			<td class="text-right"><input type="text"
+				class="form-control table-input"
+				name="bipartisanDetailsBeanList[0].address"
+				id="bipartisanDetailsBeanList[0].address" maxlength="256"></td>
+			<td class="text-right"><input type="text"
+				class="form-control table-input text-right patternvalidation"
+				data-pattern="number"
+				name="bipartisanDetailsBeanList[0].contactNumber"
+				id="bipartisanDetailsBeanList[0].contactNumber" maxlength="10"></td>
+			<td class="text-right"><form:select path=""
+					data-first-option="false"
+					name="bipartisanDetailsBeanList[0].governmentDepartment"
+					id="bipartisanDetailsBeanList[0].governmentDepartment"
+					cssClass="form-control" onfocus="callAlertForDepartment();"
+					cssErrorClass="form-control error">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${govtDeptList}" itemValue="id"
+						itemLabel="code" />
+				</form:select></td>
+			<td class="text-center"><span style="cursor: pointer;"
+				id="addresRowId"><i class="fa fa-plus"></i></span></td>
+		</tr>
+	</tbody>
+</table>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
 			code="lbl.representedby" /></label>

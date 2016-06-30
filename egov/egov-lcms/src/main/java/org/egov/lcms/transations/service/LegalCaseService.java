@@ -110,11 +110,11 @@ public class LegalCaseService {
         final Functionary funcObj = getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
         legalcase.setStatus(getStatusByCodeAndModuleType(LcmsConstants.LEGALCASE_STATUS_CREATED, "LCMS"));
-        prepareLegalcaseDetails(legalcase);
+        prepareChildEntities(legalcase);
         return legalCaseRepository.save(legalcase);
     }
 
-    private void prepareLegalcaseDetails(final Legalcase legalcase) {
+    private void prepareChildEntities(final Legalcase legalcase) {
         final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
         final List<LegalcaseDepartment> legalcaseDetails = new ArrayList<LegalcaseDepartment>();
         final List<LegalcaseAdvocate> legalAdvocateDetails = new ArrayList<LegalcaseAdvocate>();
@@ -127,6 +127,14 @@ public class LegalCaseService {
         }
         legalcase.getBipartisanDetails().clear();
         legalcase.setBipartisanDetails(partitionDetails);
+        
+        for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList()) {
+            bipartObjtemp.setSerialNumber(bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
+            bipartObjtemp.setLegalcase(legalcase);
+            legalcase.getBipartisanDetails().add(bipartObjtemp);
+        }
+        legalcase.setBipartisanDetails(partitionDetails);
+        
         for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
 
             legaldeptObj.setLegalcase(legalcase);
