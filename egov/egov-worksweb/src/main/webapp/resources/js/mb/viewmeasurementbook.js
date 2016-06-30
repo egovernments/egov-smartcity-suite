@@ -43,9 +43,7 @@ $(document).ready(function() {
 	var nonSorTotal = 0;
 	 $('#tblsor tr:not(:first)').each(function () {
 		 var unitrate = $(this).find('input[name="unitrate"]').val(); 
-		 alert("unitrate="+unitrate);
 		 var currMbEnrty = $(this).find('input[name="currMbEnrty"]').val(); 
-		 alert("currMbEnrty="+currMbEnrty);
 		 var cumulativeQuantitycurrEnrty = $(this).find('input[name="cumulativeQuantitycurrEnrty"]').val(); 
 		 var apprQuantity = $(this).find('input[name="apprQuantity"]').val();
          
