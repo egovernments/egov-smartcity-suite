@@ -207,9 +207,9 @@ public class MilestoneTemplateAction extends SearchFormAction {
             }
             if (templateActivities.getPercentage() != null)
                 percentage += templateActivities.getPercentage();
+        }
         if (percentage != 100)
             addFieldError("milestone.activity.total.percentage", getText("milestone.activity.total.percentage"));
-        }
     }
 
     protected void populateCategoryList(
