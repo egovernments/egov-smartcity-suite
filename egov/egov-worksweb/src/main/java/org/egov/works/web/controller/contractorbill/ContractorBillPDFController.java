@@ -64,8 +64,6 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
@@ -91,9 +89,6 @@ public class ContractorBillPDFController {
 
     @Autowired
     private WorksUtils worksUtils;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
@@ -129,8 +124,6 @@ public class ContractorBillPDFController {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             new DecimalFormat("#.##");
-            final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                    .findByEstimateNumber(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateNumber());
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
 
@@ -154,13 +147,13 @@ public class ContractorBillPDFController {
                             ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber()
                             : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
-            reportParams.put("win", lineEstimateDetails.getProjectCode().getCode());
+            reportParams.put("win", contractorBillRegister.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
             reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
             reportParams.put("billAmount", contractorBillRegister.getBillamount());
-            reportParams.put("nameOfTheWork", lineEstimateDetails.getNameOfWork());
-            reportParams.put("ward", lineEstimateDetails.getLineEstimate().getWard().getName());
-            reportParams.put("department", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getName());
+            reportParams.put("nameOfTheWork", contractorBillRegister.getWorkOrderEstimate().getEstimate().getName());
+            reportParams.put("ward", contractorBillRegister.getWorkOrderEstimate().getEstimate().getWard().getName());
+            reportParams.put("department", contractorBillRegister.getEgBillregistermis().getEgDepartment().getName());
             reportParams.put("reportRunDate", sdf.format(new Date()));
             reportParams.put("creatorName", contractorBillRegister.getCreatedBy().getName());
             reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
