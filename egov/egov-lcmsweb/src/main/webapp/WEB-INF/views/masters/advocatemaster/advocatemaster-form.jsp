@@ -86,9 +86,11 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.address" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="address"
+						<form:textarea class="form-control text-left patternvalidation" path="address" id="address"
+							name="address"  data-pattern="alphabetwithspace" maxlength="128" />
+							<!-- <form:input path="address"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="128" />
+								data-pattern="alphanumericwithspecialcharacters" maxlength="128" /> -->
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message

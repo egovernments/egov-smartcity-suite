@@ -75,9 +75,11 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.notes" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="notes"
+						<form:textarea class="form-control text-left patternvalidation" path="notes" id="notes"
+							name="notes" data-pattern="alphabetwithspace" maxlength="256"  />
+							<!-- <form:input path="notes"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="256" />
+								data-pattern="alphanumeric" maxlength="256" /> -->
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 					</div>

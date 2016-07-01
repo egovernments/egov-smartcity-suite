@@ -65,7 +65,8 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="name"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="100" required="required" />
+								data-pattern="alphabetwithspace" maxlength="100"
+								required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 
@@ -74,9 +75,13 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.address" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="address"
+							<form:textarea class="form-control text-left patternvalidation"
+								path="address" id="address" name="address"
+								data-pattern="alphabetwithspace" maxlength="256"
+								required="required" />
+							<!-- <form:input path="address"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="256" required="required" />
+								data-pattern="alphabetwithspace" maxlength="256" required="required" /> -->
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
