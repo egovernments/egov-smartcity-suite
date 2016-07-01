@@ -101,11 +101,14 @@ public class ScheduleOfRateSearchAction extends BaseFormAction {
 
     public List<ScheduleOfRate> getSORList() {
         if (estimateId != null && estimateDate != null)
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(), estimateDate);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(),
+                    estimateDate);
         else if (estimateDate != null)
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(), estimateDate);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(),
+                    estimateDate);
         else
-            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(), estimateDate);
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(query, scheduleCategoryId.toString(),
+                    estimateDate);
 
     }
 

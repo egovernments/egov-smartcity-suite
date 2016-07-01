@@ -109,13 +109,13 @@ public class WorkOrder extends StateAware implements Auditable {
     public enum OfflineStatuses {
 
         ACCEPTANCE_LETTER_ISSUED, ACCEPTANCE_LETTER_ACKNOWLEDGED, AGREEMENT_ORDER_SIGNED, WORK_ORDER_ACKNOWLEDGED, SITE_HANDED_OVER, WORK_COMMENCED;
-        
+
         @Override
         public String toString() {
             return name().toLowerCase();
         }
     }
-    
+
     @Id
     @GeneratedValue(generator = SEQ_EGW_WORKORDER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -626,7 +626,7 @@ public class WorkOrder extends StateAware implements Auditable {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -634,7 +634,7 @@ public class WorkOrder extends StateAware implements Auditable {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 

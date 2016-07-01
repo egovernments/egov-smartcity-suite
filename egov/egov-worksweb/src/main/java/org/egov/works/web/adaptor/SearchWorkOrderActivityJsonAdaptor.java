@@ -56,7 +56,7 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOrderActivity> {
-    
+
     @Autowired
     private MBHeaderService mbHeaderService;
 
@@ -93,12 +93,14 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
         jsonObject.addProperty("activityAmount", workOrderActivity.getActivity().getAmount().getValue());
         jsonObject.addProperty("unitRate", workOrderActivity.getActivity().getRate());
         jsonObject.addProperty("conversionFactor", workOrderActivity.getActivity().getConversionFactor());
-        final List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByWorkOrder(workOrderActivity.getWorkOrderEstimate().getWorkOrder());
+        final List<MBHeader> mbHeaders = mbHeaderService
+                .getApprovedMBHeadersByWorkOrder(workOrderActivity.getWorkOrderEstimate().getWorkOrder());
         Double cumulativePreviousEntry = 0.0;
-        if(!mbHeaders.isEmpty())
-            cumulativePreviousEntry = mbHeaderService.getPreviousCumulativeQuantity(mbHeaders.get(mbHeaders.size() - 1).getId(), workOrderActivity.getId());
-        
-        if(cumulativePreviousEntry == null)
+        if (!mbHeaders.isEmpty())
+            cumulativePreviousEntry = mbHeaderService.getPreviousCumulativeQuantity(mbHeaders.get(mbHeaders.size() - 1).getId(),
+                    workOrderActivity.getId());
+
+        if (cumulativePreviousEntry == null)
             jsonObject.addProperty("cumulativePreviousEntry", 0);
         else
             jsonObject.addProperty("cumulativePreviousEntry", cumulativePreviousEntry);

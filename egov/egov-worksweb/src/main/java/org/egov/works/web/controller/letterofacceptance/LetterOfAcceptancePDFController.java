@@ -131,11 +131,11 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
                     .getBankaccount() : "");
             reportParams.put("subject", estimate.getName());
-            if(estimate.getLineEstimateDetails() != null)
-                reportParams.put("modeOfAllotment", estimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
-            else{
+            if (estimate.getLineEstimateDetails() != null)
+                reportParams.put("modeOfAllotment",
+                        estimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
+            else
                 reportParams.put("modeOfAllotment", "");
-            }
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
@@ -145,14 +145,13 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("headOfAccount", estimate.getFinancialDetails().get(0).getBudgetGroup().getName());
             reportParams.put("ward", estimate.getWard().getName());
 
-            if(!estimate.getEstimateTechnicalSanctions().isEmpty()){
-            final String technicalSanctionByDesignation = worksUtils.getUserDesignation(estimate.getEstimateTechnicalSanctions().get(estimate.
-                            getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
-            reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
-            } else{
+            if (!estimate.getEstimateTechnicalSanctions().isEmpty()) {
+                final String technicalSanctionByDesignation = worksUtils
+                        .getUserDesignation(estimate.getEstimateTechnicalSanctions()
+                                .get(estimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
+                reportParams.put("technicalSanctionByDesignation", technicalSanctionByDesignation);
+            } else
                 reportParams.put("technicalSanctionByDesignation", "");
-            }
-            
 
             reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
 

@@ -54,7 +54,6 @@ import org.egov.works.abstractestimate.entity.Activity;
 @Table(name = "EGW_REVISION_ESTIMATE")
 public class RevisionAbstractEstimate extends AbstractEstimate {
 
-    
     private static final long serialVersionUID = 4389815027807161766L;
 
     @Transient

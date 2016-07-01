@@ -134,7 +134,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -268,18 +268,17 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+            for (final CChartOfAccountDetail detail : accountDetails)
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
+            if (!check)
                 errors.reject("error.budgethead.validate", "error.budgethead.validate");
-            }
 
         }
 
@@ -368,14 +367,14 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getCurrentState() != null)
             model.addAttribute("currentState", lineEstimate.getCurrentState().getValue());
-        if (lineEstimate.getState() != null  && lineEstimate.getState().getNextAction()!=null )
+        if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
         prepareWorkflow(model, lineEstimate, new WorkflowContainer());
         if (lineEstimate.getState() != null && lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");
         else
             model.addAttribute("mode", "view");
-        
+
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(lineEstimate.getState(), lineEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

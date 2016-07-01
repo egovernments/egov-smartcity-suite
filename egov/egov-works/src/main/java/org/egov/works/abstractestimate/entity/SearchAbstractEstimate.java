@@ -62,7 +62,7 @@ public class SearchAbstractEstimate {
         return abstractEstimateNumber;
     }
 
-    public void setAbstractEstimateNumber(String abstractEstimateNumber) {
+    public void setAbstractEstimateNumber(final String abstractEstimateNumber) {
         this.abstractEstimateNumber = abstractEstimateNumber;
     }
 
@@ -70,7 +70,7 @@ public class SearchAbstractEstimate {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -78,7 +78,7 @@ public class SearchAbstractEstimate {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -86,7 +86,7 @@ public class SearchAbstractEstimate {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -94,7 +94,7 @@ public class SearchAbstractEstimate {
         return department;
     }
 
-    public void setDepartment(Long department) {
+    public void setDepartment(final Long department) {
         this.department = department;
     }
 
@@ -102,7 +102,7 @@ public class SearchAbstractEstimate {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(final Long createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -110,7 +110,7 @@ public class SearchAbstractEstimate {
         return workIdentificationNumber;
     }
 
-    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+    public void setWorkIdentificationNumber(final String workIdentificationNumber) {
         this.workIdentificationNumber = workIdentificationNumber;
     }
 
@@ -118,7 +118,7 @@ public class SearchAbstractEstimate {
         return lineEstimateNumber;
     }
 
-    public void setLineEstimateNumber(String lineEstimateNumber) {
+    public void setLineEstimateNumber(final String lineEstimateNumber) {
         this.lineEstimateNumber = lineEstimateNumber;
     }
 
@@ -126,7 +126,7 @@ public class SearchAbstractEstimate {
         return estimateNumberAndDate;
     }
 
-    public void setEstimateNumberAndDate(String estimateNumberAndDate) {
+    public void setEstimateNumberAndDate(final String estimateNumberAndDate) {
         this.estimateNumberAndDate = estimateNumberAndDate;
     }
 
@@ -134,7 +134,7 @@ public class SearchAbstractEstimate {
         return estimateAmount;
     }
 
-    public void setEstimateAmount(String estimateAmount) {
+    public void setEstimateAmount(final String estimateAmount) {
         this.estimateAmount = estimateAmount;
     }
 
@@ -142,7 +142,7 @@ public class SearchAbstractEstimate {
         return departmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
+    public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -150,7 +150,7 @@ public class SearchAbstractEstimate {
         return ward;
     }
 
-    public void setWard(String ward) {
+    public void setWard(final String ward) {
         this.ward = ward;
     }
 
@@ -158,7 +158,7 @@ public class SearchAbstractEstimate {
         return currentOwner;
     }
 
-    public void setCurrentOwner(String currentOwner) {
+    public void setCurrentOwner(final String currentOwner) {
         this.currentOwner = currentOwner;
     }
 
@@ -166,7 +166,7 @@ public class SearchAbstractEstimate {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 

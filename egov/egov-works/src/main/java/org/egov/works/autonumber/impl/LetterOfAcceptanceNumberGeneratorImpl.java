@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LetterOfAcceptanceNumberGeneratorImpl implements LetterOfAcceptanceNumberGenerator {
 
+    @Override
     public String getNextNumber(final WorkOrderEstimate workOrderEstimate) {
         return "WO/" + workOrderEstimate.getEstimate().getProjectCode().getCode();
     }

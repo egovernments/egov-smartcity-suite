@@ -93,11 +93,13 @@ public class BillDetails extends AbstractAuditable {
     @Length(max = 100)
     private String billtype;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -105,7 +107,7 @@ public class BillDetails extends AbstractAuditable {
         return lineEstimateDetails;
     }
 
-    public void setLineEstimateDetails(LineEstimateDetails lineEstimateDetails) {
+    public void setLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
         this.lineEstimateDetails = lineEstimateDetails;
     }
 
@@ -113,7 +115,7 @@ public class BillDetails extends AbstractAuditable {
         return workOrder;
     }
 
-    public void setWorkOrder(WorkOrder workOrder) {
+    public void setWorkOrder(final WorkOrder workOrder) {
         this.workOrder = workOrder;
     }
 
@@ -121,7 +123,7 @@ public class BillDetails extends AbstractAuditable {
         return contractorBillRegister;
     }
 
-    public void setContractorBillRegister(ContractorBillRegister contractorBillRegister) {
+    public void setContractorBillRegister(final ContractorBillRegister contractorBillRegister) {
         this.contractorBillRegister = contractorBillRegister;
     }
 
@@ -129,7 +131,7 @@ public class BillDetails extends AbstractAuditable {
         return billnumber;
     }
 
-    public void setBillnumber(String billnumber) {
+    public void setBillnumber(final String billnumber) {
         this.billnumber = billnumber;
     }
 
@@ -137,7 +139,7 @@ public class BillDetails extends AbstractAuditable {
         return billdate;
     }
 
-    public void setBilldate(Date billdate) {
+    public void setBilldate(final Date billdate) {
         this.billdate = billdate;
     }
 
@@ -145,7 +147,7 @@ public class BillDetails extends AbstractAuditable {
         return billamount;
     }
 
-    public void setBillamount(BigDecimal billamount) {
+    public void setBillamount(final BigDecimal billamount) {
         this.billamount = billamount;
     }
 
@@ -153,7 +155,7 @@ public class BillDetails extends AbstractAuditable {
         return billtype;
     }
 
-    public void setBilltype(String billtype) {
+    public void setBilltype(final String billtype) {
         this.billtype = billtype;
     }
 

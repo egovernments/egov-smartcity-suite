@@ -420,17 +420,15 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                 } else {
                     billDetails.put("isNetPayable", false);
                     if (contractorDeductionAccountList != null && !contractorDeductionAccountList.isEmpty()
-                            && contractorDeductionAccountList.contains(coa)) {
+                            && contractorDeductionAccountList.contains(coa))
                         billDetails.put("isStatutoryDeduction", true);
-                    } else {
+                    else
                         billDetails.put("isStatutoryDeduction", false);
-                    }
                     if (retentionMoneyDeductionAccountList != null && !retentionMoneyDeductionAccountList.isEmpty()
-                            && retentionMoneyDeductionAccountList.contains(coa)) {
+                            && retentionMoneyDeductionAccountList.contains(coa))
                         billDetails.put("isRetentionMoneyDeduction", true);
-                    } else {
+                    else
                         billDetails.put("isRetentionMoneyDeduction", false);
-                    }
                 }
             }
             billDetailsList.add(billDetails);
@@ -448,7 +446,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                         .addEgBilldetailes(
                                 getBillDetails(contractorBillRegister, egBilldetails, workOrderEstimate, resultBinder,
                                         request));
-        final String netPayableAccountId = request.getParameter("netPayableAccountId");
+        request.getParameter("netPayableAccountId");
         final String netPayableAccountCodeId = request.getParameter("netPayableAccountCode");
         final String netPayableAmount = request.getParameter("netPayableAmount");
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)

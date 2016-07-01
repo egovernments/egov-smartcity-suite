@@ -41,9 +41,7 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 
-import org.egov.eis.entity.Assignment;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -62,10 +60,10 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
     private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(MBHeader mBHeader, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(final MBHeader mBHeader, final Type typeOfSrc, final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
-        jsonObject.addProperty("mbheaderId",mBHeader.getId());
+        final WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
+        jsonObject.addProperty("mbheaderId", mBHeader.getId());
         jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
         jsonObject.addProperty("estimateId", workOrderEstimate.getEstimate().getId());
         jsonObject.addProperty("estimateNumber", workOrderEstimate.getEstimate().getEstimateNumber());
@@ -78,12 +76,11 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
         jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "-" + mBHeader.getToPageNo());
         jsonObject.addProperty("status", mBHeader.getEgwStatus().getDescription());
         jsonObject.addProperty("createdBy", mBHeader.getCreatedBy().getName());
-        if (mBHeader.getState() != null) {
+        if (mBHeader.getState() != null)
             jsonObject.addProperty("currentOwner",
                     worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId()));
-        } else {
-            jsonObject.addProperty("currentOwner","N/A");
-        }
+        else
+            jsonObject.addProperty("currentOwner", "N/A");
         return jsonObject;
     }
 

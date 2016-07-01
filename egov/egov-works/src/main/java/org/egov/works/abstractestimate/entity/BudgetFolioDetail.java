@@ -177,7 +177,7 @@ public class BudgetFolioDetail implements Serializable {
         return workIdentificationNumber;
     }
 
-    public void setWorkIdentificationNumber(String workIdentificationNumber) {
+    public void setWorkIdentificationNumber(final String workIdentificationNumber) {
         this.workIdentificationNumber = workIdentificationNumber;
     }
 }

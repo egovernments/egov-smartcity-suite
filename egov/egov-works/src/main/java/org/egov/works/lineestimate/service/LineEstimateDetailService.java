@@ -196,11 +196,11 @@ public class LineEstimateDetailService {
 
         return flag;
     }
-    
-    public LineEstimateDetails findLineEstimateByEstimateNumber(final String estimatenumber,final String status) {
-        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimatenumber,status);
+
+    public LineEstimateDetails findLineEstimateByEstimateNumber(final String estimatenumber, final String status) {
+        return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeEquals(estimatenumber, status);
     }
-    
+
     public LineEstimateDetails getLineEstimateDetailsByProjectCode(final String workIdentificationNumber) {
         return lineEstimateDetailsRepository.findByProjectCode_codeAndLineEstimate_Status_CodeNotLike(workIdentificationNumber,
                 WorksConstants.CANCELLED_STATUS);
@@ -210,5 +210,5 @@ public class LineEstimateDetailService {
         return lineEstimateDetailsRepository.findByEstimateNumberAndLineEstimate_Status_CodeNot(estimateNumber,
                 WorksConstants.CANCELLED_STATUS);
     }
-    
+
 }

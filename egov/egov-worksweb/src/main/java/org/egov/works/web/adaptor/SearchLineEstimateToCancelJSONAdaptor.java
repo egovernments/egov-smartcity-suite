@@ -44,9 +44,6 @@ import java.lang.reflect.Type;
 
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.utils.WorksUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -56,12 +53,6 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLineEstimateToCancelJSONAdaptor implements JsonSerializer<LineEstimate> {
-    @Autowired
-    private WorksUtils worksUtils;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final LineEstimate lineEstimate, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();

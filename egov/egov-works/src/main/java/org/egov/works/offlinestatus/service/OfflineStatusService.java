@@ -63,12 +63,12 @@ public class OfflineStatusService {
 
     @Autowired
     private OfflineStatusRepository offlineStatusRepository;
-    
+
     @Autowired
     private WorksUtils worksUtils;
 
     @Transactional
-    public void create(final List<OfflineStatus> offlineStatuses, final Long ObjectId,final String ObjectType) {
+    public void create(final List<OfflineStatus> offlineStatuses, final Long ObjectId, final String ObjectType) {
         for (final OfflineStatus status : offlineStatuses)
             if (status.getId() == null) {
                 status.setObjectId(ObjectId);

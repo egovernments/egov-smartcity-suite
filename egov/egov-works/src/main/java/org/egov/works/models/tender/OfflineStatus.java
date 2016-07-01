@@ -63,80 +63,82 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "EGW_OFFLINE_STATUS")
 @NamedQueries({
-		@NamedQuery(name = OfflineStatus.GETSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.objectType=? order by id "),
-		@NamedQuery(name = OfflineStatus.GETSTATUSDATEBYOBJECTID_TYPE_DESC, query = " from OfflineStatus st where st.objectId=? and st.objectType=? and st.egwStatus.description=? order by id "),
-		@NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=?) and st.objectType=? "),
-		@NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID_TYPE, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=? and objectType=?) and st.objectType=? ") })
+        @NamedQuery(name = OfflineStatus.GETSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.objectType=? order by id "),
+        @NamedQuery(name = OfflineStatus.GETSTATUSDATEBYOBJECTID_TYPE_DESC, query = " from OfflineStatus st where st.objectId=? and st.objectType=? and st.egwStatus.description=? order by id "),
+        @NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=?) and st.objectType=? "),
+        @NamedQuery(name = OfflineStatus.GETMAXSTATUSBYOBJECTID_TYPE, query = " from OfflineStatus st where st.objectId=? and st.id=(select max(id) from OfflineStatus where objectId=? and objectType=?) and st.objectType=? ") })
 @SequenceGenerator(name = OfflineStatus.SEQ_EGW_OFFLINE_STATUS, sequenceName = OfflineStatus.SEQ_EGW_OFFLINE_STATUS, allocationSize = 1)
 public class OfflineStatus extends AbstractAuditable {
 
-	private static final long serialVersionUID = -1056415004063322298L;
-	public static final String SEQ_EGW_OFFLINE_STATUS = "SEQ_EGW_OFFLINE_STATUS";
-	public static final String GETSTATUSBYOBJECTID = "getStatusByObjectId";
-	public static final String GETSTATUSDATEBYOBJECTID_TYPE_DESC = "getStatusDateByObjectId_Type_Desc";
-	public static final String GETMAXSTATUSBYOBJECTID = "getmaxStatusByObjectId";
-	public static final String GETMAXSTATUSBYOBJECTID_TYPE = "getmaxStatusByObjectId_Type";
+    private static final long serialVersionUID = -1056415004063322298L;
+    public static final String SEQ_EGW_OFFLINE_STATUS = "SEQ_EGW_OFFLINE_STATUS";
+    public static final String GETSTATUSBYOBJECTID = "getStatusByObjectId";
+    public static final String GETSTATUSDATEBYOBJECTID_TYPE_DESC = "getStatusDateByObjectId_Type_Desc";
+    public static final String GETMAXSTATUSBYOBJECTID = "getmaxStatusByObjectId";
+    public static final String GETMAXSTATUSBYOBJECTID_TYPE = "getmaxStatusByObjectId_Type";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGW_OFFLINE_STATUS, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_OFFLINE_STATUS, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotEmpty(message = "ws.name.is.null")
-	@Column(name = "OBJECT_TYPE")
-	private String objectType;
+    @NotEmpty(message = "ws.name.is.null")
+    @Column(name = "OBJECT_TYPE")
+    private String objectType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STATUS_ID")
-	@NotNull(message = "ws.status.is.null")
-	private EgwStatus egwStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATUS_ID")
+    @NotNull(message = "ws.status.is.null")
+    private EgwStatus egwStatus;
 
-	@Column(name = "STATUS_DATE")
-	@NotNull(message = "ws.statusDate.is.null")
-	@ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.statusDate")
-	private Date statusDate;
+    @Column(name = "STATUS_DATE")
+    @NotNull(message = "ws.statusDate.is.null")
+    @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.statusDate")
+    private Date statusDate;
 
-	@Column(name = "OBJECT_ID")
-	@NotNull(message = "ws.objectId.is.null")
-	private Long objectId;
+    @Column(name = "OBJECT_ID")
+    @NotNull(message = "ws.objectId.is.null")
+    private Long objectId;
 
-	public String getObjectType() {
-		return objectType;
-	}
+    public String getObjectType() {
+        return objectType;
+    }
 
-	public void setObjectType(final String objectType) {
-		this.objectType = objectType;
-	}
+    public void setObjectType(final String objectType) {
+        this.objectType = objectType;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public void setStatusDate(final Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public void setStatusDate(final Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public Long getObjectId() {
-		return objectId;
-	}
+    public Long getObjectId() {
+        return objectId;
+    }
 
-	public void setObjectId(final Long objectId) {
-		this.objectId = objectId;
-	}
+    public void setObjectId(final Long objectId) {
+        this.objectId = objectId;
+    }
 
-	public EgwStatus getEgwStatus() {
-		return egwStatus;
-	}
+    public EgwStatus getEgwStatus() {
+        return egwStatus;
+    }
 
-	public void setEgwStatus(final EgwStatus egwStatus) {
-		this.egwStatus = egwStatus;
-	}
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

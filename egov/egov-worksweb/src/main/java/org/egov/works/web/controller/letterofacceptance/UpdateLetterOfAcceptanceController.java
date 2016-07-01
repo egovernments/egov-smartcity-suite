@@ -111,16 +111,16 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(Long.valueOf(id));
         final AbstractEstimate abstractEstimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
-        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED)) {
+        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED))
             return "redirect:/letterofacceptance/newform?estimateNumber=" + abstractEstimate.getEstimateNumber() + "&mode=edit";
-        } else {
+        else {
             model.addAttribute("stateType", workOrder.getClass().getSimpleName());
             if (workOrder.getCurrentState() != null
                     && !workOrder.getCurrentState().getValue().equalsIgnoreCase(WorksConstants.NEW))
                 model.addAttribute("currentState", workOrder.getCurrentState().getValue());
             if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
                 model.addAttribute("nextAction", workOrder.getState().getNextAction());
-            WorkflowContainer workflowContainer = new WorkflowContainer();
+            final WorkflowContainer workflowContainer = new WorkflowContainer();
             prepareWorkflow(model, workOrder, workflowContainer);
             List<String> validActions = Collections.emptyList();
             validActions = customizedWorkFlowService.getNextValidActions(workOrder.getStateType(),
@@ -159,12 +159,6 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
                 savedWorkOrder.getId(), approvalPosition);
 
         return "redirect:/letterofacceptance/letterofacceptance-success?pathVars=" + pathVars;
-    }
-
-    private void setDropDownValues(final Model model, final AbstractEstimate abstractEstimate) {
-        model.addAttribute("engineerInchargeList",
-                letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
-                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
     }
 
     @RequestMapping(value = "/modify/{id}", method = RequestMethod.GET)

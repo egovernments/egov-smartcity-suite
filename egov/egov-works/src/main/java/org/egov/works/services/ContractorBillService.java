@@ -39,6 +39,13 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationException;
@@ -56,13 +63,6 @@ import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This class will have all business logic related to Contractor Bill.
@@ -291,7 +291,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
      */
     public List<EgBilldetails> getRetentionMoneyDeductionList(Long billId,
             List<StatutoryDeductionsForBill> statutoryList, List<DeductionTypeForBill> standardDeductionList)
-                    throws NumberFormatException, ApplicationException;
+            throws NumberFormatException, ApplicationException;
 
     /**
      * Get the netpayblecode
@@ -328,7 +328,7 @@ public interface ContractorBillService extends BaseService<ContractorBillRegiste
     public List<EgBilldetails> getAccountDetailsList(Long billId, Long workOrderEstimateId,
             List<StatutoryDeductionsForBill> statutoryList, List<DeductionTypeForBill> standardDeductionList,
             List<EgBilldetails> customDeductionList, List<EgBilldetails> retentionMoneyDeductionList)
-                    throws NumberFormatException, ApplicationException;
+            throws NumberFormatException, ApplicationException;
 
     /**
      * @param statutoryList ,standardDeductionList,customDeductionList,workOrderEstimateId ,workOrderId, id(billId)

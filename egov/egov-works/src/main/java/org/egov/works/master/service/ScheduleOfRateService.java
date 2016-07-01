@@ -70,10 +70,10 @@ public class ScheduleOfRateService {
 
     @Autowired
     private ScheduleOfRateRepository scheduleOfRateRepository;
-    
+
     @Autowired
     private WorksService worksService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -131,28 +131,29 @@ public class ScheduleOfRateService {
         return scheduleOfRateRepository.save(scheduleOfRate);
     }
 
-    public ScheduleOfRate findById(Long id, boolean b) {
+    public ScheduleOfRate findById(final Long id, final boolean b) {
         return scheduleOfRateRepository.findOne(id);
     }
 
-    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids, final Date estimateDate) {
-        List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
-        String[] split = ids.split(",");
-        for (String s : split)
+    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids,
+            final Date estimateDate) {
+        final List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
+        final String[] split = ids.split(",");
+        for (final String s : split)
             scheduleOfCategoryIds.add(Long.parseLong(s));
         final List<ScheduleOfRate> scheduleOfRates = scheduleOfRateRepository
                 .findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(),
-                scheduleOfCategoryIds, estimateDate);
-        for(final ScheduleOfRate rate : scheduleOfRates)
+                        scheduleOfCategoryIds, estimateDate);
+        for (final ScheduleOfRate rate : scheduleOfRates)
             rate.setSorRateValue(rate.getRateOn(estimateDate).getRate().getValue());
-        
+
         return scheduleOfRates;
     }
 
     // TODO: Need to remove this method after getting better alternate option
     public ScheduleOfRate setPrimaryDetails(final ScheduleOfRate scheduleOfRate) {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-        if(scheduleOfRate.getId() == null){
+        if (scheduleOfRate.getId() == null) {
             scheduleOfRate.setCreatedBy(user);
             scheduleOfRate.setCreatedDate(new Date());
         }
@@ -160,27 +161,27 @@ public class ScheduleOfRateService {
         scheduleOfRate.setModifiedDate(new Date());
         return scheduleOfRate;
     }
-    
+
     // TODO: Need to remove this method after getting better alternate option
     public SORRate setPrimaryDetailsForSorRates(final SORRate sorRate) {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-            sorRate.setCreatedBy(user);
-            sorRate.setCreatedDate(new Date());
+        sorRate.setCreatedBy(user);
+        sorRate.setCreatedDate(new Date());
         sorRate.setModifiedBy(user);
         sorRate.setModifiedDate(new Date());
         return sorRate;
     }
-    
+
     // TODO: Need to remove this method after getting better alternate option
     public MarketRate setPrimaryDetailsForMarketRates(final MarketRate marketRate) {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
-            marketRate.setCreatedBy(user);
-            marketRate.setCreatedDate(new Date());
+        marketRate.setCreatedBy(user);
+        marketRate.setCreatedDate(new Date());
         marketRate.setModifiedBy(user);
         marketRate.setModifiedDate(new Date());
         return marketRate;
     }
-    
+
     public ScheduleOfRate getByCode(final String code) {
         return scheduleOfRateRepository.findByCode(code);
     }

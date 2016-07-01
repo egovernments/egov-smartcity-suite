@@ -63,6 +63,7 @@ public class LineEstimateNumberGeneratorImpl implements LineEstimateNumberGenera
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
+    @Override
     @Transactional
     public String getNextNumber(final LineEstimate lineEstimate) {
         final CFinancialYear financialYear = financialYearHibernateDAO

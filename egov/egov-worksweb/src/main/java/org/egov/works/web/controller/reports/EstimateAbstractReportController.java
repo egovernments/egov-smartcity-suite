@@ -82,7 +82,7 @@ public class EstimateAbstractReportController {
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
+        final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
         estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
@@ -94,7 +94,7 @@ public class EstimateAbstractReportController {
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
+        final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
         estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);

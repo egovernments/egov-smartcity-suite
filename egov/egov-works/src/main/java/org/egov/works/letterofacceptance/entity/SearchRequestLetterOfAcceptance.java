@@ -172,7 +172,7 @@ public class SearchRequestLetterOfAcceptance {
         return mbRefNumber;
     }
 
-    public void setMbRefNumber(String mbRefNumber) {
+    public void setMbRefNumber(final String mbRefNumber) {
         this.mbRefNumber = mbRefNumber;
     }
 
@@ -180,7 +180,7 @@ public class SearchRequestLetterOfAcceptance {
         return fileNumber;
     }
 
-    public void setFileNumber(String fileNumber) {
+    public void setFileNumber(final String fileNumber) {
         this.fileNumber = fileNumber;
     }
 
@@ -188,7 +188,7 @@ public class SearchRequestLetterOfAcceptance {
         return contractorName;
     }
 
-    public void setContractorName(String contractorName) {
+    public void setContractorName(final String contractorName) {
         this.contractorName = contractorName;
     }
 }

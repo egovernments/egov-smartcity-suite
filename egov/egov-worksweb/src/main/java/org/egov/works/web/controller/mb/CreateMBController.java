@@ -48,17 +48,18 @@ public class CreateMBController {
 
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private WorksUtils worksUtils;
-    
+
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         return workOrderEstimate;
     }
-    
+
     @RequestMapping(value = "/create/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String createMeasurementBook(@PathVariable final Long workOrderEstimateId, final HttpServletRequest request,
+    public @ResponseBody String createMeasurementBook(@PathVariable final Long workOrderEstimateId,
+            final HttpServletRequest request,
             final HttpServletResponse response) {
         final WorkOrderEstimate workOrderEstimate = getWorkOrderEstimate(workOrderEstimateId);
         final String result = new StringBuilder().append(toSearchMilestoneTemplateJson(workOrderEstimate)).toString();
@@ -76,7 +77,7 @@ public class CreateMBController {
     public @ResponseBody String create(@ModelAttribute("mbHeader") final MBHeader mbHeader,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response) throws ApplicationException, IOException {
-        
+
         Long approvalPosition = 0l;
         String approvalComment = "";
         String workFlowAction = "";
@@ -96,16 +97,16 @@ public class CreateMBController {
         }
 
         final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, approvalPosition, approvalComment, workFlowAction);
-        
+
         mbHeaderService.fillWorkflowData(jsonObject, request, savedMBHeader);
-        
+
         jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
                 new String[] { mbHeader.getMbRefNo() },
                 null));
-        
+
         return jsonObject.toString();
     }
-    
+
     private void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject) {
         // TODO Auto-generated method stub
 
@@ -120,7 +121,7 @@ public class CreateMBController {
             e.printStackTrace();
         }
     }
-    
+
     @RequestMapping(value = "/mb-success", method = RequestMethod.GET)
     public ModelAndView successView(@ModelAttribute MBHeader mbHeader,
             @RequestParam("mbHeader") Long id, @RequestParam("approvalPosition") final Long approvalPosition,

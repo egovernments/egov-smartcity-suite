@@ -43,8 +43,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -70,12 +68,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CreateMilestoneController {
 
     @Autowired
-    private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
     private MilestoneService milestoneService;
 
     @Autowired
@@ -86,10 +78,10 @@ public class CreateMilestoneController {
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
     private EstimateService estimateService;
 
@@ -98,12 +90,13 @@ public class CreateMilestoneController {
             final Model model, final HttpServletRequest request) throws ApplicationException {
         final String estimateNumber = request.getParameter("estimateNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
-        if(milestoneService.checkMilestoneCreated(workOrder.getId())){
-            String message = messageSource.getMessage("error.milestonecreated.validate", new String[] { workOrder.getWorkOrderNumber() }, null);
+        if (milestoneService.checkMilestoneCreated(workOrder.getId())) {
+            final String message = messageSource.getMessage("error.milestonecreated.validate",
+                    new String[] { workOrder.getWorkOrderNumber() }, null);
             model.addAttribute("errorMessage", message);
             return "milestone-success";
         }
-        
+
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
@@ -114,7 +107,7 @@ public class CreateMilestoneController {
     @RequestMapping(value = "/milestone-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
         final Long workOrderId = Long.valueOf(request.getParameter("workOrderId"));
         final String estimateNumber = request.getParameter("estimateNumber");
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(workOrderId);
@@ -127,7 +120,7 @@ public class CreateMilestoneController {
         final Milestone newMilestone = milestoneService.create(milestone);
         model.addAttribute("milestone", newMilestone);
         model.addAttribute("message", messageSource.getMessage("msg.milestone.create.success",
-                new String[] { estimateNumber },null));
+                new String[] { estimateNumber }, null));
 
         return "milestone-success";
     }

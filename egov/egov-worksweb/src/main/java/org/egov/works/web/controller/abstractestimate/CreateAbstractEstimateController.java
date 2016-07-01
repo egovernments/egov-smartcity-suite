@@ -255,9 +255,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     }
 
     /**
-     * Method called to populate data from lineestimatedetails to create
-     * abstract estimate
-     * 
+     * Method called to populate data from lineestimatedetails to create abstract estimate
+     *
      * @param lineEstimateDetails
      * @param model
      * @param abstractEstimate

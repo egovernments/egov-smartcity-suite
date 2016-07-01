@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -64,9 +63,6 @@ public class CancelLineEstimateController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private ResourceBundleMessageSource messageSource;

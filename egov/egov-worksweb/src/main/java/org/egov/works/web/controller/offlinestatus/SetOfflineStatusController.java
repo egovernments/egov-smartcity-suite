@@ -76,7 +76,7 @@ public class SetOfflineStatusController {
 
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
 
@@ -85,8 +85,9 @@ public class SetOfflineStatusController {
             final HttpServletRequest request)
             throws ApplicationException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(workOrderId);
-        final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrder.getId(),WorksConstants.WORKORDER);
-        int offlineStatusSize = offlineStatuses.size();
+        final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrder.getId(),
+                WorksConstants.WORKORDER);
+        final int offlineStatusSize = offlineStatuses.size();
         workOrder.setOfflineStatuses(offlineStatuses);
         setDropDownValues(model);
         model.addAttribute("workOrder", workOrder);
@@ -144,8 +145,10 @@ public class SetOfflineStatusController {
         final List<OfflineStatus> newOfflinestatus = workOrder.getOfflineStatuses();
         for (int k = 0; k < newOfflinestatus.size() - 1; k++)
             if (newOfflinestatus.get(k).getStatusDate().after(newOfflinestatus.get(k + 1).getStatusDate())) {
-                final EgwStatus egwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k + 1).getEgwStatus().getId(), false);
-                final EgwStatus newEgwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k).getEgwStatus().getId(), false);
+                final EgwStatus egwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k + 1).getEgwStatus().getId(),
+                        false);
+                final EgwStatus newEgwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k).getEgwStatus().getId(),
+                        false);
                 resultBinder.reject("errors.status.date.incorrect",
                         new String[] { egwStatus.getDescription(), newEgwStatus.getDescription() },
                         "errors.status.date.incorrect");
@@ -157,7 +160,7 @@ public class SetOfflineStatusController {
             model.addAttribute("workOrder", workOrder);
             return "setstatus-form";
         }
-        List<OfflineStatus> offlineStatuses = workOrder.getOfflineStatuses();
+        final List<OfflineStatus> offlineStatuses = workOrder.getOfflineStatuses();
         offlineStatusService.create(offlineStatuses, workOrder.getId(), WorksConstants.WORKORDER);
         model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
                 new String[] { "" }, null));

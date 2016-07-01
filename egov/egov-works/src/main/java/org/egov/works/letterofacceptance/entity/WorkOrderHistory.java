@@ -58,32 +58,34 @@ import org.egov.works.workorder.entity.WorkOrder;
 @Table(name = "EGW_WORKORDER_HISTORY")
 @SequenceGenerator(name = WorkOrderHistory.SEQ_EGW_WORKORDER_HISTORY, sequenceName = WorkOrderHistory.SEQ_EGW_WORKORDER_HISTORY, allocationSize = 1)
 public class WorkOrderHistory extends AbstractAuditable {
-    
+
     private static final long serialVersionUID = -3932916779507334036L;
-    
+
     public static final String SEQ_EGW_WORKORDER_HISTORY = "SEQ_EGW_WORKORDER_HISTORY";
 
     @Id
-    @GeneratedValue(generator=SEQ_EGW_WORKORDER_HISTORY, strategy=GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGW_WORKORDER_HISTORY, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workOrder", nullable = false)
     private WorkOrder workOrder;
-    
+
     @NotNull
     @Min(value = 1)
     private double workOrderAmount;
-    
+
     @NotNull
     @Min(value = 1)
     private double revisedWorkOrderAmount;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -91,7 +93,7 @@ public class WorkOrderHistory extends AbstractAuditable {
         return workOrder;
     }
 
-    public void setWorkOrder(WorkOrder workOrder) {
+    public void setWorkOrder(final WorkOrder workOrder) {
         this.workOrder = workOrder;
     }
 
@@ -99,7 +101,7 @@ public class WorkOrderHistory extends AbstractAuditable {
         return workOrderAmount;
     }
 
-    public void setWorkOrderAmount(double workOrderAmount) {
+    public void setWorkOrderAmount(final double workOrderAmount) {
         this.workOrderAmount = workOrderAmount;
     }
 
@@ -107,7 +109,7 @@ public class WorkOrderHistory extends AbstractAuditable {
         return revisedWorkOrderAmount;
     }
 
-    public void setRevisedWorkOrderAmount(double revisedWorkOrderAmount) {
+    public void setRevisedWorkOrderAmount(final double revisedWorkOrderAmount) {
         this.revisedWorkOrderAmount = revisedWorkOrderAmount;
     }
 }

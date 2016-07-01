@@ -70,7 +70,7 @@ public class OverheadService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Transactional
     public Overhead create(final Overhead overhead) throws IOException {
         for (final OverheadRate overheadRates : overhead.getOverheadRates())
@@ -86,7 +86,7 @@ public class OverheadService {
     public Overhead getOverheadByName(final String name) {
         return overheadRepository.findByNameIgnoreCase(name);
     }
-    
+
     public List<Overhead> getOverheadsByDate(final Date date) {
         return overheadRepository.getByDate(date);
     }
@@ -104,7 +104,7 @@ public class OverheadService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     public List<String> findOverheadNameToSearchOverhead(final String name) {
         final List<Overhead> overhead = overheadRepository.findByNameContainingIgnoreCase("%" + name + "%");
         final List<String> results = new ArrayList<String>();
@@ -112,7 +112,7 @@ public class OverheadService {
             results.add(details.getName());
         return results;
     }
-    
+
     public List<Overhead> searchOverheadToView(final SearchRequestOverhead searchRequestOverhead) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Overhead.class)
                 .addOrder(Order.asc("createdDate"));

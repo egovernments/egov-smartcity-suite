@@ -498,8 +498,8 @@ public class ContractorBillAction extends BaseFormAction {
                             || contractorBillRegister
                                     .getStatus().getCode()
                                     .equalsIgnoreCase(ContractorBillRegister.BillStatus.CANCELLED.toString())))
-                allowForward = contractorBillService.validateForBudgetHeadInWorkflow(
-                        contractorBillRegister.getEgBilldetailes(), workOrderEstimate.getEstimate());
+            allowForward = contractorBillService.validateForBudgetHeadInWorkflow(
+                    contractorBillRegister.getEgBilldetailes(), workOrderEstimate.getEstimate());
     }
 
     private void populateBudgetHeadForDepositWorksEstimate() {

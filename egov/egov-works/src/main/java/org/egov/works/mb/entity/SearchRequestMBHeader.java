@@ -81,7 +81,7 @@ public class SearchRequestMBHeader {
         return mbStatus;
     }
 
-    public void setMbStatus(Long mbStatus) {
+    public void setMbStatus(final Long mbStatus) {
         this.mbStatus = mbStatus;
     }
 

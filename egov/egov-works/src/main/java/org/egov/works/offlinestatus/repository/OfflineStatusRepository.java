@@ -49,5 +49,5 @@ import org.springframework.stereotype.Repository;
 public interface OfflineStatusRepository extends JpaRepository<OfflineStatus, Long> {
 
     List<OfflineStatus> findByObjectIdAndObjectType(final Long objectId, final String objectType);
-    
+
 }

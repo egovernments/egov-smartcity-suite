@@ -69,17 +69,17 @@ public class ViewMilestoneController {
 
     @Autowired
     private MilestoneTemplateActivityService milestoneTemplateActivityService;
-    
+
     @Autowired
     private TrackMilestoneService trackMilestoneService;
-    
+
     @Autowired
-    private MilestoneService milestoneService; 
+    private MilestoneService milestoneService;
 
     @RequestMapping(value = "/viewmilestonetemplate/{id}", method = RequestMethod.GET)
     public String viewMilestoneTemplate(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final MilestoneTemplate milestoneTemplate = milestoneTemplateService.getMilestoneTemplateById(Long.parseLong(id));
         model.addAttribute("milestoneTemplate", milestoneTemplate);
         model.addAttribute("mode", "view");
@@ -90,25 +90,25 @@ public class ViewMilestoneController {
     public @ResponseBody List<MilestoneTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
             final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final List<MilestoneTemplateActivity> milestoneTemplateActivities = milestoneTemplateActivityService
                 .getMilestoneTemplateActivityByMilestoneTemplate(Long.parseLong(id));
         return milestoneTemplateActivities;
     }
-    
+
     @RequestMapping(value = "/viewmilestone/{id}", method = RequestMethod.GET)
     public String viewMilestone(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final Milestone milestone = milestoneService.getMilestoneById(Long.parseLong(id));
         model.addAttribute("milestone", milestone);
         return "milestone-view";
     }
-    
+
     @RequestMapping(value = "/viewtrackmilestone/{id}", method = RequestMethod.GET)
     public String viewTrackMilestone(@PathVariable final String id, final Model model,
             final HttpServletRequest request)
-                    throws ApplicationException {
+            throws ApplicationException {
         final TrackMilestone trackMilestone = trackMilestoneService.getTrackMilestoneByMilestoneId(Long.parseLong(id));
         model.addAttribute("trackMilestone", trackMilestone);
         return "trackmilestone-view";

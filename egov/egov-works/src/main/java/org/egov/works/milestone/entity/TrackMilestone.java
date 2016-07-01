@@ -129,7 +129,7 @@ public class TrackMilestone extends StateAware {
         return totalPercentage;
     }
 
-    public void setTotalPercentage(BigDecimal totalPercentage) {
+    public void setTotalPercentage(final BigDecimal totalPercentage) {
         this.totalPercentage = totalPercentage;
     }
 

@@ -43,9 +43,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
@@ -61,19 +61,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/workorder/searchform")
-public class SearchWorkOrderForMBHeaderController  extends GenericWorkFlowController{
+public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateService lineEstimateService;
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
+    public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final Model model) {
 
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())

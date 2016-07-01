@@ -74,7 +74,7 @@ public class LetterOfAcceptanceSearchController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
@@ -118,7 +118,7 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "searchloatocreatecontractorbill-search";
     }
-    
+
     @RequestMapping(value = "/searchmodifyform", method = RequestMethod.GET)
     public String showSearchLOAModifyForm(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
@@ -127,20 +127,19 @@ public class LetterOfAcceptanceSearchController {
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "letterofacceptancetomodify-search";
     }
-    
+
     @RequestMapping(value = "/setloaofflinestatus", method = RequestMethod.GET)
     public String showLOAToSetOfflineStatus(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final Model model) throws ApplicationException {
-        List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
         setDropDownValues(model);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
-        for(final EgwStatus egwStatus : egwStatuses) {
-            if(!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS) &&
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS) &&
                     !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED) &&
                     !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
                 newEgwStatuses.add(egwStatus);
-        }
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         return "setofflinestatus-search";

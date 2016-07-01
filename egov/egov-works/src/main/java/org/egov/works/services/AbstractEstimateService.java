@@ -178,7 +178,7 @@ public class AbstractEstimateService extends PersistenceService<AbstractEstimate
         final CFinancialYear financialYear = getCurrentFinancialYear(entity.getEstimateDate());
         if (entity.getEstimateNumber() == null || entity.getEstimateNumber() != null
                 && estimateNumberChangeRequired(entity, financialYear)) {
-            EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
+            final EstimateNumberGenerator e = beanResolver.getAutoNumberServiceFor(EstimateNumberGenerator.class);
             final String estimateNumber = e.getEstimateNumber(entity, financialYear);
             entity.setEstimateNumber(estimateNumber);
         }

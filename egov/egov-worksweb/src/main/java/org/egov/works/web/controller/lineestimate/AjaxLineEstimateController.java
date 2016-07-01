@@ -153,12 +153,11 @@ public class AjaxLineEstimateController {
     }
 
     @RequestMapping(value = "/getfinancilyearbyid", method = RequestMethod.GET)
-    public @ResponseBody CFinancialYear getFinancilYearById(@RequestParam("fyId") Long fyId) {
+    public @ResponseBody CFinancialYear getFinancilYearById(@RequestParam("fyId") final Long fyId) {
 
         CFinancialYear financialYear = new CFinancialYear();
-        if (fyId != null) {
+        if (fyId != null)
             financialYear = financialYearService.findById(Long.valueOf(fyId), false);
-        }
 
         return financialYear;
     }
@@ -307,7 +306,7 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long lineEstimateId) {
         final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
-        String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
+        final String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
         if (estimateNumbers.equals(""))
             return "";
         return message;

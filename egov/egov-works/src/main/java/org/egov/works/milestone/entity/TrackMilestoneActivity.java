@@ -58,7 +58,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 @Table(name = "EGW_TRACK_MILESTONE_ACTIVITY")
 @Unique(id = "id", tableName = "EGW_TRACK_MILESTONE_ACTIVITY")
 @SequenceGenerator(name = TrackMilestoneActivity.EGW_TRACK_MILESTONE_ACTIVITY, sequenceName = TrackMilestoneActivity.EGW_TRACK_MILESTONE_ACTIVITY, allocationSize = 1)
-public class TrackMilestoneActivity extends AbstractAuditable{
+public class TrackMilestoneActivity extends AbstractAuditable {
 
     private static final long serialVersionUID = -4386325007110227524L;
 
@@ -84,10 +84,12 @@ public class TrackMilestoneActivity extends AbstractAuditable{
 
     private Date completionDate;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

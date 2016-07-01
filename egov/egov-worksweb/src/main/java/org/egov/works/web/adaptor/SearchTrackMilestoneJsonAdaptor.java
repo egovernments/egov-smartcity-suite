@@ -44,7 +44,6 @@ import java.lang.reflect.Type;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.TrackMilestone;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,9 +57,6 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
 
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Override
     public JsonElement serialize(final TrackMilestone trackMilestone, final Type type,
@@ -76,15 +72,12 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
                 jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
                 jsonObject.addProperty("nameOfWork", led.getNameOfWork());
                 jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-                if(led.getLineEstimate().getTypeOfWork() != null){
+                if (led.getLineEstimate().getTypeOfWork() != null)
                     jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription());
-                }
-                if(led.getLineEstimate().getSubTypeOfWork() != null){
+                if (led.getLineEstimate().getSubTypeOfWork() != null)
                     jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription());
-                }
                 jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
                 jsonObject.addProperty("nameOfWork", "");
@@ -100,8 +93,7 @@ public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMile
                         .getWorkOrderNumber());
                 jsonObject
                         .addProperty("workOrderId", trackMilestone.getMilestone().getWorkOrderEstimate().getWorkOrder().getId());
-            }
-            else {
+            } else {
                 jsonObject.addProperty("agreementAmount", "");
                 jsonObject.addProperty("workOrderNumber", "");
                 jsonObject.addProperty("workOrderId", "");

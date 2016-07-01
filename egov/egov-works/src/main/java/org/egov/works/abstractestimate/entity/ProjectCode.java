@@ -66,9 +66,9 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGW_PROJECTCODE")
-@NamedQueries({ 
-    @NamedQuery(name = ProjectCode.ALLACTIVEPROJECTCODES, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') order by pc.code "),
-    @NamedQuery(name = ProjectCode.GETPROJECTCODEBYCODE, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ? ")
+@NamedQueries({
+        @NamedQuery(name = ProjectCode.ALLACTIVEPROJECTCODES, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') order by pc.code "),
+        @NamedQuery(name = ProjectCode.GETPROJECTCODEBYCODE, query = " select distinct pc from ProjectCode as pc left join pc.estimates as e where e.egwStatus.code not in('CANCELLED') and pc.code = ? ")
 })
 @SequenceGenerator(name = ProjectCode.SEQ_EGW_PROJECTCODE, sequenceName = ProjectCode.SEQ_EGW_PROJECTCODE, allocationSize = 1)
 public class ProjectCode extends AbstractAuditable implements EntityType {

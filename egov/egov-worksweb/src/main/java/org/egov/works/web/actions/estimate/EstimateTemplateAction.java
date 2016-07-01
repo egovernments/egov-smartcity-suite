@@ -75,7 +75,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EstimateTemplateAction extends SearchFormAction {
 
     private static final long serialVersionUID = 3610026596221473556L;
-    private static final String VIEW = "view";
     private EstimateTemplate estimateTemplate = new EstimateTemplate();
     private List<EstimateTemplateActivity> sorActivities = new LinkedList<EstimateTemplateActivity>();
     private List<EstimateTemplateActivity> nonSorActivities = new LinkedList<EstimateTemplateActivity>();
@@ -138,7 +137,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
+        final List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
         addDropdownData("uomList", uomList);
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));

@@ -89,7 +89,7 @@ import com.google.gson.JsonObject;
 @Service
 @Transactional(readOnly = true)
 public class MBHeaderService {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MBHeaderService.class);
 
     @PersistenceContext
@@ -111,20 +111,20 @@ public class MBHeaderService {
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     private WorkOrderActivityService workOrderActivityService;
-    
+
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<MBHeader> mbHeaderWorkflowService;
-    
+
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private PositionMasterService positionMasterService;
 
@@ -142,7 +142,8 @@ public class MBHeaderService {
     }
 
     public List<MBHeader> getApprovedMBsForContractorBillByWorkOrderEstimateId(final Long workOrderEstimateId) {
-        return mbHeaderRepository.findByWorkOrderEstimateId(workOrderEstimateId, WorksConstants.APPROVED, WorksConstants.CANCELLED);
+        return mbHeaderRepository.findByWorkOrderEstimateId(workOrderEstimateId, WorksConstants.APPROVED,
+                WorksConstants.CANCELLED);
     }
 
     public List<MBHeader> getMBHeadersByWorkOrder(final WorkOrder workOrder) {
@@ -172,26 +173,25 @@ public class MBHeaderService {
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
     }
-    
+
     @Transactional
     public MBHeader create(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
             final String workFlowAction) {
         mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
         mbHeader.setWorkOrderEstimate(workOrderEstimateService.getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId()));
-        if (mbHeader.getState() == null) {
+        if (mbHeader.getState() == null)
             if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.CREATED.toString()));
             else
                 mbHeader.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.NEW.toString()));
-        }
         mergeSorAndNonSorMBDetails(mbHeader);
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
-        
+
         createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
-        
+
         return savedMBHeader;
     }
 
@@ -209,17 +209,17 @@ public class MBHeaderService {
             for (final MBDetails details : mbHeader.getMbDetails())
                 details.setMbHeader(mbHeader);
         }
-        
+
         final MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);
-        
+
         mbHeaderStatusChange(mbHeader, workFlowAction);
-        
+
         createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
-        
+
         return updatedMBHeader;
     }
-    
+
     private List<MBDetails> removeDeletedMBDetails(final List<MBDetails> mbDetails, final String removedDetailIds) {
         final List<MBDetails> mbDetailsList = new ArrayList<MBDetails>();
         if (null != removedDetailIds) {
@@ -238,11 +238,12 @@ public class MBHeaderService {
         return mbDetailsList;
     }
 
-    private void mergeSorAndNonSorMBDetails(MBHeader mbHeader) {
+    private void mergeSorAndNonSorMBDetails(final MBHeader mbHeader) {
         for (final MBDetails mbDetails : mbHeader.getSorMbDetails())
             if (mbDetails.getId() == null) {
                 mbDetails.setMbHeader(mbHeader);
-                mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                mbDetails.setWorkOrderActivity(
+                        workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
                 mbHeader.addMbDetails(mbDetails);
             } else
                 for (final MBDetails oldMBDetails : mbHeader.getSORMBDetails())
@@ -251,15 +252,16 @@ public class MBHeaderService {
         for (final MBDetails mbDetails : mbHeader.getNonSorMbDetails())
             if (mbDetails.getId() == null) {
                 mbDetails.setMbHeader(mbHeader);
-                mbDetails.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                mbDetails.setWorkOrderActivity(
+                        workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
                 mbHeader.addMbDetails(mbDetails);
             } else
                 for (final MBDetails oldMBDetails : mbHeader.getNonSORMBDetails())
                     if (oldMBDetails.getId().equals(mbDetails.getId()))
                         updateMBDetails(oldMBDetails, mbDetails);
     }
-    
-    private void updateMBDetails(MBDetails oldMBDetails, MBDetails mbDetails) {
+
+    private void updateMBDetails(final MBDetails oldMBDetails, final MBDetails mbDetails) {
         oldMBDetails.setQuantity(mbDetails.getQuantity());
         oldMBDetails.setRate(mbDetails.getRate());
         oldMBDetails.setRemarks(mbDetails.getRemarks());
@@ -395,7 +397,7 @@ public class MBHeaderService {
     public Double getPreviousCumulativeQuantity(final Long mbHeaderId, final Long woActivityId) {
         return mbHeaderRepository.getPreviousCumulativeQuantity(mbHeaderId, WorksConstants.CANCELLED, woActivityId);
     }
-    
+
     public void createMBHeaderWorkflowTransition(final MBHeader mbHeader,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
@@ -457,32 +459,31 @@ public class MBHeaderService {
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
-    
+
     public void fillWorkflowData(final JsonObject jsonObject, final HttpServletRequest request, final MBHeader mbHeader) {
         jsonObject.addProperty("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getCurrentState() != null
                 && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
             jsonObject.addProperty("currentState", mbHeader.getCurrentState().getValue());
-        if (mbHeader.getState() != null  && mbHeader.getState().getNextAction()!=null )
+        if (mbHeader.getState() != null && mbHeader.getState().getNextAction() != null)
             jsonObject.addProperty("nextAction", mbHeader.getState().getNextAction());
 
         jsonObject.addProperty("id", mbHeader.getId());
-        
-        if(!mbHeader.getMbDetails().isEmpty()) {
+
+        if (!mbHeader.getMbDetails().isEmpty()) {
             final JsonArray jsonArray = new JsonArray();
             for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
                 final JsonObject id = new JsonObject();
                 id.addProperty("id", mbDetails.getId());
-                if(mbDetails.getWorkOrderActivity().getActivity().getSchedule() != null)
+                if (mbDetails.getWorkOrderActivity().getActivity().getSchedule() != null)
                     id.addProperty("sorType", "SOR");
                 else
                     id.addProperty("sorType", "Non SOR");
-                
+
                 jsonArray.add(id);
             }
             jsonObject.add("detailIds", jsonArray);
-        } else {
+        } else
             jsonObject.add("detailIds", new JsonArray());
-        }
     }
 }

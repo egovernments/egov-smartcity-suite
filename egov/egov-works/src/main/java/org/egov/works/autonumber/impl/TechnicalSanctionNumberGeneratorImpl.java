@@ -63,21 +63,22 @@ public class TechnicalSanctionNumberGeneratorImpl implements TechnicalSanctionNu
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     /**
-     * 
+     *
      * Format TS/seqnumber/month/financialyear but sequence is running number for a year
      *
      */
-    public String getNextNumber(AbstractEstimate abstractEstimate) {
+    @Override
+    public String getNextNumber(final AbstractEstimate abstractEstimate) {
 
-        CFinancialYear fy = financialYearService.getCurrentFinancialYear();
+        final CFinancialYear fy = financialYearService.getCurrentFinancialYear();
 
-        Date currnetDate = new Date();
+        final Date currnetDate = new Date();
 
         String technicalSanctionNumber = "";
 
-        String sequenceName = "seq_estimate_technicalsanctionnumber_" + fy.getFinYearRange();
+        final String sequenceName = "seq_estimate_technicalsanctionnumber_" + fy.getFinYearRange();
 
-        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
 
         technicalSanctionNumber = String.format("%s/%05d/%02d/%s", "TS", nextSequence, currnetDate.getMonth() + 1,
                 fy.getFinYearRange());

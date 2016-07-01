@@ -125,11 +125,10 @@ public class WorkProgressRegisterService {
     public Date getReportSchedulerRunDate() {
         Query query = null;
         query = entityManager.unwrap(Session.class).createQuery("from WorkProgressRegister ");
-        List<WorkProgressRegister> obj = query.setMaxResults(1).list();
+        final List<WorkProgressRegister> obj = query.setMaxResults(1).list();
         Date runDate = null;
-        if (obj != null) {
+        if (obj != null)
             runDate = obj.get(0).getCreatedDate();
-        }
         return runDate;
     }
 
@@ -153,117 +152,92 @@ public class WorkProgressRegisterService {
 
     }
 
-    private Query setParameterForDepartmentWiseReport(EstimateAbstractReport estimateAbstractReport, Query query) {
+    private Query setParameterForDepartmentWiseReport(final EstimateAbstractReport estimateAbstractReport, final Query query) {
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.isSpillOverFlag()) {
+            if (estimateAbstractReport.isSpillOverFlag())
                 query.setBoolean("spilloverflag", true);
-            }
-            if (estimateAbstractReport.getDepartment() != null) {
+            if (estimateAbstractReport.getDepartment() != null)
                 query.setLong("department", estimateAbstractReport.getDepartment());
-            }
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-            }
 
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 query.setLong("scheme", estimateAbstractReport.getScheme());
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 query.setLong("subScheme", estimateAbstractReport.getSubScheme());
-            }
 
             if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
+                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined"))
                 if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
+                    if (estimateAbstractReport.getTypeOfSlum() != null)
                         query.setString("typeofslum", estimateAbstractReport.getTypeOfSlum());
-                    }
 
-                    if (estimateAbstractReport.getBeneficiary() != null) {
+                    if (estimateAbstractReport.getBeneficiary() != null)
                         query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-                    }
 
-                } else {
+                } else
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                }
-            }
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
-            }
 
         }
         return query;
     }
 
-    private Query setParameterForTypeOfWorkWiseReport(EstimateAbstractReport estimateAbstractReport, Query query) {
+    private Query setParameterForTypeOfWorkWiseReport(final EstimateAbstractReport estimateAbstractReport, final Query query) {
 
         if (estimateAbstractReport != null) {
-            if (estimateAbstractReport.isSpillOverFlag()) {
+            if (estimateAbstractReport.isSpillOverFlag())
                 query.setBoolean("spilloverflag", true);
 
-            }
-
-            if (estimateAbstractReport.getTypeOfWork() != null) {
+            if (estimateAbstractReport.getTypeOfWork() != null)
                 query.setLong("typeofwork", estimateAbstractReport.getTypeOfWork());
-            }
 
-            if (estimateAbstractReport.getSubTypeOfWork() != null) {
+            if (estimateAbstractReport.getSubTypeOfWork() != null)
                 query.setLong("subtypeofwork", estimateAbstractReport.getSubTypeOfWork());
-            }
 
             if (estimateAbstractReport.getDepartments() != null
                     && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
-                List<Long> departmentIds = new ArrayList<Long>();
-                for (Department dept : estimateAbstractReport.getDepartments()) {
+                final List<Long> departmentIds = new ArrayList<Long>();
+                for (final Department dept : estimateAbstractReport.getDepartments())
                     departmentIds.add(dept.getId());
-                }
                 query.setParameterList("departmentIds", departmentIds);
 
             }
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 query.setDate("fromDate", estimateAbstractReport.getAdminSanctionFromDate());
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 query.setDate("toDate", estimateAbstractReport.getAdminSanctionToDate());
-            }
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 query.setLong("scheme", estimateAbstractReport.getScheme());
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 query.setLong("subScheme", estimateAbstractReport.getSubScheme());
-            }
 
             if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
+                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined"))
                 if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
+                    if (estimateAbstractReport.getTypeOfSlum() != null)
                         query.setString("typeofslum", estimateAbstractReport.getTypeOfSlum());
-                    }
 
-                    if (estimateAbstractReport.getBeneficiary() != null) {
+                    if (estimateAbstractReport.getBeneficiary() != null)
                         query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-                    }
 
-                } else {
+                } else
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                }
-            }
 
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
-            }
 
         }
         return query;
@@ -308,55 +282,43 @@ public class WorkProgressRegisterService {
 
     }
 
-    private String getQueryForDepartmentWiseReport(EstimateAbstractReport estimateAbstractReport) {
-        StringBuilder workInProgessCondition = new StringBuilder();
-        StringBuilder filterConditions = new StringBuilder();
+    private String getQueryForDepartmentWiseReport(final EstimateAbstractReport estimateAbstractReport) {
+        final StringBuilder workInProgessCondition = new StringBuilder();
+        final StringBuilder filterConditions = new StringBuilder();
 
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.getDepartment() != null) {
+            if (estimateAbstractReport.getDepartment() != null)
                 filterConditions.append(" AND details.department =:department ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-            }
 
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 filterConditions.append(" AND details.scheme =:scheme ");
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 filterConditions.append(" AND details.subScheme =:subScheme ");
-            }
 
             if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
+                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined"))
                 if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
 
                     filterConditions.append(" AND details.workcategory =:workcategory ");
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
+                    if (estimateAbstractReport.getTypeOfSlum() != null)
                         filterConditions.append(" AND details.typeofslum =:typeofslum ");
-                    }
 
-                    if (estimateAbstractReport.getBeneficiary() != null) {
+                    if (estimateAbstractReport.getBeneficiary() != null)
                         filterConditions.append(" AND details.beneficiary =:beneficiary ");
-                    }
 
-                } else {
-
+                } else
                     filterConditions.append(" AND details.workcategory =:workcategory ");
 
-                }
-            }
-
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
-            }
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
 
@@ -424,7 +386,7 @@ public class WorkProgressRegisterService {
 
             }
         }
-        StringBuilder query = new StringBuilder();
+        final StringBuilder query = new StringBuilder();
         query.append("SELECT departmentName AS departmentName, ");
         query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
         query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
@@ -536,13 +498,13 @@ public class WorkProgressRegisterService {
         return query.toString();
     }
 
-    private String getQueryForTypeOfWorkWiseReport(EstimateAbstractReport estimateAbstractReport) {
-        StringBuilder workInProgessCondition = new StringBuilder();
-        StringBuilder filterConditions = new StringBuilder();
-        StringBuilder selectQuery = new StringBuilder();
-        StringBuilder groupByQuery = new StringBuilder();
-        StringBuilder mainSelectQuery = new StringBuilder();
-        StringBuilder mainGroupByQuery = new StringBuilder();
+    private String getQueryForTypeOfWorkWiseReport(final EstimateAbstractReport estimateAbstractReport) {
+        final StringBuilder workInProgessCondition = new StringBuilder();
+        final StringBuilder filterConditions = new StringBuilder();
+        final StringBuilder selectQuery = new StringBuilder();
+        final StringBuilder groupByQuery = new StringBuilder();
+        final StringBuilder mainSelectQuery = new StringBuilder();
+        final StringBuilder mainGroupByQuery = new StringBuilder();
         if (estimateAbstractReport.getDepartments() != null
                 && !estimateAbstractReport.getDepartments().toString().equalsIgnoreCase("[null]")) {
             filterConditions.append(" AND details.department in ( :departmentIds ) ");
@@ -571,53 +533,40 @@ public class WorkProgressRegisterService {
 
         if (estimateAbstractReport != null) {
 
-            if (estimateAbstractReport.getTypeOfWork() != null) {
+            if (estimateAbstractReport.getTypeOfWork() != null)
                 filterConditions.append(" AND details.typeofwork =:typeofwork ");
-            }
 
-            if (estimateAbstractReport.getSubTypeOfWork() != null) {
+            if (estimateAbstractReport.getSubTypeOfWork() != null)
                 filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-            }
 
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+            if (estimateAbstractReport.getAdminSanctionToDate() != null)
                 filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-            }
 
-            if (estimateAbstractReport.getScheme() != null) {
+            if (estimateAbstractReport.getScheme() != null)
                 filterConditions.append(" AND details.scheme =:scheme ");
-            }
 
-            if (estimateAbstractReport.getSubScheme() != null) {
+            if (estimateAbstractReport.getSubScheme() != null)
                 filterConditions.append(" AND details.subScheme =:subScheme ");
-            }
 
             if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
+                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined"))
                 if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
 
                     filterConditions.append(" AND details.workcategory =:workcategory ");
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
+                    if (estimateAbstractReport.getTypeOfSlum() != null)
                         filterConditions.append(" AND details.typeofslum =:typeofslum ");
-                    }
 
-                    if (estimateAbstractReport.getBeneficiary() != null) {
+                    if (estimateAbstractReport.getBeneficiary() != null)
                         filterConditions.append(" AND details.beneficiary =:beneficiary ");
-                    }
 
-                } else {
-
+                } else
                     filterConditions.append(" AND details.workcategory =:workcategory ");
 
-                }
-            }
-
-            if (estimateAbstractReport.getNatureOfWork() != null) {
+            if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
-            }
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
 
@@ -683,8 +632,8 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
             }
-        }        
-        StringBuilder query = new StringBuilder();
+        }
+        final StringBuilder query = new StringBuilder();
         query.append(mainSelectQuery.toString());
         query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
         query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");

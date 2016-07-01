@@ -249,12 +249,12 @@ public class Activity extends AbstractAuditable {
     }
 
     public double getConversionFactor() {
-            final double masterRate = estimateRate;
-            final double unitRate = rate;
-            if (unitRate > 0 && masterRate > 0)
-                return unitRate / masterRate;
-            else
-                return Double.valueOf(1);
+        final double masterRate = estimateRate;
+        final double unitRate = rate;
+        if (unitRate > 0 && masterRate > 0)
+            return unitRate / masterRate;
+        else
+            return Double.valueOf(1);
     }
 
     public List<ValidationError> validate() {
@@ -318,7 +318,7 @@ public class Activity extends AbstractAuditable {
         return estimateRate;
     }
 
-    public void setEstimateRate(double estimateRate) {
+    public void setEstimateRate(final double estimateRate) {
         this.estimateRate = estimateRate;
     }
 

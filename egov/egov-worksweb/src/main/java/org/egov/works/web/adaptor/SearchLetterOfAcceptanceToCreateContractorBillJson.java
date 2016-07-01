@@ -70,7 +70,7 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final JsonObject jsonObject = new JsonObject();
-        if (workOrderEstimate!= null) {
+        if (workOrderEstimate != null) {
             if (workOrderEstimate.getWorkOrder().getWorkOrderNumber() != null)
                 jsonObject.addProperty("workOrderNumber", workOrderEstimate.getWorkOrder().getWorkOrderNumber());
             else
@@ -100,12 +100,12 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
 
             jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
             if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates() != null) {
-                List<MBHeader> mbHeaders = mBHeaderService
+                final List<MBHeader> mbHeaders = mBHeaderService
                         .getApprovedMBsForContractorBillByWorkOrderEstimateId(workOrderEstimate.getId());
                 if (!mbHeaders.isEmpty()) {
                     String mbRefNumbers = "";
                     BigDecimal mbAmount = BigDecimal.ZERO;
-                    for (MBHeader header : mbHeaders) {
+                    for (final MBHeader header : mbHeaders) {
                         mbRefNumbers = mbRefNumbers + header.getMbRefNo() + ",";
                         mbAmount = mbAmount.add(header.getMbAmount());
                     }
@@ -119,7 +119,7 @@ public class SearchLetterOfAcceptanceToCreateContractorBillJson implements JsonS
             }
             if (workOrderEstimate.getEstimate() != null)
                 jsonObject.addProperty("aeId", workOrderEstimate.getEstimate().getId());
-                
+
             jsonObject.addProperty("woeId", workOrderEstimate.getId());
         }
         return jsonObject;

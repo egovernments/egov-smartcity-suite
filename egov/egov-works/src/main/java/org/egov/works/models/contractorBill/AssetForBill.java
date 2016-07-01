@@ -71,25 +71,25 @@ public class AssetForBill extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGW_CONTRACTORBILL_ASSETS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ASSET_ID")
     private Asset asset;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COA_ID")
     private CChartOfAccounts coa;
-    
-    @Column(name="narration")
+
+    @Column(name = "narration")
     private String description;
-    
+
     @NotNull
     private BigDecimal amount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BILLREGISTER_ID")
     private ContractorBillRegister egbill;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WORKORDER_ESTIMATE_ID")
     private WorkOrderEstimate workOrderEstimate;
@@ -142,11 +142,13 @@ public class AssetForBill extends AbstractAuditable {
         this.workOrderEstimate = workOrderEstimate;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 

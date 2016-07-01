@@ -39,18 +39,18 @@
  */
 package org.egov.works.web.adaptor;
 
+import java.lang.reflect.Type;
+
+import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Type;
-
 @Component
-public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<BudgetFolioDetail>{
+public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<BudgetFolioDetail> {
 
     @Override
     public JsonElement serialize(final BudgetFolioDetail budgetFolioDetail, final Type type,
@@ -89,23 +89,23 @@ public class EstimateAppropriationRegisterJSONAdaptor implements JsonSerializer<
                 jsonObject.addProperty("estimateValue", budgetFolioDetail.getWorkValue());
             else
                 jsonObject.addProperty("estimateValue", "");
-            if(budgetFolioDetail.getCumulativeTotal() != null)
+            if (budgetFolioDetail.getCumulativeTotal() != null)
                 jsonObject.addProperty("cumulativeTotal", budgetFolioDetail.getCumulativeTotal());
             else
                 jsonObject.addProperty("cumulativeTotal", "");
-            if(budgetFolioDetail.getBalanceAvailable() != null)
+            if (budgetFolioDetail.getBalanceAvailable() != null)
                 jsonObject.addProperty("balanceAvailable", budgetFolioDetail.getBalanceAvailable());
             else
                 jsonObject.addProperty("balanceAvailable", "");
-            if(budgetFolioDetail.getActualBalanceAvailable() != null)
+            if (budgetFolioDetail.getActualBalanceAvailable() != null)
                 jsonObject.addProperty("actualBalanceAvailable", budgetFolioDetail.getActualBalanceAvailable());
             else
                 jsonObject.addProperty("actualBalanceAvailable", "");
-            if(budgetFolioDetail.getCumulativeExpensesIncurred() != null)
+            if (budgetFolioDetail.getCumulativeExpensesIncurred() != null)
                 jsonObject.addProperty("cumulativeExpensesIncurred", budgetFolioDetail.getCumulativeExpensesIncurred());
             else
                 jsonObject.addProperty("cumulativeExpensesIncurred", "");
-            
+
             jsonObject.addProperty("id", budgetFolioDetail.getSrlNo());
         }
         return jsonObject;

@@ -866,15 +866,15 @@ public class SearchEstimateAction extends SearchFormAction {
                 if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getStatus().getCode())) {
                     milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                             WorksConstants.CANCELLED_STATUS));
-                            // TODO - The setter methods of variables in State.java are
-                            // protected. Need to alternative way to solve this issue.
-                            /*******
-                             * oldEndState = milestone.getCurrentState(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
-                             * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
-                             * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
-                             * oldEndState.setValue(WorksConstants.CANCELLED_STATUS);
-                             * oldEndState.setText1(cancelComments.toString()); milestone.changeState("END", owner, null);
-                             *******/
+                    // TODO - The setter methods of variables in State.java are
+                    // protected. Need to alternative way to solve this issue.
+                    /*******
+                     * oldEndState = milestone.getCurrentState(); oldEndState.setCreatedBy(prsnlInfo.getUserMaster());
+                     * oldEndState.setModifiedBy(prsnlInfo.getUserMaster()); oldEndState.setCreatedDate(new Date());
+                     * oldEndState.setModifiedDate(new Date()); oldEndState.setOwner(owner);
+                     * oldEndState.setValue(WorksConstants.CANCELLED_STATUS); oldEndState.setText1(cancelComments.toString());
+                     * milestone.changeState("END", owner, null);
+                     *******/
 
                     for (final TrackMilestone tms : milestone.getTrackMilestone())
                         if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getStatus().getCode())) {

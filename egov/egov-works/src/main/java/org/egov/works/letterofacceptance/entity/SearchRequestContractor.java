@@ -44,30 +44,37 @@ public class SearchRequestContractor {
     private String nameOfAgency;
     private Long contractorClass;
     private Long department;
-    
+
     public String getContractorCode() {
         return contractorCode;
     }
-    public void setContractorCode(String contractorCode) {
+
+    public void setContractorCode(final String contractorCode) {
         this.contractorCode = contractorCode;
     }
+
     public String getNameOfAgency() {
         return nameOfAgency;
     }
-    public void setNameOfAgency(String nameOfAgency) {
+
+    public void setNameOfAgency(final String nameOfAgency) {
         this.nameOfAgency = nameOfAgency;
     }
+
     public Long getContractorClass() {
         return contractorClass;
     }
-    public void setContractorClass(Long contractorClass) {
+
+    public void setContractorClass(final Long contractorClass) {
         this.contractorClass = contractorClass;
     }
+
     public Long getDepartment() {
         return department;
     }
-    public void setDepartment(Long department) {
+
+    public void setDepartment(final Long department) {
         this.department = department;
     }
-    
+
 }

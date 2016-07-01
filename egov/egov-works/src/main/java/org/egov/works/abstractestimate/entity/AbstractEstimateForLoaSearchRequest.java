@@ -94,12 +94,11 @@ public class AbstractEstimateForLoaSearchRequest {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
-
     public Long getAbstractEstimateCreatedBy() {
         return abstractEstimateCreatedBy;
     }
 
-    public void setAbstractEstimateCreatedBy(Long abstractEstimateCreatedBy) {
+    public void setAbstractEstimateCreatedBy(final Long abstractEstimateCreatedBy) {
         this.abstractEstimateCreatedBy = abstractEstimateCreatedBy;
     }
 

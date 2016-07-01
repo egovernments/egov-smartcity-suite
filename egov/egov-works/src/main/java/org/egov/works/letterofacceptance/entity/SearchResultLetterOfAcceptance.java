@@ -114,7 +114,7 @@ public class SearchResultLetterOfAcceptance {
         return typeOfWork;
     }
 
-    public void setTypeOfWork(Long typeOfWork) {
+    public void setTypeOfWork(final Long typeOfWork) {
         this.typeOfWork = typeOfWork;
     }
 
@@ -122,7 +122,7 @@ public class SearchResultLetterOfAcceptance {
         return subTypeOfWork;
     }
 
-    public void setSubTypeOfWork(Long subTypeOfWork) {
+    public void setSubTypeOfWork(final Long subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
     }
 
@@ -130,7 +130,7 @@ public class SearchResultLetterOfAcceptance {
         return srlNo;
     }
 
-    public void setSrlNo(Integer srlNo) {
+    public void setSrlNo(final Integer srlNo) {
         this.srlNo = srlNo;
     }
 

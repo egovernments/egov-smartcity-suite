@@ -270,7 +270,7 @@ public class WorksConstants {
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
-    
+
     public static final String WORKFLOWTYPE_DISPLAYNAME_MBHEADER = "MB Header";
 
     public static final String BILL_EXPENDITURE_TYPE = "Works";

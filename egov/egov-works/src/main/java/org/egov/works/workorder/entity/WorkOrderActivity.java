@@ -257,11 +257,13 @@ public class WorkOrderActivity extends AbstractAuditable {
         this.prevCumlvQuantity = prevCumlvQuantity;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -269,7 +271,7 @@ public class WorkOrderActivity extends AbstractAuditable {
         return sorCategory;
     }
 
-    public void setSorCategory(String sorCategory) {
+    public void setSorCategory(final String sorCategory) {
         this.sorCategory = sorCategory;
     }
 

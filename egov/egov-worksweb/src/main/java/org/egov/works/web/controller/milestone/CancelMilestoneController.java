@@ -43,12 +43,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.entity.SearchRequestMilestone;
 import org.egov.works.milestone.service.MilestoneService;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -84,11 +81,11 @@ public class CancelMilestoneController extends GenericWorkFlowController {
         Milestone milestone = milestoneService.getMilestoneById(milestoneId);
         milestone.setCancellationReason(cancellationReason);
         milestone.setCancellationRemarks(cancellationRemarks);
-        
+
         milestone = milestoneService.cancel(milestone);
-        
+
         model.addAttribute("message", messageSource.getMessage("msg.milestone.cancel.success",
-                new String[] {milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber()}, null));
+                new String[] { milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() }, null));
         return "milestone-success";
     }
 }

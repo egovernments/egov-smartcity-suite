@@ -40,6 +40,18 @@
 
 package org.egov.works.reports.service;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
@@ -55,58 +67,50 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 @Service
 public class EstimateAppropriationRegisterService {
-    
+
     private static final Logger logger = Logger.getLogger(EstimateAppropriationRegisterService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
-    
+
     @Autowired
     private BudgetGroupService budgetGroupService;
-    
+
     @Autowired
     private LineEstimateDetailsRepository lineEstimateDetailsRepository;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    
+
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
-    
+
     @SuppressWarnings("unchecked")
     public Map<String, List> searchEstimateAppropriationRegister(
-            EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
-        
-        Map<String, Object> queryParamMap = new HashMap<String, Object>();
+            final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
+
+        final Map<String, Object> queryParamMap = new HashMap<String, Object>();
         BigDecimal totalGrant = BigDecimal.ZERO;
         BigDecimal totalGrantPerc = BigDecimal.ZERO;
         Map<String, List> approvedBudgetFolioDetailsMap = null;
-            
+
         if (estimateAppropriationRegisterSearchRequest != null && estimateAppropriationRegisterSearchRequest.getFund() != null)
             queryParamMap.put("fundid", estimateAppropriationRegisterSearchRequest.getFund().intValue());
 
-        if (estimateAppropriationRegisterSearchRequest != null && estimateAppropriationRegisterSearchRequest.getFunction() != null)
+        if (estimateAppropriationRegisterSearchRequest != null
+                && estimateAppropriationRegisterSearchRequest.getFunction() != null)
             queryParamMap.put("functionid", estimateAppropriationRegisterSearchRequest.getFunction());
-        if (estimateAppropriationRegisterSearchRequest != null && estimateAppropriationRegisterSearchRequest.getBudgetHead() != null) {
+        if (estimateAppropriationRegisterSearchRequest != null
+                && estimateAppropriationRegisterSearchRequest.getBudgetHead() != null) {
             final List<BudgetGroup> budgetheadid = new ArrayList<BudgetGroup>();
-            BudgetGroup budgetGroup = budgetGroupService.findById(estimateAppropriationRegisterSearchRequest.getBudgetHead(), true);
+            final BudgetGroup budgetGroup = budgetGroupService
+                    .findById(estimateAppropriationRegisterSearchRequest.getBudgetHead(), true);
             budgetheadid.add(budgetGroup);
             queryParamMap.put("budgetheadid", budgetheadid);
         }
@@ -118,7 +122,8 @@ public class EstimateAppropriationRegisterService {
         if (estimateAppropriationRegisterSearchRequest != null
                 && estimateAppropriationRegisterSearchRequest.getFinancialYear() != null) {
             queryParamMap.put("financialyearid", estimateAppropriationRegisterSearchRequest.getFinancialYear());
-            queryParamMap.put("fromDate", financialYearHibernateDAO.getFinancialYearById(estimateAppropriationRegisterSearchRequest.getFinancialYear()).getStartingDate());
+            queryParamMap.put("fromDate", financialYearHibernateDAO
+                    .getFinancialYearById(estimateAppropriationRegisterSearchRequest.getFinancialYear()).getStartingDate());
             queryParamMap.put("toDate", new Date());
         }
 
@@ -138,14 +143,14 @@ public class EstimateAppropriationRegisterService {
             }
             approvedBudgetFolioDetailsMap = getApprovedAppropriationDetailsForBugetHead(queryParamMap);
         }
-        
+
         return approvedBudgetFolioDetailsMap;
     }
-    
+
     private BigDecimal getPlanningBudgetPercentage(final Map<String, Object> queryParamMap) {
         return budgetDetailsDAO.getPlanningPercentForYear(queryParamMap);
     }
-    
+
     public Map<String, List> getApprovedAppropriationDetailsForBugetHead(final Map<String, Object> queryParamMap) {
         final List<BudgetFolioDetail> approvedBudgetFolioResultList = new ArrayList<BudgetFolioDetail>();
         final Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -174,7 +179,7 @@ public class EstimateAppropriationRegisterService {
                     queryParamMap.get("totalGrantPerc").toString()));
         return new HashMap<String, List>();
     }
-    
+
     public Map<String, List> addApprovedEstimateResultList(final List<BudgetFolioDetail> budgetFolioResultList,
             final List<BudgetUsage> budgetUsageList, final BigDecimal totalGrantPerc) {
         int srlNo = 1;
@@ -186,14 +191,15 @@ public class EstimateAppropriationRegisterService {
             final BudgetFolioDetail budgetFolioDetail = new BudgetFolioDetail();
             budgetFolioDetail.setSrlNo(srlNo++);
 
-            final List<LineEstimateDetails> leds = lineEstimateDetailsRepository.findByEstimateNumberContainingIgnoreCase(budgetUsage.getReferenceNumber());
-            LineEstimateDetails led = leds.isEmpty() ? null : leds.get(0);
+            final List<LineEstimateDetails> leds = lineEstimateDetailsRepository
+                    .findByEstimateNumberContainingIgnoreCase(budgetUsage.getReferenceNumber());
+            final LineEstimateDetails led = leds.isEmpty() ? null : leds.get(0);
             if (led != null) {
                 budgetFolioDetail.setEstimateNo(led.getEstimateNumber());
                 budgetFolioDetail.setNameOfWork(led.getNameOfWork());
                 budgetFolioDetail.setWorkValue(led.getEstimateAmount().doubleValue());
                 budgetFolioDetail.setEstimateDate(sdf.format(led.getLineEstimate().getLineEstimateDate()));
-                if(led.getProjectCode() != null)
+                if (led.getProjectCode() != null)
                     budgetFolioDetail.setWorkIdentificationNumber(led.getProjectCode().getCode());
 
             }
@@ -205,7 +211,6 @@ public class EstimateAppropriationRegisterService {
             budgetFolioDetail.setAppDate(sdf.format(new Date(budgetUsage.getUpdatedTime().getTime())));
             budgetFolioDetail.setAppType(getApporpriationType(budgetUsage.getId()));
             budgetFolioResultList.add(budgetFolioDetail);
-            
 
             if (budgetUsage.getReleasedAmount() > 0) {
                 cumulativeTotal = cumulativeTotal - budgetUsage.getReleasedAmount();
@@ -222,9 +227,9 @@ public class EstimateAppropriationRegisterService {
         budgetFolioMap.put("calculatedValues", calculatedValuesList);
         return budgetFolioMap;
     }
-    
+
     public String getApporpriationType(final long budgetUsageId) {
-        String appType = "Regular";
+        final String appType = "Regular";
         return appType;
     }
 }

@@ -87,10 +87,11 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
-    
+
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -118,10 +119,10 @@ public class AjaxAbstractEstimateController {
 
     @RequestMapping(value = "/ajaxsor-byschedulecategories", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategories(@RequestParam("code") final String code,
-            @RequestParam("scheduleCategories") final String scheduleCategories, @RequestParam("estimateDate") final Date estimateDate) {
-        if (!scheduleCategories.equals("null")) {
+            @RequestParam("scheduleCategories") final String scheduleCategories,
+            @RequestParam("estimateDate") final Date estimateDate) {
+        if (!scheduleCategories.equals("null"))
             return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategories(code, scheduleCategories, estimateDate);
-        }
         return null;
     }
 
@@ -134,28 +135,27 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody List<EstimateTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
             final Model model)
             throws ApplicationException {
-        List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
+        final List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
                 .getEstimateTemplateActivities();
-        for (EstimateTemplateActivity activity : activities) {
+        for (final EstimateTemplateActivity activity : activities)
             try {
                 if (activity.getSchedule() != null)
                     activity.getSchedule().setSorRateValue(activity.getSchedule().getRateOn(new Date()).getRate().getValue());
             } catch (final ApplicationRuntimeException e) {
                 activity.getSchedule().setSorRateValue((double) 0);
             }
-        }
         return activities;
     }
 
     @RequestMapping(value = "/getAbstractEstimatesByNumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String number) {
-        List<AbstractEstimate> abstractEstimates = estimateService.getAbstractEstimateByEstimateNumberLike(number);
+        final List<AbstractEstimate> abstractEstimates = estimateService.getAbstractEstimateByEstimateNumberLike(number);
         final List<String> results = new ArrayList<String>();
         for (final AbstractEstimate abstractEstimate : abstractEstimates)
             results.add(abstractEstimate.getEstimateNumber());
         return results;
     }
-    
+
     @RequestMapping(value = "/ajaxsearchabstractestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchAbstractEstimatesForLOA(final Model model,
             @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {

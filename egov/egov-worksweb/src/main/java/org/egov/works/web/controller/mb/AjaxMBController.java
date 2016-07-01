@@ -182,15 +182,13 @@ public class AjaxMBController {
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService.searchActivities(workOrderEstimateId,
                 description, itemCode, sorType);
         final List<WorkOrderActivity> activities = new ArrayList<WorkOrderActivity>();
-        if (description != null && !description.equals("")) {
-            for (final WorkOrderActivity woa : workOrderActivities) {
-                if ((woa.getActivity().getSchedule() != null
-                        && woa.getActivity().getSchedule().getDescription().toLowerCase().contains(description.toLowerCase())) ||
+        if (description != null && !description.equals(""))
+            for (final WorkOrderActivity woa : workOrderActivities)
+                if (woa.getActivity().getSchedule() != null
+                        && woa.getActivity().getSchedule().getDescription().toLowerCase().contains(description.toLowerCase()) ||
                         woa.getActivity().getNonSor() != null && woa.getActivity().getNonSor().getDescription().toLowerCase()
                                 .contains(description.toLowerCase()))
                     activities.add(woa);
-            }
-        }
 
         if (!activities.isEmpty()) {
             workOrderActivities.clear();
@@ -199,11 +197,10 @@ public class AjaxMBController {
 
         if (itemCode != null && !itemCode.equals("")) {
             activities.clear();
-            for (final WorkOrderActivity woa : workOrderActivities) {
+            for (final WorkOrderActivity woa : workOrderActivities)
                 if (woa.getActivity().getSchedule() != null
                         && woa.getActivity().getSchedule().getCode().toLowerCase().contains(itemCode.toLowerCase()))
                     activities.add(woa);
-            }
         }
 
         if (!activities.isEmpty()) {

@@ -69,6 +69,7 @@ public class EstimateNumberGeneratorImpl implements EstimateNumberGenerator {
     @Autowired
     private ScriptService scriptService;
 
+    @Override
     public String getEstimateNumber(final AbstractEstimate estimate, final CFinancialYear financialYear) {
         final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
                 financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
@@ -76,6 +77,7 @@ public class EstimateNumberGeneratorImpl implements EstimateNumberGenerator {
 
     }
 
+    @Override
     @Transactional(readOnly = true)
     public String getNextNumber(final LineEstimate lineEstimate, final CFinancialYear financialYear) {
         final String financialYearRange = financialYear.getFinYearRange();

@@ -72,7 +72,7 @@ public class ViewBillOfQuantitiesXlsController {
     @Autowired
     private ReportService reportService;
 
-    @RequestMapping(value="/viewBillOfQuantitiesXls/{abstractEstimateId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/viewBillOfQuantitiesXls/{abstractEstimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> viewBillOfQuantities(@PathVariable final Long abstractEstimateId,
             final Model model) {
         final AbstractEstimate estimate = estimateService.getAbstractEstimateById(abstractEstimateId);

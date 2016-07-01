@@ -49,7 +49,7 @@ import org.springframework.stereotype.Repository;
 public interface ScheduleCategoryRepository extends JpaRepository<ScheduleCategory, Long> {
 
     List<ScheduleCategory> findByDescriptionContainingIgnoreCase(final String categoryName);
-    
+
     ScheduleCategory findByCodeIgnoreCase(final String code);
-    
+
 }

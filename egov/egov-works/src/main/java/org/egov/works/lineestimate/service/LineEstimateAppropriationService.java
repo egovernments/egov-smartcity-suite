@@ -67,8 +67,8 @@ public class LineEstimateAppropriationService {
     private LineEstimateAppropriationRepository lineEstimateAppropriationRepository;
 
     @Autowired
-    private AutonumberServiceBeanResolver beanResolver; 
-    
+    private AutonumberServiceBeanResolver beanResolver;
+
     @Autowired
     public LineEstimateAppropriationService(final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
@@ -111,7 +111,8 @@ public class LineEstimateAppropriationService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails) {
-        BudgetAppropriationNumberGenerator e = beanResolver.getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
+        final BudgetAppropriationNumberGenerator e = beanResolver
+                .getAutoNumberServiceFor(BudgetAppropriationNumberGenerator.class);
         final String budgetAppropriationNumber = e.getNextNumber(lineEstimateDetails);
         return budgetAppropriationNumber;
     }

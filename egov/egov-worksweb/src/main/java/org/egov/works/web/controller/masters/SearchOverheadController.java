@@ -42,9 +42,7 @@ package org.egov.works.web.controller.masters;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.master.service.OverheadService;
 import org.egov.works.models.masters.SearchRequestOverhead;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,9 +52,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/masters")
 public class SearchOverheadController {
-
-    @Autowired
-    private OverheadService overheadService;
 
     @RequestMapping(value = "/overhead-search", method = RequestMethod.GET)
     public String searchOverhead(

@@ -46,7 +46,6 @@ import java.util.List;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,9 +57,9 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
-    
+
     @Autowired
-    private OfflineStatusService offlineStatusService; 
+    private OfflineStatusService offlineStatusService;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -82,18 +81,24 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
                 jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getCode());
             else
                 jsonObject.addProperty("status", "");
-            if(workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
+            if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+                jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0)
+                        .getEstimate().getLineEstimateDetails().getEstimateNumber());
             else
-                jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
-            
-            if(workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0)
+                        .getEstimate().getLineEstimateDetails().getEstimateNumber());
+
+            if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+                jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
+                        .getLineEstimateDetails().getNameOfWork());
             else
-                jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
-            
-            List<OfflineStatus> offlinestatusses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
-            jsonObject.addProperty("lineEstimateId", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+                jsonObject.addProperty("nameOfWork", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
+                        .getLineEstimateDetails().getNameOfWork());
+
+            final List<OfflineStatus> offlinestatusses = offlineStatusService
+                    .getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
+            jsonObject.addProperty("lineEstimateId", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate()
+                    .getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());

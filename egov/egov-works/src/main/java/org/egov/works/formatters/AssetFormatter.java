@@ -39,16 +39,15 @@
  */
 package org.egov.works.formatters;
 
+import java.text.ParseException;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.model.Asset;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.Contractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
-
-import java.text.ParseException;
-import java.util.Locale;
 
 @Component("assetFormatter")
 public class AssetFormatter implements Formatter<Asset> {

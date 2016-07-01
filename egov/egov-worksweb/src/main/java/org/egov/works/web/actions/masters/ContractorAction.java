@@ -221,13 +221,13 @@ public class ContractorAction extends SearchFormAction {
     protected void populateContractorDetails(final String mode) {
         contractor.getContractorDetails().clear();
 
-        for (final ContractorDetail contractorDetail : actionContractorDetails){
-        	if(contractorDetail!=null){
-        		List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        		validationErrors = contractorDetail.validate();
-        		if(validationErrors!=null)
-        			throw new ValidationException(validationErrors);
-        	}
+        for (final ContractorDetail contractorDetail : actionContractorDetails) {
+            if (contractorDetail != null) {
+                List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+                validationErrors = contractorDetail.validate();
+                if (validationErrors != null)
+                    throw new ValidationException(validationErrors);
+            }
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));

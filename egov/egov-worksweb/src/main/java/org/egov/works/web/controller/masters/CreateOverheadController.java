@@ -165,24 +165,24 @@ public class CreateOverheadController {
                 break;
             }
 
-            if ((overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0)
-                    && (overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0)) {
+            if (overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0
+                    && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0) {
                 resultBinder.reject("overhead.lumpsumandpercentage.invalid",
                         new String[] { "" },
                         "overhead.lumpsumandpercentage.invalid");
                 break;
             }
 
-            if ((overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0)
-                    && (overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() <= 0.0)) {
+            if (overheadRates.getPercentage() != null && overheadRates.getPercentage() > 0.0
+                    && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() <= 0.0) {
                 resultBinder.reject("overhead.lumpsumandpercentage.invalid",
                         new String[] { "" },
                         "overhead.lumpsumandpercentage.invalid");
                 break;
             }
 
-            if ((overheadRates.getPercentage() != null && overheadRates.getPercentage() <= 0.0)
-                    && (overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0)) {
+            if (overheadRates.getPercentage() != null && overheadRates.getPercentage() <= 0.0
+                    && overheadRates.getLumpsumAmount() != null && overheadRates.getLumpsumAmount() > 0.0) {
                 resultBinder.reject("overhead.lumpsumandpercentage.invalid",
                         new String[] { "" },
                         "overhead.lumpsumandpercentage.invalid");

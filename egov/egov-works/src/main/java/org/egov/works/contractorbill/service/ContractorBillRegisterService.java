@@ -226,9 +226,8 @@ public class ContractorBillRegisterService {
                 contractorBillRegister.getEgBillregistermis()
                         .setSourcePath("/egworks/contractorbill/view/" + contractorBillRegister.getId());
                 if (contractorBillRegister.getWorkOrderEstimate() != null
-                        && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
+                        && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty())
                     approveMBHeader(contractorBillRegister);
-                }
             }
         }
         updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
@@ -481,13 +480,12 @@ public class ContractorBillRegisterService {
             mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
             mbHeaderService.create(mbHeader);
         } else {
-            List<MBHeader> mBHeaders = contractorBillRegister.getWorkOrderEstimate().getMbHeaders();
-            if (mBHeaders != null && !mBHeaders.isEmpty()) {
-                for (MBHeader mh : mBHeaders) {
+            final List<MBHeader> mBHeaders = contractorBillRegister.getWorkOrderEstimate().getMbHeaders();
+            if (mBHeaders != null && !mBHeaders.isEmpty())
+                for (final MBHeader mh : mBHeaders) {
                     mh.setEgBillregister(contractorBillRegister);
                     mbHeaderService.create(mh);
                 }
-            }
         }
     }
 
@@ -586,17 +584,14 @@ public class ContractorBillRegisterService {
     }
 
     public void mergeDeductionDetails(final ContractorBillRegister contractorBillRegister) {
-        for (EgBilldetails billDetails : contractorBillRegister.getStatutoryDeductionDetailes())
-            if (billDetails.getId() == null) {
+        for (final EgBilldetails billDetails : contractorBillRegister.getStatutoryDeductionDetailes())
+            if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
-            }
-        for (EgBilldetails billDetails : contractorBillRegister.getOtherDeductionDetailes())
-            if (billDetails.getId() == null) {
+        for (final EgBilldetails billDetails : contractorBillRegister.getOtherDeductionDetailes())
+            if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
-            }
-        for (EgBilldetails billDetails : contractorBillRegister.getRetentionMoneyDeductionDetailes())
-            if (billDetails.getId() == null) {
+        for (final EgBilldetails billDetails : contractorBillRegister.getRetentionMoneyDeductionDetailes())
+            if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
-            }
     }
 }

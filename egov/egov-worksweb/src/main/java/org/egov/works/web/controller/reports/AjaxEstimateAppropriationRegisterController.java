@@ -39,8 +39,10 @@
  */
 package org.egov.works.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.egov.works.abstractestimate.entity.BudgetFolioDetail;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
@@ -55,10 +57,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/reports")
@@ -73,30 +73,31 @@ public class AjaxEstimateAppropriationRegisterController {
     @RequestMapping(value = "/ajax-estimateappropriationregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchEstimateAppropriationRegister(final Model model,
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest) {
-        
+
         final Map<String, List> approvedBudgetFolioDetailsMap = estimateAppropriationRegisterService
                 .searchEstimateAppropriationRegister(estimateAppropriationRegisterSearchRequest);
         List<BudgetFolioDetail> approvedBudgetFolioDetails = approvedBudgetFolioDetailsMap.get("budgetFolioList");
-        List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
-        if(calculatedValuesList != null) {
-            Double latestCumulative = (Double) calculatedValuesList.get(0);
-            BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
-            for(BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
+        final List calculatedValuesList = approvedBudgetFolioDetailsMap.get("calculatedValues");
+        if (calculatedValuesList != null) {
+            final Double latestCumulative = (Double) calculatedValuesList.get(0);
+            final BigDecimal latestBalance = (BigDecimal) calculatedValuesList.get(1);
+            for (final BudgetFolioDetail bfd : approvedBudgetFolioDetails) {
                 bfd.setCumulativeExpensesIncurred(latestCumulative);
                 bfd.setActualBalanceAvailable(latestBalance.doubleValue());
             }
         }
-        if(approvedBudgetFolioDetails==null){
-            approvedBudgetFolioDetails=new ArrayList<BudgetFolioDetail>();
-        }
-        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimateAppropriationRegisterJson(approvedBudgetFolioDetails))
+        if (approvedBudgetFolioDetails == null)
+            approvedBudgetFolioDetails = new ArrayList<BudgetFolioDetail>();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchEstimateAppropriationRegisterJson(approvedBudgetFolioDetails))
                 .append("}").toString();
         return result;
     }
 
     public Object toSearchEstimateAppropriationRegisterJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(BudgetFolioDetail.class, estimateAppropriationRegisterJSONAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(BudgetFolioDetail.class, estimateAppropriationRegisterJSONAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }

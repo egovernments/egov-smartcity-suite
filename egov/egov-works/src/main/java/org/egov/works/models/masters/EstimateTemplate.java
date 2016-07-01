@@ -39,6 +39,13 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
@@ -48,12 +55,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_ESTIMATE_TEMPLATE", columnName = {
         "CODE" }, message = "estimateTemplate.code.isunique")
@@ -135,11 +136,13 @@ public class EstimateTemplate extends BaseModel {
     public void addActivity(final EstimateTemplateActivity estimateTemplateActivity) {
         estimateTemplateActivities.add(estimateTemplateActivity);
     }
+
     @JsonIgnore
     public Collection<EstimateTemplateActivity> getSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,
                 activity -> ((EstimateTemplateActivity) activity).getSchedule() != null);
     }
+
     @JsonIgnore
     public Collection<EstimateTemplateActivity> getNonSORActivities() {
         return CollectionUtils.select(estimateTemplateActivities,

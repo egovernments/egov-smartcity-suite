@@ -76,12 +76,12 @@ public class EstimateAbstractReport {
     private String typeOfWorkName;
     private String subTypeOfWorkName;
     private Set<Department> departments = new HashSet<>();
-    
+
     public Long getFinancialYear() {
         return financialYear;
     }
 
-    public void setFinancialYear(Long financialYear) {
+    public void setFinancialYear(final Long financialYear) {
         this.financialYear = financialYear;
     }
 
@@ -89,7 +89,7 @@ public class EstimateAbstractReport {
         return department;
     }
 
-    public void setDepartment(Long department) {
+    public void setDepartment(final Long department) {
         this.department = department;
     }
 
@@ -97,7 +97,7 @@ public class EstimateAbstractReport {
         return adminSanctionFromDate;
     }
 
-    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
+    public void setAdminSanctionFromDate(final Date adminSanctionFromDate) {
         this.adminSanctionFromDate = adminSanctionFromDate;
     }
 
@@ -105,7 +105,7 @@ public class EstimateAbstractReport {
         return adminSanctionToDate;
     }
 
-    public void setAdminSanctionToDate(Date adminSanctionToDate) {
+    public void setAdminSanctionToDate(final Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
@@ -113,7 +113,7 @@ public class EstimateAbstractReport {
         return scheme;
     }
 
-    public void setScheme(Integer scheme) {
+    public void setScheme(final Integer scheme) {
         this.scheme = scheme;
     }
 
@@ -121,7 +121,7 @@ public class EstimateAbstractReport {
         return subScheme;
     }
 
-    public void setSubScheme(Integer subScheme) {
+    public void setSubScheme(final Integer subScheme) {
         this.subScheme = subScheme;
     }
 
@@ -129,7 +129,7 @@ public class EstimateAbstractReport {
         return typeOfSlum;
     }
 
-    public void setTypeOfSlum(String typeOfSlum) {
+    public void setTypeOfSlum(final String typeOfSlum) {
         this.typeOfSlum = typeOfSlum;
     }
 
@@ -137,7 +137,7 @@ public class EstimateAbstractReport {
         return natureOfWork;
     }
 
-    public void setNatureOfWork(Long natureOfWork) {
+    public void setNatureOfWork(final Long natureOfWork) {
         this.natureOfWork = natureOfWork;
     }
 
@@ -145,7 +145,7 @@ public class EstimateAbstractReport {
         return workCategory;
     }
 
-    public void setWorkCategory(String workCategory) {
+    public void setWorkCategory(final String workCategory) {
         this.workCategory = workCategory;
     }
 
@@ -153,7 +153,7 @@ public class EstimateAbstractReport {
         return beneficiary;
     }
 
-    public void setBeneficiary(String beneficiary) {
+    public void setBeneficiary(final String beneficiary) {
         this.beneficiary = beneficiary;
     }
 
@@ -161,7 +161,7 @@ public class EstimateAbstractReport {
         return spillOverFlag;
     }
 
-    public void setSpillOverFlag(boolean spillOverFlag) {
+    public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
     }
 
@@ -169,7 +169,7 @@ public class EstimateAbstractReport {
         return departmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
+    public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -177,7 +177,7 @@ public class EstimateAbstractReport {
         return lineEstimates;
     }
 
-    public void setLineEstimates(Long lineEstimates) {
+    public void setLineEstimates(final Long lineEstimates) {
         this.lineEstimates = lineEstimates;
     }
 
@@ -185,7 +185,7 @@ public class EstimateAbstractReport {
         return adminSanctionedEstimates;
     }
 
-    public void setAdminSanctionedEstimates(Long adminSanctionedEstimates) {
+    public void setAdminSanctionedEstimates(final Long adminSanctionedEstimates) {
         this.adminSanctionedEstimates = adminSanctionedEstimates;
     }
 
@@ -193,7 +193,7 @@ public class EstimateAbstractReport {
         return adminSanctionedAmountInCrores;
     }
 
-    public void setAdminSanctionedAmountInCrores(String adminSanctionedAmountInCrores) {
+    public void setAdminSanctionedAmountInCrores(final String adminSanctionedAmountInCrores) {
         this.adminSanctionedAmountInCrores = adminSanctionedAmountInCrores;
     }
 
@@ -201,7 +201,7 @@ public class EstimateAbstractReport {
         return technicalSanctionedEstimates;
     }
 
-    public void setTechnicalSanctionedEstimates(Long technicalSanctionedEstimates) {
+    public void setTechnicalSanctionedEstimates(final Long technicalSanctionedEstimates) {
         this.technicalSanctionedEstimates = technicalSanctionedEstimates;
     }
 
@@ -209,7 +209,7 @@ public class EstimateAbstractReport {
         return loaCreated;
     }
 
-    public void setLoaCreated(Long loaCreated) {
+    public void setLoaCreated(final Long loaCreated) {
         this.loaCreated = loaCreated;
     }
 
@@ -217,7 +217,7 @@ public class EstimateAbstractReport {
         return agreementValueInCrores;
     }
 
-    public void setAgreementValueInCrores(String agreementValueInCrores) {
+    public void setAgreementValueInCrores(final String agreementValueInCrores) {
         this.agreementValueInCrores = agreementValueInCrores;
     }
 
@@ -225,7 +225,7 @@ public class EstimateAbstractReport {
         return workInProgress;
     }
 
-    public void setWorkInProgress(Long workInProgress) {
+    public void setWorkInProgress(final Long workInProgress) {
         this.workInProgress = workInProgress;
     }
 
@@ -233,7 +233,7 @@ public class EstimateAbstractReport {
         return WorkCompleted;
     }
 
-    public void setWorkCompleted(Long workCompleted) {
+    public void setWorkCompleted(final Long workCompleted) {
         WorkCompleted = workCompleted;
     }
 
@@ -241,7 +241,7 @@ public class EstimateAbstractReport {
         return billsCreated;
     }
 
-    public void setBillsCreated(Long billsCreated) {
+    public void setBillsCreated(final Long billsCreated) {
         this.billsCreated = billsCreated;
     }
 
@@ -249,7 +249,7 @@ public class EstimateAbstractReport {
         return BillValueInCrores;
     }
 
-    public void setBillValueInCrores(String billValueInCrores) {
+    public void setBillValueInCrores(final String billValueInCrores) {
         BillValueInCrores = billValueInCrores;
     }
 
@@ -257,7 +257,7 @@ public class EstimateAbstractReport {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -265,7 +265,7 @@ public class EstimateAbstractReport {
         return currentFinancialYearId;
     }
 
-    public void setCurrentFinancialYearId(Long currentFinancialYearId) {
+    public void setCurrentFinancialYearId(final Long currentFinancialYearId) {
         this.currentFinancialYearId = currentFinancialYearId;
     }
 
@@ -273,7 +273,7 @@ public class EstimateAbstractReport {
         return typeOfWork;
     }
 
-    public void setTypeOfWork(Long typeOfWork) {
+    public void setTypeOfWork(final Long typeOfWork) {
         this.typeOfWork = typeOfWork;
     }
 
@@ -281,7 +281,7 @@ public class EstimateAbstractReport {
         return subTypeOfWork;
     }
 
-    public void setSubTypeOfWork(Long subTypeOfWork) {
+    public void setSubTypeOfWork(final Long subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
     }
 
@@ -289,7 +289,7 @@ public class EstimateAbstractReport {
         return typeOfWorkName;
     }
 
-    public void setTypeOfWorkName(String typeOfWorkName) {
+    public void setTypeOfWorkName(final String typeOfWorkName) {
         this.typeOfWorkName = typeOfWorkName;
     }
 
@@ -297,7 +297,7 @@ public class EstimateAbstractReport {
         return departments;
     }
 
-    public void setDepartments(Set<Department> departments) {
+    public void setDepartments(final Set<Department> departments) {
         this.departments = departments;
     }
 
@@ -305,9 +305,8 @@ public class EstimateAbstractReport {
         return subTypeOfWorkName;
     }
 
-    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+    public void setSubTypeOfWorkName(final String subTypeOfWorkName) {
         this.subTypeOfWorkName = subTypeOfWorkName;
     }
-
 
 }

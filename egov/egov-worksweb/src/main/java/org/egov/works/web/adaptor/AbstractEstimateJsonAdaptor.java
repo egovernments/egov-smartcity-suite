@@ -119,9 +119,9 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
             else
                 jsonObject.addProperty("ward", "");
 
-            if (abstractEstimate.getEgwStatus() != null) {
+            if (abstractEstimate.getEgwStatus() != null)
                 jsonObject.addProperty("status", abstractEstimate.getEgwStatus().getDescription());
-            } else
+            else
                 jsonObject.addProperty("status", "");
 
             if (abstractEstimate.getState() != null) {
@@ -129,10 +129,9 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
                         && (abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.ADMIN_SANCTIONED_STATUS)
                                 || abstractEstimate.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
                     jsonObject.addProperty("currentowner", "NA");
-                else {
+                else
                     jsonObject.addProperty("currentowner",
                             worksUtils.getApproverName(abstractEstimate.getState().getOwnerPosition().getId()));
-                }
             } else
                 jsonObject.addProperty("currentowner", "NA");
 

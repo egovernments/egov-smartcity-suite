@@ -489,7 +489,7 @@ public class EstimateService {
     }
 
     @Transactional
-    public AbstractEstimate updateAbstractEstimateDetails(AbstractEstimate abstractEstimate,
+    public AbstractEstimate updateAbstractEstimateDetails(final AbstractEstimate abstractEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction, final MultipartFile[] files, final String removedActivityIds)
             throws ValidationException, IOException {
@@ -544,7 +544,7 @@ public class EstimateService {
         return updatedAbstractEstimate;
     }
 
-    private void createOverheadValues(AbstractEstimate abstractEstimate) {
+    private void createOverheadValues(final AbstractEstimate abstractEstimate) {
         OverheadValue newOverheadValue = null;
         abstractEstimate.getOverheadValues().clear();
         for (final OverheadValue overheadValue : abstractEstimate.getTempOverheadValues()) {
@@ -797,15 +797,13 @@ public class EstimateService {
     }
 
     public void validateActivities(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        for (int i = 0; i < abstractEstimate.getSorActivities().size() - 1; i++) {
-            for (int j = i + 1; j < abstractEstimate.getSorActivities().size(); j++) {
+        for (int i = 0; i < abstractEstimate.getSorActivities().size() - 1; i++)
+            for (int j = i + 1; j < abstractEstimate.getSorActivities().size(); j++)
                 if (abstractEstimate.getSorActivities().get(i).getSchedule() != null && abstractEstimate.getSorActivities().get(i)
                         .getSchedule().getId().equals(abstractEstimate.getSorActivities().get(j).getSchedule().getId())) {
                     errors.reject("error.sor.duplicate", "error.sor.duplicate");
                     break;
                 }
-            }
-        }
 
         for (final Activity activity : abstractEstimate.getSorActivities()) {
             if (activity.getQuantity() <= 0)
@@ -829,18 +827,14 @@ public class EstimateService {
         for (final MultiYearEstimate multiYearEstimate : abstractEstimate.getMultiYearEstimates()) {
             totalPercentage = totalPercentage + multiYearEstimate.getPercentage();
 
-            if (multiYearEstimate.getFinancialYear() == null) {
+            if (multiYearEstimate.getFinancialYear() == null)
                 bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.finyear.required");
-            }
-            if (multiYearEstimate.getPercentage() == 0) {
+            if (multiYearEstimate.getPercentage() == 0)
                 bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.required");
-            }
-            if (cFinancialYear != null && cFinancialYear.equals(multiYearEstimate.getFinancialYear())) {
+            if (cFinancialYear != null && cFinancialYear.equals(multiYearEstimate.getFinancialYear()))
                 bindErrors.rejectValue("multiYearEstimates[" + index + "].financialYear", "error.financialYear.unique");
-            }
-            if (totalPercentage > 100) {
+            if (totalPercentage > 100)
                 bindErrors.rejectValue("multiYearEstimates[" + index + "].percentage", "error.percentage.greater");
-            }
             cFinancialYear = multiYearEstimate.getFinancialYear();
             index++;
         }
@@ -848,13 +842,12 @@ public class EstimateService {
     }
 
     public void validateMandatory(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
-        if (StringUtils.isBlank(abstractEstimate.getDescription())) {
+        if (StringUtils.isBlank(abstractEstimate.getDescription()))
             bindErrors.rejectValue("description", "error.description.required");
-        }
-        LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
+        final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
         if (abstractEstimate.getEstimateValue() != null
                 && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
-            BigDecimal diffValue = abstractEstimate.getEstimateValue()
+            final BigDecimal diffValue = abstractEstimate.getEstimateValue()
                     .subtract(lineEstimateDetails.getEstimateAmount());
             bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
                     "error.estimatevalue.greater");

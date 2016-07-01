@@ -56,5 +56,5 @@ public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, 
             @Param("ids") final List<Long> ids, @Param("estimateDate") final Date estimateDate);
 
     ScheduleOfRate findByCode(final String sorCode);
-    
+
 }

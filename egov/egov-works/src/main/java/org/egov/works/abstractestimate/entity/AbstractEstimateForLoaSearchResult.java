@@ -142,7 +142,7 @@ public class AbstractEstimateForLoaSearchResult {
         return leId;
     }
 
-    public void setLeId(Long leId) {
+    public void setLeId(final Long leId) {
         this.leId = leId;
     }
 
@@ -150,8 +150,8 @@ public class AbstractEstimateForLoaSearchResult {
         return aeId;
     }
 
-    public void setAeId(Long aeId) {
+    public void setAeId(final Long aeId) {
         this.aeId = aeId;
     }
-    
+
 }

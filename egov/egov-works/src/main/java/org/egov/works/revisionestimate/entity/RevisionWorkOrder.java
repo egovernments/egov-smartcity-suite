@@ -49,14 +49,14 @@ import org.egov.works.workorder.entity.WorkOrder;
 @Entity
 @Table(name = "EGW_REVISION_WORKORDER")
 @NamedQueries({
-		@NamedQuery(name = RevisionWorkOrder.GET_REVISION_WORKORDER, query = " from RevisionWorkOrder rwo where rwo.parent.id=? and rwo.egwStatus.code='APPROVED' order by rwo.id ") })
+        @NamedQuery(name = RevisionWorkOrder.GET_REVISION_WORKORDER, query = " from RevisionWorkOrder rwo where rwo.parent.id=? and rwo.egwStatus.code='APPROVED' order by rwo.id ") })
 public class RevisionWorkOrder extends WorkOrder {
 
-	private static final long serialVersionUID = 6435969238603453193L;
-	public static final String GET_REVISION_WORKORDER = "GET_REVISION_WORKORDER";
+    private static final long serialVersionUID = 6435969238603453193L;
+    public static final String GET_REVISION_WORKORDER = "GET_REVISION_WORKORDER";
 
-	@Override
-	public String getStateDetails() {
-		return "Revision WorkOrder : " + getWorkOrderNumber();
-	}
+    @Override
+    public String getStateDetails() {
+        return "Revision WorkOrder : " + getWorkOrderNumber();
+    }
 }

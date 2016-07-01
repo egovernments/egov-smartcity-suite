@@ -89,7 +89,7 @@ public class ContractorGradeAction extends SearchFormAction {
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
         contractorGrade = contractorGradeService.persist(contractorGrade);
-        if(contractorGrade.getId() == null)
+        if (contractorGrade.getId() == null)
             addActionMessage(getText("contractor.grade.save.success"));
         addActionMessage(getText("contractor.grade.modify.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
@@ -99,7 +99,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-newform")
     public String newform() {
-        mode="new";
+        mode = "new";
         return NEW;
     }
 
@@ -145,7 +145,7 @@ public class ContractorGradeAction extends SearchFormAction {
         contractorGrade = contractorGradeService.getContractorGradeById(contractorGrade.getId());
         if (mode.equals("edit"))
             return EDIT;
-        return INDEX;            
+        return INDEX;
     }
 
     @Override

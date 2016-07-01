@@ -86,15 +86,15 @@ public class WorkOrderActivityService {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrderActivity.class, "woa")
                 .createAlias("woa.workOrderEstimate", "woe")
                 .createAlias("activity", "act");
-        if(workOrderEstimateId != null)
+        if (workOrderEstimateId != null)
             criteria.add(Restrictions.eq("woe.id", workOrderEstimateId));
 
-        if(sorType != null && sorType.equalsIgnoreCase("SOR"))
+        if (sorType != null && sorType.equalsIgnoreCase("SOR"))
             criteria.add(Restrictions.isNotNull("act.schedule"));
-        
-        if(sorType != null && sorType.equalsIgnoreCase("Non Sor"))
+
+        if (sorType != null && sorType.equalsIgnoreCase("Non Sor"))
             criteria.add(Restrictions.isNull("act.schedule"));
-        
+
         return criteria.list();
     }
 }

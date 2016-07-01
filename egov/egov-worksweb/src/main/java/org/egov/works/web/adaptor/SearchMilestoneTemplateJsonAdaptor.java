@@ -42,9 +42,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.masters.MilestoneTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -54,9 +52,6 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchMilestoneTemplateJsonAdaptor implements JsonSerializer<MilestoneTemplate> {
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final MilestoneTemplate milestoneTemplate, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();

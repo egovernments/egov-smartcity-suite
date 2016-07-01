@@ -63,9 +63,9 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     List<MBHeader> findByWorkOrder_id(final Long workOrderId);
 
     @Query("select mbh from MBHeader as mbh left outer join mbh.egBillregister as br where mbh.workOrderEstimate.id =:workOrderEstimateId and mbh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ")
-    List<MBHeader> findByWorkOrderEstimateId(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("mhStatus") String mhStatus,@Param("billStatus") String billStatus);
+    List<MBHeader> findByWorkOrderEstimateId(@Param("workOrderEstimateId") Long workOrderEstimateId,
+            @Param("mhStatus") String mhStatus, @Param("billStatus") String billStatus);
 
-    
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEquals(final WorkOrder workOrder, final String statusCode);
 
     List<MBHeader> findByEgBillregisterAndEgwStatus_codeEquals(final ContractorBillRegister contractorBillRegister,
@@ -83,7 +83,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     List<User> findMBHeaderCreatedByUsers();
 
     MBHeader findByWorkOrderEstimate_IdAndEgwStatus_codeNot(final Long WorkOrderEstimateId, final String statusCode);
-    
+
     @Query("select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity having mbd.workOrderActivity.id = :woActivityId")
-    Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status, @Param("woActivityId") final Long woActivityId);
+    Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status,
+            @Param("woActivityId") final Long woActivityId);
 }

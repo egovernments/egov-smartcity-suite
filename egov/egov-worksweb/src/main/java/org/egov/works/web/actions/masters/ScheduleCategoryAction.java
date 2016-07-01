@@ -124,11 +124,11 @@ public class ScheduleCategoryAction extends BaseFormAction {
 
     @Action(value = "/masters/scheduleCategory-save")
     public String save() {
-        if(scheduleCategory.getCode().isEmpty()){
+        if (scheduleCategory.getCode().isEmpty()) {
             addActionMessage(getText("scheduleCategory.code.validate.empty"));
             return EDIT;
         }
-        if(scheduleCategory.getDescription().isEmpty()){
+        if (scheduleCategory.getDescription().isEmpty()) {
             addActionMessage(getText("scheduleCategory.description.validate.empty"));
             return EDIT;
         }

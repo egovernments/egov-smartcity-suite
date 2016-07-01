@@ -84,7 +84,7 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -129,9 +129,9 @@ public class SearchAbstractEstimateController {
             final Model model) {
         setDropDownValues(model);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
-        List<Long> departmentIds = new ArrayList<Long>();
+        final List<Long> departmentIds = new ArrayList<Long>();
         if (departments != null)
-            for (Department department : departments)
+            for (final Department department : departments)
                 departmentIds.add(department.getId());
         final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
         model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
@@ -146,7 +146,7 @@ public class SearchAbstractEstimateController {
         model.addAttribute("abstractEstimateStatus", worksUtils.getStatusByModule(WorksConstants.ABSTRACTESTIMATE));
 
     }
-    
+
     private void getEstimateDocuments(final AbstractEstimate abstractEstimate) {
         List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(abstractEstimate.getId(),

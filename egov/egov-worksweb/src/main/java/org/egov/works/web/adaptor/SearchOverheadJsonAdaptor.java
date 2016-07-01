@@ -67,12 +67,14 @@ public class SearchOverheadJsonAdaptor implements JsonSerializer<Overhead> {
                 jsonObject.addProperty("description", overhead.getDescription());
             else
                 jsonObject.addProperty("description", "");
-            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate() != null)
-                jsonObject.addProperty("startDate", formatter.format(overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getStartDate()));
+            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size() - 1).getValidity().getStartDate() != null)
+                jsonObject.addProperty("startDate", formatter.format(
+                        overhead.getOverheadRates().get(overhead.getOverheadRates().size() - 1).getValidity().getStartDate()));
             else
                 jsonObject.addProperty("startDate", "");
-            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate() != null)
-                jsonObject.addProperty("endDate", formatter.format(overhead.getOverheadRates().get(overhead.getOverheadRates().size()-1).getValidity().getEndDate()));
+            if (overhead.getOverheadRates().get(overhead.getOverheadRates().size() - 1).getValidity().getEndDate() != null)
+                jsonObject.addProperty("endDate", formatter.format(
+                        overhead.getOverheadRates().get(overhead.getOverheadRates().size() - 1).getValidity().getEndDate()));
             else
                 jsonObject.addProperty("endDate", "");
 

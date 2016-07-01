@@ -51,10 +51,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OverheadRepository extends JpaRepository<Overhead, Long> {
 
-	Overhead findByNameIgnoreCase(String name);
+    Overhead findByNameIgnoreCase(String name);
 
-        List<Overhead> findByNameContainingIgnoreCase(String name);
+    List<Overhead> findByNameContainingIgnoreCase(String name);
 
-	@Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
-	List<Overhead> getByDate(@Param("date") Date date);
+    @Query("from Overhead o inner join fetch o.overheadRates as rates where ((:date between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:date and rates.validity.endDate is null))")
+    List<Overhead> getByDate(@Param("date") Date date);
 }

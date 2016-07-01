@@ -132,7 +132,7 @@ public class LineEstimatesForAbstractEstimate {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -140,7 +140,7 @@ public class LineEstimatesForAbstractEstimate {
         return nameOfWork;
     }
 
-    public void setNameOfWork(String nameOfWork) {
+    public void setNameOfWork(final String nameOfWork) {
         this.nameOfWork = nameOfWork;
     }
 
@@ -148,7 +148,7 @@ public class LineEstimatesForAbstractEstimate {
         return currentOwner;
     }
 
-    public void setCurrentOwner(String currentOwner) {
+    public void setCurrentOwner(final String currentOwner) {
         this.currentOwner = currentOwner;
     }
 
@@ -156,7 +156,7 @@ public class LineEstimatesForAbstractEstimate {
         return createdBy;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(final String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -164,7 +164,7 @@ public class LineEstimatesForAbstractEstimate {
         return adminSanctionBy;
     }
 
-    public void setAdminSanctionBy(String adminSanctionBy) {
+    public void setAdminSanctionBy(final String adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
     }
 
@@ -172,7 +172,7 @@ public class LineEstimatesForAbstractEstimate {
         return estimateAmount;
     }
 
-    public void setEstimateAmount(BigDecimal estimateAmount) {
+    public void setEstimateAmount(final BigDecimal estimateAmount) {
         this.estimateAmount = estimateAmount;
     }
 
@@ -180,7 +180,7 @@ public class LineEstimatesForAbstractEstimate {
         return actualEstimateAmount;
     }
 
-    public void setActualEstimateAmount(BigDecimal actualEstimateAmount) {
+    public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
         this.actualEstimateAmount = actualEstimateAmount;
     }
 
@@ -188,7 +188,7 @@ public class LineEstimatesForAbstractEstimate {
         return leId;
     }
 
-    public void setLeId(Long leId) {
+    public void setLeId(final Long leId) {
         this.leId = leId;
     }
 

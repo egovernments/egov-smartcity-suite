@@ -155,7 +155,7 @@ public class MBHeader extends StateAware {
     @Temporal(value = TemporalType.DATE)
     @Column(name = "MB_DATE")
     private Date mbDate;
-    
+
     @Column(name = "MB_ISSUED_DATE")
     @Temporal(value = TemporalType.DATE)
     private Date mbIssuedDate;
@@ -189,10 +189,10 @@ public class MBHeader extends StateAware {
     @JsonIgnore
     @OrderBy("id")
     @OneToMany(mappedBy = "mbHeader", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = MBDetails.class)
-    private List<MBDetails> mbDetails = new ArrayList<MBDetails>(0);
-    
+    private final List<MBDetails> mbDetails = new ArrayList<MBDetails>(0);
+
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
-    
+
     private transient List<MBDetails> nonSorMbDetails = new ArrayList<MBDetails>(0);
 
     @Transient
@@ -214,7 +214,7 @@ public class MBHeader extends StateAware {
     @Column(name = "APPROVED_DATE")
     @Temporal(value = TemporalType.DATE)
     private Date approvedDate;
-    
+
     @Transient
     private Long approvalDepartment;
 
@@ -297,7 +297,7 @@ public class MBHeader extends StateAware {
 
     public void setMbDetails(final List<MBDetails> mbDetails) {
         this.mbDetails.clear();
-        if(mbDetails != null)
+        if (mbDetails != null)
             this.mbDetails.addAll(mbDetails);
     }
 
@@ -416,7 +416,7 @@ public class MBHeader extends StateAware {
         return sorMbDetails;
     }
 
-    public void setSorMbDetails(List<MBDetails> sorMbDetails) {
+    public void setSorMbDetails(final List<MBDetails> sorMbDetails) {
         this.sorMbDetails = sorMbDetails;
     }
 
@@ -424,7 +424,7 @@ public class MBHeader extends StateAware {
         return nonSorMbDetails;
     }
 
-    public void setNonSorMbDetails(List<MBDetails> nonSorMbDetails) {
+    public void setNonSorMbDetails(final List<MBDetails> nonSorMbDetails) {
         this.nonSorMbDetails = nonSorMbDetails;
     }
 
@@ -442,7 +442,7 @@ public class MBHeader extends StateAware {
         return approvalDepartment;
     }
 
-    public void setApprovalDepartment(Long approvalDepartment) {
+    public void setApprovalDepartment(final Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
     }
 
@@ -450,7 +450,7 @@ public class MBHeader extends StateAware {
         return approvalComent;
     }
 
-    public void setApprovalComent(String approvalComent) {
+    public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
     }
 
@@ -458,7 +458,7 @@ public class MBHeader extends StateAware {
         return mbIssuedDate;
     }
 
-    public void setMbIssuedDate(Date mbIssuedDate) {
+    public void setMbIssuedDate(final Date mbIssuedDate) {
         this.mbIssuedDate = mbIssuedDate;
     }
 }

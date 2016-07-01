@@ -39,6 +39,13 @@
  */
 package org.egov.works.web.actions.workflow;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Functionary;
 import org.egov.eis.entity.EmployeeView;
@@ -50,12 +57,6 @@ import org.egov.pims.service.EisUtilService;
 import org.egov.works.models.workflow.WorkFlow;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 public class AjaxWorkflowAction extends BaseFormAction {
 

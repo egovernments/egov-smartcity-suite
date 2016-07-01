@@ -39,6 +39,18 @@
  */
 package org.egov.works.web.actions.revisionEstimate;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -79,17 +91,6 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Result(name = RevisionEstimateAction.NEW, location = "revisionEstimate-new.jsp")
@@ -454,12 +455,12 @@ public class RevisionEstimateAction extends GenericWorkFlowAction {
                             && parentWOA.getActivity().getRevisionType().toString()
                                     .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                         woa.getActivity().setRate(
-                              woa.getActivity().getRate()
+                                woa.getActivity().getRate()
                                         * parentWOA.getActivity()
                                                 .getConversionFactorForRE(workOrder.getWorkOrderDate()));
                     else
                         woa.getActivity().setRate(
-                               woa.getActivity().getRate()
+                                woa.getActivity().getRate()
                                         * parentWOA.getActivity().getConversionFactor());
                 } else
                     woa.getActivity().setRate(woa.getActivity().getRate());

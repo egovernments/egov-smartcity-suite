@@ -159,7 +159,7 @@ public class LineEstimateSearchRequest {
         return lineEstimateStatus;
     }
 
-    public void setLineEstimateStatus(String lineEstimateStatus) {
+    public void setLineEstimateStatus(final String lineEstimateStatus) {
         this.lineEstimateStatus = lineEstimateStatus;
     }
 

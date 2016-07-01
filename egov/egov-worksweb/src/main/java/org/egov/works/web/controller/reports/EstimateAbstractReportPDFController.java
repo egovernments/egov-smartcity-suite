@@ -57,16 +57,15 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.service.WorkProgressRegisterService;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -86,9 +85,6 @@ public class EstimateAbstractReportPDFController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
@@ -179,22 +175,18 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
+        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined"))
             queryParameters += "Work Category : " + workCategory + ", ";
-        }
 
-        if (typeOfSlum != null) {
+        if (typeOfSlum != null)
             queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum + ", ";
-        }
 
-        if (beneficiary != null) {
+        if (beneficiary != null)
             queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary + ", ";
-        }
 
-        if (natureOfWork != null) {
+        if (natureOfWork != null)
             queryParameters += messageSource.getMessage("msg.natureofwork", null, null)
                     + natureOfWorkService.findById(natureOfWork).getName() + ", ";
-        }
 
         if (queryParameters.endsWith(", "))
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
@@ -360,9 +352,8 @@ public class EstimateAbstractReportPDFController {
 
         if (departments != null && !departments.toString().equalsIgnoreCase("[null]")) {
             String departmentNames = "";
-            for (Department dept : departments) {
+            for (final Department dept : departments)
                 departmentNames = departmentNames + dept.getName() + ",";
-            }
             departmentNames = departmentNames.substring(0, departmentNames.length() - 1);
             queryParameters += messageSource.getMessage("msg.departments", null, null) + departmentNames + ", ";
         }
@@ -375,22 +366,18 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
-            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_',' ') + ", ";
-        }
+        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined"))
+            queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_', ' ') + ", ";
 
-        if (typeOfSlum != null) {
-            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum.replace('_',' ') + ", ";
-        }
+        if (typeOfSlum != null)
+            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum.replace('_', ' ') + ", ";
 
-        if (beneficiary != null) {
+        if (beneficiary != null)
             queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary + ", ";
-        }
 
-        if (natureOfWork != null) {
+        if (natureOfWork != null)
             queryParameters += messageSource.getMessage("msg.natureofwork", null, null)
                     + natureOfWorkService.findById(natureOfWork).getName() + ", ";
-        }
 
         if (queryParameters.endsWith(", "))
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);

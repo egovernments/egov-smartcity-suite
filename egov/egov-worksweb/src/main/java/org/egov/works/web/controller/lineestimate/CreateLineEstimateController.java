@@ -143,7 +143,7 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             lineEstimate.setExecutingDepartment(departments.get(0));
-        if (lineEstimate.getState() != null  && lineEstimate.getState().getNextAction()!=null )
+        if (lineEstimate.getState() != null && lineEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", lineEstimate.getState().getNextAction());
         model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
         model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
@@ -198,19 +198,17 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
-    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+    private void validateBudgetHead(final LineEstimate lineEstimate, final BindingResult errors) {
         if (lineEstimate.getBudgetHead() != null) {
             Boolean check = false;
-            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            final List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
-            for (CChartOfAccountDetail detail : accountDetails) {
+            for (final CChartOfAccountDetail detail : accountDetails)
                 if (detail.getDetailTypeId() != null
                         && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
-            }
-            if (!check) {
+            if (!check)
                 errors.reject("error.budgethead.validate", "error.budgethead.validate");
-            }
 
         }
 

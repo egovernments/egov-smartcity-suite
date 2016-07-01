@@ -66,8 +66,8 @@ public class EstimateAppropriationRegisterReportController {
     private FunctionHibernateDAO functionHibernateDAO;
 
     @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;   
-    
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
@@ -78,11 +78,11 @@ public class EstimateAppropriationRegisterReportController {
     }
 
     private void setDropDownValues(final Model model) {
-         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctionsOrderByCode());
-         model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
-         model.addAttribute("departments", departmentService.getAllDepartments());
-         
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctionsOrderByCode());
+        model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+
     }
 
 }

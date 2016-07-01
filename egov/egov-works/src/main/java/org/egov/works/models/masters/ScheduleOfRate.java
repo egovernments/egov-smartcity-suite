@@ -148,7 +148,7 @@ public class ScheduleOfRate extends BaseModel {
     public String getSummaryJS() {
         return StringUtils.escapeJavaScript(getSummary());
     }
-    
+
     public String getSorRate() {
         return sorRateValue != null ? sorRateValue.toString() : "";
     }
@@ -448,9 +448,8 @@ public class ScheduleOfRate extends BaseModel {
         return sorRateValue;
     }
 
-    public void setSorRateValue(Double sorRateValue) {
+    public void setSorRateValue(final Double sorRateValue) {
         this.sorRateValue = sorRateValue;
     }
-    
 
 }

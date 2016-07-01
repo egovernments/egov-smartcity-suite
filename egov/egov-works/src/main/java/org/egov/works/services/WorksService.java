@@ -39,6 +39,19 @@
  */
 package org.egov.works.services;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,19 +83,6 @@ import org.egov.utils.FinancialConstants;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class WorksService {
     private static final Logger logger = Logger.getLogger(WorksService.class);
@@ -260,7 +260,7 @@ public class WorksService {
     }
 
     public User getCurrentLoggedInUser() {
-        return (User) persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId());
+        return persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId());
     }
 
     public Map<String, Integer> getExceptionSOR() {

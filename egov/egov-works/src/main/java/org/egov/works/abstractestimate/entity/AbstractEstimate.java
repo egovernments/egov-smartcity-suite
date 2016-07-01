@@ -247,10 +247,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @Valid
     @OrderBy("id")
     @OneToMany(mappedBy = "abstractEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Activity.class)
-    private List<Activity> activities = new ArrayList<Activity>(0);
-    
+    private final List<Activity> activities = new ArrayList<Activity>(0);
+
     private transient List<Activity> sorActivities = new ArrayList<Activity>(0);
-    
+
     private transient List<Activity> nonSorActivities = new ArrayList<Activity>(0);
 
     @Valid
@@ -477,7 +477,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setActivities(final List<Activity> activities) {
         this.activities.clear();
-        if(activities != null)
+        if (activities != null)
             this.activities.addAll(activities);
     }
 
@@ -769,7 +769,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return sorActivities;
     }
 
-    public void setSorActivities(List<Activity> sorActivities) {
+    public void setSorActivities(final List<Activity> sorActivities) {
         this.sorActivities = sorActivities;
     }
 
@@ -777,7 +777,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return nonSorActivities;
     }
 
-    public void setNonSorActivities(List<Activity> nonSorActivities) {
+    public void setNonSorActivities(final List<Activity> nonSorActivities) {
         this.nonSorActivities = nonSorActivities;
     }
 
@@ -785,9 +785,8 @@ public class AbstractEstimate extends StateAware implements Auditable {
         return tempOverheadValues;
     }
 
-    public void setTempOverheadValues(List<OverheadValue> tempOverheadValues) {
+    public void setTempOverheadValues(final List<OverheadValue> tempOverheadValues) {
         this.tempOverheadValues = tempOverheadValues;
     }
-    
-    
+
 }

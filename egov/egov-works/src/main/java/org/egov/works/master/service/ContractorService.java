@@ -39,6 +39,12 @@
  */
 package org.egov.works.master.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -61,12 +67,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
@@ -297,11 +297,11 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public List<Contractor> getContractorsByCodeOrName(final String queryString) {
         return filterActiveEntities(queryString, 0, null);
     }
-    
+
     public List<Contractor> getContractorsByCode(final String queryString) {
         return filterActiveEntitiesByCode(queryString, 0, null);
     }
-    
+
     public List<Contractor> filterActiveEntitiesByCode(final String filterKey,
             final int maxRecords, final Integer accountDetailTypeId) {
         final Integer pageSize = maxRecords > 0 ? maxRecords : null;

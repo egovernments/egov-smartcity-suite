@@ -39,6 +39,19 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -68,18 +81,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
@@ -138,14 +139,20 @@ public class ContractorBillPDFController {
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("contractorName", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
-                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
-            reportParams.put("contractorCode", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
-                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
-            reportParams.put("bankAcc", contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBank() != null
-                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBankaccount() : "N/A");
-            reportParams.put("panNo", !contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber().isEmpty()
-                    ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber() : "N/A");
+            reportParams.put("contractorName",
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() != null
+                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getName() : "");
+            reportParams.put("contractorCode",
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() != null
+                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getCode() : "");
+            reportParams.put("bankAcc",
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBank() != null
+                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getBankaccount()
+                            : "N/A");
+            reportParams.put("panNo",
+                    !contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber().isEmpty()
+                            ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber()
+                            : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
             reportParams.put("win", lineEstimateDetails.getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());

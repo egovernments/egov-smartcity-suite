@@ -106,7 +106,7 @@ public class TrackMilestoneController {
     public @ResponseBody String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
             final HttpServletResponse response)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         final JsonObject jsonObject = new JsonObject();
         validateTrackMilestone(milestone, jsonObject);
@@ -146,7 +146,7 @@ public class TrackMilestoneController {
                                     new String[] {}, null));
                     flag = true;
                 }
-                if(tma.getCompletionDate() != null)
+                if (tma.getCompletionDate() != null)
                     if (tma.getCompletionDate().after(milestone.getActivities().get(count).getScheduleEndDate())
                             && tma.getRemarks() == null) {
                         jsonObject.addProperty("reasonForDelay_" + count,

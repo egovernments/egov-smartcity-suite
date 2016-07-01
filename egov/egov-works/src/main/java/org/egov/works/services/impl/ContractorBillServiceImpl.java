@@ -187,7 +187,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     @Override
     public String generateContractorBillNumber(final ContractorBillRegister ContractorBillRegister) {
-        ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+        final ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
         final String contractorBillNumber = c.getNextNumber(ContractorBillRegister);
         return contractorBillNumber;
     }

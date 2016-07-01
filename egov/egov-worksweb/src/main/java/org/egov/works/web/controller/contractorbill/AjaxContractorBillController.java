@@ -109,7 +109,7 @@ public class AjaxContractorBillController {
 
     @RequestMapping(value = "/ajaxotherdeduction-coa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<CChartOfAccounts> findDetailedAccountCodesByGlcodeLike(@RequestParam final String searchQuery) {
-        String[] purposeNames = new String[3];
+        final String[] purposeNames = new String[3];
         purposeNames[0] = WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE;
         purposeNames[1] = WorksConstants.CONTRACTOR_DEDUCTIONS_PURPOSE;
         purposeNames[2] = WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE;

@@ -200,8 +200,8 @@ public class MilestoneTemplateAction extends SearchFormAction {
         if (null == template.getMilestoneTemplateActivities() || template.getMilestoneTemplateActivities().size() == 0)
             addFieldError("milestone.activity.missing", getText("milestone.activity.missing"));
         Double percentage = 0.0;
-        for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()){
-            if (templateActivities.getPercentage() == null || templateActivities.getPercentage() == 0){
+        for (final MilestoneTemplateActivity templateActivities : template.getMilestoneTemplateActivities()) {
+            if (templateActivities.getPercentage() == null || templateActivities.getPercentage() == 0) {
                 addFieldError("milestoneTemplateActivity.percentage.null", getText("milestoneTemplateActivity.percentage.null"));
                 break;
             }
@@ -225,7 +225,7 @@ public class MilestoneTemplateAction extends SearchFormAction {
     private void populateActivities() {
         template.getMilestoneTemplateActivities().clear();
         for (final MilestoneTemplateActivity activity : templateActivities) {
-            if (activity != null){
+            if (activity != null) {
                 template.addMilestoneTemplateActivity(activity);
                 activity.setMilestoneTemplate(template);
                 activity.setCreatedBy(worksService.getCurrentLoggedInUser());
@@ -233,12 +233,12 @@ public class MilestoneTemplateAction extends SearchFormAction {
                 activity.setLastModifiedBy(worksService.getCurrentLoggedInUser());
                 activity.setLastModifiedDate(new Date());
             }
-                
+
             // TODO:Fixme - Setting auditable properties by time being since HibernateEventListener is not getting
             // triggered on update of estimate for child objects
             template.setCreatedBy(worksService.getCurrentLoggedInUser());
             template.setCreatedDate(new Date());
-            
+
         }
     }
 

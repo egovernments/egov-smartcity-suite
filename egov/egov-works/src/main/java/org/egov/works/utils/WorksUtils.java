@@ -242,7 +242,7 @@ public class WorksUtils {
         final List<AppConfigValues> exceptionalUomValues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_EXCEPTIONALUOMS);
         String exceptionaluoms = "";
-        for (AppConfigValues appVal : exceptionalUomValues)
+        for (final AppConfigValues appVal : exceptionalUomValues)
             exceptionaluoms = exceptionaluoms + appVal.getValue() + ":";
         return exceptionaluoms;
     }

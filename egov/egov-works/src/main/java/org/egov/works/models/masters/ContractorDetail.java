@@ -70,121 +70,123 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = ContractorDetail.SEQ_EGW_CONTRACTOR_DETAIL, sequenceName = ContractorDetail.SEQ_EGW_CONTRACTOR_DETAIL, allocationSize = 1)
 public class ContractorDetail extends AbstractAuditable {
 
-	private static final long serialVersionUID = -3375445155375225162L;
-	public static final String SEQ_EGW_CONTRACTOR_DETAIL = "SEQ_EGW_CONTRACTOR_DETAIL";
+    private static final long serialVersionUID = -3375445155375225162L;
+    public static final String SEQ_EGW_CONTRACTOR_DETAIL = "SEQ_EGW_CONTRACTOR_DETAIL";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGW_CONTRACTOR_DETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_CONTRACTOR_DETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONTRACTOR_ID", nullable = false)
-	private Contractor contractor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONTRACTOR_ID", nullable = false)
+    private Contractor contractor;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DEPARTMENT_ID")
-	@Required(message="contractorDetails.department.required")
-	private Department department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEPARTMENT_ID")
+    @Required(message = "contractorDetails.department.required")
+    private Department department;
 
-	@Column(name = "REGISTRATION_NUMBER")
-	@Length(max = 50, message = "contractorDetail.registrationNumber.length")
-	@OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
-	private String registrationNumber;
+    @Column(name = "REGISTRATION_NUMBER")
+    @Length(max = 50, message = "contractorDetail.registrationNumber.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractorDetail.registrationNumber.alphaNumeric")
+    private String registrationNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STATUS_ID")
-	@Required(message="contractorDetails.status.required")
-	private EgwStatus status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATUS_ID")
+    @Required(message = "contractorDetails.status.required")
+    private EgwStatus status;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONTRACTOR_GRADE_ID")
-	private ContractorGrade grade;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONTRACTOR_GRADE_ID")
+    private ContractorGrade grade;
 
-	@Valid
-	private Period validity;
+    @Valid
+    private Period validity;
 
-	public Contractor getContractor() {
-		return contractor;
-	}
+    public Contractor getContractor() {
+        return contractor;
+    }
 
-	public void setContractor(final Contractor contractor) {
-		this.contractor = contractor;
-	}
+    public void setContractor(final Contractor contractor) {
+        this.contractor = contractor;
+    }
 
-	public Department getDepartment() {
-		return department;
-	}
+    public Department getDepartment() {
+        return department;
+    }
 
-	public void setDepartment(final Department department) {
-		this.department = department;
-	}
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
 
-	public String getRegistrationNumber() {
-		return registrationNumber;
-	}
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
 
-	public void setRegistrationNumber(final String registrationNumber) {
-		this.registrationNumber = registrationNumber;
-	}
+    public void setRegistrationNumber(final String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
 
-	public EgwStatus getStatus() {
-		return status;
-	}
+    public EgwStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(final EgwStatus status) {
-		this.status = status;
-	}
+    public void setStatus(final EgwStatus status) {
+        this.status = status;
+    }
 
-	public ContractorGrade getGrade() {
-		return grade;
-	}
+    public ContractorGrade getGrade() {
+        return grade;
+    }
 
-	public void setGrade(final ContractorGrade grade) {
-		this.grade = grade;
-	}
+    public void setGrade(final ContractorGrade grade) {
+        this.grade = grade;
+    }
 
-	public Period getValidity() {
-		return validity;
-	}
+    public Period getValidity() {
+        return validity;
+    }
 
-	public void setValidity(final Period validity) {
-		this.validity = validity;
-	}
+    public void setValidity(final Period validity) {
+        this.validity = validity;
+    }
 
-	public List<ValidationError> validate() {
-		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-		if (department == null || department.getId() == null)
-			validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
-		if (status == null || status.getId() == null)
-			validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
-		if (validity == null || validity != null && validity.getStartDate() == null)
-			validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
-		else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
-			validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
-		if (validationErrors.isEmpty())
-			return null;
-		else
-			return validationErrors;
-	}
+    public List<ValidationError> validate() {
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        if (department == null || department.getId() == null)
+            validationErrors.add(new ValidationError("department", "contractorDetails.department.required"));
+        if (status == null || status.getId() == null)
+            validationErrors.add(new ValidationError("status", "contractorDetails.status.required"));
+        if (validity == null || validity != null && validity.getStartDate() == null)
+            validationErrors.add(new ValidationError("validity", "contractorDetails.fromDate_empty"));
+        else if (validity == null || validity != null && !compareDates(validity.getStartDate(), validity.getEndDate()))
+            validationErrors.add(new ValidationError("validity", "contractorDetails.invalid_fromdate_range"));
+        if (validationErrors.isEmpty())
+            return null;
+        else
+            return validationErrors;
+    }
 
-	public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
-		if (startDate == null)
-			return false;
+    public static boolean compareDates(final java.util.Date startDate, final java.util.Date endDate) {
+        if (startDate == null)
+            return false;
 
-		if (endDate == null)
-			return true;
+        if (endDate == null)
+            return true;
 
-		if (endDate.before(startDate))
-			return false;
-		return true;
-	}
+        if (endDate.before(startDate))
+            return false;
+        return true;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

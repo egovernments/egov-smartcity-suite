@@ -95,12 +95,12 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(letterOfAcceptanceId);
         final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
         if (!billNumbers.equals("")) {
-            String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+            final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
             model.addAttribute("errorMessage", message);
             return "letterofacceptance-success";
         }
-        
-        if(letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
+
+        if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
             model.addAttribute("errorMessage", messageSource.getMessage("error.loa.milestone.created",
                     new String[] {}, null));
             return "letterofacceptance-success";

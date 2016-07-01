@@ -175,10 +175,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
-            if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
+            if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                     errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
-            }
         }
 
         if (errors.hasErrors()) {
@@ -196,12 +195,12 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             if (updatedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
                 return "redirect:/abstractestimate/update/" + updatedAbstractEstimate.getId() + "?mode=save";
 
-            if(approvalPosition == null)
+            if (approvalPosition == null)
                 return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
-                    + "&approvalPosition=";
+                        + "&approvalPosition=";
             else
                 return "redirect:/abstractestimate/abstractestimate-success?estimate=" + updatedAbstractEstimate.getId()
-                    + "&approvalPosition=" + approvalPosition;
+                        + "&approvalPosition=" + approvalPosition;
         }
     }
 
@@ -212,7 +211,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         if (abstractEstimate.getCurrentState() != null
                 && !abstractEstimate.getCurrentState().getValue().equals(WorksConstants.NEW))
             model.addAttribute("currentState", abstractEstimate.getCurrentState().getValue());
-        if (abstractEstimate.getState() != null  && abstractEstimate.getState().getNextAction()!=null )
+        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null)
             model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();

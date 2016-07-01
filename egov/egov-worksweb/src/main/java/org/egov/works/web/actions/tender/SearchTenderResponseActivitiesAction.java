@@ -39,6 +39,11 @@
  */
 package org.egov.works.web.actions.tender;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
@@ -47,11 +52,6 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderEstimate;
 import org.egov.works.models.tender.TenderResponseActivity;
 import org.egov.works.utils.WorksConstants;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class SearchTenderResponseActivitiesAction extends SearchFormAction {
 

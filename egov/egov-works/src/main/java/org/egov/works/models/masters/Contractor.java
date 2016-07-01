@@ -78,290 +78,292 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "EGW_CONTRACTOR")
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
-		"CODE" }, message = "contractor.code.isunique")
+        "CODE" }, message = "contractor.code.isunique")
 @NamedQueries({
-		@NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
+        @NamedQuery(name = Contractor.GET_CONTRACTORS_BY_STATUS, query = " select distinct cont from Contractor cont inner join cont.contractorDetails as cd where cd.status.description = ? ") })
 @SequenceGenerator(name = Contractor.SEQ_EGW_CONTRACTOR, sequenceName = Contractor.SEQ_EGW_CONTRACTOR, allocationSize = 1)
 public class Contractor extends AbstractAuditable implements EntityType {
 
-	private static final long serialVersionUID = 6858362239507609219L;
-	public static final String SEQ_EGW_CONTRACTOR = "SEQ_EGW_CONTRACTOR";
-	public static final String GET_CONTRACTORS_BY_STATUS = "GET_CONTRACTORS_BY_STATUS";
+    private static final long serialVersionUID = 6858362239507609219L;
+    public static final String SEQ_EGW_CONTRACTOR = "SEQ_EGW_CONTRACTOR";
+    public static final String GET_CONTRACTORS_BY_STATUS = "GET_CONTRACTORS_BY_STATUS";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGW_CONTRACTOR, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_CONTRACTOR, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Required(message = "contractor.code.null")
-	@Length(max = 50, message = "contractor.code.length")
-	@OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
-	private String code;
+    @Required(message = "contractor.code.null")
+    @Length(max = 50, message = "contractor.code.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
+    private String code;
 
-	@Required(message = "contractor.name.null")
-	@Length(max = 100, message = "contractor.name.length")
-	@OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.name.alphaNumeric")
-	private String name;
+    @Required(message = "contractor.name.null")
+    @Length(max = 100, message = "contractor.name.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.name.alphaNumeric")
+    private String name;
 
-	@Length(max = 250, message = "contractor.correspondenceAddress.length")
-	@Column(name = "CORRESPONDENCE_ADDRESS")
-	private String correspondenceAddress;
+    @Length(max = 250, message = "contractor.correspondenceAddress.length")
+    @Column(name = "CORRESPONDENCE_ADDRESS")
+    private String correspondenceAddress;
 
-	@Length(max = 250, message = "contractor.paymentAddress.length")
-	@Column(name = "PAYMENT_ADDRESS")
-	private String paymentAddress;
+    @Length(max = 250, message = "contractor.paymentAddress.length")
+    @Column(name = "PAYMENT_ADDRESS")
+    private String paymentAddress;
 
-	@Length(max = 100, message = "contractor.contactPerson.length")
-	@OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractor.contactPerson.alphaNumeric")
-	@Column(name = "CONTACT_PERSON")
-	private String contactPerson;
+    @Length(max = 100, message = "contractor.contactPerson.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "contractor.contactPerson.alphaNumeric")
+    @Column(name = "CONTACT_PERSON")
+    private String contactPerson;
 
-	@OptionalPattern(regex = Constants.EMAIL, message = "contractor.email.invalid")
-	@Length(max = 100, message = "contractor.email.length")
-	private String email;
+    @OptionalPattern(regex = Constants.EMAIL, message = "contractor.email.invalid")
+    @Length(max = 100, message = "contractor.email.length")
+    private String email;
 
-	@Length(max = 1024, message = "contractor.narration.length")
-	private String narration;
+    @Length(max = 1024, message = "contractor.narration.length")
+    private String narration;
 
-	@Length(max = 10, message = "contractor.panNumber.length")
-	@OptionalPattern(regex = Constants.PANNUMBER, message = "contractor.panNumber.alphaNumeric")
-	@Column(name = "PAN_NUMBER")
-	private String panNumber;
+    @Length(max = 10, message = "contractor.panNumber.length")
+    @OptionalPattern(regex = Constants.PANNUMBER, message = "contractor.panNumber.alphaNumeric")
+    @Column(name = "PAN_NUMBER")
+    private String panNumber;
 
-	@Length(max = 14, message = "contractor.tinNumber.length")
-	@OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.tinNumber.alphaNumeric")
-	@Column(name = "TIN_NUMBER")
-	private String tinNumber;
+    @Length(max = 14, message = "contractor.tinNumber.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.tinNumber.alphaNumeric")
+    @Column(name = "TIN_NUMBER")
+    private String tinNumber;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BANK_ID")
-	private Bank bank;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BANK_ID")
+    private Bank bank;
 
-	@Length(max = 15, message = "contractor.ifscCode.length")
-	@OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.ifscCode.alphaNumeric")
-	@Column(name = "IFSC_CODE")
-	private String ifscCode;
+    @Length(max = 15, message = "contractor.ifscCode.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.ifscCode.alphaNumeric")
+    @Column(name = "IFSC_CODE")
+    private String ifscCode;
 
-	@Length(max = 22, message = "contractor.bankAccount.length")
-	@OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.bankAccount.alphaNumeric")
-	@Column(name = "BANK_ACCOUNT")
-	private String bankAccount;
+    @Length(max = 22, message = "contractor.bankAccount.length")
+    @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "contractor.bankAccount.alphaNumeric")
+    @Column(name = "BANK_ACCOUNT")
+    private String bankAccount;
 
-	@Length(max = 50, message = "contractor.pwdApprovalCode.length")
-	@OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
-	@Column(name = "PWD_APPROVAL_CODE")
-	private String pwdApprovalCode;
+    @Length(max = 50, message = "contractor.pwdApprovalCode.length")
+    @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.pwdApprovalCode.alphaNumeric")
+    @Column(name = "PWD_APPROVAL_CODE")
+    private String pwdApprovalCode;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "EXEMPTION")
-	private ExemptionForm exemptionForm;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "EXEMPTION")
+    private ExemptionForm exemptionForm;
 
-	@Valid
-	@JsonIgnore
-	@OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
-	private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
+    @Valid
+    @JsonIgnore
+    @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = ContractorDetail.class)
+    private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
 
-	@Override
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public String getCorrespondenceAddress() {
-		return correspondenceAddress;
-	}
+    public String getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
 
-	public void setCorrespondenceAddress(final String correspondenceAddress) {
-		this.correspondenceAddress = correspondenceAddress;
-	}
+    public void setCorrespondenceAddress(final String correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
 
-	public String getPaymentAddress() {
-		return paymentAddress;
-	}
+    public String getPaymentAddress() {
+        return paymentAddress;
+    }
 
-	public void setPaymentAddress(final String paymentAddress) {
-		this.paymentAddress = paymentAddress;
-	}
+    public void setPaymentAddress(final String paymentAddress) {
+        this.paymentAddress = paymentAddress;
+    }
 
-	public String getContactPerson() {
-		return contactPerson;
-	}
+    public String getContactPerson() {
+        return contactPerson;
+    }
 
-	public void setContactPerson(final String contactPerson) {
-		this.contactPerson = contactPerson;
-	}
+    public void setContactPerson(final String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(final String email) {
-		this.email = email;
-	}
+    public void setEmail(final String email) {
+        this.email = email;
+    }
 
-	public String getNarration() {
-		return narration;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public void setNarration(final String narration) {
-		this.narration = narration;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public String getPanNumber() {
-		return panNumber;
-	}
+    public String getPanNumber() {
+        return panNumber;
+    }
 
-	public void setPanNumber(final String panNumber) {
-		this.panNumber = panNumber;
-	}
+    public void setPanNumber(final String panNumber) {
+        this.panNumber = panNumber;
+    }
 
-	public String getTinNumber() {
-		return tinNumber;
-	}
+    public String getTinNumber() {
+        return tinNumber;
+    }
 
-	public void setTinNumber(final String tinNumber) {
-		this.tinNumber = tinNumber;
-	}
+    public void setTinNumber(final String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
 
-	public Bank getBank() {
-		return bank;
-	}
+    public Bank getBank() {
+        return bank;
+    }
 
-	public void setBank(final Bank bank) {
-		this.bank = bank;
-	}
+    public void setBank(final Bank bank) {
+        this.bank = bank;
+    }
 
-	public String getIfscCode() {
-		return ifscCode;
-	}
+    public String getIfscCode() {
+        return ifscCode;
+    }
 
-	public void setIfscCode(final String ifscCode) {
-		this.ifscCode = ifscCode;
-	}
+    public void setIfscCode(final String ifscCode) {
+        this.ifscCode = ifscCode;
+    }
 
-	public String getBankAccount() {
-		return bankAccount;
-	}
+    public String getBankAccount() {
+        return bankAccount;
+    }
 
-	public void setBankAccount(final String bankAccount) {
-		this.bankAccount = bankAccount;
-	}
+    public void setBankAccount(final String bankAccount) {
+        this.bankAccount = bankAccount;
+    }
 
-	public String getPwdApprovalCode() {
-		return pwdApprovalCode;
-	}
+    public String getPwdApprovalCode() {
+        return pwdApprovalCode;
+    }
 
-	public void setPwdApprovalCode(final String pwdApprovalCode) {
-		this.pwdApprovalCode = pwdApprovalCode;
-	}
+    public void setPwdApprovalCode(final String pwdApprovalCode) {
+        this.pwdApprovalCode = pwdApprovalCode;
+    }
 
-	public List<ContractorDetail> getContractorDetails() {
-		return contractorDetails;
-	}
+    public List<ContractorDetail> getContractorDetails() {
+        return contractorDetails;
+    }
 
-	public ExemptionForm getExemptionForm() {
-		return exemptionForm;
-	}
+    public ExemptionForm getExemptionForm() {
+        return exemptionForm;
+    }
 
-	public void setExemptionForm(final ExemptionForm exemptionForm) {
-		this.exemptionForm = exemptionForm;
-	}
+    public void setExemptionForm(final ExemptionForm exemptionForm) {
+        this.exemptionForm = exemptionForm;
+    }
 
-	public void setContractorDetails(final List<ContractorDetail> contractorDetails) {
-		this.contractorDetails = contractorDetails;
-	}
+    public void setContractorDetails(final List<ContractorDetail> contractorDetails) {
+        this.contractorDetails = contractorDetails;
+    }
 
-	public void addContractorDetail(final ContractorDetail contractorDetail) {
-		contractorDetails.add(contractorDetail);
-	}
+    public void addContractorDetail(final ContractorDetail contractorDetail) {
+        contractorDetails.add(contractorDetail);
+    }
 
-	public List<ValidationError> validate() {
-		List<ValidationError> errorList = null;
-		if (contractorDetails != null && contractorDetails.isEmpty())
-			return Arrays
-					.asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
-		else if (contractorDetails != null && !contractorDetails.isEmpty())
-			for (final ContractorDetail contractorDetail : contractorDetails) {
-				errorList = contractorDetail.validate();
-				if (errorList != null)
-					return errorList;
-			}
-		return errorList;
-	}
+    public List<ValidationError> validate() {
+        List<ValidationError> errorList = null;
+        if (contractorDetails != null && contractorDetails.isEmpty())
+            return Arrays
+                    .asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
+        else if (contractorDetails != null && !contractorDetails.isEmpty())
+            for (final ContractorDetail contractorDetail : contractorDetails) {
+                errorList = contractorDetail.validate();
+                if (errorList != null)
+                    return errorList;
+            }
+        return errorList;
+    }
 
-	@Override
-	public String getBankaccount() {
-		// TODO Auto-generated method stub
-		return bankAccount;
-	}
+    @Override
+    public String getBankaccount() {
+        // TODO Auto-generated method stub
+        return bankAccount;
+    }
 
-	@Override
-	public String getBankname() {
-		// TODO Auto-generated method stub
-		if (bank == null)
-			return "";
-		else
-			return bank.getName();
-	}
+    @Override
+    public String getBankname() {
+        // TODO Auto-generated method stub
+        if (bank == null)
+            return "";
+        else
+            return bank.getName();
+    }
 
-	@Override
-	public String getIfsccode() {
-		// TODO Auto-generated method stub
-		return ifscCode;
-	}
+    @Override
+    public String getIfsccode() {
+        // TODO Auto-generated method stub
+        return ifscCode;
+    }
 
-	@Override
-	public String getPanno() {
-		// TODO Auto-generated method stub
-		return panNumber;
-	}
+    @Override
+    public String getPanno() {
+        // TODO Auto-generated method stub
+        return panNumber;
+    }
 
-	@Override
-	public String getTinno() {
-		// TODO Auto-generated method stub
-		return tinNumber;
-	}
+    @Override
+    public String getTinno() {
+        // TODO Auto-generated method stub
+        return tinNumber;
+    }
 
-	@Override
-	public String getModeofpay() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getModeofpay() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Integer getEntityId() {
-		return Integer.valueOf(id.intValue());
-	}
+    @Override
+    public Integer getEntityId() {
+        return Integer.valueOf(id.intValue());
+    }
 
-	@Override
-	public String getEntityDescription() {
+    @Override
+    public String getEntityDescription() {
 
-		return getName();
-	}
+        return getName();
+    }
 
-	@Override
-	public EgwStatus getEgwStatus() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public EgwStatus getEgwStatus() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
 }

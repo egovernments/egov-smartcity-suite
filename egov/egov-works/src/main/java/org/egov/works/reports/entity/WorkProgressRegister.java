@@ -237,7 +237,7 @@ public class WorkProgressRegister extends AbstractAuditable {
     private String subTypeOfWorkName;
 
     private Double milestonePercentageCompleted;
-    
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -484,7 +484,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return totalBillAmount;
     }
 
-    public void setTotalBillAmount(BigDecimal totalBillAmount) {
+    public void setTotalBillAmount(final BigDecimal totalBillAmount) {
         this.totalBillAmount = totalBillAmount;
     }
 
@@ -524,7 +524,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return scheme;
     }
 
-    public void setScheme(Scheme scheme) {
+    public void setScheme(final Scheme scheme) {
         this.scheme = scheme;
     }
 
@@ -532,7 +532,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return subScheme;
     }
 
-    public void setSubScheme(SubScheme subScheme) {
+    public void setSubScheme(final SubScheme subScheme) {
         this.subScheme = subScheme;
     }
 
@@ -540,7 +540,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return natureOfWork;
     }
 
-    public void setNatureOfWork(NatureOfWork natureOfWork) {
+    public void setNatureOfWork(final NatureOfWork natureOfWork) {
         this.natureOfWork = natureOfWork;
     }
 
@@ -548,7 +548,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return lineEstimate;
     }
 
-    public void setLineEstimate(LineEstimate lineEstimate) {
+    public void setLineEstimate(final LineEstimate lineEstimate) {
         this.lineEstimate = lineEstimate;
     }
 
@@ -556,7 +556,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return lineEstimateDetails;
     }
 
-    public void setLineEstimateDetails(LineEstimateDetails lineEstimateDetails) {
+    public void setLineEstimateDetails(final LineEstimateDetails lineEstimateDetails) {
         this.lineEstimateDetails = lineEstimateDetails;
     }
 
@@ -564,7 +564,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return departmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
+    public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -572,7 +572,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return woStatusCode;
     }
 
-    public void setWoStatusCode(String woStatusCode) {
+    public void setWoStatusCode(final String woStatusCode) {
         this.woStatusCode = woStatusCode;
     }
 
@@ -580,7 +580,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return workOrderCreated;
     }
 
-    public void setWorkOrderCreated(boolean workOrderCreated) {
+    public void setWorkOrderCreated(final boolean workOrderCreated) {
         this.workOrderCreated = workOrderCreated;
     }
 
@@ -588,7 +588,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return workCompleted;
     }
 
-    public void setWorkCompleted(boolean workCompleted) {
+    public void setWorkCompleted(final boolean workCompleted) {
         this.workCompleted = workCompleted;
     }
 
@@ -596,7 +596,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return typeOfWorkName;
     }
 
-    public void setTypeOfWorkName(String typeOfWorkName) {
+    public void setTypeOfWorkName(final String typeOfWorkName) {
         this.typeOfWorkName = typeOfWorkName;
     }
 
@@ -604,7 +604,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return subTypeOfWorkName;
     }
 
-    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+    public void setSubTypeOfWorkName(final String subTypeOfWorkName) {
         this.subTypeOfWorkName = subTypeOfWorkName;
     }
 
@@ -612,7 +612,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return lineEstimateStatus;
     }
 
-    public void setLineEstimateStatus(String lineEstimateStatus) {
+    public void setLineEstimateStatus(final String lineEstimateStatus) {
         this.lineEstimateStatus = lineEstimateStatus;
     }
 
@@ -620,7 +620,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return milestonePercentageCompleted;
     }
 
-    public void setMilestonePercentageCompleted(Double milestonePercentageCompleted) {
+    public void setMilestonePercentageCompleted(final Double milestonePercentageCompleted) {
         this.milestonePercentageCompleted = milestonePercentageCompleted;
     }
 

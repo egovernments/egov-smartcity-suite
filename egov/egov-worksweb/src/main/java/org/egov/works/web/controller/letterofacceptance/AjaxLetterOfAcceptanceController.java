@@ -82,25 +82,25 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchLetterOfAcceptanceJsonAdaptor searchLetterOfAcceptanceJsonAdaptor;
-    
+
     @Autowired
     private SearchContractorJsonAdaptor searchContractorJsonAdaptor;
 
     @Autowired
     private SearchLetterOfAcceptanceToCreateContractorBillJson searchLetterOfAcceptanceToCreateContractorBillJson;
-    
+
     @Autowired
     private SearchLetterOfAcceptanceToCancelJson searchLetterOfAcceptanceToCancelJson;
-    
+
     @Autowired
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
-    
+
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
-    private WorkOrderEstimateService workOrderEstimateService;  
-    
+    private WorkOrderEstimateService workOrderEstimateService;
+
     @Autowired
     private SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor searchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
 
@@ -153,7 +153,8 @@ public class AjaxLetterOfAcceptanceController {
 
     public Object toSearchLetterOfAcceptanceToCreateContractorBillJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceToCreateContractorBillJson)
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceToCreateContractorBillJson)
                 .create();
         final String json = gson.toJson(object);
         return json;
@@ -179,7 +180,7 @@ public class AjaxLetterOfAcceptanceController {
             @RequestParam("workOrderId") final Long workOrderId) {
         return letterOfAcceptanceService.validateContractorBillInWorkflowForWorkorder(workOrderId);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractorsbycode-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCode(@RequestParam final String name) {
         return contractorService.getContractorsByCode(name);
@@ -188,36 +189,37 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajax-contractorsforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxContractorSearch(final Model model,
             @ModelAttribute final SearchRequestContractor searchRequestContractor) {
-        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService.searchContractorDetails(searchRequestContractor);
+        final List<ContractorDetail> contractorDetails = letterOfAcceptanceService
+                .searchContractorDetails(searchRequestContractor);
         final List<Contractor> contractors = new ArrayList<Contractor>();
-        for(ContractorDetail cd : contractorDetails) {
-            if(!contractors.contains(cd.getContractor()))
+        for (final ContractorDetail cd : contractorDetails)
+            if (!contractors.contains(cd.getContractor()))
                 contractors.add(cd.getContractor());
-        }
         final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchContractorJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(Contractor.class, searchContractorJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxsearch-loanumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findApprovedLoaNumbers(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.findLoaWorkOrderNumberForMilestone(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumber-milestone", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersForLoa(@RequestParam final String code) {
         return letterOfAcceptanceService.findWorkIdentificationNumbersToCreateMilestone(code);
     }
 
     @RequestMapping(value = "/ajaxsearch-loaformilestone", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String showSearchLoaToCreateMilestone(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+    public @ResponseBody String showSearchLoaToCreateMilestone(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> workOrderEstimate = letterOfAcceptanceService
                 .getLoaForCreateMilestone(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLOAForCreateMilestoneJson(workOrderEstimate))
@@ -227,20 +229,22 @@ public class AjaxLetterOfAcceptanceController {
 
     public Object toSearchLOAForCreateMilestoneJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, letterOfAcceptanceForMilestoneJSONAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, letterOfAcceptanceForMilestoneJSONAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxsearch-loatomodify", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLoaToModify(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> searchLoaList = letterOfAcceptanceService.searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
+        final List<WorkOrder> searchLoaList = letterOfAcceptanceService
+                .searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
                 .append("}").toString();
         return result;
     }
-    
+
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchLOAsToCancel(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
@@ -259,45 +263,47 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumbers-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkIdNumbersToCancelLOA(@RequestParam final String code) {
         return letterOfAcceptanceService.findWorkIdentificationNumbersToSearchLOAToCancel(code);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsToCancelLOA(@RequestParam final String code) {
         return letterOfAcceptanceService.findContractorsToSearchLOAToCancel(code);
     }
-    
+
     @RequestMapping(value = "/ajax-checkifbillscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
         final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
-        String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
-        if(billNumbers.equals(""))
+        final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+        if (billNumbers.equals(""))
             return "";
-        
+
         return message;
     }
-    
+
     @RequestMapping(value = "/ajaxworkorder-mbheader", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findWorkOrderForMBHeader(@RequestParam final String workOrderNo) {
         return workOrderEstimateService.findWorkOrderForMBHeader(workOrderNo);
-    } 
-    
+    }
+
     @RequestMapping(value = "/ajaxsearch-loatosetofflinestatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLoaToSetOfflineStatus(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> searchLoaList = letterOfAcceptanceService
                 .searchLetterOfAcceptanceForOfflineStatus(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJsonToSetOfflineStatus(searchLoaList))
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLetterOfAcceptanceJsonToSetOfflineStatus(searchLoaList))
                 .append("}").toString();
         return result;
     }
 
     public Object toSearchLetterOfAcceptanceJsonToSetOfflineStatus(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceForOfflineStatusJsonAdaptor).create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceForOfflineStatusJsonAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }

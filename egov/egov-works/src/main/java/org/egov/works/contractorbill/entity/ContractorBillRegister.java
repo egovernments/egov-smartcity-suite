@@ -281,7 +281,7 @@ public class ContractorBillRegister extends EgBillregister {
         return statutoryDeductionDetailes;
     }
 
-    public void setStatutoryDeductionDetailes(List<EgBilldetails> statutoryDeductionDetailes) {
+    public void setStatutoryDeductionDetailes(final List<EgBilldetails> statutoryDeductionDetailes) {
         this.statutoryDeductionDetailes = statutoryDeductionDetailes;
     }
 
@@ -289,7 +289,7 @@ public class ContractorBillRegister extends EgBillregister {
         return otherDeductionDetailes;
     }
 
-    public void setOtherDeductionDetailes(List<EgBilldetails> otherDeductionDetailes) {
+    public void setOtherDeductionDetailes(final List<EgBilldetails> otherDeductionDetailes) {
         this.otherDeductionDetailes = otherDeductionDetailes;
     }
 
@@ -297,7 +297,7 @@ public class ContractorBillRegister extends EgBillregister {
         return retentionMoneyDeductionDetailes;
     }
 
-    public void setRetentionMoneyDeductionDetailes(List<EgBilldetails> retentionMoneyDeductionDetailes) {
+    public void setRetentionMoneyDeductionDetailes(final List<EgBilldetails> retentionMoneyDeductionDetailes) {
         this.retentionMoneyDeductionDetailes = retentionMoneyDeductionDetailes;
     }
 

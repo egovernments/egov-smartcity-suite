@@ -39,7 +39,21 @@
  */
 package org.egov.works.web.actions.estimate;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -90,20 +104,7 @@ import org.egov.works.services.DepositWorksUsageService;
 import org.egov.works.services.WorksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @Results({ @Result(name = FinancialDetailAction.PRINT, type = "stream", location = "budgetFolioPDF", params = {
         "inputName", "budgetFolioPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
@@ -357,7 +358,8 @@ public class FinancialDetailAction extends BaseFormAction {
             abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
+                && fundSourceDAO
+                        .fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
             abstractEstimate.setFundSource(fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList)
                     .getFundSource().getId().intValue()));
 
