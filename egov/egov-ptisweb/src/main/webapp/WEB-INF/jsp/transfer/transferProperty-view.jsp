@@ -101,7 +101,19 @@
 				<div class="headingbg">
 					<s:text name="transferProperty" />
 				</div>
+				<s:if
+					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+							value="%{@org.egov.ptis.constants.PropertyTaxConstants@ALL_READY_REGISTER}" /></span>
+				</s:if>
+				<s:else>
+					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+							value="%{@org.egov.ptis.constants.PropertyTaxConstants@FULLTT}" /></span>
+				</s:else>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
 					<tr>
 						<td class="bluebox2" style="width: 5%;">&nbsp;</td>
 						<td class="bluebox" style="width: 20%"><s:text name="prop.Id"></s:text>
@@ -109,8 +121,9 @@
 						<td class="bluebox"><span class="bold"><s:property
 									value="basicproperty.upicNo" default="N/A" /></span> <s:hidden
 								name="assessmentNo" value="%{basicproperty.upicNo}" /></td>
-						<td class="bluebox"><s:text name="applNumber"/></td>
-						<td style="width: 25%;"><span class="bold"><s:property value="%{applicationNo}"/></span></td>
+						<td class="bluebox"><s:text name="applNumber" /></td>
+						<td style="width: 25%;"><span class="bold"><s:property
+									value="%{applicationNo}" /></span></td>
 					</tr>
 					<tr>
 						<td class="bluebox2">&nbsp;</td>
@@ -334,51 +347,68 @@
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
-						<tr>
-							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="transferreason"></s:text> :</td>
-							<td class="greybox"><span class="bold"><s:property
-										value="%{mutationReason.mutationName}" /></span></td>
-							<td class="greybox"><s:text name="saleDetls" /> :</td>
-							<td class="greybox"><span class="bold"> <s:if
-										test="%{saleDetail == ''}">N/A</s:if> <s:else>
-										<s:property value="%{saleDetail}" />
-									</s:else>
-							</span></td>
-						</tr>
-						<tr>
-							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="docNum" />:</td>
-							<td class="greybox"><span class="bold"><s:property
-										value="%{deedNo}" /></span></td>
-							<td class="greybox"><s:text name="docDate" />:</td>
-							<td class="greybox"><s:date name="deedDate" var="docDate"
-									format="dd/MM/yyyy" /> <span class="bold"><s:property
-										value="%{#docDate}" /></span></td>
-						</tr>					
-					</s:if>
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="label.parties.value" /> :</td>
-						<td class="greybox"><span class="bold"><s:property
-									value="%{partyValue}" default="N/A" /></span></td>
-						<td class="greybox"><s:text name="label.department.value" /> :</td>
-						<td class="greybox"><span class="bold"><s:property
-										value="%{departmentValue}" default="N/A" /></span></td>
-					</tr>
 					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
+						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesignation) && 
+						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED)  
+						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING)))}">
 						<tr>
-							<td class="bluebox2">&nbsp;</td>
-							<td class="bluebox"><s:text name="docValue" /> :</td>
-							<td class="bluebox"><span class="bold"><s:property
-										value="%{marketValue}" default="N/A" /></span></td>
-							<td class="bluebox"><s:text name="payablefee" />:</td>
-							<td class="bluebox"><span class="bold"><s:property
-										value="%{mutationFee}" default="N/A" /></span></td>
+							<%@ include file="transferProperty-registrationDetails-view.jsp"%>
 						</tr>
 					</s:if>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<s:if
+							test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) ||
+						(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(userDesignation) && 
+						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED)  
+						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING)))}">
+							<tr>
+								<td class="greybox2">&nbsp;</td>
+								<td class="greybox"><s:text name="transferreason"></s:text>
+									:</td>
+								<td class="greybox"><span class="bold"><s:property
+											value="%{mutationReason.mutationName}" /></span></td>
+								<td class="greybox"><s:text name="saleDetls" /> :</td>
+								<td class="greybox"><span class="bold"> <s:if
+											test="%{saleDetail == ''}">N/A</s:if> <s:else>
+											<s:property value="%{saleDetail}" />
+										</s:else>
+								</span></td>
+							</tr>
+							<tr>
+								<td class="greybox2">&nbsp;</td>
+								<td class="greybox"><s:text name="docNum" />:</td>
+								<td class="greybox"><span class="bold"><s:property
+											value="%{deedNo}" /></span></td>
+								<td class="greybox"><s:text name="docDate" />:</td>
+								<td class="greybox"><s:date name="deedDate" var="docDate"
+										format="dd/MM/yyyy" /> <span class="bold"><s:property
+											value="%{#docDate}" /></span></td>
+							</tr>
+						</s:if>
+						<tr>
+							<td class="greybox2">&nbsp;</td>
+							<td class="greybox"><s:text name="label.parties.value" /> :</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="%{partyValue}" default="N/A" /></span></td>
+							<td class="greybox"><s:text name="label.department.value" />
+								:</td>
+							<td class="greybox"><span class="bold"><s:property
+										value="%{departmentValue}" default="N/A" /></span></td>
+						</tr>
+						<s:if
+							test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="docValue" /> :</td>
+								<td class="bluebox"><span class="bold"><s:property
+											value="%{marketValue}" default="N/A" /></span></td>
+								<td class="bluebox"><s:text name="payablefee" />:</td>
+								<td class="bluebox"><span class="bold"><s:property
+											value="%{mutationFee}" default="N/A" /></span></td>
+							</tr>
+						</s:if>
+					</table>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
 					<tr>
