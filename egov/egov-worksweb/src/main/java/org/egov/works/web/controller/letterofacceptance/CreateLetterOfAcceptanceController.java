@@ -136,10 +136,6 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
         loadViewData(model, abstractEstimate, workOrder, request);
 
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
-        final AppConfigValues value = values.get(0);
-        model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrder", workOrder);
@@ -182,6 +178,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("contractorSearch", request.getParameter("contractorSearch"));
             model.addAttribute("contractorCode", request.getParameter("contractorCode"));
             model.addAttribute("engineerIncharge", request.getParameter("engineerIncharge"));
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             return "createLetterOfAcceptance-form";
         } else {
             Long approvalPosition = 0l;
@@ -244,6 +242,12 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         workOrder = letterOfAcceptanceService.getWorkOrderDocuments(workOrder);
         if (workOrder.getState() != null && workOrder.getState().getNextAction() != null)
             model.addAttribute("nextAction", workOrder.getState().getNextAction());
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE);
+        final AppConfigValues value = values.get(0);
+        if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
+            workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
+        model.addAttribute("percentage_on_estimaterate_or_workvalue", value.getValue());
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("validActionList", validActions);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());

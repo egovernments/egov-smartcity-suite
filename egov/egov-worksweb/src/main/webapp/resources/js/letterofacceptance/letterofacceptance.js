@@ -39,6 +39,7 @@
  */
 $(document).ready(function(){
 	
+	
 	if($('#engineerInchargeId').val()!="")
 		$('#engineerIncharge').val($('#engineerInchargeId').val());
 	var contractorSearch = new Bloodhound({
@@ -101,51 +102,19 @@ $(document).ready(function(){
 		calculateAgreementAmount();
 		
 		$('#save').click(function() {
-			var flag = false;
-			$("#createLetterOfAcceptanceForm").find('input, select, textarea').each(function() {
-				if($(this).attr('required') == 'required' && $(this).val() == '') {
-					flag = true;
-				}
-			});
-			if(!flag && $('#spillOverFlag').val() == 'true' && $('#workOrderCreated').val() == 'true') {
-				var estimateAdminSanctionDate = $('#estimateAdminSanctionDate').data('datepicker').date;
-				var fileDate = $('#fileDate').data('datepicker').date;
-				var workOrderDate = $('#workOrderDate').data('datepicker').date;
-				
-				if(fileDate < estimateAdminSanctionDate) {
-					bootbox.alert('File date cannot be prior to Estimate Admin Sanction date ' +$('#estimateAdminSanctionDate').val());
+			if($('form').valid()) {
+				if(validateFileDate()){
+					$("#estimateNumber").removeAttr("disabled");
+					loadDefaultsOnSubmit();
+					return true;
+				} else {
 					return false;
 				}
-				if(workOrderDate < fileDate) {
-					bootbox.alert($('#errorWorkOrderDate').val());
-					return false;
-				}
-			}
+			} 
+			return false;
+		
 		});
 	
-		$("form").submit(function() {
-			if($('form').valid())	{
-				$('.loader-class').modal('show', {backdrop: 'static'});
-				loadDefaultsOnSubmit();
-			}
-			else 
-				$('.loader-class').modal('hide');
-		});
-		
-		function loadDefaultsOnSubmit()	{
-			if($('#tenderFinalizedPercentage').val() == '' || $('#tenderFinalizedPercentage').val() < 0) 
-				$('#tenderFinalizedPercentage').val(0);
-			if($('#workOrderAmount').val() == '' || $('#workOrderAmount').val() < 0) 
-				$('#workOrderAmount').val(0);
-			if($('#securityDeposit').val() == '' || $('#securityDeposit').val() < 0) 
-				$('#securityDeposit').val(0);
-			if($('#emdAmountDeposited').val() == '' || $('#emdAmountDeposited').val() < 0) 
-				$('#emdAmountDeposited').val(0);
-			if($('#defectLiabilityPeriod').val() == '' || $('#defectLiabilityPeriod').val() < 0) 
-				$('#defectLiabilityPeriod').val(0);
-		 }
-		
-
 		$('#tenderFinalizedPercentage').blur(function(){
 			calculateAgreementAmount();		
 		});
@@ -163,10 +132,7 @@ $(document).ready(function(){
 				//Application has to read apply the Tender finalized percentage on each and every SOR and arrive at the Agreement value.
 			if($('#percentage_on_estimaterate_or_workvalue').val() == 'Yes'){
 		    	var tenderFinalizedPercentage = $('#tenderFinalizedPercentage').val();
-		    	if($('#percentageSign').val()=='-')
-		    		$('#tenderFinalizedPer').html($('#percentageSign').val()+tenderFinalizedPercentage);
-		    	else
-		    		$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
+		    	setTenderFinalizedPerSignInBOQ(tenderFinalizedPercentage);
 				if(tenderFinalizedPercentage != ''){
 				    	percentageVal = assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage);
 				    	var agreementAmount = eval($('#workValue').val())+(eval($('#workValue').val())*percentageVal)/100;
@@ -187,7 +153,8 @@ $(document).ready(function(){
 	    		$('.number-sign button').html('<span class="sign-text">-</span> &nbsp;<span class="caret"></span>');
 	    	else
 	    		$('.number-sign button').html('<span class="sign-text">+</span> &nbsp;<span class="caret"></span>');
-	    	calculateAgreementAmount();	
+	    	$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
+	    	 $('#agreementValue').html(roundTo(agreementValue));
 		}
 
 		function assignSignForTenderFinalizedPercentage(tenderFinalizedPercentage){
@@ -221,6 +188,13 @@ $(document).ready(function(){
 			}
 });
 
+function setTenderFinalizedPerSignInBOQ(tenderFinalizedPercentage) {
+	if($('#percentageSign').val()=='-')
+		$('#tenderFinalizedPer').html($('#percentageSign').val()+tenderFinalizedPercentage);
+	else
+		$('#tenderFinalizedPer').html(tenderFinalizedPercentage);
+}
+
 function searchContractor() {
 	window.open("/egworks/letterofacceptance/contractorsearchform", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
@@ -249,8 +223,19 @@ function validateWorkFlowApprover(name) {
 		
 		if(!$("form").valid())
 		{
-			return false;
+			bootbox.confirm($('#confirm').val(), function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					return false;
+				} else {
+					$("#estimateNumber").removeAttr("disabled");
+					$("#workOrderDate").removeAttr("disabled");
+					loadDefaultsOnSubmit();
+					document.forms[0].submit();
+				}
+			});
 		}
+		return false;
 		
 	}
 	if (button != null && button == 'Forward') {
@@ -258,7 +243,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
-		
+		flag = validateFileDate();
 		if(!$("form").valid())
 		{
 			return false;
@@ -268,8 +253,45 @@ function validateWorkFlowApprover(name) {
 	if(flag) {
 		$("#estimateNumber").removeAttr("disabled");
 		$("#workOrderDate").removeAttr("disabled");
+		loadDefaultsOnSubmit();
 		document.forms[0].submit;
 		return true;
 	} else
+		$("#workOrderDate").attr('disabled', 'disabled');
 		return false;
+	
 }
+
+function loadDefaultsOnSubmit()	{
+	if($('#tenderFinalizedPercentage').val() == '' || $('#tenderFinalizedPercentage').val() < 0) 
+		$('#tenderFinalizedPercentage').val(0);
+	if($('#workOrderAmount').val() == '' || $('#workOrderAmount').val() < 0) 
+		$('#workOrderAmount').val(0);
+	if($('#securityDeposit').val() == '' || $('#securityDeposit').val() < 0) 
+		$('#securityDeposit').val(0);
+	if($('#emdAmountDeposited').val() == '' || $('#emdAmountDeposited').val() < 0) 
+		$('#emdAmountDeposited').val(0);
+	if($('#defectLiabilityPeriod').val() == '' || $('#defectLiabilityPeriod').val() < 0) 
+		$('#defectLiabilityPeriod').val(0);
+ }
+
+function validateFileDate() {
+	var flag = true;
+	var estimateAdminSanctionDate = $('#estimateAdminSanctionDate').data('datepicker').date;
+	var fileDate = $('#fileDate').data('datepicker').date;
+	$("#workOrderDate").removeAttr("disabled");
+	var workOrderDate = $('#workOrderDate').val();
+	
+	if(fileDate < estimateAdminSanctionDate) {
+		bootbox.alert('File date cannot be prior to Estimate Admin Sanction date ' +$('#estimateAdminSanctionDate').val());
+		flag = false;
+		return false;
+	}
+	if(workOrderDate < fileDate) {
+		bootbox.alert($('#errorWorkOrderDate').val());
+		flag = false;
+		return false;
+	}
+	return flag;
+}
+

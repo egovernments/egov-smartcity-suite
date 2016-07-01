@@ -83,7 +83,7 @@
                <form:hidden path="percentageSign" name="percentageSign" id="percentageSign" />
                <input type="hidden" name ="percentage_on_estimaterate_or_workvalue" id ="percentage_on_estimaterate_or_workvalue" value="${percentage_on_estimaterate_or_workvalue}">
             </div>
-            <form:input path="tenderFinalizedPercentage" name="tenderFinalizedPercentage" id="tenderFinalizedPercentage" type="text" class="form-control patternvalidation" maxlength="8" />
+            <form:input path="tenderFinalizedPercentage" name="tenderFinalizedPercentage" id="tenderFinalizedPercentage" value="${tenderFinalizedPercentage}" type="text" class="form-control patternvalidation" maxlength="8" />
 			<form:errors path="tenderFinalizedPercentage" cssClass="add-margin error-msg" />
         </div> 
 	</div>
