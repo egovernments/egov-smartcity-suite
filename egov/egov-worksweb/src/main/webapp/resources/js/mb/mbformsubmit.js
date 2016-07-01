@@ -51,7 +51,9 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 		
 		if($('#mbHeader').valid()) {
-			return validateFormData();
+			flag = validateFormData();
+			if(!flag)
+				return false;
 		}
 		
 		validateSORDetails();
@@ -92,7 +94,9 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 		
 		if($('#mbHeader').valid()) {
-			return validateFormData();
+			flag = validateFormData();
+			if(!flag)
+				return false;
 		}
 		
 		validateSORDetails();

@@ -311,8 +311,9 @@ public class UpdateMBController extends GenericWorkFlowController {
         model.addAttribute("mbHeader", mbHeader);
         final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                 mbHeader.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
-                OfflineStatuses.WORK_COMMENCED.toString());
-        model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
+                OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+        if(offlineStatus != null)
+            model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
 
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())) {

@@ -49,12 +49,12 @@ $('#Save').click(function() {
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
-		return validateFormData();
+		flag = validateFormData();
 	}
 	
 	validateSORDetails();
 	
-	if($('#mbHeader').valid()) {
+	if($('#mbHeader').valid() && flag) {
 		submitForm("Save");
 	}
 	else
@@ -75,12 +75,12 @@ $('#Forward').click(function() {
 	$('#approvalComent').removeAttr('required');
 	
 	if($('#mbHeader').valid()) {
-		return validateFormData();
+		flag = validateFormData();
 	}
 	
 	validateSORDetails();
 	
-	if($('#mbHeader').valid()) {
+	if($('#mbHeader').valid() && flag) {
 		submitForm("Forward");
 	}
 	else

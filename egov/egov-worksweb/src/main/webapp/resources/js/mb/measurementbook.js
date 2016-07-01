@@ -716,6 +716,7 @@ function validateSORDetails() {
 }
 
 function validateFormData() {
+	var flag = true;
 	var mbDate = $('#mbDate').data('datepicker').date;
 	var workCommencedDate = $('#workCommencedDate').data('datepicker').date;
 	var mbIssuedDate = $('#mbIssuedDate').data('datepicker').date;
@@ -764,6 +765,7 @@ function validateFormData() {
 		bootbox.alert($('#errorquantitieszero').val());
 		return false;
 	}
+	return flag;
 }
 
 function viewMBWorkOrder() {
