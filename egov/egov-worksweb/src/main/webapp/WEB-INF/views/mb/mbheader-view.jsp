@@ -57,7 +57,8 @@
 <input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
 <input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 <div class="position_alert1">
-	<spring:message code="lbl.tender.finalizedperc" /> : <span><c:out value="${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/></span><br>
+	<spring:message code="lbl.tender.finalizedperc" /> : <span id="tenderPerc"></span>
+	<input type="hidden" name="tenderFinalizedPerc" id="tenderFinalizedPerc" value="${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/>
 	</div>
 	<div class="position_alert2">
 		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbHeader.mbAmount}"/></fmt:formatNumber>

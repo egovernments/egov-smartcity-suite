@@ -41,6 +41,11 @@
 $(document).ready(function() {
 	var sorTotal = 0;
 	var nonSorTotal = 0;
+	
+	if($('#tenderFinalizedPerc').val() > 0) {
+	  var tenderPercentage = $('#tenderPerc').html('<span class="sign-text">+</span>'+$('#tenderFinalizedPerc').val());
+	}
+	
 	 $('#tblsor tr:not(:first)').each(function () {
 		 var unitrate = $(this).find('input[name="unitrate"]').val(); 
 		 var currMbEnrty = $(this).find('input[name="currMbEnrty"]').val(); 
@@ -55,7 +60,7 @@ $(document).ready(function() {
          $(this).find('span[id="cumulativeAmountCurrentEntry"]').html(amountCurrMBEntry);
          $(this).find('span[id="approvedAmount"]').html(apprAmt);
          if(cumulativeAmtCurrEnrty != 'NaN')
-         sorTotal = parseFloat((parseFloat(sorTotal) + parseFloat(cumulativeAmtCurrEnrty))).toFixed(2); 
+         sorTotal = parseFloat((parseFloat(sorTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
         
 	 });
 	 
@@ -73,7 +78,7 @@ $(document).ready(function() {
          $(this).find('span[id="nonSorCumulativeAmountCurrentEntry"]').html(amountCurrMBEntry);
          $(this).find('span[id="nonSorApprovedAmount"]').html(apprAmt);
          if(cumulativeAmtCurrEnrty != 'NaN')
-           nonSorTotal = parseFloat((parseFloat(nonSorTotal) + parseFloat(cumulativeAmtCurrEnrty))).toFixed(2); 
+           nonSorTotal = parseFloat((parseFloat(nonSorTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
 	 });
 	 $("#sorTotal").html(sorTotal);
 	 $("#nonSorTotal").html(nonSorTotal);

@@ -46,12 +46,7 @@
 			<spring:message code="title.mb.details" />
 		</div>
 	</div>
-	<c:choose>
-		<c:when test="${mbHeader.mbDetails.size() != 0}">
-			<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
-				<c:choose>
-					<c:when
-						test="${mbdetails.workOrderActivity.activity.schedule != null }">
+		<c:if test="${mbHeader.mbDetails.size() != 0}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body">
 								<div class="panel-heading">
@@ -77,21 +72,22 @@
 											<th><spring:message code="lbl.approved.amount" /></th>
 											<th><spring:message code="lbl.remarks" /></th>
 										</tr>
-									</thead>
+									</thead>  
 									<tbody>
-										<tr>
-											<c:set var="slNo" value="${1}" scope="session" />
-											<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+									<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
+					                <c:if test="${mbdetails.workOrderActivity.activity.schedule != null }">
+										<tr> 
+											<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 											<input type="hidden" name="unitrate" id="unitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
 											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.scheduleCategory.code}"></c:out></td>
 											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.code}"></c:out></td>
-											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.summary}"></c:out>
-												<a href="#" class="hintanchor"	title="'+ <c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out> +'"><i
-													class="fa fa-question-circle" aria-hidden="true"></i></a></td>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>
+												<a href="#" class="hintanchor"	title="<c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>"><i
+													class="fa fa-question-circle" aria-hidden="true"></i></a></td>   
 											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
 											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
-											<td><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
+											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
 											<td><c:out value="${mbdetails.quantity}" /></td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
@@ -102,15 +98,17 @@
 											<td class="text-right"><span id="cumulativeAmountCurrentEntry"></span></td>
 											<td class="text-right"><span id="approvedAmount"></span></td>
 											<td><c:out value="${mbdetails.remarks}" /></td>
-											<s:set value="%{#slNo + 1}" var="count" />
 										</tr>
+										</c:if>
+										</c:forEach>
 									</tbody>
 									<tfoot>
 									<tfoot>
 										<tr>
-											<td colspan="11" class="text-right view-content" ><spring:message code="lbl.total" /></td>
+											<td colspan="10" class="text-right view-content" ><spring:message code="lbl.total" /></td>
 											<td class="text-right view-content"><span data-pattern="decimalvalue"
 												id="sorTotal"></span></td>
+											<td></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -118,8 +116,6 @@
 								</table>
 							</div>
 						</div>
-					</c:when>
-					<c:otherwise>
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body">
 								<div class="panel-heading">
@@ -145,18 +141,19 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<c:set var="slNo" value="${1}" scope="session" />
-											<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+									<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
+					                <c:if test="${mbdetails.workOrderActivity.activity.schedule == null }">
+										<tr> 
+											<td><span><c:out value="${item.index + 1}" /></span></td>
 											<input type="hidden" name="nonSorUnitrate" id="nonSorUnitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
 											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.summary}"></c:out>
 												<a href="#" class="hintanchor"
-												title="'+ <c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out> +'"><i
+												title="<c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out>"><i
 													class="fa fa-question-circle" aria-hidden="true"></i></a></td>
 											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
 											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
-											<td><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
+											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
 											<td><c:out value="${mbdetails.quantity}" /></td>
 											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />
@@ -167,14 +164,16 @@
 											<td class="text-right"><span id="nonSorCumulativeAmountCurrentEntry"></span></td>
 											<td class="text-right"><span id="nonSorApprovedAmount"></span></td>
 											<td><c:out value="${mbdetails.remarks}" /></td>
-											<s:set value="%{#slNo + 1}" var="count" />
 										</tr>
+										</c:if>
+										</c:forEach>
 									</tbody>
 									<tfoot>
 										<tr>
-											<td colspan="9" class="text-right view-content"><spring:message code="lbl.total" /></td>
+											<td colspan="8" class="text-right view-content"><spring:message code="lbl.total" /></td>
 											<td class="text-right view-content"><span data-pattern="decimalvalue"
 												id="nonSorTotal"></span></td>
+											<td></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -182,9 +181,5 @@
 								</table>
 							</div>
 						</div>
-					</c:otherwise>
-				</c:choose>
-			</c:forEach>
-		</c:when>
-	</c:choose>
+					</c:if>
 </div>

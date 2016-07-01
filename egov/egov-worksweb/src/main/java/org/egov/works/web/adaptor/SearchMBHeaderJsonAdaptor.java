@@ -60,7 +60,8 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
     private WorksUtils worksUtils;
 
     @Override
-    public JsonElement serialize(final MBHeader mBHeader, final Type typeOfSrc, final JsonSerializationContext context) {
+    public JsonElement serialize(final MBHeader mBHeader, final Type typeOfSrc,
+            final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         final WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
         jsonObject.addProperty("mbheaderId", mBHeader.getId());
@@ -76,7 +77,7 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
         jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "-" + mBHeader.getToPageNo());
         jsonObject.addProperty("status", mBHeader.getEgwStatus().getDescription());
         jsonObject.addProperty("createdBy", mBHeader.getCreatedBy().getName());
-        if (mBHeader.getState() != null)
+        if (mBHeader.getState() != null && mBHeader.getState().getOwnerPosition() != null)
             jsonObject.addProperty("currentOwner",
                     worksUtils.getApproverName(mBHeader.getState().getOwnerPosition().getId()));
         else
