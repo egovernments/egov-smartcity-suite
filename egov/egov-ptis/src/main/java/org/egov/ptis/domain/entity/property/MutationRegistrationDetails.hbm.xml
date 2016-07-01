@@ -68,5 +68,6 @@
 		<property name="plinthArea" column="PLINTHAREA" />
 		<property name="plotArea" column="PLOTAREA" />
 		<property name="sroName" column="SRONAME"></property>
+		<property name="documentValue" column="DOCUMENTVALUE"></property>
 	</class>
 </hibernate-mapping>

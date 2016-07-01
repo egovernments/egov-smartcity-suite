@@ -69,6 +69,8 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     private Double plinthArea;
     private Double plotArea;
     private String sroName;
+    private BigDecimal documentValue;
+    
     public String getTypeOfTransfer() {
         return typeOfTransfer;
     }
@@ -173,6 +175,12 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     }
     public void setSroName(String sroName) {
         this.sroName = sroName;
+    }
+    public BigDecimal getDocumentValue() {
+        return documentValue;
+    }
+    public void setDocumentValue(BigDecimal documentValue) {
+        this.documentValue = documentValue;
     }
 
 }
