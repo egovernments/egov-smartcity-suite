@@ -373,11 +373,6 @@
 			<artifactId>jersey-spring</artifactId>
 			<version>1.9.1</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.2</version>
-		</dependency>
 		<!-- RESTFUL WEBSERVICE END -->
 		
 	</dependencies>
