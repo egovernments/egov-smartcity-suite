@@ -64,7 +64,6 @@ import org.egov.collection.entity.RemittanceDetail;
 import org.egov.collection.service.CollectionReportService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.commons.Accountdetailtype;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
