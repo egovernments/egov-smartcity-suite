@@ -46,7 +46,8 @@
 <body onload="replacePercentageValue();">
 <form:form name="milestoneForm" role="form" action="milestone-save" modelAttribute="milestone" id="milestone" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<form:hidden id="mode" path=""  value="${mode}"/>
-	<input type="hidden" value="${workOrder.id}" id="workOrderId" name="workOrderId"/>
+	<input type="hidden" value="${workOrderEstimate.workOrder.id}" id="workOrderId" name="workOrderId"/>
+	<input type="hidden" value="${workOrderEstimate.id}" id="workOrderEstimateId" name="workOrderEstimateId"/>
 	<input type="hidden" value="<spring:message code="error.milestone.altleastone.milestonedetails.needed" />" id="errorMilestoneDeatail" />
 	<input type="hidden" value="<spring:message code="error.milestone.total.percentage" />" id="errorTotalPercentage" />
 	<input type="hidden" value="<spring:message code="error.milestone.templatecode" />" id="errorTemplateCode" />

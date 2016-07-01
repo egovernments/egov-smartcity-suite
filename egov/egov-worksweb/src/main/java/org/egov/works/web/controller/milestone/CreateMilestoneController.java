@@ -46,12 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.service.MilestoneService;
-import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,12 +67,6 @@ public class CreateMilestoneController {
     private MilestoneService milestoneService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
-
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
     @Autowired
@@ -88,18 +78,16 @@ public class CreateMilestoneController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
             final Model model, final HttpServletRequest request) throws ApplicationException {
-        final String estimateNumber = request.getParameter("estimateNumber");
-        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
-        if (milestoneService.checkMilestoneCreated(workOrder.getId())) {
-            final String message = messageSource.getMessage("error.milestonecreated.validate",
-                    new String[] { workOrder.getWorkOrderNumber() }, null);
+        
+        final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        if(milestoneService.checkMilestoneCreated(workOrderEstimate.getWorkOrder().getId())){
+            String message = messageSource.getMessage("error.milestonecreated.validate", new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);
             model.addAttribute("errorMessage", message);
             return "milestone-success";
         }
-
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
-        model.addAttribute("workOrder", workOrder);
-        model.addAttribute("lineEstimateDetails", lineEstimateDetails);
+        
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("milestone", new Milestone());
         return "newMilestone-form";
     }
@@ -107,20 +95,18 @@ public class CreateMilestoneController {
     @RequestMapping(value = "/milestone-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder)
-            throws ApplicationException, IOException {
-        final Long workOrderId = Long.valueOf(request.getParameter("workOrderId"));
-        final String estimateNumber = request.getParameter("estimateNumber");
-        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(workOrderId);
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
+                    throws ApplicationException, IOException {
+        final Long workOrderEstimateId = Long.valueOf(request.getParameter("workOrderEstimateId"));
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         final AbstractEstimate abstractEstimate = estimateService
-                .getAbstractEstimateByEstimateNumberAndStatus(lineEstimateDetails.getEstimateNumber());
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getEstimateByWorkOrderAndEstimateAndStatus(
-                workOrder.getId(), abstractEstimate.getId());
-        milestone.setWorkOrderEstimate(workOrderEstimate);
+                .getAbstractEstimateByEstimateNumberAndStatus(workOrderEstimate.getEstimate().getEstimateNumber());
+        final WorkOrderEstimate newWorkOrderEstimate = workOrderEstimateService.getEstimateByWorkOrderAndEstimateAndStatus(
+                workOrderEstimate.getWorkOrder().getId(), abstractEstimate.getId());
+        milestone.setWorkOrderEstimate(newWorkOrderEstimate);
         final Milestone newMilestone = milestoneService.create(milestone);
         model.addAttribute("milestone", newMilestone);
         model.addAttribute("message", messageSource.getMessage("msg.milestone.create.success",
-                new String[] { estimateNumber }, null));
+                new String[] { workOrderEstimate.getEstimate().getEstimateNumber() },null));
 
         return "milestone-success";
     }

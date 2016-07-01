@@ -99,6 +99,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -686,6 +687,7 @@ public class LetterOfAcceptanceService {
                 .createAlias("woeestimate.executingDepartment", "executingDepartment")
                 .createAlias("wo.contractor", "woc")
                 .createAlias("wo.egwStatus", "status")
+                .createAlias("woe.milestone", "ms", JoinType.LEFT_OUTER_JOIN)
                 .addOrder(Order.asc("wo.workOrderDate"));
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null)
@@ -711,6 +713,7 @@ public class LetterOfAcceptanceService {
                 criteria.add(Restrictions.eq("woeestimate.category.id", searchRequestLetterOfAcceptance.getSubTypeOfWork()));
         }
         criteria.add(Restrictions.eq("status.code", WorksConstants.APPROVED));
+        criteria.add(Restrictions.isNull("ms.id"));
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();

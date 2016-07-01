@@ -202,11 +202,11 @@ function callAjaxSearch() {
 					if(data.workOrderAmount != "")
 						$('td:eq(10)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					if (data.estimateNumber != null)
-						$('td:eq(0)',row).html('<input type="radio" data='+ data.estimateNumber +' name="selectCheckbox" value="'+ data.id +'"/>');
+						$('td:eq(0)',row).html('<input type="radio" data='+ data.workOrderEstimateId +' name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
 					$('td:eq(1)', row).html(index + 1);
 					$('td:eq(8)', row).html(
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
-									+ data.id + '\')">'
+									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
 					return row;
 				},
@@ -241,16 +241,16 @@ function callAjaxSearch() {
 			});
 }
 
-function openLetterOfAcceptance(id) {
-	window.open("/egworks/letterofacceptance/view/" + id, '','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function openLetterOfAcceptance(workOrderId) {
+	window.open("/egworks/letterofacceptance/view/" + workOrderId, '','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 jQuery('#createMilestone').click(function(e) {
-	var estimateNumber = $('input[name=selectCheckbox]:checked').attr('data');
-	if(estimateNumber == null) {
+	var workOrderEstimateId = $('input[name=selectCheckbox]:checked').attr('data');
+	if(workOrderEstimateId == null) {
 		var message = document.getElementById('selectLOA').value;
 		bootbox.alert(message);
 	}else {
-			window.location = "/egworks/milestone/newform?estimateNumber="+estimateNumber;
+			window.location = "/egworks/milestone/newform?workOrderEstimateId="+workOrderEstimateId;
 		}
 });

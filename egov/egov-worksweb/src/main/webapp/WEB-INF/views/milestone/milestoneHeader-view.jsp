@@ -57,16 +57,14 @@
 						<spring:message code="lbl.estimatenumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.estimateNumber}"></c:out>
-						<input
-							type="hidden" value="${lineEstimateDetails.estimateNumber}" name="estimateNumber" />
-					</div>
+						<c:out default="N/A" value="${workOrderEstimate.estimate.estimateNumber}"></c:out>
+ 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.estimate.date" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate
-							value="${lineEstimateDetails.lineEstimate.lineEstimateDate}"
+							value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.lineEstimateDate}"
 							pattern="dd/MM/yyyy" />
 					</div>
 				</div>
@@ -75,14 +73,14 @@
 						<spring:message code="lbl.nameofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimateDetails.nameOfWork}"></c:out>
+						<c:out default="N/A" value="${workOrderEstimate.estimate.lineEstimateDetails.nameOfWork}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.workidentificationnumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.projectCode.code}"></c:out>
+							value="${workOrderEstimate.estimate.projectCode.code}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -91,16 +89,16 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.typeOfWork.description}"></c:out>
-							<input type="hidden" id="typeOfWork" value="${lineEstimateDetails.lineEstimate.typeOfWork.id}"/>
+							value="${workOrderEstimate.estimate.parentCategory.description}"></c:out>
+							<input type="hidden" id="typeOfWork" value="${workOrderEstimate.estimate.parentCategory.id}"/>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.subTypeOfWork.description}"></c:out>
-						<input type="hidden" id="subTypeOfWork" value="${lineEstimateDetails.lineEstimate.subTypeOfWork.id}"/>
+							value="${workOrderEstimate.estimate.category.description}"></c:out>
+						<input type="hidden" id="subTypeOfWork" value="${workOrderEstimate.estimate.category.id}"/>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -109,14 +107,14 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.createdBy.name}"></c:out>
+							value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.createdBy.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.department" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${lineEstimateDetails.lineEstimate.executingDepartment.name}"></c:out>
+							value="${workOrderEstimate.estimate.executingDepartment.name}"></c:out>
 					</div>
 				</div>
 				<div class="row add-border">
@@ -125,18 +123,18 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<a style="cursor:pointer;" onclick="openLetterOfAcceptance();"><c:out default="N/A"
-								value="${workOrder.workOrderNumber}"></c:out></a> <input
-							type="hidden" value="${workOrder.id}" name="workOrderId" />
+								value="${workOrderEstimate.workOrder.workOrderNumber}"></c:out></a> <input
+							type="hidden" value="${workOrderEstimate.workOrder.id}" name="workOrderId" id="workOrderId" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.loadate" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<fmt:formatDate value="${workOrder.workOrderDate}"
+						<fmt:formatDate value="${workOrderEstimate.workOrder.workOrderDate}"
 							pattern="dd/MM/yyyy" />
 
 						<input type="hidden" id="workOrderDate"
-							value='<fmt:formatDate value="${workOrder.workOrderDate}"
+							value='<fmt:formatDate value="${workOrderEstimate.workOrder.workOrderDate}"
 							pattern="yyyy-MM-dd" />' />
 					</div>
 				</div>
@@ -146,13 +144,13 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-							minFractionDigits="2" value="${workOrder.workOrderAmount}" />
+							minFractionDigits="2" value="${workOrderEstimate.workOrder.workOrderAmount}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.contractor" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrder.contractor.code} - ${workOrder.contractor.name}"></c:out>
+						<c:out default="N/A" value="${workOrderEstimate.workOrder.contractor.code} - ${workOrderEstimate.workOrder.contractor.name}"></c:out>
 					</div>
 				</div>
 			</div>

@@ -41,10 +41,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.TrackMilestone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -55,29 +52,25 @@ import com.google.gson.JsonSerializer;
 @Component
 public class SearchTrackMilestoneJsonAdaptor implements JsonSerializer<TrackMilestone> {
 
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final TrackMilestone trackMilestone, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (trackMilestone != null) {
             if (trackMilestone.getMilestone().getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(trackMilestone.getMilestone()
-                        .getWorkOrderEstimate()
-                        .getWorkOrder()
-                        .getEstimateNumber());
-                jsonObject.addProperty("estimateNumber", led.getEstimateNumber());
-                jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
-                jsonObject.addProperty("nameOfWork", led.getNameOfWork());
-                jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-                if (led.getLineEstimate().getTypeOfWork() != null)
-                    jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription());
-                if (led.getLineEstimate().getSubTypeOfWork() != null)
-                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription());
-                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
-            } else {
+                jsonObject.addProperty("estimateNumber", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getEstimateNumber());
+                jsonObject.addProperty("workIdentificationNumber", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
+                jsonObject.addProperty("nameOfWork", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("department", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getLineEstimate().getExecutingDepartment().getName());
+                if(trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getParentCategory() != null){
+                    jsonObject.addProperty("typeOfWork", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getParentCategory().getDescription());
+                }
+                if(trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getCategory() != null){
+                    jsonObject.addProperty("subTypeOfWork", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getCategory().getDescription());
+                }
+                jsonObject.addProperty("lineEstimateId", trackMilestone.getMilestone().getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+            }
+            else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
                 jsonObject.addProperty("nameOfWork", "");

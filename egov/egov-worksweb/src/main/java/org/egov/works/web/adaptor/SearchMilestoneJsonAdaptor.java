@@ -41,10 +41,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -55,28 +52,25 @@ import com.google.gson.JsonSerializer;
 @Component
 public class SearchMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final Milestone milestone, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (milestone != null) {
             if (milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(milestone.getWorkOrderEstimate()
-                        .getWorkOrder()
-                        .getEstimateNumber());
-                jsonObject.addProperty("estimateNumber", led.getEstimateNumber());
-                jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
-                jsonObject.addProperty("nameOfWork", led.getNameOfWork());
-                jsonObject.addProperty("department", led.getLineEstimate().getExecutingDepartment().getName());
-                if (led.getLineEstimate().getTypeOfWork() != null)
-                    jsonObject.addProperty("typeOfWork", led.getLineEstimate().getTypeOfWork().getDescription());
-                if (led.getLineEstimate().getSubTypeOfWork() != null)
-                    jsonObject.addProperty("subTypeOfWork", led.getLineEstimate().getSubTypeOfWork().getDescription());
-                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
-            } else {
+                jsonObject.addProperty("estimateNumber", milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber());
+                jsonObject.addProperty("workIdentificationNumber", milestone.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
+                jsonObject.addProperty("nameOfWork", milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("department", milestone.getWorkOrderEstimate().getEstimate().getExecutingDepartment().getName());
+                if(milestone.getWorkOrderEstimate().getEstimate().getParentCategory() != null){
+                jsonObject.addProperty("typeOfWork", milestone.getWorkOrderEstimate().getEstimate().getParentCategory().getDescription());
+                }
+                if(milestone.getWorkOrderEstimate().getEstimate().getCategory() != null){
+                    jsonObject.addProperty("subTypeOfWork", milestone.getWorkOrderEstimate().getEstimate().getCategory().getDescription());
+                }
+                jsonObject.addProperty("lineEstimateId", milestone.getWorkOrderEstimate().getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+            }
+            else {
                 jsonObject.addProperty("estimateNumber", "");
                 jsonObject.addProperty("workIdentificationNumber", "");
                 jsonObject.addProperty("nameOfWork", "");

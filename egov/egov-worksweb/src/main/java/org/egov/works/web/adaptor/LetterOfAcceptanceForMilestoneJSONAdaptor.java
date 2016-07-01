@@ -76,7 +76,8 @@ public class LetterOfAcceptanceForMilestoneJSONAdaptor implements JsonSerializer
                 jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
                 jsonObject.addProperty("workOrderDate", workOrderEstimate.getWorkOrder().getWorkOrderDate().toString());
 
-                jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
+                jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
+                jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
             }
         return jsonObject;
     }
