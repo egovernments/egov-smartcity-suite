@@ -293,7 +293,7 @@ public class WorksConstants {
 
     public static final String CONTRACTOR_DEDUCTIONS_PURPOSE = "Contractor Deductions";
 
-    public static final String RETENTION_MONEY_DEDUCTIONS_PURPOSE = "Retention Money";
+    public static final String RETENTION_MONEY_DEDUCTIONS_PURPOSE = "RETENTION_MONEY";
 
     public static final String ACCOUNTDETAIL_TYPE_CONTRACTOR = "contractor";
 
