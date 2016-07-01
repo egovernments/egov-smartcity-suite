@@ -537,9 +537,11 @@ function calculateRetentionMoneyDeductionAmount(obj)
 	rIndex--;
 	var billType = $("#billtype").val();
 	if(document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditGlcode").value !=""){
-		if(billType!="" && billType == 'Part Bill')
+		if(debitAmount=="")
+			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = "";
+		if(debitAmount!="" && billType!="" && billType == 'Part Bill')
 			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100);
-		else if(billType!="" && billType == 'Final Bill')
+		else if(debitAmount!="" &&  billType!="" && billType == 'Final Bill')
 			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100);
 	}else
 		document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value ="";

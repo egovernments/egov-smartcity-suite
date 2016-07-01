@@ -215,7 +215,7 @@
 				<c:choose>
 					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
 						<tr id="retentionmoneydeductionrow">
-							<td> <form:select path="retentionMoneyDeductionDetailes[0].glcodeid" name="retentionMoneyDeductionDetailes[0].creditGlcode" id="retentionMoneyDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode"  onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);">
+							<td> <form:select path="retentionMoneyDeductionDetailes[0].glcodeid" name="retentionMoneyDeductionDetailes[0].creditGlcode" id="retentionMoneyDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode"  onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 										<c:forEach var="coa" items="${retentionMoneyDeductionAccounCodes}">
 											<form:option value="${coa.id}">
@@ -240,7 +240,7 @@
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && billDetail.isRetentionMoneyDeduction}">
 								<tr id="retentionmoneydeductionrow">
 									<td>
-										<form:select path="retentionMoneyDeductionDetailes[${rowIndex }].glcodeid" data-first-option="false" name="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode" id="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode"  class="form-control table-input" onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);">
+										<form:select path="retentionMoneyDeductionDetailes[${rowIndex }].glcodeid" data-first-option="false" name="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode" id="retentionMoneyDeductionDetailes[${rowIndex }].creditGlcode"  class="form-control table-input" onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
 											<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 											<c:forEach var="coa" items="${retentionMoneyDeductionAccounCodes}">
 												<c:if test="${billDetail.glcodeId == coa.id }">
