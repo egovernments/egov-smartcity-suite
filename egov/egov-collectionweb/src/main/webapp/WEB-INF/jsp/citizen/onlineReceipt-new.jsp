@@ -310,8 +310,6 @@ function validateOnlineReceipt(){
 	}
 	else {
 			doLoadingMask('#loadingMask');
-			document.collDetails.action="onlineReceipt-saveNew.action";
-
 			return true;
   		}
 }
@@ -396,8 +394,7 @@ function onLoad(){
 
 <body onload="onLoad();">
 	<div class="maincontainer">
-		<s:form theme="simple" name="collDetails"
-			action="onlineReceipt">
+		<s:form theme="simple" name="collDetails" action="onlineReceipt-saveNew.action">
 			<div class="errorstyle" id="receipt_error_area"
 				style="display: none;"></div>
 			<div class="formmainbox">
@@ -654,8 +651,7 @@ function onLoad(){
 													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 													name="radioButton1" /><span class="complaintmsg"> <s:property
 															value="name" />
-												</span> <br>
-												<s:text name="%{code}.transactionmessage" /></td>
+												</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 											</s:if>
 											<s:else>
@@ -665,8 +661,7 @@ function onLoad(){
 													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 													name="radioButton1" /><span class="complaintmsg"> <s:property
 															value="name" />
-												</span> <br>
-												<s:text name="%{code}.transactionmessage" /></td>
+												</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 											</s:else>
 
@@ -679,8 +674,7 @@ function onLoad(){
 												onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 												name="radioButton1" /><span class="complaintmsg"> <s:property
 														value="name" />
-											</span> <br>
-											<s:text name="%{code}.transactionmessage" /></td>
+											</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 										</s:else>
 
@@ -755,14 +749,12 @@ function onLoad(){
 							<div id="transactiondiv" style="display: none"></div>
 							<div id="loadingMask"
 								style="display: none; overflow: hidden; text-align: center">
-								<img
-									src="/collection/resources/images/bar_loader.gif" />
-								<span style="color: red">Please wait....</span>
+								<img src="/collection/resources/images/bar_loader.gif" /> <span
+									style="color: red">Please wait....</span>
 							</div>
-							<div class="bottombuttonholder"  align="middle">
-								<input type="submit" class="buttonsubmit"
-									id="button2" value="Pay Online"
-									onclick="return validateOnlineReceipt();" />
+							<div class="bottombuttonholder" align="middle">
+								<s:submit align="center" type="submit" cssClass="buttonsubmit"
+									id="button2" value="Pay Online" onclick="return validateOnlineReceipt();" />
 							</div>
 						</div>
 						<br />
