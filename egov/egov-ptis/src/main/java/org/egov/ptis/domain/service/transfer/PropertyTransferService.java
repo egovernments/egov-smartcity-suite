@@ -205,14 +205,19 @@ public class PropertyTransferService {
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
-        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue());
+        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(),
+                propertyMutation.getDepartmentValue());
         propertyMutation.setMutationFee(mutationFee);
+        // Setting Document value
+        propertyMutation.setMarketValue(
+                (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0)
+                        ? propertyMutation.getPartyValue() : propertyMutation.getDepartmentValue());
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
         propertyMutation.setMutationDate(new Date());
         if (propertyMutation.getApplicationNo() == null)
             propertyMutation.setApplicationNo(applicationNumberGenerator.generate());
-        createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
+        createUserIfNotExist(propertyMutation, propertyMutation.getTransfereeInfosProxy());
         basicProperty.getPropertyMutations().add(propertyMutation);
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
