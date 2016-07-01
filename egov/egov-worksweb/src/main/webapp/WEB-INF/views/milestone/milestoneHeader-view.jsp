@@ -64,7 +64,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate
-							value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.lineEstimateDate}"
+							value="${workOrderEstimate.estimate.estimateDate}"
 							pattern="dd/MM/yyyy" />
 					</div>
 				</div>
@@ -73,7 +73,7 @@
 						<spring:message code="lbl.nameofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.estimate.lineEstimateDetails.nameOfWork}"></c:out>
+						<c:out default="N/A" value="${workOrderEstimate.estimate.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.workidentificationnumber" />
@@ -107,7 +107,7 @@
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A"
-							value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.createdBy.name}"></c:out>
+							value="${workOrderEstimate.estimate.createdBy.name}"></c:out>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.department" />

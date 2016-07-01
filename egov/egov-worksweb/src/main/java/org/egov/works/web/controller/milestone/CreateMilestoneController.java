@@ -44,8 +44,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -72,9 +70,6 @@ public class CreateMilestoneController {
     @Autowired
     private ResourceBundleMessageSource messageSource;
 
-    @Autowired
-    private EstimateService estimateService;
-
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
             final Model model, final HttpServletRequest request) throws ApplicationException {
@@ -98,11 +93,7 @@ public class CreateMilestoneController {
                     throws ApplicationException, IOException {
         final Long workOrderEstimateId = Long.valueOf(request.getParameter("workOrderEstimateId"));
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        final AbstractEstimate abstractEstimate = estimateService
-                .getAbstractEstimateByEstimateNumberAndStatus(workOrderEstimate.getEstimate().getEstimateNumber());
-        final WorkOrderEstimate newWorkOrderEstimate = workOrderEstimateService.getEstimateByWorkOrderAndEstimateAndStatus(
-                workOrderEstimate.getWorkOrder().getId(), abstractEstimate.getId());
-        milestone.setWorkOrderEstimate(newWorkOrderEstimate);
+        milestone.setWorkOrderEstimate(workOrderEstimate);
         final Milestone newMilestone = milestoneService.create(milestone);
         model.addAttribute("milestone", newMilestone);
         model.addAttribute("message", messageSource.getMessage("msg.milestone.create.success",
