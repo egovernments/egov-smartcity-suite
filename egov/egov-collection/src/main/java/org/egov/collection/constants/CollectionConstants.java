@@ -555,4 +555,6 @@ public final class CollectionConstants {
      // Remittance Status codes
         public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
         public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
+        
+        public static final String REMITTANCE_BY_VOUCHER_NUMBER="getRemitanceByVoucherNumber";
 }

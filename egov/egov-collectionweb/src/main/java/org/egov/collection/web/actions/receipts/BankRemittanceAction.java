@@ -61,6 +61,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.entity.Remittance;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
@@ -132,6 +133,8 @@ public class BankRemittanceAction extends BaseFormAction {
     private Boolean showRemittanceDate = false;
     private Long finYearId;
     private RemittanceServiceImpl remittanceService;
+    private String voucherNumber;
+
 
     /**
      * @param collectionsUtil
@@ -273,7 +276,7 @@ public class BankRemittanceAction extends BaseFormAction {
                 getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
-        bankRemittanceList = prepareBankRemittanceReport(voucherHeaderValues);
+        bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
         if (getSession().get("REMITTANCE_LIST") != null)
             getSession().remove("REMITTANCE_LIST");
         getSession().put("REMITTANCE_LIST", bankRemittanceList);
@@ -286,34 +289,7 @@ public class BankRemittanceAction extends BaseFormAction {
         return INDEX;
     }
 
-    private List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
-        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
-        for (final ReceiptHeader receiptHead : receiptHeaders) {
-            @SuppressWarnings("rawtypes")
-            final Iterator itr = receiptHead.getReceiptInstrument().iterator();
-            while (itr.hasNext()) {
-                final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
-                final InstrumentHeader instHead = (InstrumentHeader) itr.next();
-                if (!instHead.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
-                    collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
-                    collBankRemitReport.setBranchName(instHead.getBankBranchName());
-                    collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
-                    collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
-                    collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
-                    collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
-                    collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
-                    collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
-                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
-                    reportList.add(collBankRemitReport);
-                } else {
-                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceVoucher());
-                    reportList.add(collBankRemitReport);
-                }
-            }
-        }
-        return reportList;
-    }
-
+  
     private Double getSum(final String[] array) {
         Double sum = 0.0;
         for (final String num : array)
@@ -653,5 +629,13 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setRemittanceService(final RemittanceServiceImpl remittanceService) {
         this.remittanceService = remittanceService;
+    }
+    
+    public String getVoucherNumber() {
+        return voucherNumber;
+    }
+
+    public void setVoucherNumber(String voucherNumber) {
+        this.voucherNumber = voucherNumber;
     }
 }

@@ -111,4 +111,8 @@
 				column="collectionheader" />
 		</set>
 	</class>
+	
+	    <query name="getRemitanceByVoucherNumber">
+    <![CDATA[select r from Remittance r where r.voucherHeader.voucherNumber= ?]]></query>
+	
 </hibernate-mapping>
