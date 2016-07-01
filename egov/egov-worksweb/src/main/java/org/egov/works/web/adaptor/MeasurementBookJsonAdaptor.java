@@ -42,10 +42,16 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.models.tender.OfflineStatus;
+import org.egov.works.offlinestatus.service.OfflineStatusService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -55,19 +61,28 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
+    
+    @Autowired
+    private OfflineStatusService offlineStatusService;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         final DecimalFormat df = new DecimalFormat("0.00");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         if (workOrderEstimate != null) {
             if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null) {
                 final AbstractEstimate estimate = workOrderEstimate.getEstimate();
                 jsonObject.addProperty("estimateNumber", estimate.getEstimateNumber());
+                jsonObject.addProperty("estimateId", estimate.getId());
                 jsonObject.addProperty("projectCode", estimate.getLineEstimateDetails().getProjectCode().getCode());
                 jsonObject.addProperty("nameOfWork", estimate.getLineEstimateDetails().getNameOfWork());
-            } else
+            } else {
                 jsonObject.addProperty("estimateNumber", "");
+                jsonObject.addProperty("estimateId", "");
+                jsonObject.addProperty("projectCode", "");
+                jsonObject.addProperty("nameOfWork", "");
+            }
             if (workOrderEstimate.getWorkOrder() != null) {
                 final WorkOrder workOrder = workOrderEstimate.getWorkOrder();
                 jsonObject.addProperty("workOrderNumber", workOrder.getWorkOrderNumber());
@@ -77,6 +92,12 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
                 jsonObject.addProperty("workOrderAssignedTo", workOrder.getEngineerIncharge().getName());
                 jsonObject.addProperty("approvedRate", workOrder.getWorkOrderAmount());
                 jsonObject.addProperty("tenderFinalisedPercentage", workOrder.getTenderFinalizedPercentage());
+                final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
+                        workOrder.getId(), WorksConstants.WORKORDER, OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+                if(offlineStatus != null)
+                    jsonObject.addProperty("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
+                else
+                    jsonObject.addProperty("workCommencedDate", "");
             } else {
                 jsonObject.addProperty("workOrderNumber", "");
                 jsonObject.addProperty("workOrderId", "");
@@ -85,6 +106,7 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
                 jsonObject.addProperty("workOrderAssignedTo", "");
                 jsonObject.addProperty("approvedRate", "");
                 jsonObject.addProperty("tenderFinalisedPercentage", "");
+                jsonObject.addProperty("workCommencedDate", "");
             }
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
         }

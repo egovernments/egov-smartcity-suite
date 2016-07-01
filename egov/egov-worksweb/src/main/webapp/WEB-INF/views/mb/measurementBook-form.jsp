@@ -62,6 +62,7 @@
 	enctype="multipart/form-data">
 	
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
+	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
 	<form:input path="workOrder.id" type="hidden" id="workOrderId" value="${mbHeader.workOrderEstimate.workOrder.id }" />
 	<form:input path="workOrderEstimate.id" type="hidden" id="workOrderEstimateId" value="${mbHeader.workOrderEstimate.id }" />
 	<input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>

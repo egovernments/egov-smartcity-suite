@@ -38,6 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $('#Save').click(function() {
+	
+	var flag = true;
 
 	document.getElementById("workFlowAction").value = "Save";
 	
@@ -46,25 +48,11 @@ $('#Save').click(function() {
 	$('#approvalPosition').removeAttr('required');
 	$('#approvalComent').removeAttr('required');
 	
-	flag = validateSORDetails();
-	
 	if($('#mbHeader').valid()) {
-		var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-		var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-		if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
-			bootbox.alert($('#errorsornonsor').val());
-			return false;
-		}
-		
-		$('.quantity').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		if (!flag) {
-			bootbox.alert($('#errorquantitieszero').val());
-			return false;
-		}
+		return validateFormData();
 	}
+	
+	validateSORDetails();
 	
 	if($('#mbHeader').valid()) {
 		submitForm("Save");
@@ -76,6 +64,8 @@ $('#Save').click(function() {
 });
 
 $('#Forward').click(function() {
+	
+	var flag = true;
 
 	document.getElementById("workFlowAction").value = "Forward";
 	
@@ -84,25 +74,11 @@ $('#Forward').click(function() {
 	$('#approvalPosition').attr('required', 'required');
 	$('#approvalComent').removeAttr('required');
 	
-	flag = validateSORDetails();
-	
 	if($('#mbHeader').valid()) {
-		var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-		var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-		if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
-			bootbox.alert($('#errorsornonsor').val());
-			return false;
-		}
-		
-		$('.quantity').each(function() {
-			if (parseFloat($(this).val()) <= 0)
-				flag = false;
-		});
-		if (!flag) {
-			bootbox.alert($('#errorquantitieszero').val());
-			return false;
-		}
+		return validateFormData();
 	}
+	
+	validateSORDetails();
 	
 	if($('#mbHeader').valid()) {
 		submitForm("Forward");

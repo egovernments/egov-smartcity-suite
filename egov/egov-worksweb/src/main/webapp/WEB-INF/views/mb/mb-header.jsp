@@ -43,6 +43,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="panel panel-primary" data-collapsed="0">
+	<input type="hidden" id="errorentrydate" value="<spring:message code='error.mb.entry.date.commenced.date' />">
+	<input type="hidden" id="errorissueddate" value="<spring:message code='error.mb.issued.date.commenced.date' />">
+	<input type="hidden" id="errorentryissueddate" value="<spring:message code='error.mb.issued.date.entry.date' />">
+	<input type="hidden" id="errorfromtopage" value="<spring:message code='error.from.to.page' />">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
 			<spring:message code="lbl.measurementbook.details" />
@@ -73,13 +77,13 @@
 			    <spring:message code="lbl.from.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="fromPageNo" id="fromPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
+				<form:input path="fromPageNo" id="fromPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.to.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="toPageNo" id="toPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" />
+				<form:input path="toPageNo" id="toPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -104,7 +108,8 @@
 			    <spring:message code="lbl.estimatenumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<span name="estimateNumber" id="estimateNumber">${mbHeader.workOrderEstimate.estimate.estimateNumber }</span>
+				<a href="javascript:void(0);" onclick="viewEstimate()"><span name="estimateNumber" id="estimateNumber">${mbHeader.workOrderEstimate.estimate.estimateNumber }</span></a>
+				<input type="hidden" id="estimateId" value="${mbHeader.workOrderEstimate.estimate.id }">
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.mb.nameofwork" />
@@ -124,7 +129,7 @@
 			    <spring:message code="lbl.loanumber" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<span name="workOrderNumber" id="workOrderNumber">${mbHeader.workOrderEstimate.workOrder.workOrderNumber }</span>
+				<a href="javascript:void(0);" onclick="viewMBWorkOrder()"><span name="workOrderNumber" id="workOrderNumber">${mbHeader.workOrderEstimate.workOrder.workOrderNumber }</span></a>
 			</div>
 		</div>
 		<div class="form-group">

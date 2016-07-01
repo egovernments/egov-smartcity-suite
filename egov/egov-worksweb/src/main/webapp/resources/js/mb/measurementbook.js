@@ -714,3 +714,64 @@ function validateSORDetails() {
 	} else
 		return false;
 }
+
+function validateFormData() {
+	var mbDate = $('#mbDate').data('datepicker').date;
+	var workCommencedDate = $('#workCommencedDate').data('datepicker').date;
+	var mbIssuedDate = $('#mbIssuedDate').data('datepicker').date;
+	var fromPageNo = $('#fromPageNo').val();
+	var toPageNo = $('#toPageNo').val();
+	
+	if(mbDate < workCommencedDate) {
+		bootbox.alert($('#errorentrydate').val());
+		$('#mbDate').val('');
+		return false;
+	}
+	
+	if(mbIssuedDate != "" && mbIssuedDate > mbDate) {
+		bootbox.alert($('#errorentryissueddate').val());
+		$('#mbDate').val('');
+		return false;
+	}
+	
+	if(mbIssuedDate != "" && mbIssuedDate < workCommencedDate) {
+		bootbox.alert($('#errorissueddate').val());
+		$('#mbIssuedDate').val('');
+		return false;
+	}
+	
+	if(toPageNo < fromPageNo) {
+		bootbox.alert($('#errorfromtopage').val());
+		return false;
+	}
+	
+	var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+	var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+	if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
+		bootbox.alert($('#errorsornonsor').val());
+		return false;
+	}
+	
+	$("#tblsor tbody tr[sorinvisible!='true'] .quantity").each(function() {
+		if (parseFloat($(this).val()) <= 0)
+			flag = false;
+	});
+	$("#tblNonSor tbody tr[nonsorinvisible!='true'] .quantity").each(function() {
+		if (parseFloat($(this).val()) <= 0)
+			flag = false;
+	});
+	if (!flag) {
+		bootbox.alert($('#errorquantitieszero').val());
+		return false;
+	}
+}
+
+function viewMBWorkOrder() {
+	var workOrderId = $('#workOrderId').val();
+	window.open("/egworks/letterofacceptance/view/" + workOrderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewEstimate() {
+	var estimateId = $('#estimateId').val();
+	window.open("/egworks/abstractestimate/view/" + estimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

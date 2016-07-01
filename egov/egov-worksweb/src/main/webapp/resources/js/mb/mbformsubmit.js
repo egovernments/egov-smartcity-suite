@@ -50,25 +50,11 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
 		
-		flag = validateSORDetails();
-		
 		if($('#mbHeader').valid()) {
-			var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-			var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-			if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
-				bootbox.alert($('#errorsornonsor').val());
-				return false;
-			}
-			
-			$('.quantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			if (!flag) {
-				bootbox.alert($('#errorquantitieszero').val());
-				return false;
-			}
+			return validateFormData();
 		}
+		
+		validateSORDetails();
 	}
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
@@ -105,25 +91,11 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 		
-		flag = validateSORDetails();
-		
 		if($('#mbHeader').valid()) {
-			var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-			var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-			if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
-				bootbox.alert($('#errorsornonsor').val());
-				return false;
-			}
-			
-			$('.quantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			if (!flag) {
-				bootbox.alert($('#errorquantitieszero').val());
-				return false;
-			}
+			return validateFormData();
 		}
+		
+		validateSORDetails();
 	}
 	
 	if(flag) {

@@ -87,4 +87,8 @@ public class OfflineStatusService {
         return CollectionUtils.select(Arrays.asList(statusNames), statusName -> (String) statusName != null);
     }
 
+    public OfflineStatus getOfflineStatusByObjectIdAndObjectTypeAndStatus(final Long objectId, final String objectType,
+            final String statusCode) {
+        return offlineStatusRepository.findByObjectIdAndObjectTypeAndEgwStatus_code(objectId, objectType, statusCode);
+    }
 }

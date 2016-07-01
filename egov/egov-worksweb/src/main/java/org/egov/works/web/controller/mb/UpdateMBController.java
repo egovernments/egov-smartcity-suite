@@ -41,6 +41,7 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,8 +58,11 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.tender.OfflineStatus;
+import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -94,6 +98,9 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private OfflineStatusService offlineStatusService;
 
     @ModelAttribute
     public MBHeader getMBHeader(@PathVariable final String mbHeaderId) {
@@ -268,7 +275,7 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final MBHeader mbHeader) {
-        // estimateService.setDropDownValues(model);
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getCurrentState() != null
                 && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
@@ -302,6 +309,10 @@ public class UpdateMBController extends GenericWorkFlowController {
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
         model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         model.addAttribute("mbHeader", mbHeader);
+        final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
+                mbHeader.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
+                OfflineStatuses.WORK_COMMENCED.toString());
+        model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
 
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())) {
