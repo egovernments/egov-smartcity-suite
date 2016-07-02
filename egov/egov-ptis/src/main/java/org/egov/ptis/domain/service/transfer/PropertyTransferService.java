@@ -100,6 +100,7 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.MutationRegistrationDetails;
 import org.egov.ptis.domain.entity.property.PropertyAddress;
 import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -201,6 +202,10 @@ public class PropertyTransferService {
     @Qualifier("waterChargesIntegrationServiceImpl")
     private WaterChargesIntegrationService waterChargesIntegrationService;
     
+    @Autowired
+    @Qualifier("mutationRegistrationService")
+    private PersistenceService<MutationRegistrationDetails, Long> mutationRegistrationService;
+    
     @Transactional
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
@@ -209,9 +214,7 @@ public class PropertyTransferService {
                 propertyMutation.getDepartmentValue());
         propertyMutation.setMutationFee(mutationFee);
         // Setting Document value
-        propertyMutation.setMarketValue(
-                (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0)
-                        ? propertyMutation.getPartyValue() : propertyMutation.getDepartmentValue());
+        defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             propertyMutation.getTransferorInfos().add(ownerInfo.getOwner());
         propertyMutation.setMutationDate(new Date());
@@ -222,6 +225,7 @@ public class PropertyTransferService {
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
     }
 
@@ -246,11 +250,13 @@ public class PropertyTransferService {
     public void updatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         processAndStoreDocument(propertyMutation.getDocuments());
         checkAllMandatoryDocumentsAttached(propertyMutation);
+     defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
         BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue());
         propertyMutation.setMutationFee(mutationFee);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
     }
 
@@ -682,5 +688,16 @@ public class PropertyTransferService {
     		}
     	}
     	return mutationFee;
+    }
+    
+    /**
+     * API to set Document Value (Market Value) 
+     * @param propertyMutation Object
+     * @return void
+     */
+    public void defineDocumentValue(final PropertyMutation propertyMutation) {
+        propertyMutation.setMarketValue(
+                (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0)
+                        ? propertyMutation.getPartyValue() : propertyMutation.getDepartmentValue());
     }
 }
