@@ -1,0 +1,1 @@
+update eg_action set url='/letterofacceptance/ajaxsearch-loatocreatemb' where name='AjaxWorkOrderSearch' and contextroot='egworks';

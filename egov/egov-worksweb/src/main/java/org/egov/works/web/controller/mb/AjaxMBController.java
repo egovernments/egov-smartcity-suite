@@ -78,9 +78,6 @@ import com.google.gson.JsonObject;
 public class AjaxMBController {
 
     @Autowired
-    private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
-
-    @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
     @Autowired
@@ -97,28 +94,6 @@ public class AjaxMBController {
 
     @Autowired
     private SearchWorkOrderActivityJsonAdaptor searchWorkOrderActivityJsonAdaptor;
-
-    @RequestMapping(value = "/workorder/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchWorkOrders(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
-                .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
-        final List<WorkOrderEstimate> resultList = new ArrayList<WorkOrderEstimate>();
-        for (final WorkOrderEstimate WorkOrderEstimate : workOrderEstimateList)
-            if (WorkOrderEstimate != null && !WorkOrderEstimate.getWorkOrderActivities().isEmpty())
-                resultList.add(WorkOrderEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(resultList)).append("}")
-                .toString();
-        return result;
-    }
-
-    public Object searchWorkOrder(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder
-                .registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForMBHeaderJsonAdaptor).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 
     @RequestMapping(value = "/workorder/validatemb/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
@@ -179,15 +154,16 @@ public class AjaxMBController {
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String sorType = request.getParameter("sorType");
-        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService.searchActivities(workOrderEstimateId,
-                description, itemCode, sorType);
+        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
+                .searchActivities(workOrderEstimateId, description, itemCode, sorType);
         final List<WorkOrderActivity> activities = new ArrayList<WorkOrderActivity>();
         if (description != null && !description.equals(""))
             for (final WorkOrderActivity woa : workOrderActivities)
                 if (woa.getActivity().getSchedule() != null
-                        && woa.getActivity().getSchedule().getDescription().toLowerCase().contains(description.toLowerCase()) ||
-                        woa.getActivity().getNonSor() != null && woa.getActivity().getNonSor().getDescription().toLowerCase()
-                                .contains(description.toLowerCase()))
+                        && woa.getActivity().getSchedule().getDescription().toLowerCase()
+                                .contains(description.toLowerCase())
+                        || woa.getActivity().getNonSor() != null && woa.getActivity().getNonSor().getDescription()
+                                .toLowerCase().contains(description.toLowerCase()))
                     activities.add(woa);
 
         if (!activities.isEmpty()) {
@@ -208,9 +184,8 @@ public class AjaxMBController {
             workOrderActivities.addAll(activities);
         }
 
-        final String result = new StringBuilder("{ \"data\":").append(toSearchWorkOrderActivityResultJson(workOrderActivities))
-                .append("}")
-                .toString();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();
         return result;
     }
 

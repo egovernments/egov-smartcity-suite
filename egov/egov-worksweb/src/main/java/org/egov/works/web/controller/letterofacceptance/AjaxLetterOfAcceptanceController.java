@@ -54,6 +54,7 @@ import org.egov.works.web.adaptor.SearchLetterOfAcceptanceForOfflineStatusJsonAd
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCancelJson;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
+import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
@@ -74,6 +75,7 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class AjaxLetterOfAcceptanceController {
+
     @Autowired
     private ContractorService contractorService;
 
@@ -104,6 +106,9 @@ public class AjaxLetterOfAcceptanceController {
     @Autowired
     private SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor searchLetterOfAcceptanceForOfflineStatusJsonAdaptor;
 
+    @Autowired
+    private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
+
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
         return contractorService.getContractorsByCodeOrName(name);
@@ -112,7 +117,8 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajaxsearch-loa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearch(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> searchLoaList = letterOfAcceptanceService.searchLetterOfAcceptance(searchRequestLetterOfAcceptance);
+        final List<WorkOrder> searchLoaList = letterOfAcceptanceService
+                .searchLetterOfAcceptance(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
                 .append("}").toString();
         return result;
@@ -120,7 +126,8 @@ public class AjaxLetterOfAcceptanceController {
 
     public Object toSearchLetterOfAcceptanceJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -146,8 +153,8 @@ public class AjaxLetterOfAcceptanceController {
         final List<WorkOrderEstimate> searchWorkOrderEstimateList = letterOfAcceptanceService
                 .searchLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLetterOfAcceptanceToCreateContractorBillJson(searchWorkOrderEstimateList))
-                .append("}").toString();
+                .append(toSearchLetterOfAcceptanceToCreateContractorBillJson(searchWorkOrderEstimateList)).append("}")
+                .toString();
         return result;
     }
 
@@ -195,8 +202,8 @@ public class AjaxLetterOfAcceptanceController {
         for (final ContractorDetail cd : contractorDetails)
             if (!contractors.contains(cd.getContractor()))
                 contractors.add(cd.getContractor());
-        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toSearchContractorJson(contractors)).append("}")
+                .toString();
         return result;
     }
 
@@ -222,15 +229,15 @@ public class AjaxLetterOfAcceptanceController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrderEstimate> workOrderEstimate = letterOfAcceptanceService
                 .getLoaForCreateMilestone(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchLOAForCreateMilestoneJson(workOrderEstimate))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLOAForCreateMilestoneJson(workOrderEstimate)).append("}").toString();
         return result;
     }
 
     public Object toSearchLOAForCreateMilestoneJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, letterOfAcceptanceForMilestoneJSONAdaptor)
-                .create();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, letterOfAcceptanceForMilestoneJSONAdaptor).create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -250,9 +257,8 @@ public class AjaxLetterOfAcceptanceController {
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final List<WorkOrder> workOrders = letterOfAcceptanceService
                 .searchLOAsToCancel(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLOAsToCancelJson(workOrders))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLOAsToCancelJson(workOrders)).append("}")
+                .toString();
         return result;
     }
 
@@ -295,15 +301,15 @@ public class AjaxLetterOfAcceptanceController {
         final List<WorkOrderEstimate> searchLoaList = letterOfAcceptanceService
                 .searchLetterOfAcceptanceForOfflineStatus(searchRequestLetterOfAcceptance);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLetterOfAcceptanceJsonToSetOfflineStatus(searchLoaList))
-                .append("}").toString();
+                .append(toSearchLetterOfAcceptanceJsonToSetOfflineStatus(searchLoaList)).append("}").toString();
         return result;
     }
 
     public Object toSearchLetterOfAcceptanceJsonToSetOfflineStatus(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder
-                .registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceForOfflineStatusJsonAdaptor).create();
+                .registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceForOfflineStatusJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -311,5 +317,23 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajaxestimatenumbers-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findApprovedEstimateNumbersForLOA(@RequestParam final String estimateNumber) {
         return workOrderEstimateService.getEstimateNumbersForApprovedLoa(estimateNumber);
+    }
+
+    @RequestMapping(value = "/ajaxsearch-loatocreatemb", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchWorkOrders(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrderEstimate> workOrderEstimateList = workOrderEstimateService
+                .searchWorkOrderToCreateMBHeader(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":").append(searchWorkOrder(workOrderEstimateList))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object searchWorkOrder(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder
+                .registerTypeAdapter(WorkOrderEstimate.class, searchWorkOrderForMBHeaderJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
     }
 }

@@ -100,7 +100,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 						<div class="col-sm-3 add-margin">
-						<form:input path="egwStatus" class="form-control" id="egwStatus" value="APPROVED" readonly="true" />
+						<form:input path="egwStatus" class="form-control" id="egwStatus" value="WORK COMMENCED" readonly="true" />
 						</div>
 					</div>
 				</div>
