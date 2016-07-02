@@ -76,6 +76,10 @@
 			<div class="tab-pane fade in active" id="estimateheader">
 				<%@ include file="abstractestimate-viewheader.jsp"%>
 				<%@ include file="abstractestimate-viewmultiyearestimate.jsp"%>
+				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true}">
+					<%@ include file="spilloverestimate-viewtechnicalsanction.jsp"%>
+					<%@ include file="spilloverestimate-viewadminsanction.jsp"%>
+				</c:if>
 				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">

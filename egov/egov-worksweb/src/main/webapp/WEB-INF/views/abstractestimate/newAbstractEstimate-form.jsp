@@ -83,7 +83,11 @@
 			<div class="tab-pane fade in active" id="estimateheader">
 				<%@ include file="estimate-header.jsp"%>
 				<%@ include file="estimate-multiYearEstimate.jsp"%>
-				<%@ include file="../common/uploadDocuments.jsp"%>
+				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
+	 				<%@ include file="spilloverestimate-technicalsanction.jsp"%>
+	 				<%@ include file="spilloverestimate-adminsanction.jsp"%>
+				</c:if>
+ 				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">
 				<%@ include file="estimate-sor.jsp"%>
@@ -96,20 +100,33 @@
 				<%@ include file="estimate-financialdetails.jsp"%>
 				<%@ include file="estimate-asset.jsp"%>
 			</div>
-			<c:if test="${!workflowHistory.isEmpty() && mode != null }">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">
-							<spring:message  code="lbl.apphistory"/>
-						</div>
-					</div>
-					<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+		<c:choose>
+			<c:when test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+				<div class="col-sm-12 text-center">
+					<form:button type="submit" name="submit" id="saveSpillAbstractEstimate" class="btn btn-primary" value="Save"  ><spring:message code="lbl.save"/></form:button>
+					<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
 				</div>
-			</c:if>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-			</div>
+		    </c:when>
+			<c:otherwise>
+				<c:if test="${!workflowHistory.isEmpty() && mode != null }">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message  code="lbl.apphistory"/>
+							</div>
+						</div>
+						<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+					</div>
+				</c:if>
+				<div class="row">
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+					<div class="buttonbottom" align="center">
+						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+					</div>
+				</div>
+		    </c:otherwise>
+	  </c:choose>
 		</div>
 	</div>
 </form:form>
@@ -117,3 +134,7 @@
 <script type="text/javascript" src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/loadmaps.js?rnd=${app_release_no}'/>"></script>
+<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated}">
+<script type="text/javascript"
+	src="<c:url value='/resources/js/abstractestimate/spilloverabstractestimate.js?rnd=${app_release_no}'/>"></script>
+</c:if>

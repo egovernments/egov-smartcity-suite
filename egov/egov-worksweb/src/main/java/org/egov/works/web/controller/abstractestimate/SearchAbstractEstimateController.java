@@ -119,6 +119,11 @@ public class SearchAbstractEstimateController {
                 workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
         model.addAttribute("paymentreleased",
                 estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
+        model.addAttribute("adminsanctionbydesignation",
+                worksUtils.getUserDesignation(abstractEstimate.getApprovedBy()));
+        model.addAttribute("technicalsanctionbydesignation",
+                worksUtils.getUserDesignation(abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy()));
+
 
         return "abstractestimate-view";
     }

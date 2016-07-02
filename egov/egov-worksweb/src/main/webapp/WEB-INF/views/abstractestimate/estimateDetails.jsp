@@ -1,4 +1,3 @@
-
 <link rel="stylesheet" href="<c:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
@@ -18,7 +17,14 @@
 			    <spring:message code="lbl.abstractestimatedate" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="estimateDate" name="estimateDate" class="form-control disablefield" value="${estimateDate}"/>
+				<c:choose>
+						<c:when test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }" >
+							 <form:input path="estimateDate" id="estimateDate" data-errormsg="Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" required="required" />
+						</c:when>
+						<c:otherwise>
+							<form:input path="estimateDate" name="estimateDate" class="form-control disablefield" value="${estimateDate}"/>						
+						</c:otherwise>
+				</c:choose>
 				<form:errors path="estimateDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
@@ -126,4 +132,10 @@
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		
+		<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
+			<div class="form-group">
+				<label class="col-sm-4 control-label text-right view-content">
+				    <spring:message code="lbl.spilloverwork" />
+				</label>
+			</div>
+		</c:if>

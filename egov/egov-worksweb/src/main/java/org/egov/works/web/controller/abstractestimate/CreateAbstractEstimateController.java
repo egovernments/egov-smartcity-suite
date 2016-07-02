@@ -40,6 +40,7 @@
 package org.egov.works.web.controller.abstractestimate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -47,9 +48,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
+import org.egov.pims.commons.Designation;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -97,6 +102,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
+    
+    @Autowired
+    private DesignationService designationService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("abstractEstimate") final AbstractEstimate abstractEstimate,
@@ -112,8 +123,30 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
             final LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
-        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
-        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
+        
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
+            final List<Designation> designations = new ArrayList<Designation>();
+
+            final List<AppConfigValues> configValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_TECHSANCTION_AUTHORITY);
+
+            for (final AppConfigValues valuesFordesignation : configValues)
+                designations.add(designationService.getDesignationByName(valuesFordesignation.getValue()));
+            model.addAttribute("designations", designations);
+            
+            final List<AppConfigValues> configValuesForAdminSanctionAuthority = appConfigValuesService
+                    .getConfigValuesByModuleAndKey(
+                            WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_ADMINSANCTION_AUTHORITY);
+
+            final List<Designation> adminSanctionAuthority = new ArrayList<Designation>();
+
+            for (final AppConfigValues valuesForAdminSanctiondesignation : configValuesForAdminSanctionAuthority)
+                adminSanctionAuthority
+                        .add(designationService.getDesignationByName(valuesForAdminSanctiondesignation.getValue()));
+            model.addAttribute("adminSanctionAuthority", adminSanctionAuthority);
+        }else{
+            
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         prepareWorkflow(model, abstractEstimate, workflowContainer);
         List<String> validActions = Collections.emptyList();
@@ -125,6 +158,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
         model.addAttribute("validActionList", validActions);
         model.addAttribute("mode", null);
+        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
+        }
+        model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -145,6 +181,16 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         estimateService.validateActivities(abstractEstimate, bindErrors);
+        
+        //Added server side validation for selected abstract estimate created flag
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
+            estimateService.validateTechnicalSanctionDetail(abstractEstimate, bindErrors);
+            estimateService.validateAdminSanctionDetail(abstractEstimate, bindErrors);
+            estimateService.setTechnicalSanctionDetails(abstractEstimate);
+            
+        }
+            
         if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
             if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                 bindErrors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
@@ -156,6 +202,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             loadViewData(model, abstractEstimate, abstractEstimate.getLineEstimateDetails());
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
+            model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("mode", "edit");
             return "newAbstractEstimate-form";
         } else {
@@ -172,8 +219,13 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             if (savedAbstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
                 return "redirect:/abstractestimate/update/" + savedAbstractEstimate.getId() + "?mode=save";
 
-            return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
-                    + "&approvalPosition=" + approvalPosition;
+            if (abstractEstimate.getLineEstimateDetails() != null
+                    && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
+                return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
+                    + "&approvalPosition=";
+            else
+                return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
+                        + "&approvalPosition=" + approvalPosition;
         }
 
     }
@@ -223,7 +275,12 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private String getMessageByStatus(final AbstractEstimate abstractEstimate, final String approverName,
             final String nextDesign) {
         String message = "";
-
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
+                message = messageSource.getMessage("msg.estimate.spilladminsanctioned",
+                        new String[] { abstractEstimate.getEstimateNumber() }, null);
+            
+        }else{
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
             message = messageSource.getMessage("msg.estimate.saved",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
@@ -250,8 +307,9 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CANCELLED.toString()))
             message = messageSource.getMessage("msg.estimate.cancelled",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
-
+        }
         return message;
+        
     }
 
     /**

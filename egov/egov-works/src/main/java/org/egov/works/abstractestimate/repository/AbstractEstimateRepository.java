@@ -67,5 +67,7 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
 
     @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.executingDepartment.id in (:departmentIds)")
     List<User> findAbstractEstimateCreatedByUsers(@Param("departmentIds") final List<Long> departmentIds);
+    
+    AbstractEstimate findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(String technicalSanctionNumber, String statusCode);
 
 }

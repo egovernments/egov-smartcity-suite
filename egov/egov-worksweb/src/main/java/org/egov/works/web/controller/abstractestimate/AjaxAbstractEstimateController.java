@@ -43,6 +43,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -87,7 +91,13 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
-
+    
+    @Autowired
+    private AssignmentService assignmentService;
+    
+    @Autowired
+    private UserService userService;
+    
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
@@ -164,5 +174,19 @@ public class AjaxAbstractEstimateController {
         final String result = new StringBuilder("{ \"data\":").append(toSearchAbstractEstimateForLOAResultJson(searchResultList))
                 .append("}").toString();
         return result;
+    }
+    
+    @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<User> getAssignmentByDesignation(
+            @RequestParam("approvalDesignation") final Long approvalDesignation) {
+        final List<User> users = new ArrayList<User>();
+        List<Assignment> assignments = new ArrayList<Assignment>();
+        if (approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1)
+            assignments = assignmentService.getAllActiveAssignments(approvalDesignation);
+
+        for (final Assignment assignment : assignments)
+            users.add(userService.getUserById(assignment.getEmployee().getId()));
+
+        return users;
     }
 }

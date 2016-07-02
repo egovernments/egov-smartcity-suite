@@ -51,6 +51,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.service.AssetService;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
@@ -198,6 +199,9 @@ public class EstimateService {
 
     @Autowired
     private UOMService uomService;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -227,9 +231,14 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
+        if(abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()){
+            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                    EstimateStatus.ADMIN_SANCTIONED.toString()));
+        }else{
         createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
-
+        }
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -876,5 +885,50 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        
     }
+    
+    public void validateTechnicalSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() == null)
+            errors.reject("technicalSanctionDate", "error.techdate.notnull");
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate()
+                        .before(abstractEstimate.getEstimateDate()))
+            errors.reject("technicalSanctionDate", "error.technicalsanctiondate");
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() == null)
+            errors.reject("technicalSanctionNumber", "error.technumber.notnull");
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() == null)
+            errors.reject("authority", "error.techby.notnull");
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null
+                && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() != null) {
+            final AbstractEstimate esistingAbstractEstimate = abstractEstimateRepository
+                    .findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(
+                            abstractEstimate.getEstimateTechnicalSanctions().get(0)
+                                    .getTechnicalSanctionNumber(),
+                            EstimateStatus.CANCELLED.toString());
+            if (esistingAbstractEstimate != null)
+                errors.reject("error.technumber.unique", "error.technumber.unique");
+        }
+    }
+
+    public void validateAdminSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
+        if (abstractEstimate.getApprovedDate() == null)
+            errors.reject("error.adminsanctiondate.notnull", "error.adminsanctiondate.notnull");
+        if (abstractEstimate.getApprovedBy() == null)
+            errors.reject("error.adminby.notnull", "error.adminby.notnull");
+        if (abstractEstimate.getApprovedBy() != null
+                && abstractEstimate.getApprovedDate().before(abstractEstimate.getEstimateDate()))
+            errors.reject("error.abstractadminsanctiondate", "error.abstractadminsanctiondate");
+
+    }
+
+    public void setTechnicalSanctionDetails(final AbstractEstimate abstractEstimate) {
+        if (abstractEstimate.getEstimateTechnicalSanctions() != null)
+            abstractEstimate.getEstimateTechnicalSanctions().get(0).setAbstractEstimate(abstractEstimate);
+    }
+
 }

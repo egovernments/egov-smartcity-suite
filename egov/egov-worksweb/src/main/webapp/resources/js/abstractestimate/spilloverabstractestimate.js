@@ -1,0 +1,218 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
+$adminSanctionNameId = 0;
+$(document).ready(function(){
+	$('#designation').val($('#designationValue').val());
+	$('#designation').trigger('change');
+	$adminSanctionNameId = $('#authorityValueForAdmin').val();
+
+	var authorityValue = $('#authorityValue').val();
+	$('#authority option').each(function() {
+		var value = $(this).val();
+		if(value == authorityValue)
+			$(this).attr('selected', 'selected');
+	});
+	
+});
+
+
+
+$('#designation').change(function(){
+	$.ajax({
+		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
+		type: "GET",
+		data: {
+			approvalDesignation : $('#designation').val(),
+			approvalDepartment : $('#executingDepartment').val()    
+		},
+		dataType: "json",
+		success: function (response) {
+			$('#authority').empty();
+			$('#authority').append($("<option value=''>Select from below</option>"));
+			$.each(response, function(index, value) {
+				$('#authority').append($('<option>').text(value.name).attr('value', value.id));  
+			});
+			var authorityValue = $('#authorityValue').val();
+			$('#authority').val(authorityValue);
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+});
+
+function validateAdminSanctionDate(obj){
+	var estimateDate = $('#estimateDate').val();
+	var adminSanctionDate = $('#approvedDate').val();
+	if(new Date((estimateDate.split('/').reverse().join('-'))).getTime() > new Date((adminSanctionDate.split('/').reverse().join('-'))).getTime())
+	{	
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		bootbox.alert($('#errorAbstractAdminSanctionDate').val());
+		return false;	
+	}
+	
+}
+
+function validateTechinicalSanctionDate(obj){
+	var estimateDate = $('#estimateDate').val();
+	var technicalSanctionDate = $('#technicalSanctionDate').val();
+	if(new Date((estimateDate.split('/').reverse().join('-'))).getTime() > new Date((technicalSanctionDate.split('/').reverse().join('-'))).getTime())
+	{	
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		bootbox.alert($('#errorAbstractTechnicalSanctionDate').val());
+		return false;	
+	}
+	
+}
+
+function initializeDatePicker(){
+	
+	$('#approvedDate').datepicker().off('changeDate');
+	jQuery( "#approvedDate" ).datepicker({ 
+		format: 'dd/mm/yyyy',
+		autoclose:true,
+		onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}
+		}).on('changeDate', function(ev) {
+		
+			var string=jQuery(this).val();
+			if(!(string.indexOf("_") > -1)){
+			isDatepickerOpened=false; 
+			validateAdminSanctionDate(this);
+			$('#approvedDate').datepicker('hide');
+			}
+
+		}).data('datepicker');
+	
+	$('#technicalSanctionDate').datepicker().off('changeDate');
+	jQuery( "#technicalSanctionDate" ).datepicker({ 
+		format: 'dd/mm/yyyy',
+		autoclose:true,
+		onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}
+		}).on('changeDate', function(ev) {
+		
+			var string=jQuery(this).val();
+			if(!(string.indexOf("_") > -1)){
+			isDatepickerOpened=false; 
+			validateTechinicalSanctionDate(this);
+			$('#technicalSanctionDate').datepicker('hide');
+			}
+
+		}).data('datepicker');
+	
+	$('#technicalSanctionDate').datepicker('update');
+
+}
+
+$('#adminSanctionAuthority').change(function(){
+	$.ajax({
+		url: "/egworks/abstractestimate/ajax-assignmentByDesignation",     
+		type: "GET",
+		data: {
+			approvalDesignation : $('#adminSanctionAuthority').val(),
+		},
+		dataType: "json",
+		success: function (response) {
+			$('#adminSanctionAuthorityValue').empty();
+			$('#adminSanctionAuthorityValue').append($("<option value=''>Select from below</option>"));
+			$.each(response, function(index, value) {
+				var selected="";
+				if($adminSanctionNameId)
+				{
+					if($adminSanctionNameId==val.id)
+					{
+						selected="selected";
+					}
+				}
+				$('#adminSanctionDesignation').append($("<option value='" + value.id + "'>" + value.name + "</option>"));
+			});
+			var adminSanctionAuthorityValue = $('#adminSanctionAuthorityValue').val();
+			$('#adminSanctionAuthorityValue').val(authorityValue);
+		}, 
+		error: function (response) {
+			console.log("failed");
+		}
+	});
+});
+
+$('#saveSpillAbstractEstimate').click(function() {
+	if($('#abstractEstimate').valid()) {
+		validateSORDetails();
+		$('.disablefield').removeAttr("disabled");
+		return true;
+	} else
+	return false;
+});
+
+function resetFormOnSubmit(){
+	if($('#estimateNumber').val() != '') {
+		   $('.disablefield').attr('disabled', 'disabled');
+		}
+	initializeDatePicker();
+	$('#estimateDate').val('');
+	var adminSanctionDesignation = $('#adminSanctionAuthority').val();
+	$("#adminSanctionAuthority").each(function() {
+		if($(this).children('option').length == 2) {
+		 	$(this).find('option').eq(1).prop('selected', true);
+		} else {
+			$(this).val(adminSanctionAuthority);
+		}
+	});
+	$('#adminSanctionAuthority').trigger('change');
+	
+	$('#designation').val($('#designationValue').val());
+	$('#designation').trigger('change');
+	
+	var authorityValue = $('#authorityValue').val();
+	$('#authority option').each(function() {
+		var value = $(this).val();
+		if(value == authorityValue)
+			$(this).attr('selected', 'selected');
+	});
+	
+}
