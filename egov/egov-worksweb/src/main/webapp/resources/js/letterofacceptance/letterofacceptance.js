@@ -98,6 +98,7 @@ $(document).ready(function(){
 		if($('#defectLiabilityPeriod').val() <= 0) 
 			$('#defectLiabilityPeriod').val('');
 		$('#estimateAmount').val(roundTo($('#estimateAmount').val()));
+		$('#workValue').val(roundTo($('#workValue').val()));
 		
 		calculateAgreementAmount();
 		

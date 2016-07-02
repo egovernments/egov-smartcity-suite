@@ -68,8 +68,8 @@
 								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><c:out value="${sorDtls.estimateRate}"></c:out></td>
-								 	<td class="text-right"><c:out value="${sorDtls.getAmount().value}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}"></c:out></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
 						<c:forEach items="${abstractEstimate.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
@@ -81,8 +81,8 @@
 									<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.estimateRate}"></c:out></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.getAmount().value}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}"></c:out></fmt:formatNumber></td>
 								</tr>
 						</c:forEach>
 					</c:when>
@@ -103,7 +103,7 @@
 				<tr>
 					<td colspan="7" class="text-right"><spring:message
 							code="lbl.total" /></td>
-					<td class="text-right"><span id="boqTotal">${total}</span></td>
+					<td class="text-right"><span id="boqTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${total}</fmt:formatNumber></span></td>
 				</tr>
 				<tr>
 					<td colspan="7" class="text-right"><spring:message
