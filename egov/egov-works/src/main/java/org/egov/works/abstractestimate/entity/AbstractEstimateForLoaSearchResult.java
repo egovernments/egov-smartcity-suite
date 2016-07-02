@@ -42,7 +42,6 @@ package org.egov.works.abstractestimate.entity;
 import java.math.BigDecimal;
 
 public class AbstractEstimateForLoaSearchResult {
-    private Long id;
     private Long leId;
     private Long aeId;
     private String adminSanctionNumber;
@@ -52,18 +51,9 @@ public class AbstractEstimateForLoaSearchResult {
     private String createdBy;
     private String adminSanctionBy;
     private BigDecimal estimateAmount;
-    private BigDecimal actualEstimateAmount;
     private String workIdentificationNumber;
 
     public AbstractEstimateForLoaSearchResult() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getAdminSanctionNumber() {
@@ -120,14 +110,6 @@ public class AbstractEstimateForLoaSearchResult {
 
     public void setAdminSanctionBy(final String adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
-    }
-
-    public BigDecimal getActualEstimateAmount() {
-        return actualEstimateAmount;
-    }
-
-    public void setActualEstimateAmount(final BigDecimal actualEstimateAmount) {
-        this.actualEstimateAmount = actualEstimateAmount;
     }
 
     public String getWorkIdentificationNumber() {

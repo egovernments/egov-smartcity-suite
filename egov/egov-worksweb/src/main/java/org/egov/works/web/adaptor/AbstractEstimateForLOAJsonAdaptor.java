@@ -83,16 +83,11 @@ public class AbstractEstimateForLOAJsonAdaptor implements JsonSerializer<Abstrac
                 jsonObject.addProperty("currentOwner", abstractEstimateForLoaSearchResult.getCurrentOwner());
             else
                 jsonObject.addProperty("currentOwner", "");
-            if (abstractEstimateForLoaSearchResult.getActualEstimateAmount() != null)
-                jsonObject.addProperty("actualEstimateAmount", abstractEstimateForLoaSearchResult.getActualEstimateAmount());
-            else
-                jsonObject.addProperty("actualEstimateAmount", "");
             if (abstractEstimateForLoaSearchResult.getWorkIdentificationNumber() != null)
                 jsonObject.addProperty("workIdentificationNumber",
                         abstractEstimateForLoaSearchResult.getWorkIdentificationNumber());
             else
                 jsonObject.addProperty("workIdentificationNumber", "");
-            jsonObject.addProperty("id", abstractEstimateForLoaSearchResult.getId());
             jsonObject.addProperty("leId", abstractEstimateForLoaSearchResult.getLeId());
             jsonObject.addProperty("aeId", abstractEstimateForLoaSearchResult.getAeId());
         }

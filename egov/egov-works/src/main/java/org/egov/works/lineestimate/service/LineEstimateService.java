@@ -407,7 +407,7 @@ public class LineEstimateService {
     public List<String> findEstimateNumbersForLoa(final String name) {
         final List<String> lineEstimateNumbers = lineEstimateDetailsRepository.findEstimateNumbersForLoa(
                 "%" + name.toUpperCase() + "%",
-                LineEstimateStatus.TECHNICAL_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
+                LineEstimateStatus.ADMINISTRATIVE_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS);
 
         return lineEstimateNumbers;
     }

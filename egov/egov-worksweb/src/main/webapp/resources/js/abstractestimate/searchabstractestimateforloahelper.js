@@ -104,12 +104,8 @@ function callAjaxSearch() {
 					if(data.estimateNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="openAbstractEstimate(\''+ data.aeId +'\')">' + data.estimateNumber + '</a>');
 					if(data.adminSanctionNumber != null)
-						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.id +'\')">' + data.adminSanctionNumber + '</a>');
+						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.adminSanctionNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
-					if(data.actualEstimateAmount != null)
-						$('td:eq(9)',row).html(parseFloat(Math.round(data.actualEstimateAmount * 100) / 100).toFixed(2));
-					else
-						$('td:eq(9)',row).html('0.00');
 					return row;
 				},
 				aaSorting: [],				
@@ -122,7 +118,6 @@ function callAjaxSearch() {
 					"data" : "createdBy", "sClass" : "text-center"} ,{
 					"data" : "adminSanctionBy", "sClass" : "text-center"}, {
 					"data" : "adminSanctionNumber", "sClass" : "text-center"} ,{
-					"data" : "", "sClass" : "text-right", "sType" : "decimal"}, {
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});

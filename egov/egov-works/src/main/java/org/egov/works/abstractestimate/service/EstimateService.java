@@ -760,8 +760,8 @@ public class EstimateService {
                             .eq("projectCode.code", abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber())
                             .ignoreCase());
                 criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
-                Restrictions.eq("upper(aeStatus.code)",
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase());
+                criteria.add(Restrictions.eq("aeStatus.code",
+                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()).ignoreCase());
                 if (abstractEstimateForLoaSearchRequest.isSpillOverFlag())
                     criteria.add(Restrictions.eq("lineEstimate.spillOverFlag",
                             abstractEstimateForLoaSearchRequest.isSpillOverFlag()));
@@ -780,16 +780,15 @@ public class EstimateService {
         final List<AbstractEstimateForLoaSearchResult> abstractEstimateForLoaSearchResults = new ArrayList<AbstractEstimateForLoaSearchResult>();
         for (final AbstractEstimate ae : abstractEstimates) {
             final AbstractEstimateForLoaSearchResult result = new AbstractEstimateForLoaSearchResult();
-            result.setId(ae.getLineEstimateDetails().getLineEstimate().getId());
+            if (ae.getLineEstimateDetails() != null)
+                result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
             result.setAeId(ae.getId());
-            result.setAdminSanctionNumber(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionNumber());
-            result.setCreatedBy(ae.getLineEstimateDetails().getLineEstimate().getCreatedBy().getName());
-            result.setEstimateAmount(ae.getLineEstimateDetails().getEstimateAmount());
+            result.setCreatedBy(ae.getCreatedBy().getName());
+            result.setEstimateAmount(ae.getEstimateValue());
             result.setEstimateNumber(ae.getEstimateNumber());
-            result.setNameOfWork(ae.getLineEstimateDetails().getNameOfWork());
-            if (ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionBy() != null)
-                result.setAdminSanctionBy(ae.getLineEstimateDetails().getLineEstimate().getAdminSanctionBy().getName());
-            result.setActualEstimateAmount(ae.getLineEstimateDetails().getActualEstimateAmount());
+            result.setNameOfWork(ae.getName());
+            if (ae.getApprovedBy() != null)
+                result.setAdminSanctionBy(ae.getApprovedBy().getName());
             result.setWorkIdentificationNumber(ae.getProjectCode().getCode());
             abstractEstimateForLoaSearchResults.add(result);
         }
