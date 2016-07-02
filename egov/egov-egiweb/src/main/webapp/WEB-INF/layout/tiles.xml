@@ -236,14 +236,14 @@
     </definition>
     <definition name="crossHierarchy-list" extends="base_layout">
         <put-attribute name="page-title" value="title.search.crosshierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crossHierarchy/crossHierarchy-list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-list.jsp"/>
     </definition>
     <definition name="crossHierarchy-editform" extends="base_layout">
-        <put-attribute name="page-title" value="title.updateCrossHierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crossHierarchy/crossHierarchy-editform.jsp"/>
+        <put-attribute name="page-title" value="title.updateCrosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-editform.jsp"/>
     </definition>
      <definition name="crossHierarchy-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.successCrossHierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crossHierarchy/crossHierarchy-success.jsp"/>
+        <put-attribute name="page-title" value="title.successCrosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-success.jsp"/>
     </definition>
 </tiles-definitions>

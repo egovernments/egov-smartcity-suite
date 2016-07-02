@@ -60,30 +60,28 @@
 						<label class="col-sm-3 control-label">
 						<spring:message code="lbl.escalation.heading.fromPosition" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="fromposition" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="toPosition" id="topositionId"/>
-							<form:errors path="toPosition" cssClass="error-msg" />
-							<div class="error-msg positionerror all-errors display-hide"></div>
+							<input id="fromposition" name="fromposition" type="text" class="form-control typeahead" autocomplete="off"  required="required"/>
+							<form:hidden path="fromPosition" id="frompositionId"/>
+							<form:errors path="fromPosition" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label">
 							<spring:message code="lbl.complaintType"/><span class="mandatory"></span></label>
 						<div class="col-sm-6 add-margin">
-							<form:select path="complaintTypes" id="complaintTypes"
+							<form:select path="complaintTypes" id="complaintTypes" 
 								cssClass="form-control" required="required" style="height:250px">
 								<form:options items="${complainttypes}" itemValue="id" itemLabel="name" />
 							</form:select>
 						</div>
 					</div>
 					<div class="form-group" >
-						<label class="col-sm-3 control-label">
+						<label class="col-sm-3 control-label">  
 						<spring:message code="lbl.escalation.heading.toPosition" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
-							<input id="toposition" type="text" class="form-control typeahead" placeholder="" autocomplete="off" required="required"/>
-							<form:hidden path="fromPosition" id="frompositionId"/>
-							<form:errors path="fromPosition" cssClass="error-msg" />
-							<div class="error-msg positionerror all-errors display-hide"></div>
+							<input id="toposition" type="text" name="toposition" class="form-control typeahead" autocomplete="off" required="required"/>
+							<form:hidden path="toPosition" id="topositionId"/>
+							<form:errors path="toPosition" cssClass="error-msg" />
 						</div>
 					</div>
 				</div>

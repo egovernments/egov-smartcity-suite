@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.crossHierarchy;
+package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/crossHierarchy/update/{nameArray}")
+@RequestMapping("/crosshierarchy/update/{nameArray}")
 public class ModifyCrossHierarchyController {
 
     @Autowired
@@ -77,7 +77,7 @@ public class ModifyCrossHierarchyController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String crossHierarchyFormForUpdate(@ModelAttribute final CrossHierarchyGenerator crossHierarchyGenerator,
+    public String crosshierarchyFormForUpdate(@ModelAttribute final CrossHierarchyGenerator crossHierarchyGenerator,
             @PathVariable final String[] nameArray, final Model model) {
         Boundary boundary = null;
         BoundaryType boundaryType = null;
@@ -86,8 +86,9 @@ public class ModifyCrossHierarchyController {
             boundaryType = boundaryTypeService.getBoundaryTypeById(Long.parseLong(nameArray[1]));
         }
 
-        final List<Boundary> boundaryList = getBoundaryByBoundaryType();
-        final List<Boundary> mappedBoundary = getMappedLocationForBoundary(Long.parseLong(nameArray[0]));
+        final List<Boundary> boundaryList = crossHierarchyService.getBoundaryByBoundaryType();
+        final List<Boundary> mappedBoundary = crossHierarchyService
+                .getActiveChildBoundariesByBoundaryId(Long.parseLong(nameArray[0]));
         boundaryList.remove(mappedBoundary);
         model.addAttribute("boundary", boundary);
         model.addAttribute("boundaryType", boundaryType);
@@ -99,7 +100,7 @@ public class ModifyCrossHierarchyController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String crossHierarchyFormForUpdate(@ModelAttribute final CrossHierarchyGenerator crossHierarchyGenerator,
+    public String crosshierarchyFormForUpdate(@ModelAttribute final CrossHierarchyGenerator crossHierarchyGenerator,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "crossHierarchy-editform";
@@ -107,48 +108,35 @@ public class ModifyCrossHierarchyController {
         final Boundary boundary = crossHierarchyGenerator.getBoundary();
         final BoundaryType boundaryType = boundaryTypeService
                 .getBoundaryTypeById(crossHierarchyGenerator.getBoundaryType().getId());
-        final List<Boundary> mappedBoundaries = getMappedLocationForBoundary(boundary.getId());
+        final List<Boundary> mappedBoundaries = crossHierarchyService
+                .getActiveChildBoundariesByBoundaryId(boundary.getId());
         final List<Boundary> selectedBoundaries = crossHierarchyGenerator.getBoundaries();
-        if(!mappedBoundaries.isEmpty()){
-        mappedBoundaries.remove(selectedBoundaries);
-        
-        for (final Boundary mappedBoundary : mappedBoundaries) {
-            final CrossHierarchy existingCrossHierarchy = crossHierarchyService
-                    .findAllByParentAndChildBoundary(boundary.getId(), mappedBoundary.getId());
-            if (existingCrossHierarchy != null)
-                crossHierarchyService.delete(existingCrossHierarchy);
-        }
-        }
-        if(!selectedBoundaries.isEmpty()){
-        for (final Boundary mappedBoundary : crossHierarchyGenerator.getBoundaries()) {
-            final CrossHierarchy crossHierarchy = new CrossHierarchy();
-            final CrossHierarchy existingCrossHierarchy = crossHierarchyService
-                    .findAllByParentAndChildBoundary(boundary.getId(), mappedBoundary.getId());
-            if (existingCrossHierarchy == null) {
-                crossHierarchy.setChild(mappedBoundary);
-                crossHierarchy.setParent(boundary);
-                crossHierarchy.setParentType(boundaryType);
-                crossHierarchy.setChildType(mappedBoundary.getBoundaryType());
-                crossHierarchyService.create(crossHierarchy);
+        if (!mappedBoundaries.isEmpty()) {
+            mappedBoundaries.remove(selectedBoundaries);
+
+            for (final Boundary mappedBoundary : mappedBoundaries) {
+                final CrossHierarchy existingCrossHierarchy = crossHierarchyService
+                        .findAllByParentAndChildBoundary(boundary.getId(), mappedBoundary.getId());
+                if (existingCrossHierarchy != null)
+                    crossHierarchyService.delete(existingCrossHierarchy);
             }
         }
+        if (!selectedBoundaries.isEmpty())
+            for (final Boundary mappedBoundary : crossHierarchyGenerator.getBoundaries()) {
+                final CrossHierarchy crossHierarchy = new CrossHierarchy();
+                final CrossHierarchy existingCrossHierarchy = crossHierarchyService
+                        .findAllByParentAndChildBoundary(boundary.getId(), mappedBoundary.getId());
+                if (existingCrossHierarchy == null) {
+                    crossHierarchy.setChild(mappedBoundary);
+                    crossHierarchy.setParent(boundary);
+                    crossHierarchy.setParentType(boundaryType);
+                    crossHierarchy.setChildType(mappedBoundary.getBoundaryType());
+                    crossHierarchyService.create(crossHierarchy);
+                }
+            }
 
-        }
-
-        model.addAttribute("message", "msg.crossHierarchy.update.success");
+        model.addAttribute("message", "msg.crosshierarchy.update.success");
 
         return "crossHierarchy-success";
-    }
-
-    public List<Boundary> getBoundaryByBoundaryType() {
-        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName("Locality");
-        final List<Boundary> boundaryList = boundaryService.getAllBoundariesByBoundaryTypeId(boundaryType.getId());
-        return boundaryList;
-    }
-
-    public List<Boundary> getMappedLocationForBoundary(final Long boundaryId) {
-
-        final List<Boundary> boundaryList = crossHierarchyService.getActiveChildBoundariesByBoundaryId(boundaryId);
-        return boundaryList;
     }
 }

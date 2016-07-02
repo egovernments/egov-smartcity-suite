@@ -55,8 +55,35 @@
 	<definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
+	
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
+    
+    <definition name="uomcategory-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.uomcategory.new" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-new.jsp"/>
+    </definition>
+
+    <definition name="uomcategory-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.uomcategory.view" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-view.jsp"/>
+    </definition>
+
+    <definition name="uomcategory-edit" extends="base_layout">
+		<put-attribute name="page-title" value="title.uomcategory.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-edit.jsp"/>
+	</definition>
+
+	<definition name="uomcategory-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.uomcategory.result" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-result.jsp"/>
+	</definition>
+
+	<definition name="uomcategory-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.uomcategory.search" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-search.jsp"/>
+	</definition>
+
 
 </tiles-definitions>

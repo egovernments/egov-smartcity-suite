@@ -121,12 +121,13 @@
 		var screenType="subcategoryMaster"; 
 		var name="";
 		var code="";
+		var subcategoryid= document.getElementById("licenseSubCategory_id").value;
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},subcategorySuccessHandler,subcategoryFailureHandler);
+		    	{name:name, code:code, subcategoryId:subcategoryid, screenType:screenType},subcategorySuccessHandler,subcategoryFailureHandler);
 	}
 
 	subcategoryFailureHandler=function(){

@@ -42,7 +42,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<script src='https://www.google.com/recaptcha/api.js'></script>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12" style="position:relative;">
@@ -191,7 +190,8 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
-						<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
+						<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+						<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
 						<form:errors cssClass="add-margin error-msg"/>
 					</div>
 				</div>

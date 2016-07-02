@@ -1,0 +1,1 @@
+update eg_wf_matrix set validactions ='Generate WorkOrder' where objecttype ='WaterConnectionDetails' and  nextstate ='Work order generated' and currentstate = 'Digital Signature Updated' and validactions ='WorkOrder Generate';

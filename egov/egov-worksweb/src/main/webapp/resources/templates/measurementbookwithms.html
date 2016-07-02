@@ -1,0 +1,502 @@
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Neon Admin Panel">
+    <meta name="author" content="">
+    
+    <title>eGov Urban Portal</title>
+    
+    <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
+    <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
+    <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
+    
+    <!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style>
+      .position_alert1{
+        position:absolute;top:15px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;width:215px;
+      }
+      .position_alert2{
+        position:absolute;top:15px;right:240px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
+      }
+      .position_alert3{
+        background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
+      }
+    </style>
+  </head>
+  <body class="page-body">
+    <div class="page-container" id="page-container">
+      <header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+        
+        <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+          <div class="container-fluid">
+            <div class="navbar-header col-md-10 col-xs-10">
+              <a class="navbar-brand" href="javascript:void(0);">
+                <img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
+                <div>
+                  
+                  <span class="title2">Create Measurement Book</span>
+                </div>
+              </a>
+            </div>
+            
+            <div class="nav-right-menu col-md-2 col-xs-2">
+              <ul class="hr-menu text-right">
+                <li class="ico-menu">
+                  <a href="javascript:void(0);">
+                    <img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/logo@2x.png" title="Powered by eGovernments" height="20px">
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </div>
+        </nav>
+        
+      </header>
+      <div class="main-content">
+          <div class="position_alert1">MB Amount : &#8377 <span>3300</span></div>
+          <div class="position_alert2">Finalised Tender (&#37;) : <span> + 10</span></div>
+          <div class="row">
+            <div class="col-md-12">
+              <ul class="nav nav-tabs" id="settingstab">
+                <li class="active"><a data-toggle="tab" href="#header" data-tabidx=1>MB Header</a></li>
+                <li><a data-toggle="tab" href="#workdetails" data-tabidx=2>Tendered Items</a></li>
+                <li><a data-toggle="tab" href="#thirdtab" data-tabidx=3>Non Tendered & Lumpsum Items</a></li>
+              </ul>
+              <form role="form" class="form-horizontal form-groups-bordered">
+                <div class="tab-content">
+                  <div class="tab-pane fade in active" id="header">
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="panel-title">
+                          Measurement Book Details
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">MB Reference No.<span class="mandatory"></span></label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label text-right">MB Entry Date</label>
+                            <div class="col-sm-3 add-margin">
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">From Page No.<span class="mandatory"></span></label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label text-right">To Page No.<span class="mandatory"></span></label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">Measurement Abstract<span class="mandatory"></span></label>
+                            <div class="col-sm-3 add-margin">
+                                <textarea class="form-control"></textarea>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="panel-title">
+                          Work Details
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">Estimate No.</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled="" value="ENG/2016-17/00016">
+                            </div>
+                            <label class="col-sm-2 control-label text-right">Name of the Work</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled="" value="23/June">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">Work Identification No.</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled=""  value="ENG/SL00012">
+                            </div>
+                            <label class="col-sm-2 control-label text-right">LOA No.</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled=""  value="WO/ENG/SL00012">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">Contractor Name</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled=""  value="Y Reddy">
+                            </div>
+                            <label class="col-sm-2 control-label text-right">Work Assigned To</label>
+                            <div class="col-sm-3 add-margin">
+                                <input type="text" class="form-control" disabled=""  value="Sreeni">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label text-right">MB Issued Date</label>
+                            <div class="col-sm-3 add-margin">
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <label class="col-sm-2 control-label text-right">Contractor Comments</label>
+                            <div class="col-sm-3 add-margin">
+                                <textarea class="form-control"></textarea>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="workdetails" class="tab-pane fade">
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="position_alert3">Page Total : &#8377 <span>1000</span></div>
+                        <div class="panel-title">
+                          SOR
+                          <div class="pull-right">
+                            <a id="searchAndAdd" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-plus"></i> Add</a>
+                            <a id="addAll" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-plus"></i> Add All</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="pull-right">
+                              <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Open M-Sheet</button>
+                              <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-times-circle" aria-hidden="true"></i> Close M-Sheet</button>
+                            </div>
+                          </div>
+                        </div>
+                        <table class="table table-bordered multiheadertbl">
+                          <thead>
+                            <tr>
+                              <th>S.no</th>
+                              <th>Category</th>
+                              <th>Code</th>
+                              <th>Description</th>
+                              <th>UOM</th>
+                              <th>Approved Quantity</th>
+                              <th>Approved Rate</th>
+                              <th>Cumulative upto Previous Entry</th>
+                              <th>Current MB Entry</th>
+                              <th>Cumulative Quantity includng Current Entry</th>
+                              <th>Amount for Current Entry</th>
+                              <th>Cumulative Amount includng Current Entry</th>
+                              <th>Approved Amount</th>
+                              <th>Remarks</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colspan="15">Click on add to search and add an activity</td>
+                            </tr>
+                            <tr>
+                            <td colspan="15">
+                              <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg" style="cursor:pointer;font-size:16px;"></span></div></div>
+                              <table class="table table-bordered multiheadertbl">
+                                <thead>
+                                  <tr>
+                                    <th colspan="1"></th>
+                                    <th colspan="7">Estimated</th>
+                                    <th colspan="5">Actuals</th>
+                                    <th colspan="1"></th>
+                                  </tr>
+                                  <tr>
+                                      <th>S.no</th>
+                                      <th>Description</th>
+                                      <th>Number</th>
+                                      <th>Length</th>
+                                      <th>Width</th>
+                                      <th>Depth/Height</th>
+                                      <th>Quantity</th>
+                                      <th>Deduction</th>
+                                      <th>Number</th>
+                                      <th>Length</th>
+                                      <th>Width</th>
+                                      <th>Depth/Height</th>
+                                      <th>Quantity</th>
+                                      <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                      <td>1</td>
+                                      <td>Estimate YYY ...</td>
+                                      <td>2</td>
+                                      <td>2</td>
+                                      <td>2</td>
+                                      <td>2</td>
+                                      <td>5</td>
+                                      <td>No</td>
+                                      <td><input type="text" class="form-control"></td>
+                                      <td><input type="text" class="form-control"></td>
+                                      <td><input type="text" class="form-control"></td>
+                                      <td><input type="text" class="form-control"></td>
+                                      <td><input type="text" class="form-control"></td>
+                                      <td><span class="glyphicon glyphicon-trash"></span></td>
+                                    </tr>
+                                    <tr>
+                                      <td colspan="5"></td>
+                                      <td class="text-right">Total</td>
+                                      <td class="text-right view-content">100</td>
+                                      <td colspan="3" class="text-right"><button type="button" class="btn btn-xs btn-info add-msrow">Add Row</button><button type="button" class="btn btn-xs btn-danger">Reset</button><button type="button" class="btn btn-xs btn-primary ms-submit">Submit</button></td>
+                                      <td class="text-right">Total</td>
+                                      <td class="text-right view-content">100</td>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="11" class="text-right view-content">Total</td>
+                              <td class="text-right view-content">500</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="panel-title">
+                          Non-SOR
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <table class="table table-bordered multiheadertbl">
+                          <thead>
+                            <tr>
+                              <th>S.no</th>
+                              <th>Description</th>
+                              <th>UOM</th>
+                              <th>Approved Quantity</th>
+                              <th>Approved Rate</th>
+                              <th>Cumulative upto Previous Entry</th>
+                              <th>Current MB Entry</th>
+                              <th>Cumulative Quantity includng Current Entry</th>
+                              <th>Amount for Current Entry</th>
+                              <th>Cumulative Amount includng Current Entry</th>
+                              <th>Approved Amount</th>
+                              <th>Remarks</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colspan="13">Click on add to search and add an activity</td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="9" class="text-right view-content">Total</td>
+                              <td class="text-right view-content">500</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="thirdtab" class="tab-pane fade">
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="position_alert3">Page Total : &#8377 <span>2000</span></div>
+                        <div class="panel-title">
+                          Non Tendered
+                          <div class="pull-right">
+                            <a id="searchAndAdd" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-plus"></i> Add</a>
+                            <a id="addAll" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-plus"></i> Add All</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="pull-right">
+                              <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Open M-Sheet</button>
+                              <button type="button" class="btn btn-sm btn-secondary"><i class="fa fa-times-circle" aria-hidden="true"></i> Close M-Sheet</button>
+                            </div>
+                          </div>
+                        </div>
+                        <table class="table table-bordered multiheadertbl">
+                          <thead>
+                            <tr>
+                              <th>S.no</th>
+                              <th>Category</th>
+                              <th>Code</th>
+                              <th>Description</th>
+                              <th>UOM</th>
+                              <th>Approved Quantity</th>
+                              <th>Approved Rate</th>
+                              <th>Cumulative upto Previous Entry</th>
+                              <th>Current MB Entry</th>
+                              <th>Cumulative Quantity includng Current Entry</th>
+                              <th>Amount for Current Entry</th>
+                              <th>Cumulative Amount includng Current Entry</th>
+                              <th>Approved Amount</th>
+                              <th>Remarks</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colspan="15">Click on add to search and add an activity</td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="11" class="text-right view-content">Total</td>
+                              <td class="text-right view-content">1500</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="panel panel-primary" data-collapsed="0">
+                      <div class="panel-heading">
+                        <div class="panel-title">
+                          Lumpsum Items
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <table class="table table-bordered multiheadertbl">
+                          <thead>
+                            <tr>
+                              <th>S.no</th>
+                              <th>Description</th>
+                              <th>UOM</th>
+                              <th>Approved Quantity</th>
+                              <th>Approved Rate</th>
+                              <th>Cumulative upto Previous Entry</th>
+                              <th>Current MB Entry</th>
+                              <th>Cumulative Quantity includng Current Entry</th>
+                              <th>Amount for Current Entry</th>
+                              <th>Cumulative Amount includng Current Entry</th>
+                              <th>Approved Amount</th>
+                              <th>Remarks</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colspan="13">Click on add to search and add an activity</td>
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="9" class="text-right view-content">Total</td>
+                              <td class="text-right view-content">500</td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-primary">Forward</button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a>
+                </div>
+              </form>
+
+            </div>
+          </div>
+
+          
+    </div>
+      <footer class="main">
+          
+          Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>
+          
+      </footer> 
+    </div>
+  <link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+  <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+  <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
+       
+  <script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
+
+
+</body></html>
+
+

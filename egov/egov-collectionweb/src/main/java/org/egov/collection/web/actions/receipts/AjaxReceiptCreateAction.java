@@ -99,18 +99,6 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         return RESULT;
     }
 
-    /*
-     * public String getMISdetailsForService() { value = ""; String serviceId =
-     * parameters.get("serviceId")[0]; String queryString =
-     * "select nvl(fund.id,'-1'),nvl(department.id,'-1') from ServiceDetails where id='"
-     * + serviceId + "'"; List<Object[]> list =
-     * getPersistenceService().findAllBy(queryString); if (list != null &&
-     * !list.isEmpty()) { for (int i = 0; i < list.size(); i++) { Object[]
-     * arrayObjectInitialIndex = list.get(i); value =
-     * arrayObjectInitialIndex[0].toString() + "~" +
-     * arrayObjectInitialIndex[1].toString() + "#"; } } return RESULT; }
-     */
-
     public String getMISdetailsForService() {
         value = "";
         final String serviceId = parameters.get("serviceId")[0];

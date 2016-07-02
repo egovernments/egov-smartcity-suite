@@ -107,8 +107,8 @@ $(document).ready(function()
 	typeaheadWithEventsHandling(com_pos_typeahead, '#topositionId');
 	
 	
-	$('#escalationSearch').click(function(e){   
-		if($('#bulkEscalation').valid())
+	$('#escalationSearch').click(function(e){  
+		if($('form').valid())
 		{    
 			oTable= $('#bulk_escalation_table');
 			oTable.dataTable({

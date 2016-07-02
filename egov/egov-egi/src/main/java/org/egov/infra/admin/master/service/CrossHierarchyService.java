@@ -57,6 +57,12 @@ public class CrossHierarchyService {
     private final CrossHierarchyRepository crossHierarchyRepository;
 
     @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
     public CrossHierarchyService(final CrossHierarchyRepository crossHierarchyRepository) {
         this.crossHierarchyRepository = crossHierarchyRepository;
     }
@@ -65,7 +71,7 @@ public class CrossHierarchyService {
     public CrossHierarchy create(final CrossHierarchy crossHierarchy) {
         return crossHierarchyRepository.save(crossHierarchy);
     }
-
+    
     @Transactional
     public CrossHierarchy update(final CrossHierarchy crossHierarchy) {
         return crossHierarchyRepository.save(crossHierarchy);
@@ -118,4 +124,11 @@ public class CrossHierarchyService {
     public CrossHierarchy findAllByParentAndChildBoundary(final Long parentId, final Long childId) {
         return crossHierarchyRepository.findBoundariesByParentAndChildBoundary(parentId, childId);
     }
+    
+    public List<Boundary> getBoundaryByBoundaryType() {
+        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName("Locality");
+        final List<Boundary> boundaryList = boundaryService.getAllBoundariesByBoundaryTypeId(boundaryType.getId());
+        return boundaryList;
+    }
+
 }

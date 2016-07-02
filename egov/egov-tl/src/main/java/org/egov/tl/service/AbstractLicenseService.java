@@ -458,8 +458,8 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void processAndStoreDocument(List<LicenseDocument> documents, License license) {
         documents.forEach(document -> {
+            document.setType(this.licenseDocumentTypeService.load(document.getType().getId(), LicenseDocumentType.class));
             if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
-                document.setLicense(license);
                 int fileCount = 0;
                 for (File file : document.getUploads()) {
                     FileStoreMapper fileStore = this.fileStoreService.store(file,
@@ -467,8 +467,13 @@ public abstract class AbstractLicenseService<T extends License> {
                             document.getUploadsContentType().get(fileCount++), "EGTL");
                     document.getFiles().add(fileStore);
                 }
+                document.setEnclosed(true);
+            } else if (document.getType().isMandatory() && document.getFiles().isEmpty()) {
+                document.getFiles().clear();
+                throw new ValidationException("TL-004", "TL-004", document.getType().getName());
             }
-            document.setType(this.licenseDocumentTypeService.load(document.getType().getId(), LicenseDocumentType.class));
+            document.setDocDate(new Date());
+            document.setLicense(license);
         });
     }
 

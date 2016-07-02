@@ -52,7 +52,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-public class BankBranchService extends PersistenceService<Bankbranch, Long> {
+public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
 
     @PersistenceContext
     private EntityManager entityManager;

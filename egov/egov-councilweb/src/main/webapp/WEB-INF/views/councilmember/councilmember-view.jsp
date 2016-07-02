@@ -94,13 +94,16 @@ ${councilMember.residentialAddress}
 						id="links">
 						<c:choose>
 							<c:when test="${councilMember.photo != null}">
-										<c:if test="${(councilMember.photo.contentType == 'image/jpg') || (councilMember.photo.contentType == 'image/jpeg')|| (councilMember.photo.contentType == 'image/gif')|| 
+										<%-- <c:if test="${(councilMember.photo.contentType == 'image/jpg') || (councilMember.photo.contentType == 'image/jpeg')|| (councilMember.photo.contentType == 'image/gif')|| 
 										(councilMember.photo.contentType == 'image/png')}">
 										<a href="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
 												data-gallery> <img class="img-width add-margin"
 												src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}" alt="councilMember.photo.fileName"/></a>
-										</c:if>
-										
+										</c:if> --%>  
+										<a href="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
+												data-gallery> <img class="img-width add-margin"  style="max-width: 50%; max-height: 50%;"
+												src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}" alt="councilMember.photo.fileName"/></a>
+									
 							</c:when>
 							<c:otherwise>
 									<spring:message code="msg.no.attach.found"/>

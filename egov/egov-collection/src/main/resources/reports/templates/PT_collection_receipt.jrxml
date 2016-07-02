@@ -159,7 +159,7 @@
 				<textFieldExpression><![CDATA[$F{description}.substring($F{description}.lastIndexOf(" ")+1)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="297" y="85" width="100" height="15" uuid="b4196e17-5966-4aac-8472-41f0c74b4585">
+				<reportElement positionType="Float" x="292" y="85" width="100" height="15" uuid="b4196e17-5966-4aac-8472-41f0c74b4585">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
@@ -191,10 +191,11 @@
 				<text><![CDATA[Name & Address :]]></text>
 			</staticText>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="91" y="120" width="193" height="57" isPrintWhenDetailOverflows="true" uuid="6769e71e-4242-4cdd-b737-e9de34ba9628">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="91" y="120" width="190" height="62" isPrintWhenDetailOverflows="true" uuid="6769e71e-4242-4cdd-b737-e9de34ba9628">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
@@ -230,10 +231,9 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("PT_collection_receipt_accounts_amtpayable.jasper")]]></subreportExpression>
 			</subreport>
 			<textField>
-				<reportElement positionType="Float" x="91" y="85" width="193" height="25" uuid="13a55e85-9c77-4a1e-b2b7-715bd33a3194">
+				<reportElement positionType="Float" x="91" y="85" width="190" height="25" uuid="13a55e85-9c77-4a1e-b2b7-715bd33a3194">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
@@ -267,7 +267,7 @@
 				<text><![CDATA[Date :]]></text>
 			</staticText>
 			<textField evaluationTime="Report">
-				<reportElement positionType="Float" x="91" y="190" width="193" height="20" uuid="9ad8c7c8-d07c-472a-80ef-d278c51aa8ca">
+				<reportElement positionType="Float" x="91" y="195" width="190" height="20" uuid="9ad8c7c8-d07c-472a-80ef-d278c51aa8ca">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -282,7 +282,7 @@
 				<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="194" width="90" height="20" uuid="abb29d4e-1813-4f59-a667-18ab97e83a8c">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="199" width="90" height="20" uuid="abb29d4e-1813-4f59-a667-18ab97e83a8c">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -292,7 +292,7 @@
 				<textFieldExpression><![CDATA["Place of Payment :"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="297" y="110" width="100" height="15" uuid="56354cb7-70fd-4869-adc4-1a05f846d5d3">
+				<reportElement positionType="Float" x="292" y="110" width="100" height="15" uuid="56354cb7-70fd-4869-adc4-1a05f846d5d3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>

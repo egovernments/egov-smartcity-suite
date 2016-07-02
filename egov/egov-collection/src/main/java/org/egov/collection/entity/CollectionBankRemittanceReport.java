@@ -55,6 +55,7 @@ public class CollectionBankRemittanceReport implements Serializable {
     private Date chequeDate;
     private Double amount;
     private String voucherNumber;
+    private String serviceType;
 
     public String getReceiptNumber() {
         return receiptNumber;
@@ -127,4 +128,13 @@ public class CollectionBankRemittanceReport implements Serializable {
     public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+    
 }

@@ -59,16 +59,13 @@
 			</div>
 		</c:if>
 		<form:form method="post" class="form-horizontal form-groups-bordered" 
-			modelAttribute="crossHierarchyGenerator" id="crossHierarchyForm" action="crossHierarchyFormForUpdate"  name="crossHierarchyForm">
+			modelAttribute="crossHierarchyGenerator" id="crossHierarchyForm" action="crosshierarchyFormForUpdate"  name="crossHierarchyForm">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong>Cross Hierarchy Mapping for Location</strong>
+						<strong><spring:message code="title.crosshierarchy.mapping" /></strong>
 					</div>
 				</div>
-				<%-- <form:hidden path="boundaryId" id="boundaryId" value="${boundaryId}" /> --%>
-				<%-- <form:hidden path="selectedModeBndry" id="selectedModeBndry"
-					value="${selectedModeBndry}" /> --%>
 				<div class="form-group">
 					<label class="col-sm-3 control-label"><spring:message
 										code="lbl.boundaryType" /><span
@@ -113,7 +110,7 @@
 								<%-- <form role="form" id="complaintform" class="form-horizontal form-groups-bordered"> --%>
 						<div class="row">
 							<div class="col-xs-5">
-								<div>Location</div>
+								<div><spring:message code="lbl.crosshierarchy.location" /></div>
 								<form:select path="" multiple="true" size="10" name="from[]"
 									id="multiselect" cssClass="form-control"
 									cssErrorClass="form-control error">
@@ -136,7 +133,7 @@
 
 							</div>
 							<div class="col-xs-5">
-								<div>Mapped Location</div>
+								<div><spring:message code="lbl.mapped.location" /></div>
 
 								<form:select path="boundaries" multiple="true" size="10" name="to[]"
 									id="multiselect_to" cssClass="form-control"
@@ -151,7 +148,7 @@
 						<div>&nbsp;</div><div>&nbsp;</div>
 						<div class="form-group">
 				<div class="text-center">
-					<button type="button" class="btn btn-primary" id="save"><spring:message code="lbl.save"/></button>
+					<button type="button" class="btn btn-primary" id="crosshierarchysave"><spring:message code="lbl.save"/></button>
 					<button type="button" class="btn btn-default" data-dismiss="modal"
 						onclick="self.close()">
 						<spring:message code="lbl.close" />

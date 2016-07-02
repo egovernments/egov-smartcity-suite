@@ -1,4 +1,3 @@
-
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -38,40 +37,31 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib prefix="html" uri="/WEB-INF/struts-html.tld" %> 
-<head>
-<title>File Upload</title>
-<script>
-function callCreateVouchers(){
-	document.forms[0].action="historicDataUpload!save.action";
-	document.forms[0].submit();
-}
-
-</script>
-</head>
-<body>
-
-<s:form theme="simple" name="fileUpload" enctype="multipart/form-data" method="POST"> 
-	<div class="formmainbox"><div class="subheadnew">File Upload</div>
-		<table width="100%" border="0" align="center" cellpadding="0"
-			cellspacing="0" class="tablebottom">
-		</table>	
-			
-			
-
-
-			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
-				<div class="buttonbottom">
-					
-					
-					<input name="button" type="button" class="buttonsubmit" id="buttonmiscvalidate" value="Upload Historic Data" onclick="callCreateVouchers();" />
-					
-							
-					<input name="button" type="button" class="button" id="buttonclose2" value="Close" onclick="window.close();" />
-					
+  <div class="main-content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"><spring:message
+								code="title.uom.category"/></div>
 				</div>
-			</div>
-</s:form>
-</body>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.category" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="category"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="25" required="required" />
+							<form:errors path="category" cssClass="error-msg" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.narration" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="narration"
+								class="form-control text-left patternvalidation"
+								data-pattern="alphanumeric" maxlength="25" />
+							<form:errors path="narration" cssClass="error-msg" />
+						</div>
+					</div>
+				

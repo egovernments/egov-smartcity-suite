@@ -40,6 +40,14 @@
 
 package org.egov.collection.web.actions.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -69,23 +77,15 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
-        @Result(name = "list", location = "serviceDetails-list.jsp"),
-        @Result(name = ServiceDetailsAction.BEFORECREATE, location = "serviceDetails-beforeCreate.jsp"),
-        @Result(name = "codeUniqueCheck", location = "serviceDetails-codeUniqueCheck.jsp"),
-        @Result(name = ServiceDetailsAction.MESSAGE, location = "serviceDetails-message.jsp"),
-        @Result(name = "view", location = "serviceDetails-view.jsp"),
-        @Result(name = "SUCCESS", location = "serviceDetails-view.jsp"),
-        @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"), })
+    @Result(name = "list", location = "serviceDetails-list.jsp"),
+    @Result(name = ServiceDetailsAction.BEFORECREATE, location = "serviceDetails-beforeCreate.jsp"),
+    @Result(name = "codeUniqueCheck", location = "serviceDetails-codeUniqueCheck.jsp"),
+    @Result(name = ServiceDetailsAction.MESSAGE, location = "serviceDetails-message.jsp"),
+    @Result(name = "view", location = "serviceDetails-view.jsp"),
+    @Result(name = "SUCCESS", location = "serviceDetails-view.jsp"),
+    @Result(name = ServiceDetailsAction.BEFOREMODIFY, location = "serviceDetails-beforeModify.jsp"), })
 public class ServiceDetailsAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -305,7 +305,7 @@ public class ServiceDetailsAction extends BaseFormAction {
             final ServiceAccountDetails next = detail.next();
             if (null != next
                     && (null == next.getGlCodeId() || null == next.getGlCodeId().getId() || next.getGlCodeId().getId()
-                            .toString().trim().isEmpty()) && next.getAmount().compareTo(BigDecimal.ZERO) == 0)
+                    .toString().trim().isEmpty()) && next.getAmount().compareTo(BigDecimal.ZERO) == 0)
                 detail.remove();
             else if (null == next)
                 detail.remove();
@@ -317,9 +317,9 @@ public class ServiceDetailsAction extends BaseFormAction {
             final ServiceSubledgerInfo next = detail.next();
             if (null != next
                     && (null == next.getServiceAccountDetail() || null == next.getServiceAccountDetail().getGlCodeId()
-                            || null == next.getServiceAccountDetail().getGlCodeId().getId()
-                            || next.getServiceAccountDetail().getGlCodeId().getId() == 0 || next
-                            .getServiceAccountDetail().getGlCodeId().getId() == -1))
+                    || null == next.getServiceAccountDetail().getGlCodeId().getId()
+                    || next.getServiceAccountDetail().getGlCodeId().getId() == 0 || next
+                    .getServiceAccountDetail().getGlCodeId().getId() == -1))
                 detail.remove();
             else if (null == next)
                 detail.remove();
@@ -352,7 +352,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 
         for (final ServiceSubledgerInfo subledger : subledgerDetails)
             if (null == subledger.getDetailType() || null == subledger.getDetailType().getId()
-                    || subledger.getDetailType().getId() == 0) {
+            || subledger.getDetailType().getId() == 0) {
 
                 addActionError(getText("service.accdetailType.entrymissing", new String[] { subledger
                         .getServiceAccountDetail().getGlCodeId().getGlcode() }));

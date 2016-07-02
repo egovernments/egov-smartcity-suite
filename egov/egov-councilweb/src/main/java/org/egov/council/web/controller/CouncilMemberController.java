@@ -120,11 +120,19 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final CouncilMember councilMember, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final CouncilMember councilMember,@RequestParam final MultipartFile attachments, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_EDIT;
+        }
+        if (attachments.getSize() > 0) {
+            try {
+                councilMember.setPhoto(fileStoreService.store(attachments.getInputStream(),
+                        attachments.getOriginalFilename(), attachments.getContentType(), MODULE_NAME));
+            } catch (IOException e) {
+                LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
+            }
         }
         councilMemberService.update(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));

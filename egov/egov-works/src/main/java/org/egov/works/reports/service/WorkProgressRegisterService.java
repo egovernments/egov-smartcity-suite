@@ -291,8 +291,7 @@ public class WorkProgressRegisterService {
                     .addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
-        }
-        else {
+        } else {
             query = entityManager.unwrap(Session.class).createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
@@ -319,73 +318,6 @@ public class WorkProgressRegisterService {
         StringBuilder filterConditions = new StringBuilder();
 
         if (estimateAbstractReport != null) {
-            if (estimateAbstractReport.isSpillOverFlag()) {
-                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-                
-                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
-                workInProgessCondition.append(" 0                             AS lineEstimates, ");
-                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS loaCreated, ");
-                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
-                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
-                workInProgessCondition.append(" 0                             AS workCompleted, ");
-                workInProgessCondition.append(" 0                             AS billsCreated, ");
-                workInProgessCondition.append(" 0                             AS billValueInCrores ");
-                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
-                workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
-                workInProgessCondition.append(" AND details.workcompleted  = false ");
-                workInProgessCondition.append(filterConditions.toString());
-                workInProgessCondition.append(" GROUP BY details.departmentName ");
-
-                
-
-            } else {
-                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
-                workInProgessCondition.append(" 0                             AS lineEstimates, ");
-                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS loaCreated, ");
-                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
-                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
-                workInProgessCondition.append(" 0                             AS workCompleted, ");
-                workInProgessCondition.append(" 0                             AS billsCreated, ");
-                workInProgessCondition.append(" 0                             AS billValueInCrores ");
-                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
-                workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
-                workInProgessCondition.append(" AND details.workcompleted  = false ");
-                workInProgessCondition.append(" AND details.spilloverflag  = true ");
-                workInProgessCondition.append(filterConditions.toString());
-                workInProgessCondition.append(" GROUP BY details.departmentName ");
-                workInProgessCondition.append(" UNION ");
-                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
-                workInProgessCondition.append(" 0                             AS lineEstimates, ");
-                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
-                workInProgessCondition.append(" 0                             AS loaCreated, ");
-                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
-                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
-                workInProgessCondition.append(" 0                             AS workCompleted, ");
-                workInProgessCondition.append(" 0                             AS billsCreated, ");
-                workInProgessCondition.append(" 0                             AS billValueInCrores ");
-                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
-                workInProgessCondition.append(" WHERE ");
-                workInProgessCondition.append(" details.wostatuscode = 'APPROVED' ");
-                workInProgessCondition.append(" AND details.workcompleted  = false ");
-                workInProgessCondition.append(" AND details.spilloverflag  = false ");
-                workInProgessCondition.append(filterConditions.toString());
-                workInProgessCondition.append(" GROUP BY details.departmentName ");
-               
-
-            }
 
             if (estimateAbstractReport.getDepartment() != null) {
                 filterConditions.append(" AND details.department =:department ");
@@ -430,7 +362,70 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getNatureOfWork() != null) {
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
             }
+            if (estimateAbstractReport.isSpillOverFlag()) {
+                filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
 
+                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
+                workInProgessCondition.append(" 0                             AS lineEstimates, ");
+                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS loaCreated, ");
+                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
+                workInProgessCondition.append(" 0                             AS workCompleted, ");
+                workInProgessCondition.append(" 0                             AS billsCreated, ");
+                workInProgessCondition.append(" 0                             AS billValueInCrores ");
+                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
+                workInProgessCondition.append(" WHERE ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition.append(" AND details.workcompleted  = false ");
+                workInProgessCondition.append(filterConditions.toString());
+                workInProgessCondition.append(" GROUP BY details.departmentName ");
+
+            } else {
+                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
+                workInProgessCondition.append(" 0                             AS lineEstimates, ");
+                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS loaCreated, ");
+                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
+                workInProgessCondition.append(" 0                             AS workCompleted, ");
+                workInProgessCondition.append(" 0                             AS billsCreated, ");
+                workInProgessCondition.append(" 0                             AS billValueInCrores ");
+                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
+                workInProgessCondition.append(" WHERE ");
+                workInProgessCondition.append(" ( details.workordercreated  = true or details.wostatuscode = 'APPROVED') ");
+                workInProgessCondition.append(" AND details.workcompleted  = false ");
+                workInProgessCondition.append(" AND details.spilloverflag  = true ");
+                workInProgessCondition.append(filterConditions.toString());
+                workInProgessCondition.append(" GROUP BY details.departmentName ");
+                workInProgessCondition.append(" UNION ");
+                workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
+                workInProgessCondition.append(" 0                             AS lineEstimates, ");
+                workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS loaCreated, ");
+                workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
+                workInProgessCondition.append(" 0                             AS workCompleted, ");
+                workInProgessCondition.append(" 0                             AS billsCreated, ");
+                workInProgessCondition.append(" 0                             AS billValueInCrores ");
+                workInProgessCondition.append(" FROM egw_mv_work_progress_register details ");
+                workInProgessCondition.append(" WHERE ");
+                workInProgessCondition.append(" details.wostatuscode = 'APPROVED' ");
+                workInProgessCondition.append(" AND details.workcompleted  = false ");
+                workInProgessCondition.append(" AND details.spilloverflag  = false ");
+                workInProgessCondition.append(filterConditions.toString());
+                workInProgessCondition.append(" GROUP BY details.departmentName ");
+
+            }
         }
         StringBuilder query = new StringBuilder();
         query.append("SELECT departmentName AS departmentName, ");
@@ -576,11 +571,59 @@ public class WorkProgressRegisterService {
 
             mainGroupByQuery.append(" GROUP BY typeofworkname,subtypeofworkname ");
         }
-        
+
         if (estimateAbstractReport != null) {
+
+            if (estimateAbstractReport.getTypeOfWork() != null) {
+                filterConditions.append(" AND details.typeofwork =:typeofwork ");
+            }
+
+            if (estimateAbstractReport.getSubTypeOfWork() != null) {
+                filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
+            }
+
+            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
+                filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
+            }
+
+            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
+                filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
+            }
+
+            if (estimateAbstractReport.getScheme() != null) {
+                filterConditions.append(" AND details.scheme =:scheme ");
+            }
+
+            if (estimateAbstractReport.getSubScheme() != null) {
+                filterConditions.append(" AND details.subScheme =:subScheme ");
+            }
+
+            if (estimateAbstractReport.getWorkCategory() != null
+                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
+                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
+
+                    filterConditions.append(" AND details.workcategory =:workcategory ");
+                    if (estimateAbstractReport.getTypeOfSlum() != null) {
+                        filterConditions.append(" AND details.typeofslum =:typeofslum ");
+                    }
+
+                    if (estimateAbstractReport.getBeneficiary() != null) {
+                        filterConditions.append(" AND details.beneficiary =:beneficiary ");
+                    }
+
+                } else {
+
+                    filterConditions.append(" AND details.workcategory =:workcategory ");
+
+                }
+            }
+
+            if (estimateAbstractReport.getNatureOfWork() != null) {
+                filterConditions.append(" AND details.natureofwork =:natureofwork ");
+            }
             if (estimateAbstractReport.isSpillOverFlag()) {
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
-                
+
                 workInProgessCondition.append(selectQuery.toString());
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
@@ -599,8 +642,6 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" AND details.workcompleted  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
-
-                
 
             } else {
                 workInProgessCondition.append(selectQuery.toString());
@@ -642,59 +683,8 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" AND details.spilloverflag  = false ");
                 workInProgessCondition.append(filterConditions.toString());
                 workInProgessCondition.append(groupByQuery.toString());
-               
 
             }
-            if (estimateAbstractReport.getTypeOfWork() != null) {
-                filterConditions.append(" AND details.typeofwork =:typeofwork ");
-            }
-
-            if (estimateAbstractReport.getSubTypeOfWork() != null) {
-                filterConditions.append(" AND details.subtypeofwork =:subtypeofwork ");
-            }
-
-           
-
-            if (estimateAbstractReport.getAdminSanctionFromDate() != null) {
-                filterConditions.append(" AND details.adminsanctiondate >=:fromDate ");
-            }
-
-            if (estimateAbstractReport.getAdminSanctionToDate() != null) {
-                filterConditions.append(" AND details.adminsanctiondate <=:toDate ");
-            }
-
-            if (estimateAbstractReport.getScheme() != null) {
-                filterConditions.append(" AND details.scheme =:scheme ");
-            }
-
-            if (estimateAbstractReport.getSubScheme() != null) {
-                filterConditions.append(" AND details.subScheme =:subScheme ");
-            }
-
-            if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
-                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
-
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
-                        filterConditions.append(" AND details.typeofslum =:typeofslum ");
-                    }
-
-                    if (estimateAbstractReport.getBeneficiary() != null) {
-                        filterConditions.append(" AND details.beneficiary =:beneficiary ");
-                    }
-
-                } else {
-
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-
-                }
-            }
-
-            if (estimateAbstractReport.getNatureOfWork() != null) {
-                filterConditions.append(" AND details.natureofwork =:natureofwork ");
-            }
-
         }
         StringBuilder query = new StringBuilder();
         query.append(mainSelectQuery.toString());
