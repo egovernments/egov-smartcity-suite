@@ -165,6 +165,7 @@
 																</c:when>
 																<c:otherwise>
 																	<c:if test="${overhead.id == overheadValue.overhead.id }">
+																		<c:set var="percentage" value=""/>
 																		<form:option value="${overhead.id}" selected="selected">
 																			<c:out value="${overhead.name}" />
 																		</form:option>

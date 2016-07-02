@@ -169,28 +169,15 @@
 									<td align="right">
 										<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 									</td>
-									<c:if test="${activity.serviceTaxPerc == null }">
-										<td hidden="true" class="nonSorServiceTaxPerc">
-											<form:input path="nonSorActivities[${item.index }].serviceTaxPerc"  id="nonSorServiceTaxPerc_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
-										</td>
-										<td hidden="true" align="right" class="nonSorVatAmount">
-											<span class="nonSorVatAmount_${item.index } nonSorVatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) }</fmt:formatNumber></span>
-										</td>
-										<td align="right">
-											<span class="nonSorTotal_${item.index } nonSorTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + (activity.rate * activity.quantity) }</fmt:formatNumber></span>
-										</td>
-									</c:if>
-									<c:if test="${activity.serviceTaxPerc != null }">
-										<td hidden="true" class="nonSorServiceTaxPerc">
-											<form:input path="nonSorActivities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="nonSorServiceTaxPerc_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
-										</td>
-										<td hidden="true" align="right" class="nonSorVatAmount">
-											<span class="nonSorVatAmount_${item.index } nonSorVatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
-										</td>
-										<td align="right">
-											<span class="nonSorTotal_${item.index } nonSorTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
-										</td>
-									</c:if>
+									<td hidden="true" class="nonSorServiceTaxPerc">
+										<form:input path="nonSorActivities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="nonSorServiceTaxPerc_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right nonSorServiceTaxPerc" maxlength="64" onblur="calculateNonSorVatAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td hidden="true" align="right" class="nonSorVatAmount">
+										<span class="nonSorVatAmount_${item.index } nonSorVatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
+									</td>
+									<td align="right">
+										<span class="nonSorTotal_${item.index } nonSorTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
+									</td>
 									<td>
 										<span class="add-padding delete_${item.index }" onclick="deleteNonSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 									</td>
