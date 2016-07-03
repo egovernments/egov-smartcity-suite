@@ -63,10 +63,15 @@
 	
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+	<input name="totalMBAmountOfMBs" type="hidden" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />
+	<input name="workOrderAmount" type="hidden" id="workOrderAmount" value="${mbHeader.workOrderEstimate.workOrder.workOrderAmount }" />
+	<input name="quantityTolerance" type="hidden" id="quantityTolerance" value="${quantityTolerance }" />
 	<form:input path="workOrder.id" type="hidden" id="workOrderId" value="${mbHeader.workOrderEstimate.workOrder.id }" />
 	<form:input path="workOrderEstimate.id" type="hidden" id="workOrderEstimateId" value="${mbHeader.workOrderEstimate.id }" />
 	<input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" id="errorsornonsor" value="<spring:message code='error.mb.sor.nonsor.required' />">
+	<input type="hidden" id="errortotalmbamount" value="<spring:message code='error.sum.mb.workorder.amount' />">
+	<input type="hidden" id="errortoleranceexceeded" value="<spring:message code='error.tolerance.exceeded' />">
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	
@@ -74,12 +79,20 @@
 		<c:out value="${message}" /><br />
 	</div>
 	
-	<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true">
+	<div class="alert text-left" style="color: red;" id="errorMessage">
+	</div>
+	
+	<div>
+	       <spring:hasBindErrors name="mbHeader">
+			    <div class="col-md-10 col-md-offset-1">
+					<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+			   </div>
+          </spring:hasBindErrors>
 	</div>
 
 	<div class="main-content">
 		<div class="position_alert1">
-			<spring:message code="lbl.total.mbamount" /><span class="mandatory"></span> : &#8377 <span id="mbAmountSpan">${mbHeader.mbAmount }</span>
+			<spring:message code="lbl.mb.amount" /><span class="mandatory"></span> : &#8377 <span id="mbAmountSpan">${mbHeader.mbAmount }</span>
 			<form:hidden path="mbAmount" value="${mbHeader.mbAmount }" id="mbAmount" class="form-control"/>
 		</div>
 		<c:choose>

@@ -52,6 +52,8 @@ import org.apache.commons.io.IOUtils;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -101,6 +103,9 @@ public class UpdateMBController extends GenericWorkFlowController {
     
     @Autowired
     private OfflineStatusService offlineStatusService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @ModelAttribute
     public MBHeader getMBHeader(@PathVariable final String mbHeaderId) {
@@ -150,7 +155,7 @@ public class UpdateMBController extends GenericWorkFlowController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         final JsonObject jsonObject = new JsonObject();
-        validateMBHeader(mbHeader, jsonObject);
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder);
 
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -184,11 +189,6 @@ public class UpdateMBController extends GenericWorkFlowController {
                     null));
         }
         return jsonObject.toString();
-    }
-
-    private void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject) {
-        // TODO Auto-generated method stub
-
     }
 
     protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
@@ -238,22 +238,11 @@ public class UpdateMBController extends GenericWorkFlowController {
                 && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-        if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
-                mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()))
-                && !workFlowAction.equals(WorksConstants.CANCEL_ACTION))
-            // estimateService.validateMultiYearEstimates(abstractEstimate, errors);
-            // estimateService.validateMandatory(abstractEstimate, errors);
-            // estimateService.validateAssetDetails(abstractEstimate, errors);
-            // estimateService.validateActivities(abstractEstimate, errors);
-            if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
-            if (mbHeader.getSorMbDetails().isEmpty() && mbHeader.getNonSorMbDetails().isEmpty())
-            errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
+        final JsonObject jsonObject = new JsonObject();
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, errors);
 
         if (errors.hasErrors()) {
-            // for (final MBDetails mbDetails : mbHeader.getSorMbDetails())
-            // activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
             model.addAttribute("removedMBDetailIds", removedDetailIds);
-
             return loadViewData(model, request, mbHeader);
         } else {
             if (null != workFlowAction)
@@ -276,6 +265,7 @@ public class UpdateMBController extends GenericWorkFlowController {
     private String loadViewData(final Model model, final HttpServletRequest request,
             final MBHeader mbHeader) {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Boolean isMBEditable = false;
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getCurrentState() != null
                 && !mbHeader.getCurrentState().getValue().equals(WorksConstants.NEW))
@@ -293,14 +283,18 @@ public class UpdateMBController extends GenericWorkFlowController {
                     WorksConstants.NEW, workflowContainer.getPendingActions(), mbHeader.getCreatedDate());
             model.addAttribute("validActionList", validActions);
         }
+        
+        List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
+        AppConfigValues value = values.get(0);
+        
+        model.addAttribute("quantityTolerance", value.getValue());
 
-        // final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-        // WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
-        // final AppConfigValues value = values.get(0);
-        // if (value.getValue().equalsIgnoreCase("Yes"))
-        // model.addAttribute("isServiceVATRequired", true);
-        // else
-        // model.addAttribute("isServiceVATRequired", false);
+        values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT);
+        value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            isMBEditable = true;
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(mbHeader.getState(), mbHeader.getStateHistory()));
@@ -314,9 +308,21 @@ public class UpdateMBController extends GenericWorkFlowController {
                 OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
         if(offlineStatus != null)
             model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
+        
+        Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(mbHeader.getId(),
+                mbHeader.getWorkOrderEstimate().getWorkOrder().getId(), mbHeader.getWorkOrderEstimate().getId(),
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+        if(totalMBAmountOfMBs != null)
+            model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - mbHeader.getMbAmount().doubleValue());
+        
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByWorkOrderEstimate(mbHeader.getWorkOrderEstimate());
+        if (!mbHeaders.isEmpty()) {
+            model.addAttribute("lastFromPageNumber", mbHeaders.get(mbHeaders.size() - 1).getToPageNo());
+        } else
+            model.addAttribute("lastFromPageNumber", "");
 
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
-                mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())) {
+                mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()) || isMBEditable) {
             model.addAttribute("mode", "edit");
             return "mbHeader-form";
         } else {

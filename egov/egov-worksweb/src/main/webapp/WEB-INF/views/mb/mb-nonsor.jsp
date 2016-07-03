@@ -40,7 +40,7 @@
 <div id="baseNonSORTable" class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="lbl.nonsor" />
+			<spring:message code="title.nonsor" />
 		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">
@@ -91,7 +91,7 @@
 							<td>
 								<span class="nonSorApprovedQuantity_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="nonSorApprovedRate_0"></span>
 								<span class="nonSorUnitRate_0" hidden="true"></span>
 							</td>
@@ -105,13 +105,13 @@
 							<td>
 								<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
 							</td>
-							<td>
-								<span class="nonSorAmountCurrentEntry_0"></span>
+							<td align="right">
+								<span class="nonSorAmountCurrentEntry nonSorAmountCurrentEntry_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="nonSorApprovedAmount_0"></span>
 							</td>
 							<td>
@@ -138,30 +138,30 @@
 									<span class="nonSorUom_${item.index }">${details.workOrderActivity.activity.nonSor.uom.uom }</span>
 								</td>
 								<td>
-									<span class="nonSorApprovedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
+									<span class="nonSorApprovedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="nonSorApprovedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="nonSorApprovedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
 									<span class="nonSorUnitRate_${item.index }" hidden="true">${details.rate }</span>
 								</td>
 								<td>
-									<span class="nonSorCumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity }</fmt:formatNumber></span>
+									<span class="nonSorCumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
 								</td>
 								<td>
-									<span class="nonSorCumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
+									<span class="nonSorCumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="nonSorAmountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * details.quantity }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="nonSorAmountCurrentEntry nonSorAmountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.rate * details.quantity }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="nonSorAmountIncludingCurrentEntry nonSorAmountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="nonSorApprovedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="nonSorApprovedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<form:textarea path="nonSorMbDetails[${item.index }].remarks" value="${details.remarks }" id="nonSorRemarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
@@ -176,8 +176,9 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="8" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="nonSorTotal">0.00</span> </td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

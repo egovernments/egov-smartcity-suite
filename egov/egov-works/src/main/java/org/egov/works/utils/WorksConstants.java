@@ -271,7 +271,7 @@ public class WorksConstants {
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
 
-    public static final String WORKFLOWTYPE_DISPLAYNAME_MBHEADER = "MB Header";
+    public static final String WORKFLOWTYPE_DISPLAYNAME_MBHEADER = "Measurement Book";
 
     public static final String BILL_EXPENDITURE_TYPE = "Works";
 
@@ -326,5 +326,9 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE = "PERCENTAGE_ON_ESTIMATERATE_OR_WORKVALUE";
     
     public static final String APPCONFIG_KEY_DESIGNATION_ADMINSANCTION_AUTHORITY = "DESIGNATION_ADMINSANCTION_AUTHORITY";
+
+    public static final String APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT = "SECOND_LEVEL_EDIT_MB";
+    
+    public static final String APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL = "MB_QUANTITY_TOLERANCE_LEVEL";
 
 }

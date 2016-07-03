@@ -298,9 +298,9 @@ function populateData(data, selectedActivities){
 						$('.description_' + sorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 						$('.uom_' + sorCount).html(workOrderActivity.uom);
 						$('.approvedQuantity_' + sorCount).html(workOrderActivity.approvedQuantity);
-						$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+						$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(4));
 						$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
-						$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+						$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(4));
 						$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
 						sorCount++;
 					}else{
@@ -309,9 +309,9 @@ function populateData(data, selectedActivities){
 						$('.nonSorDescription_' + nonSorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 						$('.nonSorUom_' + nonSorCount).html(workOrderActivity.uom);
 						$('.nonSorApprovedQuantity_' + nonSorCount).html(workOrderActivity.approvedQuantity);
-						$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+						$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(4));
 						$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
-						$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
+						$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(4));
 						$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
 						nonSorCount++;
 					}
@@ -363,10 +363,10 @@ function populateData(data, selectedActivities){
 				$('.description_' + sorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 				$('.uom_' + sorCount).html(workOrderActivity.uom);
 				$('.approvedQuantity_' + sorCount).html(workOrderActivity.approvedQuantity);
-				$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+				$('.approvedRate_' + sorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(4));
 				$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
-				$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
-				$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
+				$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(4));
+				$('.cumulativePreviousEntry_' + sorCount).html(parseFloat(workOrderActivity.cumulativePreviousEntry).toFixed(4));
 				sorCount++;
 			}else{
 				$('#nonSorWorkOrderActivity_' + nonSorCount).val(workOrderActivity.id);
@@ -374,10 +374,10 @@ function populateData(data, selectedActivities){
 				$('.nonSorDescription_' + nonSorCount).html(hint.replace(/@fulldescription@/g, workOrderActivity.description));
 				$('.nonSorUom_' + nonSorCount).html(workOrderActivity.uom);
 				$('.nonSorApprovedQuantity_' + nonSorCount).html(workOrderActivity.approvedQuantity);
-				$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(2));
+				$('.nonSorApprovedRate_' + nonSorCount).html(parseFloat(workOrderActivity.estimateRate).toFixed(4));
 				$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
-				$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
-				$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
+				$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(4));
+				$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(parseFloat(workOrderActivity.cumulativePreviousEntry).toFixed(4));
 				nonSorCount++;
 			}
 		}
@@ -610,13 +610,26 @@ function validateQuantityInput(object) {
 function calculateSorAmounts(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
 	
+	var toleranceLimit = $('#quantityTolerance').val();
 	var cumulativePreviousEntry = parseFloat($('.cumulativePreviousEntry_' + rowcount).html().trim());
 	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
 	var unitRate = parseFloat($('#unitRate_' + rowcount).val().trim());
+	var approvedQuantity = parseFloat($('.approvedQuantity_' + rowcount).html().trim());
+	var toleranceQuantity = parseFloat(approvedQuantity + parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100));
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
+	if (approvedQuantity < cumulativeIncludingCurrentEntry) {
+		bootbox.alert($('#errorcumulativequantity').val());
+		$(currentObj).val('');
+		return false;
+	}
 	
-	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(2);
-	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
-	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
+	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
+		bootbox.alert($('#errortoleranceexceeded').val());
+		$(currentObj).val('');
+		return false;
+	}
+	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(4);
+	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(4);
 	
 	$('.cumulativeIncludingCurrentEntry_' + rowcount).html(cumulativeIncludingCurrentEntry);
 	$('.amountCurrentEntry_' + rowcount).html(amountCurrentEntry);
@@ -628,13 +641,26 @@ function calculateSorAmounts(currentObj) {
 function calculateNonSorAmounts(currentObj) {
 	rowcount = $(currentObj).attr('id').split('_').pop();
 	
+	var toleranceLimit = $('#quantityTolerance').val();
 	var cumulativePreviousEntry = parseFloat($('.nonSorCumulativePreviousEntry_' + rowcount).html().trim());
 	var currentQuantity = $(currentObj).val() == "" ? 0 : $(currentObj).val();
 	var unitRate = parseFloat($('#nonSorUnitRate_' + rowcount).val().trim());
+	var approvedQuantity = parseFloat($('.nonSorApprovedQuantity_' + rowcount).html().trim());
+	var toleranceQuantity = parseFloat(approvedQuantity + parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100));
+	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
+	if (approvedQuantity < cumulativeIncludingCurrentEntry) {
+		bootbox.alert($('#errorcumulativequantity').val());
+		$(currentObj).val('');
+		return false;
+	}
 	
-	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(2);
-	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(2);
-	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(2);
+	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
+		bootbox.alert($('#errortoleranceexceeded').val());
+		$(currentObj).val('');
+		return false;
+	}
+	var amountCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(currentQuantity)).toFixed(4);
+	var amountIncludingCurrentEntry = parseFloat(parseFloat(unitRate) * parseFloat(cumulativeIncludingCurrentEntry)).toFixed(4);
 	
 	$('.nonSorCumulativeIncludingCurrentEntry_' + rowcount).html(cumulativeIncludingCurrentEntry);
 	$('.nonSorAmountCurrentEntry_' + rowcount).html(amountCurrentEntry);
@@ -645,9 +671,9 @@ function calculateNonSorAmounts(currentObj) {
 
 function sorTotal() {
 	var total = 0.0;
-	$('.amountIncludingCurrentEntry').each(function() {
+	$('.amountCurrentEntry').each(function() {
 		if($(this).html().trim() != "")
-			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(4);
 	});
 	$('#sorTotal').html(total);
 	calculateTotalValue();
@@ -655,9 +681,9 @@ function sorTotal() {
 
 function nonSorTotal() {
 	var total = 0.0;
-	$('.nonSorAmountIncludingCurrentEntry').each(function() {
+	$('.nonSorAmountCurrentEntry').each(function() {
 		if($(this).html().trim() != "")
-			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(4);
 	});
 	$('#nonSorTotal').html(total);
 	calculateTotalValue();
@@ -671,13 +697,13 @@ function calculateTotalValue() {
 	if(nonSorTotal == '')
 		nonSorTotal = 0.0;
 	
-	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(2);
+	var total = parseFloat(parseFloat(sorTotal) + parseFloat(nonSorTotal) ).toFixed(4);
 	$('#pageTotal').html(total);
 	
 	var tenderFinalisedPercentage = 0;
 	if($('#tenderFinalisedPercentage').html().trim() != '')
 		tenderFinalisedPercentage = parseFloat($('#tenderFinalisedPercentage').html());
-	var mbAmount = parseFloat(parseFloat(total) + (parseFloat(parseFloat(tenderFinalisedPercentage) / 100) * parseFloat(total))).toFixed(2);
+	var mbAmount = parseFloat(parseFloat(total) + (parseFloat(parseFloat(tenderFinalisedPercentage) / 100) * parseFloat(total))).toFixed(4);
 	
 	$('#mbAmount').val(mbAmount);
 	$('#mbAmountSpan').html(mbAmount);
@@ -722,6 +748,18 @@ function validateFormData() {
 	var mbIssuedDate = $('#mbIssuedDate').data('datepicker').date;
 	var fromPageNo = $('#fromPageNo').val();
 	var toPageNo = $('#toPageNo').val();
+	var lastToPageNo = $('#lastToPageNumber').val();
+	var totalMBAmountOfMBs = $('#totalMBAmountOfMBs').val();
+	var mbAmount = $('#mbAmount').val();
+	var workOrderAmount = $('#workOrderAmount').val();
+	
+	if (parseFloat(workOrderAmount) < parseFloat(parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount))) {
+		var message = $('#errortotalmbamount').val();
+		message = message.replace(/\{0\}/g, parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount));
+		message = message.replace(/\{1\}/g, workOrderAmount);
+		bootbox.alert(message);
+		return false;
+	}
 	
 	if(mbDate < workCommencedDate) {
 		bootbox.alert($('#errorentrydate').val());
@@ -729,19 +767,24 @@ function validateFormData() {
 		return false;
 	}
 	
-	if(mbIssuedDate != "" && mbIssuedDate > mbDate) {
+	if($('#mbIssuedDate').val() != "" && mbIssuedDate > mbDate) {
 		bootbox.alert($('#errorentryissueddate').val());
 		$('#mbDate').val('');
 		return false;
 	}
 	
-	if(mbIssuedDate != "" && mbIssuedDate < workCommencedDate) {
+	if($('#mbIssuedDate').val() != "" && mbIssuedDate < workCommencedDate) {
 		bootbox.alert($('#errorissueddate').val());
 		$('#mbIssuedDate').val('');
 		return false;
 	}
 	
-	if(toPageNo < fromPageNo) {
+	if(parseFloat(fromPageNo) < parseFloat(lastToPageNo)) {
+		bootbox.alert($('#errorfromlasttopage').val());
+		return false;
+	}
+	
+	if(parseFloat(toPageNo) < parseFloat(fromPageNo)) {
 		bootbox.alert($('#errorfromtopage').val());
 		return false;
 	}

@@ -50,6 +50,8 @@ $('#Save').click(function() {
 	
 	if($('#mbHeader').valid()) {
 		flag = validateFormData();
+		if(!flag)
+			return false;
 	}
 	
 	validateSORDetails();
@@ -76,6 +78,8 @@ $('#Forward').click(function() {
 	
 	if($('#mbHeader').valid()) {
 		flag = validateFormData();
+		if(!flag)
+			return false;
 	}
 	
 	validateSORDetails();
@@ -150,13 +154,13 @@ function submitForm(workFlowAction) {
 			$('#tblNonSor').find('input, textarea').each(function() {
 				$(this).removeAttr('disabled');
 			});
-			
 			$('#successMessage').html("");
+			$('#errorMessage').html("");
 			console.log(error.responseText.slice(0,-2));
 			var json = $.parseJSON(error.responseText.slice(0,-2));
 			
 			$.each(json, function(key, value){
-				$('#successMessage').append(value + '</br>');
+				$('#errorMessage').append(value + '</br>');
 			});
 		}
 	});

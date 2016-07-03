@@ -62,6 +62,7 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -99,8 +100,8 @@ public class AjaxMBController {
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
-        mBHeaderService.validateMBInDrafts(workOrderEstimateId, jsonObject);
-        mBHeaderService.validateMBInWorkFlow(workOrderEstimateId, jsonObject);
+        mBHeaderService.validateMBInDrafts(workOrderEstimateId, jsonObject, null);
+        mBHeaderService.validateMBInWorkFlow(workOrderEstimateId, jsonObject, null);
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";

@@ -39,6 +39,7 @@
   --%>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
+	<input type="hidden" id="errorcumulativequantity" value="<spring:message code='error.approved.quantity.cumulative' />">
 	<div class="panel-heading">
 		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
@@ -55,7 +56,7 @@
 	</div>
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="lbl.sor" />
+			<spring:message code="title.sor" />
 		</div>
 	</div>
 	<div class="panel-body" id="sorHeaderTable">
@@ -112,7 +113,7 @@
 							<td>
 								<span class="approvedQuantity_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="approvedRate_0"></span>
 							</td>
 							<td>
@@ -125,13 +126,13 @@
 							<td>
 								<span class="cumulativeIncludingCurrentEntry_0"></span>
 							</td>
-							<td>
-								<span class="amountCurrentEntry_0"></span>
+							<td align="right">
+								<span class="amountCurrentEntry amountCurrentEntry_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_0"></span>
 							</td>
-							<td>
+							<td align="right">
 								<span class="approvedAmount_0"></span>
 							</td>
 							<td>
@@ -151,10 +152,10 @@
 									<form:input type="hidden" path="sorMbDetails[${item.index }].workOrderActivity.id" id="workOrderActivity_${item.index }" class="workOrderActivity" value="${details.workOrderActivity.id }" />
 								</td>
 								<td>
-									<span class="sorCategory_${item.index }">${details.workOrderActivity.activity.schedule.code }</span>
+									<span class="sorCategory_${item.index }">${details.workOrderActivity.activity.schedule.scheduleCategory.code }</span>
 								</td>
 								<td>
-									<span class="sorCode_${item.index }">${details.workOrderActivity.activity.schedule.scheduleCategory.code }</span>
+									<span class="sorCode_${item.index }">${details.workOrderActivity.activity.schedule.code }</span>
 								</td>
 								<td align="left">
 									<span class="summary_${item.index }">${details.workOrderActivity.activity.schedule.getSummary() }</span>&nbsp
@@ -164,29 +165,29 @@
 									<span class="uom_${item.index }">${details.workOrderActivity.activity.schedule.uom.uom }</span>
 								</td>
 								<td>
-									<span class="approvedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
+									<span class="approvedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.approvedQuantity }</fmt:formatNumber></span>
+								</td>
+								<td align="right">
+									<span class="approvedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<span class="approvedRate_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.activity.estimateRate }</fmt:formatNumber></span>
-								</td>
-								<td>
-									<span class="cumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity }</fmt:formatNumber></span>
+									<span class="cumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].rate" value="${details.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
 								</td>
 								<td>
-									<span class="cumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
+									<span class="cumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="amountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * details.quantity }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="amountCurrentEntry amountCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.rate * details.quantity }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="amountIncludingCurrentEntry amountIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.rate * (details.prevCumlvQuantity + details.quantity) }</fmt:formatNumber></span>
 								</td>
-								<td>
-									<span class="approvedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
+								<td align="right">
+									<span class="approvedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.workOrderActivity.approvedAmount }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<form:textarea path="sorMbDetails[${item.index }].remarks" value="${details.remarks }" id="remarks_${item.index }" data-idx="${item.index }" data-optional="1" class="form-control table-input" maxlength="1024"></form:textarea>
@@ -201,8 +202,9 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="11" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
 					<td class="text-right"> <span id="sorTotal">0.00</span> </td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

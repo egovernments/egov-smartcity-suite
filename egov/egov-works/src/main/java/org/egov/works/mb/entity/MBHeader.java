@@ -308,7 +308,7 @@ public class MBHeader extends StateAware {
     // to show in inbox
     @Override
     public String getStateDetails() {
-        return "MbHeader Number : " + getMbRefNo();
+        return "MB Ref Number : " + getMbRefNo();
     }
 
     public ContractorBillRegister getEgBillregister() {

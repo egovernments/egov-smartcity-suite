@@ -43,8 +43,13 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
@@ -64,6 +69,12 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
     
     @Autowired
     private OfflineStatusService offlineStatusService;
+    
+    @Autowired
+    private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -71,6 +82,13 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
         final DecimalFormat df = new DecimalFormat("0.00");
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         if (workOrderEstimate != null) {
+            final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(
+                    workOrderEstimate.getId(), MBHeader.MeasurementBookStatus.CANCELLED.toString());
+            if (!mbHeaders.isEmpty()) {
+                jsonObject.addProperty("lastToPageNumber", mbHeaders.get(mbHeaders.size() - 1).getToPageNo());
+            } else
+                jsonObject.addProperty("lastToPageNumber", "");
+            
             if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null) {
                 final AbstractEstimate estimate = workOrderEstimate.getEstimate();
                 jsonObject.addProperty("estimateNumber", estimate.getEstimateNumber());
@@ -94,10 +112,17 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
                 jsonObject.addProperty("tenderFinalisedPercentage", workOrder.getTenderFinalizedPercentage());
                 final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                         workOrder.getId(), WorksConstants.WORKORDER, OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-                if(offlineStatus != null)
+                if (offlineStatus != null)
                     jsonObject.addProperty("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
                 else
                     jsonObject.addProperty("workCommencedDate", "");
+                Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(null,
+                        workOrder.getId(), workOrderEstimate.getId(),
+                        MBHeader.MeasurementBookStatus.CANCELLED.toString());
+                if (totalMBAmountOfMBs != null)
+                    jsonObject.addProperty("totalMBAmountOfMBs", totalMBAmountOfMBs);
+                else
+                    jsonObject.addProperty("totalMBAmountOfMBs", "");
             } else {
                 jsonObject.addProperty("workOrderNumber", "");
                 jsonObject.addProperty("workOrderId", "");
@@ -107,7 +132,15 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
                 jsonObject.addProperty("approvedRate", "");
                 jsonObject.addProperty("tenderFinalisedPercentage", "");
                 jsonObject.addProperty("workCommencedDate", "");
+                jsonObject.addProperty("totalMBAmountOfMBs", "");
             }
+            
+            List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
+            AppConfigValues value = values.get(0);
+            
+            jsonObject.addProperty("quantityTolerance", value.getValue());
+            
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
         }
         return jsonObject;

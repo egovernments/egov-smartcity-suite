@@ -499,4 +499,18 @@
     <bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService" >
       <constructor-arg index="0" value="org.egov.commons.SubScheme" />
     </bean>
+    
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <!-- Disabling caching since on development-->
+        <property name="cacheSeconds" value="0"/>
+    </bean>
 </beans>

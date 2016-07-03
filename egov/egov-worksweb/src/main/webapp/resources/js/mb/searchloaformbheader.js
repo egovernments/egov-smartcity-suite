@@ -252,7 +252,7 @@ $('#btncreatemb').click(function(e) {
 			cache: true,
 		}).done(function(value) {
 			if(value == '') {
-				$('#errorMessage').hide();
+				$('#errorMessage').html('');
 				$('#searchFormDiv').remove();
 				$('.loader-class').modal('show', {backdrop: 'static'});
 				$.ajax({
@@ -281,7 +281,9 @@ $('#btncreatemb').click(function(e) {
 				$('.loader-class').modal('hide');
 			} else {
 				var json = $.parseJSON(value);
-				$('#errorMessage').append(json.mberror+ '</br>');
+				$.each(json, function(key, value){
+					$('#errorMessage').append(value + '</br>');
+				});
 				$('#errorMessage').show();
 			}
 		});

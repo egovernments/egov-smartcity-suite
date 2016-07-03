@@ -2,6 +2,7 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,10 +11,13 @@ import org.apache.commons.io.IOUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.tender.OfflineStatus;
+import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.web.adaptor.MeasurementBookJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -51,7 +55,7 @@ public class CreateMBController {
 
     @Autowired
     private WorksUtils worksUtils;
-
+    
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         return workOrderEstimate;
@@ -89,7 +93,7 @@ public class CreateMBController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         final JsonObject jsonObject = new JsonObject();
-        validateMBHeader(mbHeader, jsonObject);
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder);
 
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -105,11 +109,6 @@ public class CreateMBController {
                 null));
 
         return jsonObject.toString();
-    }
-
-    private void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject) {
-        // TODO Auto-generated method stub
-
     }
 
     protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {

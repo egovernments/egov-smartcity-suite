@@ -47,6 +47,8 @@
 	<input type="hidden" id="errorissueddate" value="<spring:message code='error.mb.issued.date.commenced.date' />">
 	<input type="hidden" id="errorentryissueddate" value="<spring:message code='error.mb.issued.date.entry.date' />">
 	<input type="hidden" id="errorfromtopage" value="<spring:message code='error.from.to.page' />">
+	<input type="hidden" id="errorfromlasttopage" value="<spring:message code='error.from.last.to.page' />">
+	<input type="hidden" id="lastToPageNumber" value="${lastToPageNumber }">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
 			<spring:message code="lbl.measurementbook.details" />

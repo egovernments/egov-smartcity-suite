@@ -102,7 +102,7 @@ function validateWorkFlowApprover(name) {
 		validateSORDetails();
 	}
 	
-	if(flag) {
+	if(flag && $('#mbHeader').valid()) {
 		document.forms[0].submit;
 		return true;
 	} else
