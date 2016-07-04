@@ -73,7 +73,8 @@ public class AjaxLegalCaseController {
     @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Department> getAllDepartmentsByNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName) {
-        return departmentService.getAllDepartmentsByNameLike(departmentName);
+        return null;
+       // return departmentService.getAllDepartmentsByNameLike(departmentName);
 
     }
 
@@ -90,7 +91,9 @@ public class AjaxLegalCaseController {
             @ModelAttribute("legalcase") @RequestParam final String departmentName,
             @RequestParam final String positionName) {
         final Department deptObj = departmentService.getDepartmentByName(departmentName);
-        return positionMasterService.getPageOfPositionsByDeptAndName(deptObj.getId(), positionName);
+        return null;
+        //        return positionMasterService.getPageOfPositionsByDeptAndName(deptObj.getId(), positionName);
+
 
     }
 
