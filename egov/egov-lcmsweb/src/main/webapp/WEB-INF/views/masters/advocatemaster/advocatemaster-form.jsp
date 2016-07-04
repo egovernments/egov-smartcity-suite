@@ -44,12 +44,10 @@
 				<div class="panel-heading">
 					<div class="panel-title">Advocate Master</div>
 				</div>
-
-
 				<div class="panel-body">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.name" />: <span class="mandatory"></span></label>
+								code="lbl.names" />: <span class="mandatory"></span></label>
 						<div class="col-sm-2 col-md-1 add-margin">
 							<form:select path="salutation" id="salutation"
 								cssClass="form-control" cssErrorClass="form-control error" required="required" >
@@ -88,9 +86,6 @@
 						<div class="col-sm-3 add-margin">
 						<form:textarea class="form-control text-left patternvalidation" path="address" id="address"
 							name="address"  data-pattern="alphabetwithspace" maxlength="128" />
-							<!-- <form:input path="address"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="128" /> -->
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message

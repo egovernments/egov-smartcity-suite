@@ -79,9 +79,6 @@
 								path="address" id="address" name="address"
 								data-pattern="alphabetwithspace" maxlength="256"
 								required="required" />
-							<!-- <form:input path="address"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="256" required="required" /> -->
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message

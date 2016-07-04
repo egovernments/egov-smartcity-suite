@@ -54,7 +54,7 @@
 						<div class="col-sm-3 add-margin view-content">
 							${advocateMaster.salutation}</div>
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.name" />
+							<spring:message code="lbl.names" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${advocateMaster.name}</div>

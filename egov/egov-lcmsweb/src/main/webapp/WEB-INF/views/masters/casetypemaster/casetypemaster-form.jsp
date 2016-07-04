@@ -51,7 +51,8 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="8" required="required" />
+								data-pattern="alphanumericwithspecialcharacters" maxlength="8"
+								required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -59,7 +60,8 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="caseType"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="50" required="required" />
+								data-pattern="alphabetwithspace" maxlength="50"
+								required="required" />
 							<form:errors path="caseType" cssClass="error-msg" />
 						</div>
 					</div>
@@ -75,28 +77,27 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.notes" /> :</label>
 						<div class="col-sm-3 add-margin">
-						<form:textarea class="form-control text-left patternvalidation" path="notes" id="notes"
-							name="notes" data-pattern="alphabetwithspace" maxlength="256"  />
-							<!-- <form:input path="notes"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="256" /> -->
+							<form:textarea class="form-control text-left patternvalidation"
+								path="notes" id="notes" name="notes"
+								data-pattern="alphabetwithspace" maxlength="256" />
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active" />:<span class="mandatory"></span></label>
-					<div class="col-sm-2 add-margin">
-						<form:select path="active" id="active" cssClass="form-control"
-							cssErrorClass="form-control error" required="required">
-							
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:option value="true">YES</form:option>
-							<form:option value="false">NO</form:option>
-							<form:errors path="active" cssClass="error-msg" />
-						</form:select>
-					</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.active" />:<span class="mandatory"></span></label>
+						<div class="col-sm-2 add-margin">
+							<form:select path="active" id="active" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
 
-					<input type="hidden" name="casetypeMaster"
-						value="${casetypeMaster.id}" />
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:option value="true">YES</form:option>
+								<form:option value="false">NO</form:option>
+								<form:errors path="active" cssClass="error-msg" />
+							</form:select>
+						</div>
+
+						<input type="hidden" name="casetypeMaster"
+							value="${casetypeMaster.id}" />
