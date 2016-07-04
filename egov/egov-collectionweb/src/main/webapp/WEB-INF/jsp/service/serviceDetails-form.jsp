@@ -135,6 +135,8 @@ function validate(){
 	            valid=false;
 	        }
 	 }
+		 if (valid)
+				dom.get('serviceType').disabled = false;
 		window.scroll(0,0);
 		return valid;
 }
