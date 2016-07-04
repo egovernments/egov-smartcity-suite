@@ -37,29 +37,61 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.web.controller;
+package org.egov.lcms.web.ajax.controller;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.List;
 
-import org.egov.commons.Bankbranch;
-import org.egov.commons.service.BankBranchService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.lcms.masters.entity.AdvocateMaster;
+import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class AjaxAdvocateMasterController {
+@RequestMapping(value = "/legalcase/")
+public class AjaxLegalCaseController {
 
     @Autowired
-    BankBranchService bankBranchService;
+    private DepartmentService departmentService;
 
-    @RequestMapping(value = "/ajax-getAllBankBranchsByBank", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Bankbranch> getAllBankBranchsByBank(@RequestParam final Integer bankId) {
-        return bankBranchService.getAllBankBranchsByBank(bankId);
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private AdvocateMasterService advocateMasterService;
+
+    @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Department> getAllDepartmentsByNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String departmentName) {
+        return departmentService.getAllDepartmentsByNameLike(departmentName);
+
+    }
+
+    @RequestMapping(value = "ajax/advocateSearch", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<AdvocateMaster> getAllAdvocatesByNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String advocateName,
+            @RequestParam final Boolean isSeniorAdvocate) {
+
+        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
+    }
+
+    @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
+            @ModelAttribute("legalcase") @RequestParam final String departmentName,
+            @RequestParam final String positionName) {
+        final Department deptObj = departmentService.getDepartmentByName(departmentName);
+        return positionMasterService.getPageOfPositionsByDeptAndName(deptObj.getId(), positionName);
+
     }
 
 }

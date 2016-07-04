@@ -37,18 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.web.ajax.controller;
 
-package org.egov.lcms.web.controller;
+import java.util.List;
 
-public class TempRequest {
-	private String searchText;
+import org.egov.commons.Bankbranch;
+import org.egov.commons.service.BankBranchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-	public String getSearchText() {
-		return searchText;
-	}
+@Controller
+public class AjaxAdvocateMasterController {
 
-	public void setSearchText(final String searchText) {
-		this.searchText = searchText;
-	}
+    @Autowired
+    BankBranchService bankBranchService;
+
+    @RequestMapping(value = "/ajax-getAllBankBranchsByBank", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Bankbranch> getAllBankBranchsByBank(@RequestParam final Integer bankId) {
+        return bankBranchService.getAllBankBranchsByBank(bankId);
+    }
 
 }
