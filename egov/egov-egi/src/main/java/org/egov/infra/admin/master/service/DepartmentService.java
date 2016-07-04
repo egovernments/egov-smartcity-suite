@@ -89,9 +89,6 @@ public class DepartmentService {
     public Department getDepartmentByCode(final String code) {
         return departmentRepository.findByCode(code);
     }
-    public List<Department> getAllDepartmentsByNameLike(final String name) {
-        return departmentRepository.findByNameContainingIgnoreCase(name);
-    }
 
     @Transactional
     public void deleteDepartment(final Department department) {
