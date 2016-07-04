@@ -215,13 +215,21 @@ function validate()
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
+	if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
+		dom.get("norecordselectederror").style.display="block";
+		dom.get("norecordselectederror").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
+		window.scroll(0,0);
+		valSuccess=false;
+		return false;
+	}
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
-		{
+		{ 
 			dom.get("comparedatemessage").style.display="block";
 			window.scroll(0,0);
 			valSuccess= false;
+			return false;
 		}
 	}
 	else
@@ -229,6 +237,7 @@ function validate()
 		dom.get("comparedatemessage").style.display="none";
 		doLoadingMask('#loadingMask');
 		valSuccess= true;
+		return true;
 	}
 	return valSuccess;
 	
@@ -390,7 +399,7 @@ function onChangeServiceClass(obj)
 </div>
 <div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>
+      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
