@@ -90,7 +90,7 @@ public class PropertyMutation extends StateAware {
     private boolean partialMutation;
     private boolean registrationDone;
     private String type;
-    private MutationRegistrationDetails mutationRegistrationDetails;
+    private MutationRegistrationDetails mutationRegistrationDetails = new MutationRegistrationDetails();
 
     
     @Override
