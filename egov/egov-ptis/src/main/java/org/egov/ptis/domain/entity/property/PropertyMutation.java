@@ -90,6 +90,7 @@ public class PropertyMutation extends StateAware {
     private boolean partialMutation;
     private boolean registrationDone;
     private String type;
+    private MutationRegistrationDetails mutationRegistrationDetails;
 
     
     @Override
@@ -439,6 +440,14 @@ public class PropertyMutation extends StateAware {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public MutationRegistrationDetails getMutationRegistrationDetails() {
+        return mutationRegistrationDetails;
+    }
+
+    public void setMutationRegistrationDetails(MutationRegistrationDetails mutationRegistrationDetails) {
+        this.mutationRegistrationDetails = mutationRegistrationDetails;
     }
    
 }

@@ -45,29 +45,26 @@
 			</div>
 		</td>
 	</tr>
-	<s:if
-		test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
-		<tr>
-			<td class="greybox2">&nbsp;</td>
-			<td class="greybox"><s:text name="regst.details.sellerName"></s:text>
-				:</td>
-			<td class="greybox"><span class="bold"><s:property
-						value="%{mutationRegistrationDetails.seller}" default="N/A" /></span></td>
-			<td class="greybox"><s:text name="regst.details.buyerName" /> :</td>
-			<td class="greybox"><span class="bold">
-						<s:property value="%{mutationRegistrationDetails.buyer}" default="N/A" />
-			</span></td>
-		</tr>
-		<tr>
-			<td class="greybox2">&nbsp;</td>
-			<td class="greybox"><s:text name="regst.details.doorNo" />:</td>
-			<td class="greybox"><span class="bold"><s:property
-						value="%{mutationRegistrationDetails.doorNo}" default="N/A" /></span></td>
-			<td class="greybox"><s:text name="regst.details.address" />:</td>
-			<td class="greybox"><span class="bold"><s:property
-						value="%{mutationRegistrationDetails.address}" default="N/A" /></span></td>
-		</tr>
-	</s:if>
+	<tr>
+		<td class="greybox2">&nbsp;</td>
+		<td class="greybox"><s:text name="regst.details.sellerName"></s:text>
+			:</td>
+		<td class="greybox"><span class="bold"><s:property
+					value="%{mutationRegistrationDetails.seller}" default="N/A" /></span></td>
+		<td class="greybox"><s:text name="regst.details.buyerName" /> :</td>
+		<td class="greybox"><span class="bold">
+					<s:property value="%{mutationRegistrationDetails.buyer}" default="N/A" />
+		</span></td>
+	</tr>
+	<tr>
+		<td class="greybox2">&nbsp;</td>
+		<td class="greybox"><s:text name="regst.details.doorNo" />:</td>
+		<td class="greybox"><span class="bold"><s:property
+					value="%{mutationRegistrationDetails.doorNo}" default="N/A" /></span></td>
+		<td class="greybox"><s:text name="regst.details.address" />:</td>
+		<td class="greybox"><span class="bold"><s:property
+					value="%{mutationRegistrationDetails.address}" default="N/A" /></span></td>
+	</tr>
 	<tr>
 		<td class="greybox2">&nbsp;</td>
 		<td class="greybox"><s:text
@@ -107,5 +104,19 @@
 			:</td>
 		<td class="greybox"><span class="bold"><s:property
 					value="%{mutationRegistrationDetails.sroName}" default="N/A" /></span></td>
+		<td class="greybox"><s:text name="transferreason"></s:text>
+			:</td>
+		<td class="greybox"><span class="bold"><s:property
+					value="%{mutationRegistrationDetails.typeOfTransfer}"/></span></td>
+	</tr>
+	<tr>
+		<td class="greybox2">&nbsp;</td>
+		<td class="greybox"><s:text name="docNum" />:</td>
+		<td class="greybox"><span class="bold"><s:property
+					value="%{mutationRegistrationDetails.documnerNo}" /></span></td>
+		<td class="greybox"><s:text name="docDate" />:</td>
+		<td class="greybox"><s:date name="mutationRegistrationDetails.documentDate" var="docDate"
+				format="dd/MM/yyyy" /> <span class="bold"><s:property
+					value="%{#docDate}" /></span></td>
 	</tr>
 </table>

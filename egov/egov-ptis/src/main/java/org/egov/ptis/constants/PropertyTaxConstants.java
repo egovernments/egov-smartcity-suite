@@ -1430,4 +1430,6 @@ public interface PropertyTaxConstants {
     
     public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
     
+    public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
+    public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
 }
