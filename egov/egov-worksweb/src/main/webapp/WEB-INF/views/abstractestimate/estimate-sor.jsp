@@ -70,7 +70,7 @@
 				code="lbl.subtypeofwork" />
 		</label>
 		<div class="col-sm-3 add-margin">
-            <input type="hidden" id="subTypeOfWorkValue" value="${lineEstimate.subTypeOfWork.id }"/>
+            <input type="hidden" id="subTypeOfWorkValue" value="${abstractEstimate.category.id }"/>
 			<form:select path="category" data-first-option="false" id="category" class="form-control disablefield">
 				<form:option value="">
 					<spring:message code="lbl.select" />

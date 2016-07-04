@@ -47,10 +47,12 @@ $(document).ready(function(){
 	   $('.disablefield').attr('disabled', 'disabled');
 	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
-	$ExceptionalUOMs = $('#exceptionaluoms').val();
+	$ExceptionalUOMs = $('#exceptionaluoms').val();  
+	$subSchemeId = $('#subSchemeValue').val();
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
 	$('#scheme').trigger('change');
+	$('#parentCategory').trigger('blur');
 	var workCategory = $('#workCategory').val();
 	if(workCategory != undefined && workCategory != '') {
 		$('#workCategory').val($('#workCategory').val().replace(/_/g, ' '));
@@ -1214,7 +1216,7 @@ function getSubSchemsBySchemeId(schemeId) {
 							$('#subScheme').val($subSchemeId);
 						});
 					}, 
-					error: function (response) {
+					error: function (response) { 
 						console.log("failed");
 					}
 				});

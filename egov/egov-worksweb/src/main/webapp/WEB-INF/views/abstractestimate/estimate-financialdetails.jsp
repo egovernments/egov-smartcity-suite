@@ -104,7 +104,9 @@
 				<label class="col-sm-2 control-label text-right">
 					<spring:message code="lbl.subscheme" />
 				</label>
-				<input type="hidden" id="subSchemeValue" value="${lineEstimate.subScheme.id }" />
+				<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+				<input type="hidden" id="subSchemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.subScheme.id }" />
+				</c:if>
 				<div class="col-sm-3 add-margin">
 					<form:select path="financialDetails[0].subScheme" data-first-option="false" id="subScheme" class="form-control disablefield">
 						<form:option value="">
