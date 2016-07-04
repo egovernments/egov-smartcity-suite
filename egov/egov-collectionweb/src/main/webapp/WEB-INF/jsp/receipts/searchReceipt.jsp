@@ -216,8 +216,8 @@ function validate()
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
 	if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
-		dom.get("norecordselectederror").style.display="block";
-		dom.get("norecordselectederror").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
+		dom.get("error_area").style.display="block";
+		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
 		window.scroll(0,0);
 		valSuccess=false;
 		return false;
@@ -301,6 +301,7 @@ function onChangeServiceClass(obj)
 </script> 
 </head>
 <body>
+<div class="errorstyle" id="error_area" style="display:none;"></div>
 <span align="center" style="display: none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
