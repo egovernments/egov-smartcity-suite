@@ -123,6 +123,8 @@ public class WorkOrderActivity extends AbstractAuditable {
 
     @Transient
     private double prevCumlvQuantity;
+    
+    private transient Long mbHeaderId;
 
     public Activity getActivity() {
         return activity;
@@ -273,6 +275,14 @@ public class WorkOrderActivity extends AbstractAuditable {
 
     public void setSorCategory(final String sorCategory) {
         this.sorCategory = sorCategory;
+    }
+
+    public Long getMbHeaderId() {
+        return mbHeaderId;
+    }
+
+    public void setMbHeaderId(Long mbHeaderId) {
+        this.mbHeaderId = mbHeaderId;
     }
 
 }

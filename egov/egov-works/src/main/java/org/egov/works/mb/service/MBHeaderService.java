@@ -532,6 +532,18 @@ public class MBHeaderService {
                         new String[] { totalMBAmount.toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
                         null));
             }
+        } else {
+            final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                    .getWorkOrderEstimateById(mbHeader.getWorkOrderEstimate().getId());
+            if (workOrderEstimate.getWorkOrder()
+                    .getWorkOrderAmount() < mbHeader.getMbAmount().doubleValue()) {
+                jsonObject.addProperty("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
+                        new String[] { mbHeader.getMbAmount().toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        null));
+                errors.reject("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
+                        new String[] { mbHeader.getMbAmount().toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        null));
+            }
         }
         
         final List<MBHeader> mbHeaders = getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(

@@ -90,9 +90,11 @@ public class SearchMBHeaderController {
     @RequestMapping(value = "/measurementbook/searchactivityform", method = RequestMethod.GET)
     public String showSearchWorkOrderActivity(@RequestParam("woeId") final Long workOrderEstimateId,
             @RequestParam("workOrderNo") final String workOrderNo,
+            @RequestParam("mbHeaderId") final String mbHeaderId,
             final Model model) {
         model.addAttribute("workOrderEstimateId", workOrderEstimateId);
         model.addAttribute("workOrderNo", workOrderNo);
+        model.addAttribute("mbHeaderId", mbHeaderId);
 
         return "workorderactivity-searchform";
     }

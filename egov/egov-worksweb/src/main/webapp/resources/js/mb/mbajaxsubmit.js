@@ -130,6 +130,7 @@ function submitForm(workFlowAction) {
 				
 				$.each(json.detailIds, function(key, value){
 					$('#successMessage').html("");
+					$('#errorMessage').html("");
 					if(value.sorType == "SOR") {
 						$('#sorMbDetailsId_' + sorCount).val(value.id);
 						sorCount++;

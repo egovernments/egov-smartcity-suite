@@ -152,6 +152,7 @@ public class AjaxMBController {
     @RequestMapping(value = "/measurementbook/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String searchWorkOrderActivities(final HttpServletRequest request) {
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
+        final Long mbHeaderId = Long.parseLong(request.getParameter("id"));
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String sorType = request.getParameter("sorType");
@@ -184,6 +185,9 @@ public class AjaxMBController {
             workOrderActivities.clear();
             workOrderActivities.addAll(activities);
         }
+        
+        for (final WorkOrderActivity woa : workOrderActivities)
+            woa.setMbHeaderId(mbHeaderId);
 
         final String result = new StringBuilder("{ \"data\":")
                 .append(toSearchWorkOrderActivityResultJson(workOrderActivities)).append("}").toString();

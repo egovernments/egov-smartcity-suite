@@ -93,12 +93,9 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
         jsonObject.addProperty("activityAmount", workOrderActivity.getActivity().getAmount().getValue());
         jsonObject.addProperty("unitRate", workOrderActivity.getActivity().getRate());
         jsonObject.addProperty("conversionFactor", workOrderActivity.getActivity().getConversionFactor());
-        final List<MBHeader> mbHeaders = mbHeaderService
-                .getApprovedMBHeadersByWorkOrder(workOrderActivity.getWorkOrderEstimate().getWorkOrder());
         Double cumulativePreviousEntry = 0.0;
-        if (!mbHeaders.isEmpty())
-            cumulativePreviousEntry = mbHeaderService.getPreviousCumulativeQuantity(mbHeaders.get(mbHeaders.size() - 1).getId(),
-                    workOrderActivity.getId());
+        cumulativePreviousEntry = mbHeaderService.getPreviousCumulativeQuantity(workOrderActivity.getMbHeaderId(),
+                workOrderActivity.getId());
 
         if (cumulativePreviousEntry == null)
             jsonObject.addProperty("cumulativePreviousEntry", 0);

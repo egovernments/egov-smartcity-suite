@@ -47,12 +47,18 @@ $(document).ready(function(){
 $('#searchAndAdd').click(function() {
 	var workOrderEstimateId = $('#workOrderEstimateId').val();
 	var workOrderNumber = $('#workOrderNumber').html();
+	var mbHeaderId = $('#id').val();
+	if(mbHeaderId == '')
+		mbHeaderId = -1;
 	
-	window.open("/egworks/measurementbook/searchactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open("/egworks/measurementbook/searchactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber + "&mbHeaderId=" + mbHeaderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
 $('#addAll').click(function() {
 	var workOrderEstimateId = $('#workOrderEstimateId').val();
+	var mbHeaderId = $('#id').val();
+	if(mbHeaderId == '')
+		mbHeaderId = -1;
 	var selectedActivities = "";
 	
 	$('.loader-class').modal('show', {backdrop: 'static'});
@@ -61,7 +67,8 @@ $('#addAll').click(function() {
 		url: "/egworks/measurementbook/ajax-searchactivities",
 		cache: true,
 		dataType: "json",
-		"data": {"workOrderEstimateId" : workOrderEstimateId},
+		"data": {"workOrderEstimateId" : workOrderEstimateId,
+			"id" : mbHeaderId},
 		success: function (data) {
 			populateActivities(data, selectedActivities);
 		},

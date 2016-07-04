@@ -88,12 +88,12 @@
 											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
-											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
+											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
 											<td><c:out value="${mbdetails.quantity}" /></td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
-											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="cumulativeQuantitycurrEnrty" id="cumulativeQuantitycurrEnrty"
-												value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" />
+												value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" />
 											<td class="text-right"><span id="amountCurrentEntry"></span></td>
 											<td class="text-right"><span id="cumulativeAmountCurrentEntry"></span></td>
 											<td class="text-right"><span id="approvedAmount"></span></td>
@@ -154,12 +154,12 @@
 											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
-											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity}" /></td>
+											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
 											<td><c:out value="${mbdetails.quantity}" /></td>
 											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />
-											<td><c:out value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="nonSorCumulativeQuantityCurrEnrty" id="nonSorCumulativeQuantityCurrEnrty"
-												value="${mbdetails.workOrderActivity.prevCumlvQuantity + mbdetails.quantity}" />
+												value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" />
 											<td class="text-right"><span id="nonSorAmountCurrentEntry"></span></td>
 											<td class="text-right"><span id="nonSorCumulativeAmountCurrentEntry"></span></td>
 											<td class="text-right"><span id="nonSorApprovedAmount"></span></td>
