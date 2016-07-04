@@ -182,7 +182,7 @@ public class WorkOrderEstimateService {
         if (searchRequestLetterOfAcceptance.getName() != null)
             queryStr.append(" and upper(woe.workOrder.contractor.name) =:contractorName ");
         if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
-            queryStr.append(" and upper(woe.workOrder.estimateNumber) =:estimateNumber ");
+            queryStr.append(" and upper(woe.estimate.estimateNumber) =:estimateNumber ");
         if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null)
             queryStr.append(" and upper(woe.estimate.projectCode.code) =:workIdentificationNo ");
 

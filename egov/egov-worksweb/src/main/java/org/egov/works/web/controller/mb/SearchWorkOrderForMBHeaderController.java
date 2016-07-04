@@ -73,12 +73,13 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String showSearchWorkOrder(@ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) {
+    public String showSearchWorkOrder(
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model) {
 
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
+        searchRequestLetterOfAcceptance.setEgwStatus(WorksConstants.WO_STATUS_WOCOMMENCED.toUpperCase());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
         final MBHeader mbHeader = new MBHeader();
