@@ -222,7 +222,7 @@
 						<tr>
 							<td colspan="5">
 								<div class="headingsmallbg">
-									<s:text name="transferDtls" />
+									<span class="bold"><s:text name="transferDtls" /></span>
 								</div>
 							</td>
 						</tr>
@@ -285,7 +285,7 @@
 						<tr>
 							<td colspan="5">
 								<div class="headingsmallbg">
-									<s:text name="transferorDetails" />
+									<span class="bold"><s:text name="transferorDetails" /></span>
 								</div>
 							</td>
 						</tr>
@@ -351,9 +351,9 @@
 						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) ||
 						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
 						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
-						<tr>
+						
 							<%@ include file="transferProperty-registrationDetails-view.jsp"%>
-						</tr>
+						
 					</s:if>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<s:if
@@ -361,37 +361,37 @@
 						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
 						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
 							<tr>
-								<td class="greybox2">&nbsp;</td>
-								<td class="greybox"><s:text name="transferreason"></s:text>
+								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="transferreason"></s:text>
 									:</td>
-								<td class="greybox"><span class="bold"><s:property
+								<td class="bluebox"><span class="bold"><s:property
 											value="%{mutationReason.mutationName}" /></span></td>
-								<td class="greybox"><s:text name="saleDetls" /> :</td>
-								<td class="greybox"><span class="bold"> <s:if
+								<td class="bluebox"><s:text name="saleDetls" /> :</td>
+								<td class="bluebox"><span class="bold">  <s:if
 											test="%{saleDetail == ''}">N/A</s:if> <s:else>
-											<s:property value="%{saleDetail}" />
+											<s:property value="%{saleDetail}" default="N/A" />
 										</s:else>
 								</span></td>
 							</tr>
 							<tr>
-								<td class="greybox2">&nbsp;</td>
-								<td class="greybox"><s:text name="docNum" />:</td>
-								<td class="greybox"><span class="bold"><s:property
+								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="docNum" />:</td>
+								<td class="bluebox"><span class="bold"><s:property
 											value="%{deedNo}" /></span></td>
-								<td class="greybox"><s:text name="docDate" />:</td>
-								<td class="greybox"><s:date name="deedDate" var="docDate"
+								<td class="bluebox"><s:text name="docDate" />:</td>
+								<td class="bluebox"><s:date name="deedDate" var="docDate"
 										format="dd/MM/yyyy" /> <span class="bold"><s:property
 											value="%{#docDate}" /></span></td>
 							</tr>
 						</s:if>
 						<tr>
-							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="label.parties.value" /> :</td>
-							<td class="greybox"><span class="bold"><s:property
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="label.parties.value" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
 										value="%{partyValue}" default="N/A" /></span></td>
-							<td class="greybox"><s:text name="label.department.value" />
+							<td class="bluebox"><s:text name="label.department.value" />
 								:</td>
-							<td class="greybox"><span class="bold"><s:property
+							<td class="bluebox"><span class="bold"><s:property
 										value="%{departmentValue}" default="N/A" /></span></td>
 						</tr>
 						<s:if

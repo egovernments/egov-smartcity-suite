@@ -41,7 +41,7 @@
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
-				<s:text name="registrationDetails" />
+				<span class="bold"><s:text name="registrationDetails" /></span>
 			</div>
 		</td>
 	</tr>

@@ -227,10 +227,10 @@
 					<s:if
 						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
 						<tr>
-							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="transferreason"></s:text>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="transferreason"></s:text>
 								<span class="mandatory1">*</span> :</td>
-							<td class="greybox"><s:select name="mutationReason"
+							<td class="bluebox"><s:select name="mutationReason"
 									id="transRsnId" list="dropdownData.MutationReason" listKey="id"
 									listValue="mutationName" headerKey="-1"
 									headerValue="%{getText('default.select')}"
@@ -243,15 +243,15 @@
 									onblur="trim(this,this.value);"></s:textarea></td>
 						</tr>
 						<tr class="documentDetRow">
-							<td class="greybox2">&nbsp;</td>
-							<td class="greybox"><s:text name="docNum" /><span
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docNum" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="greybox"><s:textfield name="deedNo" id="docNum"
+							<td class="bluebox"><s:textfield name="deedNo" id="docNum"
 									maxlength="64"
 									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-							<td class="greybox"><s:text name="docDate" /><span
+							<td class="bluebox"><s:text name="docDate" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="greybox"><s:date name="deedDate" var="docDate"
+							<td class="bluebox"><s:date name="deedDate" var="docDate"
 									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
 									id="deedDate" maxlength="10" value="%{docDate}"
 									autocomplete="off"
@@ -260,15 +260,15 @@
 						</tr>
 					</s:if>
 					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="label.parties.value" /><span
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="label.parties.value" /><span
 							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textfield name="partyValue"
+						<td class="bluebox"><s:textfield name="partyValue"
 								value="%{partyValue}" id="partyValue" maxlength="16"
 								onblur="validNumber(this);checkZero(this);" /></td>
-						<td class="greybox"><s:text name="label.department.value" /><span
+						<td class="bluebox"><s:text name="label.department.value" /><span
 							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textfield name="departmentValue"
+						<td class="bluebox"><s:textfield name="departmentValue"
 								value="%{departmentValue}" id="departmentValue" maxlength="16"
 								onblur="validNumber(this);checkZero(this);" /></td>
 					</tr>
