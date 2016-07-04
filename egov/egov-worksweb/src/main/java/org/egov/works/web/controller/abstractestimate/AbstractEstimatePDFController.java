@@ -37,25 +37,33 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
 package org.egov.works.web.controller.abstractestimate;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,43 +71,55 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/abstractestimate")
-public class ViewBillOfQuantitiesXlsController {
+public class AbstractEstimatePDFController {
 
-    public static final String BOQ = "Bill Of Qunatities";
     @Autowired
     private EstimateService estimateService;
 
     @Autowired
     private ReportService reportService;
 
-    @RequestMapping(value = "/viewBillOfQuantitiesXls/{abstractEstimateId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewBillOfQuantities(@PathVariable final Long abstractEstimateId,
-            final Model model) {
-        final AbstractEstimate estimate = estimateService.getAbstractEstimateById(abstractEstimateId);
-        final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
-                createHeaderParams(estimate, BOQ));
-        reportRequest.setReportFormat(FileFormat.XLS);
-        final ReportOutput reportOutput = reportService.createReport(reportRequest);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add("content-disposition",
-                "no-cache;filename=AbstractEstimate-BillOfQuantites_" + estimate.getEstimateNumber() + ".xls");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    public static final String ABSTRACTESTIMATEPDF = "abstractEstimatePDF";
+    private final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ReportRequest reportInput = null;
+    private ReportOutput reportOutput = null;
+
+    @RequestMapping(value = "/abstractEstimatePDF/{estimateId}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> generateAbstractEstimatePDF(final HttpServletRequest request,
+            @PathVariable("estimateId") final Long id, final HttpSession session) throws IOException {
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(id);
+        return generateReport(abstractEstimate, request, session);
     }
 
-    private Map createHeaderParams(final AbstractEstimate estimate, final String type) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ResponseEntity<byte[]> generateReport(final AbstractEstimate abstractEstimate,
+            final HttpServletRequest request, final HttpSession session) {
+        final List<Activity> activities = new ArrayList<Activity>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        if (type.equalsIgnoreCase(BOQ)) {
-            reportParams.put("workName", estimate.getName());
-            reportParams.put("deptName", estimate.getExecutingDepartment().getName());
-            reportParams.put("estimateNo", estimate.getEstimateNumber());
-            reportParams.put("activitySize",
-                    estimate.getSORActivities() == null ? 0 : estimate.getSORActivities().size());
-            reportParams.put("NonSOR_Activities", estimate.getNonSORActivities());
-            reportParams.put("grandTotalAmt", BigDecimal.valueOf(estimate.getWorkValue()));
-            reportParams.put("estimateDate",
-                    estimate.getEstimateDate() != null ? formatter.format(estimate.getEstimateDate()) : "");
+        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+        reportParams.put("cityName", cityName);
+        if (abstractEstimate != null) {
+            reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
+            activities.addAll(abstractEstimate.getSORActivities());
+            activities.addAll(abstractEstimate.getNonSORActivities());
+            if (abstractEstimate.getState() != null)
+                reportParams.put("workflowdetails", lineEstimateService.getHistory(abstractEstimate.getState(),
+                        abstractEstimate.getStateHistory()));
+
+            reportParams.put("activities", activities);
         }
-        return reportParams;
+        reportParams.put("currDate", formatter.format(new Date()));
+        reportInput = new ReportRequest(ABSTRACTESTIMATEPDF, abstractEstimate, reportParams);
+        final HttpHeaders headers = new HttpHeaders();
+        ;
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition",
+                "inline;filename=AbstractEstimate_" + abstractEstimate.getEstimateNumber() + ".pdf");
+        reportOutput = reportService.createReport(reportInput);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+
     }
+
 }

@@ -60,8 +60,9 @@
 <input type="hidden" name="estimateId" id="estimateId" value="${abstractEstimate.id}"/>
 <div class="row text-center">
 	<div class="add-margin">
-	<c:if test="${abstractEstimate != null && abstractEstimate.state.value != 'NEW'}">
+	<c:if test="${abstractEstimate != null && abstractEstimate.state.value != 'NEW' && abstractEstimate.state.value != 'Cancel'}">
 	    <button type='submit' class='btn btn-primary' id="viewBOQ" name="viewBOQ"><spring:message code='lbl.viewBOQ' />	</button>
+	    <button type='submit' class='btn btn-primary' id="estimatepdf" name="estimatepdf"><spring:message code='lbl.abstractestimate.pdf' />	</button>
 	</c:if>
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
@@ -71,5 +72,10 @@
 $('#viewBOQ').click(function() {
 	var estimateId = $("#estimateId").val();
 	window.open("/egworks/abstractestimate/viewBillOfQuantitiesXls/"+estimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+});
+
+$('#estimatepdf').click(function() {
+	var estimateId = $("#estimateId").val();
+	window.open("/egworks/abstractestimate/abstractEstimatePDF/"+estimateId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 });
 </script>
