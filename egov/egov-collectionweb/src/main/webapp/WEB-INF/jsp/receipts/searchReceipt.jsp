@@ -282,6 +282,13 @@ function checkviewforselectedrecord()
 
 }
 
+function onChangeServiceClass(obj)
+{
+    if(obj!=null && obj.value!=null && obj.value!='-1'){
+    	populateserviceType({serviceClass:obj.value});
+    }
+}
+
 </script> 
 </head>
 <body>
@@ -333,10 +340,18 @@ function checkviewforselectedrecord()
 
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="service.master..classification"/> <span class="mandatory"></td>
+			<td class="bluebox"> 
+				<s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
+				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select>
+			</td>
+			 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/></td>
 	      <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
+	      
+	      <%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td> --%>
 	    </tr>
 	     <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
