@@ -1,47 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-   ~    accountability and the service delivery of the government  organizations.
-   ~
-   ~     Copyright (C) <2015>  eGovernments Foundation
-   ~
-   ~     The updated version of eGov suite of products as by eGovernments Foundation
-   ~     is available at http://www.egovernments.org
-   ~
-   ~     This program is free software: you can redistribute it and/or modify
-   ~     it under the terms of the GNU General Public License as published by
-   ~     the Free Software Foundation, either version 3 of the License, or
-   ~     any later version.
-   ~
-   ~     This program is distributed in the hope that it will be useful,
-   ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-   ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   ~     GNU General Public License for more details.
-   ~
-   ~     You should have received a copy of the GNU General Public License
-   ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-   ~     http://www.gnu.org/licenses/gpl.html .
-   ~
-   ~     In addition to the terms of the GPL license to be adhered to in using this
-   ~     program, the following additional terms are to be complied with:
-   ~
-   ~         1) All versions of this program, verbatim or modified must carry this
-   ~            Legal Notice.
-   ~
-   ~         2) Any misrepresentation of the origin of the material is prohibited. It
-   ~            is required that all modified versions of this material be marked in
-   ~            reasonable ways as different from the original version.
-   ~
-   ~         3) This license does not grant any rights to any user of the program
-   ~            with regards to rights under trademark law for use of the trade names
-   ~            or trademarks of eGovernments Foundation.
-   ~
-   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-06-28T16:07:53 -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-07-04T15:25:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="letterOfAcceptance" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1d5c7e8-57e5-4396-98bf-17f9bb000b84">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="java.util.*"/>
 	<parameter name="technicalSanctionByDesignation" class="java.lang.String"/>
 	<parameter name="present" class="java.lang.String"/>
@@ -50,6 +12,7 @@
 	<parameter name="ward" class="java.lang.String"/>
 	<parameter name="workOrderNumber" class="java.lang.String"/>
 	<parameter name="workOrderDate" class="java.lang.String"/>
+	<parameter name="tenderFinalizedPercentage" class="java.lang.Double"/>
 	<parameter name="agreementAmount" class="java.lang.String"/>
 	<parameter name="contractorName" class="java.lang.String"/>
 	<parameter name="contractorAddress" class="java.lang.String"/>
@@ -64,9 +27,13 @@
 	<parameter name="asd" class="java.lang.String"/>
 	<parameter name="headOfAccount" class="java.lang.String"/>
 	<parameter name="technicalSanctionBy" class="java.lang.String"/>
+	<parameter name="activities" class="java.util.List"/>
+	<parameter name="activitySize" class="java.lang.Integer"/>
+	<parameter name="currDate" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
+	<field name="activity" class="org.egov.works.abstractestimate.entity.Activity"/>
 	<background>
 		<band height="802" splitType="Stretch">
 			<rectangle>
@@ -176,6 +143,10 @@
 			<textField>
 				<reportElement x="400" y="90" width="137" height="30" uuid="474a0f50-4a25-4dad-b14d-e3a24d42669b"/>
 				<textFieldExpression><![CDATA["Office of the " + $P{technicalSanctionByDesignation}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="19" width="100" height="21" uuid="f5b43966-45e9-4756-8bc2-c1bb98f7a9ac"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -288,8 +259,8 @@
 			</textField>
 		</band>
 	</pageHeader>
-	<summary>
-		<band height="221">
+	<detail>
+		<band height="262">
 			<staticText>
 				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="16" y="154" width="490" height="63" uuid="4d655106-ffd0-43b3-bd42-3cfcd79633f7"/>
 				<textElement>
@@ -329,6 +300,25 @@
 				</reportElement>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA["	The above work is entrusted to you on tender basis and the work should be started within 3 days of receipt of this order and should be completed within................."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="437" y="230" width="97" height="20" uuid="4ad4368e-8e3f-47f0-8bab-ea7b21dfb89c"/>
+				<textFieldExpression><![CDATA[$P{currDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="94">
+			<subreport>
+				<reportElement x="1" y="52" width="459" height="40" uuid="100ec7bb-9367-40d8-98e7-1da7ced33ae6">
+					<printWhenExpression><![CDATA[$P{activitySize}!=0 && $P{activities}!=null]]></printWhenExpression>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{activities},false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("letterOfAcceptance-BOQ.jasper")]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="440" y="20" width="100" height="21" uuid="676d8aab-407d-4db4-9321-c86216ab0e2b"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

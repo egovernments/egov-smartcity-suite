@@ -43,7 +43,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +61,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -95,8 +98,7 @@ public class LetterOfAcceptancePDFController {
 
     @RequestMapping(value = "/letterOfAcceptancePDF/{letterOfAcceptanceId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
-            @PathVariable("letterOfAcceptanceId") final Long id,
-            final HttpSession session) throws IOException {
+            @PathVariable("letterOfAcceptanceId") final Long id, final HttpSession session) throws IOException {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         return generateReport(workOrder, request, session);
     }
@@ -105,31 +107,32 @@ public class LetterOfAcceptancePDFController {
             final HttpSession session) {
         if (workOrder != null) {
             final AbstractEstimate estimate = workOrder.getWorkOrderEstimates().get(0).getEstimate();
+            final List<WorkOrderActivity> workOrderActivities = workOrder.getWorkOrderEstimates().get(0)
+                    .getWorkOrderActivities();
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final DecimalFormat df = new DecimalFormat("0.00");
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams
-                    .put("cityLogo",
-                            url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
-                                    (String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo")));
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
-            reportParams.put("workOrderNumber", workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
+            reportParams.put("workOrderNumber",
+                    workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
             reportParams.put("workOrderDate",
                     workOrder.getWorkOrderDate() != null ? formatter.format(workOrder.getWorkOrderDate()) : "");
-            reportParams.put("contractorName", workOrder.getContractor().getName() != null ? workOrder.getContractor().getName()
-                    : "");
-            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
-                    .getCorrespondenceAddress() : "");
-            reportParams.put("panNo", workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber()
-                    : "");
-            reportParams.put("bank", workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName()
-                    : "");
-            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
-                    .getBankaccount() : "");
+            reportParams.put("contractorName",
+                    workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
+            reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getCorrespondenceAddress() : "");
+            reportParams.put("panNo",
+                    workOrder.getContractor().getPanNumber() != null ? workOrder.getContractor().getPanNumber() : "");
+            reportParams.put("bank",
+                    workOrder.getContractor().getBank() != null ? workOrder.getContractor().getBank().getName() : "");
+            reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null
+                    ? workOrder.getContractor().getBankaccount() : "");
             reportParams.put("subject", estimate.getName());
             if (estimate.getLineEstimateDetails() != null)
                 reportParams.put("modeOfAllotment",
@@ -140,10 +143,13 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
             reportParams.put("WINCode", estimate.getProjectCode().getCode());
-            reportParams.put("amountOfEstimate",
-                    estimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+            reportParams.put("amountOfEstimate", estimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
             reportParams.put("headOfAccount", estimate.getFinancialDetails().get(0).getBudgetGroup().getName());
             reportParams.put("ward", estimate.getWard().getName());
+            reportParams.put("activities", workOrderActivities);
+            reportParams.put("activitySize", workOrderActivities.size());
+            reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
+            reportParams.put("currDate", formatter.format(new Date()));
 
             if (!estimate.getEstimateTechnicalSanctions().isEmpty()) {
                 final String technicalSanctionByDesignation = worksUtils
@@ -153,7 +159,7 @@ public class LetterOfAcceptancePDFController {
             } else
                 reportParams.put("technicalSanctionByDesignation", "");
 
-            reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
+            reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrderActivities, reportParams);
 
         }
 
