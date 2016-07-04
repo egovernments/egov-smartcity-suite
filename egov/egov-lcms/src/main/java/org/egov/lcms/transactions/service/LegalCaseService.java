@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transations.service;
+package org.egov.lcms.transactions.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -37,12 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transations.autonumber;
+package org.egov.lcms.autonumber.impl;
 
+import java.io.Serializable;
+
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface LegalCaseNumberGenerator {
+public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {
+    private static final String LEGALCASE_NUMBER_SEQ_PREFIX = "SEQ_LEGALCASE_NUMBER";
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-    public String generateLegalCaseNumber();
+   
+
+    @Override
+    public String generateLegalCaseNumber() {
+        String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
+       final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s%06d", "LC", nextSequence);
+    }
+
 }

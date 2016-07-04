@@ -43,10 +43,10 @@ package org.egov.lcms.web.controller.transactions;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.transactions.entity.Legalcase;
-import org.egov.lcms.transations.autonumber.LegalCaseNumberGenerator;
-import org.egov.lcms.transations.service.LegalCaseService;
+import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
