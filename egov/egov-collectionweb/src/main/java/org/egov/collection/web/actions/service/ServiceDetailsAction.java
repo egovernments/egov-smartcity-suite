@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -76,7 +77,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
     @Result(name = "list", location = "serviceDetails-list.jsp"),
@@ -113,6 +113,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsDAO chartOfAccountsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    private TreeMap<String, String> serviceTypeMap =  new TreeMap<String,String>();
 
     public ServiceDetailsAction() {
         addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -177,6 +178,7 @@ public class ServiceDetailsAction extends BaseFormAction {
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))
             addDropdownData("fundsourceList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE));
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
 
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
@@ -488,5 +490,13 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public void setMandatoryFields(final List<String> mandatoryFields) {
         this.mandatoryFields = mandatoryFields;
+    }
+
+    public TreeMap<String, String> getServiceTypeMap() {
+        return serviceTypeMap;
+    }
+
+    public void setServiceTypeMap(TreeMap<String, String> serviceTypeMap) {
+        this.serviceTypeMap = serviceTypeMap;
     }
 }
