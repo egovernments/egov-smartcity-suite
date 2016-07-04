@@ -146,7 +146,7 @@
 										<tr> 
 											<td><span><c:out value="${item.index + 1}" /></span></td>
 											<input type="hidden" name="nonSorUnitrate" id="nonSorUnitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
-											<td><c:out value="${mbdetails.workOrderActivity.activity.nonSor.summary}"></c:out>
+											<td><c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>
 												<a href="#" class="hintanchor"
 												title="<c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>"><i
 													class="fa fa-question-circle" aria-hidden="true"></i></a></td>

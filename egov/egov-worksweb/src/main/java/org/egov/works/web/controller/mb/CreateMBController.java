@@ -93,6 +93,8 @@ public class CreateMBController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         final JsonObject jsonObject = new JsonObject();
+        mbHeaderService.validateMBInDrafts(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
+        mbHeaderService.validateMBInWorkFlow(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder);
 
         if (jsonObject.toString().length() > 2) {

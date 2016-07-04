@@ -230,16 +230,14 @@ public class MBHeaderService {
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
             mbHeader.setMbDetails(mbDetails);
-            for (final MBDetails details : mbHeader.getMbDetails())
-                details.setMbHeader(mbHeader);
         }
 
         final MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);
 
-        mbHeaderStatusChange(mbHeader, workFlowAction);
+        mbHeaderStatusChange(updatedMBHeader, workFlowAction);
 
-        if (mbHeader.getEgwStatus().getCode().equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString()))
-            mbHeader.setApprovedDate(new Date());
+        if (updatedMBHeader.getEgwStatus().getCode().equalsIgnoreCase(MBHeader.MeasurementBookStatus.APPROVED.toString()))
+            updatedMBHeader.setApprovedDate(new Date());
 
         createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
@@ -519,9 +517,6 @@ public class MBHeaderService {
     }
     
     public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors) {
-//        validateMBInDrafts(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
-//        validateMBInWorkFlow(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
-        
         Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId(),
                 mbHeader.getWorkOrder().getId(), mbHeader.getWorkOrderEstimate().getId(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
