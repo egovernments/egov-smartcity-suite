@@ -136,11 +136,13 @@ public class ScheduleOfRateService {
     }
 
     public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategories(final String code, final String ids,
-            final Date estimateDate) {
+            Date estimateDate) {
         final List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
         final String[] split = ids.split(",");
         for (final String s : split)
             scheduleOfCategoryIds.add(Long.parseLong(s));
+        if (estimateDate == null)
+            estimateDate = new Date();
         final List<ScheduleOfRate> scheduleOfRates = scheduleOfRateRepository
                 .findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(code.toUpperCase(),
                         scheduleOfCategoryIds, estimateDate);
