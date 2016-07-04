@@ -58,14 +58,17 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.CollectionRemittanceReportResult;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.entity.Remittance;
+import org.egov.collection.entity.RemittanceDetail;
 import org.egov.collection.service.CollectionReportService;
+import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -73,6 +76,7 @@ import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.egov.model.masters.AccountCodePurpose;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = RemittanceStatementReportAction.INDEX, location = "remittanceStatementReport-index.jsp"),
@@ -118,6 +122,10 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private String bank;
     private String bankAccount;
     private Date remittanceDate;
+    private String voucherNumber;
+    private RemittanceServiceImpl remittanceService;
+
+
 
     @Override
     public void prepare() {
@@ -209,6 +217,48 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
+
+    @Action(value = "/reports/remittanceStatementReport-reportPrintBankChallan")
+    public String reportPrintBankChallan() {
+        final Remittance remittanceObj = (Remittance) persistenceService
+                .findByNamedQuery(CollectionConstants.REMITTANCE_BY_VOUCHER_NUMBER, voucherNumber);
+        List<ReceiptHeader> remittanceList = new ArrayList<ReceiptHeader>(remittanceObj.getCollectionRemittance());
+        double totalCashAmt=0;
+        double totalChequeAmt=0;
+        bankRemittanceList = remittanceService.prepareBankRemittanceReport(remittanceList);         
+        for(RemittanceDetail rd:remittanceObj.getRemittanceDetails())
+        {
+            if(rd.getChartOfAccount().getPurposeId()==(getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CASH_IN_HAND).getId()))
+            {
+                totalCashAmt=rd.getCreditAmount().doubleValue();
+            }
+            
+            if(rd.getChartOfAccount().getPurposeId().equals(getAccountCodePurpose(CollectionConstants.PURPOSE_NAME_CHEQUE_IN_HAND).getId()))
+                    {
+                totalChequeAmt=rd.getCreditAmount().doubleValue();
+                    }
+        }
+        critParams.put(EGOV_CASH_AMOUNT, totalCashAmt);
+        critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmt);
+        critParams.put(EGOV_REMITTANCE_VOUCHER, remittanceObj==null?"":remittanceObj.getReferenceNumber());
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceObj==null?new Date():remittanceObj.getReferenceDate());
+        critParams.put(EGOV_BANK, remittanceObj.getBankAccount()!= null ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
+        critParams.put(EGOV_BANK_ACCOUNT, remittanceObj.getBankAccount()!= null ? remittanceObj.getBankAccount().getAccountnumber() : "");
+        final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
+        collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
+        final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return REPORT;
+    }
+   
+    public AccountCodePurpose getAccountCodePurpose(String purposeName)
+    {
+       AccountCodePurpose acctCodePurposeObj = (AccountCodePurpose) getPersistenceService()
+                .find(" from AccountCodePurpose"+ " where name = ? ",purposeName);
+        return acctCodePurposeObj;
+    }
+    
 
     @Override
     protected String getReportTemplateName() {
@@ -374,5 +424,16 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         this.remittanceDate = remittanceDate;
     }
 
+    public String getVoucherNumber() {
+        return voucherNumber;
+    }
 
+    public void setVoucherNumber(String voucherNumber) {
+        this.voucherNumber = voucherNumber;
+    }
+    
+    public void setRemittanceService(final RemittanceServiceImpl remittanceService) {
+        this.remittanceService = remittanceService;
+    }
+    
 }

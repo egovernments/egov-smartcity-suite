@@ -40,9 +40,22 @@
 
 package org.egov.adtax.service.collection;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
+import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
@@ -55,17 +68,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -197,6 +199,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
         billdetail.setGlcode(glCodeForDemandDetail);
         billdetail.setDescription(description);
         billdetail.setAdditionalFlag(1);
+        billdetail.setPurpose(PURPOSE.OTHERS.toString());
         return billdetail;
     }
 

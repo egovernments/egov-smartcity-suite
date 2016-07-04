@@ -39,6 +39,15 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -62,27 +71,15 @@ import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
-        @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
-        @Result(name = "process", location = "dishonoredCheque-process.jsp"),
-        @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
+    @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
+    @Result(name = "process", location = "dishonoredCheque-process.jsp"),
+    @Result(name = "accountList", location = "dishonoredCheque-accountList.jsp") })
 @ParentPackage("egov")
 public class DishonoredChequeAction extends SearchFormAction {
 
     private static final long serialVersionUID = 2871716607884152080L;
     private static final Logger LOGGER = Logger.getLogger(DishonoredChequeAction.class);
-    private static final String PAYMENT = "Payment";
-    private static final String RECEIPT = "Receipt";
-    private static final String JOURNAL_VOUCHER = "Journal Voucher";
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     public static final String SEARCH = "search";
     private List bankBranchList;
@@ -106,9 +103,9 @@ public class DishonoredChequeAction extends SearchFormAction {
     private String referenceNo;
     private Long accountNumber;
     private EgovPaginatedList paginatedList;
-    private List<DishonoredChequeForm> generalLedger = new ArrayList<DishonoredChequeForm>();
-    private List<DishonoredChequeForm> subLedgerDetails = new ArrayList<DishonoredChequeForm>();
-    private List<DishonoredChequeForm> remittanceGeneralLedger = new ArrayList<DishonoredChequeForm>();
+    private List<DishonoredChequeForm> generalLedger = new ArrayList<DishonoredChequeForm>(0);
+    private List<DishonoredChequeForm> subLedgerDetails = new ArrayList<DishonoredChequeForm>(0);
+    private List<DishonoredChequeForm> remittanceGeneralLedger = new ArrayList<DishonoredChequeForm>(0);
     protected List<DishonoredChequeBean> dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
     @Autowired
     private ReceiptHeaderService receiptHeaderService;
@@ -127,7 +124,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         super.prepare();
         addDropdownData(CollectionConstants.DROPDOWN_DATA_BANKBRANCH_LIST, bankBranchHibernateDAO.getAllBankBranchs());
         addDropdownData(CollectionConstants.DROPDOWN_DATA_ACCOUNT_NO_LIST, Collections.EMPTY_LIST);
-        addDropdownData(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST, (List<String>) persistenceService.getSession()
+        addDropdownData(CollectionConstants.DROPDOWN_DATA_DISHONOR_REASONS_LIST, persistenceService.getSession()
                 .createSQLQuery("select * from egf_instrument_dishonor_reason").list());
 
         instrumentModesMap = CollectionConstants.INSTRUMENT_MODES_MAP;
@@ -189,7 +186,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     @Action(value = "/receipts/dishonoredCheque-create")
     public String create() throws Exception {
         try {
-            DishonoredChequeForm chequeForm = new DishonoredChequeForm();
+            final DishonoredChequeForm chequeForm = new DishonoredChequeForm();
             chequeForm.setTransactionDate(transactionDate);
             chequeForm.setDishonorReason(dishonorReason);
             chequeForm.setReferenceNo(referenceNo);
@@ -254,12 +251,10 @@ public class DishonoredChequeAction extends SearchFormAction {
      */
     @SuppressWarnings("unchecked")
     public void getReversalGlCodes() {
-        List<Object[]> glCodes = new ArrayList<Object[]>();
-        List<Object[]> glCodescredit = new ArrayList<Object[]>();
-        List<Object[]> slDetailsCredit = new ArrayList<Object[]>();
-        List<Object[]> slDetailsDebit = new ArrayList<Object[]>();
-        List<Object[]> remittanceDetailsCredit = new ArrayList<Object[]>();
-        List<Object[]> instrumentDetails = new ArrayList<Object[]>();
+        List<Object[]> glCodes = new ArrayList<Object[]>(0);
+        List<Object[]> glCodescredit = new ArrayList<Object[]>(0);
+        List<Object[]> remittanceDetailsCredit = new ArrayList<Object[]>(0);
+        List<Object[]> instrumentDetails = new ArrayList<Object[]>(0);
         reversalAmount = (BigDecimal) persistenceService
                 .find("select sum(instrumentAmount) from InstrumentHeader where id in (" + instHeaderIds + ")");
         glCodescredit = persistenceService
@@ -273,8 +268,8 @@ public class DishonoredChequeAction extends SearchFormAction {
         glCodes.addAll(glCodescredit);
 
         String reversalGlCodesStr = "";
-        for (Object[] gl : glCodes) {
-            DishonoredChequeForm detail = new DishonoredChequeForm();
+        for (final Object[] gl : glCodes) {
+            final DishonoredChequeForm detail = new DishonoredChequeForm();
             detail.setVoucherHeaderId(getStringValue(gl[0]));
             detail.setGlcodeId(getStringValue(gl[1]));
             detail.setGlcode(getStringValue(gl[2]));
@@ -283,19 +278,18 @@ public class DishonoredChequeAction extends SearchFormAction {
             detail.setCreditAmount(getStringValue(gl[5]));
             detail.setFunctionId(getStringValue(gl[6]));
             generalLedger.add(detail);
-            if (reversalGlCodesStr.equalsIgnoreCase("")) {
+            if (reversalGlCodesStr.equalsIgnoreCase(""))
                 reversalGlCodesStr = "'" + getStringValue(gl[2]) + "'";
-            } else {
+            else
                 reversalGlCodesStr = reversalGlCodesStr + "," + "'" + getStringValue(gl[2]) + "'";
-            }
         }
 
         remittanceDetailsCredit = persistenceService
                 .findAllBy("select gl.voucherHeaderId.id ,gl.glcodeId.id, gl.glcode,gl.glcodeId.name, sum(gl.creditAmount),sum(gl.debitAmount),gl.functionId from CGeneralLedger gl ,InstrumentOtherDetails iod where gl.voucherHeaderId.id = iod.payinslipId.id and iod.instrumentHeaderId.id   in ("
                         + instHeaderIds
                         + ") and gl.debitAmount<>0 and gl.creditAmount=0  group by gl.voucherHeaderId.id ,gl.glcodeId.id,gl.glcode,gl.glcodeId.name,gl.functionId order by gl.glcode");
-        for (Object[] gl : remittanceDetailsCredit) {
-            DishonoredChequeForm detail = new DishonoredChequeForm();
+        for (final Object[] gl : remittanceDetailsCredit) {
+            final DishonoredChequeForm detail = new DishonoredChequeForm();
             detail.setVoucherHeaderId(getStringValue(gl[0]));
             detail.setGlcodeId(getStringValue(gl[1]));
             detail.setGlcode(getStringValue(gl[2]));
@@ -315,7 +309,7 @@ public class DishonoredChequeAction extends SearchFormAction {
                                 + instHeaderIds
                                 + ")").list();
         dishonoredChequeDisplayList = new ArrayList<DishonoredChequeBean>(0);
-        for (Object[] object : instrumentDetails) {
+        for (final Object[] object : instrumentDetails) {
             final DishonoredChequeBean chequeBean = new DishonoredChequeBean();
             chequeBean.setVoucherHeaderId(getLongValue(object[0]));
             chequeBean.setVoucherNumber(getStringValue(object[1]));
@@ -332,23 +326,6 @@ public class DishonoredChequeAction extends SearchFormAction {
             chequeBean.setDescription(getStringValue(object[12]));
             dishonoredChequeDisplayList.add(chequeBean);
         }
-        /*
-         * slDetailsCredit = persistenceService
-         * .findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)" +
-         * " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(" + voucherHeaderIds + ")" +
-         * " and gl.id = gd.generalLedgerId and gl.debitAmount >0 and gl.glcode in (" + reversalGlCodesStr +
-         * ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId"); for (Object[] sl : slDetailsCredit) { DishonoredChequeForm
-         * detail = new DishonoredChequeForm(); detail.setGlcode(getStringValue(sl[0]));
-         * detail.setDetailTypeId(getStringValue(sl[1])); detail.setDetailKeyId(getStringValue(sl[2]));
-         * detail.setAmount(getStringValue(sl[3])); subLedgerDetails.add(detail); } slDetailsDebit = persistenceService
-         * .findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)" +
-         * " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(" + voucherHeaderIds + ")" +
-         * " and gl.id = gd.generalLedgerId and gl.creditAmount >0 and gl.glcode in (" + reversalGlCodesStr +
-         * ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId"); for (Object[] sl : slDetailsDebit) { DishonoredChequeForm
-         * detail = new DishonoredChequeForm(); detail.setGlcode(getStringValue(sl[0]));
-         * detail.setDetailTypeId(getStringValue(sl[1])); detail.setDetailKeyId(getStringValue(sl[2]));
-         * detail.setAmount(getStringValue(sl[3])); subLedgerDetails.add(detail); }
-         */
     }
 
     protected String getStringValue(final Object object) {
@@ -441,7 +418,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return voucherHeaderIds;
     }
 
-    public void setVoucherHeaderIds(String voucherHeaderIds) {
+    public void setVoucherHeaderIds(final String voucherHeaderIds) {
         this.voucherHeaderIds = voucherHeaderIds;
     }
 
@@ -449,7 +426,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return generalLedger;
     }
 
-    public void setGeneralLedger(List<DishonoredChequeForm> generalLedger) {
+    public void setGeneralLedger(final List<DishonoredChequeForm> generalLedger) {
         this.generalLedger = generalLedger;
     }
 
@@ -457,7 +434,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return subLedgerDetails;
     }
 
-    public void setSubLedgerDetails(List<DishonoredChequeForm> subLedgerDetails) {
+    public void setSubLedgerDetails(final List<DishonoredChequeForm> subLedgerDetails) {
         this.subLedgerDetails = subLedgerDetails;
     }
 
@@ -465,7 +442,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return reversalAmount;
     }
 
-    public void setReversalAmount(BigDecimal reversalAmount) {
+    public void setReversalAmount(final BigDecimal reversalAmount) {
         this.reversalAmount = reversalAmount;
     }
 
@@ -473,7 +450,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return remittanceGeneralLedger;
     }
 
-    public void setRemittanceGeneralLedger(List<DishonoredChequeForm> remittanceGeneralLedger) {
+    public void setRemittanceGeneralLedger(final List<DishonoredChequeForm> remittanceGeneralLedger) {
         this.remittanceGeneralLedger = remittanceGeneralLedger;
     }
 
@@ -481,7 +458,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return receiptGLDetails;
     }
 
-    public void setReceiptGLDetails(String receiptGLDetails) {
+    public void setReceiptGLDetails(final String receiptGLDetails) {
         this.receiptGLDetails = receiptGLDetails;
     }
 
@@ -489,7 +466,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return remittanceGLDetails;
     }
 
-    public void setRemittanceGLDetails(String remittanceGLDetails) {
+    public void setRemittanceGLDetails(final String remittanceGLDetails) {
         this.remittanceGLDetails = remittanceGLDetails;
     }
 
@@ -497,7 +474,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return transactionDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
+    public void setTransactionDate(final Date transactionDate) {
         this.transactionDate = transactionDate;
     }
 
@@ -505,7 +482,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return dishonorReason;
     }
 
-    public void setDishonorReason(String dishonorReason) {
+    public void setDishonorReason(final String dishonorReason) {
         this.dishonorReason = dishonorReason;
     }
 
@@ -513,7 +490,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -521,7 +498,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return referenceNo;
     }
 
-    public void setReferenceNo(String referenceNo) {
+    public void setReferenceNo(final String referenceNo) {
         this.referenceNo = referenceNo;
     }
 
@@ -529,7 +506,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return accountNumber;
     }
 
-    public void setAccountNumber(Long accountNumber) {
+    public void setAccountNumber(final Long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -537,7 +514,7 @@ public class DishonoredChequeAction extends SearchFormAction {
         return dishonoredChequeDisplayList;
     }
 
-    public void setDishonoredChequeDisplayList(List<DishonoredChequeBean> dishonoredChequeDisplayList) {
+    public void setDishonoredChequeDisplayList(final List<DishonoredChequeBean> dishonoredChequeDisplayList) {
         this.dishonoredChequeDisplayList = dishonoredChequeDisplayList;
     }
 

@@ -87,7 +87,7 @@ public class SearchChallanAction extends BaseFormAction {
         addDropdownData("serviceCategoryList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         if (null != serviceCategoryId && serviceCategoryId != -1)
             addDropdownData("serviceList",  getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,serviceCategoryId,
-                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList",Collections.EMPTY_LIST);
         setFromDate(new Date());

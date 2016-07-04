@@ -117,7 +117,7 @@ public class DemandUtils {
                     isActualDemand = egBillDet.getAdditionalFlag() == 1 ? true : false;
                     billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet.getOrderNo(),
                             egBillDet.getCrAmount(), egBillDet.getDrAmount(), egBillDet.getFunctionCode(),
-                            egBillDet.getDescription(), isActualDemand, PURPOSE.valueOf(egBillDet.getPurpose()));
+                            egBillDet.getDescription(), isActualDemand,egBillDet.getPurpose()!=null?PURPOSE.valueOf(egBillDet.getPurpose()):PURPOSE.OTHERS);
                     billDetails.addBillAccountDetails(billAccDetails);
                 }
                 billPayeeDet.addBillDetails(billDetails);
