@@ -56,7 +56,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.lcms.utils.LcmsConstants;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;

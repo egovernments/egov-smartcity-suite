@@ -19,7 +19,7 @@ import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.GovernmentDepartmentService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
-import org.egov.lcms.utils.LcmsConstants;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 

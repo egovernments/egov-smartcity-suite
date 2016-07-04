@@ -39,7 +39,6 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -48,7 +47,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
@@ -56,7 +54,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.Legalcase;
@@ -65,7 +62,8 @@ import org.egov.lcms.transactions.entity.LegalcaseDepartment;
 import org.egov.lcms.transactions.entity.LegalcaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.repository.LegalcaseRepository;
-import org.egov.lcms.utils.LcmsConstants;
+import org.egov.lcms.utils.LegalCaseUtil;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -78,10 +76,6 @@ public class LegalCaseService {
 
     private final LegalcaseRepository legalCaseRepository;
 
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-    
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
@@ -97,6 +91,9 @@ public class LegalCaseService {
 
     @Autowired
     private AdvocateMasterService advocateMasterService;
+
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
 
     @Autowired
     public LegalCaseService(final LegalcaseRepository legalCaseRepository) {
@@ -120,9 +117,9 @@ public class LegalCaseService {
     public Legalcase createLegalCase(final Legalcase legalcase) {
         legalcase.setCasenumber(legalcase.getCasenumber() + "/" + legalcase.getWpYear());
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
-        final Functionary funcObj = getFunctionaryByCode(funcString);
+        final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
-        legalcase.setStatus(getStatusByCodeAndModuleType(LcmsConstants.LEGALCASE_STATUS_CREATED, "LCMS"));
+        legalcase.setStatus(legalCaseUtil.getLegalCaseStatusByCode(LcmsConstants.LEGALCASE_STATUS_CREATED));
         prepareChildEntities(legalcase);
         processAndStoreApplicationDocuments(legalcase);
         return legalCaseRepository.save(legalcase);
@@ -141,13 +138,13 @@ public class LegalCaseService {
         }
         legalcase.getBipartisanDetails().clear();
         legalcase.setBipartisanDetails(partitionDetails);
-        
+
         for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList()) {
             bipartObjtemp.setSerialNumber(bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
             bipartObjtemp.setLegalcase(legalcase);
             legalcase.getBipartisanDetails().add(bipartObjtemp);
         }
-        
+
         for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
 
             legaldeptObj.setLegalcase(legalcase);
@@ -179,29 +176,21 @@ public class LegalCaseService {
         legalcase.setEglcPwrs(pwrList);
 
     }
+
     protected void processAndStoreApplicationDocuments(final Legalcase legalcase) {
         if (!legalcase.getLegalcaseDocuments().isEmpty())
             for (final LegalcaseDocuments applicationDocument : legalcase.getLegalcaseDocuments()) {
                 applicationDocument.setLegalcase(legalcase);
                 applicationDocument.setDocumentName("LegalCase");
-              applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+                applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
- 
+
     @Transactional
     public Legalcase updateLegalCase(final Legalcase legalCase) {
         return legalCaseRepository.save(legalCase);
     }
 
-    public Functionary getFunctionaryByCode(final String[] funcString) {
-        final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
-        return funcObj;
-    }
-
-    public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
-        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
-    }
-    
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays

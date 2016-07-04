@@ -75,7 +75,7 @@ import org.egov.lcms.masters.entity.CasetypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
-import org.egov.lcms.utils.LcmsConstants;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 

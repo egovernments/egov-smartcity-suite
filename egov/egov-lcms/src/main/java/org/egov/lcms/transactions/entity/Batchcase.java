@@ -60,7 +60,7 @@ import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.utils.LcmsConstants;
+import org.egov.lcms.utils.constants.LcmsConstants;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_BATCHCASE")
