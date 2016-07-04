@@ -1,6 +1,5 @@
 
 alter table EGLC_legalcase drop column isrespondentgovernment ;
-alter table EGLC_legalcase drop column isrespondent; 
 
 alter table eglc_bipartisandetails add  column version bigint; 
 
