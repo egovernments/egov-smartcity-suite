@@ -938,7 +938,7 @@ public class ChallanAction extends BaseFormAction {
                 && receiptHeader.getService().getServiceCategory().getId() != -1)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, receiptHeader.getService()
-                            .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+                            .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.EMPTY_LIST);
         setBillDetailslist(collectionCommon.setReceiptDetailsList(receiptHeader,
@@ -1022,11 +1022,11 @@ public class ChallanAction extends BaseFormAction {
         if (null != service && null != service.getServiceCategory() && service.getServiceCategory().getId() != -1)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, service.getServiceCategory().getId(),
-                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else if (serviceCategoryId != null)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, serviceCategoryId,
-                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.EMPTY_LIST);
         if (headerFields.contains(CollectionConstants.DEPARTMENT))

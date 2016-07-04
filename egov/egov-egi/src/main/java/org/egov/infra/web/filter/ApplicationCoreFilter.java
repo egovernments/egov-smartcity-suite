@@ -64,22 +64,22 @@ public class ApplicationCoreFilter implements Filter {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpSession session = request.getSession();
         try {
-            prepareCityPreferences(request, session);
-            prepareThreadLocal(request, session);
+            prepareCityPreferences(session);
+            prepareThreadLocal(session);
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
         }
     }
 
-    private void prepareCityPreferences(final HttpServletRequest request, final HttpSession session) {
+    private void prepareCityPreferences(final HttpSession session) {
         if (session.getAttribute("cityCode") == null)
             cityService.cityDataAsMap().forEach((k, v) -> {
                 session.setAttribute(k, v);
             });
     }
 
-    private void prepareThreadLocal(final HttpServletRequest request, final HttpSession session) {
+    private void prepareThreadLocal(final HttpSession session) {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
         ApplicationThreadLocals.setCityName((String) session.getAttribute("cityname"));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));

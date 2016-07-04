@@ -40,10 +40,10 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -51,8 +51,10 @@ import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgressRegister> {
@@ -185,9 +187,13 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("totalBillPaidSoFar", workProgressRegister.getTotalBillPaidSoFar());
             else
                 jsonObject.addProperty("totalBillPaidSoFar", "");
-            if (workProgressRegister.getBalanceValueOfWorkToBill() != null)
-                jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
-            else
+            if (workProgressRegister.getBalanceValueOfWorkToBill() != null) {
+                if (workProgressRegister.getBilltype() != null
+                        && workProgressRegister.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
+                    jsonObject.addProperty("balanceValueOfWorkToBill", "NA");
+                else
+                    jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
+            } else
                 jsonObject.addProperty("balanceValueOfWorkToBill", "");
             if (workProgressRegister.getMilestonePercentageCompleted() != null)
                 jsonObject.addProperty("milestonePercentageCompleted", workProgressRegister.getMilestonePercentageCompleted());

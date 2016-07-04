@@ -22,6 +22,7 @@
 </form:form>
 
 	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
+	<script src="<c:url value='/resources/app/js/councilMemberHelper.js?rnd=${app_release_no}'/>"></script>	
 	<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
 <script>
 	$('#buttonSubmit').click(function(e) {

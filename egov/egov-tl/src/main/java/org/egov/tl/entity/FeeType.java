@@ -105,4 +105,23 @@ public class FeeType extends AbstractAuditable {
     public void setFeeProcessType(final FeeProcessType feeProcessType) {
         this.feeProcessType = feeProcessType;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final FeeType feeType = (FeeType) o;
+
+        if (getName() != null ? !getName().equals(feeType.getName()) : feeType.getName() != null) return false;
+        return getCode() != null ? getCode().equals(feeType.getCode()) : feeType.getCode() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + (getCode() != null ? getCode().hashCode() : 0);
+        return result;
+    }
 }

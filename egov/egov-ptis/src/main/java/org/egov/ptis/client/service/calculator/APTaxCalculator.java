@@ -489,7 +489,7 @@ public class APTaxCalculator implements PropertyTaxCalculator {
          * no Building plan details, Penalty perc = 100%
          */
         if (deviationPerc != null && !deviationPerc.equals("0")) {
-            if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) == -1) {
+            if (deviationPerc.compareTo(BigDecimal.ZERO) == 1 && deviationPerc.compareTo(BigDecimal.TEN) <=0) {
                 unAuthPenalty = totalPropertyTax.multiply(BPA_DEVIATION_TAXPERC_1_10);
             } else if (deviationPerc.compareTo(BigDecimal.TEN) == 1
             		&& deviationPerc.compareTo(BIGDECIMAL_100) != 0) {

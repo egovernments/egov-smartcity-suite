@@ -107,7 +107,7 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.reference" />
+						<spring:message code="lbl.letter.reference" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${lineEstimate.reference}"></c:out>

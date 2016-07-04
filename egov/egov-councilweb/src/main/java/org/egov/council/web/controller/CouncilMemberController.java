@@ -3,6 +3,7 @@ package org.egov.council.web.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
@@ -15,7 +16,10 @@ import org.egov.council.service.CouncilPartyService;
 import org.egov.council.service.CouncilQualificationService;
 import org.egov.council.web.adaptor.CouncilMemberJsonAdaptor;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -41,6 +45,7 @@ public class CouncilMemberController {
     private final static String COUNCILMEMBER_EDIT = "councilmember-edit";
     private final static String COUNCILMEMBER_VIEW = "councilmember-view";
     private final static String COUNCILMEMBER_SEARCH = "councilmember-search";
+    private final static String MODULE_NAME = "COUNCIL";
     @Autowired
     private CouncilMemberService councilMemberService;
     @Autowired
@@ -55,19 +60,22 @@ public class CouncilMemberController {
     private CouncilCasteService councilCasteService;
     @Autowired
     private CouncilPartyService councilPartyService;
+    @Qualifier("fileStoreService")
+    protected @Autowired FileStoreService fileStoreService;
+    protected @Autowired FileStoreUtils fileStoreUtils;
     private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
 
-
-    private void prepareNewForm(Model model) {
+    private void prepareNewForm(final Model model) {
         model.addAttribute("boundarys",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                        "Ward","ADMINISTRATION"));//GET ELECTION WARD.
+                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));// GET
+                                                                                                                  // ELECTION
+                                                                                                                  // WARD.
         model.addAttribute("councilDesignations", councilDesignationService.findAll());
         model.addAttribute("councilQualifications", councilQualificationService.findAll());
         model.addAttribute("councilCastes", councilCasteService.findAll());
         model.addAttribute("councilPartys", councilPartyService.findAll());
-       // model.addAttribute("genders", genderService.findAll());
-       // model.addAttribute("addresss", addressService.findAll());
+        // model.addAttribute("genders", genderService.findAll());
+        // model.addAttribute("addresss", addressService.findAll());
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -78,18 +86,20 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final CouncilMember councilMember, @RequestParam final MultipartFile attachments, final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs)  {
+    public String create(@Valid @ModelAttribute final CouncilMember councilMember,
+            @RequestParam final MultipartFile attachments, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_NEW;
         }
-        if(councilMember!=null && councilMember.getStatus()==null)
-        councilMember.setStatus(CouncilMemberStatus.ACTIVE);
-        
-        if(attachments!=null){
+        if (councilMember != null && councilMember.getStatus() == null)
+            councilMember.setStatus(CouncilMemberStatus.ACTIVE);
+
+        if (attachments.getSize() > 0) {
             try {
-                councilMember.setPhoto(attachments.getBytes());
+                councilMember.setPhoto(fileStoreService.store(attachments.getInputStream(),
+                        attachments.getOriginalFilename(), attachments.getContentType(), MODULE_NAME));
             } catch (IOException e) {
                 LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
             }
@@ -100,19 +110,29 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") final Long id, Model model) {
+    public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
+            throws IOException {
         CouncilMember councilMember = councilMemberService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilMember", councilMember);
+
         return COUNCILMEMBER_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final CouncilMember councilMember, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final CouncilMember councilMember,@RequestParam final MultipartFile attachments, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_EDIT;
+        }
+        if (attachments.getSize() > 0) {
+            try {
+                councilMember.setPhoto(fileStoreService.store(attachments.getInputStream(),
+                        attachments.getOriginalFilename(), attachments.getContentType(), MODULE_NAME));
+            } catch (IOException e) {
+                LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
+            }
         }
         councilMemberService.update(councilMember);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
@@ -124,6 +144,7 @@ public class CouncilMemberController {
         CouncilMember councilMember = councilMemberService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilMember", councilMember);
+
         return COUNCILMEMBER_VIEW;
     }
 
@@ -152,10 +173,16 @@ public class CouncilMemberController {
         return result;
     }
 
+    @RequestMapping(value = "/downloadfile/{fileStoreId}")
+    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
+        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, MODULE_NAME, false, response);
+    }
+
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(CouncilMember.class, new CouncilMemberJsonAdaptor()).create();
         final String json = gson.toJson(object);
         return json;
     }
+
 }

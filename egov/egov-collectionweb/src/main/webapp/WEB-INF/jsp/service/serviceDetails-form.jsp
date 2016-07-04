@@ -69,7 +69,7 @@ function validate(){
 		dom.get("error_area").style.display="block";
 		valid=false;
 	}
-	if(dom.get('serviceType').value.trim()== ""){
+	if(null!= document.getElementById('serviceType') && document.getElementById('serviceType').value == -1){
 		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
 		dom.get("error_area").style.display="block";
 		valid=false;
@@ -135,6 +135,8 @@ function validate(){
 	            valid=false;
 	        }
 	 }
+		 if (valid)
+				dom.get('serviceType').disabled = false;
 		window.scroll(0,0);
 		return valid;
 }
@@ -208,12 +210,11 @@ function enableUrl(obj) {
             <td></td>
 			<td class="bluebox"> <s:text name="service.master.enable"></s:text> </td>
 			<td class="bluebox"><s:checkbox name="isEnabled" /></td>
-			<td class="bluebox"><s:text name="service.master.type" /> <span class="mandatory"></td>
+			<td class="bluebox"><s:text name="service.master..classification"/> <span class="mandatory"></td>
 			<td class="bluebox"> 
-				<s:select list="#{'':'-----Select----','B':'Bill Based', 'C':'Collection', 'P':'Payment'}" 
+				<s:select list="serviceTypeMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
 				name="serviceType" id="serviceType" onchange="return enableUrl(this)"></s:select>
 			</td>
-			
 		</tr>
 		<tr>
 		    <td></td>

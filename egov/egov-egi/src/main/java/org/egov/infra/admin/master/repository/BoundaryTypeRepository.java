@@ -40,14 +40,15 @@
 
 package org.egov.infra.admin.master.repository;
 
+import java.util.List;
+import java.util.Set;
+
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long> {
@@ -81,4 +82,7 @@ public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:name")
     public List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName);
+
+    @Query("select bt from BoundaryType bt where bt.hierarchyType.code in :names and bt.name like 'W%'")
+    public List<BoundaryType> findByHierarchyTypeNames(@Param("names") final Set<String> names);
 }

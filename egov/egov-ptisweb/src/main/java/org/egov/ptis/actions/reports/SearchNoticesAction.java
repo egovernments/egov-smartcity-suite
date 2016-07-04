@@ -39,46 +39,12 @@
  */
 package org.egov.ptis.actions.reports;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.ptis.actions.common.CommonServices;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.notice.PtNotice;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -98,11 +64,42 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQueryHQL;
+import org.egov.ptis.actions.common.CommonServices;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.notice.PtNotice;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @ParentPackage("egov")
 @Namespace("/reports")
@@ -205,7 +202,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
         if (null == noticeList || noticeList.size() <= 0) {
             addActionError(getText("notice.file.merge.unavailable"));
-            return ERROR;
+            return INDEX;
         }
 
         final List<InputStream> pdfs = new ArrayList<InputStream>();
@@ -266,7 +263,7 @@ public class SearchNoticesAction extends SearchFormAction {
             ZipOutputStream zipOutputStream;
             if (null == noticeList || noticeList.size() <= 0) {
                 addActionError(getText("notice.file.zip.unavailable"));
-                return ERROR;
+                return INDEX;
             } else {
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
                 response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".zip");
@@ -317,7 +314,7 @@ public class SearchNoticesAction extends SearchFormAction {
                 noticeNumber);
         if (ptNotice == null) {
             addActionError(getText("DocMngr.file.unavailable"));
-            return ERROR;
+            return INDEX;
         }
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {

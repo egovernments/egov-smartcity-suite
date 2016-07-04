@@ -146,7 +146,7 @@ public class ReportService {
                 BaseRegisterResult baseRegisterResultObj = new BaseRegisterResult();
                 baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
                 for (FloorDetailsView floor : floorDetails) {
-                    baseRegisterResultObj.setPlinthArea(floor.getPlinthArea());
+                    baseRegisterResultObj.setPlinthArea(floor.getBuiltUpArea());
                     baseRegisterResultObj.setPropertyUsage(floor.getPropertyUsage());
                     baseRegisterResultObj.setClassificationOfBuilding(floor.getClassification());
                 }
@@ -228,7 +228,7 @@ public class ReportService {
             if (count == 0) {
                 baseRegisterResultObj = new BaseRegisterResult();
                 baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
-                baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
+                baseRegisterResultObj.setPlinthArea(floorview.getBuiltUpArea());
                 baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview
                         .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
@@ -240,7 +240,7 @@ public class ReportService {
                 baseRegisterResultObj.setDoorNO("");
                 baseRegisterResultObj.setCourtCase("");
                 baseRegisterResultObj.setArrearPeriod("");
-                baseRegisterResultObj.setPlinthArea(floorview.getPlinthArea());
+                baseRegisterResultObj.setPlinthArea(floorview.getBuiltUpArea());
                 baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview
                         .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage());
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());

@@ -53,6 +53,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -67,9 +68,7 @@
 		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
-		
-		
-		
+
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
@@ -193,32 +192,43 @@
 									</div>
 								</div>
 								<c:if test="${param.error}">
-								<div class="form-group">
-									<div class="text-center error-msg font-12">
+									<div class="text-center error-msg font-12 add-margin">
+                                        <c:set var="security_message" value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
 										<c:choose>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Maximum sessions of {0} for this principal exceeded'}">
+										<c:when test="${security_message == 'Maximum sessions of {0} for this principal exceeded'}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'User account has expired'}">
+										<c:when test="${security_message == 'User account has expired'}">
 											<spring:message code="msg.cred.exprd1"/>
 											<a href="javascript:void(0);" data-toggle="modal"
 											   data-target="#fpassword" data-backdrop="static">
 											<spring:message code="msg.cred.exprd2"/>
 											</a> <spring:message code="msg.cred.exprd3"/>
 										</c:when>
-										<c:when test="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message == 'Inactive User'}">
+										<c:when test="${security_message == 'Inactive User'}">
 		     							 	<div class="form-group signin-leftpadding">
 												<a href="/portal/citizen/register?activation=true" class="btn btn-custom btn-block btn-login signin-submit">
 												<spring:message code="msg.acc.not.activated"/>
 												</a> 
 											</div>
 	     								</c:when>
+										<c:when test="${fn:contains(security_message, 'User account is locked')}">
+											<spring:message code="msg.acc.locked"/>
+											<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+											<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
+											<c:if test="${fn:contains(security_message, 'Recaptcha Invalid')}">
+												<spring:message code="err.recaptcha.invalid"/>
+											</c:if>
+										</c:when>
+										<c:when test="${fn:contains(security_message, 'Too many attempts')}">
+                                            <c:set var="attempts" value="${fn:substringAfter(security_message, 'Too many attempts')}" />
+											<spring:message code="msg.acc.toomany.attempt" arguments="${attempts}"/>
+										</c:when>
 										<c:otherwise>
 											<spring:message code="msg.cred.invalid"/>
 										</c:otherwise>
 										</c:choose>
 									</div>
-								</div>
 								</c:if>
 								<c:if test="${not empty param.recovered}">
 								<div class="form-group">

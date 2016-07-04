@@ -76,10 +76,11 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns input stream for given file. First checks in the custom location (/custom/[filePath]/). If not found, tries the
-     * given location [filePath]
+     * Returns input stream for given file. First checks in the custom location
+     * (/custom/[filePath]/). If not found, tries the given location [filePath]
      *
-     * @param filePath Path of file to be loaded from classpath
+     * @param filePath
+     *            Path of file to be loaded from classpath
      * @return Input stream for given file
      */
     private static InputStream getFileAsStream(final String filePath) {
@@ -100,10 +101,12 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns input stream for given image file. First checks in the custom location (/custom/reports/images/). If not found,
-     * tries the product location (/reports/images/)
+     * Returns input stream for given image file. First checks in the custom
+     * location (/custom/reports/images/). If not found, tries the product
+     * location (/reports/images/)
      *
-     * @param imageName Name of image to be read
+     * @param imageName
+     *            Name of image to be read
      * @return Input stream for given image file
      */
     public static InputStream getImageAsStream(final String imageName) {
@@ -115,10 +118,12 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns input stream for given report template. First checks in the custom location (/custom/reports/templates/). If not
-     * found, tries the product location (/reports/templates/)
+     * Returns input stream for given report template. First checks in the
+     * custom location (/custom/reports/templates/). If not found, tries the
+     * product location (/reports/templates/)
      *
-     * @param templateName Report template to be read
+     * @param templateName
+     *            Report template to be read
      * @return Input stream for given report template
      */
     public static InputStream getTemplateAsStream(final String templateName) {
@@ -126,7 +131,8 @@ public final class ReportUtil {
     }
 
     /**
-     * Loads the report configuration file from classpath (/config/reports.properties)
+     * Loads the report configuration file from classpath
+     * (/config/reports.properties)
      *
      * @return the Properties object created from the configuration file
      */
@@ -136,25 +142,25 @@ public final class ReportUtil {
             reportProps.load(getFileAsStream(ReportConstants.REPORT_CONFIG_FILE));
             return reportProps;
         } catch (final IOException e) {
-            LOGGER.warn(
-                    "Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]",
-                    e);
+            LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE
+                    + "]", e);
             return null;
         } catch (final ApplicationRuntimeException e) {
-            LOGGER.warn(
-                    "Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE + "]",
-                    e);
+            LOGGER.warn("Exception while loading report configuration file [" + ReportConstants.REPORT_CONFIG_FILE
+                    + "]", e);
             return null;
         }
     }
 
     /**
-     * Executes given SQL query (which is expected to return a single object) and returns the output. Returns null if query
-     * doesn't fetch any data.
+     * Executes given SQL query (which is expected to return a single object)
+     * and returns the output. Returns null if query doesn't fetch any data.
      *
-     * @param connection Connection to be used for executing the query. Can be passed as $P{REPORT_CONNECTION} in case of a jasper
-     * report
-     * @param sqlQuery Query to be executed to get the data
+     * @param connection
+     *            Connection to be used for executing the query. Can be passed
+     *            as $P{REPORT_CONNECTION} in case of a jasper report
+     * @param sqlQuery
+     *            Query to be executed to get the data
      * @return Output of the query
      */
     public static Object fetchFromDBSql(final Connection connection, final String sqlQuery) throws SQLException {
@@ -211,12 +217,18 @@ public final class ReportUtil {
     }
 
     /**
-     * Adds given number of days/months/years to given date and returns the resulting date
+     * Adds given number of days/months/years to given date and returns the
+     * resulting date
      *
-     * @param inputDate Input date
-     * @param addType type to be added (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
-     * @param addAmount Number of days/months/years to be added to the input date
-     * @return Date after adding given number of days/months/years to the input date
+     * @param inputDate
+     *            Input date
+     * @param addType
+     *            type to be added
+     *            (Calendar.DAY_OF_MONTH/Calendar.MONTH/Calendar.YEAR)
+     * @param addAmount
+     *            Number of days/months/years to be added to the input date
+     * @return Date after adding given number of days/months/years to the input
+     *         date
      */
     public static Date add(final Date inputDate, final int addType, final int addAmount) {
         return DateUtils.add(inputDate, addType, addAmount);
@@ -225,7 +237,8 @@ public final class ReportUtil {
     /**
      * Converts given amount to words with default decimal precision of 2.
      *
-     * @param amount Amount to be converted to words
+     * @param amount
+     *            Amount to be converted to words
      * @return The amount in words with default decimal precision of 2.
      */
     public static String amountInWords(final BigDecimal amount) {
@@ -237,9 +250,13 @@ public final class ReportUtil {
      * e.g. formatNumber(1000, 2, false) will return 1000.00 <br>
      * formatNumber(1000, 2, true) will return 1,000.00 <br>
      *
-     * @param number The number to be formatted
-     * @param fractionDigits Number of fraction digits to be used for formatting
-     * @param useGrouping Flag indicating whether grouping is to be used while formatting the number
+     * @param number
+     *            The number to be formatted
+     * @param fractionDigits
+     *            Number of fraction digits to be used for formatting
+     * @param useGrouping
+     *            Flag indicating whether grouping is to be used while
+     *            formatting the number
      * @return Formatted number with given number of fraction digits
      */
     public static String formatNumber(final BigDecimal number, final int fractionDigits, final boolean useGrouping) {
@@ -254,8 +271,21 @@ public final class ReportUtil {
     public static String logoBasePath() {
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
+        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                (String) request.getSession().getAttribute("citylogo"));
+        return imagePath;
+    }
+
+    /**
+     * Gives the absolute path of the 'CANCELLED' Watermark image
+     *
+     * @return absolute path of the 'CANCELLED' Watermark image
+     */
+    public static String cancelledWatermarkAbsolutePath() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        final String imagePath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH).concat(
+                "/resources/global/images/cancelled_watermark.png");
         return imagePath;
     }
 

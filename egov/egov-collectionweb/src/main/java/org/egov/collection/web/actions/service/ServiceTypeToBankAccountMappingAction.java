@@ -63,9 +63,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = ServiceTypeToBankAccountMappingAction.NEW, location = "serviceTypeToBankAccountMapping-new.jsp"),
-        @Result(name = ServiceTypeToBankAccountMappingAction.SUCCESS, location = "serviceTypeToBankAccountMapping-success.jsp"),
-        @Result(name = ServiceTypeToBankAccountMappingAction.INDEX, location = "serviceTypeToBankAccountMapping-index.jsp") })
+    @Result(name = ServiceTypeToBankAccountMappingAction.NEW, location = "serviceTypeToBankAccountMapping-new.jsp"),
+    @Result(name = ServiceTypeToBankAccountMappingAction.SUCCESS, location = "serviceTypeToBankAccountMapping-success.jsp"),
+    @Result(name = ServiceTypeToBankAccountMappingAction.INDEX, location = "serviceTypeToBankAccountMapping-index.jsp") })
 public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private PersistenceService<BankAccountServiceMap, Long> bankAccountMappingService;
@@ -102,7 +102,8 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
             addDropdownData(
                     "bankAccountIdList",
                     bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(bankAccountServiceMap
-                            .getBankAccountId().getBankbranch().getId(),bankAccountServiceMap.getServiceDetails().getFund().getId()));
+                            .getBankAccountId().getBankbranch().getId(), bankAccountServiceMap.getServiceDetails().getFund()
+                            .getId()));
             setServiceCategory(bankAccountServiceMap.getServiceDetails().getServiceCategory().getId());
             setBankId(bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getId());
             setBranchId(bankAccountServiceMap.getBankAccountId().getBankbranch().getId());

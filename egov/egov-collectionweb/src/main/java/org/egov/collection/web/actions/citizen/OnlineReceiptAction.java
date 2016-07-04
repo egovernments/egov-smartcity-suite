@@ -78,7 +78,6 @@ import org.egov.collection.utils.FinancialsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;

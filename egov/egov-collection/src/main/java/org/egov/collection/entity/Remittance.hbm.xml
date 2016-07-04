@@ -93,6 +93,9 @@
 		</many-to-one>
 		<property name="lastModifiedDate" column="LASTMODIFIEDDATE"
 			type="timestamp" />
+		<many-to-one name="bankAccount" class="org.egov.commons.Bankaccount" fetch="select">
+            <column name="bankaccount" precision="22" scale="0" />
+        </many-to-one>
 		<set name="remittanceDetails" inverse="true" cascade="all,delete-orphan"
 			>
 			<key>
@@ -108,4 +111,8 @@
 				column="collectionheader" />
 		</set>
 	</class>
+	
+	    <query name="getRemitanceByVoucherNumber">
+    <![CDATA[select r from Remittance r where r.voucherHeader.voucherNumber= ?]]></query>
+	
 </hibernate-mapping>

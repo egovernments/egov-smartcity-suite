@@ -45,14 +45,6 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<import value="org.egov.collection.constants.*"/>
 	<parameter name="TOTAL_AMOUNT" class="java.math.BigDecimal">
 		<defaultValueExpression><![CDATA[BigDecimal.valueOf(0)]]></defaultValueExpression>
@@ -97,7 +89,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="false"/>
+					<font size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Mode]]></text>
 			</staticText>
@@ -113,7 +105,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="false"/>
+					<font size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Bank Name & Branch]]></text>
 			</staticText>
@@ -126,7 +118,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
+					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instrumentType}]]></textFieldExpression>
 			</textField>
@@ -139,7 +131,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
+					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque No: " + $F{instrumentNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "D.D. No: " + $F{instrumentNumber}  + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_ONLINE ? "Transaction No: " + $F{transactionNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan No: " + $F{transactionNumber} + "\nDated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):"NA"]]></textFieldExpression>
 			</textField>
@@ -154,7 +146,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="8" isBold="false"/>
+					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bankName} == null ? "NA" :$F{bankBranchName} == null ? $F{bankName} :$F{bankName} + ", "+$F{bankBranchName}]]></textFieldExpression>
 			</textField>
@@ -167,7 +159,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="9" isBold="false"/>
+					<font size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Cheque / DD / Bank Challan / Online Transaction Number & Date]]></text>
 			</staticText>

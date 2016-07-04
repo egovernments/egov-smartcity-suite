@@ -82,7 +82,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reference" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.letter.reference" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="reference" cssClass="add-margin error-msg" />

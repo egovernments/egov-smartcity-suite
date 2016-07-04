@@ -190,8 +190,8 @@ function search()
 	}else{
 		 document.getElementById("search").innerHTML="";
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
-		document.forms[0].action='${pageContext.request.contextPath}/payment/payment-search.action';
-		document.forms[0].submit();
+		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
+		document.form2.submit();
 		
 	}
 	
@@ -1169,7 +1169,7 @@ function checkContingentForSameMisAttribs(obj,len)
 				<table align="center" width="100%">
 					<tr>
 						<font size="small" color="red">*Maximum of 500 records are
-							displayed here<br>*You can select Maximum of 65 bills for single payment</font>
+							displayed here<br>*You can select Maximum of 125 bills for single payment</font>
 					</tr>
 					<tr>
 						<td class="modeofpayment"><strong><s:text

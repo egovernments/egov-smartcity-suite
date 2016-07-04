@@ -72,7 +72,7 @@
 					<th class="thGrossAmount" style="display: none;"><spring:message code="lbl.grossamount"/><span class="mandatory"></th>
 					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.beneficiary"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.action"/></th>
 				</tr>
 			</thead>

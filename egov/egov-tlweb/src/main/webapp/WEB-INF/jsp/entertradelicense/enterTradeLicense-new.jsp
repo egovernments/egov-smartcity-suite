@@ -79,8 +79,8 @@
 										<s:text name='page.title.entertrade' /> 
 								</div>
                                 <ul class="nav nav-tabs" id="settingstab">
-                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true">Trade Details</a></li>
-                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false">Enclosed Documents</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0" aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                    <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1" aria-expanded="false"><s:text name="license.support.docs"/></a></li>
                                 </ul>
                             </div>
                             
@@ -108,59 +108,56 @@
 											</div>
 											
 											<div class="col-md-12">
-											<table class="table table-bordered feedetails">
-												<thead>
-													<tr>
-														<th><s:text name='license.fin.year'/></th>
-														<th><s:text name='license.fee.amount'/></th>
-														<th class="text-center"><s:text name='license.fee.paid.y.n'/></th>
-													</tr>
-												</thead>
-												<tbody>
-												<c:set value="" var="startfinyear"/>
-												<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="stat">
-													<tr>
-														<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}" var="finyear"/>
-														<s:if test="#stat.index == 0">
-															<c:set value="${finyear}" var="startfinyear"/>
-														</s:if>
-														<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-														<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="number"/> </td>
-														<td class="text-center">
-														<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case"></s:checkbox>
-														</td>
-													</tr>
-												</s:iterator>
-												</tbody>
-												<tfoot>
-													<tr>
-														<td class="error-msg" colspan="3">
-															<s:text  name="license.legacy.info">
-																<s:param>${startfinyear}</s:param>
-															</s:text>
-														</td>
-													</tr>
-												</tfoot>
-											</table>
+												<table class="table table-bordered feedetails">
+													<thead>
+														<tr>
+															<th><s:text name='license.fin.year'/></th>
+															<th><s:text name='license.fee.amount'/></th>
+															<th class="text-center"><s:text name='license.fee.paid.y.n'/></th>
+														</tr>
+													</thead>
+													<tbody>
+													<c:set value="" var="startfinyear"/>
+													<s:iterator value="legacyInstallmentwiseFees" var="LIFee" status="stat">
+														<tr>
+															<c:set value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}" var="finyear"/>
+															<s:if test="#stat.index == 0">
+																<c:set value="${finyear}" var="startfinyear"/>
+															</s:if>
+															<td><input type="text"  name="" class="form-control feeyear" readonly="readonly" value="${finyear}" tabindex="-1"/></td>
+															<td><input type="text" name="legacyInstallmentwiseFees[${LIFee.key}]" class="form-control patternvalidation feeamount"  value="${LIFee.value}" data-pattern="number"/> </td>
+															<td class="text-center">
+															<s:checkbox name="legacyFeePayStatus[%{#attr.LIFee.key}]" class="case"></s:checkbox>
+															</td>
+														</tr>
+													</s:iterator>
+													</tbody>
+													<tfoot>
+														<tr>
+															<td class="error-msg" colspan="3">
+																<s:text  name="license.legacy.info">
+																	<s:param>${startfinyear}</s:param>
+																</s:text>
+															</td>
+														</tr>
+													</tfoot>
+												</table>
 											</div>
-											
-                                    </div>
-                                    <div class="tab-pane fade" id="tradeattachments"> 
-                                        <div>
+                                    	</div>
+	                                    <div class="tab-pane fade" id="tradeattachments">
 											<%@include file="../common/documentUpload.jsp" %>
-										</div>
-                                    </div>
+	                                    </div>
+                            		</div>
                             	</div>
-                            </div>
-                        </div> 
-                        <div class="row">
-							<div class="text-center">
-								<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateForm();">
-									Save</button>
-								<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
-									Close</button>
+                        	</div> 
+	                        <div class="row">
+								<div class="text-center">
+									<button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateForm();">
+										Save</button>
+									<button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+										Close</button>
+								</div>
 							</div>
-						</div>
                         </s:push>  
                     </s:form> 
                     </div>
@@ -179,6 +176,18 @@
             }
 	
 			function validateForm() {
+				var adhaar = document.getElementById('adhaarId').value;
+				var mobileno= document.getElementById('mobilePhoneNumber').value;
+				if(adhaar.length > 0 && adhaar.length < 12){
+					jQuery('#adhaarError').removeClass("hide");
+					document.getElementById("adhaarId").focus();
+					return false;
+				}
+				if(mobileno.length > 0 && mobileno.length < 10){
+					jQuery('#mobileError').removeClass("hide");
+					document.getElementById("mobilePhoneNumber").focus();
+					return false;
+				}
 				if (document.getElementById("oldLicenseNumber").value == '' || document.getElementById("oldLicenseNumber").value == null){
 					showMessage('enterLicense_error', '<s:text name="newlicense.oldlicensenumber.null" />');
 					document.getElementById("oldLicenseNumber").focus();

@@ -57,6 +57,9 @@
 		} else {
 			document.getElementById("urlDetails").style.display = "none";
 		}
+		if (selectedStatus == 'P' || selectedStatus == 'B' ) {
+			dom.get('serviceType').disabled = true;
+		}
 	}
 
 	function EnableVoucherDetails(obj) {

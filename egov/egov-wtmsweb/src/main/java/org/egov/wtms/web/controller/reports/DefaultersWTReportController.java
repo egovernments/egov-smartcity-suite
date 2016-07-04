@@ -39,11 +39,22 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -53,6 +64,7 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -66,20 +78,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/report/defaultersWTReport/search")
@@ -98,9 +98,6 @@ public class DefaultersWTReportController {
     public ConnectionDemandService connectionDemandService;
 
     @Autowired
-    private DemandGenericDao demandGenericDao;
-    
-    @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @RequestMapping(method = GET)
@@ -115,8 +112,8 @@ public class DefaultersWTReportController {
     }
 
     public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
-        return boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD, REVENUE_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
+                REVENUE_HIERARCHY_TYPE);
     }
 
     public @ModelAttribute("topDefaultersList") List<Integer> defaultersList() {
@@ -147,7 +144,8 @@ public class DefaultersWTReportController {
             toAmount = request.getParameter("toAmount");
 
         List<DefaultersReport> defaultersreportlist = new ArrayList<DefaultersReport>();
-        final SQLQuery query = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward, topDefaulters);
+        final SQLQuery query = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
+                topDefaulters);
         defaultersreportlist = query.list();
         String result = null;
         for (final DefaultersReport dd : defaultersreportlist)
@@ -157,28 +155,32 @@ public class DefaultersWTReportController {
         IOUtils.write(result, response.getWriter());
     }
 
-    public String getDuePeriodFrom(final String consumerCode)
-    {
+    public String getDuePeriodFrom(final String consumerCode) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByApplicationNumberOrConsumerCode(consumerCode);
-        final DemandComparatorByInstallmentOrder demandComparatorByOrderId = new DemandComparatorByInstallmentOrder();
-        final Set<EgDemandDetails> egdemandtemplist = new HashSet<EgDemandDetails>();
-        final Set<EgDemandDetails> demnadDetList = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().getEgDemandDetails();
-        for (final EgDemandDetails egDemandTemp : demnadDetList)
-            if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
-                egdemandtemplist.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-        final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(egdemandtemplist);
-        if (egdemandlist.isEmpty())
+                .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails != null) {
+            final DemandComparatorByInstallmentOrder demandComparatorByOrderId = new DemandComparatorByInstallmentOrder();
+            final Set<EgDemandDetails> egdemandtemplist = new HashSet<EgDemandDetails>();
+            final Set<EgDemandDetails> demnadDetList = waterTaxUtils.getCurrentDemand(waterConnectionDetails)
+                    .getDemand().getEgDemandDetails();
+            for (final EgDemandDetails egDemandTemp : demnadDetList)
+                if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
+                    egdemandtemplist.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
+            final List<EgDemandDetails> egdemandlist = new ArrayList<EgDemandDetails>(egdemandtemplist);
+            if (egdemandlist.isEmpty())
+                return "";
+            else {
+                Collections.sort(egdemandlist, demandComparatorByOrderId);
+                return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
+            }
+        } else
             return "";
-        else
-            Collections.sort(egdemandlist, demandComparatorByOrderId);
-        return egdemandlist.get(0).getEgDemandReason().getEgInstallmentMaster().getDescription();
     }
 
     private Object toJSON(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DailyWTCollectionReport.class,
-                new DefaultersReportAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DailyWTCollectionReport.class, new DefaultersReportAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }

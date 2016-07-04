@@ -53,7 +53,7 @@ public class InstrumentOtherDetailsService extends PersistenceService<Instrument
     public InstrumentOtherDetailsService(final Class<InstrumentOtherDetails> instrumentOtherDetails) {
         this.type = instrumentOtherDetails;
     }
-    
+    @Transactional
     public void reconcile(Date recociledOn,Long ihId,BigDecimal instrumentAmount)
     {
     	InstrumentOtherDetails io = find("from InstrumentOtherDetails where instrumentHeaderId.id=?",ihId);

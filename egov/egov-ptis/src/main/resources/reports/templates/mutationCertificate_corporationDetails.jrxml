@@ -38,14 +38,15 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-05-24T10:15:18 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-06-24T12:32:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="218"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
 	<parameter name="municipalityName" class="java.lang.String"/>
 	<parameter name="approvedDate" class="java.lang.String"/>
 	<parameter name="assessmentNo" class="java.lang.String"/>
@@ -122,7 +123,7 @@
 				<textElement textAlignment="Justified" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["TAXATION - "+$P{municipalityName}+" - Transfer of the title on the building bearing, H. No. "+$P{doorNo}+" situated at "+$P{localityName}+" area within the Municipality limits – Orders – Issued."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["TAXATION - "+$P{municipalityName}+" - Transfer of the title on the building bearing, H. No. "+JRStringUtil.xmlEncode($P{doorNo})+" situated at "+JRStringUtil.xmlEncode($P{localityName})+" area within the Municipality limits – Orders – Issued."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="60" y="164" width="40" height="15" uuid="01208bc4-8c0a-4676-a32b-e7a6b75672c4"/>
@@ -143,7 +144,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1. Application of Sri / Smt. "+$P{newOwnerName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["1. Application of Sri / Smt. "+JRStringUtil.xmlEncode($P{newOwnerName})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="25" y="188" width="55" height="15" uuid="053abe97-d350-411a-97da-ededcc98ed6b"/>
@@ -225,7 +226,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{oldOwnerName}+", "+$P{oldOwnerParentName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{oldOwnerName})+", "+JRStringUtil.xmlEncode($P{oldOwnerParentName})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="410" width="230" height="50" uuid="973380fa-39a3-4baa-8bb5-db60d7e5aa7b"/>
@@ -409,7 +410,7 @@
 				<textElement textAlignment="Left">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Sri / Smt "+$P{newOwnerName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Sri / Smt "+JRStringUtil.xmlEncode($P{newOwnerName})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="40" y="73" width="240" height="33" uuid="87ab0624-56fd-41cd-9dc9-59239d9eba0e"/>
@@ -423,7 +424,7 @@
 				<textElement textAlignment="Left">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerAddress}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{ownerAddress})]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
 				<reportElement x="369" y="7" width="171" height="51" uuid="adec0340-85ea-48f6-a847-51aa1e187146"/>

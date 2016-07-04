@@ -38,7 +38,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
 <!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
 <!-- 2016-04-20T17:44:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
@@ -94,6 +93,10 @@
 	<parameter name="Q_BRANCH_ID" class="java.lang.String">
 		<parameterDescription><![CDATA[Where clause for bankbranch id]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "" : "AND BANKBRANCH.ID = " + $P{EGOV_BRANCH_ID}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="EGOV_HOSTNAME" class="java.lang.String">
+		<parameterDescription><![CDATA[Host name]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT(VOUCHERHEADER.VOUCHERNUMBER) AS VOUCHER_NUMBER,
@@ -158,12 +161,15 @@ ORDER BY
 		<variableExpression><![CDATA[$F{VOUCHER_AMOUNT}]]></variableExpression>
 		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
 	</variable>
+	<variable name="VIEW1" class="java.lang.String">
+		<initialValueExpression><![CDATA["View"]]></initialValueExpression>
+	</variable>
 	<group name="remittancegroup">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupHeader>
-			<band height="50">
+			<band height="58">
 				<staticText>
-					<reportElement x="0" y="20" width="30" height="30" uuid="53840303-18e8-4096-823c-94b4367cd406"/>
+					<reportElement x="0" y="28" width="30" height="30" uuid="53840303-18e8-4096-823c-94b4367cd406"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -177,7 +183,7 @@ ORDER BY
 					<text><![CDATA[Sl. No.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="30" y="20" width="70" height="30" uuid="b693b167-dede-4812-b596-0f4c018df595"/>
+					<reportElement x="30" y="28" width="70" height="30" uuid="b693b167-dede-4812-b596-0f4c018df595"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -191,7 +197,7 @@ ORDER BY
 					<text><![CDATA[Voucher Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="100" y="20" width="95" height="30" uuid="431b7433-0af4-4349-a5e1-94a2a4c4c8dc"/>
+					<reportElement x="100" y="28" width="95" height="30" uuid="431b7433-0af4-4349-a5e1-94a2a4c4c8dc"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -205,7 +211,7 @@ ORDER BY
 					<text><![CDATA[Voucher Number]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="195" y="20" width="75" height="30" uuid="50072f40-a52d-4472-b275-e0d3140577dd"/>
+					<reportElement x="195" y="28" width="75" height="30" uuid="50072f40-a52d-4472-b275-e0d3140577dd"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -219,21 +225,7 @@ ORDER BY
 					<text><![CDATA[Voucher Type]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="270" y="20" width="100" height="30" uuid="81836273-ffbe-477b-9d01-e6d6a0654931"/>
-					<box leftPadding="5" rightPadding="5">
-						<pen lineWidth="0.5"/>
-						<topPen lineWidth="0.5"/>
-						<leftPen lineWidth="0.5"/>
-						<bottomPen lineWidth="0.5"/>
-						<rightPen lineWidth="0.5"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[Service]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="370" y="20" width="100" height="30" uuid="98bb7876-ad03-4d87-a186-18ab0f56455f"/>
+					<reportElement x="270" y="28" width="100" height="30" uuid="98bb7876-ad03-4d87-a186-18ab0f56455f"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -247,7 +239,7 @@ ORDER BY
 					<text><![CDATA[Fund]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="470" y="20" width="150" height="30" uuid="7d229eb1-7350-46c5-858f-5fb4c0cd2857"/>
+					<reportElement x="370" y="28" width="150" height="30" uuid="7d229eb1-7350-46c5-858f-5fb4c0cd2857"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -261,7 +253,7 @@ ORDER BY
 					<text><![CDATA[Bank A/C Number]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="620" y="20" width="100" height="30" uuid="b6db9656-c898-47a8-8e05-2d45ea7f770d"/>
+					<reportElement x="520" y="28" width="100" height="30" uuid="b6db9656-c898-47a8-8e05-2d45ea7f770d"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -275,7 +267,7 @@ ORDER BY
 					<text><![CDATA[Remittance By]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="720" y="20" width="102" height="30" uuid="8a7cfa57-3234-412a-9676-45176caaf13b"/>
+					<reportElement x="620" y="28" width="102" height="30" uuid="8a7cfa57-3234-412a-9676-45176caaf13b"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -289,7 +281,10 @@ ORDER BY
 					<text><![CDATA[Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="370" y="20" width="100" height="30" uuid="f5705f20-7104-4634-ba81-8787d0004f37"/>
+					<reportElement x="722" y="28" width="48" height="30" uuid="f08663ed-11ac-489e-8dda-3a694c928d16">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -300,14 +295,31 @@ ORDER BY
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[Fund]]></text>
+					<text><![CDATA[Receipt details ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="770" y="28" width="52" height="30" uuid="a390ae50-e069-4517-a12b-54ee015d2200">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Bank Challan ]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="50">
+			<band height="20">
 				<staticText>
-					<reportElement x="0" y="0" width="720" height="20" uuid="34db8ca7-761a-482c-9769-bf6a8054227c"/>
+					<reportElement x="0" y="0" width="722" height="20" uuid="34db8ca7-761a-482c-9769-bf6a8054227c"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -321,7 +333,7 @@ ORDER BY
 					<text><![CDATA[Total:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00">
-					<reportElement stretchType="RelativeToTallestObject" x="720" y="0" width="102" height="20" isPrintWhenDetailOverflows="true" uuid="2a91040e-25b4-4228-a3a0-deeeb4eb29b1"/>
+					<reportElement stretchType="RelativeToTallestObject" x="722" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="2a91040e-25b4-4228-a3a0-deeeb4eb29b1"/>
 					<box leftPadding="5" rightPadding="5">
 						<pen lineWidth="0.5"/>
 						<topPen lineWidth="0.5"/>
@@ -341,7 +353,7 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="209">
+		<band height="238">
 			<staticText>
 				<reportElement style="Title" x="130" y="10" width="520" height="45" uuid="6b0d24c9-2a8e-47ef-80ca-d2fca40e4c09"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -364,7 +376,7 @@ ORDER BY
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="608" y="116" width="131" height="20" uuid="3410f866-eb63-4f3b-940a-e60e33b96759"/>
+				<reportElement x="578" y="116" width="131" height="20" uuid="3410f866-eb63-4f3b-940a-e60e33b96759"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -392,7 +404,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="510" y="116" width="98" height="20" uuid="40c03bb3-d584-41bb-a5df-a6f32fd2e1d7"/>
+				<reportElement x="480" y="116" width="98" height="20" uuid="40c03bb3-d584-41bb-a5df-a6f32fd2e1d7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -434,7 +446,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_ID} == null || $P{EGOV_SERVICE_ID} == -1) ? "All Services" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT NAME FROM EGCL_SERVICEDETAILS WHERE ID = " + $P{EGOV_SERVICE_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="509" y="138" width="98" height="20" uuid="5ac32a18-7dfa-4cc8-aac1-06ee4e1fb028"/>
+				<reportElement x="479" y="138" width="98" height="20" uuid="5ac32a18-7dfa-4cc8-aac1-06ee4e1fb028"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -448,7 +460,7 @@ ORDER BY
 				<text><![CDATA[Bank Account:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="608" y="138" width="201" height="20" uuid="1d0accb7-8c1c-4e15-82de-91d29f4ed490"/>
+				<reportElement x="578" y="138" width="242" height="20" uuid="1d0accb7-8c1c-4e15-82de-91d29f4ed490"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -462,7 +474,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_BANKACCOUNT_ID} == null || $P{EGOV_BANKACCOUNT_ID} == -1) ? "All Accounts" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BANK.NAME||'-'||BANKACCOUNT.ACCOUNTNUMBER FROM BANK, BANKACCOUNT,BANKBRANCH WHERE BANKACCOUNT.BRANCHID=BANKBRANCH.ID AND BANKBRANCH.BANKID=BANK.ID AND BANKACCOUNT.ID=" + $P{EGOV_BANKACCOUNT_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="509" y="160" width="98" height="20" uuid="0257acb7-0219-4baa-b120-21ee2b63e8ea"/>
+				<reportElement x="479" y="160" width="98" height="20" uuid="0257acb7-0219-4baa-b120-21ee2b63e8ea"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -476,7 +488,7 @@ ORDER BY
 				<text><![CDATA[User Name:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="608" y="160" width="131" height="20" uuid="4e245512-5900-4afa-a123-dbcd74aa874d"/>
+				<reportElement x="578" y="160" width="131" height="20" uuid="4e245512-5900-4afa-a123-dbcd74aa874d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -526,21 +538,7 @@ ORDER BY
 	<detail>
 		<band height="21" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="7681e2ab-3ea3-4625-ab3e-f029a78b4b0e"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{SERVICE_NAME}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="195" y="0" width="75" height="20" isPrintWhenDetailOverflows="true" uuid="e702dcfc-7b9c-46d6-bd23-5f512175971f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="195" y="0" width="75" height="21" isPrintWhenDetailOverflows="true" uuid="e702dcfc-7b9c-46d6-bd23-5f512175971f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -554,7 +552,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{VOUCHER_TYPE}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="20" isPrintWhenDetailOverflows="true" uuid="b57ae9ab-2445-4c57-9d5f-475b7af27be7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="30" height="21" isPrintWhenDetailOverflows="true" uuid="b57ae9ab-2445-4c57-9d5f-475b7af27be7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -568,7 +566,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="95" height="20" isPrintWhenDetailOverflows="true" uuid="db90df99-337c-4c0f-9f37-42df4d74a2a9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="95" height="21" isPrintWhenDetailOverflows="true" uuid="db90df99-337c-4c0f-9f37-42df4d74a2a9"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -582,7 +580,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{VOUCHER_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="70" height="20" isPrintWhenDetailOverflows="true" uuid="2618ec66-70fb-43cb-b8ac-3445c2f43da7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="70" height="21" isPrintWhenDetailOverflows="true" uuid="2618ec66-70fb-43cb-b8ac-3445c2f43da7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -596,7 +594,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{VOUCHER_DATE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="16934e12-0b25-46aa-bba9-06250abd99c2"/>
+				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="100" height="21" isPrintWhenDetailOverflows="true" uuid="16934e12-0b25-46aa-bba9-06250abd99c2"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -610,7 +608,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{FUND_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="470" y="0" width="150" height="20" isPrintWhenDetailOverflows="true" uuid="30871a6e-5cb5-40e1-ac28-392fb1a669cd"/>
+				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="150" height="21" isPrintWhenDetailOverflows="true" uuid="30871a6e-5cb5-40e1-ac28-392fb1a669cd"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -624,7 +622,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{BANK_ACCOUNT_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="620" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="080dfad6-d930-4540-a75d-958a44bf2676"/>
+				<reportElement stretchType="RelativeToTallestObject" x="520" y="0" width="100" height="21" isPrintWhenDetailOverflows="true" uuid="080dfad6-d930-4540-a75d-958a44bf2676"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -638,7 +636,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{REMITTED_BY}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00">
-				<reportElement stretchType="RelativeToTallestObject" x="720" y="0" width="102" height="20" isPrintWhenDetailOverflows="true" uuid="d943026c-843b-49c2-a6c9-157e7c61c4bf"/>
+				<reportElement stretchType="RelativeToTallestObject" x="620" y="0" width="102" height="21" isPrintWhenDetailOverflows="true" uuid="d943026c-843b-49c2-a6c9-157e7c61c4bf"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -650,6 +648,38 @@ ORDER BY
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{VOUCHER_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" hyperlinkType="Reference">
+				<reportElement stretchType="RelativeToTallestObject" x="722" y="0" width="48" height="21" uuid="cc9df1d4-2147-43dc-bd41-e65d69ae1680"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" isUnderline="false" pdfFontName="Times-Italic"/>
+				</textElement>
+				<textFieldExpression><![CDATA["View"]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA["reports/remittanceVoucherReport-reportReceiptDetails.action?voucherNumber="+$F{VOUCHER_NUMBER}+"&srvId="+$P{EGOV_SERVICE_ID}+"&bankAcctId="+$P{EGOV_BANKACCOUNT_ID}+"&bankBranchId="+$P{EGOV_BRANCH_ID}+"&createdId="+$P{EGOV_CREATEDBY_ID}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$F{VOUCHER_NUMBER}]]></hyperlinkTooltipExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" hyperlinkType="Reference">
+				<reportElement stretchType="RelativeToTallestObject" x="770" y="0" width="52" height="21" uuid="d501cef7-b709-4288-a233-b6719de57398"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" isItalic="true" isUnderline="false" pdfFontName="Times-Italic"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Print"]]></textFieldExpression>
+				<hyperlinkReferenceExpression><![CDATA["reports/remittanceStatementReport-reportPrintBankChallan.action?voucherNumber="+$F{VOUCHER_NUMBER}]]></hyperlinkReferenceExpression>
+				<hyperlinkTooltipExpression><![CDATA[$F{VOUCHER_NUMBER}]]></hyperlinkTooltipExpression>
 			</textField>
 		</band>
 	</detail>

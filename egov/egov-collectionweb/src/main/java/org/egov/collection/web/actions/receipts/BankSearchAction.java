@@ -39,7 +39,10 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import com.opensymphony.xwork2.Action;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -48,9 +51,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.opensymphony.xwork2.Action;
 
 @Result(name = Action.SUCCESS, type = "redirect", location = "bankSearch-searchResults")
 @ParentPackage("egov")
@@ -60,7 +61,7 @@ public class BankSearchAction extends BaseFormAction {
     private PersistenceService<Bank, Integer> bankService;
     private static final String SEARCH_RESULTS = "searchResults";
     private final Bank bank = new Bank();
-    private List<Bank> bankList = new ArrayList<Bank>();
+    private List<Bank> bankList = new ArrayList<Bank>(0);
     private String query;
 
     public String getQuery() {

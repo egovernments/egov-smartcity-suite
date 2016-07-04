@@ -39,6 +39,13 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -50,15 +57,9 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({
@@ -68,7 +69,6 @@ public class SearchReceiptAction extends SearchFormAction {
 
     private static final long serialVersionUID = 1L;
     private Integer serviceTypeId = -1;
-    private Integer counterId = -1;
     private Long userId = (long) -1;
     private String instrumentType;
     private String receiptNumber;
@@ -78,6 +78,8 @@ public class SearchReceiptAction extends SearchFormAction {
     private String target = "new";
     private String manualReceiptNumber;
     private List resultList;
+    private String serviceClass = "-1";
+    private TreeMap<String, String> serviceClassMap =  new TreeMap<String,String>();
     
     @Autowired
     private EisCommonService eisCommonService; 
@@ -101,14 +103,6 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public void setInstrumentType(final String instrumentType) {
         this.instrumentType = instrumentType;
-    }
-
-    public Integer getCounterId() {
-        return counterId;
-    }
-
-    public void setCounterId(final Integer counterId) {
-        this.counterId = counterId;
     }
 
     public String getReceiptNumber() {
@@ -135,16 +129,10 @@ public class SearchReceiptAction extends SearchFormAction {
         this.toDate = toDate;
     }
 
-    public SearchReceiptAction() {
-        super();
-        addRelatedEntity("serviceType", ServiceDetails.class, "name");
-    }
-
     @Action(value = "/receipts/searchReceipt-reset")
     public String reset() {
         setPage(1);
         serviceTypeId = -1;
-        counterId = -1;
         userId = (long) -1;
         receiptNumber = "";
         fromDate = null;
@@ -152,6 +140,7 @@ public class SearchReceiptAction extends SearchFormAction {
         instrumentType = "";
         searchStatus = -1;
         manualReceiptNumber="";
+        serviceClass="-1";
         return SUCCESS;
     }
 
@@ -160,11 +149,13 @@ public class SearchReceiptAction extends SearchFormAction {
     {
         super.prepare();
         setupDropdownDataExcluding();
-        addDropdownData("counterList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_COUNTERS));
         addDropdownData("instrumentTypeList",
                 getPersistenceService().findAllBy("from InstrumentType i where i.isActive = true order by type"));
         addDropdownData("userList",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
+        serviceClassMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceClassMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
+        addDropdownData("serviceTypeList",Collections.EMPTY_LIST);
     }
 
     @Override
@@ -187,7 +178,9 @@ public class SearchReceiptAction extends SearchFormAction {
         ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>();
         receiptList.addAll(searchResult.getList());
         searchResult.getList().clear();
-      
+        if (getServiceClass()!= "-1") 
+        addDropdownData("serviceTypeList",
+                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,getServiceClass()));
         Long posId = null;
 
         for (ReceiptHeader receiptHeader : receiptList) {
@@ -260,9 +253,10 @@ public class SearchReceiptAction extends SearchFormAction {
             criteriaString.append(" and receipt.service.id = ? ");
             params.add(Long.valueOf(getServiceTypeId()));
         }
-        if (getCounterId() != -1) {
-            criteriaString.append(" and receipt.location.id = ? ");
-            params.add(Long.valueOf(getCounterId()));
+        
+        if (getServiceClass()!= "-1") {
+            criteriaString.append(" and receipt.service.serviceType = ? ");
+            params.add(getServiceClass());
         }
 
         if (getUserId() != -1) {
@@ -303,5 +297,21 @@ public class SearchReceiptAction extends SearchFormAction {
 
     public void setResultList(List resultList) {
         this.resultList = resultList;
+    }
+
+    public String getServiceClass() {
+        return serviceClass;
+    }
+
+    public void setServiceClass(String serviceClass) {
+        this.serviceClass = serviceClass;
+    }
+
+    public TreeMap<String, String> getServiceClassMap() {
+        return serviceClassMap;
+    }
+
+    public void setServiceClassMap(TreeMap<String, String> serviceClassMap) {
+        this.serviceClassMap = serviceClassMap;
     }
 }

@@ -84,7 +84,9 @@ $(document).ready(function(){
 	$('#typeofwork').trigger('blur');
 	$('#scheme').trigger('change');
 	$('#function').trigger('change');
-
+	
+	if(!$('#slum').is(':checked'))
+		$('#nonslum').attr('checked', 'checked');
 
 	return showSlumFieldsValue();
 });

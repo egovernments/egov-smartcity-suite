@@ -40,6 +40,9 @@
 
 package org.egov.collection.web.actions.reports;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -52,15 +55,12 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Action class for Online Trasaction Report
  */
 @Results({
-    @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
-    @Result(name = OnlineTransactionReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
+        @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
+        @Result(name = OnlineTransactionReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
 public class OnlineTransactionReportAction extends ReportFormAction {
     private static final long serialVersionUID = 1L;
     // Report parameter names

@@ -114,7 +114,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="button" class="btn btn-primary" id="routerSearch"><spring:message code="lbl.submit"/></button>
+					<button type="button" class="btn btn-primary" id="routerSearch"><spring:message code="lbl.search"/></button>
 					<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 				</div>
 			</div><br>

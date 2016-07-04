@@ -40,6 +40,8 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -48,8 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class CrossHierarchyService {
@@ -57,8 +57,29 @@ public class CrossHierarchyService {
     private final CrossHierarchyRepository crossHierarchyRepository;
 
     @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
     public CrossHierarchyService(final CrossHierarchyRepository crossHierarchyRepository) {
         this.crossHierarchyRepository = crossHierarchyRepository;
+    }
+
+    @Transactional
+    public CrossHierarchy create(final CrossHierarchy crossHierarchy) {
+        return crossHierarchyRepository.save(crossHierarchy);
+    }
+    
+    @Transactional
+    public CrossHierarchy update(final CrossHierarchy crossHierarchy) {
+        return crossHierarchyRepository.save(crossHierarchy);
+    }
+
+    @Transactional
+    public void delete(final CrossHierarchy crossHierarchy) {
+        crossHierarchyRepository.delete(crossHierarchy);
     }
 
     public List<Boundary> getCrossHierarchyChildrens(final Boundary boundary, final BoundaryType boundaryType) {
@@ -96,7 +117,18 @@ public class CrossHierarchyService {
 
     public List<Boundary> findChildBoundariesByParentBoundary(final String boundaryTypeName,
             final String hierarchyTypeName, final String parentBoundary) {
-        return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName,
-                hierarchyTypeName, parentBoundary);
+        return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName, hierarchyTypeName,
+                parentBoundary);
     }
+
+    public CrossHierarchy findAllByParentAndChildBoundary(final Long parentId, final Long childId) {
+        return crossHierarchyRepository.findBoundariesByParentAndChildBoundary(parentId, childId);
+    }
+    
+    public List<Boundary> getBoundaryByBoundaryType() {
+        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByName("Locality");
+        final List<Boundary> boundaryList = boundaryService.getAllBoundariesByBoundaryTypeId(boundaryType.getId());
+        return boundaryList;
+    }
+
 }
