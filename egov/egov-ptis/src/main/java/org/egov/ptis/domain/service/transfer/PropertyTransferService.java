@@ -337,8 +337,9 @@ public class PropertyTransferService {
         ackBean.setUlbLogo(cityLogo);
         ackBean.setMunicipalityName(cityName);
         ackBean.setReceivedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
-        if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER)){
+        if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
+        	ackBean.setTransferpropertyText("");
         	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
                      .getResolutionTime().toString());
         }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)){
