@@ -565,4 +565,6 @@ public final class CollectionConstants {
             put("P", "Payment");
         }
     };
+
+    public static final char[] REVENUEHEADS=new char[] {'I','A','L'};
 }
