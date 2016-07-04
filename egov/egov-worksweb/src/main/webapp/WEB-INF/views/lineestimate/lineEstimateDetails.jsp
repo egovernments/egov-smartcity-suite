@@ -55,7 +55,7 @@
 					<th><spring:message code="lbl.estimatedamount"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.beneficiary"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.action"/></th>
 				</tr>
 			</thead>
