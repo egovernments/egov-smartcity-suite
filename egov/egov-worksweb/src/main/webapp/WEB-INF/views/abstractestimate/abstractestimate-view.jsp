@@ -114,8 +114,8 @@
 					<c:otherwise>
 						<c:if test="${abstractEstimate.activities.size() > 0 && !abstractEstimate.egwStatus.code.equalsIgnoreCase('NEW')}">
 	                    	<a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
+	                    	<a href="javascript:void(0)" class="btn btn-primary" onclick="viewEstimatePDF();"><spring:message code="lbl.abstractestimate.pdf" /></a>
 	                    </c:if>
-	                    <a href="javascript:void(0)" class="btn btn-primary" onclick="viewEstimatePDF();"><spring:message code="lbl.abstractestimate.pdf" /></a>
 	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</c:otherwise>
 				</c:choose>

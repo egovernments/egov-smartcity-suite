@@ -330,5 +330,7 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT = "SECOND_LEVEL_EDIT_MB";
     
     public static final String APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL = "MB_QUANTITY_TOLERANCE_LEVEL";
+    
+    public static final String WF_STATUS_ADMIN_SANCTION ="Admin Sanctioned";
 
 }
