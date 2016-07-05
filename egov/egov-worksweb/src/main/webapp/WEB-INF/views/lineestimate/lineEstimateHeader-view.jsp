@@ -121,10 +121,10 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.ward" />
+						<spring:message code="lbl.election.ward" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.ward.name}" />
+						<c:out default="N/A" value="${lineEstimate.ward.boundaryNum}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.location" />
