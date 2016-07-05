@@ -300,7 +300,7 @@
 				var result=true;
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					return false;
 				}
 				if(document.getElementById('selectedRows').value=='' || document.getElementById('selectedRows').value==0)
@@ -466,7 +466,7 @@
 				
 				else if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					obj.value='';
 					return true;
 				}
@@ -507,7 +507,7 @@
 					
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					obj.value='';
 					return false;
 				}
