@@ -149,7 +149,7 @@
 				data-pattern="string" maxlength="50" id="lcNumber" />
 		</div>
 		<div class="col-sm-2 add-margin text-center">
-			<form:select path="wpYear" data-first-option="false"
+			<form:select path="finwpYear" data-first-option="false"
 				cssClass="form-control" id="wpYear">
 				<form:option value="">
 					<spring:message code="lbls.select" />

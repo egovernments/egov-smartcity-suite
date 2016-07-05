@@ -38,12 +38,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
-	
 	$(".show-ManualLcNumber").hide(); 
 	$("#bipartisanDetails[0].governmentDepartment").prop("disabled", true);
 	$("#seniordov1").hide(); 
     $("#seniordov2").hide(); 
     $("#seniordov3").hide(); 
+    var index=document.getElementById('petitionDetails').rows.length-1;
+    
+    $("#addpetRowId").click(function(){	
+    	addRow();
+    });
+    
+
+    
+ 	
 	
 	
 });
@@ -73,5 +81,28 @@ document.getElementById("lcNumber").value="";
 document.getElementById("wpYear").value="--select---";
  
 }
-
-
+	
+function addRow()
+{     
+			alert('addrowin');
+	var index=document.getElementById('petitionDetails').rows.length-1;
+	    	var tableObj=document.getElementById('petitionDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			tbody.appendChild(rowObj);
+			/*var rowno = parseInt(tableObj.rows.length)-2;
+			document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].value=false;								
+			document.forms["newlegalcaseForm"].name[lastRow-1].value="";
+			document.forms["newlegalcaseForm"].address[lastRow-1].value="";
+			document.forms["newlegalcaseForm"].contactNumber[lastRow-1].value="";
+			//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].value="";
+		    document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].isrespondentgovernment");
+			document.forms["newlegalcaseForm"].name[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].name");
+			document.forms["newlegalcaseForm"].address[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].address");
+          document.forms["newlegalcaseForm"].contactNumber[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].contactNumber");
+          document.forms["newlegalcaseForm"].governmentDepartment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].governmentDepartment");
+		//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].setAttribute("name","feedetailsList["+index+"].id");
+			index++;*/
+		
+ }

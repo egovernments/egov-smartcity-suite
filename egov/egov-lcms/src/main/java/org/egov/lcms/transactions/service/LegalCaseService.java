@@ -119,7 +119,7 @@ public class LegalCaseService {
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
-        legalcase.setStatus(legalCaseUtil.getLegalCaseStatusByCode(LcmsConstants.LEGALCASE_STATUS_CREATED));
+        legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,(LcmsConstants.LEGALCASE_STATUS_CREATED)));
         prepareChildEntities(legalcase);
         processAndStoreApplicationDocuments(legalcase);
         return legalCaseRepository.save(legalcase);

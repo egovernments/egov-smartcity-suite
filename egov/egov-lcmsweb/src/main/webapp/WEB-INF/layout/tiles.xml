@@ -282,5 +282,11 @@
 	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-search.jsp"/>
 </definition>
 
+<definition name="search-legalCaseForm" extends="base_layout">
+	<put-attribute name="page-title" value="title.advocatemaster.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/search/search-legalCaseForm.jsp"/>
+</definition>
+
+
 
 </tiles-definitions>

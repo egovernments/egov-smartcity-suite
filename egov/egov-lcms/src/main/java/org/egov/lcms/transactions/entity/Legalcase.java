@@ -170,6 +170,10 @@ public class Legalcase extends AbstractAuditable {
 
     @Transient
     private String wpYear;
+    
+    @Transient
+    private String finwpYear;
+    
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -798,5 +802,14 @@ public class Legalcase extends AbstractAuditable {
     public void setLegalcaseDocuments(final List<LegalcaseDocuments> legalcaseDocuments) {
         this.legalcaseDocuments = legalcaseDocuments;
     }
+
+	public String getFinwpYear() {
+		return finwpYear;
+	}
+
+	public void setFinwpYear(String finwpYear) {
+		this.finwpYear = finwpYear;
+	}
+    
 
 }

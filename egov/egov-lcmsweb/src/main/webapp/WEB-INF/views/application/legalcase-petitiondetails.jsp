@@ -46,7 +46,7 @@
 		<spring:message code="lbl.bipartisanDetails.details" />
 	</div>
 </div>
-<table class="table table-striped table-bordered" id="estimateDetails">
+<table class="table table-striped table-bordered" id="petitionDetails">
 	<thead>
 		<tr>
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
@@ -90,7 +90,7 @@
 						itemLabel="code" />
 				</form:select></td>
 			<td class="text-center"><span style="cursor: pointer;"
-				id="addRowId"><i class="fa fa-plus"></i></span></td>
+				id="addpetRowId"><i class="fa fa-plus"></i></span></td>
 		</tr>
 	</tbody>
 </table>

@@ -63,9 +63,7 @@ public class LegalCaseUtil {
         return funcObj;
     }
 
-    public EgwStatus getLegalCaseStatusByCode(final String code) {
-        return getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE, code);
-    }
+  
 
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
