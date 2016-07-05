@@ -44,6 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +64,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
@@ -106,8 +108,8 @@ public class WorksUtils {
                 documentDetailsRepository.save(doc);
     }
 
-    public List<DocumentDetails> getDocumentDetails(final MultipartFile[] files, final Object object, final String objectType)
-            throws IOException {
+    public List<DocumentDetails> getDocumentDetails(final MultipartFile[] files, final Object object,
+            final String objectType) throws IOException {
         final List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
 
         Long id = null;
@@ -126,8 +128,9 @@ public class WorksUtils {
                     final DocumentDetails documentDetails = new DocumentDetails();
                     documentDetails.setObjectId(id);
                     documentDetails.setObjectType(objectType);
-                    documentDetails.setFileStore(fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                            files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
+                    documentDetails.setFileStore(
+                            fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
+                                    files[i].getContentType(), WorksConstants.FILESTORE_MODULECODE));
                     documentDetailsList.add(documentDetails);
                 }
         return documentDetailsList;
@@ -144,8 +147,8 @@ public class WorksUtils {
         if (stateHistoryList != null && !stateHistoryList.isEmpty()) {
             for (final StateHistory stateHistory : stateHistoryList)
                 if (stateHistory.getOwnerPosition() != null) {
-                    final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(
-                            stateHistory.getOwnerPosition().getId(), new Date());
+                    final List<Assignment> assignmentList = assignmentService
+                            .getAssignmentsForPosition(stateHistory.getOwnerPosition().getId(), new Date());
                     for (final Assignment assgn : assignmentList)
                         if (desgnArray != null)
                             for (final String str : desgnArray)
@@ -156,8 +159,8 @@ public class WorksUtils {
                 }
             if (approverPosition == 0) {
                 final State stateObj = state;
-                final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(stateObj
-                        .getOwnerPosition().getId(), new Date());
+                final List<Assignment> assignmentList = assignmentService
+                        .getAssignmentsForPosition(stateObj.getOwnerPosition().getId(), new Date());
                 for (final Assignment assgn : assignmentList)
                     if (desgnArray != null)
                         for (final String str : desgnArray)
@@ -167,8 +170,7 @@ public class WorksUtils {
                             }
             }
         } else {
-            final Position posObjToClerk = positionMasterService
-                    .getCurrentPositionForUser(createdById);
+            final Position posObjToClerk = positionMasterService.getCurrentPositionForUser(createdById);
             approverPosition = posObjToClerk.getId();
         }
         return approverPosition;
@@ -188,8 +190,8 @@ public class WorksUtils {
     }
 
     public String getPathVars(final EgwStatus status, final State state, final Long id, final Long approvalPosition) {
-        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
-                .getCurrentUser().getId(), new Date(), new Date());
+        final Assignment currentUserAssignment = assignmentService
+                .getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(), new Date());
 
         Assignment assignObj = null;
         List<Assignment> asignList = null;
@@ -208,13 +210,11 @@ public class WorksUtils {
 
         String pathVars = "";
         if (!status.getCode().equalsIgnoreCase(LineEstimateStatus.REJECTED.toString()))
-            pathVars = id + ","
-                    + getApproverName(approvalPosition) + ","
+            pathVars = id + "," + getApproverName(approvalPosition) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? nextDesign : "");
         else
-            pathVars = id + ","
-                    + getApproverName(state.getOwnerPosition().getId()) + ","
+            pathVars = id + "," + getApproverName(state.getOwnerPosition().getId()) + ","
                     + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                     + (nextDesign != null ? state.getOwnerPosition().getDeptDesig().getDesignation().getName() : "");
         return pathVars;
@@ -255,6 +255,39 @@ public class WorksUtils {
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public CFinancialYear getFinancialYearByDate(final Date billdate) {
         return financialYearHibernateDAO.getFinancialYearByDate(billdate);
+    }
+
+    public List<Hashtable<String, Object>> getWorkFlowHistory(final State state, final List<StateHistory> history) {
+        User user = null;
+        Assignment assignment = null;
+        final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
+        final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
+        if (null != state) {
+            for (final StateHistory stateHistory : history) {
+                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                HistoryMap.put("date", stateHistory.getDateInfo());
+                HistoryMap.put("comments", stateHistory.getComments());
+                HistoryMap.put("status", stateHistory.getValue());
+                user = stateHistory.getLastModifiedBy();
+                if (null != user) {
+                    assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                    HistoryMap.put("user", user.getName());
+                    HistoryMap.put("designation", assignment.getDesignation().getName());
+                }
+                historyTable.add(HistoryMap);
+            }
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("status", state.getValue());
+            user = state.getLastModifiedBy();
+            if (null != user) {
+                assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                map.put("user", user.getName());
+                map.put("designation", assignment.getDesignation().getName());
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
     }
 
 }

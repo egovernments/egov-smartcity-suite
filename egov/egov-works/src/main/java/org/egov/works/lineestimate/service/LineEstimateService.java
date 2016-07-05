@@ -516,10 +516,6 @@ public class LineEstimateService {
                 map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
                 map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
                         ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
-            } else if (ownerPosition == null && state.getValue().equals(WorksConstants.WF_STATUS_ADMIN_SANCTION)) {
-                final Position ownerPos = history.get(0).getOwnerPosition();
-                map.put("department", null != ownerPos.getDeptDesig().getDepartment()
-                        ? ownerPos.getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
             if (!history.isEmpty() && history != null)

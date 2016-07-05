@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-05T15:41:42 -->
+<!-- 2016-07-05T17:58:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimate_workflowdetails" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="5fbab416-b149-47d8-9fb3-c2dbb87b88d6">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -47,7 +47,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="designationName" class="java.lang.String"/>
+	<field name="designation" class="java.lang.String"/>
 	<field name="ownerName" class="java.lang.String"/>
 	<field name="state" class="java.lang.String"/>
 	<field name="approvedDate" class="java.lang.String"/>
@@ -155,7 +155,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{department} != null ? $F{department}.toString().toLowerCase() : ""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{designation}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="89" y="0" width="100" height="19" uuid="f9358039-9d38-4c0a-9baf-1debebf3b097"/>
@@ -168,7 +168,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{user} != null ? $F{user} : $F{updatedBy}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{user}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="189" y="0" width="130" height="19" uuid="347762bd-cbbb-410a-abe9-be399e5ef0be"/>

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-05T16:47:44 -->
+<!-- 2016-07-05T19:07:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimate_BOQ" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="020c6c36-6917-4359-abd9-63ceb063a3ac">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -65,9 +65,10 @@
 		<band splitType="Stretch"/>
 	</background>
 	<columnHeader>
-		<band height="45" splitType="Stretch">
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="0" y="15" width="50" height="30" uuid="61b33cdc-7c88-4ce5-9a00-3b57c184aca8"/>
+				<reportElement x="0" y="0" width="50" height="30" uuid="61b33cdc-7c88-4ce5-9a00-3b57c184aca8"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -80,7 +81,7 @@
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="15" width="70" height="30" uuid="cc1a409f-b481-4c2d-abed-f931040ec2f2"/>
+				<reportElement x="50" y="0" width="70" height="30" uuid="cc1a409f-b481-4c2d-abed-f931040ec2f2"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -93,7 +94,7 @@
 				<text><![CDATA[SOR Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="120" y="15" width="188" height="30" uuid="5aa7b9a3-f4e3-426f-94e4-0497122cfbff"/>
+				<reportElement x="120" y="0" width="188" height="30" uuid="5aa7b9a3-f4e3-426f-94e4-0497122cfbff"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -106,7 +107,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="308" y="15" width="52" height="30" uuid="1f2c69fd-bad2-4cd7-b65d-fa243424842d"/>
+				<reportElement x="308" y="0" width="52" height="30" uuid="1f2c69fd-bad2-4cd7-b65d-fa243424842d"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -119,7 +120,7 @@
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="360" y="15" width="58" height="30" uuid="8a1699d8-0e3a-41c6-bf98-fa50ecd6162b"/>
+				<reportElement x="360" y="0" width="58" height="30" uuid="8a1699d8-0e3a-41c6-bf98-fa50ecd6162b"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -132,7 +133,7 @@
 				<text><![CDATA[Rate ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="418" y="15" width="48" height="30" uuid="5a47c0d6-714f-4186-8a38-81322552e180"/>
+				<reportElement x="418" y="0" width="48" height="30" uuid="5a47c0d6-714f-4186-8a38-81322552e180"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -145,7 +146,7 @@
 				<text><![CDATA[UOM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="466" y="15" width="66" height="30" uuid="3ea0866e-0bf5-4299-b3ce-e158f17585ce"/>
+				<reportElement x="466" y="0" width="66" height="30" uuid="3ea0866e-0bf5-4299-b3ce-e158f17585ce"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>

@@ -57,7 +57,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
-import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -80,7 +80,7 @@ public class AbstractEstimatePDFController {
     private ReportService reportService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
+    private WorksUtils worksUtils;
 
     public static final String ABSTRACTESTIMATEPDF = "abstractEstimatePDF";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -105,8 +105,8 @@ public class AbstractEstimatePDFController {
             activities.addAll(abstractEstimate.getSORActivities());
             activities.addAll(abstractEstimate.getNonSORActivities());
             if (abstractEstimate.getState() != null)
-                reportParams.put("workflowdetails", lineEstimateService.getHistory(abstractEstimate.getState(),
-                        abstractEstimate.getStateHistory()));
+                reportParams.put("workflowdetails",
+                        worksUtils.getWorkFlowHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
 
             reportParams.put("activities", activities);
         }
