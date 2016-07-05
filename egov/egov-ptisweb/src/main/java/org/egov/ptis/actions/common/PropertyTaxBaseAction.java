@@ -763,12 +763,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         } else {
             propertyTaxDetailsMap.put("vacantLandTax",
-                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
-                            : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
-                    .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)).add(
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS)).add(
+                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_VACANT_TAX)).add(
                     demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_LIBRARY_CESS));
             if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
