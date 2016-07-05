@@ -104,19 +104,23 @@
 			:</td>
 		<td class="greybox"><span class="bold"><s:property
 					value="%{mutationRegistrationDetails.sroName}" default="N/A" /></span></td>
+		<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
 		<td class="greybox"><s:text name="transferreason"></s:text>
 			:</td>
 		<td class="greybox"><span class="bold"><s:property
-					value="%{mutationRegistrationDetails.typeOfTransfer}"/></span></td>
+					value="%{mutationRegistrationDetails.typeOfTransfer}" default="N/A" /></span></td>
+		</s:if>
 	</tr>
+	<s:if test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
 	<tr>
 		<td class="greybox2">&nbsp;</td>
 		<td class="greybox"><s:text name="docNum" />:</td>
 		<td class="greybox"><span class="bold"><s:property
-					value="%{mutationRegistrationDetails.documnerNo}" /></span></td>
+					value="%{mutationRegistrationDetails.documnerNo}" default="N/A" /></span></td>
 		<td class="greybox"><s:text name="docDate" />:</td>
 		<td class="greybox"><s:date name="mutationRegistrationDetails.documentDate" var="docDate"
 				format="dd/MM/yyyy" /> <span class="bold"><s:property
-					value="%{#docDate}" /></span></td>
+					value="%{#docDate}" default="N/A" /></span></td>
 	</tr>
+	</s:if>
 </table>

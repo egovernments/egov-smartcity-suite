@@ -357,9 +357,7 @@
 					</s:if>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<s:if
-							test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) ||
-						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
-						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
+							test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
 							<tr>
 								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="transferreason"></s:text>
