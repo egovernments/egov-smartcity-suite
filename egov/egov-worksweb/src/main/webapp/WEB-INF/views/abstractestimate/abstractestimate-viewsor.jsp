@@ -41,11 +41,36 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="title.sor" /><c:out value="${isServiceVATRequired}"></c:out>
+			<spring:message code="title.estimatetemplate" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="row add-border">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.typeofwork" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.parentCategory.description}"></c:out>
+		</div>
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.subtypeofwork" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.category.description}"></c:out>  
+		</div>
+	</div>	
+	</div>
+	</div>
+	
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="title.sor" />
 		</div>
 	</div>
 	<div class="panel-body">
