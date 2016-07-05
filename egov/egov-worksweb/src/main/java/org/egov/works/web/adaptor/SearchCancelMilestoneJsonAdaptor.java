@@ -42,10 +42,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.milestone.entity.Milestone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -56,21 +53,16 @@ import com.google.gson.JsonSerializer;
 @Component
 public class SearchCancelMilestoneJsonAdaptor implements JsonSerializer<Milestone> {
 
-    @Autowired
-    private LineEstimateService lineEstimateService;
-
     @Override
     public JsonElement serialize(final Milestone milestone, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         if (milestone != null) {
-            if (milestone.getWorkOrderEstimate().getWorkOrder().getEstimateNumber() != null) {
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(milestone.getWorkOrderEstimate()
-                        .getWorkOrder()
-                        .getEstimateNumber());
-                jsonObject.addProperty("workIdentificationNumber", led.getProjectCode().getCode());
-            } else
+            if (milestone.getWorkOrderEstimate().getEstimate() != null)
+                jsonObject.addProperty("workIdentificationNumber",
+                        milestone.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
+            else
                 jsonObject.addProperty("workIdentificationNumber", "");
             if (milestone.getWorkOrderEstimate().getWorkOrder() != null) {
                 jsonObject.addProperty("agreementAmount", milestone.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount());
