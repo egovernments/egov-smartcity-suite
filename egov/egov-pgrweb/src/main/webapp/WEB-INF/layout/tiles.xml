@@ -244,4 +244,8 @@
         <put-attribute name="page-title" value="lbl.bulkescalation.generation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkEscalation-new.jsp"/>
     </definition>
+    <definition name="functionaryWise-search" extends="base_layout"> 
+    	<put-attribute name="page-title" value="lbl.functionaryWiseReport.heading.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/functionaryWise-search.jsp"/>
+    </definition>
 </tiles-definitions>
