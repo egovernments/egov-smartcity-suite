@@ -1,7 +1,7 @@
 delete from egw_status where moduletype='LCMS' and code='LCCREATED';
 
 insert into egw_status (id,moduletype,description,lastmodifieddate,code,order_id )
-values(nextval('seq_egw_status'),'Legal Case','Created','2016-06-27 13:10:10.622846','LCCREATED',1)
+values(nextval('seq_egw_status'),'Legal Case','Created','2016-06-27 13:10:10.622846','LCCREATED',1);
 
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application)
