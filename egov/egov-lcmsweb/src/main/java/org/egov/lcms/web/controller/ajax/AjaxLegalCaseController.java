@@ -73,8 +73,7 @@ public class AjaxLegalCaseController {
     @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Department> getAllDepartmentsByNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName) {
-        return null;
-       // return departmentService.getAllDepartmentsByNameLike(departmentName);
+         return departmentService.getAllDepartmentsByNameLike(departmentName);
 
     }
 
