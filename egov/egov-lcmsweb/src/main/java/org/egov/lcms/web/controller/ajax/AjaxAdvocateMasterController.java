@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.web.ajax.controller;
+package org.egov.lcms.web.controller.ajax;
 
 import java.util.List;
 
