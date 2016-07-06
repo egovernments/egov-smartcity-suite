@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.actions.transfer;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
@@ -46,7 +48,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_PARTIAL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REGISTERED_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
@@ -59,6 +63,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_AP
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REGISTRATION_COMPLETED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
@@ -90,12 +95,11 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
@@ -128,6 +132,7 @@ import com.opensymphony.xwork2.ActionContext;
         @Result(name = BaseFormAction.NEW, location = "transfer/transferProperty-new.jsp"),
         @Result(name = BaseFormAction.EDIT, location = "transfer/transferProperty-edit.jsp"),
         @Result(name = BaseFormAction.VIEW, location = "transfer/transferProperty-view.jsp"),
+        @Result(name = PropertyTransferAction.REDIRECT, location = "transfer/transferProperty-redirect.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
@@ -155,6 +160,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public static final String REDIRECT_SUCCESS = "redirect-success";
     public static final String COLLECT_FEE = "collect-fee";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
+    protected static final String REDIRECT = "redirect";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
 
     // Form Binding Model
@@ -167,9 +173,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     protected AssignmentService assignmentService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     @Qualifier("workflowService")
@@ -237,6 +240,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
+    }
+    
+    @SkipValidation
+    @Action(value = "/redirect")
+    public String redirect() {
+        return REDIRECT;
     }
 
     @SkipValidation
@@ -321,7 +330,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String view() {
         final String currState = propertyMutation.getState().getValue();
         final String nextAction = propertyMutation.getState().getNextAction();
-        final String userDesignation = transferOwnerService.getLoggedInUserDesignation();
         propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
         if (currState.endsWith(WF_STATE_REJECTED)
                 || (nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING))
@@ -549,16 +557,24 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Override
     public void validate() {
-        if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
-            addActionError(getText("mandatory.trRsnId"));
-        else if (propertyMutation.getMutationReason().getMutationName()
-                .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
-                && StringUtils.isBlank(propertyMutation.getSaleDetail()))
-            addActionError(getText("mandatory.saleDtl"));
-        if (propertyMutation.getDeedDate() == null)
-            addActionError("Registration Document Date should not be empty");
-        if (StringUtils.isBlank(propertyMutation.getDeedNo()))
-            addActionError("Registration Document Number should not be empty");
+        if (PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {
+            if (propertyMutation.getMutationReason() == null || propertyMutation.getMutationReason().getId() == -1)
+                addActionError(getText("mandatory.trRsnId"));
+            else if (propertyMutation.getMutationReason().getMutationName()
+                    .equals(PropertyTaxConstants.MUTATIONRS_SALES_DEED)
+                    && StringUtils.isBlank(propertyMutation.getSaleDetail()))
+                addActionError(getText("mandatory.saleDtl"));
+            if (propertyMutation.getDeedDate() == null)
+                addActionError("Registration Document Date should not be empty");
+            if (StringUtils.isBlank(propertyMutation.getDeedNo()))
+                addActionError("Registration Document Number should not be empty");
+        }
+        if (propertyMutation.getPartyValue() == null || propertyMutation.getPartyValue().equals("")) {
+            addActionError(getText("mandatory.party.value"));
+        }
+        if (propertyMutation.getDepartmentValue() == null || propertyMutation.getDepartmentValue().equals("")) {
+            addActionError(getText("mandatory.department.value"));
+        }
         boolean anyDocIsMandatory = false;
         for (final DocumentType docTypes : documentTypes)
             if (docTypes.isMandatory()) {
@@ -576,7 +592,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                                 + " document marked as enclosed, please add the relavent documents.");
         // To set proxy list at approval stage
         if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
-                && propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED))
+                && (propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED)
+                || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())
@@ -608,18 +625,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                     }
                 }
             }
-        }
-
-        if (getMutationId() != null && null != propertyMutation
-                && propertyMutation.getState().getValue().equals(WF_STATE_BILL_COLLECTOR_APPROVED)) {
-            if (propertyMutation.getMutationFee() == null)
-                addActionError(getText("mandatory.mutationFee"));
-            else if (propertyMutation.getMutationFee().compareTo(BigDecimal.ZERO) < 1)
-                addActionError(getText("madatory.mutFeePos"));
-            if (propertyMutation.getMarketValue() == null)
-                addActionError("Market Value is mandatory");
-            else if (propertyMutation.getMarketValue().compareTo(BigDecimal.ZERO) < 1)
-                addActionError("Please enter a valid Market Value");
         }
 
         if (loggedUserIsMeesevaUser || !propertyByEmployee) {
@@ -680,7 +685,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 propertyMutation.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(NATURE_TITLE_TRANSFER);
+                        .withNatureOfTask(getNatureOfTask());
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approverComments).withDateInfo(currentDate.toDate());
@@ -740,7 +745,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 smsMsgForTransferee = getText("msg.rejecttransferproperty.sms", argsForTransferee);
             } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getMarketValue().toString());
+                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
+                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
+                } else {
+                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
+                }
                 argsForTransferee.add(propertyMutation.getMutationFee().toString());
                 transferorMobileNumber = "";
                 smsMsgForTransferee = getText("msg.paymenttransferproperty.sms", argsForTransferee);
@@ -795,7 +804,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
                 subject = getText("subject.paymenttransferproperty");
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                argsForTransferee.add(propertyMutation.getMarketValue().toString());
+                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
+                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
+                } else {
+                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
+                }
                 argsForTransferee.add(propertyMutation.getMutationFee().toString());
                 argsForTransferee.add(transferOwnerService.getCityName());
                 transferorEmailId = "";
@@ -821,6 +834,18 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         messagingService.sendEmail(transferorEmailId, subject, emailBodyTransferor);
         messagingService.sendEmail(transfereeEmailId, subject, emailBodyTransferee);
+    }
+    
+    private String getNatureOfTask() {
+        String nature = ADDTIONAL_RULE_REGISTERED_TRANSFER.equals(getAdditionalRule())
+                ? NATURE_REGISTERED_TRANSFER
+                : ADDTIONAL_RULE_FULL_TRANSFER.equals(getAdditionalRule())
+                        ? NATURE_FULL_TRANSFER
+                        : PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER
+                                .equals(getAdditionalRule())
+                                        ? NATURE_PARTIAL_TRANSFER
+                                        : "PropertyMutation";
+        return nature;
     }
 
     public BigDecimal getCurrentPropertyTax() {
@@ -1039,5 +1064,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public void setDigitalSignEnabled(boolean digitalSignEnabled) {
         this.digitalSignEnabled = digitalSignEnabled;
     }
-
+    
+    @Override
+    public String getAdditionalRule() {
+        return propertyMutation.getType();
+    }
 }

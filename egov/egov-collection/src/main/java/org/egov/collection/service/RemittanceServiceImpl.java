@@ -293,7 +293,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
         for (final ReceiptHeader receiptHeader : bankRemitList) {
             receiptHeader.setStatus(receiptStatusRemitted);
-            receiptHeader.setRemittanceVoucher(remittance.getReferenceNumber());
+            receiptHeader.setRemittanceReferenceNumber(remittance.getReferenceNumber());
             receiptHeaderService.update(receiptHeader);
         }
         return bankRemitList;

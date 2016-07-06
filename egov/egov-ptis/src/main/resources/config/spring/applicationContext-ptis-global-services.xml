@@ -145,6 +145,7 @@
 	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" scope="prototype" />
 	<bean id="vacancyRemissionService" class="org.egov.ptis.domain.service.property.VacancyRemissionService" scope="prototype" autowire-candidate="true" />
 	<bean id="financialUtil" class="org.egov.ptis.client.util.FinancialUtil" scope="prototype" autowire-candidate="true" />
-	
-	
+	<bean id="mutationRegistrationService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" />
+	</bean>
 </beans>

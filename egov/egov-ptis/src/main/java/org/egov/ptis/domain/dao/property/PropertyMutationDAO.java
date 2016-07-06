@@ -54,4 +54,19 @@ public interface PropertyMutationDAO {
 	public void delete(PropertyMutation propertyMutation);
 
 	public PropertyMutation update(PropertyMutation propertyMutation);
+	
+	/**
+	 * Fetch the PropertyMutation for the given assessmentNo and applicationNo
+	 * @param assessmentNo
+	 * @param applicationNo
+	 * @return PropertyMutation
+	 */
+	public PropertyMutation getPropertyMutationForAssessmentNoAndApplicationNumber(String assessmentNo, String applicationNo);
+	
+	/**
+         * Fetch the PropertyMutation for the given assessmentNo
+         * @param assessmentNo
+         * @return PropertyMutation
+         */
+        public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo);
 }

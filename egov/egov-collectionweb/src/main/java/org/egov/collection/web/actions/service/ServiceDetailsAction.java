@@ -40,6 +40,15 @@
 
 package org.egov.collection.web.actions.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -68,14 +77,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceDetailsAction.NEW, location = "serviceDetails-new.jsp"),
@@ -113,6 +114,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     private ChartOfAccountsDAO chartOfAccountsDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
 
     public ServiceDetailsAction() {
         addRelatedEntity("serviceCategory", ServiceCategory.class);
@@ -177,10 +179,11 @@ public class ServiceDetailsAction extends BaseFormAction {
         if (headerFields.contains(CollectionConstants.FUNDSOURCE))
             addDropdownData("fundsourceList",
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE));
-
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
+        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
-
     }
 
     @Action(value = "/service/serviceDetails-beforeCreate")
@@ -206,7 +209,7 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     @Action(value = "/service/serviceDetails-view")
     public String view() {
-
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         return "view";
     }
 
@@ -219,6 +222,12 @@ public class ServiceDetailsAction extends BaseFormAction {
 
         if (null == subledgerDetails || subledgerDetails.isEmpty())
             subledgerDetails.add(new ServiceSubledgerInfo());
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        if (serviceDetails.getServiceType().equals(CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION)
+                || serviceDetails.getServiceType().equals(CollectionConstants.SERVICE_TYPE_MISC_COLLECTION)) {
+            serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
+            serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
+        }
         return BEFOREMODIFY;
     }
 
@@ -415,8 +424,8 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public boolean getCodeCheck() {
         boolean codeExistsOrNot = false;
-        final ServiceDetails service = serviceDetailsService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CODE,
-                serviceDetails.getCode());
+        final ServiceDetails service = serviceDetailsService.findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_CODE, serviceDetails.getCode());
         if (null != service)
             codeExistsOrNot = true;
         return codeExistsOrNot;
@@ -488,5 +497,13 @@ public class ServiceDetailsAction extends BaseFormAction {
 
     public void setMandatoryFields(final List<String> mandatoryFields) {
         this.mandatoryFields = mandatoryFields;
+    }
+
+    public TreeMap<String, String> getServiceTypeMap() {
+        return serviceTypeMap;
+    }
+
+    public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
+        this.serviceTypeMap = serviceTypeMap;
     }
 }

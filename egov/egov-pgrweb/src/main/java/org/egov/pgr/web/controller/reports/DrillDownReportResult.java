@@ -44,6 +44,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 public class DrillDownReportResult {
     private String zoneName;
     private BigInteger registered = BigInteger.ZERO;
@@ -61,6 +63,7 @@ public class DrillDownReportResult {
     private String boundaryname;
     private BigInteger complaintid;
     private BigDecimal complainttypeid;
+    private BigInteger usrid;
     private BigInteger feedback;
     private BigInteger withinsla;
     private BigInteger beyondsla;
@@ -90,10 +93,10 @@ public class DrillDownReportResult {
         this.crn = crn;
     }
 
-    public Date getCreateddate() {
-        return createddate;
+    public DateTime getCreateddate() {
+        return null == this.createddate ? null : new DateTime(this.createddate);
     }
-
+    
     public void setCreateddate(final Date createddate) {
         this.createddate = createddate;
     }
@@ -231,6 +234,14 @@ public class DrillDownReportResult {
 
     public void setIssla(final String issla) {
         this.issla = issla;
+    }
+
+    public BigInteger getUsrid() {
+        return usrid;
+    }
+
+    public void setUsrid(BigInteger usrid) {
+        this.usrid = usrid;
     }
 
 }

@@ -75,7 +75,6 @@ import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
-import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -291,7 +290,7 @@ public class AssessmentService {
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,false);
             if (null != errorDetails) {
                 responseJson = JsonConvertor.convert(errorDetails);
             } else {
@@ -841,25 +840,6 @@ public class AssessmentService {
         return getJSONResponse(mstrCodeNamePairDetailsList);
     }
 
-    /**
-     * This method loads the assessment details.
-     * 
-     * @param assessmentNumber - assessment number i.e. property id
-     * @return
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
-     * @throws IOException
-     */
-    @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String fetchAssessmentDetails(@RequestBody String assessmentRequest)
-            throws JsonGenerationException, JsonMappingException, IOException {
-        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
-                AssessmentRequest.class);
-        RestAssessmentDetails assessmentDetails = propertyExternalService
-                .loadAssessmentDetails(assessmentReq.getAssessmentNo());
-        return getJSONResponse(assessmentDetails);
-    }
-    
     /**
      * This method is used to get POJO object from JSON request.
      * 

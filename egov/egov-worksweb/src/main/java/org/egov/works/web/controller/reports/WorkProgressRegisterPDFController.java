@@ -170,7 +170,7 @@ public class WorkProgressRegisterPDFController {
             for (final WorkProgressRegister wpr : workProgressRegisters) {
                 final WorkProgressRegisterPdf pdf = new WorkProgressRegisterPdf();
                 if (wpr.getWard() != null)
-                    pdf.setWard(wpr.getWard().getName());
+                    pdf.setWard(wpr.getWard().getBoundaryNum().toString());
                 else
                     pdf.setWard("");
                 if (wpr.getLocation() != null)

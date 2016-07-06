@@ -209,7 +209,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Ward]]></text>
+				<text><![CDATA[Election ward]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="72" y="0" width="57" height="47" uuid="be51590d-9615-4411-a5cb-ada3a649dd9d"/>

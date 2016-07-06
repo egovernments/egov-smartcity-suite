@@ -51,7 +51,7 @@
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="main" align="center">
 <tr>
-<td class="mainheading" colspan="6" align="center"><s:text name="bankremittance.confirmation"/>&nbsp;<b></b><s:property value="%{voucherHeaderValues[0].remittanceVoucher}" /></b><br/></td>
+<td class="mainheading" colspan="6" align="center"><s:text name="bankremittance.confirmation"/>&nbsp;<b></b><s:property value="%{voucherHeaderValues[0].remittanceReferenceNumber}" /></b><br/></td>
 </tr>
 <tr>
 <td>&nbsp;</td>

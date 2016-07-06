@@ -160,8 +160,8 @@ public class RestRedirectConstants {
 		code_ulbNames.put("1018","Yemmiganur");
 		code_ulbNames.put("1165","Yerraguntla");
 		code_ulbNames.put("0001","localhost");//for local
-
-
+		code_ulbNames.put("1087", "Anakapalli");
+		code_ulbNames.put("1089", "Bheemili");
 
 
 	}

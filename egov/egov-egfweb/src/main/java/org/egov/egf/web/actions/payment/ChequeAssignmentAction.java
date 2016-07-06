@@ -801,7 +801,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 final List<Object[]> yearCodeList = persistenceService
                         .findAllBy(
                                 "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
-                                        + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where name = 'Accounts')"
+                                        + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
                                         + " order by serialNo desc ", bankaccount);
 
                 if (yearCodeList != null)

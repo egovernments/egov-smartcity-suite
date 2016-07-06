@@ -53,6 +53,7 @@
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/complaint/reg-success**" filters="none" />
 				<security:filter-chain pattern="/complaint/view/**" filters="none" />
+				<security:filter-chain pattern="/complaint/downloadfile/**" filters="none" />
 				<security:filter-chain pattern="/error/**" filters="none" />
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>

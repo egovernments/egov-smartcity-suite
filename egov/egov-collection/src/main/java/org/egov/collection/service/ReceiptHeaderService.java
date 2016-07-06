@@ -458,15 +458,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return check;
     }
 
-    public List<ReceiptHeader> setVoucherNumber(final List<ReceiptHeader> receiptHeaders,
-            final CVoucherHeader voucherHeader) {
-        final List<ReceiptHeader> receiptHeaderList = new ArrayList<ReceiptHeader>(0);
-        for (final ReceiptHeader receiptHeader : receiptHeaders) {
-            receiptHeader.setRemittanceVoucher(voucherHeader.getVoucherNumber());
-            receiptHeaderList.add(receiptHeader);
-        }
-        return receiptHeaderList;
-    }
 
     @Transactional
     public void updateChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,

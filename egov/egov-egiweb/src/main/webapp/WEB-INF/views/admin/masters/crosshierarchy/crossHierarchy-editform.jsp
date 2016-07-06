@@ -71,7 +71,7 @@
 										code="lbl.boundaryType" /><span
 						class="mandatory"></span></label>
 					<div class="col-sm-6">
-						<form:input path="" id="boundaryType"  value="${boundaryType.name}"
+						<form:input path="" id="boundaryType"  value="${boundaryType.hierarchyType.code}"
 							type="text" class="form-control low-width" placeholder=""
 							autocomplete="off" required="required" readonly="true" />
 					 <form:hidden path="boundaryType" id="boundaryType" value="${boundaryType.id}" /> 

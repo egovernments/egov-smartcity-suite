@@ -40,26 +40,30 @@
 
 package org.egov.pgr.web.controller.reports;
 
+import java.lang.reflect.Type;
+
+import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-
-import java.lang.reflect.Type;
 
 public class DrillDownReportWithcompTypeAdaptor implements JsonSerializer<DrillDownReportResult> {
 
     @Override
     public JsonElement serialize(final DrillDownReportResult drillDownReportObject, final Type type,
             final JsonSerializationContext jsc) {
+        final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy hh:mm a");
         final JsonObject jsonObject = new JsonObject();
         if (drillDownReportObject != null) {
 
             jsonObject.addProperty("crn", null != drillDownReportObject.getCrn() ? drillDownReportObject.getCrn()
                     .toString() : "Not Available");
             jsonObject.addProperty("createddate",
-                    null != drillDownReportObject.getCreateddate() ? drillDownReportObject.getCreateddate().toString()
+                    null != drillDownReportObject.getCreateddate() ? formatter.print(drillDownReportObject.getCreateddate())
                             : "Not Available");
             jsonObject.addProperty("complainantname",
                     null != drillDownReportObject.getComplaintname() ? drillDownReportObject.getComplaintname()

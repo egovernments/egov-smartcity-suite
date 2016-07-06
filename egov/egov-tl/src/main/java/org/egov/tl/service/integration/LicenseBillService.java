@@ -42,6 +42,7 @@ package org.egov.tl.service.integration;
 
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -249,6 +250,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             billdetailRebate.setDescription(reasonDed.getEgDemandReasonMaster().getReasonMaster()
                                     + " - " + installment.getDescription());
                             billdetailRebate.setFunctionCode(TL_FUNCTION_CODE);
+                            billdetailRebate.setPurpose(BillAccountDetails.PURPOSE.REBATE.toString());
                             billDetails.add(billdetailRebate);
                         }
                     }
@@ -272,6 +274,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
                         + installment.getDescription());
                 billdetail.setFunctionCode(TL_FUNCTION_CODE);
+                billdetail.setPurpose(BillAccountDetails.PURPOSE.CURRENT_AMOUNT.toString());
                 billDetails.add(billdetail);
             }
 

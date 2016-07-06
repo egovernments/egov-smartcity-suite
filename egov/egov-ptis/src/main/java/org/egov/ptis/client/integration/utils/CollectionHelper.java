@@ -80,6 +80,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 public class CollectionHelper {
     private static final Logger LOG = Logger.getLogger(CollectionHelper.class);
     private EgBill bill;
+    private boolean isMutationFeePayment = false;
 
     /**
      * Use this constructor when you're only interested in getting the details
@@ -181,15 +182,24 @@ public class CollectionHelper {
         List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
         Collections.sort(billDetails);
 
-        for (EgBillDetails billDet : billDetails) {
-            receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
-                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
-                    billDet.getDescription()));
+        if(isMutationFeePayment){
+        	for (EgBillDetails billDet : billDetails) {
+	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
+	                    billDet.getCrAmount(),
+	                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
+	                    billDet.getDescription()));
+	        }
+        }else{
+	        for (EgBillDetails billDet : billDetails) {
+	            receiptDetails.add(initReceiptDetail(billDet.getGlcode(),
+	                    BigDecimal.ZERO, // billDet.getCrAmount(),
+	                    billDet.getCrAmount().subtract(billDet.getDrAmount()), billDet.getDrAmount(),
+	                    billDet.getDescription()));
+	        }
+        	SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
+        			receiptDetails);
         }
-
-        SpringBeanUtil.getPropertyTaxCollection().apportionPaidAmount(String.valueOf(bill.getId()), amountPaid,
-                receiptDetails);
-
+        
         boolean isActualDemand = false;
         for (EgBillDetails billDet : bill.getEgBillDetails()) {
             for (ReceiptDetail rd : receiptDetails) {
@@ -226,7 +236,7 @@ public class CollectionHelper {
             collModesList.add(coll);
         }
         billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
-                bill.getFundSourceCode(), bill.getDepartmentCode(), "Property Tax collection", bill.getCitizenName(),
+                bill.getFundSourceCode(), bill.getDepartmentCode(), bill.getDisplayMessage(), bill.getCitizenName(),
                 bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
         billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
 
@@ -308,5 +318,13 @@ public class CollectionHelper {
     void setBill(EgBill bill) {
         this.bill = bill;
     }
+
+	public boolean getIsMutationFeePayment() {
+		return isMutationFeePayment;
+	}
+
+	public void setIsMutationFeePayment(boolean isMutationFeePayment) {
+		this.isMutationFeePayment = isMutationFeePayment;
+	}
 
 }

@@ -80,6 +80,9 @@ $(document).ready(function(){
 	$('#typeofwork').trigger('blur');
 	$('#scheme').trigger('change');
 	$('#function').trigger('change');
+	
+	if(!$('#slum').is(':checked'))
+		$('#nonslum').attr('checked', 'checked');
 	return showSlumFieldsValue();
 });
 
@@ -396,7 +399,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: ct.name,
+                        name: '' + ct.boundaryNum + '',
                         value: ct.id
                     };
                 });
@@ -408,7 +411,7 @@ $(document).ready(function(){
 	var ward_typeahead = $('#wardInput').typeahead({
 		hint : false,
 		highlight : false,
-		minLength : 3
+		minLength : 1
 	}, {
 		displayKey : 'name',
 		source : ward.ttAdapter(),

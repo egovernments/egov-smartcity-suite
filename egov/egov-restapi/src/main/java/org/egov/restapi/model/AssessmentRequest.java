@@ -46,6 +46,7 @@ public class AssessmentRequest {
     private String ownerName;
     private String mobileNumber;
     private String ulbCode;
+    private String applicationNo;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -84,5 +85,13 @@ public class AssessmentRequest {
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
+	}
 
 }

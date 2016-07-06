@@ -4050,9 +4050,9 @@ public class CommonAction extends BaseFormAction {
             {
                 yearCodeList = persistenceService
                         .findAllBy(
-                                "select  fs from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                "select  DISTINCT fs from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
                                         + " and ac.id=cd.accountCheque and cd.allotedTo.id=?"
-                                        + " order by serialNo desc ", bankaccount, departmentId.longValue());
+                                        + " order by fs.id desc ", bankaccount, departmentId.longValue());
             }
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting year code " + e.getMessage(),

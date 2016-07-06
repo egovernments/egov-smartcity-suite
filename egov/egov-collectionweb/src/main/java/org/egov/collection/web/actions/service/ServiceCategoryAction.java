@@ -52,8 +52,8 @@ import org.egov.infstr.services.PersistenceService;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),
-    @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
-    @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
+        @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
+        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
 public class ServiceCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;

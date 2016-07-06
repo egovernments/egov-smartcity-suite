@@ -41,11 +41,16 @@
 package org.egov.collection.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.model.instrument.InstrumentHeader;
 
 public abstract class RemittanceService implements Serializable {
     private static final long serialVersionUID = 1849734164810403255L;
@@ -58,4 +63,33 @@ public abstract class RemittanceService implements Serializable {
     
     public abstract List<HashMap<String, Object>> findAllRemittanceDetailsForServiceAndFund(final String boundaryIdList,
             final String serviceCodes, final String fundCodes, Date startDate, Date endDate);
+    
+    public List<CollectionBankRemittanceReport> prepareBankRemittanceReport(final List<ReceiptHeader> receiptHeaders) {
+        final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
+        for (final ReceiptHeader receiptHead : receiptHeaders) {
+            @SuppressWarnings("rawtypes")
+            final Iterator itr = receiptHead.getReceiptInstrument().iterator();
+            while (itr.hasNext()) {
+                final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
+                final InstrumentHeader instHead = (InstrumentHeader) itr.next();
+                if (!instHead.getInstrumentType().getType().equals(CollectionConstants.INSTRUMENTTYPE_CASH)) {
+                    collBankRemitReport.setChequeNo(instHead.getInstrumentNumber());
+                    collBankRemitReport.setBranchName(instHead.getBankBranchName());
+                    collBankRemitReport.setBankName(instHead.getBankId() != null ? instHead.getBankId().getName() : "");
+                    collBankRemitReport.setChequeDate(instHead.getInstrumentDate());
+                    collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
+                    collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
+                    collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
+                    collBankRemitReport.setReceiptDate(receiptHead.getReceiptDate());
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceReferenceNumber());
+                    reportList.add(collBankRemitReport);
+                } else {
+                    collBankRemitReport.setVoucherNumber(receiptHead.getRemittanceReferenceNumber());
+                    reportList.add(collBankRemitReport);
+                }
+            }
+        }
+        return reportList;
+    }
+
 }

@@ -57,13 +57,18 @@ public class RestAssessmentDetails implements Serializable {
     private Float plinthArea = null;
     private BigDecimal totalTaxDue = BigDecimal.ZERO;
     private String isMutationFeePaid;
-
+    private String feeReceipt;
+    private String feeReceiptDate;
+    private BigDecimal mutationFee = BigDecimal.ZERO;
+    private String applicationNo;
 
     @Override
     public String toString() {
         return "AssessmentDetails [assessmentNo=" + assessmentNo + ", ownerDetails=" + ownerDetails
                 + ", propertyAddress=" + propertyAddress + ", localityName=" + localityName
-                + ", plinthArea=" + plinthArea + ", totalTaxDue=" + totalTaxDue + ", isMutationFeePaid=" + isMutationFeePaid;
+                + ", plinthArea=" + plinthArea + ", totalTaxDue=" + totalTaxDue + ", isMutationFeePaid=" + isMutationFeePaid
+                + ", feeReceipt=" + feeReceipt + ", feeReceiptDate=" + feeReceiptDate
+                + ", mutationFee=" + mutationFee + ", applicationNo=" + applicationNo;
               
     }
 
@@ -132,6 +137,38 @@ public class RestAssessmentDetails implements Serializable {
 
 	public void setPlinthArea(Float plinthArea) {
 		this.plinthArea = plinthArea;
+	}
+
+	public String getFeeReceipt() {
+		return feeReceipt;
+	}
+
+	public void setFeeReceipt(String feeReceipt) {
+		this.feeReceipt = feeReceipt;
+	}
+
+	public String getFeeReceiptDate() {
+		return feeReceiptDate;
+	}
+
+	public void setFeeReceiptDate(String feeReceiptDate) {
+		this.feeReceiptDate = feeReceiptDate;
+	}
+
+	public BigDecimal getMutationFee() {
+		return mutationFee;
+	}
+
+	public void setMutationFee(BigDecimal mutationFee) {
+		this.mutationFee = mutationFee;
+	}
+
+	public String getApplicationNo() {
+		return applicationNo;
+	}
+
+	public void setApplicationNo(String applicationNo) {
+		this.applicationNo = applicationNo;
 	}
 
 }
