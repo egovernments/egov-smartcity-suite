@@ -151,7 +151,7 @@
 						<spring:message code="lbl.mb.issued.date" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<fmt:formatDate value="${mbHeader.approvedDate}" pattern="dd/MM/yyyy" />
+						<fmt:formatDate value="${mbHeader.mbIssuedDate}" pattern="dd/MM/yyyy" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.contractor.comments" /> 

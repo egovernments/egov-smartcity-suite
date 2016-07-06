@@ -243,7 +243,7 @@ var workIdentificationNumber_typeahead = $('#workIdentificationNumber').typeahea
 $('#btncreatemb').click(function(e) {
 	var workOrderEstimateId = $('input[name=selectCheckbox]:checked').val();
 	if(workOrderEstimateId == null) {
-		bootbox.alert("Please select atleast one work order to create Measurement book");
+		bootbox.alert("Please select atleast one Letter of Acceptance to create Measurement book");
 	}
 	else {
 		$.ajax({
@@ -262,7 +262,6 @@ $('#btncreatemb').click(function(e) {
 					dataType: "json"
 				}).done(function(json) {
 					json = $.parseJSON(json);
-					console.log(json);
 					$.each(json, function(key, value){
 						if(key == "tenderFinalisedPercentage") {
 							if(value >= 0)
@@ -281,6 +280,7 @@ $('#btncreatemb').click(function(e) {
 				$('.loader-class').modal('hide');
 			} else {
 				var json = $.parseJSON(value);
+				$('#errorMessage').html('');
 				$.each(json, function(key, value){
 					$('#errorMessage').append(value + '</br>');
 				});

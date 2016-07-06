@@ -48,7 +48,6 @@
 	<input type="hidden" id="errorentryissueddate" value="<spring:message code='error.mb.issued.date.entry.date' />">
 	<input type="hidden" id="errorfromtopage" value="<spring:message code='error.from.to.page' />">
 	<input type="hidden" id="errorfromlasttopage" value="<spring:message code='error.from.last.to.page' />">
-	<input type="hidden" id="lastToPageNumber" value="${lastToPageNumber }">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">
 			<spring:message code="lbl.measurementbook.details" />
@@ -109,42 +108,42 @@
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.estimatenumber" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin view-content">
 				<a href="javascript:void(0);" onclick="viewEstimate()"><span name="estimateNumber" id="estimateNumber">${mbHeader.workOrderEstimate.estimate.estimateNumber }</span></a>
 				<input type="hidden" id="estimateId" value="${mbHeader.workOrderEstimate.estimate.id }">
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.mb.nameofwork" />
 			</label>
-			<div class="col-sm-3 add-margin">
-				<span name="nameOfWork" id="nameOfWork">${mbHeader.workOrderEstimate.estimate.lineEstimateDetails.nameOfWork }</span>
+			<div class="col-sm-3 add-margin view-content">
+				<span name="nameOfWork" id="nameOfWork">${mbHeader.workOrderEstimate.estimate.name }</span>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.workidnumber" />
 			</label>
-			<div class="col-sm-3 add-margin">
-				<span name="projectCode" id="projectCode">${mbHeader.workOrderEstimate.estimate.lineEstimateDetails.projectCode.code }</span>
+			<div class="col-sm-3 add-margin view-content">
+				<span name="projectCode" id="projectCode">${mbHeader.workOrderEstimate.estimate.projectCode.code }</span>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.loanumber" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin view-content">
 				<a href="javascript:void(0);" onclick="viewMBWorkOrder()"><span name="workOrderNumber" id="workOrderNumber">${mbHeader.workOrderEstimate.workOrder.workOrderNumber }</span></a>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.contractor.name" />
+			    <spring:message code="lbl.name.contractor" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin view-content">
 				<span name="contractorName" id="contractorName">${mbHeader.workOrderEstimate.workOrder.contractor.name }</span>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.work.assigned" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin view-content">
 				<span name="workOrderAssignedTo" id="workOrderAssignedTo">${mbHeader.workOrderEstimate.workOrder.engineerIncharge.name }</span>
 			</div>
 		</div>

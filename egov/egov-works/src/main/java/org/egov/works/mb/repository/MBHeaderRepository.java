@@ -89,8 +89,8 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity having mbd.workOrderActivity.id = :woActivityId")
     Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status,
             @Param("woActivityId") final Long woActivityId);
-
-    @Query("select sum(mbAmount) from MBHeader where id != :mbHeaderId and egwStatus.code != :statusCode and workOrderEstimate.workOrder.id = :workOrderId and workOrderEstimate.id = :workOrderEstimateId")
-    Double getTotalMBAmountOfMBs(@Param("mbHeaderId") final Long mbHeaderId, @Param("workOrderId") final Long workOrderId,
+    
+    @Query("select sum(mbAmount) from MBHeader where id != :mbHeaderId and egwStatus.code != :statusCode and workOrderEstimate.id = :workOrderEstimateId")
+    Double getTotalMBAmountOfMBs(@Param("mbHeaderId") final Long mbHeaderId,
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("statusCode") final String statusCode);
 }

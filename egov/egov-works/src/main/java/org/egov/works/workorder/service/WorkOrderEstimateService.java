@@ -194,15 +194,13 @@ public class WorkOrderEstimateService {
      * @param workOrderId
      * @return
      */
-    public JsonObject getContratorBillForWorkOrderEstimateAndBillType(final Long workOrderEstimateId) {
-        final JsonObject jsonObject = new JsonObject();
+    public void getContratorBillForWorkOrderEstimateAndBillType(final Long workOrderEstimateId, final JsonObject jsonObject) {
         final WorkOrderEstimate workOrderEstimate = getWorkOrderEstimateById(workOrderEstimateId);
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
                 .getContratorBillForWorkOrder(workOrderEstimate, ContractorBillRegister.BillStatus.CANCELLED.toString(),
                         BillTypes.Final_Bill.toString());
         if (contractorBillRegister != null)
             jsonObject.addProperty("mberror", messageSource.getMessage("error.mbheader.create", new String[] {}, null));
-        return jsonObject;
     }
 
     public List<String> getApprovedAndWorkCommencedWorkOrderNumbers(final String workOrderNo) {

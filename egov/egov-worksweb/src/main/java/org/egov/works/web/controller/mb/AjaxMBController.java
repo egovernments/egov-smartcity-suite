@@ -49,20 +49,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderActivityJsonAdaptor;
-import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderActivity;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -159,6 +155,7 @@ public class AjaxMBController {
         final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
                 .searchActivities(workOrderEstimateId, description, itemCode, sorType);
         final List<WorkOrderActivity> activities = new ArrayList<WorkOrderActivity>();
+        // TODO re factor this code to handle via criteria
         if (description != null && !description.equals(""))
             for (final WorkOrderActivity woa : workOrderActivities)
                 if (woa.getActivity().getSchedule() != null
@@ -185,7 +182,7 @@ public class AjaxMBController {
             workOrderActivities.clear();
             workOrderActivities.addAll(activities);
         }
-        
+
         for (final WorkOrderActivity woa : workOrderActivities)
             woa.setMbHeaderId(mbHeaderId);
 

@@ -101,6 +101,7 @@
 							<td>
 								<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
+								<form:input type="hidden" path="nonSorMbDetails[0].amount" id="nonSorAmount_0" class="form-control table-input text-right"/>
 							</td>
 							<td>
 								<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
@@ -150,6 +151,7 @@
 								<td>
 									<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
+									<form:input type="hidden" path="nonSorMbDetails[${item.index }].amount" value="${details.amount }" id="nonSorAmount_${item.index }" class="form-control table-input text-right"/>
 								</td>
 								<td>
 									<span class="nonSorCumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>

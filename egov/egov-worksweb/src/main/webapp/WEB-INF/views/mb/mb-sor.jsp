@@ -122,6 +122,7 @@
 							<td>
 								<form:input path="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
+								<form:input type="hidden" path="sorMbDetails[0].amount" id="amount_0" class="form-control table-input text-right"/>
 							</td>
 							<td>
 								<span class="cumulativeIncludingCurrentEntry_0"></span>
@@ -176,6 +177,7 @@
 								<td>
 									<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].rate" value="${details.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
+									<form:input type="hidden" path="sorMbDetails[${item.index }].amount" value="${details.amount }" id="amount_${item.index }" class="form-control table-input text-right"/>
 								</td>
 								<td>
 									<span class="cumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>

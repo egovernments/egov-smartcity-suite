@@ -100,10 +100,10 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -283,11 +283,11 @@ public class UpdateMBController extends GenericWorkFlowController {
                     WorksConstants.NEW, workflowContainer.getPendingActions(), mbHeader.getCreatedDate());
             model.addAttribute("validActionList", validActions);
         }
-        
+
         List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_QUANTITY_TOLERANCE_LEVEL);
         AppConfigValues value = values.get(0);
-        
+
         model.addAttribute("quantityTolerance", value.getValue());
 
         values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -306,21 +306,16 @@ public class UpdateMBController extends GenericWorkFlowController {
         final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                 mbHeader.getWorkOrderEstimate().getWorkOrder().getId(), WorksConstants.WORKORDER,
                 OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-        if(offlineStatus != null)
+        if (offlineStatus != null)
             model.addAttribute("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
-        
-        Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(mbHeader.getId(),
-                mbHeader.getWorkOrderEstimate().getWorkOrder().getId(), mbHeader.getWorkOrderEstimate().getId(),
-                MBHeader.MeasurementBookStatus.CANCELLED.toString());
-        if(totalMBAmountOfMBs != null)
-            model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - mbHeader.getMbAmount().doubleValue());
-        
-        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByWorkOrderEstimate(mbHeader.getWorkOrderEstimate());
-        if (!mbHeaders.isEmpty()) {
-            model.addAttribute("lastFromPageNumber", mbHeaders.get(mbHeaders.size() - 1).getToPageNo());
-        } else
-            model.addAttribute("lastFromPageNumber", "");
 
+        final Double totalMBAmountOfMBs = mbHeaderService.getTotalMBAmountOfMBs(mbHeader.getId(),
+                mbHeader.getWorkOrderEstimate().getId(),
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+        if (totalMBAmountOfMBs != null)
+            model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - mbHeader.getMbAmount().doubleValue());
+
+        // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||
                 mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()) || isMBEditable) {
             model.addAttribute("mode", "edit");

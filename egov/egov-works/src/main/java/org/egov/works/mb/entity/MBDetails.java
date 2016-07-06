@@ -264,7 +264,7 @@ public class MBDetails extends AbstractAuditable {
     }
 
     public double getAmount() {
-        if (workOrderActivity.getActivity().getNonSor() == null)
+        if (workOrderActivity.getActivity() != null && workOrderActivity.getActivity().getNonSor() == null)
             amount = workOrderActivity.getApprovedRate() * quantity * workOrderActivity.getConversionFactor();
         else
             amount = workOrderActivity.getApprovedRate() * quantity;

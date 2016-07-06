@@ -62,7 +62,7 @@
 	enctype="multipart/form-data">
 	
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
-	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" />
+	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" />
 	<input name="totalMBAmountOfMBs" type="hidden" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />
 	<input name="workOrderAmount" type="hidden" id="workOrderAmount" value="${mbHeader.workOrderEstimate.workOrder.workOrderAmount }" />
 	<input name="quantityTolerance" type="hidden" id="quantityTolerance" value="${quantityTolerance }" />
