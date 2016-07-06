@@ -120,13 +120,17 @@
 			<c:choose>
 				<c:when test="${workOrderEstimate.mbHeaders.size() != 0}">
 					<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mbDtls" varStatus="item">
-							<tr >
-								<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+						<c:if test="${mbDtls.egwStatus.code == 'APPROVED' && ((mbDtls.egBillregister == null || 
+						(mbDtls.egBillregister !=null && mbDtls.egBillregister.billstatus == 'CANCELLED')) || 
+						(mbDtls.egBillregister != null && contractorBillRegister.id != null && mbDtls.egBillregister.id == contractorBillRegister.id))}">
+							<tr><c:set var="slNo" value="${slNo + 1}" />
+								<td><span class="spansno"><c:out value="${slNo}" /></span></td>
 								<td><a href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
 								<td><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></td>
-								<td><c:out value="${mbDtls.mbDate}"></c:out></td>
+								<td><fmt:formatDate value="${mbDtls.mbDate}" pattern="dd/MM/yyyy" /></td>
 								<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></td>
 							</tr>
+						</c:if>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
@@ -137,7 +141,11 @@
 			<c:set var="mbtotal" value="${0}" scope="session" />
 			<c:if test="${workOrderEstimate.mbHeaders.size() != 0}">
 				<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mb">
-					<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />  
+					<c:if test="${mb.egwStatus.code == 'APPROVED' && ((mb.egBillregister == null || 
+						(mb.egBillregister !=null && mb.egBillregister.billstatus == 'CANCELLED')) || 
+						(mb.egBillregister != null && contractorBillRegister.id != null && mb.egBillregister.id == contractorBillRegister.id))}">
+						<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />
+					</c:if>  
 				</c:forEach>
 			</c:if>
 			<tr>

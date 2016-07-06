@@ -72,8 +72,8 @@ import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -133,10 +133,10 @@ public class MBHeaderService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -154,8 +154,9 @@ public class MBHeaderService {
     }
 
     public List<MBHeader> getApprovedMBsForContractorBillByWorkOrderEstimateId(final Long workOrderEstimateId) {
-        return mbHeaderRepository.findByWorkOrderEstimateId(workOrderEstimateId, WorksConstants.APPROVED,
-                WorksConstants.CANCELLED);
+        return mbHeaderRepository.findByWorkOrderEstimateId(workOrderEstimateId,
+                MBHeader.MeasurementBookStatus.APPROVED.toString(),
+                ContractorBillRegister.BillStatus.CANCELLED.toString());
     }
 
     public List<MBHeader> getMBHeadersByWorkOrder(final WorkOrder workOrder) {
@@ -179,13 +180,14 @@ public class MBHeaderService {
     public List<MBHeader> getMBHeadersByContractorBill(final ContractorBillRegister contractorBillRegister) {
         return mbHeaderRepository.findByEgBillregister(contractorBillRegister);
     }
-    
-    public List<MBHeader> getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(final Long workOrderEstimateId, final String statusCode) {
+
+    public List<MBHeader> getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(final Long workOrderEstimateId,
+            final String statusCode) {
         return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimateId, statusCode);
     }
 
     @Transactional
-    public MBHeader create(final MBHeader mbHeader) {
+    public MBHeader save(final MBHeader mbHeader) {
         final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
         return savedMBHeader;
     }
@@ -214,14 +216,14 @@ public class MBHeaderService {
     @Transactional
     public MBHeader update(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
             final String workFlowAction, final String removedDetailIds) {
-        
+
         Boolean isMBEditable = false;
-        
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_MB_SECOND_LEVEL_EDIT);
-                final AppConfigValues value = values.get(0);
-                if (value.getValue().equalsIgnoreCase("Yes"))
-                    isMBEditable = true;
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            isMBEditable = true;
 
         if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString())
                 || mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString()) || isMBEditable)
@@ -515,21 +517,23 @@ public class MBHeaderService {
         } else
             jsonObject.add("detailIds", new JsonArray());
     }
-    
+
     public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors) {
-        Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId(),
+        final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId(),
                 mbHeader.getWorkOrder().getId(), mbHeader.getWorkOrderEstimate().getId(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
-        
+
         if (totalMBAmountOfMBs != null) {
-            Double totalMBAmount = totalMBAmountOfMBs + mbHeader.getMbAmount().doubleValue();
+            final Double totalMBAmount = totalMBAmountOfMBs + mbHeader.getMbAmount().doubleValue();
             if (mbHeader.getWorkOrder()
                     .getWorkOrderAmount() < totalMBAmount) {
                 jsonObject.addProperty("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
-                        new String[] { totalMBAmount.toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        new String[] { totalMBAmount.toString(),
+                                new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
                         null));
                 errors.reject("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
-                        new String[] { totalMBAmount.toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        new String[] { totalMBAmount.toString(),
+                                new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
                         null));
             }
         } else {
@@ -538,105 +542,108 @@ public class MBHeaderService {
             if (workOrderEstimate.getWorkOrder()
                     .getWorkOrderAmount() < mbHeader.getMbAmount().doubleValue()) {
                 jsonObject.addProperty("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
-                        new String[] { mbHeader.getMbAmount().toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        new String[] { mbHeader.getMbAmount().toString(),
+                                new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
                         null));
                 errors.reject("errorSumOfMBWorkOrderAmount", messageSource.getMessage("error.sum.mb.workorder.amount",
-                        new String[] { mbHeader.getMbAmount().toString(), new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                        new String[] { mbHeader.getMbAmount().toString(),
+                                new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
                         null));
             }
         }
-        
+
         final List<MBHeader> mbHeaders = getMBHeadersByWorkOrderEstimateIdAndNotEgwStatusCode(
                 mbHeader.getWorkOrderEstimate().getId(), MBHeader.MeasurementBookStatus.CANCELLED.toString());
         if (!mbHeaders.isEmpty()) {
-            Integer lastToPageNumber = mbHeaders.get(mbHeaders.size() - 1).getToPageNo();
+            final Integer lastToPageNumber = mbHeaders.get(mbHeaders.size() - 1).getToPageNo();
             if (lastToPageNumber != null && lastToPageNumber > mbHeader.getFromPageNo()
                     && mbHeaders.get(mbHeaders.size() - 1).getId() != mbHeader.getId()) {
                 jsonObject.addProperty("errorLastToPageNumber", messageSource.getMessage("error.from.last.to.page",
-                        new String[] { },
+                        new String[] {},
                         null));
                 errors.reject("errorLastToPageNumber", messageSource.getMessage("error.from.last.to.page",
-                        new String[] { },
+                        new String[] {},
                         null));
             }
         }
-        
+
         final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                 mbHeader.getWorkOrder().getId(), WorksConstants.WORKORDER,
                 OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
         if (offlineStatus != null) {
             if (offlineStatus.getStatusDate().after(mbHeader.getMbDate())) {
                 jsonObject.addProperty("errorEntryCommencedDate", messageSource.getMessage("error.mb.entry.date.commenced.date",
-                        new String[] { },
+                        new String[] {},
                         null));
                 errors.reject("errorEntryCommencedDate", messageSource.getMessage("error.mb.entry.date.commenced.date",
-                        new String[] { },
+                        new String[] {},
                         null));
             }
-            if(mbHeader.getMbIssuedDate() != null && offlineStatus.getStatusDate().after(mbHeader.getMbIssuedDate()))
+            if (mbHeader.getMbIssuedDate() != null && offlineStatus.getStatusDate().after(mbHeader.getMbIssuedDate()))
                 if (offlineStatus.getStatusDate().after(mbHeader.getMbDate())) {
-                    jsonObject.addProperty("errorIssuedCommencedDate", messageSource.getMessage("error.mb.issued.date.commenced.date",
-                            new String[] { },
-                            null));
+                    jsonObject.addProperty("errorIssuedCommencedDate",
+                            messageSource.getMessage("error.mb.issued.date.commenced.date",
+                                    new String[] {},
+                                    null));
                     errors.reject("errorIssuedCommencedDate", messageSource.getMessage("error.mb.issued.date.commenced.date",
-                            new String[] { },
+                            new String[] {},
                             null));
                 }
         }
-        
+
         if (mbHeader.getMbIssuedDate() != null && mbHeader.getMbIssuedDate().after(mbHeader.getMbDate())) {
             jsonObject.addProperty("errorEntryIssuedDate", messageSource.getMessage("error.mb.issued.date.entry.date",
-                    new String[] { },
+                    new String[] {},
                     null));
             errors.reject("errorEntryIssuedDate", messageSource.getMessage("error.mb.issued.date.entry.date",
-                    new String[] { },
+                    new String[] {},
                     null));
         }
         if (mbHeader.getFromPageNo() > mbHeader.getToPageNo()) {
             jsonObject.addProperty("errorFromToPageNumber", messageSource.getMessage("error.from.to.page",
-                    new String[] { },
+                    new String[] {},
                     null));
             errors.reject("errorFromToPageNumber", messageSource.getMessage("error.from.to.page",
-                    new String[] { },
+                    new String[] {},
                     null));
         }
     }
-    
+
     public void validateMBDetails(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors) {
         if (mbHeader.getSorMbDetails().isEmpty() && mbHeader.getNonSorMbDetails().isEmpty()) {
             jsonObject.addProperty("errorSorNonSorMandatory", messageSource.getMessage("error.mb.sor.nonsor.required",
-                    new String[] { },
+                    new String[] {},
                     null));
             errors.reject("errorSorNonSorMandatory", messageSource.getMessage("error.mb.sor.nonsor.required",
-                    new String[] { },
+                    new String[] {},
                     null));
         }
-        
-        for (final MBDetails details : mbHeader.getSorMbDetails()) {
+
+        for (final MBDetails details : mbHeader.getSorMbDetails())
             validateMBDetail(details, jsonObject, errors);
-        }
-        
-        for (final MBDetails details : mbHeader.getNonSorMbDetails()) {
+
+        for (final MBDetails details : mbHeader.getNonSorMbDetails())
             validateMBDetail(details, jsonObject, errors);
-        }
     }
-    
+
     private void validateMBDetail(final MBDetails details, final JsonObject jsonObject, final BindingResult errors) {
         Double prevCumulativeQuantity = getPreviousCumulativeQuantity(details.getMbHeader().getId(),
                 details.getWorkOrderActivity().getId());
         if (prevCumulativeQuantity == null)
             prevCumulativeQuantity = 0D;
-        if (details.getWorkOrderActivity().getApprovedQuantity() < (details.getQuantity() + prevCumulativeQuantity)) {
-            jsonObject.addProperty("errorApprovedCumulativeQuantity", messageSource.getMessage("error.approved.quantity.cumulative",
-                    new String[] { },
-                    null));
+        if (details.getWorkOrderActivity().getApprovedQuantity() < details.getQuantity() + prevCumulativeQuantity) {
+            jsonObject.addProperty("errorApprovedCumulativeQuantity",
+                    messageSource.getMessage("error.approved.quantity.cumulative",
+                            new String[] {},
+                            null));
             errors.reject("errorApprovedCumulativeQuantity", messageSource.getMessage("error.approved.quantity.cumulative",
-                    new String[] { },
+                    new String[] {},
                     null));
         }
     }
 
-    public Double getTotalMBAmountOfMBs(Long mbHeaderId, Long workOrderId, Long workOrderEstimateId, String statusCode) {
+    public Double getTotalMBAmountOfMBs(final Long mbHeaderId, final Long workOrderId, final Long workOrderEstimateId,
+            final String statusCode) {
         return mbHeaderRepository.getTotalMBAmountOfMBs(mbHeaderId, workOrderId, workOrderEstimateId, statusCode);
     }
 }

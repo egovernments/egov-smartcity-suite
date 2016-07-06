@@ -62,9 +62,10 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
 
     List<MBHeader> findByWorkOrder_id(final Long workOrderId);
 
-    @Query("select mbh from MBHeader as mbh left outer join mbh.egBillregister as br where mbh.workOrderEstimate.id =:workOrderEstimateId and mbh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ")
+    @Query("select mbh from MBHeader as mbh where mbh.workOrderEstimate.id =:workOrderEstimateId and mbh.egwStatus.code =:mbStatus "
+            + " and not exists (select distinct cbr from ContractorBillRegister cbr where upper(cbr.billstatus) != :billStatus and cbr = mbh.egBillregister) ")
     List<MBHeader> findByWorkOrderEstimateId(@Param("workOrderEstimateId") Long workOrderEstimateId,
-            @Param("mhStatus") String mhStatus, @Param("billStatus") String billStatus);
+            @Param("mbStatus") String mbStatus, @Param("billStatus") String billStatus);
 
     List<MBHeader> findByWorkOrderAndEgwStatus_codeEqualsOrderById(final WorkOrder workOrder, final String statusCode);
 
@@ -82,12 +83,13 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select distinct(mbh.createdBy) from MBHeader as mbh")
     List<User> findMBHeaderCreatedByUsers();
 
-    List<MBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(final Long WorkOrderEstimateId, final String statusCode);
+    List<MBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(final Long WorkOrderEstimateId,
+            final String statusCode);
 
     @Query("select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity having mbd.workOrderActivity.id = :woActivityId")
     Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status,
             @Param("woActivityId") final Long woActivityId);
-    
+
     @Query("select sum(mbAmount) from MBHeader where id != :mbHeaderId and egwStatus.code != :statusCode and workOrderEstimate.workOrder.id = :workOrderId and workOrderEstimate.id = :workOrderEstimateId")
     Double getTotalMBAmountOfMBs(@Param("mbHeaderId") final Long mbHeaderId, @Param("workOrderId") final Long workOrderId,
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("statusCode") final String statusCode);

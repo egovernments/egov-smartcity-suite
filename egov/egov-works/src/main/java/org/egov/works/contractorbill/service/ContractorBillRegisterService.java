@@ -68,11 +68,11 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBForCancelledBill;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -130,7 +130,7 @@ public class ContractorBillRegisterService {
     private MBHeaderService mbHeaderService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
+    private MBForCancelledBillService mbForCancelledBillService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -149,7 +149,7 @@ public class ContractorBillRegisterService {
 
     public Integer getMaxSequenceNumberByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
         return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(
-                workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
+                workOrderEstimate.getEstimate().getProjectCode().getCode());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {
@@ -157,8 +157,8 @@ public class ContractorBillRegisterService {
     }
 
     @Transactional
-    public ContractorBillRegister create(final ContractorBillRegister contractorBillRegister,
-            final LineEstimateDetails lineEstimateDetails, final MultipartFile[] files, final Long approvalPosition,
+    public ContractorBillRegister create(final ContractorBillRegister contractorBillRegister, final MultipartFile[] files,
+            final Long approvalPosition,
             final String approvalComent, final String additionalRule, final String workFlowAction) throws IOException {
 
         contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
@@ -177,7 +177,7 @@ public class ContractorBillRegisterService {
                     .setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
             contractorBillRegister.getAssetDetailsList().get(0).setEgbill(contractorBillRegister);
             contractorBillRegister.getAssetDetailsList().get(0).setCoa(contractorBillRegister.getWorkOrderEstimate().getEstimate()
-                    .getLineEstimateDetails().getLineEstimate().getBudgetHead().getMaxCode());
+                    .getFinancialDetails().get(0).getBudgetGroup().getMaxCode());
         }
         try {
             checkBudgetAndGenerateBANumber(contractorBillRegister);
@@ -213,8 +213,14 @@ public class ContractorBillRegisterService {
 
             if (workFlowAction.equalsIgnoreCase(WorksConstants.FORWARD_ACTION.toString()))
                 populateAndSaveMBHeader(contractorBillRegister);
-            else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
-                cancelMBHeader(contractorBillRegister);
+            else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION)) {
+                if (contractorBillRegister.getWorkOrderEstimate() != null
+                        && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty())
+                    cancelMBHeader(contractorBillRegister);
+
+                final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(contractorBillRegister);
+                saveMBForCancelledBill(mbHeaders);
+            }
             updatedContractorBillRegister = update(contractorBillRegister, files);
             contractorBillRegisterStatusChange(updatedContractorBillRegister, workFlowAction, mode);
         } else {
@@ -477,15 +483,21 @@ public class ContractorBillRegisterService {
                     MBHeader.MeasurementBookStatus.CREATED.toString()));
             mbHeader.setEgBillregister(contractorBillRegister);
             mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
-            mbHeader.setWorkOrder(letterOfAcceptanceService.getWorkOrderById(mbHeader.getWorkOrder().getId()));
-            mbHeaderService.create(mbHeader);
+            mbHeader.setWorkOrder(contractorBillRegister.getWorkOrderEstimate().getWorkOrder());
+            mbHeaderService.save(mbHeader);
         } else {
             final List<MBHeader> mBHeaders = contractorBillRegister.getWorkOrderEstimate().getMbHeaders();
             if (mBHeaders != null && !mBHeaders.isEmpty())
-                for (final MBHeader mh : mBHeaders) {
-                    mh.setEgBillregister(contractorBillRegister);
-                    mbHeaderService.create(mh);
-                }
+                for (final MBHeader mb : mBHeaders)
+                    if (mb.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.APPROVED.toString())
+                            && (mb.getEgBillregister() == null
+                                    || mb.getEgBillregister() != null && mb.getEgBillregister().getBillstatus()
+                                            .equals(ContractorBillRegister.BillStatus.CANCELLED.toString())
+                                    || mb.getEgBillregister() != null && contractorBillRegister.getId() != null
+                                            && mb.getEgBillregister().getId() == contractorBillRegister.getId())) {
+                        mb.setEgBillregister(contractorBillRegister);
+                        mbHeaderService.save(mb);
+                    }
         }
     }
 
@@ -493,7 +505,7 @@ public class ContractorBillRegisterService {
         final MBHeader mbHeader = mbHeaderService.getMBHeaderById(contractorBillRegister.getMbHeader().getId());
         mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                 MBHeader.MeasurementBookStatus.APPROVED.toString()));
-        mbHeaderService.create(mbHeader);
+        mbHeaderService.save(mbHeader);
     }
 
     private void cancelMBHeader(final ContractorBillRegister contractorBillRegister) {
@@ -567,10 +579,24 @@ public class ContractorBillRegisterService {
         contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.CONTRACTORBILL,
                 ContractorBillRegister.BillStatus.CANCELLED.toString()));
         contractorBillRegister.setBillstatus(ContractorBillRegister.BillStatus.CANCELLED.toString());
+
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(contractorBillRegister);
-        for (final MBHeader mbHeader : mbHeaders)
-            mbHeaderService.cancel(mbHeader);
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty())
+            for (final MBHeader mbHeader : mbHeaders)
+                mbHeaderService.cancel(mbHeader);
+
+        saveMBForCancelledBill(mbHeaders);
         return contractorBillRegisterRepository.save(contractorBillRegister);
+    }
+
+    private void saveMBForCancelledBill(final List<MBHeader> mbHeaders) {
+        for (final MBHeader mbObj : mbHeaders) {
+            final MBForCancelledBill mbCB = new MBForCancelledBill();
+            mbCB.setContractorBillRegister(mbObj.getEgBillregister());
+            mbCB.setMbHeader(mbObj);
+            mbForCancelledBillService.save(mbCB);
+        }
     }
 
     public ContractorBillRegister getContratorBillForWorkOrder(final WorkOrderEstimate workOrderEstimate, final String status,

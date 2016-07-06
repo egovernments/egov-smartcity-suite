@@ -42,13 +42,14 @@ $(document).ready(function(){
 	
 	otherDeductionCreditGlcode_initialize();	
 	replaceBillTypeChar();
-	calculateNetPayableAmount();
 	
 	if($("#mbTotalAmount").html()){
 		$("#debitamount").val($("#mbTotalAmount").html());
 		$("#netPayableAmount").val($("#mbTotalAmount").html());
 		$("#debitamount").prop("readonly",true);
 	}
+
+	calculateNetPayableAmount();
 	// TODO: remove this condition
 	if($('#hiddenbilldate').val() != '') {
 		$('#billdate').datepicker('setDate',new Date($('#hiddenbilldate').val()));	
@@ -519,9 +520,9 @@ function calculateRetentionMoneyDeductionAmounts()
 			if(debitAmount=="")
 				document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = "";
 			if(debitAmount!="" && billType!="" && billType == 'Part Bill')
-				document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100);
+				document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = roundTo(parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100));
 			else if(debitAmount !="" && billType!="" && billType == 'Final Bill')
-				document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100);
+				document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = roundTo(parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100));
 		}else
 			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = "";
 	}
@@ -540,9 +541,9 @@ function calculateRetentionMoneyDeductionAmount(obj)
 		if(debitAmount=="")
 			document.getElementById("retentionMoneyDeductionDetailes["+index+"].creditamount").value = "";
 		if(debitAmount!="" && billType!="" && billType == 'Part Bill')
-			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100);
+			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = roundTo(parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForPartBill))/100));
 		else if(debitAmount!="" &&  billType!="" && billType == 'Final Bill')
-			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100);
+			document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value = roundTo(parseFloat((parseFloat(debitAmount)*parseFloat(retentionMoneyPerForFinalBill))/100));
 	}else
 		document.getElementById("retentionMoneyDeductionDetailes["+rIndex+"].creditamount").value ="";
 	

@@ -347,9 +347,8 @@ public class LetterOfAcceptanceService {
     }
 
     /*
-     * This method will create work order activities Populate work order
-     * activities for Percentage Tender. The Item Rate tender logic will be
-     * implemented later when we take up Item Rate use case.
+     * This method will create work order activities Populate work order activities for Percentage Tender. The Item Rate tender
+     * logic will be implemented later when we take up Item Rate use case.
      */
     private WorkOrder createWorkOrderActivities(final WorkOrder workOrder) {
         WorkOrderActivity workOrderActivity = null;
@@ -472,8 +471,7 @@ public class LetterOfAcceptanceService {
         List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
         StringBuilder queryStr = new StringBuilder(500);
         /*
-         * This block will get LOA's where BOQ is created and final bill is not
-         * created
+         * This block will get LOA's where BOQ is created and final bill is not created
          */
         getWorkOrdersWhereBoqIsCreated(searchRequestLetterOfAcceptance, queryStr);
         Query query = setParameterForLetterOfAcceptanceForContractorBill(searchRequestLetterOfAcceptance, queryStr);
@@ -482,8 +480,7 @@ public class LetterOfAcceptanceService {
         workOrderEstimateList = query.getResultList();
 
         /*
-         * This block will get LOA's where BOQ is not created and final bill is
-         * not created
+         * This block will get LOA's where BOQ is not created and final bill is not created
          */
         if (searchRequestLetterOfAcceptance.getMbRefNumber() == null
                 || searchRequestLetterOfAcceptance.getMbRefNumber().isEmpty()) {
@@ -501,8 +498,8 @@ public class LetterOfAcceptanceService {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         qry.setParameter("woStatus", WorksConstants.APPROVED);
-        if (queryStr.toString().indexOf("mhStatus") != -1)
-            qry.setParameter("mhStatus", WorksConstants.APPROVED);
+        if (queryStr.toString().indexOf("mbStatus") != -1)
+            qry.setParameter("mbStatus", WorksConstants.APPROVED);
         qry.setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString());
         qry.setParameter("billType", BillTypes.Final_Bill.toString());
         if (searchRequestLetterOfAcceptance != null) {
@@ -542,20 +539,18 @@ public class LetterOfAcceptanceService {
                 " select distinct woe from WorkOrderEstimate woe where woe.workOrder.egwStatus.code = :woStatus and  not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType and cbr.workOrderEstimate.id is not null) ");
         queryStr.append(
                 " and exists (select workOrderEstimate  from WorkOrderActivity where woe.id =workOrderEstimate.id ) ");
+
         queryStr.append(
-                " and  exists (select mh.workOrderEstimate from MBHeader mh left outer join mh.egBillregister as br where woe.id = mh.workOrderEstimate.id and mh.egwStatus.code =:mhStatus and (br.id is null or upper(br.billstatus) =:billStatus) ");
+                " and  exists (select mb.workOrderEstimate from MBHeader mb where mb.egwStatus.code =:mbStatus and woe = mb.workOrderEstimate and not exists (select cbr from ContractorBillRegister cbr where upper(cbr.billstatus) != :billStatus and cbr = mb.egBillregister) ");
+        if (searchRequestLetterOfAcceptance != null && searchRequestLetterOfAcceptance.getMbRefNumber() != null)
+            queryStr.append(" and upper(mb.mbRefNo) =:mbRefNo ) ");
+        else
+            queryStr.append(")");
+
         queryStr.append(
                 " and exists ( select distinct(woe1) from WorkOrderEstimate as woe1 where woe1 = woe and woe1.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe1.workOrder.id) and os.objectId = woe1.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType ) ) ");
-        if (searchRequestLetterOfAcceptance != null) {
-
-            if (searchRequestLetterOfAcceptance.getMbRefNumber() != null)
-                queryStr.append(" and upper(mh.mbRefNo) =:mbRefNo ) ");
-            else
-                queryStr.append(")");
-
+        if (searchRequestLetterOfAcceptance != null)
             getSubQuery(searchRequestLetterOfAcceptance, queryStr);
-
-        }
 
     }
 
