@@ -108,8 +108,6 @@ public class WorkOrderActivity extends AbstractAuditable {
 
     private String remarks;
 
-    private String sorCategory;
-
     // Used in new/cancelled WO (for validating the approvedquantity)
     @Transient
     private double unAssignedQuantity;
@@ -123,7 +121,7 @@ public class WorkOrderActivity extends AbstractAuditable {
 
     @Transient
     private double prevCumlvQuantity;
-    
+
     private transient Long mbHeaderId;
 
     public Activity getActivity() {
@@ -269,19 +267,11 @@ public class WorkOrderActivity extends AbstractAuditable {
         this.id = id;
     }
 
-    public String getSorCategory() {
-        return sorCategory;
-    }
-
-    public void setSorCategory(final String sorCategory) {
-        this.sorCategory = sorCategory;
-    }
-
     public Long getMbHeaderId() {
         return mbHeaderId;
     }
 
-    public void setMbHeaderId(Long mbHeaderId) {
+    public void setMbHeaderId(final Long mbHeaderId) {
         this.mbHeaderId = mbHeaderId;
     }
 

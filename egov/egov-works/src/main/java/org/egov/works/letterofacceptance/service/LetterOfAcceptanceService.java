@@ -369,8 +369,6 @@ public class LetterOfAcceptanceService {
                         workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
                 workOrderActivity.setActivity(activity);
                 workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
-                if (activity.getSchedule() != null)
-                    workOrderActivity.setSorCategory(activity.getSchedule().getScheduleCategory().getCode());
                 workOrder.getWorkOrderEstimates().get(0).getWorkOrderActivities().add(workOrderActivity);
 
             }

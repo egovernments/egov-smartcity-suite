@@ -148,12 +148,30 @@
 							</c:choose>
 						</div>
 						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.estimateworkvalue" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<c:choose>
+								<c:when
+									test="${abstractEstimate.workValue == '0.0'}">
+									<c:out default="N/A" value="N/A" />
+								</c:when>
+								<c:otherwise>
+									<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+										minFractionDigits="2"
+										value="${abstractEstimate.workValue}" />
+								</c:otherwise>
+							</c:choose>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.tender.finalized.percentage" />
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<c:choose>
 								<c:when test="${workOrder.tenderFinalizedPercentage == '0.0'}">
-									<c:out default="N/A" value="N/A" />
+									<c:out default="0" value="0" />
 								</c:when>
 								<c:otherwise>
 									<fmt:formatNumber
@@ -161,8 +179,6 @@
 								</c:otherwise>
 							</c:choose>
 						</div>
-					</div>
-					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.agreement.amount" />
 						</div>

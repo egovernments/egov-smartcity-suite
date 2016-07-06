@@ -69,7 +69,7 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
             jsonObject.addProperty("summary", workOrderActivity.getActivity().getSchedule().getSummary());
             jsonObject.addProperty("sorNonSorType", "SOR");
             jsonObject.addProperty("sorCode", workOrderActivity.getActivity().getSchedule().getCode());
-            jsonObject.addProperty("categoryType", workOrderActivity.getSorCategory());
+            jsonObject.addProperty("categoryType", workOrderActivity.getActivity().getSchedule().getScheduleCategory().getCode());
         } else {
             if (workOrderActivity.getActivity().getNonSor() != null) {
                 jsonObject.addProperty("description", workOrderActivity.getActivity().getNonSor().getDescription());

@@ -50,7 +50,7 @@
 	       		</spring:hasBindErrors>
 	    	</div>
 			<div class="panel-body">
-				<jsp:include page="estimateDetails-view.jsp"/>
+				<jsp:include page="letterOfAcceptance-viewestimatedetails.jsp"/>
 				<jsp:include page="letterOfAcceptance-details.jsp"/>
 			</div>
 		</div>
