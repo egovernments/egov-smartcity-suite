@@ -38,8 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
+
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-05T19:07:59 -->
+<!-- 2016-07-06T12:43:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimate_BOQ" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="020c6c36-6917-4359-abd9-63ceb063a3ac">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -191,7 +192,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="120" y="0" width="188" height="30" uuid="16592046-5bd6-455c-b0a8-46b5934dfcae"/>
-				<box>
+				<box leftPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -218,7 +219,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
 				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="58" height="30" uuid="2e3a1d6d-6e85-42b3-9927-a8348820dea7"/>
-				<box>
+				<box rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -244,7 +245,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
 				<reportElement stretchType="RelativeToTallestObject" x="466" y="0" width="66" height="30" uuid="76cde3fe-a56c-4cee-acd1-06b04837ceb3"/>
-				<box>
+				<box rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -327,7 +328,7 @@
 			</staticText>
 			<textField pattern="#0.00#">
 				<reportElement x="466" y="0" width="66" height="30" uuid="1082e1f3-77d1-4970-8149-03d8d927bef7"/>
-				<box>
+				<box rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
