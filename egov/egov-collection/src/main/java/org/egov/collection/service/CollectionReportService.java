@@ -204,8 +204,8 @@ public class CollectionReportService {
 
         if(!serviceType.equals(CollectionConstants.ALL))
         {
-            queryStr.append(" AND EGCL_COLLECTIONHEADER.RECEIPTTYPE =:serviceType");
-            onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.RECEIPTTYPE =:serviceType");
+            queryStr.append(" AND SER.SERVICETYPE =:serviceType");
+            onlineQueryStr.append(" AND SER.SERVICETYPE =:serviceType");
         }
         
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
