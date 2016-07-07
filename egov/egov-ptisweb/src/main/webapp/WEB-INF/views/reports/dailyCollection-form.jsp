@@ -64,6 +64,7 @@ body
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
+					<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
 						<spring:message code="lbl.dailyCollection.report" />
 					</div>
 				</div>

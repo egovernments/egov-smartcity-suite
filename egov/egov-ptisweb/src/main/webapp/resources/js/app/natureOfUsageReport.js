@@ -68,7 +68,12 @@ $(document)
 													"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 													"oTableTools" : {
 														"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-														"aButtons" : [ "xls", "pdf", "print" ]
+														"aButtons" : [ 
+														               { "sExtends": "pdf","sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() },
+														               { "sExtends": "xls", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html()  },
+														               { "sExtends": "print", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() }
+														             ]
+														/*"aButtons" : [ "xls", "pdf", "print" ]*/
 													},
 													ajax : {
 														url : "/ptis/reports/natureOfUsageReportList",

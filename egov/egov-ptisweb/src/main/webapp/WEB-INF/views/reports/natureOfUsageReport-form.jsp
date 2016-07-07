@@ -117,7 +117,8 @@
 			<br />
 			<spring:message code="reports.note.text" />
 			<div id="natureOfUsage-header" class="col-md-12 table-header text-left">
-				<spring:message code="lbl.natureOfUsage.report.details" />
+				<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
+				<div class="col-md-12 table-header text-left" id="reportTitle">Nature of usage report details</div>
 			</div>
 			<div class="col-md-12 form-group report-table-container">
 				<table class="table table-bordered datatable" id="tblnatureofusage">

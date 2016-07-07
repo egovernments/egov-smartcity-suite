@@ -147,7 +147,8 @@
 			</div>
 
 			<div class="row display-hide report-section">
-				<div class="col-md-12 table-header text-left">Title Transfer Register Report Details</div>
+			<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
+			<div class="col-md-12 table-header text-left" id="reportTitle">Title Transfer Register Report Details</div>
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tblTitleTransfer">
 						<thead>

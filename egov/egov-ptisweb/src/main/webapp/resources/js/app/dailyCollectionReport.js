@@ -63,18 +63,18 @@ $('#dailyCollectionReportSearch').click(function(e){
 				"aButtons" : [ 
 				               {
 					             "sExtends": "pdf",
-                                "sTitle": "Daily Collection Report",
-                                "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
+					             "sTitle": jQuery('#pdfTitle').val(),
+                                "sPdfMessage": "Daily Collection Report, Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
                                 "sPdfOrientation": "landscape"
 				                },
 				                {
 						             "sExtends": "xls",
-						             "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
-	                                 "sTitle": "Daily Collection Report"
+						             "sPdfMessage": "Daily Collection Report, Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
+						             "sTitle": jQuery('#pdfTitle').val(),
 					             },{
 						             "sExtends": "print",
-						             "sPdfMessage": "Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
-	                                 "sTitle": "Daily Collection Report"
+						             "sPdfMessage": "Daily Collection Report, Daily Collection Report result for dates : "+fromDate+" - "+toDate+"",
+						             "sTitle": jQuery('#pdfTitle').val(),
 					              }],
 				
 			},
