@@ -48,6 +48,10 @@ $(document).ready(function(){
 	if($('#hiddenbilldate').val() != '') {
 		$('#billdate').datepicker('setDate',new Date($('#hiddenbilldate').val()));	
 	}
+	if($('#workCompletionDate').val() != '' || $('#billtype').val() == 'Final Bill') {
+		$(".workcompletion").show();
+	} else 
+		$(".workcompletion").hide();
 	
 	var currentState = $('#currentState').val();
 	if(currentState == 'Created') {
@@ -75,6 +79,7 @@ $(document).ready(function(){
 			//TODO: remove code till billdate < workOrderDate condition check
 			var billDate = $('#billdate').data('datepicker').date;
 			var workOrderDate = $('#workOrderDate').data('datepicker').date;
+			var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
 			var currentDate = new Date();
 			if(currentDate.getMonth() == 0 || currentDate.getMonth() == 1 || currentDate.getMonth() == 2) {
 				currentDate = new Date(currentDate.getFullYear() - 1, 3, 1);
@@ -91,6 +96,32 @@ $(document).ready(function(){
 				$('#billdate').val(""); 
 				return false;
 			}
+			var billType = $('#billtype').val();
+			if(billType == 'Final Bill') {
+				$('#workCompletionDate').attr('required', 'required');
+				
+				if($('#workCompletionDate').val() != '') {
+				if(workCompletionDate > billDate) {
+					bootbox.alert($('#errorWorkCompletionDateGreaterThanBillDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
+				}
+				
+				if(workCompletionDate < workOrderDate) {
+					bootbox.alert($('#errorWorkCompletionDateGreaterThanWorkOrderDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
+				}
+				
+				if(workCompletionDate > currentDate) {
+					bootbox.alert($('#errorWorkCompletionDateFutureDate').val());
+					$('#workCompletionDate').val(""); 
+					return false;
+				}
+				}
+				
+			}
+			
 			
 			var debitamount = $('#debitamount').val();
 			$('#billamount').val(debitamount);
@@ -423,3 +454,14 @@ function renderPDF(){
 	var id = $('#id').val();
 	window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
+
+$('#billtype').change(function() {
+	var billType = $('#billtype').val();
+	if(billType == 'Final Bill') {
+		$(".workcompletion").show();
+	} else {
+		$('#workCompletionDate').val('');
+		$(".workcompletion").hide();
+	}
+});
+
