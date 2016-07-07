@@ -235,7 +235,7 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setEstimateAmount("NA");
                 if (wpr.getModeOfAllotment() != null)
-                    pdf.setModeOfAllotment(wpr.getModeOfAllotment().toString());
+                    pdf.setModeOfAllotment(wpr.getModeOfAllotment());
                 else
                     pdf.setModeOfAllotment("");
                 if (wpr.getAgreementNumber() != null)

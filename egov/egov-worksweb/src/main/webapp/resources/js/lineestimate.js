@@ -209,7 +209,7 @@ function addLineEstimate() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			$("#estimateRow").clone().find("input, errors, textarea").each(
+			$("#estimateRow").clone().find("input, errors, textarea, select").each(
 					function() {
 
 						if ($(this).data('server')) {

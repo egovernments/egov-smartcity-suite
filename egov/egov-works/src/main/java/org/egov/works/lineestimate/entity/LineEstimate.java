@@ -76,7 +76,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.NatureOfWork;
@@ -181,8 +180,7 @@ public class LineEstimate extends StateAware {
     private Beneficiary beneficiary;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private ModeOfAllotment modeOfAllotment;
+    private String modeOfAllotment;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -408,11 +406,11 @@ public class LineEstimate extends StateAware {
         this.beneficiary = beneficiary;
     }
 
-    public ModeOfAllotment getModeOfAllotment() {
+    public String getModeOfAllotment() {
         return modeOfAllotment;
     }
 
-    public void setModeOfAllotment(final ModeOfAllotment modeOfAllotment) {
+    public void setModeOfAllotment(final String modeOfAllotment) {
         this.modeOfAllotment = modeOfAllotment;
     }
 

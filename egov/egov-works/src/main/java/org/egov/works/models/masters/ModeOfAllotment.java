@@ -37,16 +37,44 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.works.models.masters;
 
-package org.egov.works.lineestimate.entity.enums;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import org.apache.commons.lang.StringUtils;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-public enum ModeOfAllotment {
-    NOMINATION, TENDERING, ePROCUREMENT;
+@Entity
+@Table(name = "EGW_MODE_OF_ALLOTMENT")
+@Unique(id = "id", tableName = "EGW_MODE_OF_ALLOTMENT", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@SequenceGenerator(name = ModeOfAllotment.SEQ_EGW_MODE_OF_ALLOTMENT, sequenceName = ModeOfAllotment.SEQ_EGW_MODE_OF_ALLOTMENT, allocationSize = 1)
+public class ModeOfAllotment {
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    public static final String SEQ_EGW_MODE_OF_ALLOTMENT = "SEQ_EGW_MODE_OF_ALLOTMENT";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_MODE_OF_ALLOTMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    private String code;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
     }
 }

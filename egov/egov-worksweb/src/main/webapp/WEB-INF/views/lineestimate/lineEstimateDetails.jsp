@@ -80,7 +80,12 @@
 								<form:errors path="lineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" value="${lineEstimateDetails[0].uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="15"  required="required"/>
+								<form:select path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${lineEstimateUOMs}" itemValue="code" itemLabel="code" />
+								</form:select>
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
 							<td>
@@ -110,7 +115,12 @@
 									<form:errors path="lineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" value="${lineEstimateDtls.uom}" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text" onkeyup="calculateEstimatedAmountTotal();" required="required"/>
+									<form:select path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${lineEstimateUOMs}" itemValue="code" itemLabel="code" />
+									</form:select>
 									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
 								</td>
 								<td>

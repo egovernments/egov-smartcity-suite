@@ -39,6 +39,15 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
@@ -46,7 +55,6 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -65,10 +73,11 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.service.LineEstimateUOMService;
+import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -85,15 +94,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class UpdateLineEstimateController extends GenericWorkFlowController {
@@ -105,9 +105,6 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
     private SchemeService schemeService;
@@ -141,6 +138,12 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     
     @Autowired
     private BoundaryService boundaryService;
+    
+    @Autowired
+    private ModeOfAllotmentService modeOfAllotmentService;
+    
+    @Autowired
+    private LineEstimateUOMService lineEstimateUOMService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -369,7 +372,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
+        model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
+        model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("workCategory", WorkCategory.values());

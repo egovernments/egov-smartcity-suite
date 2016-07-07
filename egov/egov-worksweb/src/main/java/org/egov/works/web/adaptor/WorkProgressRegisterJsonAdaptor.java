@@ -143,7 +143,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("estimateAmount", "");
             if (workProgressRegister.getModeOfAllotment() != null)
-                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment().toString());
+                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment());
             else
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)
