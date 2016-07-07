@@ -90,9 +90,9 @@
 						itemLabel="code" />
 				</form:select></td>
 			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a></td>
-			
-		</tr>
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
+	</tr>
 	</tbody>
 </table>
 
@@ -148,7 +148,9 @@
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td>
-			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a></td>
+				
+			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><i class="fa fa-trash"></i></a></td>
 		</tr>
 	</tbody>
 </table>

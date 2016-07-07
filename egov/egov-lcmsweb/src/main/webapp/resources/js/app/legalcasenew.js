@@ -75,14 +75,13 @@ document.getElementById("wpYear").value="--select---";
 	
 function addPetRow()
 {     
-	var index=document.getElementById('petitionDetails').rows.length-1;
-	    	var tableObj=document.getElementById('petitionDetails');
+			var tableObj=document.getElementById('petitionDetails');
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			
+			alert("pet row id="+nextIdx+" pet row obj="+rowObj);
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
@@ -113,7 +112,7 @@ function addResRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			
+			alert("reow id="+nextIdx+" row obj="+rowObj);
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
@@ -132,3 +131,63 @@ function addResRow()
 		   tbody.appendChild(rowObj);
 		
  }
+
+$(document).on('click',"#pet_delete_row",function (){
+	var table = document.getElementById('petitionDetails');
+    var rowCount = table.rows.length;
+    var counts = rowCount - 1;
+    var k = 2;
+    var m;
+    if(counts==1)
+	{
+		bootbox.alert("This Floor cannot be deleted");
+		return false;
+	}else{
+    for(m=2;m<=counts;m++){ 
+    	$(this).closest('tr').remove();		
+    	var prevIndex = m-1;
+    	var currentIndex = k-1; 
+    	var itemDesc = '#bipartisanDetailsBeanList'+prevIndex+'name';
+    	var quantity = '#bipartisanDetailsBeanList'+prevIndex+'address';
+    	var unitOfMeasurement = '#bipartisanDetailsBeanList'+prevIndex+'contactNumber';
+    	var unitRate = '#bipartisanDetailsBeanList'+prevIndex+'governmentDepartment';
+    	
+    		$(itemDesc).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'name'); 
+        	$(quantity).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'address'); 
+        	$(unitOfMeasurement).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'contactNumber'); 
+        	$(unitRate).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'governmentDepartment'); 
+        	k++;
+    	
+    }	
+	}
+});
+
+$(document).on('click',"#res_delete_row",function (){
+	var table = document.getElementById('respodantDetails');
+    var rowCount = table.rows.length;
+    var counts = rowCount - 1;
+    var j = 2;
+    var i;
+    if(counts==1)
+	{
+		bootbox.alert("This Floor cannot be deleted");
+		return false;
+	}else{
+    for(i=2;i<=counts;i++){ 
+    	$(this).closest('tr').remove();		
+    	var prevIndex = i-1;
+    	var currentIndex = j-1; 
+    	var itemDesc = '#bipartisanDetailsBeanList'+prevIndex+'name';
+    	var quantity = '#bipartisanDetailsBeanList'+prevIndex+'address';
+    	var unitOfMeasurement = '#bipartisanDetailsBeanList'+prevIndex+'contactNumber';
+    	var unitRate = '#bipartisanDetailsBeanList'+prevIndex+'governmentDepartment';
+    	
+    		$(itemDesc).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'name'); 
+        	$(quantity).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'address'); 
+        	$(unitOfMeasurement).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'contactNumber'); 
+        	$(unitRate).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'governmentDepartment'); 
+        	j++;
+    	
+    }	
+	}
+});
