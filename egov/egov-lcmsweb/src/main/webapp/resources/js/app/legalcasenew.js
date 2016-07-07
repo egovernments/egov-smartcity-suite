@@ -43,16 +43,7 @@ $(document).ready(function(){
 	$("#seniordov1").hide(); 
     $("#seniordov2").hide(); 
     $("#seniordov3").hide(); 
-    var index=document.getElementById('petitionDetails').rows.length-1;
-    
-    $("#addpetRowId").click(function(){	
-    	addRow();
-    });
-    
-
-    
- 	
-	
+   
 	
 });
 function enableGovtDept()
@@ -82,27 +73,62 @@ document.getElementById("wpYear").value="--select---";
  
 }
 	
-function addRow()
+function addPetRow()
 {     
-			alert('addrowin');
 	var index=document.getElementById('petitionDetails').rows.length-1;
 	    	var tableObj=document.getElementById('petitionDetails');
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
-			tbody.appendChild(rowObj);
-			/*var rowno = parseInt(tableObj.rows.length)-2;
-			document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].value=false;								
-			document.forms["newlegalcaseForm"].name[lastRow-1].value="";
-			document.forms["newlegalcaseForm"].address[lastRow-1].value="";
-			document.forms["newlegalcaseForm"].contactNumber[lastRow-1].value="";
-			//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].value="";
-		    document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].isrespondentgovernment");
-			document.forms["newlegalcaseForm"].name[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].name");
-			document.forms["newlegalcaseForm"].address[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].address");
-          document.forms["newlegalcaseForm"].contactNumber[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].contactNumber");
-          document.forms["newlegalcaseForm"].governmentDepartment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].governmentDepartment");
-		//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].setAttribute("name","feedetailsList["+index+"].id");
-			index++;*/
+			
+			nextIdx=(lastRow-1);
+			
+			jQuery(rowObj).find("input, select").each(
+					function() {
+
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('[0]', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[0]', '['
+											+ nextIdx + ']');
+								}/*,
+								'data-idx' : function(_,dataIdx)
+								{
+									return nextIdx;
+								}*/
+					});  
+		   });
+
+		   tbody.appendChild(rowObj);}
+
+function addResRow()
+{     
+	var index=document.getElementById('respodantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respodantDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			
+			jQuery(rowObj).find("input, select").each(
+					function() {
+
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('[0]', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[0]', '['
+											+ nextIdx + ']');
+								}
+					});  
+		   });
+
+		   tbody.appendChild(rowObj);
 		
  }

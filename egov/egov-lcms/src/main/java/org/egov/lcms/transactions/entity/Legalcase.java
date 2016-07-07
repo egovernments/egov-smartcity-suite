@@ -120,7 +120,7 @@ public class Legalcase extends AbstractAuditable {
     private PetitionTypeMaster petitiontypeMaster;
     @Required(message = "case.number.null")
     @Length(max = 50, message = "casenumber.length")
-    @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "case.number.alphanumeric")
+    //@OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "case.number.alphanumeric")
     private String casenumber;
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
@@ -149,7 +149,7 @@ public class Legalcase extends AbstractAuditable {
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
     @Column(name = "isSenioradvrequired")
-    private Boolean isSenioradvrequired;
+    private Boolean isSenioradvrequired=Boolean.FALSE;
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 

@@ -115,7 +115,7 @@ public class LegalCaseService {
 
     @Transactional
     public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(legalcase.getCasenumber() + "/" + legalcase.getWpYear());
+        legalcase.setCasenumber(legalcase.getCasenumber() + (legalcase.getWpYear()!=null ?"/" + legalcase.getWpYear() :""));
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);

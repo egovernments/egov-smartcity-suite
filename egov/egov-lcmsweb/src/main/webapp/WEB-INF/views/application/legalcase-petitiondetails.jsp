@@ -89,8 +89,9 @@
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td>
-			<td class="text-center"><span style="cursor: pointer;"
-				id="addpetRowId"><i class="fa fa-plus"></i></span></td>
+			<td class="text-center">
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a></td>
+			
 		</tr>
 	</tbody>
 </table>
@@ -101,7 +102,7 @@
 		<spring:message code="lbl.bipartisanDetails.respondant" />
 	</div>
 </div>
-<table class="table table-striped table-bordered" id="estimateDetails">
+<table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
@@ -147,8 +148,7 @@
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td>
-			<td class="text-center"><span style="cursor: pointer;"
-				id="addresRowId"><i class="fa fa-plus"></i></span></td>
+			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a></td>
 		</tr>
 	</tbody>
 </table>
@@ -172,3 +172,23 @@
 	</div>
 
 </div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right" id="persons">Remarks:</label>
+	<div class="col-sm-3 add-margin">
+		<form:textarea class="form-control" path="remarks" id="remarks"
+			name="remarks" maxlength="256" />
+		<form:errors path="remarks" cssClass="add-margin error-msg" />
+	</div>
+</div>
+<div class="form-group" >
+<label class="col-sm-3 control-label text-right"><font size="2"><spring:message code="lbl.mesg.document"/></font>	</label>
+	<div class="col-sm-3 add-margin">
+	
+				<input type="file" id="file" name="legalcaseDocuments[0].files" 
+				class="file-ellipsis upload-file">
+			
+		<form:errors path="legalcaseDocuments[0].files" cssClass="add-margin error-msg" />
+		<%-- <div class="add-margin error-msg text-left" ><font size="2">
+								<spring:message code="lbl.mesg.document"/>	
+								</font></div> --%></div>
+	</div> 

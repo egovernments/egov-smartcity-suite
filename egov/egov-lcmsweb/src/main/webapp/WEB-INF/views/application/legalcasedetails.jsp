@@ -51,7 +51,7 @@
 			</form:option>
 
 			<form:options items="${courtTypeList}" itemValue="id"
-				id="courtTypeDropdown" itemLabel="code" />
+				id="courtTypeDropdown" itemLabel="courtType" />
 		</form:select>
 		<form:errors path="casetypeMaster" cssClass="add-margin error-msg" />
 	</div>
@@ -65,7 +65,7 @@
 			</form:option>
 
 			<form:options items="${petitiontypeList}" itemValue="id"
-				id="courtTypeDropdown" itemLabel="code" />
+				id="courtTypeDropdown" itemLabel="petitionType" />
 		</form:select>
 		<form:errors path="petitiontypeMaster" cssClass="add-margin error-msg" />
 	</div>
@@ -95,7 +95,7 @@
 			</form:option>
 
 			<form:options items="${caseTypeList}" itemValue="id"
-				id="courtTypeDropdown" itemLabel="code" />
+				id="courtTypeDropdown" itemLabel="caseType" />
 		</form:select>
 		<form:errors path="casetypeMaster" cssClass="add-margin error-msg" />
 	</div>
@@ -104,8 +104,8 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
-		<form:input class="form-control patternvalidation"
-			data-pattern="string" maxlength="50" id="casenumber"
+		<form:input class="form-control"
+			data-pattern="" maxlength="50" id="casenumber"
 			required="required" path="casenumber" />
 	</div>
 	<div class="col-sm-2 add-margin text-center">
@@ -179,10 +179,27 @@
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.previouscaseNumber" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
-		<form:input class="form-control patternvalidation"
+		<form:input class="form-control patternvalidation" placeholder="InCase of appeal,review petition"
 			data-pattern="string" maxlength="50" id="appealNum" path="appealNum" />
-		<div class="add-margin error-msg text-left"><font size="2"><spring:message code="lbl.textmessage.previouscaseno" /></font></div>
-		<form:errors path="appealNum" cssClass="add-margin error-msg" />
+		<%-- <div class="add-margin error-msg text-left"><font size="2"><spring:message code="lbl.textmessage.previouscaseno" /></font></div>
+		 --%><form:errors path="appealNum" cssClass="add-margin error-msg" />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
+			code="lbl.title" /><span class="mandatory"></span>:</label>
+	<div class="col-sm-3 add-margin">
+		<form:textarea class="form-control" path="caseTitle" id="caseTitle"
+			name="caseTitle" />
+		<form:errors path="caseTitle" cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
+			code="lbl.prayer" /><span class="mandatory"></span>:</label>
+	<div class="col-sm-3 add-margin" id="personsdiv">
+		<form:textarea class="form-control" maxlength="1024" id="prayer"
+			path="prayer" />
+		<form:errors path="prayer" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
@@ -208,25 +225,6 @@
 </div>
 
 
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.title" /><span class="mandatory"></span>:</label>
-	<div class="col-sm-3 add-margin">
-		<form:textarea class="form-control" path="caseTitle" id="caseTitle"
-			name="caseTitle" />
-		<form:errors path="caseTitle" cssClass="add-margin error-msg" />
-	</div>
-</div>
-
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.prayer" /><span class="mandatory"></span>:</label>
-	<div class="col-sm-3 add-margin" id="personsdiv">
-		<form:textarea class="form-control" maxlength="1024" id="prayer"
-			path="prayer" />
-		<form:errors path="prayer" cssClass="add-margin error-msg" />
-	</div>
-</div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
 			code="lbl.fieldbycarp" />:</label>
