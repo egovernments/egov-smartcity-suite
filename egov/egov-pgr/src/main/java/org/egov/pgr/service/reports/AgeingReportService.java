@@ -56,7 +56,7 @@ import java.util.Date;
 public class AgeingReportService {
 
     private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
-
+    private static final String COMPLAINTSTATUS_REJECTED = "Rejected";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -73,7 +73,7 @@ public class AgeingReportService {
             query.append("SELECT dept.name as name, ");
 
         if (typeofReport != null && !"".equals(typeofReport)
-                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
+                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
             query.append(
                     " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, ");
             query.append(
@@ -112,8 +112,11 @@ public class AgeingReportService {
         if (typeofReport != null && !"".equals(typeofReport)
                 && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
             query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
-            query.append(" AND cs.name IN ('COMPLETED','REJECTED', 'WITHDRAWN','CLOSED') ");
-        } else {
+            query.append(" AND cs.name IN ('COMPLETED', 'WITHDRAWN','CLOSED') ");
+        }  else if(typeofReport != null && !"".equals(typeofReport) && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED)){
+            query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
+            query.append(" AND cs.name IN ('REJECTED') ");
+        }else {
             query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  ");
             query.append(" AND cs.name IN ('REGISTERED','FORWARDED', 'PROCESSING','REOPENED') ");
         }
@@ -137,7 +140,7 @@ public class AgeingReportService {
         final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
 
         if (typeofReport != null && !"".equals(typeofReport)
-                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
+                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
             qry.setParameter("grtthn90", 90);
             qry.setParameter("lsthn90", 90);
             qry.setParameter("grtthn45", 45.0001);
