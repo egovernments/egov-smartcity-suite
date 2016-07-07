@@ -69,7 +69,7 @@
 				<input class="form-control disablefield" name="workCategory" id="workCategory" value="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory}"/>
 			</div>
 		</div>
-		<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
+		<c:if test="${abstractEstimate.lineEstimateDetails !=null && abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.typeofslum" />

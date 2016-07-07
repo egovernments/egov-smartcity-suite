@@ -47,7 +47,7 @@
 				<spring:message code="lbl.workcategory" />
 			</div> 
 			<c:choose>
-				<c:when test="${lineEstimate.workCategory == 'SLUM_WORK' }">
+				<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
 					<div class="col-xs-3 add-margin view-content">
 						<spring:message code="lbl.slum" />
 					</div>
