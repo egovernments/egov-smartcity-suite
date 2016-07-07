@@ -100,7 +100,9 @@ function addPetRow()
 					});  
 		   });
 
-		   tbody.appendChild(rowObj);}
+		   tbody.appendChild(rowObj);
+		   
+}
 
 function addResRow()
 {     
@@ -138,25 +140,33 @@ $(document).on('click',"#pet_delete_row",function (){
     var m;
     if(counts==1)
 	{
-		bootbox.alert("This Floor cannot be deleted");
+		bootbox.alert("This Row cannot be deleted");
 		return false;
-	}else{
-    for(m=2;m<=counts;m++){ 
-    	$(this).closest('tr').remove();		
-    	var prevIndex = m-1;
-    	var currentIndex = k-1; 
-    	var itemDesc = '#bipartisanDetails'+prevIndex+'name';
-    	var quantity = '#bipartisanDetails'+prevIndex+'address';
-    	var unitOfMeasurement = '#bipartisanDetails'+prevIndex+'contactNumber';
-    	var unitRate = '#bipartisanDetails'+prevIndex+'governmentDepartment';
-    	
-    		$(itemDesc).attr("id", 'bipartisanDetails'+currentIndex+'name'); 
-        	$(quantity).attr("id", 'bipartisanDetails'+currentIndex+'address'); 
-        	$(unitOfMeasurement).attr("id", 'bipartisanDetails'+currentIndex+'contactNumber'); 
-        	$(unitRate).attr("id", 'bipartisanDetails'+currentIndex+'governmentDepartment'); 
-        	k++;
-    	
-    }	
+	}else{	
+
+		$(this).closest('tr').remove();		
+		
+		jQuery("#petitionDetails tr:eq(1) td span[alt='AddF']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#petitionDetails tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+			  });
+			
+			idx++;
+		});
+		
+		return true;
 	}
 });
 
@@ -168,24 +178,34 @@ $(document).on('click',"#res_delete_row",function (){
     var i;
     if(counts==1)
 	{
-		bootbox.alert("This Floor cannot be deleted");
+		bootbox.alert("This Row cannot be deleted");
 		return false;
-	}else{
-    for(i=2;i<=counts;i++){ 
-    	$(this).closest('tr').remove();		
-    	var prevIndex = i-1;
-    	var currentIndex = j-1; 
-    	var itemDesc = '#bipartisanDetailsBeanList'+prevIndex+'name';
-    	var quantity = '#bipartisanDetailsBeanList'+prevIndex+'address';
-    	var unitOfMeasurement = '#bipartisanDetailsBeanList'+prevIndex+'contactNumber';
-    	var unitRate = '#bipartisanDetailsBeanList'+prevIndex+'governmentDepartment';
-    	
-    		$(itemDesc).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'name'); 
-        	$(quantity).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'address'); 
-        	$(unitOfMeasurement).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'contactNumber'); 
-        	$(unitRate).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'governmentDepartment'); 
-        	j++;
-    	
-    }	
+	}else{	
+
+		$(this).closest('tr').remove();		
+		
+		jQuery("#respodantDetails tr:eq(1) td span[alt='AddF']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#respodantDetails tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+			   
+			  
+			   
+		    });
+			idx++;
+		});
+		
+		return true;
 	}
 });
