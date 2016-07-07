@@ -66,7 +66,7 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when" /></label>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.period" /></label>
 								<div class="col-sm-7 add-margin">
 									<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 									<input type="hidden" id="deptid" name="deptid" value="${deptid}"/> 
@@ -119,7 +119,7 @@
 						<thead></thead> 
 						<tfoot id="report-footer">
 						   <tr>
-								<td><b><spring:message code="lbl.total"/></b></td>
+								<td><b><spring:message code="lbl.pagetotal"/></b></td>
 						    	<td></td>
 						    	<td></td>
 						    	<td></td>
