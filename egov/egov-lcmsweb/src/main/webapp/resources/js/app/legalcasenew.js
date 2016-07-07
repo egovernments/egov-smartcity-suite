@@ -81,7 +81,6 @@ function addPetRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			alert("pet row id="+nextIdx+" pet row obj="+rowObj);
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
@@ -112,7 +111,6 @@ function addResRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			alert("reow id="+nextIdx+" row obj="+rowObj);
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
@@ -147,15 +145,15 @@ $(document).on('click',"#pet_delete_row",function (){
     	$(this).closest('tr').remove();		
     	var prevIndex = m-1;
     	var currentIndex = k-1; 
-    	var itemDesc = '#bipartisanDetailsBeanList'+prevIndex+'name';
-    	var quantity = '#bipartisanDetailsBeanList'+prevIndex+'address';
-    	var unitOfMeasurement = '#bipartisanDetailsBeanList'+prevIndex+'contactNumber';
-    	var unitRate = '#bipartisanDetailsBeanList'+prevIndex+'governmentDepartment';
+    	var itemDesc = '#bipartisanDetails'+prevIndex+'name';
+    	var quantity = '#bipartisanDetails'+prevIndex+'address';
+    	var unitOfMeasurement = '#bipartisanDetails'+prevIndex+'contactNumber';
+    	var unitRate = '#bipartisanDetails'+prevIndex+'governmentDepartment';
     	
-    		$(itemDesc).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'name'); 
-        	$(quantity).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'address'); 
-        	$(unitOfMeasurement).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'contactNumber'); 
-        	$(unitRate).attr("id", 'bipartisanDetailsBeanList'+currentIndex+'governmentDepartment'); 
+    		$(itemDesc).attr("id", 'bipartisanDetails'+currentIndex+'name'); 
+        	$(quantity).attr("id", 'bipartisanDetails'+currentIndex+'address'); 
+        	$(unitOfMeasurement).attr("id", 'bipartisanDetails'+currentIndex+'contactNumber'); 
+        	$(unitRate).attr("id", 'bipartisanDetails'+currentIndex+'governmentDepartment'); 
         	k++;
     	
     }	
