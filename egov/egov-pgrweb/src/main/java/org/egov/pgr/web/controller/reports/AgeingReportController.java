@@ -84,6 +84,7 @@ public class AgeingReportController {
         final Map<String, String> status = new LinkedHashMap<String, String>();
         status.put("Completed", "Completed");
         status.put("Pending", "Pending");
+        status.put("Rejected", "Rejected");
         model.addAttribute("status", status);
         model.addAttribute("reportHelper", reportHealperObj);
 
