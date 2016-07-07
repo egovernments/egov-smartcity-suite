@@ -261,6 +261,7 @@ $('#btncreatemb').click(function(e) {
 					cache: true,
 					dataType: "json"
 				}).done(function(json) {
+					$('#errorMessage').html('');
 					json = $.parseJSON(json);
 					$.each(json, function(key, value){
 						if(key == "tenderFinalisedPercentage") {

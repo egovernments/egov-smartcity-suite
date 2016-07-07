@@ -94,20 +94,25 @@ $('#Forward').click(function() {
 });
 
 function submitForm(workFlowAction) {
-	$('.loader-class').modal('show', {backdrop: 'static'});
+	$('.loader-class').modal('show', {
+		backdrop : 'static'
+	});
 	var id = $('#id').val();
 	var url = "";
-	if(id != "")
+	if (id != "")
 		url = "/egworks/measurementbook/save/" + id;
 	else
 		url = "/egworks/measurementbook/create";
-	
+
+	oData = new FormData(document.forms.namedItem("mbHeader"));
 	$.ajax({
 		type: "POST",
 		url: url,
-		cache: true,
-		dataType: "json",
-		"data": getFormData(jQuery('form')),
+		async: false,
+	    cache: false,
+	    contentType: false,
+	    processData: false,
+		data: oData,
 		success: function (message) {
 			var json = $.parseJSON(message);
 			if(workFlowAction == "Save") {

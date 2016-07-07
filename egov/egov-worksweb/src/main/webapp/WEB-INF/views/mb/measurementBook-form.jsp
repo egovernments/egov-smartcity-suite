@@ -57,8 +57,9 @@
         background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
       }
     </style>
-<form:form modelAttribute="mbHeader" name="mbHeader" role="form" action="" method="post" id="mbHeader"
+<form:form modelAttribute="mbHeader" name="mbHeader" role="form" method="post" id="mbHeader"
 	class="form-horizontal form-groups-bordered"
+	accept-charset="utf-8"
 	enctype="multipart/form-data">
 	
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
@@ -116,6 +117,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="mbheader">
 				<%@ include file="mb-header.jsp"%>
+				<jsp:include page="../common/uploadDocuments.jsp"/>
 			</div>
 			<div class="tab-pane fade" id="tenderedItems">
 				<%@ include file="mb-sor.jsp"%>

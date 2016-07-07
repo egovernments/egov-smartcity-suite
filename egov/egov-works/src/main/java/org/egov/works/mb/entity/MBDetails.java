@@ -150,7 +150,7 @@ public class MBDetails extends AbstractAuditable {
     // -------------------------------------------------------------------
     @Transient
     private double totalEstQuantity; // Added for RE
-    @Transient
+
     private double amount = 0.0;
 
     public List<ValidationError> validate() {
@@ -264,10 +264,6 @@ public class MBDetails extends AbstractAuditable {
     }
 
     public double getAmount() {
-        if (workOrderActivity.getActivity() != null && workOrderActivity.getActivity().getNonSor() == null)
-            amount = workOrderActivity.getApprovedRate() * quantity * workOrderActivity.getConversionFactor();
-        else
-            amount = workOrderActivity.getApprovedRate() * quantity;
         return amount;
     }
 

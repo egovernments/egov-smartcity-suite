@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
@@ -77,10 +78,11 @@ public class CreateMBController {
         return json;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String create(@ModelAttribute("mbHeader") final MBHeader mbHeader,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder,
-            final HttpServletResponse response) throws ApplicationException, IOException {
+            final HttpServletResponse response, @RequestParam("file") final MultipartFile[] files)
+            throws ApplicationException, IOException {
 
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -107,7 +109,7 @@ public class CreateMBController {
             return "";
         }
 
-        final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, approvalPosition, approvalComment, workFlowAction);
+        final MBHeader savedMBHeader = mbHeaderService.create(mbHeader, files, approvalPosition, approvalComment, workFlowAction);
 
         mbHeaderService.fillWorkflowData(jsonObject, request, savedMBHeader);
 

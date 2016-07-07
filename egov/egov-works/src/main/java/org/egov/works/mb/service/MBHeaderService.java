@@ -39,6 +39,7 @@
  */
 package org.egov.works.mb.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
@@ -86,6 +88,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -185,8 +188,9 @@ public class MBHeaderService {
     }
 
     @Transactional
-    public MBHeader create(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
-            final String workFlowAction) {
+    public MBHeader create(final MBHeader mbHeader, final MultipartFile[] files, final Long approvalPosition,
+            final String approvalComent,
+            final String workFlowAction) throws IOException {
         if (mbHeader.getState() == null)
             if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
@@ -200,13 +204,19 @@ public class MBHeaderService {
         createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
 
+        final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedMBHeader,
+                WorksConstants.MBHEADER);
+        if (!documentDetails.isEmpty()) {
+            savedMBHeader.setDocumentDetails(documentDetails);
+            worksUtils.persistDocuments(documentDetails);
+        }
+
         return savedMBHeader;
     }
 
     @Transactional
     public MBHeader update(final MBHeader mbHeader, final Long approvalPosition, final String approvalComent,
-            final String workFlowAction, final String removedDetailIds) {
-
+            final String workFlowAction, final String removedDetailIds, final MultipartFile[] files) throws IOException {
         Boolean isMBEditable = false;
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -222,6 +232,13 @@ public class MBHeaderService {
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
             mbHeader.setMbDetails(mbDetails);
+
+            final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, mbHeader,
+                    WorksConstants.MBHEADER);
+            if (!documentDetails.isEmpty()) {
+                mbHeader.setDocumentDetails(documentDetails);
+                worksUtils.persistDocuments(documentDetails);
+            }
         }
 
         final MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);

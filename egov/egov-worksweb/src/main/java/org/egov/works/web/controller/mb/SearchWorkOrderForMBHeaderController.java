@@ -96,6 +96,7 @@ public class SearchWorkOrderForMBHeaderController extends GenericWorkFlowControl
         model.addAttribute("validActionList", validActions);
         model.addAttribute("currentDate", new Date());
         model.addAttribute("mbHeader", mbHeader);
+        model.addAttribute("documentDetails", mbHeader.getDocumentDetails());
         return "workorder-search";
     }
 

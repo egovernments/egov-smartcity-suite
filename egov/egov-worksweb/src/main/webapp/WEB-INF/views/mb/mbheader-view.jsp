@@ -53,7 +53,9 @@
         background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
       }
     </style>
-<form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mbHeader" id="mbHeader" class="form-horizontal form-groups-bordered">
+<form:form name="mbHeaderSearchForm" action="" role="form" modelAttribute="mbHeader" id="mbHeader" class="form-horizontal form-groups-bordered"
+	accept-charset="utf-8"
+	enctype="multipart/form-data">
 <input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
 <input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 <div class="position_alert1">
@@ -77,6 +79,7 @@
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="mbheader">
 				<jsp:include page="mbheader-viewheader.jsp" />
+				<jsp:include page="../common/uploadDocuments.jsp"/>
 			</div>
 			
 			<div class="tab-pane" id="tenderitems">

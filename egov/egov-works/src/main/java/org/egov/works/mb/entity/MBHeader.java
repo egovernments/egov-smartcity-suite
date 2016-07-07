@@ -75,6 +75,7 @@ import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
@@ -194,6 +195,8 @@ public class MBHeader extends StateAware {
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
 
     private transient List<MBDetails> nonSorMbDetails = new ArrayList<MBDetails>(0);
+    
+    private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Transient
     private String owner;
@@ -460,5 +463,15 @@ public class MBHeader extends StateAware {
 
     public void setMbIssuedDate(final Date mbIssuedDate) {
         this.mbIssuedDate = mbIssuedDate;
+    }
+    
+    public List<DocumentDetails> getDocumentDetails() {
+        return documentDetails;
+    }
+
+    public void setDocumentDetails(final List<DocumentDetails> documentDetails) {
+        this.documentDetails.clear();
+        if (documentDetails != null)
+            this.documentDetails.addAll(documentDetails);
     }
 }
