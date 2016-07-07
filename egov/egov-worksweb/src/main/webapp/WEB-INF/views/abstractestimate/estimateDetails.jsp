@@ -44,11 +44,11 @@
 				<form:errors path="natureOfWork" cssClass="add-margin error-msg" /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.estimate.ward" />
+			    <spring:message code="lbl.election.ward" />
 			</label>
 			<div class="col-sm-3 add-margin ">
 			<form:hidden path="ward" class="form-control" name="ward" value="${abstractEstimate.lineEstimateDetails.lineEstimate.ward.id}"/>
-			<form:input id="wardInput" path="ward.name" class="form-control disablefield" type="text" required="required"/>
+			<form:input id="wardInput" path="ward.boundaryNum" class="form-control disablefield" type="text" required="required"/>
 			</div>
 			
 		</div>

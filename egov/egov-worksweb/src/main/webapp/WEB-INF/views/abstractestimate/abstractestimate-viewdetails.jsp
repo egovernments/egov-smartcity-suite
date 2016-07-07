@@ -27,11 +27,11 @@
 			<c:out value="${abstractEstimate.natureOfWork.name}"></c:out>
 		</div>
 		<div class="col-xs-3 add-margin">
-			<spring:message code="lbl.estimate.ward" />
+			<spring:message code="lbl.election.ward" />
 		</div> 
 	
 		<div class="col-xs-3 add-margin view-content">
-			<c:out value="${abstractEstimate.ward.name}"></c:out>
+			<c:out value="${abstractEstimate.ward.boundaryNum}"></c:out>
 		</div>
 	</div>	
 	<c:if test="${abstractEstimate.lineEstimateDetails != null}">	
