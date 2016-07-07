@@ -70,7 +70,27 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+					<c:when test="${billDetailsMap != null && billDetailsMap.size() >= 2}">					
+						<c:set var="isStatutaryDeductionsPresent" value="${false}" scope="session" />
+						<c:set var="isOtherDeductionsPresent" value="${false}" scope="session" />
+						<c:set var="isRetentionMoneyDeductionsPresent" value="${false}" scope="session" />
+						<c:forEach items="${billDetailsMap}" var="billDetail" varStatus="item" >	
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction}">
+								<c:set var="isStatutaryDeductionsPresent" value="${true}" scope="session" />
+							</c:if>	
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction}">
+								<c:set var="isOtherDeductionsPresent" value="${true}" scope="session" />
+							</c:if>	
+							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && billDetail.isRetentionMoneyDeduction && !billDetail.isStatutoryDeduction}">
+								<c:set var="isRetentionMoneyDeductionsPresent" value="${true}" scope="session" />
+							</c:if>					
+						</c:forEach>	
+					</c:when>
+					<c:otherwise>							
+					</c:otherwise>
+				</c:choose>
+				<c:choose>
+					<c:when test="${billDetailsMap == null || !isStatutaryDeductionsPresent}">
 						<tr id="statutorydeductionrow">
 							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode" onchange="resetCreditAccountDetails(this);" >
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
@@ -91,9 +111,9 @@
 							 <span class="add-padding" onclick="deleteStatutoryDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 						</tr>
 					</c:when>
-					<c:otherwise>
+					<c:otherwise>						
+						<c:set var="rowIndex" value="${0}" scope="session" />
 						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
-							<c:set var="rowIndex" value="${0}" scope="session" />
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isRetentionMoneyDeduction && billDetail.isStatutoryDeduction}">
 								<tr id="statutorydeductionrow">
 									<td>
@@ -122,8 +142,8 @@
 									<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
 									 <span class="add-padding" onclick="deleteStatutoryDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 								</tr>
-							</c:if>
-							<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
+								<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
+							</c:if>							
 						</c:forEach>
 					</c:otherwise>
 				</c:choose>
@@ -149,7 +169,7 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+					<c:when test="${billDetailsMap == null || !isOtherDeductionsPresent}">
 						<tr id="otherdeductionrow">
 							<td>
 								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input patternvalidation otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
@@ -168,8 +188,8 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
 						<c:set var="rowIndex" value="${0}" scope="session" />
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >						
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction}">
 								<tr id="otherdeductionrow">
 									<td>
@@ -186,9 +206,9 @@
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
 									 <span class="add-padding" onclick="deleteOtherDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
-								</tr>
+								</tr>								
+								<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
 							</c:if>
-							<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
 						</c:forEach>
 					</c:otherwise>
 				</c:choose>
@@ -213,7 +233,7 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${billDetailsMap == null || billDetailsMap.size() == 2}">
+					<c:when test="${billDetailsMap == null || !isRetentionMoneyDeductionsPresent}">
 						<tr id="retentionmoneydeductionrow">
 							<td> <form:select path="retentionMoneyDeductionDetailes[0].glcodeid" name="retentionMoneyDeductionDetailes[0].creditGlcode" id="retentionMoneyDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode"  onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
@@ -234,9 +254,9 @@
 							 <span class="add-padding" onclick="deleteRetentionMoneyDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 						</tr>
 					</c:when>
-					<c:otherwise>
-						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
+					<c:otherwise>					
 						<c:set var="rowIndex" value="${0}" scope="session" />
+						<c:forEach items="${billDetailsMap }" var="billDetail" varStatus="item" >
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && billDetail.isRetentionMoneyDeduction}">
 								<tr id="retentionmoneydeductionrow">
 									<td>
@@ -265,8 +285,8 @@
 									<td class="text-center"><span style="cursor:pointer;" onclick="addRetentionMoneyDeductionRow();"><i class="fa fa-plus"></i></span>
 									 <span class="add-padding" onclick="deleteRetentionMoneyDeductionRow(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
 								</tr>
-							</c:if>
-							<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
+								<c:set var="rowIndex" value="${rowIndex+1}" scope="session" />
+							</c:if>							
 						</c:forEach>
 					</c:otherwise>
 				</c:choose>
