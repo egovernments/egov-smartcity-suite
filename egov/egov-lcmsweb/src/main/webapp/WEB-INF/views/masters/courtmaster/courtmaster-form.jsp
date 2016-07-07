@@ -42,7 +42,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Court Master</div>
+					<div class="panel-title">Court</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
@@ -77,7 +77,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea class="form-control text-left patternvalidation"
 								path="address" id="address" name="address"
-								data-pattern="alphabetwithspace" maxlength="256"
+								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="256"
 								required="required" />
 							<form:errors path="address" cssClass="error-msg" />
 						</div>

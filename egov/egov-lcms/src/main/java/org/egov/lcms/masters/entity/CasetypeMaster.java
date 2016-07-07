@@ -45,6 +45,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -58,87 +60,89 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Entity
 @Table(name = "EGLC_CASETYPE_MASTER")
 @Unique(fields = { "code", "caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code",
-		"casetype" }, enableDfltMsg = true)
+        "casetype" }, enableDfltMsg = true)
 @SequenceGenerator(name = CasetypeMaster.SEQ_CASE_TYPE, sequenceName = CasetypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class CasetypeMaster extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1517694643078084884L;
-	public static final String SEQ_CASE_TYPE = "SEQ_EGLC_CASETYPE_MASTER";
+    private static final long serialVersionUID = 1517694643078084884L;
+    public static final String SEQ_CASE_TYPE = "SEQ_EGLC_CASETYPE_MASTER";
 
-	@Id
-	@GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Length(min = 1, max = 8)
-	@Audited
-	@NotNull
-	private String code;
+    @Length(min = 1, max = 25)
+    @Audited
+    @NotNull
+    private String code;
 
-	@NotNull
-	@Length(min = 3, max = 50)
-	@Audited
-	private String caseType;
+    @NotNull
+    @Length(min = 3, max = 50)
+    @Audited
+    private String caseType;
 
-	@Audited
-	@NotNull
-	private Boolean active;
-	
-	@Length(min = 3,max = 256)
-	@SafeHtml
-	private String notes;
-	private Long ordernumber;
+    @Audited
+    @NotNull
+    private Boolean active;
 
-	public Boolean getActive() {
-		return active;
-	}
+    @Length(min = 3, max = 256)
+    @SafeHtml
+    private String notes;
+    
+    @Min(1)
+    @Max(1000)
+    private Long ordernumber;
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
+    public void setActive(final Boolean active) {
+        this.active = active;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getCaseType() {
-		return caseType;
-	}
+    public String getCaseType() {
+        return caseType;
+    }
 
-	public void setCaseType(final String caseType) {
-		this.caseType = caseType;
-	}
+    public void setCaseType(final String caseType) {
+        this.caseType = caseType;
+    }
 
-	public String getNotes() {
-		return notes;
-	}
+    public String getNotes() {
+        return notes;
+    }
 
-	public void setNotes(final String notes) {
-		this.notes = notes;
-	}
+    public void setNotes(final String notes) {
+        this.notes = notes;
+    }
 
-	public Long getOrdernumber() {
-		return ordernumber;
-	}
+    public Long getOrdernumber() {
+        return ordernumber;
+    }
 
-	public void setOrdernumber(final Long ordernumber) {
-		this.ordernumber = ordernumber;
-	}
+    public void setOrdernumber(final Long ordernumber) {
+        this.ordernumber = ordernumber;
+    }
 
 }

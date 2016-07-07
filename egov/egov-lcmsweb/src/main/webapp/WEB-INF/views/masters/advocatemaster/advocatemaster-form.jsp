@@ -42,15 +42,16 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Advocate Master</div>
+					<div class="panel-title">Standing Counsel</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
 								code="lbl.names" />: <span class="mandatory"></span></label>
-						<div class="col-sm-2 col-md-1 add-margin">
+						<div class="col-sm-2 col-md-2 add-margin">
 							<form:select path="salutation" id="salutation"
-								cssClass="form-control" cssErrorClass="form-control error" required="required" >
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -69,8 +70,8 @@
 						<div class="col-sm-3 col-md-2 add-margin">
 							<form:input type="text" path="name" id="name"
 								cssClass="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="100"
-								required="required" />
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="100" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -84,8 +85,10 @@
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.address" /> :</label>
 						<div class="col-sm-3 add-margin">
-						<form:textarea class="form-control text-left patternvalidation" path="address" id="address"
-							name="address"  data-pattern="alphabetwithspace" maxlength="128" />
+							<form:textarea class="form-control text-left patternvalidation"
+								path="address" id="address" name="address"
+								data-pattern="alphanumericwithspecialcharacterswithspace"
+								maxlength="128" />
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -104,7 +107,7 @@
 							<div class="input-group">
 								<span class="input-group-addon">+91</span>
 								<form:input type="text" path="mobileNumber" id="mobileNumber"
-									data-inputmask="'mask': '9999999999'" required="required" 
+									data-inputmask="'mask': '9999999999'" required="required"
 									cssClass="form-control" maxlength="10" data-pattern="numeric"
 									placeholder="Mobile Number" />
 							</div>
@@ -115,7 +118,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="email"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="20"
+								data-pattern="alphanumericwithspecialcharacters" maxlength="50"
 								placeholder="abc@xyz.com" />
 							<form:errors path="email" cssClass="error-msg" />
 						</div>
@@ -126,7 +129,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="panNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="10" required="required" />
+								data-pattern="alphanumeric" maxlength="20" required="required" />
 							<form:errors path="panNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -134,7 +137,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="specilization"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="10" />
+								data-pattern="alphanumericwithspecialcharacters" maxlength="25" />
 							<form:errors path="specilization" cssClass="error-msg" />
 						</div>
 					</div>
@@ -189,7 +192,8 @@
 								code="lbl.bankname" /> :<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="bankName.id" id="bankId"
-								cssClass="form-control" cssErrorClass="form-control error">
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -197,30 +201,30 @@
 							</form:select>
 							<form:errors path="bankName.id" cssClass="error-msg" />
 						</div>
+
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.bankbranch" /> :<span class="mandatory"></span></label>
+
 						<div class="col-sm-3 add-margin">
-							<c:if test="${ mode == 'create'}">
-								<input type="hidden" id="bankBranchId"
-									value="${advocateMaster.bankBranch.id }" />
-								<form:select path="bankBranch.id" id="bankBranch"
-									cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${bankbranchs}" itemValue="id"
-										itemLabel="branchname" />
-								</form:select>
-								<form:errors path="bankBranch.id" cssClass="error-msg" />
-							</c:if>
-							<c:if test="${mode == 'edit'}">
-								<select name="branchname" id="branchname" class="form-control">
-									<c:forEach items="${bankbranchlist}" var="bankBranchDropdown">
-										<option value="${bankBranchDropdown.branchname}">
-											${bankBranchDropdown.branchname}</option>
-									</c:forEach>
-								</select>
-							</c:if>
+							<%-- <c:if test="${ mode == 'create' && mode=='edit'}"> --%>
+							<input type="hidden" id="bankBranchId"
+								value="${advocateMaster.bankBranch.id }" />
+							<form:select path="bankBranch.id" id="bankBranch"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+
+								<c:forEach items="${bankbranchlist}" var="bankBranch">
+									<option value="${bankBranch.branchname}">
+										${bankBranch.branchname}</option>
+								</c:forEach>
+
+							</form:select>
+							<form:errors path="bankBranch" cssClass="error-msg" />
+
+
 						</div>
 					</div>
 					<div class="form-group" id="b2details">
@@ -229,7 +233,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="bankaccount"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="50" />
+								data-pattern="number" maxlength="20" />
 							<form:errors path="bankaccount" cssClass="error-msg" />
 						</div>
 
@@ -240,7 +244,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="ifsccode"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="11" />
+								data-pattern="alphanumeric" maxlength="20" />
 							<form:errors path="ifsccode" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -248,32 +252,11 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="tinumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="10" />
+								data-pattern="alphanumeric" maxlength="20" />
 							<form:errors path="tinumber" cssClass="error-msg" />
 						</div>
 
 					</div>
-					<!-- <div class="form-group">
-							
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.fee" /> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input path="fee"
-								class="form-control text-right patternvalidation"
-								data-pattern="number" />
-							<form:errors path="fee" cssClass="error-msg" />
-						</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.remarks" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input path="remarks"
-									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="256" />
-								<form:errors path="remarks" cssClass="error-msg" />
-							</div>
-
-						</div> -->
 					<input type="hidden" name="advocateMaster"
-						value="${advocateMaster.id}" />
+						value="${advocateMaster.id}" /> <input type="hidden" name="mode"
+						value="${mode}" />

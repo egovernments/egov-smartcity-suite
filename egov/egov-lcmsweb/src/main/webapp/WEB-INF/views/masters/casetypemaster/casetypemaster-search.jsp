@@ -48,7 +48,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search Case Type Master</div>
+						<div class="panel-title">Search Case Type </div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -57,7 +57,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="code"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="8" />
+									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="8" />
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-3 control-label text-right"><spring:message
@@ -65,7 +65,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="caseType"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="50" />
+									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="50" />
 								<form:errors path="caseType" cssClass="error-msg" />
 							</div>
 						</div>
@@ -103,7 +103,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Case Type Master
+	<div class="col-md-12 table-header text-left">Case Type
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"

@@ -187,7 +187,7 @@ public class LcmsConstants {
     public static final String alphaNumericwithSlashes = "[0-9a-zA-Z/]+";
     public static final String email = "^[\\w\\.-]+@([\\w\\-]+\\.)+[a-zA-Z]{2,4}$";
     public static final String numericiwithMixedChar = "[0-9-,]+";
-    public static final String lengthCheckForMobileNo = "[0-9]{10,13}";
+    public static final String lengthCheckForMobileNo = "^((\\+)?(\\d{2}[-]))?(\\d{10}){1}?$";
     public static final String numericiValForPhoneNo = "[0-9-,()OR]+";
     public static final String orderNumberFormat = "[0-9a-zA-Z-&/(){}\\[\\]]+";
     public static final String dateFormat = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";

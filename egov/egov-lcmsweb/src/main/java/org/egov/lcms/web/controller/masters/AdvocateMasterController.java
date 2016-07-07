@@ -126,7 +126,7 @@ public class AdvocateMasterController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
         model.addAttribute("mode", "edit");
-        prepareNewForm(model);
+
         if (advocateMaster.getBankName() != null && advocateMaster.getBankBranch() != null) {
             final Bankbranch bankbranch = bankBranchService.findById(advocateMaster.getBankBranch().getId(), false);
             final List<Bankbranch> bankbranchList = new ArrayList<Bankbranch>();
@@ -134,9 +134,10 @@ public class AdvocateMasterController {
             advocateMaster.setBankBranch(bankbranch);
             model.addAttribute("bankbranchlist", bankbranchList);
         }
-
+        prepareNewForm(model);
         model.addAttribute("advocateMaster", advocateMaster);
         return ADVOCATEMASTER_EDIT;
+
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)

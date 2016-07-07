@@ -68,7 +68,7 @@ public class PetitionTypeMasterJsonAdaptor implements JsonSerializer<PetitionTyp
             else
                 jsonObject.addProperty("code", "");
             if (petitionTypeMaster.getActive() != null)
-                jsonObject.addProperty("active", petitionTypeMaster.getActive());
+                jsonObject.addProperty("active", petitionTypeMaster.getActive()== true ? "YES" : "NO");
             else
                 jsonObject.addProperty("active", "");
 

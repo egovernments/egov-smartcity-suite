@@ -126,13 +126,15 @@ $('#bankId').blur(function(){
 			return;
 			} else {
 				$.ajax({
-					url: "/lcms/ajax-getAllBankBranchsByBank",     
+					url: "/lcms/ajax-getAllBankBranchsByBank",    
+					
 				type: "GET",
 				data: {
 					'bankId' : $('#bankId').val()
 				},
 				dataType: "json",
 				success: function (response) {
+					bootbox.alert("mode=="+$('#mode').val());
 				    console.log("success"+response);
 					$('#bankBranch').empty();
 					$('#bankBranch').append($("<option value=''>Select from below</option>"));
