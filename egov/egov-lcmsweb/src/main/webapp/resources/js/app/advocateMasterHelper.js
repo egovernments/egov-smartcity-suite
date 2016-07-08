@@ -134,7 +134,6 @@ $('#bankId').blur(function(){
 				},
 				dataType: "json",
 				success: function (response) {
-					bootbox.alert("mode=="+$('#mode').val());
 				    console.log("success"+response);
 					$('#bankBranch').empty();
 					$('#bankBranch').append($("<option value=''>Select from below</option>"));

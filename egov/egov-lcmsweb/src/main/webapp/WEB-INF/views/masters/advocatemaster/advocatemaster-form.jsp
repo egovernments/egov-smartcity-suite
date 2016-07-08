@@ -258,5 +258,4 @@
 
 					</div>
 					<input type="hidden" name="advocateMaster"
-						value="${advocateMaster.id}" /> <input type="hidden" name="mode"
-						value="${mode}" />
+						value="${advocateMaster.id}" /> 

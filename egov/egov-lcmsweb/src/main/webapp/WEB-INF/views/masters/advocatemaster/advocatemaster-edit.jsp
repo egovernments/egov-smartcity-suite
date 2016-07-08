@@ -47,7 +47,6 @@
 	<input type="hidden" id="bankBranchId"
 		value="${advocateMaster.bankBranch.id }" />
 	<input type="hidden" name="advocateMaster" value="${advocateMaster.id}" />
-	<input type="hidden" id="mode" value="${mode}" />
 	</div>
 	</div>
 	</div>
