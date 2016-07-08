@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-  <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <form:form role="form" action="search" modelAttribute="UOMCategory"
 	id="UOMCategorysearchform"
@@ -49,16 +49,16 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title"><spring:message
-										code="title.uomcategory.search" /></div>
+						<div class="panel-title">
+							<spring:message code="title.uomcategory.search" />
+						</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.category" /> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="category" id="category"
-									class="form-control">
+								<form:select path="category" id="category" class="form-control">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -68,7 +68,7 @@
 								<form:errors path="category" cssClass="error-msg" />
 							</div>
 						</div>
-						<input type="hidden" id="mode" name="mode" value="${mode}" />
+
 						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
@@ -83,13 +83,14 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" id="mode" name="mode" value="${mode}" />
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message
-										code="title.uomcategory.searchresult" /> </div>
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="title.uomcategory.searchresult" />
+	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
-			id="resultTable">
+		<table class="table table-bordered table-hover " id="resultTable">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.category" /></th>

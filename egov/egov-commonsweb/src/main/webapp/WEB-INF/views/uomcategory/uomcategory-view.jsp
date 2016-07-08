@@ -37,8 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-  <%--
+
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -77,37 +77,60 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
-  <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<div class="main-content">
-	<div class="row">
-		 <div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title"><spring:message
-								code="title.uom.category"/></div>
-				</div>
-				<div class="panel-body custom">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.category" />
-						</div>
-						 <div class="col-sm-3 add-margin view-content">
-							${UOMCategory.category}</div> 
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.narration" />
-						</div>
-					    <div class="col-sm-3 add-margin view-content">
-							${UOMCategory.narration}</div>
-					</div>
-				</div>
+<form:form role="form" action="search" modelAttribute="UOMCategory"
+	id="UOMCategorysearchform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<input type="hidden" id="mode" name="mode" value="${mode}" />
+
+</form:form>
+<div class="row display-hide report-section">
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover" id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.category" /></th>
+					<th><spring:message code="lbl.narration" /></th>
+				</tr>
+			</thead>
+		</table>
+		<div class="form-group">
+			<div class="text-center">
+				<a href='javascript:void(0)' class='btn btn-primary'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
-		</div> 
-	</div>
-	<div class="row text-center">
-		<div class="add-margin">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()">Close</a>
 		</div>
 	</div>
+
+</div>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/app/js/uomCategoryHelper.js'/>"></script>

@@ -143,7 +143,10 @@ public class UOMCategoryController {
         model.addAttribute("categories", uomCategoryService.findAll());
         prepareNewForm(model);
         model.addAttribute("UOMCategory", uomCategory);
-        return UOMCATEGORY_SEARCH;
+        if (mode.equals("view"))
+            return UOMCATEGORY_VIEW;
+        else
+            return UOMCATEGORY_SEARCH;
     }
 
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
