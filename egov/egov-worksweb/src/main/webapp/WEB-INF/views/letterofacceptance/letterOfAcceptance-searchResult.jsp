@@ -57,6 +57,7 @@
 					<th><spring:message code="lbl.contractor.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th>
 					<th><spring:message code="lbl.status" /></th>
+					<th><spring:message code="lbl.currentowner" /></th>
 					<th><spring:message code="lbl.action" /></th>
 				</tr>
 			</thead>

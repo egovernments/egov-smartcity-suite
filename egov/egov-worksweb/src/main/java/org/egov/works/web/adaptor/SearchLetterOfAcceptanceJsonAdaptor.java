@@ -42,7 +42,10 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -52,6 +55,10 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkOrder> {
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @Override
     public JsonElement serialize(final WorkOrder workOrder, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
@@ -72,25 +79,37 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                 jsonObject.addProperty("status", workOrder.getEgwStatus().getCode());
             else
                 jsonObject.addProperty("status", "");
-            if (workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+            if (workOrder.getWorkOrderEstimates().get(0).getEstimate() != null)
                 jsonObject.addProperty("estimateNumber",
-                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
+                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getEstimateNumber());
             else
-                jsonObject.addProperty("estimateNumber",
-                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
+                jsonObject.addProperty("estimateNumber", "");
+            if (workOrder.getWorkOrderEstimates().get(0).getEstimate() != null)
+                jsonObject.addProperty("nameOfWork",
+                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getName());
+            else
+                jsonObject.addProperty("nameOfWork", "");
 
             if (workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
-                jsonObject.addProperty("nameOfWork",
-                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
+                jsonObject.addProperty("lineEstimateId",
+                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate()
+                                .getId());
             else
-                jsonObject.addProperty("nameOfWork",
-                        workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
-
-            jsonObject.addProperty("lineEstimateId",
-                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
+                jsonObject.addProperty("lineEstimateId", "");
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());
+
+            if (workOrder.getState() != null) {
+                if (workOrder.getEgwStatus() != null
+                        && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
+                                || workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
+                    jsonObject.addProperty("currentowner", "NA");
+                else
+                    jsonObject.addProperty("currentowner",
+                            worksUtils.getApproverName(workOrder.getState().getOwnerPosition().getId()));
+            } else
+                jsonObject.addProperty("currentowner", "NA");
 
         }
         return jsonObject;

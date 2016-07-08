@@ -108,7 +108,7 @@ function callAjaxSearch() {
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
-					$('td:eq(8)', row)
+					$('td:eq(9)', row)
 							.html(
 									'<select id="actionDropdown" class="form-control" onchange="renderAction('
 											+ data.id
@@ -147,6 +147,8 @@ function callAjaxSearch() {
 				}, {
 					"data" : "status",
 					"sClass" : "text-center","autoWidth": "false"
+				}, {
+					"data" : "currentowner","sClass" : "text-left" 
 				}, {
 					"data" : "",
 					"sClass" : "text-left","width": "7%"
