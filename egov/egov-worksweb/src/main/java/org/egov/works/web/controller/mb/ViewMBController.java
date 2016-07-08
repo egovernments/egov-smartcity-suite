@@ -42,6 +42,8 @@ package org.egov.works.web.controller.mb;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +58,9 @@ public class ViewMBController {
     @Autowired
     private MBHeaderService mBHeaderService;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/view/{mbheaderId}", method = RequestMethod.GET)
     public String showSearchWorkOrder(@PathVariable final String mbheaderId, final Model model) {
         final MBHeader mBHeader = mBHeaderService.getMBHeaderById(Long.parseLong(mbheaderId));
@@ -66,7 +71,10 @@ public class ViewMBController {
                 if (prevCumulativeAmount != null)
                     mBDetail.getWorkOrderActivity().setPrevCumlvQuantity(prevCumulativeAmount);
             }
+        mBHeader.setDocumentDetails(worksUtils.findByObjectIdAndObjectType(mBHeader.getId(), WorksConstants.MBHEADER));
         model.addAttribute("mbHeader", mBHeader);
+        model.addAttribute("documentDetails",mBHeader.getDocumentDetails());
+        model.addAttribute("mode", "view");
         return "mbheader-view";
     }
 
