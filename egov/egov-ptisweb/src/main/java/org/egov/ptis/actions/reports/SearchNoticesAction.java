@@ -143,6 +143,9 @@ public class SearchNoticesAction extends SearchFormAction {
     protected FileStoreService fileStoreService;
     @Autowired
     private BoundaryService boundaryService;
+    private String municipal;
+    private String district;
+    private String reportHeader;
   
     public SearchNoticesAction() {
         super();
@@ -172,7 +175,37 @@ public class SearchNoticesAction extends SearchFormAction {
                     + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
                     + "House Number : " + houseNumber);
         }
-
+          
+        if (noticeType!="-1") {
+        	reportHeader=reportHeader+", NoticeType: " + noticeType;
+        }
+		if (!ownerName.isEmpty()){
+				reportHeader=reportHeader+ ", OwnerName: "+ownerName ;
+	    }
+		if(zoneId!=-1){
+			reportHeader=reportHeader+", Zone: " +getBoundary(zoneId);
+		}
+		if (wardId!=-1){
+			reportHeader=reportHeader+", Ward: "+ getBoundary(wardId);
+		}
+		if(!propertyType.equalsIgnoreCase("-1")){
+			reportHeader=reportHeader+", PropertyType: " +getPropType(propertyType);
+		}
+		if(!noticeNumber.isEmpty()){
+			reportHeader=reportHeader+", noticeNum: "+noticeNumber;
+		}
+		if(noticeFromDate!=null) {
+			reportHeader=reportHeader+", noticeDateFrom: "+ noticeFromDate;
+	    }
+		if(noticeToDate!=null) {
+			reportHeader=reportHeader+", noticeDateTo: "+ noticeToDate;
+	    }
+		if(!indexNumber.isEmpty()){
+			reportHeader=reportHeader+", propertyId: "+indexNumber;
+	    }
+		if (!houseNumber.isEmpty()){
+			reportHeader=reportHeader+", HouseNo: " +houseNumber;
+		}
         target = "searchresult";
         super.search();
         noticeList = searchResult.getList();
@@ -364,6 +397,10 @@ public class SearchNoticesAction extends SearchFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
         super.prepare();
+        municipal=getSession().get("citymunicipalityname").toString();
+        district=getSession().get("districtName").toString();
+        district=district.substring(0,1)+district.substring(1, district.length()).toLowerCase()+ " District";
+        reportHeader=municipal+", "+district;
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ZONE.toUpperCase(), REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
@@ -896,4 +933,29 @@ public class SearchNoticesAction extends SearchFormAction {
     public void setPartNo(final String partNo) {
         this.partNo = partNo;
     }
+
+	public String getMunicipal() {
+		return municipal;
+	}
+
+	public void setMunicipal(String municipal) {
+		this.municipal = municipal;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+
+	public String getReportHeader() {
+		return reportHeader;
+	}
+
+	public void setReportHeader(String reportHeader) {
+		this.reportHeader = reportHeader;
+	}
+
 }

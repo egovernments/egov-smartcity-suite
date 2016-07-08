@@ -69,7 +69,9 @@ public class ReportInfo {
     private BigDecimal arrColl;
     private BigDecimal currColl;
     private BigDecimal totalColl;
-
+    private String municipal;
+    private String district;
+    
     public String getCurrInstallment() {
         return currInstallment;
     }
@@ -446,4 +448,19 @@ public class ReportInfo {
         this.propertyWiseArrearInfoList = propertyWiseArrearInfoList;
     }
 
+	public String getMunicipal() {
+		return municipal;
+	}
+
+	public void setMunicipal(String municipal) {
+		this.municipal = municipal;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
 }
