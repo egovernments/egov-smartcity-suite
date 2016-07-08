@@ -41,8 +41,11 @@ package org.egov.lcms.web.controller.ajax;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -65,7 +68,7 @@ public class AjaxLegalCaseController {
     private DepartmentService departmentService;
 
     @Autowired
-    private PositionMasterService positionMasterService;
+    private AssignmentService assignmentService;
 
     @Autowired
     private AdvocateMasterService advocateMasterService;
@@ -89,9 +92,14 @@ public class AjaxLegalCaseController {
     public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
             @ModelAttribute("legalcase") @RequestParam final String departmentName,
             @RequestParam final String positionName) {
+    	List<Position> poslist=new ArrayList<Position>();
         final Department deptObj = departmentService.getDepartmentByName(departmentName);
-        return null;
-        //        return positionMasterService.getPageOfPositionsByDeptAndName(deptObj.getId(), positionName);
+        List<Assignment>assignList=assignmentService.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),positionName);
+        for(Assignment assign:assignList)  
+        {
+        	poslist.add(assign.getPosition());
+        }
+        return poslist;
 
 
     }

@@ -57,7 +57,6 @@ public class CaseStageService {
     @Autowired
     public CaseStageService(final CaseStageRepository caseStageRepository) {
         this.caseStageRepository = caseStageRepository;
-
     }
 
     @Transactional

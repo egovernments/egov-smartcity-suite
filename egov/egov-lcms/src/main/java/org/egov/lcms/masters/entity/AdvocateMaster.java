@@ -82,6 +82,7 @@ public class AdvocateMaster extends AbstractAuditable {
     private Long id;
 
     @Audited
+    @Length(max = 20)
     private String salutation;
 
     @NotNull
@@ -99,12 +100,13 @@ public class AdvocateMaster extends AbstractAuditable {
     private String contactPhone;
 
     @Audited
+    @Length(max = 20)
     private String specilization;
 
     @Audited
-    @Length(min = 10, max = 10)
+    @Length(max = 10)
     @SafeHtml
-    @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo, message = "Mobile Number is Invalid")
+    @Pattern(regexp = LcmsConstants.lengthCheckForMobileNo)
     private String mobileNumber;
 
     @Audited
@@ -125,7 +127,7 @@ public class AdvocateMaster extends AbstractAuditable {
     private String firmName;
 
     @NotNull
-    @Length(max = 10)
+    @Length(max = 20)
     @Audited
     private String panNumber;
 
@@ -140,15 +142,15 @@ public class AdvocateMaster extends AbstractAuditable {
     @Audited
     private String paymentmode;
 
-    @Length(max = 50)
+    @Length(max = 20)
     @Audited
     private String bankaccount;
 
-    @Length(max = 11)
+    @Length(max = 20)
     @Audited
     private String ifsccode;
 
-    @Length(max = 10)
+    @Length(max = 20)
     @Audited
     private String tinumber;
 

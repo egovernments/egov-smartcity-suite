@@ -82,7 +82,7 @@ public class LegalcaseDocuments extends AbstractPersistable<Long> {
     private String documentName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "eglc_documents", joinColumns = @JoinColumn(name = "legalcaseDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "eglc_legalcase_filestore", joinColumns = @JoinColumn(name = "legalcaseDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;

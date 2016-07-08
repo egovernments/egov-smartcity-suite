@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form  action="" modelAttribute="legalCaseReportResult" name="searchlegalcaseForm"
+		<form:form  method="get" modelAttribute="legalCaseReportResult" name="searchlegalcaseForm"
 			id="searchlegalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
@@ -60,12 +60,12 @@
 								<label for="field-1" class="col-sm-3 control-label">Case Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="caseNumber" class="form-control patternvalidation" 
-									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="app-mobno"/>
+									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="caseNumber"/>
 								</div>
 								<label for="field-1" class="col-sm-2 control-label">LegalCase Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="lcNumber" class="form-control patternvalidation" 
-									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="app-mobno"/>
+									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="lcNumber"/>
 								</div>
 
 							
@@ -138,10 +138,31 @@
 					</div>
 					</div>
 		</form:form>
+		<div class="row display-hide report-section">
+				
+				<div class="col-md-12 form-group">
+					<table
+						class="table table-bordered datatable dt-responsive table-hover"
+						id="legalCaseResults">
+						<thead></thead>
+						<tfoot id="report-footer">
+							<tr>
+								<td><b>
+								<td></td>
+								<!-- <td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td> -->
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
 		</div>
 		</div>
 		
-	<div class="row" >
+	<!-- <div class="row" >
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
@@ -153,29 +174,30 @@
 
 	</table>
 	</div>
-</div>
+</div> -->
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	type="text/javascript"></script>
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+	src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 <script src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

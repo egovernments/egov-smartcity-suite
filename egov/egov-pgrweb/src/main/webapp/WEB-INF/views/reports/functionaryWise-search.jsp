@@ -60,7 +60,7 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when"/></label>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.period"/></label>
 								<div class="col-sm-6 add-margin">
 									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" 
 									onchange="showChangeDropdown(this);">
@@ -110,7 +110,7 @@
 						<thead></thead> 
 						<tfoot id="report-footer">
 							<tr>
-								<td><b><spring:message code="lbl.total"/></b></td>
+								<td><b><spring:message code="lbl.pagetotal"/></b></td>
 						    	<td></td>
 						    	<td></td>
 						    	<td></td>

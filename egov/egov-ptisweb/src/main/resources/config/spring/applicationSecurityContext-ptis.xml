@@ -74,6 +74,17 @@
 				<security:filter-chain pattern="/reports/getRegionHeirarchyByType" filters="none" />
 				<security:filter-chain pattern="/reports/ulbWiseCollectionReport-form" filters="none" />  
 				<security:filter-chain pattern="/reports/ulbWiseDcbReport-form" filters="none" />  
+				<security:filter-chain pattern="/reports/collectionSummaryReport-wardWise.action" filters="none" /> 
+				<security:filter-chain pattern="/reports/collectionSummaryReport-list.action" filters="none" />
+				<security:filter-chain pattern="/reports/collectionSummaryReport-localityWise.action" filters="none" />
+				<security:filter-chain pattern="/reports/collectionSummaryReport-blockWise.action" filters="none" />
+				<security:filter-chain pattern="/reports/collectionSummaryReport-zoneWise.action" filters="none" />
+				<security:filter-chain pattern="/reports/dCBReport-search.action" filters="none" />  
+				<security:filter-chain pattern="/reports/ajaxDCBReport-getBoundaryWiseDCBList.action" filters="none" />  
+				<security:filter-chain pattern="/report/dailyCollection" filters="none" />
+				<security:filter-chain pattern="/report/dailyCollection/result" filters="none" />
+				<security:filter-chain pattern="/report/currentInstDCB" filters="none" />
+				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" />  
 					<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
 				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />

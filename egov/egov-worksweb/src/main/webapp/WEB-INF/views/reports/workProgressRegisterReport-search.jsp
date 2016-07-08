@@ -51,7 +51,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.ward" /></th>
+					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.location" /></th>
 					<th><spring:message code="lbl.typeofslum" /></th>
 					<th><spring:message code="lbl.beneficiaries" /></th>

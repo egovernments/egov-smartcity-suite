@@ -57,19 +57,22 @@ jQuery(document).ready(function() {
 				"aButtons" : [ 
 				               {
 					             "sExtends": "pdf",
-                                 "sTitle": "Current Installment DCB Report",
+					             "sPdfMessage": "Current Installment DCB Report",
+                                 "sTitle": jQuery('#pdfTitle').val(),
                                  "sPdfOrientation": "landscape"
 				                },
 				                {
 						             "sExtends": "xls",
-	                                 "sTitle": "Current Installment DCB Report",
+						             "sPdfMessage": "Current Installment DCB Report",
+	                                 "sTitle": jQuery('#pdfTitle').val(),
                             	     "fnClick": function ( nButton, oConfig, oFlash ) {
                             	    	 reCalculateTotalFooterWhenExport('currInstDCBReport-table');
                             		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
                             		 }
 					             },{
 						             "sExtends": "print",
-	                                 "sTitle": "Current Installment DCB Report"
+						             "sPdfMessage": "Current Installment DCB Report",
+	                                 "sTitle": jQuery('#pdfTitle').val(),
 					               }],
 				
 			},

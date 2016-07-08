@@ -147,7 +147,6 @@ public class CollectionSummaryAction extends ReportFormAction {
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.STATUS_OF_RECEIPTS));
         serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
         serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
-        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_BILLING);
         return INDEX;
     }
 

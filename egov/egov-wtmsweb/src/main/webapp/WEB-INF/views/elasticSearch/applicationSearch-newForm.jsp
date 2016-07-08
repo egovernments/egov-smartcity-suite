@@ -160,8 +160,10 @@
 								><spring:message code='lbl.search' /></button>
 								
 							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset"/></button>
+								<c:if test="${ !citizenRole }">
 							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
+								class="btn btn-default" onclick="window.close()"><spring:message code='lbl.close' /></a>
+								</c:if>
 						</div>
 				</div>
 

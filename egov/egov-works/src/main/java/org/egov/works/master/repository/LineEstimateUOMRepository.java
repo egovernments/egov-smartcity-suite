@@ -37,37 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.web.adaptor;
+package org.egov.works.master.repository;
 
-import java.lang.reflect.Type;
+import org.egov.works.models.masters.LineEstimateUOM;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.lcms.masters.entity.CourtTypeMaster;
+import java.util.List;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+@Repository
+public interface LineEstimateUOMRepository extends JpaRepository<LineEstimateUOM, Long> {
 
-public class CourttypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaster> {
     @Override
-    public JsonElement serialize(final CourtTypeMaster courttypeMaster, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (courttypeMaster != null) {
-            if (courttypeMaster.getCourtType() != null)
-                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
-            else
-                jsonObject.addProperty("courtType", "");
-            if (courttypeMaster.getCode() != null)
-                jsonObject.addProperty("code", courttypeMaster.getCode());
-            else
-                jsonObject.addProperty("code", "");
-            if (courttypeMaster.getActive() != null)
-                jsonObject.addProperty("active", courttypeMaster.getActive() == true ? "YES" : "NO");
-            else
-                jsonObject.addProperty("active", "");
-            jsonObject.addProperty("id", courttypeMaster.getId());
-        }
-        return jsonObject;
-    }
+    List<LineEstimateUOM> findAll();
+
 }

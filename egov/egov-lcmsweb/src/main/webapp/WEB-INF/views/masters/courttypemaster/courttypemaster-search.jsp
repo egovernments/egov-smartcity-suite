@@ -48,7 +48,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search Court Type Master</div>
+						<div class="panel-title">Search Court Type </div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -100,7 +100,7 @@
 		</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Court Type Master
+	<div class="col-md-12 table-header text-left">Court Type
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"

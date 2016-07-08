@@ -97,11 +97,3 @@
 
 	</tbody>
 </table>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons">Remarks:</label>
-	<div class="col-sm-3 add-margin">
-		<form:textarea class="form-control" path="remarks" id="remarks"
-			name="remarks" maxlength="256" />
-		<form:errors path="remarks" cssClass="add-margin error-msg" />
-	</div>
-</div>

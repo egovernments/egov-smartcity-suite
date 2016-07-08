@@ -157,7 +157,7 @@ function validate()
 							name="revenueId" headerKey="-1"
 							headerValue="%{getText('collectionReport.criteria.glcode.all')}"
 							cssClass="selectwk" list="dropdownData.revenueHeads"
-							value="%{revenueId}" listKey="id" listValue="glcode" /></td>
+							value="%{revenueId}" listKey="id" listValue='name + "  - " + glcode' /></td>
 					<td class="bluebox"><s:text
 					 name="searchreceipts.criteria.status" /></td>
 					<td class="bluebox"><s:select id="searchStatus"

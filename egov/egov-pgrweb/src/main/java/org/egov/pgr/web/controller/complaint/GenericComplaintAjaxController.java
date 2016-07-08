@@ -103,7 +103,7 @@ public class GenericComplaintAjaxController {
     @RequestMapping(value = { "pgrreport/complaintTypes", "search/complaintTypes",
             "search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
-        return complaintTypeService.findAllByNameLike(complaintTypeName);
+        return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
     @RequestMapping(value = "escalationTime/ajax-approvalDesignations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)

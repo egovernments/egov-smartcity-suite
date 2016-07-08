@@ -48,7 +48,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search Advocate Master</div>
+						<div class="panel-title">Search Standing Counsel</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -57,7 +57,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="name"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="100" />
+									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="100" />
 								<form:errors path="name" cssClass="error-msg" />
 							</div>
 							<label class="col-sm-3 control-label text-right"><spring:message
@@ -75,7 +75,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="email"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="0" />
+									data-pattern="alphanumericwithspecialcharacters" maxlength="0" />
 								<form:errors path="email" cssClass="error-msg" />
 							</div>
 							</div>
@@ -96,7 +96,7 @@
 		</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Advocate Master
+	<div class="col-md-12 table-header text-left">Standing Counsel
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"

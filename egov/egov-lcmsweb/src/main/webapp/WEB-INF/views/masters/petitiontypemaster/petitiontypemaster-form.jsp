@@ -42,7 +42,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Petition Type Master</div>
+					<div class="panel-title">Petition Type</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
@@ -77,7 +77,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="petitionType"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="128"
+								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128"
 								required="required" />
 							<form:errors path="petitionType" cssClass="error-msg" />
 						</div>

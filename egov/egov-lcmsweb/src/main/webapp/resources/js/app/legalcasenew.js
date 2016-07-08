@@ -39,32 +39,48 @@
  */
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
-	$("#bipartisanDetails[0].governmentDepartment").prop("disabled", true);
 	$("#seniordov1").hide(); 
     $("#seniordov2").hide(); 
     $("#seniordov3").hide(); 
-    var index=document.getElementById('petitionDetails').rows.length-1;
-    
-    $("#addpetRowId").click(function(){	
-    	addRow();
+    $("#petitionDetails tbody tr").each(function( index ) {
+    	var $this = $(this);
+        $this.find("select, button").prop("disabled", true);
+    });
+    $("#respodantDetails tbody tr").each(function( index ) {
+    	var $this = $(this);
+        $this.find("select, button").prop("disabled", true);
     });
     
-
-    
- 	
-	
+    $(".btn-primary").click(function(event){
+		
+		var caseNumber =$('#casenumber').val();
+		var lcnumber=$('#lcNumber').val();
+		var lcNumberType=$('#lcNumberType').val();
+		if(caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
+			{
+			bootbox.alert("Select Case Number Year ");
+			return false;
+			}
+		if(lcNumberType =='MANUAL'){
+			if(lcnumber=="" ||  lcnumber ==null )
+			{
+				bootbox.alert("Please enter Legal Case Number");
+				return false;
+			}
+			if( lcnumber !=null && $('#finwpYear').val() =='' || $('#finwpYear').val() ==null)
+			{
+				bootbox.alert("Select Legal Case Number Year ");
+				return false;
+			}
+		}
+			document.forms[0].submit;
+			return true;
+			event.preventDefault();
+		
+	});
 	
 });
-function enableGovtDept()
-{
-	var govtcheck=$('#activeid').val() ;
-	if(govtcheck==true)
-		{
-		$("#bipartisanDetails[0].governmentDepartment").prop("disabled", false);
 
-		}
-	
-}
 
 function checkLCType()
 {
@@ -82,27 +98,164 @@ document.getElementById("wpYear").value="--select---";
  
 }
 	
-function addRow()
+function addPetRow()
 {     
-			alert('addrowin');
-	var index=document.getElementById('petitionDetails').rows.length-1;
-	    	var tableObj=document.getElementById('petitionDetails');
+			var tableObj=document.getElementById('petitionDetails');
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
-			tbody.appendChild(rowObj);
-			/*var rowno = parseInt(tableObj.rows.length)-2;
-			document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].value=false;								
-			document.forms["newlegalcaseForm"].name[lastRow-1].value="";
-			document.forms["newlegalcaseForm"].address[lastRow-1].value="";
-			document.forms["newlegalcaseForm"].contactNumber[lastRow-1].value="";
-			//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].value="";
-		    document.forms["newlegalcaseForm"].isrespondentgovernment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].isrespondentgovernment");
-			document.forms["newlegalcaseForm"].name[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].name");
-			document.forms["newlegalcaseForm"].address[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].address");
-          document.forms["newlegalcaseForm"].contactNumber[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].contactNumber");
-          document.forms["newlegalcaseForm"].governmentDepartment[lastRow-1].setAttribute("name","bipartisanDetails["+index+"].governmentDepartment");
-		//document.forms["newlegalcaseForm"].feeDetailId[lastRow-1].setAttribute("name","feedetailsList["+index+"].id");
-			index++;*/
+			
+			nextIdx=(lastRow-1);
+			jQuery(rowObj).find("input, select").each(
+					function() {
+
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('[0]', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[0]', '['
+											+ nextIdx + ']');
+								}
+					});  
+		   });
+
+		   tbody.appendChild(rowObj);
+		   
+}
+
+function addResRow()
+{     
+	var index=document.getElementById('respodantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respodantDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			jQuery(rowObj).find("input, select").each(
+					function() {
+
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('[0]', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[0]', '['
+											+ nextIdx + ']');
+								}
+					});  
+		   });
+
+		   tbody.appendChild(rowObj);
 		
  }
+
+$(document).on('click',"#pet_delete_row",function (){
+	var table = document.getElementById('petitionDetails');
+    var rowCount = table.rows.length;
+    var counts = rowCount - 1;
+    var k = 2;
+    var m;
+    if(counts==1)
+	{
+		bootbox.alert("This Row cannot be deleted");
+		return false;
+	}else{	
+
+		$(this).closest('tr').remove();		
+		
+		jQuery("#petitionDetails tr:eq(1) td span[alt='AddF']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#petitionDetails tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+			  });
+			
+			idx++;
+		});
+		
+		return true;
+	}
+});
+
+function onChangeofPetitioncheck()
+{
+	 $("#petitionDetails tbody tr").each(function( index ) {
+		 var $this = $(this);
+	        
+	        if ( $('#activeid').val() == "true") {
+	        	$this.find("select, button").prop("disabled", false);
+	        }
+	        if ( !($('#activeid').val()) == "false") {
+	        	$this.find("select, button").prop("disabled", true);
+	        }
+
+	    });	
+}
+function onChangeofRespodantcheck()
+{
+	 $("#respodantDetails tbody tr").each(function( index ) {
+		 var $this = $(this);
+	        
+	        if ( $('#activeid').val() == "true") {
+	        	$this.find("select, button").prop("disabled", false);
+	        }
+	        if ( !($('#activeid').val()) == "false") {
+	        	$this.find("select, button").prop("disabled", true);
+	        }
+
+	    });	
+}
+
+$(document).on('click',"#res_delete_row",function (){
+	var table = document.getElementById('respodantDetails');
+    var rowCount = table.rows.length;
+    var counts = rowCount - 1;
+    var j = 2;
+    var i;
+    if(counts==1)
+	{
+		bootbox.alert("This Row cannot be deleted");
+		return false;
+	}else{	
+
+		$(this).closest('tr').remove();		
+		
+		jQuery("#respodantDetails tr:eq(1) td span[alt='AddF']").show();
+		//starting index for table fields
+		var idx=0;
+		
+		//regenerate index existing inputs in table row
+		jQuery("#respodantDetails tr:not(:first)").each(function() {
+			jQuery(this).find("input, select").each(function() {
+			   jQuery(this).attr({
+			      'id': function(_, id) {  
+			    	  return id.replace(/\[.\]/g, '['+ idx +']'); 
+			       },
+			      'name': function(_, name) {
+			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+			      },
+			   });
+			   
+			  
+			   
+		    });
+			idx++;
+		});
+		
+		return true;
+	}
+});

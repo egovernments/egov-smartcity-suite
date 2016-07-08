@@ -98,11 +98,6 @@ public class PetitionTypeMasterService {
         return petitionTypeMasterRepository.findByCourtType(courtType);
     }
 
-    /*
-     * public List<PetitionTypeMaster> search(final PetitionTypeMaster
-     * petitionTypeMaster) { return petitionTypeMasterRepository.findAll(); }
-     */
-
     public List<PetitionTypeMaster> search(final PetitionTypeMaster petitionTypeMaster) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -159,7 +154,7 @@ public class PetitionTypeMasterService {
         }
         return resultList;
     }
-    
+
     public List<PetitionTypeMaster> getPetitiontypeList()
     {
         return petitionTypeMasterRepository.findAll();

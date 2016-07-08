@@ -44,7 +44,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Judgment Type</div>
+					<div class="panel-title">Judgment Type Details</div>
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">

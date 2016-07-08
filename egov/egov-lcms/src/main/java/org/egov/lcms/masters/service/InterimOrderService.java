@@ -93,11 +93,6 @@ public class InterimOrderService {
         return interimOrderRepository.findOne(id);
     }
 
-    /*
-     * public List<InterimOrder> search(final InterimOrder interimOrder) {
-     * return interimOrderRepository.findAll(); }
-     */
-
     public List<InterimOrder> search(final InterimOrder interimOrder) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -119,7 +114,7 @@ public class InterimOrderService {
                 predicates.add(cb.like(
                         cb.lower(interimorder
                                 .get(InterimOrder.getDeclaredSingularAttribute("interimOrderType", String.class))),
-                        interimOrderType));
+                                interimOrderType));
             }
             if (interimOrder.getCode() != null) {
                 final String code = "%" + interimOrder.getCode().toLowerCase() + "%";

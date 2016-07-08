@@ -80,7 +80,7 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
         if (legalcase.getLcNumberType() != null && legalcase.getLcNumberType().equals(LCNumberType.AUTOMATED))
             legalcase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         else
-            legalcase.setLcnumber(legalcase.getLcNumber() +"/"+ legalcase.getFinwpYear());
+            legalcase.setLcnumber(legalcase.getLcNumber() +(legalcase.getFinwpYear()!=null ?"/" + legalcase.getFinwpYear() :""));
         if (errors.hasErrors())
             return "legalCase-newForm";
         legalCaseService.createLegalCase(legalcase);

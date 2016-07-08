@@ -174,18 +174,21 @@ function callAjaxByBoundary() {
 					"aButtons" : [ 
 					               {
 						             "sExtends": "pdf",
-	                                 "sTitle": "DCB Report",
+						             "sTitle": jQuery('#pdfTitle').val(),
+	                                 "sPdfMessage": "DCB Report",
 					                },
 					                {
 							             "sExtends": "xls",
-		                                 "sTitle": "DCB Report",
+		                                 "sPdfMessage": "DCB Report",
+		                                 "sTitle": jQuery('#pdfTitle').val(),
 		                                 "fnClick": function ( nButton, oConfig, oFlash ) {
 	                            	    	 reCalculateTotalFooterWhenExport('tbldcbdrilldown');
 	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
 	                            		 }
 						             },{
 							             "sExtends": "print",
-		                                 "sTitle": "DCB Report"
+		                                 "sPdfMessage": "DCB Report",
+		                                 "sTitle": jQuery('#pdfTitle').html(),
 						               }],
 				},
 				columns : [{

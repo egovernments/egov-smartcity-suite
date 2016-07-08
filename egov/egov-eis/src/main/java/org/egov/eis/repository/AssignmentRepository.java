@@ -111,6 +111,11 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     public List<Assignment> getAllAssignmentForDepartment(@Param("departmentId") Long departmentId,
             @Param("givenDate") Date givenDate);
     
+    @Query(" from Assignment A where A.department.id=:departmentId and A.fromDate<=:givenDate and A.toDate>=:givenDate "
+    		+ " and A.position.name like '%'||:posName||'%' order by A.primary desc")
+    public List<Assignment> getAllAssignmentForDepartmentAndPositionNameLike(@Param("departmentId") Long departmentId,
+            @Param("givenDate") Date givenDate ,@Param("posName") String posName);
+    
     @Query(" from Assignment A where A.designation.id=:designationId  and A.primary=true and A.fromDate<=:givenDate and A.toDate>=:givenDate ")
     public List<Assignment> getPrimaryAssignmentForDesignation(@Param("designationId") Long designationId,
             @Param("givenDate") Date givenDate);

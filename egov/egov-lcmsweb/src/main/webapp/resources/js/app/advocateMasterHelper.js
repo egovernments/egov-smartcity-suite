@@ -126,7 +126,8 @@ $('#bankId').blur(function(){
 			return;
 			} else {
 				$.ajax({
-					url: "/lcms/ajax-getAllBankBranchsByBank",     
+					url: "/lcms/ajax-getAllBankBranchsByBank",    
+					
 				type: "GET",
 				data: {
 					'bankId' : $('#bankId').val()

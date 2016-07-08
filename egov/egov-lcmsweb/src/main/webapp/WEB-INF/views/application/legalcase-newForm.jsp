@@ -60,8 +60,9 @@
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-petitiondetails.jsp"%>
-					<%@ include file="legalcase-assignedDeptDet.jsp"%>
-					<%@ include file="legalcase-standingCouncil.jsp"%>
+					<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%>
+					<%@ include file="legalcase-standingCouncil.jsp"%> --%>
+					
 				</div>
 			</div>
 

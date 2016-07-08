@@ -52,12 +52,12 @@ jQuery(document).ready(function($) {
 		var citizenRole = $('#citizenRole').val();
 		var billcollector=$('#billcollectionRole').val();
 		var administratorRole =$('#administratorRole').val();
-		 document.onkeydown=function(evt){
+		 /*document.onkeydown=function(evt){
 			 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		if(keyCode == 13){
 			submitButton();	
 		}
-		 }
+		 }*/
 		$('#searchapprvedapplication').click(function() {
 			submitButton();
 		});
@@ -182,6 +182,14 @@ $("#aplicationSearchResults").on('click','tbody tr td .collect-hoardingWiseFee',
 	document.forms["myform"].submit();
 	//window.open("generatebill/hoarding/"+hoardingNo, ''+hoardingNo+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 
+});
+
+$(document).on("keypress", 'form', function (e) {
+    var code = e.keyCode || e.which;
+    if (code == 13) {
+        e.preventDefault();
+        return false;
+    }
 });
 
 function submitButton()

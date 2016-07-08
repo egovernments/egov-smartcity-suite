@@ -115,7 +115,7 @@ public class LegalCaseService {
 
     @Transactional
     public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(legalcase.getCasenumber() + "/" + legalcase.getWpYear());
+        legalcase.setCasenumber(legalcase.getCasenumber() + (legalcase.getWpYear()!=null ?"/" + legalcase.getWpYear() :""));
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
@@ -132,17 +132,21 @@ public class LegalCaseService {
         final List<Pwr> pwrList = new ArrayList<Pwr>();
 
         for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()) {
+        	if(bipartObj.getName() !=null && !"".equals(bipartObj.getName())){
             bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
             bipartObj.setLegalcase(legalcase);
             partitionDetails.add(bipartObj);
+        	}
         }
         legalcase.getBipartisanDetails().clear();
         legalcase.setBipartisanDetails(partitionDetails);
 
         for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList()) {
+        	if(bipartObjtemp.getName() !=null && !"".equals(bipartObjtemp.getName())){
             bipartObjtemp.setSerialNumber(bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
             bipartObjtemp.setLegalcase(legalcase);
             legalcase.getBipartisanDetails().add(bipartObjtemp);
+        	}
         }
 
         for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {

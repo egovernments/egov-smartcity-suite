@@ -69,7 +69,6 @@ import org.egov.model.budget.BudgetGroup;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.Contractor;
@@ -153,8 +152,7 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     private BigDecimal estimateAmount;
 
-    @Enumerated(EnumType.STRING)
-    private ModeOfAllotment modeOfAllotment;
+    private String modeOfAllotment;
 
     @SafeHtml
     private String agreementNumber;
@@ -392,11 +390,11 @@ public class WorkProgressRegister extends AbstractAuditable {
         this.estimateAmount = estimateAmount;
     }
 
-    public ModeOfAllotment getModeOfAllotment() {
+    public String getModeOfAllotment() {
         return modeOfAllotment;
     }
 
-    public void setModeOfAllotment(final ModeOfAllotment modeOfAllotment) {
+    public void setModeOfAllotment(final String modeOfAllotment) {
         this.modeOfAllotment = modeOfAllotment;
     }
 

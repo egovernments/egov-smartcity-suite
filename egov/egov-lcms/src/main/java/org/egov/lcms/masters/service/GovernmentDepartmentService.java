@@ -114,28 +114,28 @@ public class GovernmentDepartmentService {
                 predicates.add(cb.like(
                         cb.lower(governmentDepartmentObj
                                 .get(GovernmentDepartment.getDeclaredSingularAttribute("name", String.class))),
-                        interimOrderType));
+                                interimOrderType));
             }
             if (governmentDepartment.getCode() != null) {
                 final String code = "%" + governmentDepartment.getCode().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(governmentDepartmentObj.get("code")));
                 predicates
-                        .add(cb.like(
-                                cb.lower(governmentDepartmentObj
-                                        .get(GovernmentDepartment.getDeclaredSingularAttribute("code", String.class))),
+                .add(cb.like(
+                        cb.lower(governmentDepartmentObj
+                                .get(GovernmentDepartment.getDeclaredSingularAttribute("code", String.class))),
                                 code));
             }
             if (governmentDepartment.getActive() != null)
                 if (governmentDepartment.getActive() == true)
                     predicates
-                            .add(cb.equal(
-                                    governmentDepartmentObj.get(
-                                            GovernmentDepartment.getDeclaredSingularAttribute("active", Boolean.class)),
+                    .add(cb.equal(
+                            governmentDepartmentObj.get(
+                                    GovernmentDepartment.getDeclaredSingularAttribute("active", Boolean.class)),
                                     true));
                 else
                     predicates.add(cb.equal(
                             governmentDepartmentObj
-                                    .get(GovernmentDepartment.getDeclaredSingularAttribute("active", Boolean.class)),
+                            .get(GovernmentDepartment.getDeclaredSingularAttribute("active", Boolean.class)),
                             false));
 
             createQuery.where(predicates.toArray(new Predicate[] {}));

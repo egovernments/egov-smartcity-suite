@@ -59,45 +59,52 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping(value="/search/")
+@RequestMapping(value = "/search")
 public class LegalCaseSearchController extends GenericLegalCaseController{
     
     @Autowired
     private EntityManager entityManager;
-    
-    @RequestMapping(value="/searchForm/",method=RequestMethod.GET)
-    public String saechForm(final Model model,final HttpServletRequest request)
+    @ModelAttribute
+    private void getLegalCaseReport(final Model model)
     {
-        LegalCaseReportResult legalCaseReportResult=new LegalCaseReportResult();
+    	LegalCaseReportResult legalCaseReportResult=new LegalCaseReportResult();
         model.addAttribute("legalCaseReportResult", legalCaseReportResult);
+    }
+    
+    @RequestMapping(method=RequestMethod.GET,value = "/searchForm")
+    public String saechForm(final Model model)
+    {
         model.addAttribute("currDate", new Date());
         return "search-legalCaseForm";
     }
     
     @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/searchForm/", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void getLegalCaseSearchResult(final HttpServletRequest request, final HttpServletResponse response)
+    @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody void getLegalCaseSearchResult(@RequestParam final String caseNumber,
+            @RequestParam final String lcNumber,final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
-        String caseNumber="";
-        String lcNumber="";
+        String caseNumbertemp="";
+        String lcNumbertemp="";
         if (null != request.getParameter("caseNumber") && !request.getParameter("caseNumber").isEmpty())
-            caseNumber = request.getParameter("caseNumber");
+        	caseNumbertemp = request.getParameter("caseNumber");
         if (null != request.getParameter("lcNumber") && !request.getParameter("lcNumber").isEmpty())
-            lcNumber = request.getParameter("lcNumber");
+        	lcNumbertemp = request.getParameter("lcNumber");
         
         List<LegalCaseReportResult>legalcaseSearchList=new ArrayList<LegalCaseReportResult>();
         
-        final SQLQuery query =getLegalCaseReport(caseNumber,lcNumber);
+        final SQLQuery query =getLegalCaseReport(caseNumbertemp,lcNumbertemp);
         legalcaseSearchList = query.list();
-        String result = null;
+         String result = null;
        result = new StringBuilder("{ \"data\":").append(toJSON(legalcaseSearchList)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
@@ -110,6 +117,8 @@ public class LegalCaseSearchController extends GenericLegalCaseController{
         final String json = gson.toJson(object);
         return json;
     }
+    
+   
     
     public SQLQuery getLegalCaseReport(final String caseNumber, final String lcNumber) 
            {

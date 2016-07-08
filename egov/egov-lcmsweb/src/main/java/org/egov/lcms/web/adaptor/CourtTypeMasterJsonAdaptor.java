@@ -37,16 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.web.adaptor;
 
-package org.egov.works.lineestimate.entity.enums;
+import java.lang.reflect.Type;
 
-import org.apache.commons.lang.StringUtils;
+import org.egov.lcms.masters.entity.CourtTypeMaster;
 
-public enum ModeOfAllotment {
-    NOMINATION, TENDERING, ePROCUREMENT;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+public class CourtTypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaster> {
     @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
+    public JsonElement serialize(final CourtTypeMaster courttypeMaster, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (courttypeMaster != null) {
+            if (courttypeMaster.getCourtType() != null)
+                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
+            else
+                jsonObject.addProperty("courtType", "");
+            if (courttypeMaster.getCode() != null)
+                jsonObject.addProperty("code", courttypeMaster.getCode());
+            else
+                jsonObject.addProperty("code", "");
+            if (courttypeMaster.getActive() != null)
+                jsonObject.addProperty("active", courttypeMaster.getActive() == true ? "YES" : "NO");
+            else
+                jsonObject.addProperty("active", "");
+            jsonObject.addProperty("id", courttypeMaster.getId());
+        }
+        return jsonObject;
     }
 }

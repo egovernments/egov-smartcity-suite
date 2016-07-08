@@ -42,7 +42,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Court Type Master</div>
+					<div class="panel-title">Court Type </div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
@@ -68,10 +68,7 @@
 								code="lbl.notes" /> :</label>
 						<div class="col-sm-3 add-margin">
 						<form:textarea class="form-control text-left patternvalidation" path="notes" id="notes"
-							name="notes" data-pattern="alphabetwithspace" maxlength="128"/>
-							<!-- <form:input path="notes"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="128" /> -->
+							name="notes" data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128"/>
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message

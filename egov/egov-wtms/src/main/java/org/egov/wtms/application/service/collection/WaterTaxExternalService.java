@@ -234,7 +234,7 @@ public class WaterTaxExternalService {
         } else {
             waterTaxDetails.setConsumerNo(waterConnectionDetails.getConnection().getConsumerCode());
             final String propertyIdentifier = waterConnectionDetails.getConnection().getPropertyIdentifier();
-            final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyIdentifier);
+            final BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(propertyIdentifier);
             waterTaxDetails.setPropertyAddress(basicProperty.getAddress().toString());
             waterTaxDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
 

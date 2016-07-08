@@ -92,6 +92,13 @@ function validate()
 
 		return valSuccess;
 	}
+	
+function onChangeServiceClass(obj)
+{
+    if(obj!=null && obj.value!=null && obj.value!='-1'){
+    	populateservice({serviceClass:obj.value});
+    }
+}
 </script>
 </head>
 <body>
@@ -152,11 +159,13 @@ function validate()
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text
-							name="service.master..classification" /></td>
+							name="service.master.classification" /></td>
 					<td class="bluebox"><s:select list="serviceTypeMap"
 							headerKey="ALL" headerValue="%{getText('miscreceipt.select')}"
 							name="serviceType" id="serviceType"
-							onchange="return enableUrl(this)"></s:select></td>
+							onchange="onChangeServiceClass(this);"></s:select></td>
+							 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='service'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 					<td class="bluebox"><s:text
 							name="collectionReport.criteria.service" /></td>
 					<td class="bluebox"><s:select headerKey="-1"
@@ -164,8 +173,12 @@ function validate()
 							name="serviceId" id="service" cssClass="selectwk"
 							list="dropdownData.servicetypeList" listKey="id" listValue="name"
 							value="%{serviceId}" /></td>
+					<%-- <td width="24%" class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('searchreceipts.servicetype.select')}"
+							name="serviceType" id="serviceType" cssClass="selectwk"
+							list="dropdownData.serviceTypeList" listKey="id" listValue="name"
+							value="%{serviceTypeId}" /></td> --%>
 				</tr>
-
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text

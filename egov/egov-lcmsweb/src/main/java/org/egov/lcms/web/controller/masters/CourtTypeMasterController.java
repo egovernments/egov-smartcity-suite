@@ -45,7 +45,7 @@ import javax.validation.Valid;
 
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
-import org.egov.lcms.web.adaptor.CourttypeMasterJsonAdaptor;
+import org.egov.lcms.web.adaptor.CourtTypeMasterJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -152,7 +152,7 @@ public class CourtTypeMasterController {
 
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CourtTypeMaster.class, new CourttypeMasterJsonAdaptor())
+        final Gson gson = gsonBuilder.registerTypeAdapter(CourtTypeMaster.class, new CourtTypeMasterJsonAdaptor())
                 .create();
         final String json = gson.toJson(object);
         return json;

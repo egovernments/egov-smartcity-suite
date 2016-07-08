@@ -158,7 +158,7 @@ public class WaterTaxUtils {
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public String getDepartmentForWorkFlow() {
@@ -200,6 +200,17 @@ public class WaterTaxUtils {
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
     }
 
+    public Boolean getAppconfigValueForSchedulearEnabled() {
+        Boolean schedularEnabled = Boolean.FALSE;
+        final AppConfigValues appConfigValueObj = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDEMANEDBILLSCHEDULAR).get(0);
+        if (appConfigValueObj != null && appConfigValueObj.getValue() != null) {
+            if (appConfigValueObj.getValue().equals(WaterTaxConstants.APPCONFIGVALUEOFENABLED))
+                schedularEnabled = Boolean.TRUE;
+        }
+        return schedularEnabled;
+
+    }
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;
 
@@ -229,19 +240,19 @@ public class WaterTaxUtils {
     public Boolean isEmailEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isConnectionAllowedIfWTDuePresent(final String connectionType) {
@@ -249,7 +260,7 @@ public class WaterTaxUtils {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, connectionType);
         if (null != appConfigValue && !appConfigValue.isEmpty())
-            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+            return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
 
         return isAllowed;
     }
@@ -550,7 +561,7 @@ public class WaterTaxUtils {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
         if (null != appConfigValue && !appConfigValue.isEmpty())
-            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+            return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
         else
             return false;
     }

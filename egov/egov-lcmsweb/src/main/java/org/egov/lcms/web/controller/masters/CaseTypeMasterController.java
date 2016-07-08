@@ -41,9 +41,9 @@ package org.egov.lcms.web.controller.masters;
 
 import java.util.List;
 import javax.validation.Valid;
-import org.egov.lcms.masters.entity.CasetypeMaster;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
-import org.egov.lcms.web.adaptor.CasetypeMasterJsonAdaptor;
+import org.egov.lcms.web.adaptor.CaseTypeMasterJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -78,12 +78,12 @@ public class CaseTypeMasterController {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newForm(final Model model) {
 		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", new CasetypeMaster());
+		model.addAttribute("casetypeMaster", new CaseTypeMaster());
 		return CASETYPEMASTER_NEW;
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final CasetypeMaster casetypeMaster, final BindingResult errors,
+	public String create(@Valid @ModelAttribute final CaseTypeMaster casetypeMaster, final BindingResult errors,
 			final Model model, final RedirectAttributes redirectAttrs) {
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
@@ -96,14 +96,14 @@ public class CaseTypeMasterController {
 
 	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
 	public String edit(@PathVariable("id") final Long id, Model model) {
-		CasetypeMaster casetypeMaster = casetypeMasterService.findOne(id);
+		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
 		prepareNewForm(model);
 		model.addAttribute("casetypeMaster", casetypeMaster);
 		return CASETYPEMASTER_EDIT;
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(@Valid @ModelAttribute final CasetypeMaster casetypeMaster, final BindingResult errors,
+	public String update(@Valid @ModelAttribute final CaseTypeMaster casetypeMaster, final BindingResult errors,
 			final Model model, final RedirectAttributes redirectAttrs) {
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
@@ -116,7 +116,7 @@ public class CaseTypeMasterController {
 
 	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
 	public String view(@PathVariable("id") final Long id, Model model) {
-		CasetypeMaster casetypeMaster = casetypeMasterService.findOne(id);
+		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
 		prepareNewForm(model);
 		model.addAttribute("casetypeMaster", casetypeMaster);
 		return CASETYPEMASTER_VIEW;
@@ -124,14 +124,14 @@ public class CaseTypeMasterController {
 
 	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
 	public String result(@PathVariable("id") final Long id, Model model) {
-		CasetypeMaster casetypeMaster = casetypeMasterService.findOne(id);
+		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
 		model.addAttribute("casetypeMaster", casetypeMaster);
 		return CASETYPEMASTER_RESULT;
 	}
 
 	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
 	public String search(@PathVariable("mode") final String mode, Model model) {
-		CasetypeMaster casetypeMaster = new CasetypeMaster();
+		CaseTypeMaster casetypeMaster = new CaseTypeMaster();
 		prepareNewForm(model);
 		model.addAttribute("casetypeMaster", casetypeMaster);
 		return CASETYPEMASTER_SEARCH;
@@ -140,8 +140,8 @@ public class CaseTypeMasterController {
 
 	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final CasetypeMaster casetypeMaster) {
-		List<CasetypeMaster> searchResultList = casetypeMasterService.search(casetypeMaster);
+			@ModelAttribute final CaseTypeMaster casetypeMaster) {
+		List<CaseTypeMaster> searchResultList = casetypeMasterService.search(casetypeMaster);
 		String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
 				.toString();
 		return result;
@@ -149,7 +149,7 @@ public class CaseTypeMasterController {
 
 	public Object toSearchResultJson(final Object object) {
 		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(CasetypeMaster.class, new CasetypeMasterJsonAdaptor())
+		final Gson gson = gsonBuilder.registerTypeAdapter(CaseTypeMaster.class, new CaseTypeMasterJsonAdaptor())
 				.create();
 		final String json = gson.toJson(object);
 		return json;

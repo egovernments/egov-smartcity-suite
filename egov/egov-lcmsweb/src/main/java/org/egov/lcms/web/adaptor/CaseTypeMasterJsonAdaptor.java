@@ -37,17 +37,38 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.masters.repository;
+package org.egov.lcms.web.adaptor;
 
+import java.lang.reflect.Type;
 
-import org.egov.lcms.masters.entity.CasetypeMaster;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-@Repository 
-public interface CasetypeMasterRepository extends JpaRepository<CasetypeMaster,Long> {
+public class CaseTypeMasterJsonAdaptor implements JsonSerializer<CaseTypeMaster> {
+    @Override
+    public JsonElement serialize(final CaseTypeMaster casetypeMaster, final Type type,
+            final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (casetypeMaster != null) {
+            if (casetypeMaster.getCaseType() != null)
+                jsonObject.addProperty("caseType", casetypeMaster.getCaseType());
+            else
+                jsonObject.addProperty("caseType", "");
+            if (casetypeMaster.getCode() != null)
+                jsonObject.addProperty("code", casetypeMaster.getCode());
+            else
+                jsonObject.addProperty("code", "");
+            if (casetypeMaster.getActive() != null)
+                jsonObject.addProperty("active", casetypeMaster.getActive() == true ? "YES" : "NO");
+            else
+                jsonObject.addProperty("active", "");
 
-	CasetypeMaster findByCode(String code);
-
+            jsonObject.addProperty("id", casetypeMaster.getId());
+        }
+        return jsonObject;
+    }
 }

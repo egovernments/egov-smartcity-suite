@@ -48,7 +48,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search Petition Type Master</div>
+						<div class="panel-title">Search Petition Type</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -70,7 +70,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="code"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="15" />
+									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="15" />
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 						</div>
@@ -80,7 +80,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="petitionType"
 									class="form-control text-left patternvalidation"
-									data-pattern="alphanumeric" maxlength="128" />
+									data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128" />
 								<form:errors path="petitionType" cssClass="error-msg" />
 							</div>
 						
@@ -115,7 +115,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">Petition Type Master
+	<div class="col-md-12 table-header text-left">Petition Type 
 		Search Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"

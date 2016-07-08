@@ -56,15 +56,18 @@ $('#baseRegisterReportSearch').click(function(e){
 				"aButtons" : [ 
 				               {
 					             "sExtends": "pdf",
-                                 "sTitle": "Base Register Report",
+                                 "sTitle": jQuery('#pdfTitle').val(),
+                                 "sPdfMessage": "Base Register Report",
                                  "sPdfOrientation": "landscape"
 				                },
 				                {
 						             "sExtends": "xls",
-	                                 "sTitle": "Base Register Report"
+						             "sTitle": jQuery('#pdfTitle').val(),
+	                                 "sPdfMessage": "Base Register Report"
 					             },{
 						             "sExtends": "print",
-	                                 "sTitle": "Base Register Report"
+						             "sTitle": jQuery('#pdfTitle').val(),
+	                                 "sPdfMessage": "Base Register Report"
 					               }],
 				
 			},

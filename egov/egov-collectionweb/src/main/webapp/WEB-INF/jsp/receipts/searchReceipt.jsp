@@ -350,7 +350,7 @@ function onChangeServiceClass(obj)
 
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
-	      <td class="bluebox"><s:text name="service.master..classification"/> <span class="mandatory"></td>
+	      <td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
 			<td class="bluebox"> 
 				<s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
 				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select>

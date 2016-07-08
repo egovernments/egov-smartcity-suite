@@ -123,6 +123,7 @@ public class LetterOfAcceptancePDFController {
                     workOrder.getWorkOrderNumber() != null ? workOrder.getWorkOrderNumber() : "");
             reportParams.put("workOrderDate",
                     workOrder.getWorkOrderDate() != null ? formatter.format(workOrder.getWorkOrderDate()) : "");
+
             reportParams.put("contractorName",
                     workOrder.getContractor().getName() != null ? workOrder.getContractor().getName() : "");
             reportParams.put("contractorAddress", workOrder.getContractor().getBankaccount() != null
@@ -139,6 +140,7 @@ public class LetterOfAcceptancePDFController {
                         estimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
             else
                 reportParams.put("modeOfAllotment", "");
+
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
