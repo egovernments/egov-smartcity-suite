@@ -38,15 +38,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 var tableContainer;
+var reportdatatable;
 jQuery(document).ready(
 		function($) {
-			$.fn.dataTable.moment('DD/MM/YYYY');
 
-			$(":input").inputmask();
-
-			$(".datepicker").datepicker({
-				format : "dd/mm/yyyy"
-			});
 			tableContainer = $('#legalCaseResults');
 			document.onkeydown = function(evt) {
 				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
@@ -61,36 +56,68 @@ jQuery(document).ready(
 
 		});
 function submitForm() {
-	$('.loader-class').modal('show', {
-		backdrop : 'static'
-	});
-	$
-			.post("/lcms/search/searchForm/",
-					$('#searchlegalcaseForm').serialize())
-			.done(
-					function(searchResult) {
-						tableContainer
-								.dataTable({
-									destroy : true,
-									"sPaginationType" : "bootstrap",
-									"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-									"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-											[ 10, 25, 50, "All" ] ],
-									"autoWidth" : false,
-									searchable : true,
-									data : searchResult,
-									columns : [ {
-										title : 'Case Number',
-										data : 'casenumber'
-									}, {
-										title : 'LegalCase Number',
-										data : 'legalcaseno'
-									}
 
-									],
-									"aaSorting" : [ [ 1, 'desc' ] ]
-								});
+	var caseNumber = $("#caseNumber").val();
+	var lcNumber = $("#lcNumber").val();
+	$('.report-section').removeClass('display-hide');
+	$('#report-footer').show();
+	reportdatatable = tableContainer
+			.dataTable({
+				ajax : {
+					url : "/lcms/search/legalsearchResult",
+					data : {
+						'caseNumber' : caseNumber,
+						'lcNumber' : lcNumber
+					}
+				},
+				"sPaginationType" : "bootstrap",
+				"autoWidth" : false,
+				"bDestroy" : true,
+				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+				"oTableTools" : {
+					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+					"aButtons" : [ "xls", "pdf", "print" ]
+				},
+				columns : [
+						{
+							"data" : "casenumber",
 
-					});
+							"sTitle" : "Case Number"
+						},
+						{
+							"data" : "legalcaseno",
+							"sTitle" : "Legal Case Number",
+							"className" : "text-right"
+						},
+						{
+							title : 'Actions',
+							"className" : "text-right",
+							render : function(data, type, full) {
+
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Create Hearing</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
+							}
+						} /*
+							 * , { "data" : "casenumber2", "sTitle" : "case2",
+							 * "className": "text-right" }, { "data" :
+							 * "legalcaseno1", "sTitle" : "Legal1", "className":
+							 * "text-right"
+							 * 
+							 * },{ "data" : "legalcaseno2", "sTitle" : "legal2",
+							 * "className": "text-right" }, { "data" : "total",
+							 * "sTitle" : "Total", "className": "text-right"
+							 *  }
+							 */],
+				"footerCallback" : function(row, data, start, end, display) {
+					var api = this.api(), data;
+					if (data.length == 0) {
+						$('#report-footer').hide();
+					} else {
+						$('#report-footer').show();
+					}
+
+				},
+
+			});
 	$('.loader-class').modal('hide');
 }

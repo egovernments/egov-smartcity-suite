@@ -40,6 +40,8 @@
 package org.egov.lcms.transactions.entity;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -56,5 +58,7 @@ public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseRep
 		jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
 		return jsonObject;
 	}
+	
+	
 
 }

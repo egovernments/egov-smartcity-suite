@@ -39,7 +39,9 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class LegalCaseReportResult {
 	private String caseNumber;
@@ -55,6 +57,7 @@ public class LegalCaseReportResult {
 	private String govtDept;
 	private String petName;
 	private String caseStatus;
+	private List<String>actionList=new ArrayList<String>();
 
 	public String getStandingCouncil() {
 		return standingCouncil;
@@ -158,6 +161,14 @@ public class LegalCaseReportResult {
 
 	public void setCaseStatus(String caseStatus) {
 		this.caseStatus = caseStatus;
+	}
+
+	public List<String> getActionList() {
+		return actionList;
+	}
+
+	public void setActionList(List<String> actionList) {
+		this.actionList = actionList;
 	}
 
 }
