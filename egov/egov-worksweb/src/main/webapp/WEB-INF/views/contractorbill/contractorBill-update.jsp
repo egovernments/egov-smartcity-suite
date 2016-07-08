@@ -45,12 +45,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
+			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'> 
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
-			<div class="row">
-				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">
@@ -85,8 +83,6 @@
 						</c:if>
 						</div>
 					</div>
-				</div>
-			</div>
 			<c:if test="${contractorBillRegister.cancellationReason != null}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="contractorBillCancel-view.jsp"></jsp:include>
