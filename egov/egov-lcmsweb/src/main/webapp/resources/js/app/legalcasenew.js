@@ -43,7 +43,33 @@ $(document).ready(function(){
 	$("#seniordov1").hide(); 
     $("#seniordov2").hide(); 
     $("#seniordov3").hide(); 
-   
+    $(".btn-primary").click(function(event){
+		
+		var caseNumber =$('#casenumber').val();
+		var lcnumber=$('#lcNumber').val();
+		var lcNumberType=$('#lcNumberType').val();
+		if(caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
+			{
+			bootbox.alert("Select Case Number Year ");
+			return false;
+			}
+		if(lcNumberType =='MANUAL'){
+			if(lcnumber=="" ||  lcnumber ==null )
+			{
+				bootbox.alert("Please enter Legal Case Number");
+				return false;
+			}
+			if( lcnumber !=null && $('#finwpYear').val() =='' || $('#finwpYear').val() ==null)
+			{
+				bootbox.alert("Select Legal Case Number Year ");
+				return false;
+			}
+		}
+			document.forms[0].submit;
+			return true;
+			event.preventDefault();
+		
+	});
 	
 });
 function enableGovtDept()
@@ -56,6 +82,10 @@ function enableGovtDept()
 		}
 	
 }
+
+
+
+
 
 function checkLCType()
 {
