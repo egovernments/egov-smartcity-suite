@@ -67,7 +67,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/tlreports")
+@RequestMapping(value = {"/tlreports", "/public/report"})
 public class DCBReportController {
 
     public static final String PROPERTY = "property";

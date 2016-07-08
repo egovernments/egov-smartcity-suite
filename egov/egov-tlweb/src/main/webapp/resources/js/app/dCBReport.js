@@ -157,7 +157,7 @@ function setHiddenValueByLink(obj, param, event, boundaryId) {
 	$('input[name=' + $(obj).data('hiddenele') + ']')
 			.val($(obj).data('eleval'));
 	if (param.value == 'property') {
-		window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id="
+		window.open("../../viewtradelicense/viewTradeLicense-view.action?id="
 				+ tlnumber, '',
 				'scrollbars=yes,width=1000,height=700,status=yes');
 	} else {
@@ -225,7 +225,7 @@ function callAjaxByBoundary(event) {
 				responsive : true,
 				destroy : true,
 				ajax : {
-					url : "/tl/tlreports/dCBReportList",
+					url : "../dCBReportList",
 					data : {
 						'mode' : modeVal,
 						'boundaryId' : boundary_Id,
@@ -264,7 +264,7 @@ function callAjaxByBoundary(event) {
 										+ ');" data-hiddenele="boundaryId" data-eleval="'
 										+ data.id + '">' + data.name + '</a>';
 							},
-							"sTitle" : "Municipality Name"
+							"sTitle" : "License No."
 						},
 						{
 							"data" : "no_of_users",
