@@ -210,7 +210,7 @@ function enableUrl(obj) {
             <td></td>
 			<td class="bluebox"> <s:text name="service.master.enable"></s:text> </td>
 			<td class="bluebox"><s:checkbox name="isEnabled" /></td>
-			<td class="bluebox"><s:text name="service.master..classification"/> <span class="mandatory"></td>
+			<td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
 			<td class="bluebox"> 
 				<s:select list="serviceTypeMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
 				name="serviceType" id="serviceType" onchange="return enableUrl(this)"></s:select>

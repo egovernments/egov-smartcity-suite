@@ -177,7 +177,7 @@
 				<tr>
 					<td class="bluebox">&nbsp;</td>
 					<td class="bluebox"><s:text
-							name="service.master..classification" /></td>
+							name="service.master.classification" /></td>
 					<td class="bluebox"><s:select list="serviceTypeMap"
 							headerKey="All" headerValue="%{getText('miscreceipt.select')}"
 							name="classificationType" id="classificationType" onchange="onChangeServiceClass(this);"/></td>
