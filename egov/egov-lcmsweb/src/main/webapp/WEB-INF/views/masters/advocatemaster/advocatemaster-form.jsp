@@ -47,7 +47,7 @@
 				<div class="panel-body">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-2 control-label"><spring:message
-								code="lbl.names" />: <span class="mandatory"></span></label>
+								code="lbl.names" />:<span class="mandatory"></span></label>
 						<div class="col-sm-2 col-md-2 add-margin">
 							<form:select path="salutation" id="salutation"
 								cssClass="form-control" cssErrorClass="form-control error"
@@ -83,7 +83,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.address" /> :</label>
+								code="lbl.address" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea class="form-control text-left patternvalidation"
 								path="address" id="address" name="address"
@@ -92,7 +92,7 @@
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.contactphone" /> :</label>
+								code="lbl.contactphone" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="contactPhone"
 								class="form-control text-left patternvalidation"
@@ -114,7 +114,7 @@
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.email" /> :</label>
+								code="lbl.email" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="email"
 								class="form-control text-left patternvalidation"
@@ -125,7 +125,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.pannumber" /> :<span class="mandatory"></span> </label>
+								code="lbl.pannumber" />:<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="panNumber"
 								class="form-control text-left patternvalidation"
@@ -133,7 +133,7 @@
 							<form:errors path="panNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.specilization" /> :</label>
+								code="lbl.specilization" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="specilization"
 								class="form-control text-left patternvalidation"
@@ -143,7 +143,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.status" /> :<span class="mandatory"></span> </label>
+								code="lbl.status" />:<span class="mandatory"></span> </label>
 						<div class="col-sm-2 add-margin">
 							<form:select path="isActive" id="isActive"
 								cssClass="form-control" cssErrorClass="form-control error"
@@ -169,7 +169,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.monthlyrenumeration" /> :<span class="mandatory"></span>
+								code="lbl.monthlyrenumeration" />:<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="monthlyRenumeration"
@@ -177,19 +177,16 @@
 								data-pattern="decimalvalues" required="required" />
 							<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.isretaineradvocate" />: <span class="mandatory"></span>
-						</label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.isretaineradvocate"/>:</span></label>
 						<div class="col-sm-3 add-margin">
-							<form:checkbox path="isRetaineradvocate" />
-							<form:errors path="isRetaineradvocate" cssClass="error-msg" />
+							<form:checkbox path="isRetaineradvocate"/>
+							<form:errors path="isRetaineradvocate" cssClass="error-msg"/>
 						</div>
 					</div>
-
-
 					<div class="form-group" id="b1details">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.bankname" /> :<span class="mandatory"></span></label>
+								code="lbl.bankname" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="bankName.id" id="bankId"
 								cssClass="form-control" cssErrorClass="form-control error"
@@ -223,13 +220,11 @@
 
 							</form:select>
 							<form:errors path="bankBranch" cssClass="error-msg" />
-
-
 						</div>
 					</div>
 					<div class="form-group" id="b2details">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.bankaccount" /> :<span class="mandatory"></span></label>
+								code="lbl.bankaccount" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="bankaccount"
 								class="form-control text-left patternvalidation"
@@ -240,7 +235,7 @@
 					</div>
 					<div class="form-group" id="b3details">
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.ifsccode" /> :<span class="mandatory"></span></label>
+								code="lbl.ifsccode" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="ifsccode"
 								class="form-control text-left patternvalidation"
@@ -248,7 +243,7 @@
 							<form:errors path="ifsccode" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.tinumber" /> :<span class="mandatory"></span> </label>
+								code="lbl.tinumber" />:<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="tinumber"
 								class="form-control text-left patternvalidation"
