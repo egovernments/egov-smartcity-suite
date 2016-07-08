@@ -67,7 +67,6 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping(value = "/complaint")
 public class GenericComplaintAjaxController {
 
     @Autowired
@@ -88,36 +87,37 @@ public class GenericComplaintAjaxController {
     @Autowired
     private EmployeeViewService employeeViewService;
 
-    @RequestMapping(value = { "citizen/complaintTypes", "citizen/anonymous/complaintTypes", "officials/complaintTypes",
-            "router/complaintTypes", "escalationTime/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "/complaint/citizen/complaintTypes", "/complaint/citizen/anonymous/complaintTypes",
+            "/complaint/officials/complaintTypes", "/complaint/router/complaintTypes", "/complaint/escalationTime/complaintTypes" },
+            method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllActiveComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
-    @RequestMapping(value = { "citizen/complainttypes-by-category", "citizen/anonymous/complainttypes-by-category",
+    @RequestMapping(value = { "/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
             "officials/complainttypes-by-category" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> complaintTypesByCategory(@RequestParam final Long categoryId) {
         return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
     }
 
-    @RequestMapping(value = { "pgrreport/complaintTypes", "search/complaintTypes",
+    @RequestMapping(value = { "/public/complaint/complaintTypes", "search/complaintTypes",
             "search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
 
-    @RequestMapping(value = "escalationTime/ajax-approvalDesignations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/complaint/escalationTime/ajax-approvalDesignations", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Designation> getAllDesignationsByName(@RequestParam final String designationName) {
         return designationService.getAllDesignationsByNameLike(designationName);
     }
 
-    @RequestMapping(value = "officials/isCrnRequired", method = GET)
+    @RequestMapping(value = "/complaint/officials/isCrnRequired", method = GET)
     public @ResponseBody boolean isCrnRequired(@RequestParam final Long receivingCenterId) {
         final ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
 
-    @RequestMapping(value = { "citizen/locations", "citizen/anonymous/locations",
+    @RequestMapping(value = { "/complaint/citizen/locations", "citizen/anonymous/locations",
             "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
@@ -138,7 +138,7 @@ public class GenericComplaintAjaxController {
         return locationJSONData.toString();
     }
 
-    @RequestMapping(value = { "router/position", "escalation/position" }, method = GET, produces = TEXT_PLAIN_VALUE)
+    @RequestMapping(value = { "/complaint/router/position", "/complaint/escalation/position" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllPositionByNameLike(@RequestParam final String positionName,
             final HttpServletResponse response) throws IOException {
         final String likePositionName = "%" + positionName.toUpperCase() + "%";
@@ -157,8 +157,8 @@ public class GenericComplaintAjaxController {
 
     }
 
-    @RequestMapping(value = { "router/boundaries-by-type",
-            "escalation/boundaries-by-type" }, method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "/complaint/router/boundaries-by-type",
+            "/complaint/escalation/boundaries-by-type" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getBoundariesbyType(@RequestParam final String boundaryName,
             @RequestParam final Long boundaryTypeId, final HttpServletResponse response) throws IOException {
         final String likeBoundaryName = "%" + boundaryName + "%";

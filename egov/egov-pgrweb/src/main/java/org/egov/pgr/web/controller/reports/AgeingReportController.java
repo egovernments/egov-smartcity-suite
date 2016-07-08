@@ -66,7 +66,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/report")
+@RequestMapping(value = {"/report", "/public/report"})
 public class AgeingReportController {
 
     @Autowired
