@@ -91,6 +91,13 @@
 
 		return valSuccess;
 	}
+	
+	function onChangeServiceClass(obj)
+	{
+	    if(obj!=null && obj.value!=null && obj.value!='-1'){
+	    	populateservice({serviceClass:obj.value});
+	    }
+	}
 </script>
 </head>
 <body>
@@ -169,6 +176,13 @@
 				</tr>
 				<tr>
 					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="service.master..classification" /></td>
+					<td class="bluebox"><s:select list="serviceTypeMap"
+							headerKey="All" headerValue="%{getText('miscreceipt.select')}"
+							name="classificationType" id="classificationType" onchange="onChangeServiceClass(this);"/></td>
+							 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='service'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 					<td class="bluebox"><s:text
 							name="collectionReport.criteria.service" /></td>
 					<td class="bluebox"><s:select headerKey="-1"

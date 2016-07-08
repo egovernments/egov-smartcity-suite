@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -75,10 +76,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_STATUS_ID = "EGOV_STATUS_ID";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
+    private static final String EGOV_CLASSIFICATION="EGOV_CLASSIFICATION";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
+    private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -202,7 +205,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setStatusId(final Integer statusId) {
         setReportParam(EGOV_STATUS_ID, statusId);
     }
-
+  
     /**
      * @return the payment modes
      */
@@ -228,6 +231,8 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         // Set default values of criteria fields
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         return INDEX;
     }
 
@@ -257,5 +262,22 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setServiceId(final Long serviceId) {
         setReportParam(EGOV_SERVICE_ID, serviceId);
     }
+    
+    public String getClassificationType() {
+        return (String) getReportParam(EGOV_CLASSIFICATION);
+    }
 
+    public void setClassificationType(final String classification) {
+        setReportParam(EGOV_CLASSIFICATION, classification);
+    }
+    
+    
+    public TreeMap<String, String> getServiceTypeMap() {
+        return serviceTypeMap;
+    }
+
+    public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
+        this.serviceTypeMap = serviceTypeMap;
+    }   
+    
 }
