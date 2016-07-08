@@ -541,6 +541,14 @@ public class MBHeaderService {
             totalMBAmount = totalMBAmountOfMBs + mbHeader.getMbAmount().doubleValue();
         else
             totalMBAmount = mbHeader.getMbAmount().doubleValue();
+        
+        if (mbHeader.getMbDate() != null && mbHeader.getMbDate().after(new Date())) {
+            message = messageSource.getMessage("error.mb.entry.future.date",
+                    new String[] { },
+                    null);
+            jsonObject.addProperty("errorMBEntryFutureDate", message);
+            errors.reject("errorMBEntryFutureDate", message);
+        }
 
         if (mbHeader.getWorkOrderEstimate().getWorkOrder()
                 .getWorkOrderAmount() < totalMBAmount) {
