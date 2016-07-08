@@ -75,7 +75,7 @@ function validateWorkFlowApprover(name) {
 		
 		if($("form").valid())
 		{
-			bootbox.confirm($('#confirm').val(), function(result) {
+			bootbox.confirm($('#cancelConfirm').val(), function(result) {
 				if(!result) {
 					bootbox.hideAll();
 					return false;

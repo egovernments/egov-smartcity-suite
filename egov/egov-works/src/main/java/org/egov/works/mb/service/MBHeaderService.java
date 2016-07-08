@@ -134,7 +134,7 @@ public class MBHeaderService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -232,6 +232,10 @@ public class MBHeaderService {
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
             mbHeader.setMbDetails(mbDetails);
+            
+            for (final DocumentDetails docs : mbHeader.getDocumentDetails()) {
+                worksUtils.deleteDocuments(docs.getId());
+            }
 
             final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, mbHeader,
                     WorksConstants.MBHEADER);

@@ -166,7 +166,8 @@ public class UpdateMBController extends GenericWorkFlowController {
             return "";
         }
 
-        final MBHeader updatedMBHeader = mbHeaderService.update(mbHeader, approvalPosition, approvalComment, workFlowAction,
+        MBHeader updatedMBHeader = getMbHeaderDocuments(mbHeader);
+        updatedMBHeader = mbHeaderService.update(updatedMBHeader, approvalPosition, approvalComment, workFlowAction,
                 removedDetailIds, files);
         mbHeaderService.fillWorkflowData(jsonObject, request, updatedMBHeader);
         if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))

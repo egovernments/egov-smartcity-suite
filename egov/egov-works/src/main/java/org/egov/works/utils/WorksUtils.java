@@ -64,7 +64,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
@@ -134,6 +133,10 @@ public class WorksUtils {
                     documentDetailsList.add(documentDetails);
                 }
         return documentDetailsList;
+    }
+    
+    public void deleteDocuments(final Long documentId) {
+        documentDetailsRepository.delete(documentId);
     }
 
     public List<DocumentDetails> findByObjectIdAndObjectType(final Long objectId, final String objectType) {
