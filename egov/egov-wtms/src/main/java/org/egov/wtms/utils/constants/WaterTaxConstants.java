@@ -204,6 +204,8 @@ public class WaterTaxConstants {
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
     public static final String ROLESFORLOGGEDINUSER = "RolesForSearchWAterTaxConnection";
     public static final String ENABLEDIGITALSIGNATURE = "ENABLEDIGITALSIGNATURE";
+    public static final String ENABLEDEMANEDBILLSCHEDULAR = "ENABLEBILLSCHEDULAR";
+    public static final String APPCONFIGVALUEOFENABLED="YES";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";
