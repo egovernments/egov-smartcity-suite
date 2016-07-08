@@ -66,7 +66,7 @@
 			</label>
 			<div class="col-sm-3 add-margin">
 				<c:if test="${currentDate != null }">
-					<input name="mbDate" class="form-control datepicker" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" required="required" />
+					<input name="mbDate" class="form-control datepicker" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
 				</c:if>
 				<c:if test="${currentDate == null }">
 					<form:input path="mbDate" class="form-control datepicker" id="mbDate" data-inputmask="'mask': 'd/m/y'" required="required" />
