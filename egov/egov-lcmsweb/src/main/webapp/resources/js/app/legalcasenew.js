@@ -39,10 +39,18 @@
  */
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
-	$("#bipartisanDetails[0].governmentDepartment").prop("disabled", true);
 	$("#seniordov1").hide(); 
     $("#seniordov2").hide(); 
     $("#seniordov3").hide(); 
+    $("#petitionDetails tbody tr").each(function( index ) {
+    	var $this = $(this);
+        $this.find("select, button").prop("disabled", true);
+    });
+    $("#respodantDetails tbody tr").each(function( index ) {
+    	var $this = $(this);
+        $this.find("select, button").prop("disabled", true);
+    });
+    
     $(".btn-primary").click(function(event){
 		
 		var caseNumber =$('#casenumber').val();
@@ -72,19 +80,6 @@ $(document).ready(function(){
 	});
 	
 });
-function enableGovtDept()
-{
-	var govtcheck=$('#activeid').val() ;
-	if(govtcheck==true)
-		{
-		$("#bipartisanDetails[0].governmentDepartment").prop("disabled", false);
-
-		}
-	
-}
-
-
-
 
 
 function checkLCType()
@@ -122,11 +117,7 @@ function addPetRow()
 								'name' : function(_, name) {
 									return name.replace('[0]', '['
 											+ nextIdx + ']');
-								}/*,
-								'data-idx' : function(_,dataIdx)
-								{
-									return nextIdx;
-								}*/
+								}
 					});  
 		   });
 
@@ -199,6 +190,35 @@ $(document).on('click',"#pet_delete_row",function (){
 		return true;
 	}
 });
+
+function onChangeofPetitioncheck()
+{
+	 $("#petitionDetails tbody tr").each(function( index ) {
+		 var $this = $(this);
+	        
+	        if ( $('#activeid').val() == "true") {
+	        	$this.find("select, button").prop("disabled", false);
+	        }
+	        if ( !($('#activeid').val()) == "false") {
+	        	$this.find("select, button").prop("disabled", true);
+	        }
+
+	    });	
+}
+function onChangeofRespodantcheck()
+{
+	 $("#respodantDetails tbody tr").each(function( index ) {
+		 var $this = $(this);
+	        
+	        if ( $('#activeid').val() == "true") {
+	        	$this.find("select, button").prop("disabled", false);
+	        }
+	        if ( !($('#activeid').val()) == "false") {
+	        	$this.find("select, button").prop("disabled", true);
+	        }
+
+	    });	
+}
 
 $(document).on('click',"#res_delete_row",function (){
 	var table = document.getElementById('respodantDetails');

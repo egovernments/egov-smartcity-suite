@@ -64,7 +64,7 @@
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetails[0].isrespondentgovernment"
 				id="bipartisanDetails[0].isrespondentgovernment"
-				onblur="enableGovtDept()" /></td>
+				onblur="onChangeofPetitioncheck()" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
@@ -120,7 +120,7 @@
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetailsBeanList[0].isrespondentgovernment"
 				id="bipartisanDetailsBeanList[0].isrespondentgovernment"
-				onblur="enableGovtDept()" /></td>
+				onblur="onChangeofRespodantcheck()" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
