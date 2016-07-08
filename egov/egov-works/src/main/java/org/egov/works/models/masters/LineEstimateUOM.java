@@ -60,7 +60,7 @@ public class LineEstimateUOM {
     @GeneratedValue(generator = SEQ_EGW_LINEESTIMATE_UOM, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String code;
+    private String name;
 
     public Long getId() {
         return id;
@@ -70,11 +70,11 @@ public class LineEstimateUOM {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public String getName() {
+        return name;
     }
 
-    public void setCode(final String code) {
-        this.code = code;
+    public void setName(final String name) {
+        this.name = name;
     }
 }

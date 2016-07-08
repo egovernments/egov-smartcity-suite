@@ -84,7 +84,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${lineEstimateUOMs}" itemValue="code" itemLabel="code" />
+									<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
 								</form:select>
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
@@ -119,7 +119,7 @@
 										<form:option value="">
 											<spring:message code="lbl.select" />
 										</form:option>
-										<form:options items="${lineEstimateUOMs}" itemValue="code" itemLabel="code" />
+										<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
 									</form:select>
 									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
 								</td>

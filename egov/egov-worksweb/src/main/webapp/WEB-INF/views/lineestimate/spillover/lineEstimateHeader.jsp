@@ -189,7 +189,7 @@
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${modeOfAllotment}" itemValue="code" itemLabel="code" />
+					<form:options items="${modeOfAllotment}" itemValue="name" itemLabel="name" />
 				</form:select>
 				<form:errors path="modeOfAllotment" cssClass="add-margin error-msg" />
 			</div>
