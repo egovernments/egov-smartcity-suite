@@ -59,17 +59,17 @@
 			    <spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="mbRefNo" id="mbRefNo" class="form-control" maxlength="16" required="required"/>
+				<form:input path="mbRefNo" id="mbRefNo" class="form-control required" maxlength="16" required="required"/>
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.mbentry.date" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<c:if test="${currentDate != null }">
-					<input name="mbDate" class="form-control datepicker" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+					<input name="mbDate" class="form-control datepicker required" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
 				</c:if>
 				<c:if test="${currentDate == null }">
-					<form:input path="mbDate" class="form-control datepicker" id="mbDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+					<form:input path="mbDate" class="form-control datepicker required" id="mbDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 				</c:if>
 			</div>
 		</div>
@@ -78,13 +78,13 @@
 			    <spring:message code="lbl.from.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="fromPageNo" id="fromPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
+				<form:input path="fromPageNo" id="fromPageNo" class="form-control required" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.to.page.number" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:input path="toPageNo" id="toPageNo" class="form-control" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
+				<form:input path="toPageNo" id="toPageNo" class="form-control required" maxlength="5" data-pattern="decimalvalue" required="required" onkeyup="decimalvalue(this);" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -92,7 +92,7 @@
 			    <spring:message code="lbl.measurement.abstract" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="mbAbstract" id="mbAbstract" class="form-control" maxlength="1056" required="required"></form:textarea>
+				<form:textarea path="mbAbstract" id="mbAbstract" class="form-control required" maxlength="1056" required="required"></form:textarea>
 			</div>
 		</div>
 	</div>

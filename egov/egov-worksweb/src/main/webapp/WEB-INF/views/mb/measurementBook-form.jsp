@@ -74,6 +74,7 @@
 	<input type="hidden" id="errortotalmbamount" value="<spring:message code='error.sum.mb.workorder.amount' />">
 	<input type="hidden" id="errortoleranceexceeded" value="<spring:message code='error.tolerance.exceeded' />">
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.mb.confirm" />" />
+	<input id="errorMandatory" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	
 	<div class="new-page-header"><spring:message code="lbl.createmb" /></div> 
 	

@@ -658,13 +658,13 @@ function validateSORDetails() {
 				$(this).attr('disabled', 'disabled');
 			});
 		}
-		return true;
 	} else
 		return false;
 }
 
 function validateFormData() {
 	var flag = true;
+	var isRequired = true;
 	var mbDate = $('#mbDate').data('datepicker').date;
 	var workCommencedDate = $('#workCommencedDate').val();
 	var mbIssuedDate = $('#mbIssuedDate').data('datepicker').date;
@@ -673,6 +673,17 @@ function validateFormData() {
 	var totalMBAmountOfMBs = $('#totalMBAmountOfMBs').val();
 	var mbAmount = $('#mbAmount').val();
 	var workOrderAmount = $('#workOrderAmount').val();
+	
+	$(".required").each(function() {
+		if ($(this).val() == '') {
+			isRequired = false;
+		}
+	});
+	
+	if(!isRequired) {
+		bootbox.alert($('#errorMandatory').val());
+		return false;
+	}
 	
 	if (parseFloat(workOrderAmount) < parseFloat(parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount))) {
 		var message = $('#errortotalmbamount').val();
@@ -720,6 +731,7 @@ function validateFormData() {
 		if (parseFloat($(this).val()) <= 0)
 			flag = false;
 	});
+	
 	if (!flag) {
 		bootbox.alert($('#errorquantitieszero').val());
 		return false;
