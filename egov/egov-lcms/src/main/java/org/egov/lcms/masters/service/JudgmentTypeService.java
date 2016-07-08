@@ -62,77 +62,77 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class JudgmentTypeService {
 
-	private final JudgmentTypeRepository judgmentTypeRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final JudgmentTypeRepository judgmentTypeRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	public JudgmentTypeService(final JudgmentTypeRepository judgmentTypeRepository) {
-		this.judgmentTypeRepository = judgmentTypeRepository;
-	}
+    @Autowired
+    public JudgmentTypeService(final JudgmentTypeRepository judgmentTypeRepository) {
+        this.judgmentTypeRepository = judgmentTypeRepository;
+    }
 
-	@Transactional
-	public JudgmentType persist(final JudgmentType judgmentType) {
-		return judgmentTypeRepository.save(judgmentType);
-	}
+    @Transactional
+    public JudgmentType persist(final JudgmentType judgmentType) {
+        return judgmentTypeRepository.save(judgmentType);
+    }
 
-	public List<JudgmentType> findAll() {
-		return judgmentTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
+    public List<JudgmentType> findAll() {
+        return judgmentTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
-	public JudgmentType findByCode(String code) {
-		return judgmentTypeRepository.findByCode(code);
-	}
+    public JudgmentType findByCode(final String code) {
+        return judgmentTypeRepository.findByCode(code);
+    }
 
-	public JudgmentType findOne(Long id) {
-		return judgmentTypeRepository.findOne(id);
-	}
+    public JudgmentType findOne(final Long id) {
+        return judgmentTypeRepository.findOne(id);
+    }
 
-	public List<JudgmentType> search(final JudgmentType judgmentType) {
+    public List<JudgmentType> search(final JudgmentType judgmentType) {
 
-		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<JudgmentType> createQuery = cb.createQuery(JudgmentType.class);
-		final Root<JudgmentType> judgmentTypeObj = createQuery.from(JudgmentType.class);
-		createQuery.select(judgmentTypeObj);
-		final Metamodel m = entityManager.getMetamodel();
-		final javax.persistence.metamodel.EntityType<JudgmentType> JudgmentType = m.entity(JudgmentType.class);
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<JudgmentType> createQuery = cb.createQuery(JudgmentType.class);
+        final Root<JudgmentType> judgmentTypeObj = createQuery.from(JudgmentType.class);
+        createQuery.select(judgmentTypeObj);
+        final Metamodel m = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<JudgmentType> JudgmentType = m.entity(JudgmentType.class);
 
-		final List<JudgmentType> resultList;
-		final List<Predicate> predicates = new ArrayList<Predicate>();
-		if (judgmentType.getName() == null && judgmentType.getCode() == null && judgmentType.getActive() == null)
-			resultList = findAll();
-		else {
-			if (judgmentType.getName() != null) {
-				final String interimOrderType = "%" + judgmentType.getName().toLowerCase() + "%";
-				predicates.add(cb.isNotNull(judgmentTypeObj.get("name")));
-				predicates
-						.add(cb.like(
-								cb.lower(judgmentTypeObj
-										.get(JudgmentType.getDeclaredSingularAttribute("name", String.class))),
-								interimOrderType));
-			}
-			if (judgmentType.getCode() != null) {
-				final String code = "%" + judgmentType.getCode().toLowerCase() + "%";
-				predicates.add(cb.isNotNull(judgmentTypeObj.get("code")));
-				predicates.add(cb.like(
-						cb.lower(judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("code", String.class))),
-						code));
-			}
-			if (judgmentType.getActive() != null)
-				if (judgmentType.getActive() == true)
-					predicates.add(cb.equal(
-							judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
-							true));
-				else
-					predicates.add(cb.equal(
-							judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
-							false));
+        final List<JudgmentType> resultList;
+        final List<Predicate> predicates = new ArrayList<Predicate>();
+        if (judgmentType.getName() == null && judgmentType.getCode() == null && judgmentType.getActive() == null)
+            resultList = findAll();
+        else {
+            if (judgmentType.getName() != null) {
+                final String interimOrderType = "%" + judgmentType.getName().toLowerCase() + "%";
+                predicates.add(cb.isNotNull(judgmentTypeObj.get("name")));
+                predicates
+                        .add(cb.like(
+                                cb.lower(judgmentTypeObj
+                                        .get(JudgmentType.getDeclaredSingularAttribute("name", String.class))),
+                                interimOrderType));
+            }
+            if (judgmentType.getCode() != null) {
+                final String code = "%" + judgmentType.getCode().toLowerCase() + "%";
+                predicates.add(cb.isNotNull(judgmentTypeObj.get("code")));
+                predicates.add(cb.like(
+                        cb.lower(judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("code", String.class))),
+                        code));
+            }
+            if (judgmentType.getActive() != null)
+                if (judgmentType.getActive() == true)
+                    predicates.add(cb.equal(
+                            judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
+                            true));
+                else
+                    predicates.add(cb.equal(
+                            judgmentTypeObj.get(JudgmentType.getDeclaredSingularAttribute("active", Boolean.class)),
+                            false));
 
-			createQuery.where(predicates.toArray(new Predicate[] {}));
-			final TypedQuery<JudgmentType> query = entityManager.createQuery(createQuery);
+            createQuery.where(predicates.toArray(new Predicate[] {}));
+            final TypedQuery<JudgmentType> query = entityManager.createQuery(createQuery);
 
-			resultList = query.getResultList();
-		}
-		return resultList;
-	}
+            resultList = query.getResultList();
+        }
+        return resultList;
+    }
 }

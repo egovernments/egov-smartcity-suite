@@ -61,10 +61,10 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "EGLC_CASETYPE_MASTER")
 @Unique(fields = { "code", "caseType" }, id = "id", tableName = "EGLC_CASETYPE_MASTER", columnName = { "code",
         "casetype" }, enableDfltMsg = true)
-@SequenceGenerator(name = CasetypeMaster.SEQ_CASE_TYPE, sequenceName = CasetypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
+@SequenceGenerator(name = CaseTypeMaster.SEQ_CASE_TYPE, sequenceName = CaseTypeMaster.SEQ_CASE_TYPE, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
-public class CasetypeMaster extends AbstractAuditable {
+public class CaseTypeMaster extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_CASE_TYPE = "SEQ_EGLC_CASETYPE_MASTER";

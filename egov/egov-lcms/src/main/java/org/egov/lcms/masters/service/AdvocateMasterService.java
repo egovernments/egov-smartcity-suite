@@ -93,9 +93,9 @@ public class AdvocateMasterService {
     public AdvocateMaster findByName(final String name) {
         return advocateMasterRepository.findByName(name);
     }
-   
-    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name,final Boolean isSeniorAdvocate) {
-        return advocateMasterRepository.findByNameContainingIgnoreCaseAndIsSeniorAdvocate(name,isSeniorAdvocate);
+
+    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name, final Boolean isSeniorAdvocate) {
+        return advocateMasterRepository.findByNameContainingIgnoreCaseAndIsSeniorAdvocate(name, isSeniorAdvocate);
     }
 
     public AdvocateMaster findOne(final Long id) {
@@ -105,12 +105,12 @@ public class AdvocateMasterService {
     @Transactional
     public void createAccountDetailKey(final AdvocateMaster ad) {
         final Accountdetailtype accountdetailtype = accountdetailtypeHibernateDAO.getAccountdetailtypeByName("lawyer");
-        final Accountdetailkey adk = new Accountdetailkey();
-        adk.setGroupid(1);
-        adk.setDetailkey(ad.getId().intValue());
-        adk.setDetailname(accountdetailtype.getAttributename());
-        adk.setAccountdetailtype(accountdetailtype);
-        accountdetailkeyHibernateDAO.create(adk);
+        final Accountdetailkey accountdetailkey = new Accountdetailkey();
+        accountdetailkey.setGroupid(1);
+        accountdetailkey.setDetailkey(ad.getId().intValue());
+        accountdetailkey.setDetailname(accountdetailtype.getAttributename());
+        accountdetailkey.setAccountdetailtype(accountdetailtype);
+        accountdetailkeyHibernateDAO.create(accountdetailkey);
     }
 
     public List<AdvocateMaster> search(final AdvocateMaster advocateMaster) {
@@ -132,9 +132,9 @@ public class AdvocateMasterService {
                 final String name = "%" + advocateMaster.getName().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("name")));
                 predicates
-                        .add(cb.like(
-                                cb.lower(advocateMasterObj
-                                        .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
+                .add(cb.like(
+                        cb.lower(advocateMasterObj
+                                .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
                                 name));
             }
             if (advocateMaster.getMobileNumber() != null) {
@@ -143,15 +143,15 @@ public class AdvocateMasterService {
                 predicates.add(cb.like(
                         cb.lower(advocateMasterObj
                                 .get(AdvocateMaster.getDeclaredSingularAttribute("mobileNumber", String.class))),
-                        mobileNumber));
+                                mobileNumber));
             }
             if (advocateMaster.getEmail() != null) {
                 final String email = "%" + advocateMaster.getEmail() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("email")));
                 predicates
-                        .add(cb.like(
-                                cb.lower(advocateMasterObj
-                                        .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
+                .add(cb.like(
+                        cb.lower(advocateMasterObj
+                                .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
                                 email));
             }
 

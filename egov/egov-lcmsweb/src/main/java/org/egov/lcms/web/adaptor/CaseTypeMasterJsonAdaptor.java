@@ -41,32 +41,33 @@ package org.egov.lcms.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.lcms.masters.entity.CourtTypeMaster;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class CourttypeMasterJsonAdaptor implements JsonSerializer<CourtTypeMaster> {
+public class CaseTypeMasterJsonAdaptor implements JsonSerializer<CaseTypeMaster> {
     @Override
-    public JsonElement serialize(final CourtTypeMaster courttypeMaster, final Type type,
+    public JsonElement serialize(final CaseTypeMaster casetypeMaster, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        if (courttypeMaster != null) {
-            if (courttypeMaster.getCourtType() != null)
-                jsonObject.addProperty("courtType", courttypeMaster.getCourtType());
+        if (casetypeMaster != null) {
+            if (casetypeMaster.getCaseType() != null)
+                jsonObject.addProperty("caseType", casetypeMaster.getCaseType());
             else
-                jsonObject.addProperty("courtType", "");
-            if (courttypeMaster.getCode() != null)
-                jsonObject.addProperty("code", courttypeMaster.getCode());
+                jsonObject.addProperty("caseType", "");
+            if (casetypeMaster.getCode() != null)
+                jsonObject.addProperty("code", casetypeMaster.getCode());
             else
                 jsonObject.addProperty("code", "");
-            if (courttypeMaster.getActive() != null)
-                jsonObject.addProperty("active", courttypeMaster.getActive() == true ? "YES" : "NO");
+            if (casetypeMaster.getActive() != null)
+                jsonObject.addProperty("active", casetypeMaster.getActive() == true ? "YES" : "NO");
             else
                 jsonObject.addProperty("active", "");
-            jsonObject.addProperty("id", courttypeMaster.getId());
+
+            jsonObject.addProperty("id", casetypeMaster.getId());
         }
         return jsonObject;
     }

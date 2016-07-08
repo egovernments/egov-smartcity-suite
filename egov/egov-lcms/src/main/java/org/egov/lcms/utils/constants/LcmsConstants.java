@@ -190,7 +190,7 @@ public class LcmsConstants {
     public static final String lengthCheckForMobileNo = "^((\\+)?(\\d{2}[-]))?(\\d{10}){1}?$";
     public static final String numericiValForPhoneNo = "[0-9-,()OR]+";
     public static final String orderNumberFormat = "[0-9a-zA-Z-&/(){}\\[\\]]+";
-    public static final String dateFormat = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
+    //public static final String dateFormat = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
     public static final String searchMixedCharType1 = "[0-9a-zA-Z-&/*]+";
     public static final String mixedCharType1withComma = "^[a-z|A-Z|]+[a-z|A-Z|0-9|&/() .,]*";
     public static final String referenceNumberTIRegx = "[0-9a-zA-Z-&/() .]+";

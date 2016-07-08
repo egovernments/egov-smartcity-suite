@@ -51,8 +51,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Metamodel;
 
-import org.egov.lcms.masters.entity.CasetypeMaster;
-import org.egov.lcms.masters.repository.CasetypeMasterRepository;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
+import org.egov.lcms.masters.repository.CaseTypeMasterRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -63,52 +63,52 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CaseTypeMasterService {
 
-	private final CasetypeMasterRepository casetypeMasterRepository;
+	private final CaseTypeMasterRepository casetypeMasterRepository;
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
-	public CaseTypeMasterService(final CasetypeMasterRepository casetypeMasterRepository) {
+	public CaseTypeMasterService(final CaseTypeMasterRepository casetypeMasterRepository) {
 		this.casetypeMasterRepository = casetypeMasterRepository;
 	}
 
 	@Transactional
-	public CasetypeMaster create(final CasetypeMaster casetypeMaster) {
+	public CaseTypeMaster create(final CaseTypeMaster casetypeMaster) {
 		return casetypeMasterRepository.save(casetypeMaster);
 	}
 
 
-	public List<CasetypeMaster> getCaseTypeList()
+	public List<CaseTypeMaster> getCaseTypeList()
         {
             return casetypeMasterRepository.findAll();
         }
 	@Transactional
-	public CasetypeMaster update(final CasetypeMaster casetypeMaster) {
+	public CaseTypeMaster update(final CaseTypeMaster casetypeMaster) {
 		return casetypeMasterRepository.save(casetypeMaster);
 	}
 
-	public List<CasetypeMaster> findAll() {
+	public List<CaseTypeMaster> findAll() {
 		return casetypeMasterRepository.findAll(new Sort(Sort.Direction.ASC, "caseType"));
 	}
 
-	public CasetypeMaster findByCode(String code) {
+	public CaseTypeMaster findByCode(String code) {
 		return casetypeMasterRepository.findByCode(code);
 	}
 
-	public CasetypeMaster findOne(Long id) {
+	public CaseTypeMaster findOne(Long id) {
 		return casetypeMasterRepository.findOne(id);
 	}
 
-	public List<CasetypeMaster> search(final CasetypeMaster casetypeMaster) {
+	public List<CaseTypeMaster> search(final CaseTypeMaster casetypeMaster) {
 
 		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<CasetypeMaster> createQuery = cb.createQuery(CasetypeMaster.class);
-		final Root<CasetypeMaster> casetypemasters = createQuery.from(CasetypeMaster.class);
+		final CriteriaQuery<CaseTypeMaster> createQuery = cb.createQuery(CaseTypeMaster.class);
+		final Root<CaseTypeMaster> casetypemasters = createQuery.from(CaseTypeMaster.class);
 		createQuery.select(casetypemasters);
 		final Metamodel m = entityManager.getMetamodel();
-		final javax.persistence.metamodel.EntityType<CasetypeMaster> CasetypeMaster = m.entity(CasetypeMaster.class);
+		final javax.persistence.metamodel.EntityType<CaseTypeMaster> CasetypeMaster = m.entity(CaseTypeMaster.class);
 
-		final List<CasetypeMaster> resultList;
+		final List<CaseTypeMaster> resultList;
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		if (casetypeMaster.getCaseType() == null && casetypeMaster.getCode() == null
 				&& casetypeMaster.getActive() == null)
@@ -141,7 +141,7 @@ public class CaseTypeMasterService {
 							false));
 
 			createQuery.where(predicates.toArray(new Predicate[] {}));
-			final TypedQuery<CasetypeMaster> query = entityManager.createQuery(createQuery);
+			final TypedQuery<CaseTypeMaster> query = entityManager.createQuery(createQuery);
 
 			resultList = query.getResultList();
 		}

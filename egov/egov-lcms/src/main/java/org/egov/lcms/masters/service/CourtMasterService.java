@@ -93,10 +93,6 @@ public class CourtMasterService {
         return courtMasterRepository.findByCourtType(courtType);
     }
 
-    /*
-     * public List<CourtMaster> search(final CourtMaster courtMaster) { return
-     * courtMasterRepository.findAll(); }
-     */
     public List<CourtMaster> search(final CourtMaster courtMaster) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();

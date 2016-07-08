@@ -39,15 +39,13 @@
  */
 package org.egov.lcms.masters.repository;
 
-
-import org.egov.lcms.masters.entity.CasetypeMaster;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+@Repository
+public interface CaseTypeMasterRepository extends JpaRepository<CaseTypeMaster, Long> {
 
-@Repository 
-public interface CasetypeMasterRepository extends JpaRepository<CasetypeMaster,Long> {
-
-	CasetypeMaster findByCode(String code);
+    CaseTypeMaster findByCode(String code);
 
 }

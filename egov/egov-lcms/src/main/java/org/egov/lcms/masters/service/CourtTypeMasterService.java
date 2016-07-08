@@ -75,6 +75,7 @@ public class CourtTypeMasterService {
     public CourtTypeMaster create(final CourtTypeMaster courtTypeMaster) {
         return courtTypeMasterRepository.save(courtTypeMaster);
     }
+
     public List<CourtTypeMaster> getCourtTypeList()
     {
         return courtTypeMasterRepository.findAll();
@@ -100,11 +101,6 @@ public class CourtTypeMasterService {
     public List<CourtTypeMaster> getActiveCourtTypes() {
         return courtTypeMasterRepository.findByActiveTrueOrderByCourtTypeAsc();
     }
-
-    /*
-     * public List<CourttypeMaster> search(CourttypeMaster courttypeMaster){
-     * return courttypeMasterRepository.findAll(); }
-     */
 
     public List<CourtTypeMaster> search(final CourtTypeMaster courtTypeMaster) {
 

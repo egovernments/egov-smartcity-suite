@@ -71,7 +71,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.masters.entity.CasetypeMaster;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
@@ -104,7 +104,7 @@ public class Legalcase extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "CASETYPE", nullable = false)
-    private CasetypeMaster casetypeMaster;
+    private CaseTypeMaster casetypeMaster;
     @Required(message = "case.court.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
@@ -441,11 +441,11 @@ public class Legalcase extends AbstractAuditable {
         this.functionary = functionary;
     }
 
-    public CasetypeMaster getCasetypeMaster() {
+    public CaseTypeMaster getCasetypeMaster() {
         return casetypeMaster;
     }
 
-    public void setCasetypeMaster(final CasetypeMaster casetypeMaster) {
+    public void setCasetypeMaster(final CaseTypeMaster casetypeMaster) {
         this.casetypeMaster = casetypeMaster;
     }
 

@@ -47,7 +47,7 @@ import java.util.Map;
 
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
-import org.egov.lcms.masters.entity.CasetypeMaster;
+import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.entity.GovernmentDepartment;
@@ -113,7 +113,7 @@ public class GenericLegalCaseController {
         return connectionTypeMap;
     }
 
-    public @ModelAttribute("caseTypeList") List<CasetypeMaster> caseTypeList() {
+    public @ModelAttribute("caseTypeList") List<CaseTypeMaster> caseTypeList() {
         return caseTypeMasterService.getCaseTypeList();
     }
 
