@@ -957,9 +957,12 @@ public class LineEstimateService {
             final Long id = led.getId();
             final AbstractEstimate abstractEstimate = estimateService
                     .getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(id);
-            if (abstractEstimate != null)
+
+            if (abstractEstimate != null && abstractEstimate.getActivities().isEmpty()) {
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                         WorksConstants.ABSTRACTESTIMATE, AbstractEstimate.EstimateStatus.CANCELLED.toString()));
+                abstractEstimate.getProjectCode().setActive(Boolean.FALSE);
+            }
         }
         return lineEstimateRepository.save(lineEstimate);
     }
@@ -967,6 +970,17 @@ public class LineEstimateService {
     public LineEstimate getLineEstimateByCouncilResolutionNumber(final String councilResolutionNumber) {
         return lineEstimateRepository.findByCouncilResolutionNumberIgnoreCaseAndStatus_codeNotLike(
                 councilResolutionNumber, WorksConstants.CANCELLED_STATUS);
+    }
+
+    public String checkAbstractEstimatesWithBOQForLineEstimate(final Long lineEstimateId) {
+        final List<String> listString = estimateService.getAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId);
+        String estimateNumbers = "";
+        for (final String estimateNumber : listString)
+            estimateNumbers += estimateNumber + ", ";
+        if (estimateNumbers.equals(""))
+            return "";
+        else
+            return estimateNumbers;
     }
 
 }

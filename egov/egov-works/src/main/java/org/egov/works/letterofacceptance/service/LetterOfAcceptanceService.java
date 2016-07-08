@@ -871,7 +871,8 @@ public class LetterOfAcceptanceService {
             return "";
         else
             for (final ContractorBillRegister cbr : bills)
-                billNumbers += cbr.getBillnumber() + ", ";
+                if(cbr.getWorkOrderEstimate().getWorkOrderActivities().isEmpty())
+                  billNumbers += cbr.getBillnumber() + ", ";
         return billNumbers;
     }
 

@@ -69,5 +69,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<User> findAbstractEstimateCreatedByUsers(@Param("departmentIds") final List<Long> departmentIds);
     
     AbstractEstimate findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(String technicalSanctionNumber, String statusCode);
+    
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.egwStatus.code != :status and exists(select distinct(activity.abstractEstimate.estimateNumber) from Activity as activity where activity.abstractEstimate = ae) and exists (select distinct(led.estimateNumber) from LineEstimateDetails as led  where led.lineEstimate.id = :lineEstimateId and led.estimateNumber = ae.estimateNumber)")
+    List<String> findAbstractEstimateNumbersToCancelLineEstimate(@Param("lineEstimateId") final Long lineEstimateId,@Param("status") final String status);
 
 }

@@ -931,4 +931,9 @@ public class EstimateService {
             abstractEstimate.getEstimateTechnicalSanctions().get(0).setAbstractEstimate(abstractEstimate);
     }
 
+    public List<String> getAbstractEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
+        final List<String> estimateNumbers = abstractEstimateRepository
+                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId, WorksConstants.CANCELLED_STATUS);
+        return estimateNumbers;
+    }
 }

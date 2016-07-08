@@ -89,7 +89,12 @@ public class CancelLineEstimateController {
             model.addAttribute("errorMessage", message);
             return "letterofacceptance-success";
         }
-
+        final String estimateNumbers = lineEstimateService.checkAbstractEstimatesWithBOQForLineEstimate(lineEstimate.getId());
+        if (!estimateNumbers.equals("")) {
+            final String message = messageSource.getMessage("error.lineestimate.abstractestimatewithboq.exists", new String[] { estimateNumbers }, null);
+            model.addAttribute("errorMessage", message);
+            return "letterofacceptance-success";
+        }
         lineEstimate.setCancellationReason(cancellationReason);
         lineEstimate.setCancellationRemarks(cancellationRemarks);
         lineEstimate = lineEstimateService.cancel(lineEstimate);
