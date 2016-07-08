@@ -87,7 +87,7 @@
  				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctiontodate" /></label>
 				<div class="col-sm-3 add-margin">
-						<input type="adminSanctionToDate" class="form-control datepicker" id="adminSanctionToDate" data-inputmask="'mask': 'd/m/y'" value>
+					<form:input path="adminSanctionToDate" class="form-control datepicker" id="adminSanctionToDate" data-inputmask="'mask': 'd/m/y'" />
 				</div>
 			</div>
 			
@@ -156,5 +156,4 @@
 	</div>
 </div>
 
-<script type="text/javascript"
-	src="<c:url value='/resources/js/searchletterofacceptance.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/searchletterofacceptance.js?rnd=${app_release_no}'/>"></script>
