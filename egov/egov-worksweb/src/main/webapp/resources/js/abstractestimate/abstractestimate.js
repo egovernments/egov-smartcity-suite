@@ -265,7 +265,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: ct.name,
+                        name: '' + ct.boundaryNum + '',
                         value: ct.id
                     };
                 });
@@ -277,7 +277,7 @@ $(document).ready(function(){
 	var ward_typeahead = $('#wardInput').typeahead({
 		hint : false,
 		highlight : false,
-		minLength : 3
+		minLength : 1
 	}, {
 		displayKey : 'name',
 		source : ward.ttAdapter(),
@@ -1552,7 +1552,7 @@ function validateWorkFlowApprover(name) {
 		
 		if($("form").valid())
 		{
-			bootbox.confirm($('#confirm').val(), function(result) {
+			bootbox.confirm($('#cancelConfirm').val(), function(result) {
 				if(!result) {
 					bootbox.hideAll();
 					return false;
