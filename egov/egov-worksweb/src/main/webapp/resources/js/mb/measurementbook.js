@@ -538,7 +538,9 @@ function calculateSorAmounts(currentObj) {
 	var toleranceQuantity = parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100);
 	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
 	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
-		bootbox.alert($('#errorcumulativequantity').val());
+		var message = $('#errorcumulativequantity').val();
+		message = message.replace(/\{0\}/g, toleranceLimit);
+		bootbox.alert(message);
 		$(currentObj).val('');
 		$('.cumulativeIncludingCurrentEntry_' + rowcount).html('');
 		$('.amountCurrentEntry_' + rowcount).html('');
@@ -568,7 +570,9 @@ function calculateNonSorAmounts(currentObj) {
 	var toleranceQuantity = parseFloat(approvedQuantity * parseFloat(toleranceLimit) / 100);
 	var cumulativeIncludingCurrentEntry = parseFloat(parseFloat(cumulativePreviousEntry) + parseFloat(currentQuantity)).toFixed(4);
 	if (toleranceQuantity < cumulativeIncludingCurrentEntry) {
-		bootbox.alert($('#errorcumulativequantity').val());
+		var message = $('#errorcumulativequantity').val();
+		message = message.replace(/\{0\}/g, toleranceLimit);
+		bootbox.alert(message);
 		$(currentObj).val('');
 		$('.nonSorCumulativeIncludingCurrentEntry_' + rowcount).html('');
 		$('.nonSorAmountCurrentEntry_' + rowcount).html('');
