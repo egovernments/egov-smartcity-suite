@@ -269,7 +269,7 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final MBHeader mbHeader) {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Boolean isMBEditable = false;
         model.addAttribute("stateType", mbHeader.getClass().getSimpleName());
         if (mbHeader.getCurrentState() != null
