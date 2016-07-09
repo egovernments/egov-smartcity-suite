@@ -69,7 +69,7 @@
 	</div>
 	<c:if test="${documentDetails != null &&  !documentDetails.isEmpty()}">
 		<c:forEach items="${documentDetails}" var="documentDtls">
-			&nbsp; &nbsp; <a href="/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS">${documentDtls.fileStore.fileName }</a><br />
+			&nbsp; &nbsp; <a href="" onclick="window.open('/egi/downloadfile?fileStoreId=${documentDtls.fileStore.fileStoreId}&moduleName=WMS','','height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes')">${documentDtls.fileStore.fileName }</a><br />
 		</c:forEach>
 	</c:if>
 	<c:if test="${(mode == 'view'|| mode == 'readOnly' || mode == 'workflowView') && documentDetails.isEmpty()}">
@@ -86,11 +86,11 @@
 						 	<table id="uploadertbl" width="100%"><tbody>
 						 		<tr id="row1">			 				
 									<td>
-										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">
-										<div class="add-margin error-msg text-left"><font size="2">document should not exceed 2 MB</font></div>
-									</td>
+										<input type="file" name="file" id="file1" onchange="isValidFile(this.id)" class="padding-10">										
+									</td>		
 								</tr>									 										
-						 	</tbody></table>
+						 	</tbody></table>						 								
+							<div class="add-margin error-msg text-left"><font size="2"><spring:message code="msg.documents.maxsize" /></font></div>
 						</td>
 					</tr>
 					<tr>
