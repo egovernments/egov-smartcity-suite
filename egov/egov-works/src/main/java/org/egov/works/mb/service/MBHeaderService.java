@@ -134,7 +134,7 @@ public class MBHeaderService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -232,10 +232,9 @@ public class MBHeaderService {
             List<MBDetails> mbDetails = new ArrayList<MBDetails>(mbHeader.getMbDetails());
             mbDetails = removeDeletedMBDetails(mbDetails, removedDetailIds);
             mbHeader.setMbDetails(mbDetails);
-            
-            for (final DocumentDetails docs : mbHeader.getDocumentDetails()) {
+
+            for (final DocumentDetails docs : mbHeader.getDocumentDetails())
                 worksUtils.deleteDocuments(docs.getId());
-            }
 
             final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, mbHeader,
                     WorksConstants.MBHEADER);
@@ -425,6 +424,7 @@ public class MBHeaderService {
                 null, null, additionalRule, mbHeader.getCurrentState().getValue(), null);
         if (mbHeader.getEgwStatus() != null && mbHeader.getEgwStatus().getCode() != null)
             if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CREATED.toString())
+                    && !WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
                     && mbHeader.getState() != null)
                 if (mode.equals("edit"))
                     approvalPosition = mbHeader.getState().getOwnerPosition().getId();
@@ -541,10 +541,10 @@ public class MBHeaderService {
             totalMBAmount = totalMBAmountOfMBs + mbHeader.getMbAmount().doubleValue();
         else
             totalMBAmount = mbHeader.getMbAmount().doubleValue();
-        
+
         if (mbHeader.getMbDate() != null && mbHeader.getMbDate().after(new Date())) {
             message = messageSource.getMessage("error.mb.entry.future.date",
-                    new String[] { },
+                    new String[] {},
                     null);
             jsonObject.addProperty("errorMBEntryFutureDate", message);
             errors.reject("errorMBEntryFutureDate", message);
