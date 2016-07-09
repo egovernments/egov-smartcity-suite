@@ -85,7 +85,6 @@ $(document).ready(function(){
 			//TODO: remove code till billdate < workOrderDate condition check
 			var billDate = $('#billdate').data('datepicker').date;
 			var workOrderDate = $('#workOrderDate').data('datepicker').date;
-			var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
 			var currentDate = new Date();
 			if(currentDate.getMonth() == 0 || currentDate.getMonth() == 1 || currentDate.getMonth() == 2) {
 				currentDate = new Date(currentDate.getFullYear() - 1, 3, 1);
@@ -105,6 +104,7 @@ $(document).ready(function(){
 			var billType = $('#billtype').val();
 			if(billType == 'Final Bill') {
 				$('#workCompletionDate').attr('required', 'required');
+				var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
 				
 				if($('#workCompletionDate').val() != '') {
 				if(workCompletionDate > billDate) {
