@@ -161,7 +161,7 @@ public class LetterOfAcceptancePDFController {
             } else
                 reportParams.put("technicalSanctionByDesignation", "");
 
-            reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrderActivities, reportParams);
+            reportInput = new ReportRequest(LETTEROFACCEPTANCEPDF, workOrder.getContractor(), reportParams);
 
         }
 
