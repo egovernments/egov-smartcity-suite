@@ -105,6 +105,7 @@ $(document).ready(function(){
 			if(billType == 'Final Bill') {
 				$('#workCompletionDate').attr('required', 'required');
 				var workCompletionDate = $('#workCompletionDate').data('datepicker').date;
+				var workCommencedDate = $('#workCommencedDate').val(); 
 				
 				if($('#workCompletionDate').val() != '') {
 				if(workCompletionDate > billDate) {
@@ -112,8 +113,15 @@ $(document).ready(function(){
 					$('#workCompletionDate').val(""); 
 					return false;
 				}
-				
-				if(workCompletionDate < workOrderDate) {
+				if(workCommencedDate != '') {
+					var comencedDate = $('#workCommencedDate').data('datepicker').date;
+					if(workCompletionDate < comencedDate) {
+						bootbox.alert($('#errorWorkCompletionDategreaterThanWorkCommencedDate').val());
+						$('#workCompletionDate').val(""); 
+						return false;
+					}
+				} 
+				else if(workCompletionDate < workOrderDate) {
 					bootbox.alert($('#errorWorkCompletionDateGreaterThanWorkOrderDate').val());
 					$('#workCompletionDate').val(""); 
 					return false;
