@@ -200,7 +200,7 @@ function callAjaxSearch() {
 						"data" : "department", "sClass" : "text-center"} ,{
 						"data" : "contractor", "sClass" : "text-center"} ,{
 						"data" : "agreemantAmount", "sClass" : "text-right"},{
-						"data" : "mbrefnumber", "sClass" : "text-center"},{
+						"data" : "mbrefnumberdate", "sClass" : "text-center"},{
 						"data" : "mbpageno", "sClass" : "text-center"},{
 						"data" : "mbamount", "sClass" : "text-right"},{
 						"data" : "status", "sClass" : "text-center"},{

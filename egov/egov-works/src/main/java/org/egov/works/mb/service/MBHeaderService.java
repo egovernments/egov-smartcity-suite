@@ -371,6 +371,8 @@ public class MBHeaderService {
             if (searchRequestMBHeader.getMbStatus() != null)
                 criteria.add(
                         Restrictions.eq("status.id", Integer.valueOf(searchRequestMBHeader.getMbStatus().toString())));
+            else 
+                criteria.add(Restrictions.ne("status.code",WorksConstants.NEW));
             if (searchRequestMBHeader.getCreatedBy() != null)
                 criteria.add(Restrictions.eq("mbh.createdBy.id", searchRequestMBHeader.getCreatedBy()));
 
@@ -635,4 +637,5 @@ public class MBHeaderService {
     public Double getTotalMBAmountOfMBs(final Long mbHeaderId, final Long workOrderEstimateId, final String statusCode) {
         return mbHeaderRepository.getTotalMBAmountOfMBs(mbHeaderId, workOrderEstimateId, statusCode);
     }
+    
 }

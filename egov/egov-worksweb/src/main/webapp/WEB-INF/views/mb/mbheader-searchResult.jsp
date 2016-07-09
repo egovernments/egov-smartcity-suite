@@ -55,8 +55,8 @@
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.contractor.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th> 
-					<th><spring:message code="lbl.mb.pagenumber" /></th>
 					<th><spring:message code="lbl.mb.referencenumberdate" /></th>
+					<th><spring:message code="lbl.mb.pagenumber" /></th>
 					<th><spring:message code="lbl.mbamount" /></th> 
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.createdby" /></th>

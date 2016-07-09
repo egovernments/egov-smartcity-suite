@@ -41,6 +41,7 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.utils.WorksUtils;
@@ -63,6 +64,7 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
     public JsonElement serialize(final MBHeader mBHeader, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         final WorkOrderEstimate workOrderEstimate = mBHeader.getWorkOrderEstimate();
         jsonObject.addProperty("mbheaderId", mBHeader.getId());
         jsonObject.addProperty("workOrderId", workOrderEstimate.getWorkOrder().getId());
@@ -72,9 +74,9 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
         jsonObject.addProperty("department", workOrderEstimate.getEstimate().getExecutingDepartment().getName());
         jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
         jsonObject.addProperty("agreemantAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
-        jsonObject.addProperty("mbrefnumber", mBHeader.getMbRefNo());
+        jsonObject.addProperty("mbrefnumberdate", mBHeader.getMbRefNo() + "/" + sdf.format(mBHeader.getMbDate()));
         jsonObject.addProperty("mbamount", mBHeader.getMbAmount());
-        jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "-" + mBHeader.getToPageNo());
+        jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "/" + mBHeader.getToPageNo());
         jsonObject.addProperty("status", mBHeader.getEgwStatus().getDescription());
         jsonObject.addProperty("createdBy", mBHeader.getCreatedBy().getName());
         if (mBHeader.getState() != null && mBHeader.getState().getOwnerPosition() != null)
