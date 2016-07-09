@@ -282,11 +282,18 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajax-checkifbillscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
-        final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
-        final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
-        if (billNumbers.equals(""))
-            return "";
-
+        WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
+        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
+        String message = "";
+        if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+            final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
+            if (!billNumbers.equals(""))
+                message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+        } else {
+            final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
+            if (!mbRefNumbers.equals(""))
+                message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers }, null);
+        }
         return message;
     }
 

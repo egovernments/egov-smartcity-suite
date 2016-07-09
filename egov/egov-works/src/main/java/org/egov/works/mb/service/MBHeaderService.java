@@ -638,4 +638,8 @@ public class MBHeaderService {
         return mbHeaderRepository.getTotalMBAmountOfMBs(mbHeaderId, workOrderEstimateId, statusCode);
     }
     
+    public List<MBHeader> getMBHeadersToCancelLOA(final WorkOrderEstimate workOrderEstimate) {
+        return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimate.getId(),WorksConstants.CANCELLED_STATUS);
+    }
+    
 }

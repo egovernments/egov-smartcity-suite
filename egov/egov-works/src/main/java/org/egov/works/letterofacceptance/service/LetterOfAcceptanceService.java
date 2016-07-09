@@ -83,6 +83,8 @@ import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.milestone.entity.Milestone;
 import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.models.masters.ContractorDetail;
@@ -171,6 +173,9 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private MBHeaderService mBHeaderService; 
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -843,8 +848,20 @@ public class LetterOfAcceptanceService {
                     estimateNumbers.add("");
                 criteria.add(Restrictions.in("wo.estimateNumber", estimateNumbers));
             }
-            if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null ) {
+                if(searchRequestLetterOfAcceptance.getEgwStatus().equals("APPROVED"))
                 criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
+                else{
+                // TODO if workorder status set to offlinestatus this query can
+                // be removed
+                final List<Long> workOrderIds = letterOfAcceptanceRepository.findWorkOrderForLoaStatus(
+                        searchRequestLetterOfAcceptance.getEgwStatus(), WorksConstants.WORKORDER);
+                if (workOrderIds.isEmpty())
+                    workOrderIds.add(null);
+                criteria.add(Restrictions.or(Restrictions.in("wo.id", workOrderIds), Restrictions
+                        .or(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()))));
+             }
+            }
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
@@ -871,7 +888,6 @@ public class LetterOfAcceptanceService {
             return "";
         else
             for (final ContractorBillRegister cbr : bills)
-                if(cbr.getWorkOrderEstimate().getWorkOrderActivities().isEmpty())
                   billNumbers += cbr.getBillnumber() + ", ";
         return billNumbers;
     }
@@ -984,6 +1000,17 @@ public class LetterOfAcceptanceService {
         }
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
+    }
+    
+    public String checkIfMBCreatedForLOA(final WorkOrderEstimate workOrderEstimate) {
+        String mbrefNumbres = "";
+        final List<MBHeader> mbHeaders = mBHeaderService.getMBHeadersToCancelLOA(workOrderEstimate);
+       for(MBHeader mBHeader:mbHeaders) 
+           mbrefNumbres += mBHeader.getMbRefNo() + ", ";
+           if (mbrefNumbres.equals(""))
+               return "";
+           else
+               return mbrefNumbres;
     }
 
 }

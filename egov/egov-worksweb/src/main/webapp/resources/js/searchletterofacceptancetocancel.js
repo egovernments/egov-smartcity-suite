@@ -42,7 +42,8 @@ jQuery('#btnsearch').click(function(e) {
 	var workOrderNumber = $('#workOrderNumber').val();
 	var workIdentificationNumber = $('#workIdentificationNumber').val();
 	var contractor = $('#contractor').val();
-	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && contractor == '')
+	var contractor = $('#egwStatus').val();
+	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && contractor == '' && contractor == '')
 		bootbox.alert('Atleast one search criteria is mandatory');
 	else
 		callAjaxSearch();

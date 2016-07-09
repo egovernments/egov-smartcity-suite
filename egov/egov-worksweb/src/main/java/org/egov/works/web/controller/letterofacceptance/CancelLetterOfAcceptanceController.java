@@ -39,10 +39,13 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationException;
@@ -50,7 +53,9 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -74,37 +79,61 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Autowired
     private ResourceBundleMessageSource messageSource;
 
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
-            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final Model model)
+            throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
         return "searchloa-cancel";
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelLetterOfAcceptance(final HttpServletRequest request,
-            final Model model) throws ApplicationException {
+    public String cancelLetterOfAcceptance(final HttpServletRequest request, final Model model)
+            throws ApplicationException {
         final Long letterOfAcceptanceId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
         WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(letterOfAcceptanceId);
-        final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
-        if (!billNumbers.equals("")) {
-            final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
-            model.addAttribute("errorMessage", message);
-            return "letterofacceptance-success";
+        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
+        if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
+            final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
+            if (!billNumbers.equals("")) {
+                final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers },
+                        null);
+                model.addAttribute("errorMessage", message);
+                return "letterofacceptance-success";
+            }
+        } else {
+            final String mbRefNumbers = letterOfAcceptanceService.checkIfMBCreatedForLOA(workOrderEstimate);
+            if (!mbRefNumbers.equals("")) {
+                final String message = messageSource.getMessage("error.loa.mb.created", new String[] { mbRefNumbers },
+                        null);
+                model.addAttribute("errorMessage", message);
+                return "letterofacceptance-success";
+            }
         }
 
         if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
-            model.addAttribute("errorMessage", messageSource.getMessage("error.loa.milestone.created",
-                    new String[] {}, null));
+            model.addAttribute("errorMessage",
+                    messageSource.getMessage("error.loa.milestone.created", new String[] {}, null));
             return "letterofacceptance-success";
         }
+
         workOrder.setCancellationReason(cancellationReason);
         workOrder.setCancellationRemarks(cancellationRemarks);
         workOrder = letterOfAcceptanceService.cancel(workOrder);
