@@ -141,10 +141,11 @@
 										</tr>
 									</thead>
 									<tbody>
+									<c:set var="slNo" value="${1}" scope="session" />
 									<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
 					                <c:if test="${mbdetails.workOrderActivity.activity.schedule == null }">
 										<tr> 
-											<td><span><c:out value="${item.index + 1}" /></span></td>
+											<td><span><c:out value="${slNo}" /></span></td>
 											<input type="hidden" name="nonSorUnitrate" id="nonSorUnitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
 											<td><c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>
 												<a href="#" class="hintanchor"
@@ -165,6 +166,7 @@
 											<td class="text-right"><span id="nonSorApprovedAmount"></span></td>
 											<td><c:out value="${mbdetails.remarks}" /></td>
 										</tr>
+										<c:set value="${slNo + 1}" var="slNo" scope="session" />
 										</c:if>
 										</c:forEach>
 									</tbody>
