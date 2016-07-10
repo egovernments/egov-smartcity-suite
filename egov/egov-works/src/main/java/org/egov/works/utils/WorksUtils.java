@@ -42,12 +42,14 @@ package org.egov.works.utils;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -134,7 +136,7 @@ public class WorksUtils {
                 }
         return documentDetailsList;
     }
-    
+
     public void deleteDocuments(final Long documentId) {
         documentDetailsRepository.delete(documentId);
     }
@@ -263,32 +265,43 @@ public class WorksUtils {
     public List<Hashtable<String, Object>> getWorkFlowHistory(final State state, final List<StateHistory> history) {
         User user = null;
         Assignment assignment = null;
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         if (null != state) {
             for (final StateHistory stateHistory : history) {
-                final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("status", stateHistory.getValue());
-                user = stateHistory.getLastModifiedBy();
+                if (!stateHistory.getValue().equals(WorksConstants.NEW)) {
+                    final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
+                    HistoryMap.put("date", sdf.format(stateHistory.getDateInfo()));
+                    HistoryMap.put("comments", stateHistory.getComments());
+                    if (StringUtils.isNotBlank(stateHistory.getNextAction())) {
+                        HistoryMap.put("status", stateHistory.getValue() + "-" + stateHistory.getNextAction());
+                    } else
+                        HistoryMap.put("status", stateHistory.getValue() + "-");
+                    user = stateHistory.getLastModifiedBy();
+                    if (null != user) {
+                        assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                        HistoryMap.put("user", user.getName());
+                        HistoryMap.put("designation", assignment.getDesignation().getName());
+                    }
+                    historyTable.add(HistoryMap);
+                }
+            }
+            if (!state.getValue().equals(WorksConstants.NEW)) {
+                map.put("date", sdf.format(state.getDateInfo()));
+                map.put("comments", state.getComments() != null ? state.getComments() : "");
+                if (StringUtils.isNotBlank(state.getNextAction())) {
+                    map.put("status", state.getValue() + "-" + state.getNextAction());
+                } else
+                    map.put("status", state.getValue());
+                user = state.getLastModifiedBy();
                 if (null != user) {
                     assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-                    HistoryMap.put("user", user.getName());
-                    HistoryMap.put("designation", assignment.getDesignation().getName());
+                    map.put("user", user.getName());
+                    map.put("designation", assignment.getDesignation().getName());
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(map);
             }
-            map.put("date", state.getDateInfo());
-            map.put("comments", state.getComments() != null ? state.getComments() : "");
-            map.put("status", state.getValue());
-            user = state.getLastModifiedBy();
-            if (null != user) {
-                assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-                map.put("user", user.getName());
-                map.put("designation", assignment.getDesignation().getName());
-            }
-            historyTable.add(map);
         }
         return historyTable;
     }

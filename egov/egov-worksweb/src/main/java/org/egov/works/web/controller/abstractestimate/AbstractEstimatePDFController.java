@@ -97,6 +97,7 @@ public class AbstractEstimatePDFController {
     private ResponseEntity<byte[]> generateReport(final AbstractEstimate abstractEstimate,
             final HttpServletRequest request, final HttpSession session) {
         final List<Activity> activities = new ArrayList<Activity>();
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportParams.put("cityName", cityName);
@@ -110,10 +111,9 @@ public class AbstractEstimatePDFController {
 
             reportParams.put("activities", activities);
         }
-        reportParams.put("currDate", formatter.format(new Date()));
+        reportParams.put("currDate", sdf.format(new Date()));
         reportInput = new ReportRequest(ABSTRACTESTIMATEPDF, abstractEstimate, reportParams);
         final HttpHeaders headers = new HttpHeaders();
-        ;
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",
                 "inline;filename=AbstractEstimate_" + abstractEstimate.getEstimateNumber() + ".pdf");
