@@ -118,34 +118,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
         Query query = getSession()
                 .createQuery(
-                        "SELECT coa  FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId = purpose.id and purpose.name not in(:purposeNames) AND coa.classification=4 AND coa.isActiveForPosting=true and coa.type in ('I','L') and (coa.glcode like :glCode or upper(coa.name) like :name) order by coa.glcode");
-        query.setParameterList("purposeNames", purposeNames);
-        query.setString("glCode", searchString + "%");
-        query.setString("name", "%" + searchString.toUpperCase() + "%");
-        query.setCacheable(true);
-        listChartOfAcc.addAll(query.list());
-
-        query = getSession()
-                .createQuery(
-                        " from CChartOfAccounts where parentId IN (select coa.id  FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId = purpose.id and purpose.name not in(:purposeNames) ) AND classification=4 AND isActiveForPosting=true and type in ('I','L') and (glcode like :glCode or upper(name) like :name) order by glcode");
-        query.setParameterList("purposeNames", purposeNames);
-        query.setString("glCode", searchString + "%");
-        query.setString("name", "%" + searchString.toUpperCase() + "%");
-        query.setCacheable(true);
-        listChartOfAcc.addAll(query.list());
-
-        query = getSession()
-                .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select coa.id  FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId = purpose.id and purpose.name not in(:purposeNames) )) AND classification=4 AND isActiveForPosting=true and type in ('I','L') and (glcode like :glCode or upper(name) like :name) order by glcode");
-        query.setParameterList("purposeNames", purposeNames);
-        query.setString("glCode", searchString + "%");
-        query.setString("name", "%" + searchString.toUpperCase() + "%");
-        query.setCacheable(true);
-        listChartOfAcc.addAll(query.list());
-
-        query = getSession()
-                .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select coa.id  FROM CChartOfAccounts coa,EgfAccountcodePurpose purpose WHERE coa.purposeId = purpose.id and purpose.name not in(:purposeNames) ))) AND classification=4 AND isActiveForPosting=true and type in ('I','L') and (glcode like :glCode or upper(name) like :name) order by glcode ");
+                        "SELECT coa  FROM CChartOfAccounts coa WHERE not exists (select coa1.id from EgfAccountcodePurpose purpose,CChartOfAccounts coa1 where coa.id = coa1.id and coa1.purposeId = purpose.id and purpose.name in(:purposeNames))  AND coa.classification=4 AND coa.isActiveForPosting=true and coa.type in ('I','L') and (coa.glcode like :glCode or upper(coa.name) like :name) order by coa.glcode");
         query.setParameterList("purposeNames", purposeNames);
         query.setString("glCode", searchString + "%");
         query.setString("name", "%" + searchString.toUpperCase() + "%");
