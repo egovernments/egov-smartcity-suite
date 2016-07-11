@@ -222,9 +222,9 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
 		
-		if(!$("form").valid())
+		if($("form").valid())
 		{
-			bootbox.confirm($('#confirm').val(), function(result) {
+			bootbox.confirm($('#cancelConfirm').val(), function(result) {
 				if(!result) {
 					bootbox.hideAll();
 					return false;
