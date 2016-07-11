@@ -111,6 +111,7 @@ public class LetterOfAcceptancePDFController {
                     .getWorkOrderActivities();
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
             final DecimalFormat df = new DecimalFormat("0.00");
 
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -151,7 +152,7 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("activities", workOrderActivities);
             reportParams.put("activitySize", workOrderActivities.size());
             reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
-            reportParams.put("currDate", formatter.format(new Date()));
+            reportParams.put("currDate", sdf.format(new Date()));
 
             if (!estimate.getEstimateTechnicalSanctions().isEmpty()) {
                 final String technicalSanctionByDesignation = worksUtils

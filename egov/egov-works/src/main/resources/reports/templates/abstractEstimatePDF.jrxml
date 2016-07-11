@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-11T01:15:53 -->
+<!-- 2016-07-11T12:05:17 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -376,7 +375,7 @@
 	<pageFooter>
 		<band height="20">
 			<textField>
-				<reportElement x="390" y="2" width="156" height="18" uuid="a3ba9993-1581-4932-907d-9a002d557f62"/>
+				<reportElement x="360" y="2" width="186" height="18" uuid="a3ba9993-1581-4932-907d-9a002d557f62"/>
 				<box bottomPadding="1"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Times New Roman"/>
