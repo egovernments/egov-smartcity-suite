@@ -118,7 +118,7 @@ public class GenericComplaintAjaxController {
     }
 
     @RequestMapping(value = { "/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
-            "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
+            "/complaint/officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
         final String locationNameLike = "%" + locationName + "%";
