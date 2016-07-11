@@ -80,7 +80,7 @@ public class PetitionTypeMaster extends AbstractAuditable {
     private CourtTypeMaster courtType;
 
     @NotNull
-    @Length(min = 1, max = 15)
+    @Length(min = 1, max = 25)
     @Audited
     private String code;
 

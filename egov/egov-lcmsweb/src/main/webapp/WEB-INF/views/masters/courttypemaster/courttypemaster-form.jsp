@@ -51,7 +51,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="8" required="required" />
+								data-pattern="alphanumericwithspecialcharacters" maxlength="25" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
