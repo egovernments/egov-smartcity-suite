@@ -53,6 +53,7 @@ import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,8 +144,8 @@ public class WorkOrderEstimateService {
                 qry.setParameter("fromWorkOrderDate", searchRequestLetterOfAcceptance.getFromDate());
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 qry.setParameter("toWorkOrderDate", searchRequestLetterOfAcceptance.getToDate());
-            if (searchRequestLetterOfAcceptance.getName() != null)
-                qry.setParameter("contractorName", searchRequestLetterOfAcceptance.getName().toUpperCase());
+            if (searchRequestLetterOfAcceptance.getContractor() != null)
+                qry.setParameter("contractorName", searchRequestLetterOfAcceptance.getContractor().toUpperCase());
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
                 qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null)
@@ -179,7 +180,7 @@ public class WorkOrderEstimateService {
             queryStr.append(" and woe.workOrder.workOrderDate >=:fromWorkOrderDate ");
         if (searchRequestLetterOfAcceptance.getToDate() != null)
             queryStr.append(" and woe.workOrder.workOrderDate <=:toWorkOrderDate ");
-        if (searchRequestLetterOfAcceptance.getName() != null)
+        if (searchRequestLetterOfAcceptance.getContractor() != null)
             queryStr.append(" and upper(woe.workOrder.contractor.name) =:contractorName ");
         if (searchRequestLetterOfAcceptance.getEstimateNumber() != null)
             queryStr.append(" and upper(woe.estimate.estimateNumber) =:estimateNumber ");
@@ -205,12 +206,12 @@ public class WorkOrderEstimateService {
 
     public List<String> getApprovedAndWorkCommencedWorkOrderNumbers(final String workOrderNo) {
         return workOrderEstimateRepository.findWordOrderByStatus("%" + workOrderNo + "%", WorksConstants.APPROVED,
-                WorksConstants.WO_STATUS_WOCOMMENCED);
+                OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
     }
 
     public List<String> getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(final String EstimateNumber) {
         return workOrderEstimateRepository.findEstimatesByWorkOrderStatus("%" + EstimateNumber + "%",
-                WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
+                WorksConstants.APPROVED, OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
     }
 
     public List<String> getEstimateNumbersForApprovedLoa(final String estimateNumber) {

@@ -65,13 +65,13 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
     @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     List<String> getCancelledWorkOrderNumbersByBillType(@Param("status") String billstatus, @Param("billtype") String finalBill);
 
-    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code in(:status1,:status2)")
-    List<String> findWordOrderByStatus(@Param("workOrderNumber") String workOrderNumber, @Param("status1") String status1,
-            @Param("status2") String status2);
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and woe.workOrder.egwStatus.code in(:workOrderStatus) and woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )")
+    List<String> findWordOrderByStatus(@Param("workOrderNumber") String workOrderNumber, @Param("workOrderStatus") String workOrderStatus,
+            @Param("offlineStatus") String offlineStatus, @Param("objectType") String objectType);
 
-    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code in(:status1,:status2)")
-    List<String> findEstimatesByWorkOrderStatus(@Param("estimateNumber") String estimateNumber, @Param("status1") String status1,
-            @Param("status2") String status2);
+    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and woe.workOrder.egwStatus.code in(:workOrderStatus) and woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )")
+    List<String> findEstimatesByWorkOrderStatus(@Param("estimateNumber") String estimateNumber, @Param("workOrderStatus") String workOrderStatus,
+            @Param("offlineStatus") String offlineStatus, @Param("objectType") String objectType);
 
     List<WorkOrderEstimate> findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(
             final String estimateNumber,
