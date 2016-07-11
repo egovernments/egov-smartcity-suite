@@ -202,6 +202,23 @@ $(document).ready(function(){
 			$('#approvalDesignation').removeAttr('required');
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalComent').attr('required', 'required');
+			$('.creditGlcode').removeAttr('required');
+			$('.creditAmount').removeAttr('required');
+			if($("form").valid())
+			{
+				if(validateDeductionGrids()){
+					bootbox.confirm($('#cancelConfirm').val(), function(result) {
+						if(!result) {
+							bootbox.hideAll();
+							return false;
+						} else {
+							
+							document.forms[0].submit();
+						}
+					});
+				}
+			}
+			return false;
 		}
 		if (button != null && button == 'Forward') {
 			$('#approvalDepartment').attr('required', 'required');

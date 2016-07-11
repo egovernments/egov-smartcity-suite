@@ -172,7 +172,7 @@
 					<c:when test="${billDetailsMap == null || !isOtherDeductionsPresent}">
 						<tr id="otherdeductionrow">
 							<td>
-								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input patternvalidation otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input patternvalidation otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
 								<form:hidden path="otherDeductionDetailes[0].glcodeid"  name="otherDeductionDetailes[0].glcodeid" id="otherDeductionDetailes[0].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input otherdeductionid"/> 
 								<form:errors path="otherDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
@@ -193,7 +193,7 @@
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction}">
 								<tr id="otherdeductionrow">
 									<td>
-										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditGlcode" name="otherDeductionDetailes[${rowIndex }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation  otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" maxlength="9" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditGlcode" name="otherDeductionDetailes[${rowIndex }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input patternvalidation  otherDeductionCreditGlcode creditGlcode" data-pattern="alphanumerichyphenbackslash" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
 										<form:hidden path="otherDeductionDetailes[${rowIndex }].glcodeid" name="otherDeductionDetailes[${rowIndex }].glcodeid" value="${billDetail.glcodeId}" id="otherDeductionDetailes[${rowIndex }].glcodeid" class="form-control table-input hidden-input otherdeductionid"/> 
 										<form:errors path="otherDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
