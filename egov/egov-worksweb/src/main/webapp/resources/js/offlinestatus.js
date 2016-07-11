@@ -37,12 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-$detailsRowCount = $('#statusSize').val();
-
 $(document).ready(function() {
 	
 	$('.offlineStatuses').trigger('change');
-	resetAddedOverheads();
+	resetOfflineStatusses();
 	$('#isOfflineStatusValuesLoading').val('false');
 	initializeDatePicker();
 		
@@ -132,7 +130,7 @@ function generateSno()
 	});
 }
 
-function resetAddedOverheads(){
+function resetOfflineStatusses(){
 	addedOfflineStatus = new Array();
 	var resultLength = jQuery('#tblsetstatus tr').length-1;
 	var index;
@@ -147,38 +145,56 @@ function resetAddedOverheads(){
 
 function deleteSetStatus(obj) {
     var rIndex = getRow(obj).rowIndex;
-    
     var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
 
 	var tbl=document.getElementById('tblsetstatus');	
 	var rowcount=$("#tblsetstatus tbody tr").length;
+	if(rowcount<=1) {
+    	bootbox.alert("This row can not be deleted");
+		return false;
+	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
+		var idx= 0;
+		var sno = 1;
 		//regenerate index existing inputs in table row
-		$("#tblsetstatus tbody tr").each(function() {
-			hiddenElem=$(this).find("input:hidden");
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors, textarea").each(function() {
-					   $(this).attr({
+		jQuery("#tblsetstatus tbody tr").each(function() {
+		
+				jQuery(this).find("input, select, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
 						  'data-idx' : function(_,dataIdx)
 						  {
 							  return idx;
 						  }
 					   });
+					}
 			    });
+				
 				idx++;
-			}
 		});
-		
+		resetOfflineStatusses();
 		return true;
 	}	
+}
 
 function getRow(obj) {
 	if(!obj)return null;
@@ -195,11 +211,11 @@ var addedOfflineStatus = new Array();
 
 function checkOfflineStatus(offlineStatuses) {
 	if(offlineStatuses.value==""){
-		resetAddedOverheads();
+		resetOfflineStatusses();
 	}else
 		if(addedOfflineStatus.indexOf(offlineStatuses.value) == -1) {
 			if($('#isOfflineStatusValuesLoading').val() == 'false')
-				resetAddedOverheads();
+				resetOfflineStatusses();
 			var objName = offlineStatuses.name;
 			var index =objName.substring(objName.indexOf("[")+1,objName.indexOf("]")); 
 		}
@@ -207,7 +223,7 @@ function checkOfflineStatus(offlineStatuses) {
 		var index =offlineStatuses.name.substring(offlineStatuses.name.indexOf("[")+1,offlineStatuses.name.indexOf("]")); 
 		offlineStatuses.value= "";
 		bootbox.alert("The Offline Status is already added");
-		resetAddedOverheads();
+		resetOfflineStatusses();
 	}
 }
 
