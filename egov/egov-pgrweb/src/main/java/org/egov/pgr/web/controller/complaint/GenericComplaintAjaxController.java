@@ -95,13 +95,13 @@ public class GenericComplaintAjaxController {
     }
 
     @RequestMapping(value = { "/complaint/citizen/complainttypes-by-category", "/complaint/citizen/anonymous/complainttypes-by-category",
-            "officials/complainttypes-by-category" }, method = GET, produces = APPLICATION_JSON_VALUE)
+            "/complaint/officials/complainttypes-by-category" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> complaintTypesByCategory(@RequestParam final Long categoryId) {
         return complaintTypeService.findActiveComplaintTypesByCategory(categoryId);
     }
 
-    @RequestMapping(value = { "/public/complaint/complaintTypes", "search/complaintTypes",
-            "search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = { "/public/complaint/complaintTypes", "/complaint/search/complaintTypes",
+            "/complaint/search/complaintTypes" }, method = GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody List<ComplaintType> getAllComplaintTypesByNameLike(@RequestParam final String complaintTypeName) {
         return complaintTypeService.findAllActiveByNameLike(complaintTypeName);
     }
@@ -117,7 +117,7 @@ public class GenericComplaintAjaxController {
         return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
     }
 
-    @RequestMapping(value = { "/complaint/citizen/locations", "citizen/anonymous/locations",
+    @RequestMapping(value = { "/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
             "officials/locations" }, method = GET, produces = TEXT_PLAIN_VALUE)
     public @ResponseBody String getAllLocationJSON(@RequestParam final String locationName) {
         final StringBuilder locationJSONData = new StringBuilder("[");
