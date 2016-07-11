@@ -123,8 +123,8 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     @Query("select distinct(wo.contractor.name) from WorkOrder as wo where upper(wo.contractor.name) like upper(:code) and wo.egwStatus.code = :status")
     List<String> findContractorsToSearchLOAToCancel(@Param("code") String code, @Param("status") String status);
 
-    @Query("select distinct(wo.estimateNumber) from WorkOrder as wo where wo.egwStatus.code = :workorderstatus and not exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate.workOrder = wo) and exists (select distinct(led.estimateNumber) from LineEstimateDetails as led  where led.lineEstimate.id = :lineestimateid and led.estimateNumber = wo.estimateNumber)")
-    List<String> findEstimateNumbersToSearchLOAToCancel(@Param("lineestimateid") Long linEstimateId,
+    @Query("select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code != :workorderstatus and not exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe) and  woe.estimate.lineEstimateDetails.lineEstimate.id =:lineestimateid")
+    List<String> findEstimateNumbersToCancelLineEstimate(@Param("lineestimateid") Long linEstimateId,
             @Param("workorderstatus") String workOrderStatus);
 
     @Query("select distinct(wo.id) from WorkOrder as wo where wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and os.objectId = wo.id) and os.objectId = wo.id and os.egwStatus.code = :offlineStatus and os.objectType = :objectType )")

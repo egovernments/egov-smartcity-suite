@@ -932,7 +932,7 @@ public class LineEstimateService {
     }
 
     public String checkIfLOAsCreated(final Long lineEstimateId) {
-        final List<String> listString = letterOfAcceptanceService.getEstimateNumbersToSearchLOAToCancel(lineEstimateId);
+        final List<String> listString = letterOfAcceptanceService.getEstimateNumbersToCancelLineEstimate(lineEstimateId);
         String estimateNumbers = "";
         for (final String estimateNumber : listString)
             estimateNumbers += estimateNumber + ", ";

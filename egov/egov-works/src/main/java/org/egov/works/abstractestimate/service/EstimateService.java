@@ -933,7 +933,7 @@ public class EstimateService {
 
     public List<String> getAbstractEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
         final List<String> estimateNumbers = abstractEstimateRepository
-                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId, WorksConstants.CANCELLED_STATUS);
+                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId, AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
     }
 }

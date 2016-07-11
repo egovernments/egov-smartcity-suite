@@ -145,7 +145,8 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
+            ApplicationException {
         final Scheme scheme = schemeService.findById(Integer.parseInt(schemeId), false);
         final Set<SubScheme> subSchemes = scheme.getSubSchemes();
         final String jsonResponse = toJSONSubScheme(subSchemes);
@@ -175,7 +176,7 @@ public class AjaxLineEstimateController {
     @RequestMapping(value = "/ajax-getward", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> findWard(@RequestParam("name") final String name) {
         final List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(
-                WorksConstants.BOUNDARY_TYPE_WARD, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" +name);
+                WorksConstants.BOUNDARY_TYPE_WARD, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" + name);
         return boundaries;
     }
 
@@ -303,12 +304,19 @@ public class AjaxLineEstimateController {
         return json;
     }
 
-    @RequestMapping(value = "/ajax-checkifloascreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String checkIfLOAsCreated(@RequestParam final Long lineEstimateId) {
-        final String estimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
-        final String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { estimateNumbers }, null);
-        if (estimateNumbers.equals(""))
-            return "";
+    @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String checkDependantObjectsCreated(@RequestParam final Long lineEstimateId) {
+        final String estimateNumbers = lineEstimateService.checkAbstractEstimatesWithBOQForLineEstimate(lineEstimateId);
+        String message = "";
+        if (!estimateNumbers.equals("")) {
+            message = messageSource.getMessage("error.lineestimate.abstractestimatewithboq.exists",
+                    new String[] { estimateNumbers }, null);
+        } else {
+            final String loaEstimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
+            if (!loaEstimateNumbers.equals(""))
+                message = messageSource.getMessage("error.lineestimate.loa.created",
+                        new String[] { loaEstimateNumbers }, null);
+        }
         return message;
     }
 

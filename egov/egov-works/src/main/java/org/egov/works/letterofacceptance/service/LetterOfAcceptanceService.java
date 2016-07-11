@@ -921,9 +921,9 @@ public class LetterOfAcceptanceService {
                 WorksConstants.APPROVED);
     }
 
-    public List<String> getEstimateNumbersToSearchLOAToCancel(final Long lineEstimateId) {
+    public List<String> getEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
         final List<String> estimateNumbers = letterOfAcceptanceRepository
-                .findEstimateNumbersToSearchLOAToCancel(lineEstimateId, WorksConstants.APPROVED.toString());
+                .findEstimateNumbersToCancelLineEstimate(lineEstimateId, WorksConstants.APPROVED);
         return estimateNumbers;
     }
 

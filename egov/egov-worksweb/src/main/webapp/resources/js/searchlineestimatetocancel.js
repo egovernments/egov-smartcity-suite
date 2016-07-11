@@ -163,7 +163,7 @@ function getFormData($form) {
 			if($("#cancelForm").valid()) {
 				$('#cancelForm #id').val(lineEstimateId);
 					$.ajax({
-						url: "/egworks/lineestimate/ajax-checkifloascreated?lineEstimateId="+lineEstimateId,     
+						url: "/egworks/lineestimate/ajax-checkifdependantObjectscreated?lineEstimateId="+lineEstimateId,     
 						type: "GET",
 						dataType: "json",
 						success: function (message) {

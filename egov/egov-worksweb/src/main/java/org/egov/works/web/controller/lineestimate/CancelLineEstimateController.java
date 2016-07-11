@@ -69,32 +69,36 @@ public class CancelLineEstimateController {
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
-            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest, final Model model)
+            throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
         return "searchlineestimate-cancel";
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelLineEstimate(final HttpServletRequest request,
-            final Model model) throws ApplicationException {
+    public String cancelLineEstimate(final HttpServletRequest request, final Model model) throws ApplicationException {
         final Long lineEstimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
         LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(lineEstimateId);
-        final String loaNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimate.getId());
-        if (!loaNumbers.equals("")) {
-            final String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { loaNumbers }, null);
-            model.addAttribute("errorMessage", message);
-            return "letterofacceptance-success";
-        }
-        final String estimateNumbers = lineEstimateService.checkAbstractEstimatesWithBOQForLineEstimate(lineEstimate.getId());
+        final String estimateNumbers = lineEstimateService
+                .checkAbstractEstimatesWithBOQForLineEstimate(lineEstimate.getId());
         if (!estimateNumbers.equals("")) {
-            final String message = messageSource.getMessage("error.lineestimate.abstractestimatewithboq.exists", new String[] { estimateNumbers }, null);
-            model.addAttribute("errorMessage", message);
-            return "letterofacceptance-success";
+            final String message = messageSource.getMessage("error.lineestimate.abstractestimatewithboq.exists",
+                    new String[] { estimateNumbers }, null);
+            model.addAttribute("message", message);
+            return "lineestimate-success";
+        } else {
+            final String loaEstimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimate.getId());
+            if (!loaEstimateNumbers.equals("")) {
+                final String message = messageSource.getMessage("error.lineestimate.loa.created",
+                        new String[] { loaEstimateNumbers }, null);
+                model.addAttribute("message", message);
+                return "lineestimate-success";
+            }
         }
+
         lineEstimate.setCancellationReason(cancellationReason);
         lineEstimate.setCancellationRemarks(cancellationRemarks);
         lineEstimate = lineEstimateService.cancel(lineEstimate);
