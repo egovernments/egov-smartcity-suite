@@ -74,7 +74,7 @@ jQuery(document)
 						tableContainer1
 						.dataTable({
 							ajax : {
-								url : "/pgr/report/ageing/resultList-update",
+								url : "ageing/resultList-update",
 								data : {
 									fromDate : startDate,
 									toDate : endDate,

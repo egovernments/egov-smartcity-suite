@@ -63,7 +63,7 @@ public class ViewComplaintController {
         this.complaintService = complaintService;
     }
 
-    @RequestMapping(value = "/complaint/view/{crnNo}", method = RequestMethod.GET)
+    @RequestMapping(value = {"/complaint/view/{crnNo}", "/public/complaint/view/{crnNo}"}, method = RequestMethod.GET)
     public String viewComplaints(@PathVariable String crnNo, Model model) {
         Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         if (complaint == null)

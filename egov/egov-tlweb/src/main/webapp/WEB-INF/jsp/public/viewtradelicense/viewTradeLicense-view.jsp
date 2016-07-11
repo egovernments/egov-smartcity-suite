@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -37,25 +36,6 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-	   http://www.springframework.org/schema/beans/spring-beans.xsd
-	   http://www.springframework.org/schema/security
-	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
+  --%>
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-                <security:filter-chain pattern="/struts/**" filters="none" />
-				<security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
-			</list>
-		</constructor-arg>
-	</bean>	
-</beans>
+<jsp:include page="../../viewtradelicense/viewTradeLicense-view.jsp"/>

@@ -40,12 +40,14 @@
 
 package org.egov.tl.web.controller;
 
+import java.lang.reflect.Type;
+
+import org.egov.tl.web.controller.DCBReportResult;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
-import java.lang.reflect.Type;
 
 public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
 
@@ -53,28 +55,15 @@ public class DCBReportHelperAdaptor implements JsonSerializer<DCBReportResult> {
     public JsonElement serialize(final DCBReportResult dCBReportObj, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         if (dCBReportObj != null) {
-            jsonObject.addProperty("boundaryName", dCBReportObj.getBoundaryName());
             jsonObject.addProperty("licenseid", dCBReportObj.getLicenseid());
-            jsonObject.addProperty("boundaryId", dCBReportObj.getBoundaryId());
-            jsonObject.addProperty("propertyid", dCBReportObj.getPropertyid());
-            jsonObject.addProperty("address", dCBReportObj.getAddress());
             jsonObject.addProperty("licensenumber", dCBReportObj.getLicensenumber());
             jsonObject.addProperty("username", dCBReportObj.getUsername());
-            jsonObject.addProperty("zoneid", dCBReportObj.getZoneid());
-            jsonObject.addProperty("wardid", dCBReportObj.getWardid());
-            jsonObject.addProperty("block", dCBReportObj.getBlock());
-            jsonObject.addProperty("locality", dCBReportObj.getLocality());
-            jsonObject.addProperty("street", dCBReportObj.getStreet());
-
             jsonObject.addProperty("curr_demand", dCBReportObj.getCurr_demand());
             jsonObject.addProperty("arr_demand", dCBReportObj.getArr_demand());
-            jsonObject.addProperty("no_of_users", dCBReportObj.getCountofconsumerno());
             jsonObject.addProperty("total_demand", dCBReportObj.getTotal_demand());
-
             jsonObject.addProperty("curr_coll", dCBReportObj.getCurr_coll());
             jsonObject.addProperty("arr_coll", dCBReportObj.getArr_coll());
             jsonObject.addProperty("total_coll", dCBReportObj.getTotal_coll());
-
             jsonObject.addProperty("curr_balance", dCBReportObj.getCurr_balance());
             jsonObject.addProperty("arr_balance", dCBReportObj.getArr_balance());
             jsonObject.addProperty("total_balance", dCBReportObj.getTotal_balance());

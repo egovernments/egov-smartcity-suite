@@ -92,7 +92,7 @@ jQuery(document)
 						compTypereportContainer
 								.dataTable({
 									ajax : {
-										url : "/pgr/report/complaintTypeReport/resultList-update",
+										url : "complaintTypeReport/resultList-update",
 										data : {
 											fromDate : startDate,
 											toDate : endDate,
@@ -235,7 +235,7 @@ jQuery(document)
 								},
 								queryTokenizer : Bloodhound.tokenizers.whitespace,
 								remote : {
-									url : '/pgr/complaint/pgrreport/complaintTypes?complaintTypeName=%QUERY',
+									url : '/pgr/public/complaint/complaintTypes?complaintTypeName=%QUERY',
 									filter : function(data) {
 										// Map the remote source JSON array to a
 										// JavaScript object array
@@ -266,7 +266,6 @@ jQuery(document)
 
 
 function callAjaxByComplaintDetail() {
-	console.log('calling inside callAjaxByComplaintDetail');
 	var startDate = "";
 	var endDate = "";
 	var complTyp = "";
@@ -291,7 +290,7 @@ function callAjaxByComplaintDetail() {
 	compreportContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/complaintTypeReport/resultList-update",
+					url : "complaintTypeReport/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -315,7 +314,7 @@ function callAjaxByComplaintDetail() {
 							"data" : "crn",
 							"sTitle" : "Complaint Number",
 							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/public/complaint/view/'
 										+ data
 										+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
 										+ data + '">' + data + '</a>';

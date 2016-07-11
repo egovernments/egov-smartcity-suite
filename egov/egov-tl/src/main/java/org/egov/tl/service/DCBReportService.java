@@ -37,73 +37,52 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-package org.egov.council.service;
-
-import java.util.List;
+package org.egov.tl.service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.egov.council.entity.CouncilMember;
-import org.egov.council.repository.CouncilMemberRepository;
-import org.hibernate.Criteria;
+
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class CouncilMemberService {
-
-    private final CouncilMemberRepository councilMemberRepository;
+public class DCBReportService {
     @PersistenceContext
     private EntityManager entityManager;
-    
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-    @Autowired
-    public CouncilMemberService(final CouncilMemberRepository councilMemberRepository) {
-        this.councilMemberRepository = councilMemberRepository;
-    }
 
-    @Transactional
-    public CouncilMember create(final CouncilMember councilMember) {
-        return councilMemberRepository.save(councilMember);
-    }
+    public SQLQuery prepareQuery(final String licensenumber, final String mode,
+            final String reportType) {
+        StringBuilder query = new StringBuilder();
+        final StringBuilder selectQry1 = new StringBuilder();
+        final StringBuilder selectQry2 = new StringBuilder();
+        StringBuilder fromQry = new StringBuilder();
+        StringBuilder whereQry = new StringBuilder();
+        final StringBuilder groupByQry = new StringBuilder();
+        selectQry2
+                .append("  cast(SUM(arr_demand) as bigint) AS arr_demand,cast(SUM(curr_demand) as bigint) AS curr_demand,cast(SUM(arr_coll) as bigint) AS arr_coll,cast(SUM(curr_coll) as bigint) AS curr_coll,"
+                        + "cast(SUM(arr_balance) as bigint) AS arr_balance,cast(SUM(curr_balance) as bigint) AS curr_balance ");
+        fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo,eg_boundary boundary ");
 
-    @Transactional
-    public CouncilMember update(final CouncilMember councilMember) {
-        return councilMemberRepository.save(councilMember);
-    }
+        if (mode.equalsIgnoreCase("license")) {
+            selectQry1
+                    .append("select distinct dcbinfo.licenseNumber as licenseNumber ,cast(dcbinfo.licenseId as integer) as licenseid,dcbinfo.username as \"username\", ");
+            fromQry = new StringBuilder(" from egtl_mv_dcb_view dcbinfo ");
+            if (licensenumber != null && !"".equals(licensenumber))
+                whereQry = whereQry.append(" where  dcbinfo.licenseNumber = '" + licensenumber.toUpperCase() + "'");
+            groupByQry.append("group by dcbinfo.licenseNumber,dcbinfo.licenseId,dcbinfo.username ");
+            if (licensenumber != null && !"".equals(licensenumber))
+                whereQry.append(" and ");
+            else
+                whereQry.append(" where ");
+            whereQry.append(" dcbinfo.licenseNumber is not null  ");
+        }
 
-    public List<CouncilMember> findAll() {
-        return councilMemberRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        query = selectQry1.append(selectQry2).append(fromQry).append(whereQry).append(groupByQry);
+        final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(query.toString());
+        // finalQuery.setResultTransformer(new AliasToBeanResultTransformer(DCBReportResult.class));
+        return finalQuery;
     }
-
-    public CouncilMember findOne(Long id) {
-        return councilMemberRepository.findById(id);
-    }
-    
-	public List<CouncilMember> search(CouncilMember councilMember) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilMember.class);
-		if (null != councilMember.getElectionWard())
-			criteria.add(Restrictions.eq("electionWard",
-					councilMember.getElectionWard()));
-		if (null != councilMember.getDesignation())
-			criteria.add(Restrictions.eq("designation",
-					councilMember.getDesignation()));
-		if (null != councilMember.getPartyAffiliation())
-			criteria.add(Restrictions.eq("partyAffiliation",
-					councilMember.getPartyAffiliation()));
-		if (null != councilMember.getName())
-			criteria.add(Restrictions.eq("name", councilMember.getName())//TODO: USE ILIKE 
-					.ignoreCase());
-		return criteria.list();
-	}
-    
 }
