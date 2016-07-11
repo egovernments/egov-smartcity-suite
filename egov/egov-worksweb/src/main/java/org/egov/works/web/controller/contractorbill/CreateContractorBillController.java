@@ -73,8 +73,8 @@ import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -134,14 +134,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         model.addAttribute("woeId", woeId);
-        final List<AppConfigValues> retentionMoneyPerForPartBillApp = appConfigValuesService
-                .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
-                        WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_PART_BILL);
-        final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService
-                .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
-                        WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
-        model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
-        model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
 
         model.addAttribute("mode", "edit");
@@ -170,6 +162,15 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("retentionMoneyDeductionAccounCodes", chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.RETENTION_MONEY_DEDUCTIONS_PURPOSE));
         model.addAttribute("billTypes", BillTypes.values());
+
+        final List<AppConfigValues> retentionMoneyPerForPartBillApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
+                        WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_PART_BILL);
+        final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService
+                .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
+                        WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
+        model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
+        model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
     }
 
     @RequestMapping(value = "/contractorbill-save", method = RequestMethod.POST)
@@ -199,20 +200,24 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
         if (resultBinder.hasErrors()) {
             setDropDownValues(model);
+            model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
+            model.addAttribute("woeId", woeId);
             model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
             model.addAttribute("netPayableAmount", request.getParameter("netPayableAmount"));
             model.addAttribute("netPayableAccountCode", request.getParameter("netPayableAccountCode"));
             model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
-
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
-
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
-
             model.addAttribute("mode", "edit");
-
             model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister));
-
+            final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
+                    workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
+                    OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+            model.addAttribute("offlinestatusWorkCommencedDate",
+                    offlineStatus != null ? offlineStatus.getStatusDate() : "");
+            model.addAttribute("workOrderEstimate", workOrderEstimate);
+            model.addAttribute("contractorBillRegister", contractorBillRegister);
             return "contractorBill-form";
         } else {
 
@@ -248,12 +253,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 // with errors.reject
                 throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
                 /*
-                 * for (final ValidationError error : e.getErrors()) {
-                 * if(error.getMessage().contains("Budget Check failed for ")) {
-                 * errors.reject(messageSource.getMessage(
-                 * "error.contractorbill.budgetcheck.insufficient.amount",null,
-                 * null)+". " +error.getMessage()); } else
-                 * errors.reject(error.getMessage()); }
+                 * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for "))
+                 * { errors.reject(messageSource.getMessage( "error.contractorbill.budgetcheck.insufficient.amount",null, null)+
+                 * ". " +error.getMessage()); } else errors.reject(error.getMessage()); }
                  */
             }
             final String pathVars = worksUtils.getPathVars(savedContractorBillRegister.getStatus(),
