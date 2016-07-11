@@ -42,8 +42,8 @@ jQuery('#btnsearch').click(function(e) {
 	var workOrderNumber = $('#workOrderNumber').val();
 	var workIdentificationNumber = $('#workIdentificationNumber').val();
 	var contractor = $('#contractor').val();
-	var contractor = $('#egwStatus').val();
-	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && contractor == '' && contractor == '')
+	var status = $('#egwStatus').val();
+	if(department == '' && workOrderNumber == '' && workIdentificationNumber == '' && contractor == '' && status == '')
 		bootbox.alert('Atleast one search criteria is mandatory');
 	else
 		callAjaxSearch();
@@ -198,7 +198,7 @@ $(document).ready(function() {
 					bootbox.alert($('#mileStonesCreatedMessage').val());
 				} else {
 					$.ajax({
-						url: "/egworks/letterofacceptance/ajax-checkifbillscreated?id="+letterOfAcceptanceId,     
+						url: "/egworks/letterofacceptance/ajax-checkifdependantObjectscreated?id="+letterOfAcceptanceId,     
 						type: "GET",
 						dataType: "json",
 						success: function (message) {

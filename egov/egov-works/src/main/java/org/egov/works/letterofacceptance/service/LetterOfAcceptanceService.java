@@ -173,9 +173,9 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
+
     @Autowired
-    private MBHeaderService mBHeaderService; 
+    private MBHeaderService mBHeaderService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -822,49 +822,65 @@ public class LetterOfAcceptanceService {
     }
 
     public List<WorkOrder> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(WorkOrder.class, "wo")
-                .addOrder(Order.asc("workOrderDate")).createAlias("wo.contractor", "woc")
-                .createAlias("wo.egwStatus", "status");
+        List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append("select distinct(wo) from WorkOrder wo where wo.id != null ");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber())
-                        .ignoreCase());
+                queryStr.append(" and wo.workOrderNumber =:workOrderNumber");
             if (searchRequestLetterOfAcceptance.getContractor() != null)
-                criteria.add(Restrictions.or(
-                        Restrictions.eq("woc.name", searchRequestLetterOfAcceptance.getContractor()).ignoreCase(),
-                        Restrictions.eq("woc.code", searchRequestLetterOfAcceptance.getContractor()).ignoreCase()));
+                queryStr.append(
+                        " and upper(wo.contractor.name) like upper(:contractorName) or upper(wo.contractor.code) like upper(:contractorCode) ");
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
-                final List<String> estimateNumbers = lineEstimateDetailsRepository
-                        .findEstimateNumbersForDepartment(searchRequestLetterOfAcceptance.getDepartmentName());
-                if (estimateNumbers.isEmpty())
-                    estimateNumbers.add("");
-                criteria.add(Restrictions.in("wo.estimateNumber", estimateNumbers));
+                queryStr.append(
+                        " and exists (select distinct(woe.workOrder) from WorkOrderEstimate woe where woe.estimate.executingDepartment.id = :department and woe.workOrder = wo)");
             }
-            if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null) {
-                final List<String> estimateNumbers = lineEstimateDetailsRepository
-                        .findEstimateNumbersForWorkIdentificationNumber(
-                                searchRequestLetterOfAcceptance.getWorkIdentificationNumber());
-                if (estimateNumbers.isEmpty())
-                    estimateNumbers.add("");
-                criteria.add(Restrictions.in("wo.estimateNumber", estimateNumbers));
+            if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null) { 
+                queryStr.append(
+                        " and exists (select distinct(woe.workOrder) from WorkOrderEstimate woe where woe.estimate.projectCode.code = :projectCode and woe.workOrder = wo)"); 
             }
-            if (searchRequestLetterOfAcceptance.getEgwStatus() != null ) {
-                if(searchRequestLetterOfAcceptance.getEgwStatus().equals("APPROVED"))
-                criteria.add(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()));
-                else{
-                // TODO if workorder status set to offlinestatus this query can
-                // be removed
-                final List<Long> workOrderIds = letterOfAcceptanceRepository.findWorkOrderForLoaStatus(
-                        searchRequestLetterOfAcceptance.getEgwStatus(), WorksConstants.WORKORDER);
-                if (workOrderIds.isEmpty())
-                    workOrderIds.add(null);
-                criteria.add(Restrictions.or(Restrictions.in("wo.id", workOrderIds), Restrictions
-                        .or(Restrictions.eq("status.code", searchRequestLetterOfAcceptance.getEgwStatus()))));
-             }
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
+                if (searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)) {
+                    queryStr.append(" and wo.egwStatus.code =:workOrderStatus");
+                } else if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
+                    queryStr.append(
+                            " and wo.egwStatus.code =:workOrderStatus and wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = wo.id) and os.objectId = wo.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
+                }
             }
         }
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
+        final Query query = setQueryParameters(searchRequestLetterOfAcceptance, queryStr);
+        workOrderList = query.getResultList();
+        return workOrderList;
+    }
+
+    private Query setQueryParameters(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (searchRequestLetterOfAcceptance != null) {
+            if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
+                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber());
+            if (searchRequestLetterOfAcceptance.getContractor() != null) {
+                qry.setParameter("contractorName", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
+                qry.setParameter("contractorCode", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
+            }
+            if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
+                qry.setParameter("department", searchRequestLetterOfAcceptance.getDepartmentName());
+            }
+            if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null) {
+                qry.setParameter("projectCode", searchRequestLetterOfAcceptance.getWorkIdentificationNumber());
+            }
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
+                if (searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED))
+                    qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
+                else if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
+                    qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
+                    qry.setParameter("offlineStatus",
+                            searchRequestLetterOfAcceptance.getEgwStatus().toString().toLowerCase());
+                    qry.setParameter("objectType", WorksConstants.WORKORDER);
+                }
+            }
+        }
+        return qry;
     }
 
     public List<String> findWorkIdentificationNumbersToSearchLOAToCancel(final String code) {
@@ -888,7 +904,7 @@ public class LetterOfAcceptanceService {
             return "";
         else
             for (final ContractorBillRegister cbr : bills)
-                  billNumbers += cbr.getBillnumber() + ", ";
+                billNumbers += cbr.getBillnumber() + ", ";
         return billNumbers;
     }
 
@@ -1001,16 +1017,16 @@ public class LetterOfAcceptanceService {
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
-    
+
     public String checkIfMBCreatedForLOA(final WorkOrderEstimate workOrderEstimate) {
         String mbrefNumbres = "";
         final List<MBHeader> mbHeaders = mBHeaderService.getMBHeadersToCancelLOA(workOrderEstimate);
-       for(MBHeader mBHeader:mbHeaders) 
-           mbrefNumbres += mBHeader.getMbRefNo() + ", ";
-           if (mbrefNumbres.equals(""))
-               return "";
-           else
-               return mbrefNumbres;
+        for (MBHeader mBHeader : mbHeaders)
+            mbrefNumbres += mBHeader.getMbRefNo() + ", ";
+        if (mbrefNumbres.equals(""))
+            return "";
+        else
+            return mbrefNumbres;
     }
 
 }

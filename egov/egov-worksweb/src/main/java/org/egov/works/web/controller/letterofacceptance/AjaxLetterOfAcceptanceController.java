@@ -280,7 +280,7 @@ public class AjaxLetterOfAcceptanceController {
         return letterOfAcceptanceService.findContractorsToSearchLOAToCancel(code);
     }
 
-    @RequestMapping(value = "/ajax-checkifbillscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
         WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
         WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);

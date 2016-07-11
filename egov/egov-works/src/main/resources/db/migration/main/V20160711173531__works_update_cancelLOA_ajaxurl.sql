@@ -1,0 +1,1 @@
+update eg_action set url = '/letterofacceptance/ajax-checkifdependantObjectscreated', name='AjaxCheckIfDependantObjectsCreatedToCancelLOA' where name='AjaxCheckIfBillsCreatedToCancelLOA' and contextroot='egworks';
