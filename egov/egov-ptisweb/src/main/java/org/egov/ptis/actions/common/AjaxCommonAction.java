@@ -457,7 +457,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     @Action(value = "/ajaxCommon-checkIfPropertyExists")
     public void checkIfPropertyExists() throws IOException {
         if (StringUtils.isNotBlank(assessmentNo)) {
-            final BasicProperty basicProperty = (BasicProperty) getPersistenceService().findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO,
+            final BasicProperty basicProperty = (BasicProperty) getPersistenceService().find("from BasicPropertyImpl bp where bp.oldMuncipalNum=? and bp.active='Y'",
                     assessmentNo);
             final JSONObject jsonObject = new JSONObject();
             if (null != basicProperty) {
