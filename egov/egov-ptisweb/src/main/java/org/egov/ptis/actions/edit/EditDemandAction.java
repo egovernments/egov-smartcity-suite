@@ -575,7 +575,9 @@ public class EditDemandAction extends BaseFormAction {
             }
 
         }
-        demandAuditService.saveDetails(demandAudit);
+        if (demandAudit.getDemandAuditDetails() != null && demandAudit.getDemandAuditDetails().size() > 0)
+            demandAuditService.saveDetails(demandAudit);
+        
         for (EgDemandDetails ddFromDB : demandDetailsFromDB) {
 
             for (DemandDetail dmdDetail : demandDetailBeanList) {
