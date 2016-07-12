@@ -896,7 +896,7 @@ public class EstimateService {
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate()
                         .before(abstractEstimate.getEstimateDate()))
-            errors.reject("technicalSanctionDate", "error.technicalsanctiondate");
+            errors.reject("error.abstracttechnicalsanctiondate", "error.abstracttechnicalsanctiondate");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() == null)
             errors.reject("technicalSanctionNumber", "error.technumber.notnull");
@@ -920,8 +920,8 @@ public class EstimateService {
             errors.reject("error.adminsanctiondate.notnull", "error.adminsanctiondate.notnull");
         if (abstractEstimate.getApprovedBy() == null)
             errors.reject("error.adminby.notnull", "error.adminby.notnull");
-        if (abstractEstimate.getApprovedBy() != null
-                && abstractEstimate.getApprovedDate().before(abstractEstimate.getEstimateDate()))
+        if (abstractEstimate.getApprovedDate() != null
+                && abstractEstimate.getEstimateDate().after(abstractEstimate.getApprovedDate()))
             errors.reject("error.abstractadminsanctiondate", "error.abstractadminsanctiondate");
 
     }

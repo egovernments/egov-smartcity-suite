@@ -80,6 +80,13 @@ $('#designation').change(function(){
 });
 
 function validateAdminSanctionDate(obj){
+	if($('#estimateDate').val() == ''){
+		bootbox.alert($('#errorAbstractEstimateDate').val());
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		return false;
+	}
 	var estimateDate = $('#estimateDate').val();
 	var adminSanctionDate = $('#approvedDate').val();
 	if(new Date((estimateDate.split('/').reverse().join('-'))).getTime() > new Date((adminSanctionDate.split('/').reverse().join('-'))).getTime())
@@ -94,6 +101,13 @@ function validateAdminSanctionDate(obj){
 }
 
 function validateTechinicalSanctionDate(obj){
+	if($('#estimateDate').val() == ''){
+		bootbox.alert($('#errorAbstractEstimateDate').val());
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		return false;
+	}
 	var estimateDate = $('#estimateDate').val();
 	var technicalSanctionDate = $('#technicalSanctionDate').val();
 	if(new Date((estimateDate.split('/').reverse().join('-'))).getTime() > new Date((technicalSanctionDate.split('/').reverse().join('-'))).getTime())
@@ -104,6 +118,18 @@ function validateTechinicalSanctionDate(obj){
 		bootbox.alert($('#errorAbstractTechnicalSanctionDate').val());
 		return false;	
 	}
+	
+}
+
+function validateAbstractEstimateDate(obj){
+	var estimateDate = $('#estimateDate').val();
+	var technicalSanctionDate = $('#technicalSanctionDate').val();
+	var adminSanctionDate = $('#approvedDate').val();
+	
+	if(technicalSanctionDate != '')
+		validateTechinicalSanctionDate(obj);
+	if(adminSanctionDate != '')
+		validateAdminSanctionDate(obj);
 	
 }
 
@@ -145,6 +171,24 @@ function initializeDatePicker(){
 
 		}).data('datepicker');
 	
+	$('#estimateDate').datepicker().off('changeDate');
+	jQuery( "#estimateDate" ).datepicker({ 
+		format: 'dd/mm/yyyy',
+		autoclose:true,
+		onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}
+		}).on('changeDate', function(ev) {
+		
+			var string=jQuery(this).val();
+			if(!(string.indexOf("_") > -1)){
+			isDatepickerOpened=false; 
+			validateAbstractEstimateDate(this);
+			$('#estimateDate').datepicker('hide');
+			}
+
+		}).data('datepicker');
+	
 	$('#technicalSanctionDate').datepicker('update');
 
 }
@@ -164,12 +208,12 @@ $('#adminSanctionAuthority').change(function(){
 				var selected="";
 				if($adminSanctionNameId)
 				{
-					if($adminSanctionNameId==val.id)
+					if($adminSanctionNameId==value.id)
 					{
 						selected="selected";
 					}
 				}
-				$('#adminSanctionDesignation').append($("<option value='" + value.id + "'>" + value.name + "</option>"));
+				$('#adminSanctionDesignation').append($("<option "+ selected +" value='" + value.id + "'>" + value.name + "</option>"));
 			});
 			var adminSanctionAuthorityValue = $('#adminSanctionAuthorityValue').val();
 			$('#adminSanctionAuthorityValue').val(authorityValue);
@@ -194,7 +238,8 @@ function resetFormOnSubmit(){
 		   $('.disablefield').attr('disabled', 'disabled');
 		}
 	initializeDatePicker();
-	$('#estimateDate').val('');
+	if($("#description").val() == '')
+		$('#estimateDate').val('');
 	var adminSanctionDesignation = $('#adminSanctionAuthority').val();
 	$("#adminSanctionAuthority").each(function() {
 		if($(this).children('option').length == 2) {
@@ -203,8 +248,6 @@ function resetFormOnSubmit(){
 			$(this).val(adminSanctionAuthority);
 		}
 	});
-	$('#adminSanctionAuthority').trigger('change');
-	
 	$('#designation').val($('#designationValue').val());
 	$('#designation').trigger('change');
 	
@@ -214,5 +257,16 @@ function resetFormOnSubmit(){
 		if(value == authorityValue)
 			$(this).attr('selected', 'selected');
 	});
+	
+	var adminAuthorityValue = $('#authorityValueForAdmin').val();
+	$('#adminSanctionDesignation').val(adminAuthorityValue);
+	$('#adminSanctionAuthority').trigger('change');
+	
+	$('#adminSanctionDesignation option').each(function() {
+		var value = $(this).val();
+		if(value == adminAuthorityValue)
+			$(this).attr('selected', 'selected');
+	});
+	
 	
 }

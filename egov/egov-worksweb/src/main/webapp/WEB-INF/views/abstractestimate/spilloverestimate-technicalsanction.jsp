@@ -38,9 +38,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <input type="hidden"
-	value="<spring:message code="error.abstractadminsanctiondate" />"
-	id="errorAbstractAdminSanctionDate" />
-<input type="hidden"
 	value="<spring:message code="error.abstracttechnicalsanctiondate" />"
 	id="errorAbstractTechnicalSanctionDate" />
 <div class="panel panel-primary" data-collapsed="0">
@@ -96,8 +93,7 @@
 							</c:forEach>
 					</select></td>
 					<td><input type="hidden" id="authorityValue"
-						value="${estimateTechnicalSanctions[0].technicalSanctionBy.id }" />
-						<form:select
+						value="${technicalSanctionBy}" /> <form:select
 							path="estimateTechnicalSanctions[0].technicalSanctionBy"
 							id="authority" data-first-option="false" class="form-control"
 							required="required">

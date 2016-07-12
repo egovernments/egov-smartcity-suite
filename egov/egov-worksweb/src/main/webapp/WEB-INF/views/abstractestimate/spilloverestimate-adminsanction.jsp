@@ -41,6 +41,9 @@
 	<input type="hidden"
 		value="<spring:message code="error.abstractadminsanctiondate" />"
 		id="errorAbstractAdminSanctionDate" />
+	<input type="hidden"
+		value="<spring:message code="error.abstractestimatedate.null" />"
+		id="errorAbstractEstimateDate" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -82,7 +85,7 @@
 								</c:forEach>
 						</select></td>
 						<td><input type="hidden" id="authorityValueForAdmin"
-							value="${approvedBy.id}" /> <form:select path="approvedBy"
+							value="${approvedByValue}" /> <form:select path="approvedBy"
 								id="adminSanctionDesignation" data-first-option="false"
 								class="form-control" required="required">
 								<form:option value="">
