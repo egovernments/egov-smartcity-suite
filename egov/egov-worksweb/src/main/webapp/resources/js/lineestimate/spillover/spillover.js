@@ -311,7 +311,7 @@ function addLineEstimate() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			$("#estimateRow").clone().find("input, errors, textarea").each(
+			$("#estimateRow").clone().find("input, errors, textarea, select").each(
 					function() {
 
 						if ($(this).data('server')) {
@@ -397,35 +397,45 @@ function deleteLineEstimate(obj) {
 		return false;
 	} else {
 		tbl.deleteRow(rIndex);
-		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
 		
-		generateSno();
-		
+		var idx= 0;
+		var sno = 1;
 		//regenerate index existing inputs in table row
-		$("#tblestimate tbody tr").each(function() {
+		jQuery("#tblestimate tbody tr").each(function() {
 		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors, textarea").each(function() {
-					   $(this).attr({
+				jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
 						  'data-idx' : function(_,dataIdx)
 						  {
 							  return idx;
 						  }
 					   });
+					}
 			    });
+				
 				idx++;
-			}
 		});
 		calculateEstimatedAmountTotal();
 		return true;
-	}	
+	}
+		
 }
 
 function calculateEstimatedAmountTotal(){
