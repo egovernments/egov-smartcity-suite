@@ -56,6 +56,14 @@ public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseRep
 		final JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
 		jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
+		jsonObject.addProperty("casetitle", legalcaseresult.getCaseTitle());
+		jsonObject.addProperty("courtname", legalcaseresult.getCourtName());
+		jsonObject.addProperty("petitioners", legalcaseresult.getPetName());
+		//jsonObject.addProperty("Respondants", legalcaseresult.get);
+		jsonObject.addProperty("department", legalcaseresult.getAssignDept());
+		jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
+		jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
+		//jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
 		return jsonObject;
 	}
 	

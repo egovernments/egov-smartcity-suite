@@ -55,10 +55,13 @@ public class LegalCaseReportResult {
 	private String courtType;
 	private String courtName;
 	private String govtDept;
+	private String caseTitle;
 	private String petName;
+	private Boolean isStatusExcluded;
 	private String caseStatus;
 	private List<String>actionList=new ArrayList<String>();
-
+private String assignDept;
+	
 	public String getStandingCouncil() {
 		return standingCouncil;
 	}
@@ -171,4 +174,29 @@ public class LegalCaseReportResult {
 		this.actionList = actionList;
 	}
 
+	public String getCaseTitle() {
+		return caseTitle;
+	}
+
+	public void setCaseTitle(String caseTitle) {
+		this.caseTitle = caseTitle;
+	}
+
+	public String getAssignDept() {
+		return assignDept;
+	}
+
+	public void setAssignDept(String assignDept) {
+		this.assignDept = assignDept;
+	}
+
+	public Boolean getIsStatusExcluded() {
+		return isStatusExcluded;
+	}
+
+	public void setIsStatusExcluded(Boolean isStatusExcluded) {
+		this.isStatusExcluded = isStatusExcluded;
+	}
+
+	
 }

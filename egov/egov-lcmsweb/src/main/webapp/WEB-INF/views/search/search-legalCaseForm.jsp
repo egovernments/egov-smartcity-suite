@@ -42,6 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <div class="row">
 	<div class="col-md-12">
 		<form:form  method="get" modelAttribute="legalCaseReportResult" name="searchlegalcaseForm"
@@ -110,8 +112,7 @@
 						</div>
 							</div>
 						<div class="form-group">
-							<label for="field-1" class="col-sm-3 control-label">Case Start Date <spring:message
-										code="lbl.fromDate" />
+							<label for="field-1" class="col-sm-3 control-label">Case Start Date
 								</label>
 						<div class="col-sm-3 add-margin">
 						<input type="text" name="caseFromDate" class="form-control datepicker"
@@ -127,6 +128,13 @@
 						</div>
 
 						</div>
+						<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.exclude.closed.case"/></label>
+								<div class="col-sm-3 add-margin">
+									<form:checkbox id="isStatusExcluded" path=""
+			value="isStatusExcluded" />
+								</div>
+								</div>
 					<div class="row">
 
 						<div class="text-center">
@@ -138,31 +146,8 @@
 					</div>
 					</div>
 		</form:form>
-		<div class="row display-hide report-section">
-				
-				<div class="col-md-12 form-group">
-					<table
-						class="table table-bordered datatable dt-responsive table-hover"
-						id="legalCaseResults">
-						<thead></thead>
-						<tfoot id="report-footer">
-							<tr>
-								<td><b>
-								<td></td>
-								<!-- <td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td> -->
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-			</div>
-		</div>
-		</div>
 		
-	<!-- <div class="row" >
+				<div class="row" >
 					<div class="col-md-6 col-xs-6 table-header">The Search result is</div>
 					<div class="col-md-6 col-xs-6 add-margin text-right">
 						<span class="inline-elem">Search</span>
@@ -174,7 +159,11 @@
 
 	</table>
 	</div>
-</div> -->
+</div>
+		</div>
+		</div>
+		
+	
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 

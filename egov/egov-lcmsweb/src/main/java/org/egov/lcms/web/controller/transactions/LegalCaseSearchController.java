@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.egov.lcms.transactions.entity.LegalCaseReportResult;
 import org.egov.lcms.transactions.entity.LegalCaseReportResultAdaptor;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -91,18 +92,22 @@ public class LegalCaseSearchController extends GenericLegalCaseController{
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void getLegalCaseSearchResult(@RequestParam final String caseNumber,
-            @RequestParam final String lcNumber,final HttpServletRequest request, final HttpServletResponse response)
+            @RequestParam final String lcNumber,
+            @RequestParam final String court,
+            @RequestParam final String caseType,
+            @RequestParam final String standingCouncil,
+            @RequestParam final String courtType,
+            @RequestParam final String isStatusExcluded,
+            final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
-        String caseNumbertemp="";
-        String lcNumbertemp="";
-        if (null != request.getParameter("caseNumber") && !request.getParameter("caseNumber").isEmpty())
-        	caseNumbertemp = request.getParameter("caseNumber");
-        if (null != request.getParameter("lcNumber") && !request.getParameter("lcNumber").isEmpty())
-        	lcNumbertemp = request.getParameter("lcNumber");
-        
+        Boolean caseExcluded=Boolean.FALSE;
+        if(request.getParameter("isStatusExcluded").equals("true"))
+        {
+        	caseExcluded=Boolean.TRUE;
+        }
         List<LegalCaseReportResult>legalcaseSearchList=new ArrayList<LegalCaseReportResult>();
-        
-        final SQLQuery query =getLegalCaseReport(caseNumbertemp,lcNumbertemp);
+        final SQLQuery query =getLegalCaseReport(request.getParameter("caseNumber") ,request.getParameter("lcNumber"), request.getParameter("court"),request.getParameter("caseType"),request.getParameter("standingCouncil")
+        		,request.getParameter("courtType"),null,caseExcluded);
         legalcaseSearchList = query.list();
          String result = null;
        result = new StringBuilder("{ \"data\":").append(toJSON(legalcaseSearchList)).append("}").toString();
@@ -120,23 +125,57 @@ public class LegalCaseSearchController extends GenericLegalCaseController{
     
    
     
-    public SQLQuery getLegalCaseReport(final String caseNumber, final String lcNumber) 
+    public SQLQuery getLegalCaseReport(final String caseNumber, final String
+    		lcNumber,final String court,String casetype,String standingcpouncil,String courttype,String status,final Boolean isStatusExcluded) 
            {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select legalObj.casenumber as \"caseNumber\", legalObj.lcNumber as \"lcNumber\" from EGLC_LEGALCASE legalObj");
+                "select legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\","
+                + "legalObj.casetitle  as \"caseTitle\",department.name  as \"assignDept\","
+                + " legalObj.appealnum  as \"standingCouncil\",egwStatus.code  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" "
+                + "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_legalcase_dept  legaldept,"
+                + "eg_department department ,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
+                + "eglc_petitiontype_master petmaster,egw_status egwStatus");
      
-        if((caseNumber != null && !caseNumber.isEmpty()) || (lcNumber != null && !lcNumber.isEmpty()))
-        {
-        	 queryStr.append(" where ");
-        }
+        queryStr.append(" where legaldept.legalcase=legalObj.id and legaldept.department=department.id and  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and "
+        		+ "legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and "
+        		+ "legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
         if (lcNumber != null && !lcNumber.isEmpty())
-            queryStr.append(" legalObj.lcNumber = " + "'" + lcNumber + "'");
+            queryStr.append(" and legalObj.lcNumber = " + "'" + lcNumber + "'");
         if ((lcNumber.isEmpty()) && caseNumber != null && !caseNumber.isEmpty())
-            queryStr.append(" legalObj.casenumber = " + "'" + caseNumber + "'");
+            queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
+        if (court != null && !"".equals(court))
+        {
+        	queryStr.append(" and courtmaster.id = " + "'" + court + "'");	
+        }
+        if (court != null && !"".equals(court))
+        {
+        	queryStr.append(" and courtmaster.id = " + "'" + court + "'");	
+        }
+		if (casetype != null && !"".equals(casetype))
+        {
+        	queryStr.append(" and casetypemaster.id = " + "'" + casetype + "'");	
+        }
+		
+        if (courttype != null && !"".equals(courttype))
+        {
+        	queryStr.append(" and courtmaster.courttype = " + "'" + courttype + "'");	
+        }
+        if (standingcpouncil != null && !"".equals(standingcpouncil))
+        {
+        	queryStr.append(" and legalObj.appealnum  like  " + "'" + standingcpouncil + "%'");	
+        }
+        if (status != null && !"".equals(status))
+        {
+        	queryStr.append(" and egwStatus.id = " + "'" + status + "'");	
+        }
         if ((lcNumber != null && !lcNumber.isEmpty()) && caseNumber != null && !caseNumber.isEmpty())
             queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
+        if(isStatusExcluded)
+        {
+        queryStr.append(" and egwStatus.code NOT IN('CANCELLED') ");	
+        }
         final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseReportResult.class));
         return finalQuery;

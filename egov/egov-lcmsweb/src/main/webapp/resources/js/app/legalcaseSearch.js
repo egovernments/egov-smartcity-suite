@@ -59,15 +59,23 @@ function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
+	
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
+	var isCancelled	=jQuery('#isStatusExcluded').is(":checked");
 	reportdatatable = tableContainer
 			.dataTable({
 				ajax : {
 					url : "/lcms/search/legalsearchResult",
 					data : {
 						'caseNumber' : caseNumber,
-						'lcNumber' : lcNumber
+						'lcNumber' : lcNumber,
+						'court':$("#courtName").val(),
+						'caseType' :$("#caseCatogory").val(),
+						'standingCouncil':$("#standingCouncil").val(),
+						'courtType' :$("#courtType").val(),
+						'isStatusExcluded' :isCancelled
+						
 					}
 				},
 				"sPaginationType" : "bootstrap",
@@ -81,13 +89,49 @@ function submitForm() {
 				},
 				columns : [
 						{
-							"data" : "casenumber",
-
-							"sTitle" : "Case Number"
-						},
-						{
 							"data" : "legalcaseno",
 							"sTitle" : "Legal Case Number",
+							"className" : "text-right"
+						},
+						{
+							"data" : "casenumber",
+							"sTitle" : "Case Number",
+								"className" : "text-right"
+						},
+						
+						{
+							"data" : "casetitle",
+							"sTitle" : "Case Title",
+							"className" : "text-right"
+						},
+						{
+							"data" : "courtname",
+							"sTitle" : "Court",
+							"className" : "text-right"
+						},
+						/*{
+							"data" : "petitioners",
+							"sTitle" : "Petitioners",
+							"className" : "text-right"
+						},
+						{
+							"data" : "petitioners",
+							"sTitle" : "Respondants",
+							"className" : "text-right"
+						},*/
+						{
+							"data" : "department",
+							"sTitle" : "Departments",
+							"className" : "text-right"
+						},
+						{
+							"data" : "standingcouncil",
+							"sTitle" : "Standing Council",
+							"className" : "text-right"
+						},
+						{
+							"data" : "casestatus",
+							"sTitle" : "Case Status",
 							"className" : "text-right"
 						},
 						{
@@ -97,17 +141,8 @@ function submitForm() {
 
 								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Create Hearing</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
 							}
-						} /*
-							 * , { "data" : "casenumber2", "sTitle" : "case2",
-							 * "className": "text-right" }, { "data" :
-							 * "legalcaseno1", "sTitle" : "Legal1", "className":
-							 * "text-right"
-							 * 
-							 * },{ "data" : "legalcaseno2", "sTitle" : "legal2",
-							 * "className": "text-right" }, { "data" : "total",
-							 * "sTitle" : "Total", "className": "text-right"
-							 *  }
-							 */],
+						} 
+						],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
