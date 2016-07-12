@@ -39,12 +39,24 @@
  */
 package org.egov.services.masters;
 
+import java.util.List;
+
 import org.egov.commons.SubScheme;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
-    
+
     public SubSchemeService(final Class<SubScheme> subScheme) {
         this.type = subScheme;
+    }
+
+    public List<SubScheme> getBySchemeId(final Integer schemeId) {
+        Query query = getSession().createQuery(" from SubScheme where isactive = true and scheme.id=:schemeId");
+
+        query.setInteger("schemeId", schemeId);
+        return query.list();
     }
 }

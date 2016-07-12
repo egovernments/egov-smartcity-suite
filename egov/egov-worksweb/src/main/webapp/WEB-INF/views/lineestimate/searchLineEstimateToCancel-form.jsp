@@ -37,51 +37,80 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading">
-		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.lineestimate" /></div>
-	</div>
-	<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.lineestimate.conform" />' />
-	<input id="LOACreatedMessage" type="hidden" value='<spring:message code="error.lineestimate.loa.created" />' />
-	<div class="panel-body">
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control" placeholder="Type first 3 letters of Line Estimate Number"/>
-				<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<input type="hidden" value="<spring:message code='error.lineestimate.required' />" id='selectLineEstimate'>
+		<form:form name="SearchRequest" role="form" action="" modelAttribute="lineEstimateSearchRequest" id="lineEstimateSearchRequest" class="form-horizontal form-groups-bordered">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title" style="text-align:center;"><spring:message code="title.search.lineestimate" /></div>
+						</div>
+						<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.lineestimate.conform" />' />
+						<input id="LOACreatedMessage" type="hidden" value='<spring:message code="error.lineestimate.loa.created" />' />
+						<div class="panel-body">
+							<div class="form-group">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control" placeholder="Type first 3 letters of Line Estimate Number"/>
+									<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="executingDepartment" data-first-option="false" id="departments" class="form-control">
+										<form:option value=""><spring:message code="lbl.select" /></form:option>
+										<form:options items="${departments}" itemValue="id" itemLabel="name" />
+									</form:select>
+									<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="createdBy" data-first-option="false" id="createdBy" class="form-control" >
+										<form:option value=""><spring:message code="lbl.select"/></form:option>
+									</form:select>
+									<form:errors path="createdBy" cssClass="add-margin error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" />
+									<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
+								</div>	
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+								<div class="col-sm-3 add-margin">
+								<form:checkbox path="spillOverFlag" id="spillOverFlag" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="executingDepartment" data-first-option="false" id="departments" class="form-control">
-					<form:option value=""><spring:message code="lbl.select" /></form:option>
-					<form:options items="${departments}" itemValue="id" itemLabel="name" />
-				</form:select>
-				<form:errors path="executingDepartment" cssClass="add-margin error-msg" />
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				</div>
 			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:select path="createdBy" data-first-option="false" id="createdBy" class="form-control" >
-					<form:option value=""><spring:message code="lbl.select"/></form:option>
-				</form:select>
-				<form:errors path="createdBy" cssClass="add-margin error-msg" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
-			<div class="col-sm-3 add-margin">
-				<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" />
-				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
-			</div>	
-		</div>
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
-			<div class="col-sm-3 add-margin">
-			<form:checkbox path="spillOverFlag" id="spillOverFlag" />
-			</div>
-		</div>
-	</div>
-</div>
+		</form:form>  
+	<jsp:include page="searchLineEstimateToCancel-result.jsp"/>
+
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<script src="<c:url value='/resources/js/lineestimate/searchlineestimatetocancel.js?rnd=${app_release_no}'/>"></script>

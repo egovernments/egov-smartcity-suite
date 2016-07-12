@@ -54,7 +54,7 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
     }
 
     public List<Scheme> getByFundId(final Integer fundId) {
-        Query query = getSession().createQuery(" from Scheme where fund.id=:fundId");
+        Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
 
         query.setInteger("fundId", fundId);
         return query.list();

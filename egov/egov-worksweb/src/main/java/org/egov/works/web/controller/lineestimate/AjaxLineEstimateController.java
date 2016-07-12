@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -68,6 +67,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
+import org.egov.services.masters.SubSchemeService;
 import org.egov.utils.BudgetAccountType;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
@@ -81,6 +81,7 @@ import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -99,7 +100,12 @@ import com.google.gson.GsonBuilder;
 @RequestMapping(value = "/lineestimate")
 public class AjaxLineEstimateController {
     @Autowired
+    @Qualifier("schemeService")
     private SchemeService schemeService;
+
+    @Autowired
+    @Qualifier("subSchemeService")
+    private SubSchemeService subSchemeService;
 
     @Autowired
     private LineEstimateService lineEstimateService;
@@ -153,9 +159,7 @@ public class AjaxLineEstimateController {
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
             ApplicationException {
-        final Scheme scheme = schemeService.findById(Integer.parseInt(schemeId), false);
-        final Set<SubScheme> subSchemes = scheme.getSubSchemes();
-        final String jsonResponse = toJSONSubScheme(subSchemes);
+        final String jsonResponse = toJSONSubScheme(subSchemeService.getBySchemeId(Integer.parseInt(schemeId)));
         return jsonResponse;
     }
 

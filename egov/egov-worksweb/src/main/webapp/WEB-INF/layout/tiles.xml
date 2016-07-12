@@ -228,7 +228,7 @@
 
 	<definition name="searchlineestimate-cancel" extends="base_layout">
         <put-attribute name="page-title" value="title.lineestimate.cancel" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateToCancel-header.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateToCancel-form.jsp"/>
     </definition>
 
     <definition name="trackMilestone-form" extends="base_layout">
