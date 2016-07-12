@@ -63,7 +63,6 @@ $('#designation').change(function(){
 			approvalDesignation : $('#designation').val(),
 			approvalDepartment : $('#executingDepartment').val()    
 		},
-		dataType: "json",
 		success: function (response) {
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
@@ -200,7 +199,6 @@ $('#adminSanctionAuthority').change(function(){
 		data: {
 			approvalDesignation : $('#adminSanctionAuthority').val(),
 		},
-		dataType: "json",
 		success: function (response) {
 			$('#adminSanctionAuthorityValue').empty();
 			$('#adminSanctionAuthorityValue').append($("<option value=''>Select from below</option>"));

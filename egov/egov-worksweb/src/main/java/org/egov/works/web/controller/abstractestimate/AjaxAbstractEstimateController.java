@@ -176,7 +176,7 @@ public class AjaxAbstractEstimateController {
         return result;
     }
     
-    @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET)
     public @ResponseBody List<User> getAssignmentByDesignation(
             @RequestParam("approvalDesignation") final Long approvalDesignation) {
         final List<User> users = new ArrayList<User>();
