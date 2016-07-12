@@ -229,7 +229,6 @@ $('#designation').change(function(){
 			approvalDesignation : $('#designation').val(),
 			approvalDepartment : $('#executingDepartments').val()    
 		},
-		dataType: "json",
 		success: function (response) {
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));

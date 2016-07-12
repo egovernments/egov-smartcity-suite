@@ -246,7 +246,7 @@ public class AjaxLineEstimateController {
         return lineEstimateService.findWorkIdentificationNumbersToSearchLineEstimatesForLoa(name);
     }
 
-    @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET)
     public @ResponseBody List<User> getAssignmentByDepartmentAndDesignation(
             @RequestParam("approvalDesignation") final Long approvalDesignation,
             @RequestParam("approvalDepartment") final Long approvalDepartment) {
@@ -263,7 +263,7 @@ public class AjaxLineEstimateController {
         return users;
     }
 
-    @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET)
     public @ResponseBody List<User> getcreateByDepartment(
             @RequestParam("department") final Long department) {
         final List<User> users = lineEstimateService.getCreatedByUsersForCancelLineEstimateByDepartment(department);

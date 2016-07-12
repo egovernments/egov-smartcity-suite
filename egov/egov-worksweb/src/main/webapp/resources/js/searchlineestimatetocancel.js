@@ -201,7 +201,6 @@ $('#departments').change(function(){
 				type: "GET",
 				url: "/egworks/lineestimate/ajaxsearchcreatedby",
 				cache: true,
-				dataType: "json",
 				data:{'department' : $('#departments').val()}
 			}).done(function(value) {
 				console.log(value);
