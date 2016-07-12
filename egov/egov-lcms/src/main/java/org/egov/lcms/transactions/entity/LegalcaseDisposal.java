@@ -137,7 +137,7 @@ public class LegalcaseDisposal extends AbstractAuditable {
                 break;
         }
 
-        for (final Judgment judgmentObj : getLegalcase().getEglcJudgments()) {
+        for (final Judgment judgmentObj : getLegalcase().getJudgment()) {
             if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
             for (final Judgmentimpl judgementImpl : judgmentObj.getEglcJudgmentimpls())

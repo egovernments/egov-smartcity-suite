@@ -105,6 +105,10 @@ public class LegalCaseService {
         return legalCaseRepository.findOne(Id);
     }
 
+    public Legalcase findByLcNumber(final String lcnumber) {
+        return legalCaseRepository.findByLcNumber(lcnumber);
+    }
+
     public Legalcase getLegalCaseByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
@@ -113,13 +117,21 @@ public class LegalCaseService {
         return legalCaseRepository.findByCasenumber(caseNumber);
     }
 
+   /* public Legalcase findByLcNumber(final String lcnumber) {
+        return legalCaseRepository.findByLcNumberAndLegalcase(lcnumber,
+                legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
+                        LcmsConstants.LEGALCASE_STATUS_JUDGMENT));
+    }
+*/
     @Transactional
     public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(legalcase.getCasenumber() + (legalcase.getWpYear()!=null ?"/" + legalcase.getWpYear() :""));
+        legalcase.setCasenumber(
+                legalcase.getCasenumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
-        legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,(LcmsConstants.LEGALCASE_STATUS_CREATED)));
+        legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
+                LcmsConstants.LEGALCASE_STATUS_CREATED));
         prepareChildEntities(legalcase);
         processAndStoreApplicationDocuments(legalcase);
         return legalCaseRepository.save(legalcase);
@@ -131,23 +143,22 @@ public class LegalCaseService {
         final List<LegalcaseAdvocate> legalAdvocateDetails = new ArrayList<LegalcaseAdvocate>();
         final List<Pwr> pwrList = new ArrayList<Pwr>();
 
-        for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()) {
-        	if(bipartObj.getName() !=null && !"".equals(bipartObj.getName())){
-            bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
-            bipartObj.setLegalcase(legalcase);
-            partitionDetails.add(bipartObj);
-        	}
-        }
+        for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails())
+            if (bipartObj.getName() != null && !"".equals(bipartObj.getName())) {
+                bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
+                bipartObj.setLegalcase(legalcase);
+                partitionDetails.add(bipartObj);
+            }
         legalcase.getBipartisanDetails().clear();
         legalcase.setBipartisanDetails(partitionDetails);
 
-        for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList()) {
-        	if(bipartObjtemp.getName() !=null && !"".equals(bipartObjtemp.getName())){
-            bipartObjtemp.setSerialNumber(bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
-            bipartObjtemp.setLegalcase(legalcase);
-            legalcase.getBipartisanDetails().add(bipartObjtemp);
-        	}
-        }
+        for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList())
+            if (bipartObjtemp.getName() != null && !"".equals(bipartObjtemp.getName())) {
+                bipartObjtemp.setSerialNumber(
+                        bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
+                bipartObjtemp.setLegalcase(legalcase);
+                legalcase.getBipartisanDetails().add(bipartObjtemp);
+            }
 
         for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
 
@@ -197,18 +208,14 @@ public class LegalCaseService {
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
-            return Arrays
-                    .asList(files)
-                    .stream()
-                    .filter(file -> !file.isEmpty())
-                    .map(file -> {
-                        try {
-                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                    file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
-                        } catch (final Exception e) {
-                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                        }
-                    }).collect(Collectors.toSet());
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), LcmsConstants.FILESTORE_MODULECODE);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
         else
             return null;
     }

@@ -37,19 +37,32 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.repository;
 
-import org.egov.lcms.transactions.entity.Legalcase;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+$(document).ready(function(){
 
-@Repository
-public interface LegalcaseRepository extends JpaRepository<Legalcase, Long> {
-
-    Legalcase findByLcNumber(String number);
-
-    Legalcase findByCasenumber(String number);
-
-    /*Legalcase findByLcNumber(String lcnumber, String status);*/
-
+	loadDateFields();
+	$('#judgmentType').change(function(){
+		loadDateFields();
+	});
+	
+function loadDateFields(){
+	if ($('#judgmentType :selected').text().localeCompare("Enquiry") == 0 ) { 
+		$("#enquirydetails").show();
+		}
+	else{
+		$("#enquirydetails").hide();
+	}
+		
+	if($('#judgmentType :selected').text().localeCompare("Ex-parte Order") == 0) {  
+		$("#exparteorder1").show();
+    	$("#exparteorder2").show();
+    	$("#exparteorder3").show();
+	}else{
+		$("#exparteorder1").hide();
+    	$("#exparteorder2").hide();
+    	$("#exparteorder3").hide();
+	}
+	
 }
+
+});

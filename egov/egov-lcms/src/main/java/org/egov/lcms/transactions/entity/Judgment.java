@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -56,6 +57,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -67,85 +70,125 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.utils.constants.LcmsConstants;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Judgment entity.
- *
- * @author MyEclipse Persistence Tools
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "EGLC_JUDGMENT")
 @SequenceGenerator(name = Judgment.SEQ_EGLC_JUDGMENT, sequenceName = Judgment.SEQ_EGLC_JUDGMENT, allocationSize = 1)
 public class Judgment extends AbstractAuditable {
-    /**
-     * Serial version uid
-     */
+
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_JUDGMENT = "SEQ_EGLC_JUDGMENT";
 
-    // Fields
     @Id
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "LEGALCASE", nullable = false)
+    @JoinColumn(name = "legalcase", nullable = false)
     private Legalcase legalcase;
-    @Required(message = "select.judgmentType")
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "JUDGEMENTTYPE", nullable = false)
+    @JoinColumn(name = "judgmenttype", nullable = false)
     private JudgmentType judgmentType;
-    @Required(message = "orderDate.null")
-    @DateFormat(message = "invalid.fieldvalue.model.orderDate")
+
+    @NotNull
+   /* @DateFormat(message = "invalid.fieldvalue.model.orderDate")*/
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
+    @Column(name="orderdate")
     private Date orderDate;
-    @DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn")
+
+    @NotNull
+    /*@DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn")*/
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
+    @Column(name="senttodepton")
     private Date sentToDeptOn;
-    @DateFormat(message = "invalid.fieldvalue.model.implementByDate")
+
+    /*@DateFormat(message = "invalid.fieldvalue.model.implementByDate")*/
+    @Column(name="implementbydate")
+    @Temporal(TemporalType.DATE)
     private Date implementByDate;
-    private Long costAwarded;
-    private Long compensationAwarded;
-    @Required(message = "judgmentDetails.null")
-    @Length(max = 1024, message = "judgmentDetails.length")
+
+    @Column(name="costawarded")
+    private double costAwarded;
+
+    @Column(name="compensationAwarded")
+    private double compensationAwarded;
+
+    @NotNull
+    @Length(max = 1024)
+    @Column(name="judgmentdetails")
     private String judgmentDetails;
-    private String judgmentDocument;
+
+    @Column(name="advisorfee")
     private Double advisorFee;
+
+    @Column(name="arbitratorfee")
     private Double arbitratorFee;
+
     @Length(max = 1024, message = "enquirydetails.length")
+    @Column(name="enquirydetails")
     private String enquirydetails;
-    @DateFormat(message = "invalid.fieldvalue.model.enquirydate")
+
+    /*@DateFormat(message = "invalid.fieldvalue.model.enquirydate")*/
+    @Temporal(TemporalType.DATE)
+    @Column(name="enquirydate")
     private Date enquirydate;
-    @DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate")
+
+    /*@DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate")*/
+    @Temporal(TemporalType.DATE)
+    @Column(name="setasidepetitiondate")
     private Date setasidePetitionDate;
-    @Length(max = 1024, message = "setasidePetitionDetails.length")
+
+    @Length(max = 1024)
+    @Column(name="setasidepetitiondetails")
     private String setasidePetitionDetails;
+
+   /* @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")*/
+    @Temporal(TemporalType.DATE)
+    @Column(name="saphearingdate")
+    private Date sapHearingDate;
+
+    @Column(name="issapaccepted")
+    private boolean sapAccepted;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
+    @Fetch(value = FetchMode.SELECT)
+    private Judgment parent;
+
+    @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
+
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
-    /*
-     * @OneToMany(mappedBy = "PARENT", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private Set<Judgment> children =
-     * new LinkedHashSet<Judgment>(0);
-     */
-    @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")
-    private Date sapHearingDate;
-    private boolean sapAccepted;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "PARENT")
-    private Judgment parent;
-    private Long documentNum;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "parent")
+    @Fetch(value = FetchMode.SELECT)
+    @JsonIgnore
+    private Set<Judgment> children = new HashSet<Judgment>();
+
+    @Column(name="ismemorequired")
     private boolean isMemoRequired;
+
+    @Column(name="certifiedmemofwddate")
     private Date certifiedMemoFwdDate;
 
-    public Long getDocumentNum() {
-        return documentNum;
+  
+    public List<JudgmentDocuments> getJudgmentDocuments() {
+        return judgmentDocuments;
     }
 
-    public void setDocumentNum(final Long documentNum) {
-        this.documentNum = documentNum;
+    public void setJudgmentDocuments(List<JudgmentDocuments> judgmentDocuments) {
+        this.judgmentDocuments = judgmentDocuments;
     }
 
     public Legalcase getLegalcase() {
@@ -188,20 +231,32 @@ public class Judgment extends AbstractAuditable {
         this.implementByDate = implementByDate;
     }
 
-    public Long getCostAwarded() {
+    public double getCostAwarded() {
         return costAwarded;
     }
 
-    public void setCostAwarded(final Long costAwarded) {
+    public void setCostAwarded(final double costAwarded) {
         this.costAwarded = costAwarded;
     }
 
-    public Long getCompensationAwarded() {
+    public double getCompensationAwarded() {
         return compensationAwarded;
     }
 
-    public void setCompensationAwarded(final Long compensationAwarded) {
+    public void setCompensationAwarded(final double compensationAwarded) {
         this.compensationAwarded = compensationAwarded;
+    }
+
+    public Set<Judgment> getChildren() {
+        return children;
+    }
+
+    public void setChildren(final Set<Judgment> children) {
+        this.children = children;
+    }
+
+    public void setMemoRequired(final boolean isMemoRequired) {
+        this.isMemoRequired = isMemoRequired;
     }
 
     public String getJudgmentDetails() {
@@ -210,14 +265,6 @@ public class Judgment extends AbstractAuditable {
 
     public void setJudgmentDetails(final String judgmentDetails) {
         this.judgmentDetails = judgmentDetails;
-    }
-
-    public String getJudgmentDocument() {
-        return judgmentDocument;
-    }
-
-    public void setJudgmentDocument(final String judgmentDocument) {
-        this.judgmentDocument = judgmentDocument;
     }
 
     public Double getAdvisorFee() {

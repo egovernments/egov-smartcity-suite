@@ -39,17 +39,11 @@
  */
 package org.egov.lcms.transactions.repository;
 
-import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.Judgment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LegalcaseRepository extends JpaRepository<Legalcase, Long> {
-
-    Legalcase findByLcNumber(String number);
-
-    Legalcase findByCasenumber(String number);
-
-    /*Legalcase findByLcNumber(String lcnumber, String status);*/
+public interface JudgmentRepository extends JpaRepository<Judgment, java.lang.Long> {
 
 }

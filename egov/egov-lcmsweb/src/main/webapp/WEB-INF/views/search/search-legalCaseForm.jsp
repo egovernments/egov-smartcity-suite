@@ -47,7 +47,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form  method="get" modelAttribute="legalCaseReportResult" name="searchlegalcaseForm"
-			id="searchlegalcaseForm" class="form-horizontal form-groups-bordered"
+			id="searchlegalcaseForm1" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<div class="row">
 	<div class="panel panel-primary" data-collapsed="0">

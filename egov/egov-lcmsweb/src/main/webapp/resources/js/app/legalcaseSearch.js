@@ -43,6 +43,7 @@ jQuery(document).ready(
 		function($) {
 
 			tableContainer = $('#legalCaseResults');
+			var judgment = $('#judgment').val();
 			document.onkeydown = function(evt) {
 				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
 						: event.keyCode;
@@ -156,3 +157,16 @@ function submitForm() {
 			});
 	$('.loader-class').modal('hide');
 }
+
+$("#legalCaseResults").on('change','tbody tr td .dropchange',
+		function() {
+		var lcNumber = tableContainer.fnGetData($(this).parent().parent(), 0);
+		if (this.value == 1) {
+			var url = '/lcms/judgment/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		});
+		

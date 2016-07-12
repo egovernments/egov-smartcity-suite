@@ -120,7 +120,8 @@ public class Legalcase extends AbstractAuditable {
     private PetitionTypeMaster petitiontypeMaster;
     @Required(message = "case.number.null")
     @Length(max = 50, message = "casenumber.length")
-    //@OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "case.number.alphanumeric")
+    // @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message =
+    // "case.number.alphanumeric")
     private String casenumber;
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
@@ -149,15 +150,18 @@ public class Legalcase extends AbstractAuditable {
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
     @Column(name = "isSenioradvrequired")
-    private Boolean isSenioradvrequired=Boolean.FALSE;
+    private Boolean isSenioradvrequired = Boolean.FALSE;
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
     @Transient
     private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
 
+    @Transient
+    private final List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
+
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Judgment> eglcJudgments = new ArrayList<Judgment>(0);
+    private List<Judgment> judgment = new ArrayList<Judgment>(0);
 
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalcaseDocuments> legalcaseDocuments = new ArrayList<LegalcaseDocuments>(0);
@@ -170,10 +174,10 @@ public class Legalcase extends AbstractAuditable {
 
     @Transient
     private String wpYear;
-    
+
     @Transient
     private String finwpYear;
-    
+
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
     @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -241,7 +245,7 @@ public class Legalcase extends AbstractAuditable {
             final LegalcaseAdvocate element = legalcaseAdvocate;
             errors.addAll(element.validate());
         }
-        for (final Judgment judgment : getEglcJudgments()) {
+        for (final Judgment judgment : getJudgment()) {
             final Judgment element = judgment;
             errors.addAll(element.validate());
         }
@@ -370,7 +374,7 @@ public class Legalcase extends AbstractAuditable {
 
     public Judgment getJudgmentValue() {
         Judgment judgmentValue = null;
-        for (final Judgment j : getEglcJudgments())
+        for (final Judgment j : getJudgment())
             if (!j.getSapAccepted())
                 judgmentValue = j;
         return judgmentValue;
@@ -723,12 +727,12 @@ public class Legalcase extends AbstractAuditable {
                 errors.addAll(reminder.validate());
     }
 
-    public List<Judgment> getEglcJudgments() {
-        return eglcJudgments;
+    public List<Judgment> getJudgment() {
+        return judgment;
     }
 
-    public void setEglcJudgments(final List<Judgment> eglcJudgments) {
-        this.eglcJudgments = eglcJudgments;
+    public void setJudgments(final List<Judgment> judgment) {
+        this.judgment = judgment;
     }
 
     public List<Pwr> getEglcPwrs() {
@@ -803,13 +807,12 @@ public class Legalcase extends AbstractAuditable {
         this.legalcaseDocuments = legalcaseDocuments;
     }
 
-	public String getFinwpYear() {
-		return finwpYear;
-	}
+    public String getFinwpYear() {
+        return finwpYear;
+    }
 
-	public void setFinwpYear(String finwpYear) {
-		this.finwpYear = finwpYear;
-	}
-    
+    public void setFinwpYear(final String finwpYear) {
+        this.finwpYear = finwpYear;
+    }
 
 }

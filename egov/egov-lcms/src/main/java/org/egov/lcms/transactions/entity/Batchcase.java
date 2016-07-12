@@ -73,18 +73,23 @@ public class Batchcase extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_BATCHCASE, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @ManyToOne
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private Legalcase legalcase;
+    
     @DateFormat(message = "invalid.fieldvalue.model.batchCaseDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.batchcase.date")
     private Date batchCaseDate;
+    
     @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "batchcase.number.alphanumeric")
     private String casenumber;
+    
     @OptionalPattern(regex = LcmsConstants.mixedCharType1withComma, message = "petitionerName.batchcase.mixedChar")
     private String petitionerName;
+    
     private String caseNumberForDisplay;
 
     @Override
