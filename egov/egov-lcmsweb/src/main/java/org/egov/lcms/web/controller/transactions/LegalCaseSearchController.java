@@ -132,13 +132,12 @@ public class LegalCaseSearchController extends GenericLegalCaseController{
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\","
-                + "legalObj.casetitle  as \"caseTitle\",department.name  as \"assignDept\","
+                + "legalObj.casetitle  as \"caseTitle\","
                 + " legalObj.appealnum  as \"standingCouncil\",egwStatus.code  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" "
-                + "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_legalcase_dept  legaldept,"
-                + "eg_department department ,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
+                + "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
                 + "eglc_petitiontype_master petmaster,egw_status egwStatus");
      
-        queryStr.append(" where legaldept.legalcase=legalObj.id and legaldept.department=department.id and  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and "
+        queryStr.append(" where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and "
         		+ "legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and "
         		+ "legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
         if (lcNumber != null && !lcNumber.isEmpty())
@@ -174,7 +173,7 @@ public class LegalCaseSearchController extends GenericLegalCaseController{
             queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
         if(isStatusExcluded)
         {
-        queryStr.append(" and egwStatus.code NOT IN('CANCELLED') ");	
+        queryStr.append(" and egwStatus.code NOT IN ('CANCELLED') ");	
         }
         final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseReportResult.class));
