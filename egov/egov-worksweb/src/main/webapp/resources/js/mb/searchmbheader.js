@@ -109,7 +109,8 @@ $(document).ready(function() {
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {
-						name : ct
+						name : ct.name,
+						code : ct.code
 					};
 				});
 			}
@@ -123,7 +124,12 @@ $(document).ready(function() {
 		minLength : 3
 	}, {
 		displayKey : 'name',
-		source : contractorSearch.ttAdapter()
+		source : contractorSearch.ttAdapter(),
+		templates: {
+	        suggestion: function (item) {
+	        	return item.code+' ~ '+item.name;
+	        }
+	    }
 	});
 });
 
@@ -162,6 +168,9 @@ function getFormData($form) {
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
+	var department = $('#department').val(); 
+	var status = $('#mbStatus').val();  
+	var createdBy = $('#createdBy').val();
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
@@ -179,6 +188,27 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
+					if(department != ''){
+						$('td:eq(3)',row).hide();
+						$('.departmentcolumn').hide();
+					} else {
+						$('td:eq(3)',row).show();
+						$('.departmentcolumn').show();
+					}
+					if(status != ""){
+						$('td:eq(9)',row).hide();
+						$('.statuscolumn').hide();
+					} else {
+						$('td:eq(9)',row).show();
+						$('.statuscolumn').show();
+					}
+					if(createdBy != ""){
+						$('td:eq(10)',row).hide();
+						$('.createdbycolumn').hide();
+					} else {
+						$('td:eq(10)',row).show();
+						$('.createdbycolumn').show();
+					}
 					$('td:eq(0)',row).html(index+1);
 					$('td:eq(5)',row).html(parseFloat(Math.round(data.agreemantAmount * 100) / 100).toFixed(2));
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.mbamount * 100) / 100).toFixed(2));

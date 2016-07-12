@@ -74,8 +74,10 @@ import org.egov.works.mb.entity.MBForCancelledBill;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -604,9 +606,9 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrderEstimate, status, billtype);
     }
 
-    public List<String> getContractorsByWorkOrderStatus(final String contractorNameCode) {
+    public List<Contractor> getContractorsByWorkOrderStatus(final String contractorNameCode) {
         return contractorBillRegisterRepository.findContractorByWorkOrderStatus("%" + contractorNameCode + "%",
-                WorksConstants.APPROVED, WorksConstants.WO_STATUS_WOCOMMENCED);
+                WorksConstants.APPROVED,OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
     }
 
     public void mergeDeductionDetails(final ContractorBillRegister contractorBillRegister) {

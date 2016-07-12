@@ -53,6 +53,7 @@ import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderActivity;
@@ -126,7 +127,7 @@ public class AjaxMBController {
     }
 
     @RequestMapping(value = "/mbheader/ajaxcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findContractorsForWorkOrder(@RequestParam final String code) {
+    public @ResponseBody List<Contractor> findContractorsForWorkOrder(@RequestParam final String code) {
         return contractorBillRegisterService.getContractorsByWorkOrderStatus(code);
     }
 

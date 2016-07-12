@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -96,7 +97,6 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status,
             @Param("billtype") final String billtype);
 
-    @Query("select distinct(cbr.workOrderEstimate.workOrder.contractor.name) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrderEstimate.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrderEstimate.workOrder.egwStatus.code in (:status1,:status2) ")
-    List<String> findContractorByWorkOrderStatus(@Param("contractorname") String contractorname,
-            @Param("status1") String status1, @Param("status2") String status2);
+    @Query("select distinct(cbr.workOrderEstimate.workOrder.contractor) as contractor from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.contractor.name) like upper(:contractorname) or upper(cbr.workOrderEstimate.workOrder.contractor.code) like upper(:contractorname)  and cbr.workOrderEstimate.workOrder.egwStatus.code in (:workOrderStatus) and cbr.workOrderEstimate.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = cbr.workOrderEstimate.workOrder.id) and os.objectId = cbr.workOrderEstimate.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )")
+    List<Contractor> findContractorByWorkOrderStatus(@Param("contractorname") String contractorname,@Param("workOrderStatus") String workOrderStatus, @Param("offlineStatus") String offlineStatus, @Param("objectType") String objectType );
 }

@@ -76,7 +76,7 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
         jsonObject.addProperty("agreemantAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
         jsonObject.addProperty("mbrefnumberdate", mBHeader.getMbRefNo() + "--" + sdf.format(mBHeader.getMbDate()));
         jsonObject.addProperty("mbamount", mBHeader.getMbAmount());
-        jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "/" + mBHeader.getToPageNo());
+        jsonObject.addProperty("mbpageno", mBHeader.getFromPageNo() + "-" + mBHeader.getToPageNo());
         jsonObject.addProperty("status", mBHeader.getEgwStatus().getDescription());
         jsonObject.addProperty("createdBy", mBHeader.getCreatedBy().getName());
         if (mBHeader.getState() != null && mBHeader.getState().getOwnerPosition() != null)

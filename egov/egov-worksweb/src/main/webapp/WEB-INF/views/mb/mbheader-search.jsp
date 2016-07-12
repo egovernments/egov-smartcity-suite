@@ -83,7 +83,7 @@
 			                  </div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:select path="department" data-first-option="false" id="departments" class="form-control">
+							<form:select path="department" data-first-option="false" id="department" class="form-control">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>

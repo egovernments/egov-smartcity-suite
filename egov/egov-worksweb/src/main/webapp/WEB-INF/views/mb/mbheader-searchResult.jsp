@@ -52,14 +52,14 @@
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
-					<th><spring:message code="lbl.department" /></th>
+					<th class="departmentcolumn"><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.contractor.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th> 
 					<th><spring:message code="lbl.mb.referencenumberdate" /></th>
 					<th><spring:message code="lbl.mb.pagenumber" /></th>
 					<th><spring:message code="lbl.mbamount" /></th> 
-					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.createdby" /></th>
+					<th class="statuscolumn"><spring:message code="lbl.status" /></th>
+					<th class="createdbycolumn"><spring:message code="lbl.createdby" /></th>
 					<th><spring:message code="lbl.currentowner" /></th>
 				</tr>
 			</thead>
