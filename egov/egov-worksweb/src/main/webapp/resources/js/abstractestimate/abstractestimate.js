@@ -40,6 +40,7 @@
 
 $subTypeOfWorkId = 0;
 $ExceptionalUOMs = "";
+$schemeId = "";
 $subSchemeId = 0;
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
@@ -48,10 +49,12 @@ $(document).ready(function(){
 	}
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
+	$schemeId = $('#schemeValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
+	getSubSchemsBySchemeId($schemeId);
 	var nameOfWork = $('#nameOfWork').val();
 	$('#workName').val(nameOfWork);
-	$('#scheme').trigger('change');
+	$('#fund').trigger('change');
 	$('#parentCategory').trigger('blur');
 	var workCategory = $('#workCategory').val();
 	if(workCategory != undefined && workCategory != '') {
@@ -1197,8 +1200,45 @@ function getActivitiesForTemplate(id){
 	nonSorTotal();
 }
 
+function getSchemsByFundId(fundId) {
+	if ($('#fund').val() === '') {
+		   $('#scheme').empty();
+		   $('#scheme').append($('<option>').text('Select from below').attr('value', ''));
+		   $('#subScheme').empty();
+		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getschemesbyfundid",
+					data : {
+						fundId : $('#fund').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#scheme').empty();
+							$('#scheme').append($("<option value=''>Select from below</option>"));
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								var selected="";
+								if($schemeId)
+								{
+									if($schemeId==value.id)
+									{
+										selected="selected";
+									}
+								}
+								$('#scheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
+							});
+				});
+				
+			}
+}
+
 function getSubSchemsBySchemeId(schemeId) {
-	if ($('#scheme').val() === '') {
+	if (schemeId === '') {
 		   $('#subScheme').empty();
 		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 			return;

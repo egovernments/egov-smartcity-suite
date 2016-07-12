@@ -53,7 +53,7 @@
 					code="lbl.fund" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" required="required">
+				<form:select path="financialDetails[0].fund" data-first-option="false" id="fund"  class="form-control disablefield" onchange="getSchemsByFundId(this.value);" required="required">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -92,12 +92,14 @@
 			<label class="col-sm-2 control-label text-right">
 					<spring:message code="lbl.scheme" />
 				</label>
+				<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+					<input type="hidden" id="schemeValue" value="${abstractEstimate.lineEstimateDetails.lineEstimate.scheme.id }" />
+				</c:if>
 				<div class="col-sm-3 add-margin">
 					<form:select path="financialDetails[0].scheme" data-first-option="false" id="scheme" class="form-control disablefield"  onchange="getSubSchemsBySchemeId(this.value);" >
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${schemes}" itemValue="id" itemLabel="name" />
 					</form:select>
 					<form:errors path="financialDetails[0].scheme"	cssClass="add-margin error-msg" />
 				</div>

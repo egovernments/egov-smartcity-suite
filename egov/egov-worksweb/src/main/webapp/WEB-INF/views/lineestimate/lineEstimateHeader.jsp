@@ -203,7 +203,7 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="fund" data-first-option="false"
-					class="form-control" id="fund" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();">
+					class="form-control" id="fund" required="required" onchange="getFunctionsByFundAndDepartment();getBudgetHeads();getSchemsByFundId(this.value);">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
@@ -236,14 +236,12 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" /></label>
+			<input type="hidden" id="schemeValue" value="${lineEstimate.scheme.id }"/>
 			<div class="col-sm-3 add-margin">
 				<form:select path="scheme" data-first-option="false" id="scheme" class="form-control" onchange="getSubSchemsBySchemeId(this.value);" >
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<c:if test="${!schemes.isEmpty()}">
-						<form:options items="${schemes}" itemValue="id" itemLabel="name" />
-					</c:if>
 				</form:select>
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" /></label>

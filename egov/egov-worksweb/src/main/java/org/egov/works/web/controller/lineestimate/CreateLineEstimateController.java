@@ -223,7 +223,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());

@@ -39,12 +39,24 @@
  */
 package org.egov.services.masters;
 
+import java.util.List;
+
 import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 public class SchemeService extends PersistenceService<Scheme, Integer> {
-   
+
     public SchemeService(final Class<Scheme> scheme) {
         this.type = scheme;
+    }
+
+    public List<Scheme> getByFundId(final Integer fundId) {
+        Query query = getSession().createQuery(" from Scheme where fund.id=:fundId");
+
+        query.setInteger("fundId", fundId);
+        return query.list();
     }
 }

@@ -143,6 +143,12 @@ public class AjaxLineEstimateController {
     @Autowired
     private NatureOfWorkService natureOfWorkService;
 
+    @RequestMapping(value = "/getschemesbyfundid", method = RequestMethod.GET)
+    public @ResponseBody List<Scheme> getAllSchemesByFundId(@RequestParam("fundId") final String fundId)
+            throws ApplicationException {
+        return schemeService.getByFundId(Integer.parseInt(fundId));
+    }
+
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,

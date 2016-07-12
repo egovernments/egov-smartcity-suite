@@ -40,6 +40,7 @@
 $deletedAmt = 0;
 $locationId = 0;
 $subTypeOfWorkId = 0;
+$schemeId = "";
 $subSchemeId = 0;
 $functionId = 0;
 $detailsRowCount = $('#detailsSize').val();
@@ -56,6 +57,7 @@ $(document).ready(function(){
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
+	$schemeId = $('#schemeValue').val();
 	$functionId = $('#functionId').val();
 	$budgetHeadId = $('#budgetHeadValue').val();
 	getFunctionsByFundAndDepartment();
@@ -78,9 +80,9 @@ $(document).ready(function(){
 	
 	//TODO : Need to remove trigger
 	$('#typeofwork').trigger('blur');
-	$('#scheme').trigger('change');
+	$('#fund').trigger('change');
 	$('#function').trigger('change');
-	
+	getSubSchemsBySchemeId($schemeId);
 	if(!$('#slum').is(':checked'))
 		$('#nonslum').attr('checked', 'checked');
 	return showSlumFieldsValue();
@@ -99,9 +101,44 @@ $('.btn-primary').click(function(){
 		return validateWorkFlowApprover(button);
 	}
 });
-
+function getSchemsByFundId(fundId) {
+	if ($('#fund').val() === '') {
+		   $('#scheme').empty();
+		   $('#scheme').append($('<option>').text('Select from below').attr('value', ''));
+		   $('#subScheme').empty();
+		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getschemesbyfundid",
+					data : {
+						fundId : $('#fund').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#scheme').empty();
+							$('#scheme').append($("<option value=''>Select from below</option>"));
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								var selected="";
+								if($schemeId)
+								{
+									if($schemeId==value.id)
+									{
+										selected="selected";
+									}
+								}
+								$('#scheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
+							});
+				});
+				
+			}
+}
 function getSubSchemsBySchemeId(schemeId) {
-	if ($('#scheme').val() === '') {
+	if (schemeId === '') {
 		   $('#subScheme').empty();
 		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 			return;
