@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-04T17:32:11 -->
+<!-- 2016-07-12T16:37:26 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -205,6 +205,7 @@
 			</subreport>
 		</band>
 		<band height="200">
+			<printWhenExpression><![CDATA[$P{EGOV_SOURCE}=="SYSTEM"]]></printWhenExpression>
 			<subreport>
 				<reportElement x="0" y="0" width="760" height="150" uuid="d394bf8d-54cc-4b0f-ab41-9cb6926c8d7e">
 					<printWhenExpression><![CDATA[$P{EGOV_SOURCE}=="SYSTEM"]]></printWhenExpression>

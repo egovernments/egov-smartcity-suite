@@ -140,8 +140,8 @@ public class CollectionReportHeadWiseService {
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
         .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, EG_LOCATION.NAME AS COUNTER_NAME, EG_USER.NAME AS EMPLOYEE_NAME,GLCODE,")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, EG_USER.ID AS USERID FROM")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS CHEQUEDD_AMOUNT,")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS ONLINE_AMOUNT, EG_USER.ID AS USERID FROM")
         .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
         .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
         .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID ")
@@ -153,7 +153,7 @@ public class CollectionReportHeadWiseService {
         .append(" INNER JOIN EGEIS_ASSIGNMENT EGEIS_ASSIGNMENT ON EGEIS_ASSIGNMENT.EMPLOYEE = EG_EMPLOYEE.ID ")
         .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
         .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
 
         final StringBuilder onlineQueryStr = new StringBuilder();
         onlineQueryStr
@@ -161,9 +161,9 @@ public class CollectionReportHeadWiseService {
         .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
         .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,CAO.NAME || CAO.GLCODE AS GLCODE,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
-        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID FROM ")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS CASH_AMOUNT, ")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID FROM ")
         .append(" EGCL_COLLECTIONHEADER EGCL_COLLECTIONHEADER INNER JOIN EGCL_COLLECTIONINSTRUMENT EGCL_COLLECTIONINSTRUMENT ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONINSTRUMENT.COLLECTIONHEADER ")
         .append(" INNER JOIN EGF_INSTRUMENTHEADER EGF_INSTRUMENTHEADER ON EGCL_COLLECTIONINSTRUMENT.INSTRUMENTHEADER = EGF_INSTRUMENTHEADER.ID ")
         .append(" INNER JOIN EGW_STATUS EGW_STATUS ON EGCL_COLLECTIONHEADER.STATUS = EGW_STATUS.ID")
@@ -171,7 +171,7 @@ public class CollectionReportHeadWiseService {
         .append(" INNER JOIN EGCL_COLLECTIONMIS EGCL_COLLECTIONMIS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONMIS.COLLECTIONHEADER ")
         .append("INNER JOIN EGCL_COLLECTIONDETAILS EGCL_COLLECTIONDETAILS ON EGCL_COLLECTIONHEADER.ID = EGCL_COLLECTIONDETAILS.COLLECTIONHEADER ")
         .append(" INNER JOIN CHARTOFACCOUNTS CAO ON CAO.ID = EGCL_COLLECTIONDETAILS.CHARTOFACCOUNT WHERE")
-        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
+        .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' AND EGCL_COLLECTIONDETAILS.CRAMOUNT>0");
         final StringBuilder queryStrGroup = new StringBuilder();
         queryStrGroup
         .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE");
@@ -249,7 +249,7 @@ public class CollectionReportHeadWiseService {
 
         final StringBuilder finalQueryStr = new StringBuilder();
         finalQueryStr
-        .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,GLCODE,cast(sum(CASH_AMOUNT) AS NUMERIC) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS NUMERIC) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS NUMERIC) AS ONLINE_AMOUNT ,USERID FROM (");
+        .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,GLCODE,cast(sum(CASH_AMOUNT) AS DOUBLE PRECISION) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS DOUBLE PRECISION) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS DOUBLE PRECISION) AS ONLINE_AMOUNT ,USERID FROM (");
         finalQueryStr
         .append(queryStr)
         .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.GLCODE order by SOURCE,EMPLOYEE_NAME,GLCODE");
@@ -314,19 +314,19 @@ public class CollectionReportHeadWiseService {
             collSummaryReportResult.setCounterName((String) arrayObjectInitialIndex[4]);
             collSummaryReportResult.setEmployeeName((String) arrayObjectInitialIndex[5]);
             collSummaryReportResult.setGlCode((String) arrayObjectInitialIndex[6]);
-            collSummaryReportResult.setCashAmount((BigDecimal) arrayObjectInitialIndex[7]);
-            collSummaryReportResult.setChequeddAmount((BigDecimal) arrayObjectInitialIndex[8]);
-            collSummaryReportResult.setOnlineAmount((BigDecimal) arrayObjectInitialIndex[9]);
+            collSummaryReportResult.setCashAmount((Double) arrayObjectInitialIndex[7]);
+            collSummaryReportResult.setChequeddAmount((Double) arrayObjectInitialIndex[8]);
+            collSummaryReportResult.setOnlineAmount((Double) arrayObjectInitialIndex[9]);
             final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
             collSummaryReportResult
             .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
-            collSummaryReportResult
-            .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
-                    : BigDecimal.ZERO).add(
-                            (BigDecimal) arrayObjectInitialIndex[8] != null ? (BigDecimal) arrayObjectInitialIndex[8]
-                                    : BigDecimal.ZERO).add(
-                                            (BigDecimal) arrayObjectInitialIndex[9] != null ? (BigDecimal) arrayObjectInitialIndex[9]
-                                                    : BigDecimal.ZERO));
+            collSummaryReportResult.setTotalAmount(((Double) arrayObjectInitialIndex[7] != null
+                    ? (Double) arrayObjectInitialIndex[7] : new Double(0.0))
+                            .sum((Double) arrayObjectInitialIndex[8] != null ? (Double) arrayObjectInitialIndex[8]
+                                    : new Double(0.0),
+                                    (Double) arrayObjectInitialIndex[9] != null ? (Double) arrayObjectInitialIndex[9]
+                                            : new Double(0.0)));
+
             reportResults.add(collSummaryReportResult);
         }
         return reportResults;
