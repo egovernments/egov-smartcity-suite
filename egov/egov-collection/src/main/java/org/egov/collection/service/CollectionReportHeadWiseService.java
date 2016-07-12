@@ -160,7 +160,7 @@ public class CollectionReportHeadWiseService {
         .append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
         .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
-        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,CAO.NAME || CAO.GLCODE AS GLCODE,")
+        .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, '' AS COUNTER_NAME, '' AS EMPLOYEE_NAME,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS CASH_AMOUNT, ")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS ONLINE_AMOUNT, 0 AS USERID FROM ")
@@ -321,11 +321,11 @@ public class CollectionReportHeadWiseService {
             collSummaryReportResult
             .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
             collSummaryReportResult.setTotalAmount(((Double) arrayObjectInitialIndex[7] != null
-                    ? (Double) arrayObjectInitialIndex[7] : new Double(0.0))
+                    ? (Double) arrayObjectInitialIndex[7] : new Double(0.0)
                             .sum((Double) arrayObjectInitialIndex[8] != null ? (Double) arrayObjectInitialIndex[8]
                                     : new Double(0.0),
                                     (Double) arrayObjectInitialIndex[9] != null ? (Double) arrayObjectInitialIndex[9]
-                                            : new Double(0.0)));
+                                            : new Double(0.0))));
 
             reportResults.add(collSummaryReportResult);
         }
