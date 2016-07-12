@@ -606,11 +606,6 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findByWorkOrderAndBillTypeAndStatus(workOrderEstimate, status, billtype);
     }
 
-    public List<Contractor> getContractorsByWorkOrderStatus(final String contractorNameCode) {
-        return contractorBillRegisterRepository.findContractorByWorkOrderStatus("%" + contractorNameCode + "%",
-                WorksConstants.APPROVED,OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
-    }
-
     public void mergeDeductionDetails(final ContractorBillRegister contractorBillRegister) {
         for (final EgBilldetails billDetails : contractorBillRegister.getStatutoryDeductionDetailes())
             if (billDetails.getId() == null)

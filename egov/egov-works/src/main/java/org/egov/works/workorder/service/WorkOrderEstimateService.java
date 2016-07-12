@@ -50,6 +50,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.models.masters.Contractor;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -222,6 +223,11 @@ public class WorkOrderEstimateService {
         for (final WorkOrderEstimate details : workOrderEstimates)
             results.add(details.getEstimate().getEstimateNumber());
         return results;
+    }
+    
+    public List<Contractor> getContractorsByWorkOrderStatus(final String contractorNameCode) {
+        return workOrderEstimateRepository.findContractorByWorkOrderStatus("%" + contractorNameCode + "%",
+                WorksConstants.APPROVED,OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
     }
 
 }

@@ -82,9 +82,6 @@ public class AjaxMBController {
     private MBHeaderService mBHeaderService;
 
     @Autowired
-    private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
     private SearchMBHeaderJsonAdaptor searchMBHeaderJsonAdaptor;
 
     @Autowired
@@ -128,7 +125,7 @@ public class AjaxMBController {
 
     @RequestMapping(value = "/mbheader/ajaxcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsForWorkOrder(@RequestParam final String code) {
-        return contractorBillRegisterService.getContractorsByWorkOrderStatus(code);
+        return workOrderEstimateService.getContractorsByWorkOrderStatus(code);
     }
 
     @RequestMapping(value = "/mbheader/ajax-searchmbheader", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
