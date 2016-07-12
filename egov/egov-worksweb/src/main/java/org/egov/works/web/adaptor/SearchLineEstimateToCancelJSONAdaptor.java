@@ -82,6 +82,7 @@ public class SearchLineEstimateToCancelJSONAdaptor implements JsonSerializer<Lin
             jsonObject.addProperty("estimateNumber", estimateNumbers);
             jsonObject.addProperty("workIdentificationNumber", winCodes);
             jsonObject.addProperty("amount", adminSanctionAmount);
+            jsonObject.addProperty("lineEstimateStatus", lineEstimate.getStatus().getCode());
 
             jsonObject.addProperty("id", lineEstimate.getId());
         }

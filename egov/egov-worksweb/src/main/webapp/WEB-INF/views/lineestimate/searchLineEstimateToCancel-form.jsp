@@ -52,6 +52,7 @@
 							<div class="panel-title" style="text-align:center;"><spring:message code="title.search.lineestimate" /></div>
 						</div>
 						<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.lineestimate.conform" />' />
+						<input id="adminConfirm" type="hidden" value='<spring:message code="msg.cancel.adminlineestimate.conform" />' />
 						<input id="LOACreatedMessage" type="hidden" value='<spring:message code="error.lineestimate.loa.created" />' />
 						<div class="panel-body">
 							<div class="form-group">

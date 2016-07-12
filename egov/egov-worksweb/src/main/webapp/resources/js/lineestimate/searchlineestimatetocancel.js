@@ -90,7 +90,7 @@ function callAjaxSearch() {
 					"aButtons" : []
 				},
 				"fnRowCallback" : function(row, data, index) {
-					$('td:eq(0)',row).html('<input type="radio" data="'+ data.id +'" name="selectCheckbox" value="'+ data.id +'"/>');
+					$('td:eq(0)',row).html('<input type="radio" data="'+ data.lineEstimateStatus +'" name="selectedRadioButton" value="'+ data.id +'"/>');
 					$('td:eq(2)', row).html(
 							'<a href="javascript:void(0);" onclick="openLineEstimate(\''
 									+ data.id + '\')">'
@@ -150,7 +150,7 @@ function getFormData($form) {
 }
 	
 	$('#btncancel').click(function() {
-		var lineEstimateId = $('input[name=selectCheckbox]:checked').val();
+		var lineEstimateId = $('input[name=selectedRadioButton]:checked').val();
 		if(lineEstimateId == null) {
 			var message = $('#selectLineEstimate').val();
 			bootbox.alert(message);
@@ -168,7 +168,13 @@ function getFormData($form) {
 						dataType: "json",
 						success: function (message) {
 							if(message == "") {
-								bootbox.confirm($('#confirm').val(), function(result) {
+								var lineEstimateStatus = $('input[name=selectedRadioButton]:checked').attr('data');
+								var confirmMessage = "";
+								if(lineEstimateStatus == 'TECHNICAL_SANCTIONED')
+									confirmMessage = $('#confirm').val();
+								else
+									confirmMessage = $('#adminConfirm').val();
+								bootbox.confirm(confirmMessage, function(result) {
 									if(!result) {
 										bootbox.hideAll();
 										return false;
