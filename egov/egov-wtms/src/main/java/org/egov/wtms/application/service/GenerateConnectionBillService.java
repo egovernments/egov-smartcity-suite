@@ -135,7 +135,7 @@ public class GenerateConnectionBillService {
                 + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
                 + " ");
         queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
-        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where code = '"
+        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where name = '"
                 + applicationType + "' )");
 
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());

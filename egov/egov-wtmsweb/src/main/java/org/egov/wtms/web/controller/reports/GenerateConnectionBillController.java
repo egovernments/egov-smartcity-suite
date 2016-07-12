@@ -211,7 +211,7 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getCode());
+                        .getName());
         response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
