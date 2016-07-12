@@ -386,7 +386,7 @@ public class GenerateConnectionBillController {
                 try {
                     final List<Long> filestoreList = generateConnectionBillService.getDocuments(
                             connectionbill.getHscNo(), connectionbill.getApplicationType());
-                    if (filestoreList != null && filestoreList.get(0) != null) {
+                    if (!filestoreList.isEmpty() && filestoreList.get(0) != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
                                 + "");
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
