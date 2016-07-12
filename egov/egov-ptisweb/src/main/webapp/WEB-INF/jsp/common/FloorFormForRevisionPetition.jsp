@@ -49,7 +49,8 @@
 		<th class="bluebgheadtd"><s:text name="firmName" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
-		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span> </th>
+		<th class="bluebgheadtd"><s:text name="effectiveDate" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="unstructuredLand" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
 		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
@@ -123,6 +124,16 @@
 				</div>
 			</td>
 
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:date name="property.propertyDetail.floorDetailsProxy[0].constructionDate" var="constrDate" format="dd/MM/yyyy"/>
+					<s:textfield autocomplete="off"
+						name="property.propertyDetail.floorDetailsProxy[0].constructionDate" data-optional="0" data-errormsg="Construction date is required!"
+						id="property.propertyDetail.floorDetailsProxy[0].constructionDate" value="%{constrDate}" size="10"
+						maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+				</div>
+			</td>
+			
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:date name="property.propertyDetail.floorDetailsProxy[0].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
@@ -297,6 +308,17 @@
 					</div>
 				</td>
  
+ 				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
+						<s:date name="property.propertyDetail.floorDetailsProxy[#floorsstatus.index].constructionDate" var="constrDate" format="dd/MM/yyyy"/>
+						<s:textfield autocomplete="off"
+							name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].constructionDate" 
+							value="%{constrDate}"
+							id="property.propertyDetail.floorDetailsProxy[%#floorsstatus.index].constructionDate" size="10"
+							maxlength="10" cssStyle="width:100%" cssClass="datepicker"></s:textfield>
+					</div>
+				</td>
+				
  				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 						<s:date name="property.propertyDetail.floorDetailsProxy[#floorsstatus.index].occupancyDate" var="occDate" format="dd/MM/yyyy"/>

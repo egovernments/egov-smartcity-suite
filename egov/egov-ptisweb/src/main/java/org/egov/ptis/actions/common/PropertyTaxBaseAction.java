@@ -424,7 +424,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.occ"));
-
+                        
+                        if(floor.getConstructionDate() == null || floor.getConstructionDate().equals(""))
+                        	addActionError(getText("mandatory.floor.constrDate"));
+                        
                         Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
                         if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals(""))
                             addActionError(getText("mandatory.floor.docOcc"));
@@ -435,6 +438,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 addActionError(getText("constrDate.before.6inst",msgParams));
                         }
 
+                        if(floor.getOccupancyDate() != null && floor.getConstructionDate() != null 
+                        		&& floor.getOccupancyDate().before(floor.getConstructionDate()))
+                        	addActionError(getText("effectiveDate.before.constrDate.error"));
+                        
                         if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
                                 || floor.getBuiltUpArea().getArea().equals("")) {
                             addActionError(getText("mandatory.assbleArea"));
