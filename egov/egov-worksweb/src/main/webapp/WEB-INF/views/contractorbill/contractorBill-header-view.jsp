@@ -163,22 +163,57 @@
 						<c:out default="N/A" value="${workOrderEstimate.estimate.projectCode.code}" />
 					</div>
 				</div>
-				<c:if test="${billAssetValue !=null }">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.assetcode" />
+				<c:choose>
+					<c:when test="${billAssetValue !=null }">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.assetcode" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${billAssetValue.asset.code}" /> 
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.assetname" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${billAssetValue.asset.name}" />
+							</div>
 						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${billAssetValue.asset.code}" /> 
+					</c:when>
+					<c:otherwise>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.assetcode" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								N/A 
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.assetname" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								N/A
+							</div>
 						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.assetname" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${billAssetValue.asset.name}" />
-						</div>
+					</c:otherwise>
+				</c:choose>
+				<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.createdby" />
 					</div>
-				</c:if>
+					<div class="col-xs-3 add-margin view-content">
+						<c:out default="N/A" value="${createdbybydesignation} - ${contractorBillRegister.createdBy.name }" />
+					</div> 
+					<c:if test="${contractorBillRegister.billtype == 'Final Bill'}">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.workcompletion.date" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<fmt:formatDate value="${contractorBillRegister.workOrderEstimate.workCompletionDate}" pattern="dd/MM/yyyy" />
+					</div>
+					</c:if>
+				</div>
+	<c:if test="${workOrderEstimate.workOrderActivities.size() == 0 }">
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.mb.referencenumber" />
@@ -201,20 +236,50 @@
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate value="${contractorBillRegister.mbHeader.mbDate}" pattern="dd/MM/yyyy" />
 					</div>
-					<c:if test="${contractorBillRegister.billtype == 'Final Bill'}">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.workcompletion.date" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<fmt:formatDate value="${contractorBillRegister.workOrderEstimate.workCompletionDate}" pattern="dd/MM/yyyy" />
-					</div>
-					</c:if>
 				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.createdby" />
-					</div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${createdbybydesignation} - ${contractorBillRegister.createdBy.name }" />
-					</div> 
-				</div>
+	</c:if>
+	<c:if test="${workOrderEstimate.workOrderActivities.size() > 0 }">
+		</br>
+		</br>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slNo" /></th>
+					<th><spring:message code="lbl.mb.referencenumber" /></th>
+					<th><spring:message code="lbl.mb.pagenumber" /></th>
+					<th><spring:message code="lbl.mb.date" /></th>
+					<th><spring:message code="lbl.mbamount" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when test="${mbDetails.size() != 0}">
+						<c:forEach items="${mbDetails}" var="mbDtls" varStatus="item">
+								<tr><c:set var="slNo" value="${slNo + 1}" />
+									<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+									<td><a href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
+									<td><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></td>
+									<td><fmt:formatDate value="${mbDtls.mbDate}" pattern="dd/MM/yyyy" /></td>
+									<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></td>
+								</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+					</c:otherwise>
+				</c:choose> 
+			</tbody>
+			<tfoot>
+				<c:set var="mbtotal" value="${0}" scope="session" />
+				<c:if test="${mbDetails.size() != 0}">
+					<c:forEach items="${mbDetails}" var="mb">
+							<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />
+					</c:forEach>
+				</c:if>
+				<tr>
+				<td colspan="4" class="text-right"><spring:message code="lbl.total" /></td>
+				<td class="text-right"><div id="mbTotalAmount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbtotal}" /></fmt:formatNumber></div>
+				</td>
+				</tr>
+			</tfoot>
+		</table>
+	</c:if>		

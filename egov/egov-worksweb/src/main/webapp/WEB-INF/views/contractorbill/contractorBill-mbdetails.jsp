@@ -81,12 +81,12 @@
 	</div>
 </c:if>
 <c:if test="${workOrderEstimate.workOrderActivities.size() > 0 }">
-      <div class="form-group">
+    <div class="form-group">
          <label class="col-sm-3 control-label text-right workcompletion"><spring:message code="lbl.workcompletion.date" /><span class="mandatory"></span></label>
 	     <div class="col-sm-3 add-margin workcompletion"> 
 		 <form:input id="workCompletionDate" path="workOrderEstimate.workCompletionDate" class="form-control datepicker" data-date-end-date="0d" required=""/>
 		 <form:errors path="workOrderEstimate.workCompletionDate" cssClass="add-margin error-msg" /> 
-	</div>
+		</div>
 	</div>
 	<c:if test="${workOrderEstimate.assetValues.size() > 0}">
 		<div class="form-group">

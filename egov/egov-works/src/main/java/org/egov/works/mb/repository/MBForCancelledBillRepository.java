@@ -43,12 +43,19 @@ import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBForCancelledBill;
+import org.egov.works.mb.entity.MBHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MBForCancelledBillRepository extends JpaRepository<MBForCancelledBill, Long> {
 
     List<MBForCancelledBill> findByContractorBillRegister(final ContractorBillRegister contractorBillRegister);
+
+    @Query("select mbHeader from MBForCancelledBill where contractorBillRegister =:contractorBillRegister ")
+    List<MBHeader> findMBHeadersByContractorBillRegister(
+            @Param("contractorBillRegister") ContractorBillRegister contractorBillRegister);
 
 }

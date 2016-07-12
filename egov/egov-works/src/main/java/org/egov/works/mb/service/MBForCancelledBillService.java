@@ -43,9 +43,8 @@ import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.mb.entity.MBForCancelledBill;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.repository.MBForCancelledBillRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,8 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MBForCancelledBillService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MBForCancelledBillService.class);
 
     private final MBForCancelledBillRepository mbForCancelledBillRepository;
 
@@ -72,5 +69,10 @@ public class MBForCancelledBillService {
     public List<MBForCancelledBill> getMBForCancelledBillListByContractorBillRegister(
             final ContractorBillRegister contractorBillRegister) {
         return mbForCancelledBillRepository.findByContractorBillRegister(contractorBillRegister);
+    }
+
+    public List<MBHeader> getMBHeadersForCancelledBillListByContractorBillRegister(
+            final ContractorBillRegister contractorBillRegister) {
+        return mbForCancelledBillRepository.findMBHeadersByContractorBillRegister(contractorBillRegister);
     }
 }

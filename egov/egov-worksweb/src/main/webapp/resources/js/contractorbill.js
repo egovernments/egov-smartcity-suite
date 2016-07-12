@@ -183,6 +183,8 @@ $(document).ready(function(){
 
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value = name;
+		$('.creditGlcode').removeAttr('required');
+		$('.creditAmount').removeAttr('required');
 		var approverPosId = document.getElementById("approvalPosition");
 		var button = document.getElementById("workFlowAction").value;
 		if (button != null && button == 'Submit') {
@@ -225,17 +227,20 @@ $(document).ready(function(){
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
 			$('#approvalComent').removeAttr('required');
+			if(!$("form").valid())
+			{
+				return false;
+			}
 		}
 		if (button != null && button == 'Approve') {
 			$('#approvalComent').removeAttr('required');
 		}
-		$('.creditGlcode').removeAttr('required');
-		$('.creditAmount').removeAttr('required');
-		if(validateDeductionGrids()){
-			document.forms[0].submit;
+		if(validateDeductionGrids()) {
+				document.forms[0].submit;
+				return true;
 		}
-		else
 			return false;
+		
 	}
 	
 });

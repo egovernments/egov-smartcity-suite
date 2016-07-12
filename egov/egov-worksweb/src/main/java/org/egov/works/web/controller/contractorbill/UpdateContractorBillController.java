@@ -72,13 +72,14 @@ import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -111,6 +112,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private MBForCancelledBillService mbForCancelledBillService;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -189,12 +193,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             // errors.reject
             throw new ApplicationRuntimeException("error.contractorbill.budgetcheck.insufficient.amount");
             /*
-             * for (final ValidationError error : e.getErrors()) {
-             * if(error.getMessage().contains("Budget Check failed for ")) {
-             * errors.reject(messageSource.getMessage(
-             * "error.contractorbill.budgetcheck.insufficient.amount",null,null)
-             * +". " +error.getMessage()); } else
-             * errors.reject(error.getMessage()); }
+             * for (final ValidationError error : e.getErrors()) { if(error.getMessage().contains("Budget Check failed for ")) {
+             * errors.reject(messageSource.getMessage( "error.contractorbill.budgetcheck.insufficient.amount",null,null) +". "
+             * +error.getMessage()); } else errors.reject(error.getMessage()); }
              */
         }
 
@@ -410,6 +411,12 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
         if (mbHeaders != null && !mbHeaders.isEmpty())
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
+        if (newcontractorBillRegister.getStatus() != null
+                && newcontractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS))
+            model.addAttribute("mbDetails",   mbForCancelledBillService.getMBHeadersForCancelledBillListByContractorBillRegister(newcontractorBillRegister));
+        else
+            model.addAttribute("mbDetails", mbHeaders);
+
         return "contractorBill-update";
     }
 
