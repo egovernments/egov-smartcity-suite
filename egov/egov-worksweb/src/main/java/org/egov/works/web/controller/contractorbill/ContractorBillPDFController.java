@@ -147,6 +147,8 @@ public class ContractorBillPDFController {
                             ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber()
                             : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
+            reportParams.put("workCommencedDate", (contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() != null) ? 
+                    formatter.format(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate()) : "");
             reportParams.put("win", contractorBillRegister.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
             reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
@@ -158,10 +160,10 @@ public class ContractorBillPDFController {
             reportParams.put("creatorName", contractorBillRegister.getCreatedBy().getName());
             reportParams.put("creatorDesignation", worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
             reportParams.put("approverDesignation", worksUtils.getUserDesignation(contractorBillRegister.getApprovedBy()));
-            reportParams.put("approverName", contractorBillRegister.getApprovedBy().getName());
-            final List<MBHeader> mbHeaders = mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
-            reportParams.put("mbRefNo", mbHeaders != null && !mbHeaders.isEmpty() ? mbHeaders.get(0).getMbRefNo() : "");
-
+            reportParams.put("approverName", contractorBillRegister.getApprovedBy() != null ? contractorBillRegister.getApprovedBy().getName() : "N/A");
+            reportParams.put("mbAmountExists",(contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities()!= null && 
+                    !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty() ? "Yes":"No"));
+            reportParams.put("mbDetails", mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister));
             reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams),
                     reportParams);
 
