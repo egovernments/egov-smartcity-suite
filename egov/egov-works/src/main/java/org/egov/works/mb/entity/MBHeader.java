@@ -195,7 +195,7 @@ public class MBHeader extends StateAware {
     private transient List<MBDetails> sorMbDetails = new ArrayList<MBDetails>(0);
 
     private transient List<MBDetails> nonSorMbDetails = new ArrayList<MBDetails>(0);
-    
+
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
     @Transient
@@ -223,6 +223,10 @@ public class MBHeader extends StateAware {
 
     @Transient
     private String approvalComent;
+
+    private String cancellationReason;
+
+    private String cancellationRemarks;
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
@@ -464,7 +468,7 @@ public class MBHeader extends StateAware {
     public void setMbIssuedDate(final Date mbIssuedDate) {
         this.mbIssuedDate = mbIssuedDate;
     }
-    
+
     public List<DocumentDetails> getDocumentDetails() {
         return documentDetails;
     }
@@ -473,5 +477,21 @@ public class MBHeader extends StateAware {
         this.documentDetails.clear();
         if (documentDetails != null)
             this.documentDetails.addAll(documentDetails);
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
     }
 }

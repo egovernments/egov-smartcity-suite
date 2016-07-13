@@ -340,5 +340,10 @@
         <put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/mb-success.jsp"/>
     </definition>
+    
+    <definition name="searchmb-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.mb.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mb/searchMBToCancel-form.jsp"/>
+    </definition>
 
 </tiles-definitions>  

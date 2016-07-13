@@ -66,6 +66,7 @@ import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
 import org.egov.works.models.tender.OfflineStatus;
@@ -78,6 +79,7 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -647,4 +649,56 @@ public class MBHeaderService {
                 WorksConstants.CANCELLED_STATUS);
     }
 
+    public List<MBHeader> searchMBsToCancel(final SearchRequestCancelMB searchRequestCancelMB) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(MBHeader.class, "mb")
+                .createAlias("mb.workOrderEstimate", "woe")
+                .createAlias("woe.workOrder", "wo")
+                .createAlias("woe.estimate", "estimate")
+                .createAlias("wo.contractor", "woc")
+                .createAlias("mb.egwStatus", "status");
+        if (searchRequestCancelMB != null) {
+            if (searchRequestCancelMB.getMbReferenceNumber() != null)
+                criteria.add(Restrictions.ilike("mb.mbRefNo", searchRequestCancelMB.getMbReferenceNumber(), MatchMode.ANYWHERE));
+            if (searchRequestCancelMB.getContractorName() != null)
+                criteria.add(Restrictions.or(
+                        Restrictions.eq("woc.name", searchRequestCancelMB.getContractorName()).ignoreCase(),
+                        Restrictions.eq("woc.code", searchRequestCancelMB.getContractorName()).ignoreCase()));
+            if (searchRequestCancelMB.getDepartment() != null)
+                criteria.add(Restrictions.eq("estimate.executingDepartment.id", searchRequestCancelMB.getDepartment()));
+            if (searchRequestCancelMB.getWorkIdentificationNumber() != null)
+                criteria.add(Restrictions.eq("estimate.projectCode.id", searchRequestCancelMB.getWorkIdentificationNumber()));
+            if (searchRequestCancelMB.getStatus() != null)
+                criteria.add(Restrictions.eq("status.code", searchRequestCancelMB.getStatus()));
+            if (searchRequestCancelMB.getLoaNumber() != null)
+                criteria.add(Restrictions.eq("wo.workOrderNumber", searchRequestCancelMB.getLoaNumber()));
+        }
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public List<String> findLoaNumbersToCancelMB(final String code) {
+        final List<String> loaNumbers = mbHeaderRepository
+                .findLoaNumbersToCancelMB("%" + code + "%",
+                        MBHeader.MeasurementBookStatus.APPROVED.toString());
+        return loaNumbers;
+    }
+
+    public List<String> findContractorsToCancelMB(final String code) {
+        final List<String> loaNumbers = mbHeaderRepository
+                .findContractorsToSearchMBToCancel("%" + code + "%",
+                        MBHeader.MeasurementBookStatus.APPROVED.toString());
+        return loaNumbers;
+    }
+
+    public List<String> findWorkIdentificationNumbersToCancelMB(final String code) {
+        final List<String> workIdNumbers = mbHeaderRepository
+                .findWorkIdentificationNumbersToCancelMB("%" + code + "%",
+                        MBHeader.MeasurementBookStatus.APPROVED.toString());
+        return workIdNumbers;
+    }
+
+    public MBHeader getLatestMBHeader(final Long workOrderEstimateId) {
+        return mbHeaderRepository.findLatestMBHeaderToValidateMB(workOrderEstimateId,
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
 }

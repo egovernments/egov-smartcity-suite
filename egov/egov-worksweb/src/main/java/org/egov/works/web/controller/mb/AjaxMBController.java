@@ -48,18 +48,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.web.adaptor.SearchMBHeaderJsonAdaptor;
+import org.egov.works.web.adaptor.SearchMBToCancelJson;
 import org.egov.works.web.adaptor.SearchWorkOrderActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +91,9 @@ public class AjaxMBController {
 
     @Autowired
     private SearchWorkOrderActivityJsonAdaptor searchWorkOrderActivityJsonAdaptor;
+
+    @Autowired
+    private SearchMBToCancelJson searchMBToCancelJson;
 
     @RequestMapping(value = "/workorder/validatemb/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
@@ -197,4 +202,45 @@ public class AjaxMBController {
         return json;
     }
 
+    @RequestMapping(value = "/measurementbook/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchMBsToCancel(final Model model,
+            @ModelAttribute final SearchRequestCancelMB searchRequestCancelMB) {
+        final List<MBHeader> mbHeaders = mBHeaderService
+                .searchMBsToCancel(searchRequestCancelMB);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchMBsToCancelJson(mbHeaders)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchMBsToCancelJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(MBHeader.class, searchMBToCancelJson)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/measurementbook/ajaxloanumbers-mbtocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLOAsToCancelMB(@RequestParam final String code) {
+        return mBHeaderService.findLoaNumbersToCancelMB(code);
+    }
+
+    @RequestMapping(value = "/measurementbook/ajaxcontractors-mbtocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsToCancelMB(@RequestParam final String code) {
+        return mBHeaderService.findContractorsToCancelMB(code);
+    }
+
+    @RequestMapping(value = "/measurementbook/ajaxworkidentificationnumbers-mbtocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkIdNumbersToCancelMB(@RequestParam final String code) {
+        return mBHeaderService.findWorkIdentificationNumbersToCancelMB(code);
+    }
+
+    @RequestMapping(value = "/measurementbook/ajaxvalidatelatestmb-mbtocancel/{mbHeaderId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String validateIsLatestMB(@PathVariable final Long mbHeaderId) {
+        final MBHeader mbHeader = mBHeaderService.getMBHeaderById(mbHeaderId);
+        final MBHeader latestMBHeader = mBHeaderService.getLatestMBHeader(mbHeader.getWorkOrderEstimate().getId());
+        if (!mbHeader.getId().equals(latestMBHeader.getId()))
+            return latestMBHeader.getMbRefNo();
+        return "";
+    }
 }

@@ -83,14 +83,27 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select distinct(mbh.createdBy) from MBHeader as mbh")
     List<User> findMBHeaderCreatedByUsers();
 
-    List<MBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(final Long WorkOrderEstimateId,
+    List<MBHeader> findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(final Long workOrderEstimateId,
             final String statusCode);
 
     @Query("select sum(mbd.quantity) from MBDetails mbd where (mbd.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbd.mbHeader.egwStatus.code != :status group by mbd.workOrderActivity having mbd.workOrderActivity.id = :woActivityId")
     Double getPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status,
             @Param("woActivityId") final Long woActivityId);
-    
+
     @Query("select sum(mbAmount) from MBHeader where id != :mbHeaderId and egwStatus.code != :statusCode and workOrderEstimate.id = :workOrderEstimateId")
     Double getTotalMBAmountOfMBs(@Param("mbHeaderId") final Long mbHeaderId,
             @Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("statusCode") final String statusCode);
+
+    @Query("select distinct(mb.workOrderEstimate.workOrder.workOrderNumber) from MBHeader as mb where upper(mb.workOrderEstimate.workOrder.workOrderNumber) like upper(:code) and mb.egwStatus.code = :status")
+    List<String> findLoaNumbersToCancelMB(@Param("code") String code, @Param("status") String status);
+
+    @Query("select distinct(mb.workOrderEstimate.workOrder.contractor.name) from MBHeader as mb where upper(mb.workOrderEstimate.workOrder.contractor.name) like upper(:code) or upper(mb.workOrderEstimate.workOrder.contractor.code) like upper(:code) and mb.egwStatus.code = :status")
+    List<String> findContractorsToSearchMBToCancel(@Param("code") String code, @Param("status") String status);
+
+    @Query("select distinct(mb.workOrderEstimate.estimate.projectCode.code) from MBHeader as mb  where upper(mb.workOrderEstimate.estimate.projectCode.code) like upper(:code) and mb.egwStatus.code = :status")
+    List<String> findWorkIdentificationNumbersToCancelMB(@Param("code") String code, @Param("status") String status);
+
+    @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mb.egwStatus.code != :statusCode)")
+    MBHeader findLatestMBHeaderToValidateMB(@Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("statusCode") final String statusCode);
 }
