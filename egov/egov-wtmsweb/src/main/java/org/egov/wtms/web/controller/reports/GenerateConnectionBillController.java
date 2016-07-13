@@ -192,13 +192,8 @@ public class GenerateConnectionBillController {
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->"+Long.valueOf(count));
         List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)<1000){
-            generateconnectionBillList = generateConnectionBillService
-                .getBillData(generateConnectionBillList);
-        }
-        else
-        {
-             generateconnectionBillList = new ArrayList<>();
+        if (Long.valueOf(count)>1000){
+            generateconnectionBillList = new ArrayList<>();
         }
         result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
