@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
@@ -436,6 +438,15 @@ public class ValidationUtil {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+            }
+            BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropTaxDetails.getAssessmentNo());
+            if(basicProperty != null){
+            	Property property = basicProperty.getProperty();
+            	if(property != null && property.getIsExemptedFromTax()){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
+            	}
             }
         }
         

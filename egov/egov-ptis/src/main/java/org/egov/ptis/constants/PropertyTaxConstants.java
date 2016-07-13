@@ -1067,6 +1067,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
     public static final String PROPERTY_ACTIVE_ERR_CODE = "PTAX103";
     public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104";
+    public static final String PROPERTY_EXEMPTED_ERR_CODE = "PTAX105";
 
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
@@ -1074,6 +1075,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
     public static final String PROPERTY_ACTIVE_NOT_EXISTS = "Active property does not exists for the given assessment number";
     public static final String PROPERTY_INACTIVE_ERR_MSG = "Property is not active for the given assessment number";
+    public static final String PROPERTY_EXEMPTED_ERR_MSG = "Property is exempted";
 
     public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
     public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
@@ -1206,6 +1208,9 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_MUTATION_INVALID = "PTIS-REST-41";
     public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "Mutation application number is invalid";
+    
+    public static final String THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY = "PTIS-REST-42";
+    public static final String THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY = "Property is Exempted";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";

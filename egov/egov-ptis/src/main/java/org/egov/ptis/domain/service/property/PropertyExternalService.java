@@ -389,10 +389,18 @@ public class PropertyExternalService {
         PropertyTaxDetails propertyTaxDetails = null;
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
-            propertyTaxDetails = getPropertyTaxDetails(basicProperty);
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
-            propertyTaxDetails.setErrorDetails(errorDetails);
+        	Property property = basicProperty.getProperty();
+        	if(property != null && property.getIsExemptedFromTax()){
+        		propertyTaxDetails = new PropertyTaxDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE);
+                errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG);
+                propertyTaxDetails.setErrorDetails(errorDetails);
+        	} else {
+	            propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+	            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+	            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+	            propertyTaxDetails.setErrorDetails(errorDetails);
+        	}
         } else {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);

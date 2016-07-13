@@ -424,7 +424,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
     public Boolean isAssessmentNoExist(String assessmentNo) {
         Boolean isAssessmentNoExist = Boolean.FALSE;
         if (null != assessmentNo && !assessmentNo.trim().equals("")) {
-            Query doorNoQuery = getCurrentSession().createQuery("from BasicPropertyImpl bp where bp.upicNo =:assessmentNo");
+            Query doorNoQuery = getCurrentSession().createQuery("from BasicPropertyImpl bp where bp.upicNo =:assessmentNo and bp.active = 'Y' ");
             doorNoQuery.setString("assessmentNo", assessmentNo.trim());
             if (null != doorNoQuery.list() && !doorNoQuery.list().isEmpty()) {
                 isAssessmentNoExist = Boolean.TRUE;
