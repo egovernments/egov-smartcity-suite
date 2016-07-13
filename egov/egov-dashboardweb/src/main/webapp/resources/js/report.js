@@ -38,12 +38,48 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-/* $.extend($.expr[":"], {
-				"containsIN": function(elem, i, match, array) {
-					return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
-				 }
-			}); */
-		
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
+var report = getUrlParameter('report');
+
+if(report != undefined){
+	//Show secret key - Non public URL's
+	$('.lock').show();
+}else{
+	//Hide secret key - Non public URL's
+	$('.lock').hide();
+}
+
+var windowhref=window.location.href;
+
+windowhref=windowhref.replace("http://", "");
+windowhref=windowhref.replace("https://", "");
+
+cityUrl=windowhref.split(".");
+
+if(cityUrl.length > 1){
+	$('.title2').html(ucfirst(cityUrl[0])+" ERP Reports");
+	document.title = ucfirst(cityUrl[0])+" ERP Reports";
+}
+
+
+function ucfirst (str) {
+    return typeof str !="undefined"  ? (str += '', str[0].toUpperCase() + str.substr(1)) : '' ;
+}
+
 $('.accordion').click(function(){
 	if($(this).data('collapse') == 'more'){
 		$(this).data('collapse','less');
@@ -66,51 +102,13 @@ $('.collapsable').click(function(){
 	$('.panel-body').find('span a').data('collapse','more').html('More <i class="fa fa-angle-down" aria-hidden="true"></i>');
 });
 
-/* $( ".search" ).keyup(function() {
-	$( ".report-li a").css( "color", "#337ab7" );
-	var key = $(this).val();
-	//alert( "Handler for .keyup() called.:" + $(this).val());
-	if(!key){
-		//empty - collapse
-		$('.panel-body').find('li.report-li:gt(1)').addClass('hide');
-		$('.panel-body').find('span a').data('collapse','more').html('More <i class="fa fa-angle-down" aria-hidden="true"></i>');
-	}else{
-		//Non-empty - Expand
-		$('li').removeClass('hide');
-		$('.panel-body').find('span a').data('collapse','less').html('Less <i class="fa fa-angle-up" aria-hidden="true"></i>');
-		//search in li a tag
-		$( ".report-li a:containsIN('"+key+"')" ).css( "color", "red" );
-	}
-}); */
+var reportarray=[];
 
-var reportarray = [{"report":"Grievance Type Wise Report", "url":"/pgr/report/complaintTypeReport"},
-                   {"report":"Ageing Report - Department wise", "url":"/pgr/report/ageingReportByDept"},
-                   {"report":"Ageing Report - Boundary wise", "url":"/pgr/report/ageingReportByBoundary"},
-                   {"report":"Status Drill Down Report - Department wise", "url":"/pgr/report/drillDownReportByBoundary"},
-                   {"report":"Status Drill Down Report - Boundary wise", "url":"/pgr/report/drillDownReportByDept"},
-                   {"report":"Collection summary report", "url":"/collection/reports/collectionSummary-criteria.action#no-back-button"},
-                   {"report":"Remittance voucher report", "url":"/collection/reports/remittanceVoucherReport-criteria.action#no-back-button"},
-                   {"report":"Receipt register report", "url":"/collection/reports/receiptRegisterReport-criteria.action#no-back-button"},
-                   {"report":"Work Progress Register", "url":"/egworks/reports/workprogressregister/searchform"},
-                   {"report":"Estimate Abstract Report By Department", "url":"/egworks/reports/estimateabstractreport/departmentwise-searchform"},
-                   {"report":"Estimate Abstract Report By Type Of Work", "url":"/egworks/reports/estimateabstractreport/typeofworkwise-searchform"},
-                   {"report":"Revenue ward wise collection report", "url":"/ptis/reports/collectionSummaryReport-wardWise.action"},
-                   {"report":"Defaulters Report", "url":"/ptis/reports/defaultersReport-search.action#no-back-button"},
-                   {"report":"DCB Report", "url":"/ptis/reports/dCBReport-search.action#no-back-button"},
-                   {"report":"Base Register", "url":"/ptis/report/baseRegister"},
-                   {"report":"Daily collection report", "url":"/ptis/report/dailyCollection"},
-                   {"report":"Arrear Register report", "url":"/ptis/reports/arrearRegisterReport-index.action#no-back-button"},
-                   {"report":"Advertisement Collection Report", "url":"/adtax/reports/search-for-dcbreport"},
-                   {"report":"Agency wise Collection Report ", "url":"/adtax/reports/search-dcbreport"},
-                   {"report":"DCB Report by Trade", "url":"/tl/tlreports/dCBReport/licenseNumberWise#no-back"},
-                   {"report":"View/Search Trade licenses", "url":"/tl/search/searchTrade-newForm.action#no-back"},
-                   {"report":"DCB Report revenue ward wise", "url":"/wtms/reports/dCBReport/wardWise"},
-                   {"report":"Defaulters Report", "url":"/wtms/report/defaultersWTReport/search"},
-                   {"report":"Daily collection report", "url":"/wtms/report/dailyWTCollectionReport/search/"},
-                   {"report":"DCB Report locality wise", "url":"/wtms/reports/dCBReport/localityWise"},
-                   {"report":"Number of connections", "url":"/wtms/reports/coonectionReport/wardWise"},
-                   {"report":"Base Register report", "url":"/wtms/report/baseRegister"}
-	       			];
+$('.open-popup').each(function(){
+	var report={report:$(this).text()+" - "+$(this).closest('div.panel').find('.panel-heading').html(), url:$(this).attr('href')};
+	reportarray.push(report);
+});
+
 
 $( ".search" ).keyup(function() {
 	var key = $(this).val();
