@@ -71,8 +71,8 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "EGLC_JUDGMENTIMPL")
-@SequenceGenerator(name = Judgmentimpl.SEQ_EGLC_JUDGMENTIMPL, sequenceName = Judgmentimpl.SEQ_EGLC_JUDGMENTIMPL, allocationSize = 1)
-public class Judgmentimpl extends AbstractAuditable {
+@SequenceGenerator(name = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, sequenceName = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, allocationSize = 1)
+public class JudgmentImpl extends AbstractAuditable {
     /**
      * Serial version uid
      */
@@ -84,7 +84,6 @@ public class Judgmentimpl extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENTIMPL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    // Fields
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGEMENT", nullable = false)
@@ -92,16 +91,16 @@ public class Judgmentimpl extends AbstractAuditable {
     private Long isCompiled;
     @DateFormat(message = "invalid.fieldvalue.model.dateofcompliance")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
-    private Date dateofcompliance;
+    private Date dateOfCompliance;
     @Length(max = 1024, message = "compliancereport.maxlength")
-    private String compliancereport;
+    private String complianceReport;
     private String reason;
     @Length(max = 128, message = "details.maxlength")
     private String details;
     @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Contempt> contempt = new ArrayList<Contempt>();
+    private List<Contempt> contempt = new ArrayList<Contempt>(0);
     @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appeal> appeal = new ArrayList<Appeal>();
+    private List<Appeal> appeal = new ArrayList<Appeal>(0);
 
     public List<Contempt> getContempt() {
         return contempt;
@@ -135,22 +134,6 @@ public class Judgmentimpl extends AbstractAuditable {
         this.isCompiled = isCompiled;
     }
 
-    public Date getDateofcompliance() {
-        return dateofcompliance;
-    }
-
-    public void setDateofcompliance(final Date dateofcompliance) {
-        this.dateofcompliance = dateofcompliance;
-    }
-
-    public String getCompliancereport() {
-        return compliancereport;
-    }
-
-    public void setCompliancereport(final String compliancereport) {
-        this.compliancereport = compliancereport;
-    }
-
     /**
      * @return the reason
      */
@@ -159,8 +142,7 @@ public class Judgmentimpl extends AbstractAuditable {
     }
 
     /**
-     * @param reason
-     *            the reason to set
+     * @param reason the reason to set
      */
     public void setReason(final String reason) {
         this.reason = reason;
@@ -168,7 +150,7 @@ public class Judgmentimpl extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getDateofcompliance() != null && !DateUtils.compareDates(getDateofcompliance(), judgment.getOrderDate()))
+        if (getDateOfCompliance() != null && !DateUtils.compareDates(getDateOfCompliance(), judgment.getOrderDate()))
             errors.add(new ValidationError("dateofcompliance", "dateofcompliance.less.orderDate"));
         for (final Contempt contempt : getContempt())
             errors.addAll(contempt.validate());
@@ -178,9 +160,8 @@ public class Judgmentimpl extends AbstractAuditable {
     }
 
     /*
-     * public String getImplementationdetails() { return implementationdetails;
-     * } public void setImplementationdetails(String implementationdetails) {
-     * this.implementationdetails = implementationdetails; }
+     * public String getImplementationdetails() { return implementationdetails; } public void setImplementationdetails(String
+     * implementationdetails) { this.implementationdetails = implementationdetails; }
      */
 
     public String getDetails() {
@@ -199,6 +180,22 @@ public class Judgmentimpl extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public Date getDateOfCompliance() {
+        return dateOfCompliance;
+    }
+
+    public void setDateOfCompliance(Date dateOfCompliance) {
+        this.dateOfCompliance = dateOfCompliance;
+    }
+
+    public String getComplianceReport() {
+        return complianceReport;
+    }
+
+    public void setComplianceReport(String complianceReport) {
+        this.complianceReport = complianceReport;
     }
 
 }

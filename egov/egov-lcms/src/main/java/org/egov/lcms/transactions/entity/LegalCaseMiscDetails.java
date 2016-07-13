@@ -60,8 +60,8 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_MISCDETAILS")
-@SequenceGenerator(name = LegalcaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, sequenceName = LegalcaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, allocationSize = 1)
-public class LegalcaseMiscDetails extends AbstractAuditable {
+@SequenceGenerator(name = LegalCaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, sequenceName = LegalCaseMiscDetails.SEQ_EGLC_LEGALCASE_MISCDETAILS, allocationSize = 1)
+public class LegalCaseMiscDetails extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_MISCDETAILS = "SEQ_EGLC_LEGALCASE_MISCDETAILS";
@@ -73,7 +73,7 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @Required(message = "miscDetails.date.null")
     @DateFormat(message = "invalid.fieldvalue.model.miscDate")
     private Date miscDate;
@@ -86,14 +86,6 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @Valid
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase Legalcase) {
-        legalcase = Legalcase;
-    }
 
     public Date getMiscDate() {
         return miscDate;
@@ -135,6 +127,14 @@ public class LegalcaseMiscDetails extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

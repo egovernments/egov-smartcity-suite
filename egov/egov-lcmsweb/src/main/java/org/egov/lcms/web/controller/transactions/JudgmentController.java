@@ -44,7 +44,7 @@ import javax.validation.Valid;
 
 import org.egov.lcms.masters.service.JudgmentTypeService;
 import org.egov.lcms.transactions.entity.Judgment;
-import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.JudgmentService;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,15 +78,15 @@ public class JudgmentController {
     public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @PathVariable final String lcNumber,
             final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
-        final Legalcase legalcase = getLegalCase(lcNumber, request);
+        final LegalCase legalcase = getLegalCase(lcNumber, request);
         model.addAttribute("legalcase", legalcase);
         model.addAttribute("judgment", judgment);
         return "judgment-new";
     }
 
     @ModelAttribute
-    private Legalcase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
-        final Legalcase legalcase = legalcaseService.findByLcNumber(lcNumber);
+    private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+        final LegalCase legalcase = legalcaseService.findByLcNumber(lcNumber);
         return legalcase;
     }
 
@@ -94,13 +94,13 @@ public class JudgmentController {
     public String create(@Valid @ModelAttribute("judgment") final Judgment judgment, final BindingResult errors,
             final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
             final HttpServletRequest request, final Model model) {
-        final Legalcase legalcase = getLegalCase(lcNumber, request);
+        final LegalCase legalcase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
             prepareNewForm(model);
             model.addAttribute("legalcase", legalcase);
             return "judgment-new";
         } else
-            judgment.setLegalcase(legalcase);
+            judgment.setLegalCase(legalcase);
         judgmentService.persist(judgment);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("judgment", judgment);

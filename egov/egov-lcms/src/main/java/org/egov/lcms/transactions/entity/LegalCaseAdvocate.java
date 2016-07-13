@@ -74,8 +74,8 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "EGLC_LEGALCASE_ADVOCATE")
-@SequenceGenerator(name = LegalcaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalcaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
-public class LegalcaseAdvocate extends AbstractPersistable<Long> {
+@SequenceGenerator(name = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, sequenceName = LegalCaseAdvocate.SEQ_EGLC_LEGALCASE_ADVOCATE, allocationSize = 1)
+public class LegalCaseAdvocate extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_ADVOCATE = "SEQ_EGLC_LEGALCASE_ADVOCATE";
@@ -86,7 +86,7 @@ public class LegalcaseAdvocate extends AbstractPersistable<Long> {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "advocatemaster", nullable = false)
@@ -146,14 +146,6 @@ public class LegalcaseAdvocate extends AbstractPersistable<Long> {
 
     public void setChangeSeniorAdvocate(final Boolean changeSeniorAdvocate) {
         this.changeSeniorAdvocate = changeSeniorAdvocate;
-    }
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
     }
 
     public AdvocateMaster getAdvocateMaster() {
@@ -216,28 +208,28 @@ public class LegalcaseAdvocate extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (legalcase.getIsSenioradvrequired()) {
+        if (legalCase.getIsSenioradvrequired()) {
             if (getEglcSeniorAdvocateMaster() == null)
                 errors.add(new ValidationError("eglcSeniorAdvocateMaster", "legalcase.eglcSeniorAdvocateMaster.null"));
             if (StringUtils.isBlank(getOrdernumber()))
                 errors.add(new ValidationError("ordernumber", "legalcase.ordernumber.null"));
             if (getOrderdate() == null)
                 errors.add(new ValidationError("orderDate", "legalcase.orderdate.null"));
-            if (!DateUtils.compareDates(getOrderdate(), legalcase.getCaseReceivingDate()))
+            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casereceivingdate"));
-            if (!DateUtils.compareDates(getOrderdate(), legalcase.getCasedate()))
+            if (!DateUtils.compareDates(getOrderdate(), legalCase.getCasedate()))
                 errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
             if (!DateUtils.compareDates(getAssignedtodateForsenior(), getOrderdate()))
                 errors.add(new ValidationError("assignedtodatesenior", "assignedon.less.orderdate"));
         }
 
-        if (!DateUtils.compareDates(getAssignedtodate(), legalcase.getCaseReceivingDate()))
+        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCaseReceivingDate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casereceivingdate"));
-        if (!DateUtils.compareDates(getAssignedtodate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getAssignedtodate(), legalCase.getCasedate()))
             errors.add(new ValidationError("assignedon", "assignedon.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCasedate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.casedate"));
-        if (!DateUtils.compareDates(getVakalatdate(), legalcase.getCaseReceivingDate()))
+        if (!DateUtils.compareDates(getVakalatdate(), legalCase.getCaseReceivingDate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.caserecdate"));
         if (!DateUtils.compareDates(getVakalatdate(), getAssignedtodate()))
             errors.add(new ValidationError("vakalatdate", "vakalatdate.less.assingedon"));
@@ -306,6 +298,14 @@ public class LegalcaseAdvocate extends AbstractPersistable<Long> {
 
     public void setReassignmentreasonsenior(final String reassignmentreasonsenior) {
         this.reassignmentreasonsenior = reassignmentreasonsenior;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

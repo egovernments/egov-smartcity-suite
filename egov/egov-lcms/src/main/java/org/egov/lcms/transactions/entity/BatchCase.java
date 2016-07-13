@@ -64,8 +64,8 @@ import org.egov.lcms.utils.constants.LcmsConstants;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_BATCHCASE")
-@SequenceGenerator(name = Batchcase.SEQ_EGLC_LEGALCASE_BATCHCASE, sequenceName = Batchcase.SEQ_EGLC_LEGALCASE_BATCHCASE, allocationSize = 1)
-public class Batchcase extends AbstractAuditable {
+@SequenceGenerator(name = BatchCase.SEQ_EGLC_LEGALCASE_BATCHCASE, sequenceName = BatchCase.SEQ_EGLC_LEGALCASE_BATCHCASE, allocationSize = 1)
+public class BatchCase extends AbstractAuditable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_BATCHCASE = "SEQ_EGLC_LEGALCASE_BATCHCASE";
@@ -73,23 +73,23 @@ public class Batchcase extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_BATCHCASE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
-    
+    private LegalCase legalCase;
+
     @DateFormat(message = "invalid.fieldvalue.model.batchCaseDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.batchcase.date")
     private Date batchCaseDate;
-    
+
     @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message = "batchcase.number.alphanumeric")
     private String casenumber;
-    
+
     @OptionalPattern(regex = LcmsConstants.mixedCharType1withComma, message = "petitionerName.batchcase.mixedChar")
     private String petitionerName;
-    
+
     private String caseNumberForDisplay;
 
     @Override
@@ -100,14 +100,6 @@ public class Batchcase extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
     }
 
     public Date getBatchCaseDate() {
@@ -147,8 +139,7 @@ public class Batchcase extends AbstractAuditable {
     }
 
     /*
-     * If they entered either one of the value then validation should throw for
-     * rest of the fields. That check is done over here.
+     * If they entered either one of the value then validation should throw for rest of the fields. That check is done over here.
      */
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -164,6 +155,14 @@ public class Batchcase extends AbstractAuditable {
                 errors.add(new ValidationError("casenumber", "batchcase.casenumber.null"));
         }
         return errors;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

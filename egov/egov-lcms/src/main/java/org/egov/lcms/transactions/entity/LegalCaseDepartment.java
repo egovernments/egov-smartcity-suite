@@ -66,8 +66,8 @@ import org.egov.pims.commons.Position;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_DEPT")
-@SequenceGenerator(name = LegalcaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, sequenceName = LegalcaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, allocationSize = 1)
-public class LegalcaseDepartment extends AbstractPersistable<Long> {
+@SequenceGenerator(name = LegalCaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, sequenceName = LegalCaseDepartment.SEQ_EGLC_LEGALCASE_DEPT, allocationSize = 1)
+public class LegalCaseDepartment extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASE_DEPT = "SEQ_EGLC_LEGALCASE_DEPT";
@@ -75,32 +75,32 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_DEPT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
-    
+    private LegalCase legalCase;
+
     @DateFormat(message = "invalid.fieldvalue.dateOfReceipt")
     @Column(name = "dateofreceiptofpwr")
     private Date dateofreceiptofpwr;
-    
-    @ManyToOne(fetch=FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "DEPARTMENT")
     private Department department;
-    
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "POSITION")
     private Position position;
-    
+
     @Column(name = "isprimarydepartment")
     private boolean isPrimaryDepartment;
-    
+
     @OneToMany(mappedBy = "legalCaseDepartment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reminder> legalcaseReminders = new ArrayList<Reminder>();
-    
+    private List<Reminder> legalCaseReminders = new ArrayList<Reminder>(0);
+
     @DateFormat(message = "invalid.fieldvalue.assignOnDate")
     private Date assignOn;
 
@@ -110,15 +110,6 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
 
     public void setIsPrimaryDepartment(final boolean isPrimaryDepartment) {
         this.isPrimaryDepartment = isPrimaryDepartment;
-    }
-
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase eglcLegalcase) {
-        legalcase = eglcLegalcase;
     }
 
     public void setPrimaryDepartment(final boolean isPrimaryDepartment) {
@@ -145,20 +136,19 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getLegalcase() != null && !DateUtils.compareDates(getDateofreceiptofpwr(), legalcase.getCasedate()))
+        if (getLegalCase() != null && !DateUtils.compareDates(getDateofreceiptofpwr(), legalCase.getCasedate()))
             errors.add(new ValidationError("dateOfReceipt", "dateOfReceipt.less.casedate"));
-        if (legalcase != null && !DateUtils.compareDates(getAssignOn(), legalcase.getCasedate()))
+        if (legalCase != null && !DateUtils.compareDates(getAssignOn(), legalCase.getCasedate()))
             errors.add(new ValidationError("assignOnDate", "assignOn.less.casedate"));
 
         return errors;
     }
 
-
     public Date getDateofreceiptofpwr() {
         return dateofreceiptofpwr;
     }
 
-    public void setDateofreceiptofpwr(Date dateofreceiptofpwr) {
+    public void setDateofreceiptofpwr(final Date dateofreceiptofpwr) {
         this.dateofreceiptofpwr = dateofreceiptofpwr;
     }
 
@@ -170,20 +160,12 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
         this.department = department;
     }
 
-    public List<Reminder> getLegalcaseReminders() {
-        return legalcaseReminders;
-    }
-
-    public void setLegalcaseReminders(final List<Reminder> legalcaseReminders) {
-        this.legalcaseReminders = legalcaseReminders;
-    }
-
     public void addReminder(final Reminder reminder) {
-        getLegalcaseReminders().add(reminder);
+        getLegalCaseReminders().add(reminder);
     }
 
     public void removeReminder(final Reminder reminder) {
-        getLegalcaseReminders().remove(reminder);
+        getLegalCaseReminders().remove(reminder);
     }
 
     public Date getAssignOn() {
@@ -192,6 +174,22 @@ public class LegalcaseDepartment extends AbstractPersistable<Long> {
 
     public void setAssignOn(final Date assignOn) {
         this.assignOn = assignOn;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
+
+    public List<Reminder> getLegalCaseReminders() {
+        return legalCaseReminders;
+    }
+
+    public void setLegalCaseReminders(final List<Reminder> legalCaseReminders) {
+        this.legalCaseReminders = legalCaseReminders;
     }
 
 }

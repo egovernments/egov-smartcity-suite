@@ -56,12 +56,12 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
-import org.egov.lcms.transactions.entity.Legalcase;
-import org.egov.lcms.transactions.entity.LegalcaseAdvocate;
-import org.egov.lcms.transactions.entity.LegalcaseDepartment;
-import org.egov.lcms.transactions.entity.LegalcaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
+import org.egov.lcms.transactions.entity.LegalCaseDepartment;
+import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
-import org.egov.lcms.transactions.repository.LegalcaseRepository;
+import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class LegalCaseService {
 
-    private final LegalcaseRepository legalCaseRepository;
+    private final LegalCaseRepository legalCaseRepository;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -96,25 +96,25 @@ public class LegalCaseService {
     private LegalCaseUtil legalCaseUtil;
 
     @Autowired
-    public LegalCaseService(final LegalcaseRepository legalCaseRepository) {
+    public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
         this.legalCaseRepository = legalCaseRepository;
 
     }
 
-    public Legalcase findBy(final Long Id) {
+    public LegalCase findBy(final Long Id) {
         return legalCaseRepository.findOne(Id);
     }
 
-    public Legalcase findByLcNumber(final String lcnumber) {
+    public LegalCase findByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
 
-    public Legalcase getLegalCaseByLcNumber(final String lcnumber) {
+    public LegalCase getLegalCaseByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
 
-    public Legalcase getLegalCaseByCaseNumber(final String caseNumber) {
-        return legalCaseRepository.findByCasenumber(caseNumber);
+    public LegalCase getLegalCaseByCaseNumber(final String caseNumber) {
+        return legalCaseRepository.findByCaseNumber(caseNumber);
     }
 
    /* public Legalcase findByLcNumber(final String lcnumber) {
@@ -124,9 +124,9 @@ public class LegalCaseService {
     }
 */
     @Transactional
-    public Legalcase createLegalCase(final Legalcase legalcase) {
-        legalcase.setCasenumber(
-                legalcase.getCasenumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
+    public LegalCase createLegalCase(final LegalCase legalcase) {
+        legalcase.setCaseNumber(
+                legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         final String[] funcString = legalcase.getFunctionaryCode().split("LC");
         final Functionary funcObj = legalCaseUtil.getFunctionaryByCode(funcString);
         legalcase.setFunctionary(funcObj);
@@ -137,16 +137,16 @@ public class LegalCaseService {
         return legalCaseRepository.save(legalcase);
     }
 
-    private void prepareChildEntities(final Legalcase legalcase) {
+    private void prepareChildEntities(final LegalCase legalcase) {
         final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
-        final List<LegalcaseDepartment> legalcaseDetails = new ArrayList<LegalcaseDepartment>();
-        final List<LegalcaseAdvocate> legalAdvocateDetails = new ArrayList<LegalcaseAdvocate>();
+        final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
+        final List<LegalCaseAdvocate> legalAdvocateDetails = new ArrayList<LegalCaseAdvocate>();
         final List<Pwr> pwrList = new ArrayList<Pwr>();
 
         for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails())
             if (bipartObj.getName() != null && !"".equals(bipartObj.getName())) {
                 bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
-                bipartObj.setLegalcase(legalcase);
+                bipartObj.setLegalCase(legalcase);
                 partitionDetails.add(bipartObj);
             }
         legalcase.getBipartisanDetails().clear();
@@ -156,22 +156,22 @@ public class LegalCaseService {
             if (bipartObjtemp.getName() != null && !"".equals(bipartObjtemp.getName())) {
                 bipartObjtemp.setSerialNumber(
                         bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
-                bipartObjtemp.setLegalcase(legalcase);
+                bipartObjtemp.setLegalCase(legalcase);
                 legalcase.getBipartisanDetails().add(bipartObjtemp);
             }
 
-        for (final LegalcaseDepartment legaldeptObj : legalcase.getLegalcaseDepartment()) {
+        for (final LegalCaseDepartment legaldeptObj : legalcase.getLegalCaseDepartment()) {
 
-            legaldeptObj.setLegalcase(legalcase);
+            legaldeptObj.setLegalCase(legalcase);
             legaldeptObj.setDepartment(departmentService.getDepartmentByName(legaldeptObj.getDepartment().getName()));
             legaldeptObj.setPosition(positionMasterService.getPositionByName(legaldeptObj.getPosition().getName()));
             legalcaseDetails.add(legaldeptObj);
         }
-        legalcase.getLegalcaseDepartment().clear();
-        legalcase.setLegalcaseDepartment(legalcaseDetails);
+        legalcase.getLegalCaseDepartment().clear();
+        legalcase.setLegalCaseDepartment(legalcaseDetails);
 
-        for (final LegalcaseAdvocate legalAdvocateObj : legalcase.getEglcLegalcaseAdvocates()) {
-            legalAdvocateObj.setLegalcase(legalcase);
+        for (final LegalCaseAdvocate legalAdvocateObj : legalcase.getEglcLegalcaseAdvocates()) {
+            legalAdvocateObj.setLegalCase(legalcase);
             legalAdvocateObj.setAdvocateMaster(
                     advocateMasterService.findByName(legalAdvocateObj.getAdvocateMaster().getName()));
             legalAdvocateObj.setEglcSeniorAdvocateMaster(
@@ -183,7 +183,7 @@ public class LegalCaseService {
         legalcase.setEglcLegalcaseAdvocates(legalAdvocateDetails);
 
         for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
-            legalpwr.setLegalcase(legalcase);
+            legalpwr.setLegalCase(legalcase);
             legalpwr.setCaFilingdate(new Date());
             pwrList.add(legalpwr);
         }
@@ -192,17 +192,17 @@ public class LegalCaseService {
 
     }
 
-    protected void processAndStoreApplicationDocuments(final Legalcase legalcase) {
-        if (!legalcase.getLegalcaseDocuments().isEmpty())
-            for (final LegalcaseDocuments applicationDocument : legalcase.getLegalcaseDocuments()) {
-                applicationDocument.setLegalcase(legalcase);
+    protected void processAndStoreApplicationDocuments(final LegalCase legalcase) {
+        if (!legalcase.getLegalCaseDocuments().isEmpty())
+            for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
+                applicationDocument.setLegalCase(legalcase);
                 applicationDocument.setDocumentName("LegalCase");
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
 
     @Transactional
-    public Legalcase updateLegalCase(final Legalcase legalCase) {
+    public LegalCase updateLegalCase(final LegalCase legalCase) {
         return legalCaseRepository.save(legalCase);
     }
 

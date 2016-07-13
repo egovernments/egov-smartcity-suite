@@ -44,159 +44,158 @@ import java.util.Date;
 import java.util.List;
 
 public class LegalCaseReportResult {
-	private String caseNumber;
-	private String lcNumber;
-	private Date caseFromDate;
-	private Date caseToDate;
-	private String standingCouncil;
-	private String casecategory;
-	private String courttype;
-	private String petitionType;
-	private String courtType;
-	private String courtName;
-	private String govtDept;
-	private String caseTitle;
-	private String petName;
-	private Boolean isStatusExcluded;
-	private String caseStatus;
-	private List<String>actionList=new ArrayList<String>();
-private String assignDept;
-	
-	public String getStandingCouncil() {
-		return standingCouncil;
-	}
+    private String caseNumber;
+    private String lcNumber;
+    private Date caseFromDate;
+    private Date caseToDate;
+    private String standingCouncil;
+    private String casecategory;
+    private String courttype;
+    private String petitionType;
+    private String courtType;
+    private String courtName;
+    private String govtDept;
+    private String caseTitle;
+    private String petName;
+    private Boolean isStatusExcluded;
+    private String caseStatus;
+    private List<String> actionList = new ArrayList<String>(0);
+    private String assignDept;
 
-	public void setStandingCouncil(String standingCouncil) {
-		this.standingCouncil = standingCouncil;
-	}
+    public String getStandingCouncil() {
+        return standingCouncil;
+    }
 
-	public String getCaseNumber() {
-		return caseNumber;
-	}
+    public void setStandingCouncil(final String standingCouncil) {
+        this.standingCouncil = standingCouncil;
+    }
 
-	public void setCaseNumber(String caseNumber) {
-		this.caseNumber = caseNumber;
-	}
+    public String getCaseNumber() {
+        return caseNumber;
+    }
 
-	public String getLcNumber() {
-		return lcNumber;
-	}
+    public void setCaseNumber(final String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
 
-	public void setLcNumber(String lcNumber) {
-		this.lcNumber = lcNumber;
-	}
+    public String getLcNumber() {
+        return lcNumber;
+    }
 
-	public Date getCaseFromDate() {
-		return caseFromDate;
-	}
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
 
-	public void setCaseFromDate(Date caseFromDate) {
-		this.caseFromDate = caseFromDate;
-	}
+    public Date getCaseFromDate() {
+        return caseFromDate;
+    }
 
-	public Date getCaseToDate() {
-		return caseToDate;
-	}
+    public void setCaseFromDate(final Date caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
 
-	public void setCaseToDate(Date caseToDate) {
-		this.caseToDate = caseToDate;
-	}
+    public Date getCaseToDate() {
+        return caseToDate;
+    }
 
-	public String getCasecategory() {
-		return casecategory;
-	}
+    public void setCaseToDate(final Date caseToDate) {
+        this.caseToDate = caseToDate;
+    }
 
-	public void setCasecategory(String casecategory) {
-		this.casecategory = casecategory;
-	}
+    public String getCasecategory() {
+        return casecategory;
+    }
 
-	public String getCourttype() {
-		return courttype;
-	}
+    public void setCasecategory(final String casecategory) {
+        this.casecategory = casecategory;
+    }
 
-	public void setCourttype(String courttype) {
-		this.courttype = courttype;
-	}
+    public String getCourttype() {
+        return courttype;
+    }
 
-	public String getPetitionType() {
-		return petitionType;
-	}
+    public void setCourttype(final String courttype) {
+        this.courttype = courttype;
+    }
 
-	public void setPetitionType(String petitionType) {
-		this.petitionType = petitionType;
-	}
+    public String getPetitionType() {
+        return petitionType;
+    }
 
-	public String getCourtType() {
-		return courtType;
-	}
+    public void setPetitionType(final String petitionType) {
+        this.petitionType = petitionType;
+    }
 
-	public void setCourtType(String courtType) {
-		this.courtType = courtType;
-	}
+    public String getCourtType() {
+        return courtType;
+    }
 
-	public String getCourtName() {
-		return courtName;
-	}
+    public void setCourtType(final String courtType) {
+        this.courtType = courtType;
+    }
 
-	public void setCourtName(String courtName) {
-		this.courtName = courtName;
-	}
+    public String getCourtName() {
+        return courtName;
+    }
 
-	public String getGovtDept() {
-		return govtDept;
-	}
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
 
-	public void setGovtDept(String govtDept) {
-		this.govtDept = govtDept;
-	}
+    public String getGovtDept() {
+        return govtDept;
+    }
 
-	public String getPetName() {
-		return petName;
-	}
+    public void setGovtDept(final String govtDept) {
+        this.govtDept = govtDept;
+    }
 
-	public void setPetName(String petName) {
-		this.petName = petName;
-	}
+    public String getPetName() {
+        return petName;
+    }
 
-	public String getCaseStatus() {
-		return caseStatus;
-	}
+    public void setPetName(final String petName) {
+        this.petName = petName;
+    }
 
-	public void setCaseStatus(String caseStatus) {
-		this.caseStatus = caseStatus;
-	}
+    public String getCaseStatus() {
+        return caseStatus;
+    }
 
-	public List<String> getActionList() {
-		return actionList;
-	}
+    public void setCaseStatus(final String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
 
-	public void setActionList(List<String> actionList) {
-		this.actionList = actionList;
-	}
+    public List<String> getActionList() {
+        return actionList;
+    }
 
-	public String getCaseTitle() {
-		return caseTitle;
-	}
+    public void setActionList(final List<String> actionList) {
+        this.actionList = actionList;
+    }
 
-	public void setCaseTitle(String caseTitle) {
-		this.caseTitle = caseTitle;
-	}
+    public String getCaseTitle() {
+        return caseTitle;
+    }
 
-	public String getAssignDept() {
-		return assignDept;
-	}
+    public void setCaseTitle(final String caseTitle) {
+        this.caseTitle = caseTitle;
+    }
 
-	public void setAssignDept(String assignDept) {
-		this.assignDept = assignDept;
-	}
+    public String getAssignDept() {
+        return assignDept;
+    }
 
-	public Boolean getIsStatusExcluded() {
-		return isStatusExcluded;
-	}
+    public void setAssignDept(final String assignDept) {
+        this.assignDept = assignDept;
+    }
 
-	public void setIsStatusExcluded(Boolean isStatusExcluded) {
-		this.isStatusExcluded = isStatusExcluded;
-	}
+    public Boolean getIsStatusExcluded() {
+        return isStatusExcluded;
+    }
 
-	
+    public void setIsStatusExcluded(final Boolean isStatusExcluded) {
+        this.isStatusExcluded = isStatusExcluded;
+    }
+
 }

@@ -66,9 +66,9 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASEDISPOSAL")
-@SequenceGenerator(name = LegalcaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, sequenceName = LegalcaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, allocationSize = 1)
+@SequenceGenerator(name = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, sequenceName = LegalCaseDisposal.SEQ_EGLC_LEGALCASEDISPOSAL, allocationSize = 1)
 @CompareDates(fromDate = "consignmentDate", toDate = LcmsConstants.DISPOSAL_DATE, dateFormat = "dd/MM/yyyy", message = "consignmentDate.greaterThan.disposalDate")
-public class LegalcaseDisposal extends AbstractAuditable {
+public class LegalCaseDisposal extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LEGALCASEDISPOSAL = "SEQ_EGLC_LEGALCASEDISPOSAL";
 
@@ -79,7 +79,7 @@ public class LegalcaseDisposal extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @Required(message = "disposalDate.null")
     @DateFormat(message = "invalid.fieldvalue.model.disposalDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "disposalDate.lessthan.currentDate")
@@ -113,21 +113,13 @@ public class LegalcaseDisposal extends AbstractAuditable {
         this.consignmentDate = consignmentDate;
     }
 
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
-    }
-
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getDisposalDate(), getLegalcase().getCasedate()))
+        if (!DateUtils.compareDates(getDisposalDate(), getLegalCase().getCasedate()))
             errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.caseDate"));
 
-        for (final Hearings hearingsObj : legalcase.getHearings()) {
+        for (final Hearings hearingsObj : legalCase.getHearings()) {
             int i = 0;
             if (!DateUtils.compareDates(getDisposalDate(), hearingsObj.getHearingDate())) {
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.hearingDate"));
@@ -137,11 +129,11 @@ public class LegalcaseDisposal extends AbstractAuditable {
                 break;
         }
 
-        for (final Judgment judgmentObj : getLegalcase().getJudgment()) {
+        for (final Judgment judgmentObj : getLegalCase().getJudgment()) {
             if (!DateUtils.compareDates(getDisposalDate(), judgmentObj.getOrderDate()))
                 errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE, "disposalDate.greaterthan.judgementDate"));
-            for (final Judgmentimpl judgementImpl : judgmentObj.getEglcJudgmentimpls())
-                if (!DateUtils.compareDates(getDisposalDate(), judgementImpl.getDateofcompliance()))
+            for (final JudgmentImpl judgementImpl : judgmentObj.getEglcJudgmentimpls())
+                if (!DateUtils.compareDates(getDisposalDate(), judgementImpl.getDateOfCompliance()))
                     errors.add(new ValidationError(LcmsConstants.DISPOSAL_DATE,
                             "disposalDate.greaterthan.judgementImplDate"));
         }
@@ -157,6 +149,14 @@ public class LegalcaseDisposal extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

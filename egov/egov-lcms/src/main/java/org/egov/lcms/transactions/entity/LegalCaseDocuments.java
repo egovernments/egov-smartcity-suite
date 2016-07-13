@@ -63,8 +63,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "eglc_legalcase_document")
-@SequenceGenerator(name = LegalcaseDocuments.SEQ_LEGALCASEDOCUMENTS, sequenceName = LegalcaseDocuments.SEQ_LEGALCASEDOCUMENTS, allocationSize = 1)
-public class LegalcaseDocuments extends AbstractPersistable<Long> {
+@SequenceGenerator(name = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, sequenceName = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, allocationSize = 1)
+public class LegalCaseDocuments extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -4555037259173138199L;
     public static final String SEQ_LEGALCASEDOCUMENTS = "SEQ_eglc_legalcase_document";
 
@@ -75,7 +75,7 @@ public class LegalcaseDocuments extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
 
     @NotNull
     @Length(min = 3, max = 100)
@@ -95,14 +95,6 @@ public class LegalcaseDocuments extends AbstractPersistable<Long> {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
     }
 
     public Set<FileStoreMapper> getSupportDocs() {
@@ -127,6 +119,14 @@ public class LegalcaseDocuments extends AbstractPersistable<Long> {
 
     public void setDocumentName(final String documentName) {
         this.documentName = documentName;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

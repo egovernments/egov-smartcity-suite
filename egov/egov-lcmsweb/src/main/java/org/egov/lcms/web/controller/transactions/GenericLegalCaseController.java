@@ -69,7 +69,7 @@ public class GenericLegalCaseController {
 
     @Autowired
     private CaseTypeMasterService caseTypeMasterService;
-    
+
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
 
@@ -89,7 +89,7 @@ public class GenericLegalCaseController {
     public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
         return courtMasterService.findAll();
     }
-    
+
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
         return governmentDepartmentService.findAll();
     }
@@ -132,5 +132,4 @@ public class GenericLegalCaseController {
         return wPYearList;
     }
 
-  
 }

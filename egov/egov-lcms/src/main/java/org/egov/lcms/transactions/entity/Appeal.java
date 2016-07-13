@@ -83,7 +83,7 @@ public class Appeal extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGMENTIMPL")
-    private Judgmentimpl judgmentimpl;
+    private JudgmentImpl judgmentImpl;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "STATUS")
@@ -132,14 +132,6 @@ public class Appeal extends AbstractAuditable {
         this.appealFiledBy = appealFiledBy;
     }
 
-    public Judgmentimpl getJudgmentimpl() {
-        return judgmentimpl;
-    }
-
-    public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
-        this.judgmentimpl = judgmentimpl;
-    }
-
     @Override
     public Long getId() {
         return id;
@@ -153,8 +145,16 @@ public class Appeal extends AbstractAuditable {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (getAppealFiledOn() != null
-                && !DateUtils.compareDates(getAppealFiledOn(), getJudgmentimpl().getJudgment().getOrderDate()))
+                && !DateUtils.compareDates(getAppealFiledOn(), getJudgmentImpl().getJudgment().getOrderDate()))
             errors.add(new ValidationError("appealfiledon", "appealfiledon.less.orderDate"));
         return errors;
+    }
+
+    public JudgmentImpl getJudgmentImpl() {
+        return judgmentImpl;
+    }
+
+    public void setJudgmentImpl(JudgmentImpl judgmentImpl) {
+        this.judgmentImpl = judgmentImpl;
     }
 }

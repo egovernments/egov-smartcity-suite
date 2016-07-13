@@ -45,7 +45,7 @@ import javax.validation.Valid;
 
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
-import org.egov.lcms.transactions.entity.Legalcase;
+import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,7 +67,7 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
     private LegalCaseNumberGenerator legalCaseNumberGenerator;
 
     @RequestMapping(value = "create/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final Legalcase legalcase, final Model model,
+    public String newForm(@ModelAttribute final LegalCase legalcase, final Model model,
             final HttpServletRequest request) {
         model.addAttribute("legalcase", legalcase);
         model.addAttribute("mode", "create");
@@ -75,12 +75,13 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final Legalcase legalcase, final BindingResult errors,
+    public String create(@Valid @ModelAttribute final LegalCase legalcase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model) {
         if (legalcase.getLcNumberType() != null && legalcase.getLcNumberType().equals(LCNumberType.AUTOMATED))
             legalcase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         else
-            legalcase.setLcnumber(legalcase.getLcNumber() +(legalcase.getFinwpYear()!=null ?"/" + legalcase.getFinwpYear() :""));
+            legalcase.setLcnumber(legalcase.getLcNumber()
+                    + (legalcase.getFinwpYear() != null ? "/" + legalcase.getFinwpYear() : ""));
         if (errors.hasErrors())
             return "legalCase-newForm";
         legalCaseService.createLegalCase(legalcase);

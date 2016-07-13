@@ -80,7 +80,7 @@ public class VacateStay extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "LCINTERIMORDER", nullable = false)
-    private Lcinterimorder lcinterimOrder;
+    private LcInterimOrder lcInterimOrder;
     @DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
     private Date vsReceivedFromStandingCounsel;
     @DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
@@ -124,24 +124,24 @@ public class VacateStay extends AbstractAuditable {
         this.remarks = remarks;
     }
 
-    public Lcinterimorder getLcinterimOrder() {
-        return lcinterimOrder;
+    public LcInterimOrder getLcInterimOrder() {
+        return lcInterimOrder;
     }
 
-    public void setLcinterimOrder(final Lcinterimorder lcinterimOrder) {
-        this.lcinterimOrder = lcinterimOrder;
+    public void setLcInterimOrder(final LcInterimOrder lcInterimOrder) {
+        this.lcInterimOrder = lcInterimOrder;
     }
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcinterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcInterimOrder().getIodate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcinterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcInterimOrder().getIodate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
 
-        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcinterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcInterimOrder().getIodate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
 
         if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))

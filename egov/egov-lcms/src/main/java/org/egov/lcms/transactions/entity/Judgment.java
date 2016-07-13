@@ -63,14 +63,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.egov.lcms.utils.constants.LcmsConstants;
-
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
@@ -91,72 +88,72 @@ public class Judgment extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "judgmenttype", nullable = false)
     private JudgmentType judgmentType;
 
     @NotNull
-   /* @DateFormat(message = "invalid.fieldvalue.model.orderDate")*/
+    /* @DateFormat(message = "invalid.fieldvalue.model.orderDate") */
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
-    @Column(name="orderdate")
+    @Column(name = "orderdate")
     private Date orderDate;
 
     @NotNull
-    /*@DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn")*/
+    /* @DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn") */
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
-    @Column(name="senttodepton")
+    @Column(name = "senttodepton")
     private Date sentToDeptOn;
 
-    /*@DateFormat(message = "invalid.fieldvalue.model.implementByDate")*/
-    @Column(name="implementbydate")
+    /* @DateFormat(message = "invalid.fieldvalue.model.implementByDate") */
+    @Column(name = "implementbydate")
     @Temporal(TemporalType.DATE)
     private Date implementByDate;
 
-    @Column(name="costawarded")
+    @Column(name = "costawarded")
     private double costAwarded;
 
-    @Column(name="compensationAwarded")
+    @Column(name = "compensationAwarded")
     private double compensationAwarded;
 
     @NotNull
     @Length(max = 1024)
-    @Column(name="judgmentdetails")
+    @Column(name = "judgmentdetails")
     private String judgmentDetails;
 
-    @Column(name="advisorfee")
+    @Column(name = "advisorfee")
     private Double advisorFee;
 
-    @Column(name="arbitratorfee")
+    @Column(name = "arbitratorfee")
     private Double arbitratorFee;
 
     @Length(max = 1024, message = "enquirydetails.length")
-    @Column(name="enquirydetails")
-    private String enquirydetails;
+    @Column(name = "enquirydetails")
+    private String enquiryDetails;
 
-    /*@DateFormat(message = "invalid.fieldvalue.model.enquirydate")*/
+    /* @DateFormat(message = "invalid.fieldvalue.model.enquirydate") */
     @Temporal(TemporalType.DATE)
-    @Column(name="enquirydate")
-    private Date enquirydate;
+    @Column(name = "enquirydate")
+    private Date enquiryDate;
 
-    /*@DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate")*/
+    /* @DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate") */
     @Temporal(TemporalType.DATE)
-    @Column(name="setasidepetitiondate")
+    @Column(name = "setasidepetitiondate")
     private Date setasidePetitionDate;
 
     @Length(max = 1024)
-    @Column(name="setasidepetitiondetails")
+    @Column(name = "setasidepetitiondetails")
     private String setasidePetitionDetails;
 
-   /* @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate")*/
+    /* @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate") */
     @Temporal(TemporalType.DATE)
-    @Column(name="saphearingdate")
+    @Column(name = "saphearingdate")
     private Date sapHearingDate;
 
-    @Column(name="issapaccepted")
+    @Column(name = "issapaccepted")
     private boolean sapAccepted;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -168,7 +165,7 @@ public class Judgment extends AbstractAuditable {
     private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
 
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Judgmentimpl> eglcJudgmentimpls = new HashSet<Judgmentimpl>(0);
+    private Set<JudgmentImpl> eglcJudgmentimpls = new HashSet<JudgmentImpl>(0);
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent")
@@ -176,27 +173,26 @@ public class Judgment extends AbstractAuditable {
     @JsonIgnore
     private Set<Judgment> children = new HashSet<Judgment>();
 
-    @Column(name="ismemorequired")
+    @Column(name = "ismemorequired")
     private boolean isMemoRequired;
 
-    @Column(name="certifiedmemofwddate")
+    @Column(name = "certifiedmemofwddate")
     private Date certifiedMemoFwdDate;
 
-  
     public List<JudgmentDocuments> getJudgmentDocuments() {
         return judgmentDocuments;
     }
 
-    public void setJudgmentDocuments(List<JudgmentDocuments> judgmentDocuments) {
+    public void setJudgmentDocuments(final List<JudgmentDocuments> judgmentDocuments) {
         this.judgmentDocuments = judgmentDocuments;
     }
 
-    public Legalcase getLegalcase() {
-        return legalcase;
+    public LegalCase getLegalCase() {
+        return legalCase;
     }
 
-    public void setLegalcase(final Legalcase eglcLegalcase) {
-        legalcase = eglcLegalcase;
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
     public JudgmentType getJudgmentType() {
@@ -283,22 +279,6 @@ public class Judgment extends AbstractAuditable {
         this.arbitratorFee = arbitratorFee;
     }
 
-    public String getEnquirydetails() {
-        return enquirydetails;
-    }
-
-    public void setEnquirydetails(final String enquirydetails) {
-        this.enquirydetails = enquirydetails;
-    }
-
-    public Date getEnquirydate() {
-        return enquirydate;
-    }
-
-    public void setEnquirydate(final Date enquirydate) {
-        this.enquirydate = enquirydate;
-    }
-
     public Date getSetasidePetitionDate() {
         return setasidePetitionDate;
     }
@@ -315,12 +295,12 @@ public class Judgment extends AbstractAuditable {
         this.setasidePetitionDetails = setasidePetitionDetails;
     }
 
-    public void addJudgmentimpl(final Judgmentimpl judgmentimpl) {
+    public void addJudgmentimpl(final JudgmentImpl judgmentimpl) {
         getEglcJudgmentimpls().add(judgmentimpl);
     }
 
     @Valid
-    public Set<Judgmentimpl> getEglcJudgmentimpls() {
+    public Set<JudgmentImpl> getEglcJudgmentimpls() {
         return eglcJudgmentimpls;
     }
 
@@ -342,26 +322,26 @@ public class Judgment extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (legalcase != null && !DateUtils.compareDates(getOrderDate(), legalcase.getCasedate()))
+        if (legalCase != null && !DateUtils.compareDates(getOrderDate(), legalCase.getCasedate()))
             errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
         if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
             errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));
         if (!DateUtils.compareDates(getSentToDeptOn(), getOrderDate()))
             errors.add(new ValidationError("sentToDeptOn", "sentToDeptOn.less.orderDate"));
-        if (!DateUtils.compareDates(getEnquirydate(), getOrderDate()))
+        if (!DateUtils.compareDates(getEnquiryDate(), getOrderDate()))
             errors.add(new ValidationError("enquirydate", "enquirydate.less.orderDate"));
         if (!DateUtils.compareDates(getSapHearingDate(), getOrderDate()))
             errors.add(new ValidationError("sapHearingDate", "sapHearingDate.less.orderDate"));
         if (!DateUtils.compareDates(getSetasidePetitionDate(), getOrderDate()))
             errors.add(new ValidationError("setasidePetitionDate", "setasidePetitionDate.less.orderDate"));
-        for (final Judgmentimpl judgmentimpl : getEglcJudgmentimpls()) {
-            final Judgmentimpl element = judgmentimpl;
+        for (final JudgmentImpl judgmentimpl : getEglcJudgmentimpls()) {
+            final JudgmentImpl element = judgmentimpl;
             errors.addAll(element.validate());
         }
         return errors;
     }
 
-    public void setEglcJudgmentimpls(final Set<Judgmentimpl> eglcJudgmentimpls) {
+    public void setEglcJudgmentimpls(final Set<JudgmentImpl> eglcJudgmentimpls) {
         this.eglcJudgmentimpls = eglcJudgmentimpls;
     }
 
@@ -397,6 +377,22 @@ public class Judgment extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getEnquiryDetails() {
+        return enquiryDetails;
+    }
+
+    public void setEnquiryDetails(final String enquiryDetails) {
+        this.enquiryDetails = enquiryDetails;
+    }
+
+    public Date getEnquiryDate() {
+        return enquiryDate;
+    }
+
+    public void setEnquiryDate(final Date enquiryDate) {
+        this.enquiryDate = enquiryDate;
     }
 
 }

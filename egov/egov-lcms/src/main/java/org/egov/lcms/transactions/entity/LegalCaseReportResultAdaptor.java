@@ -40,8 +40,6 @@
 package org.egov.lcms.transactions.entity;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,23 +48,21 @@ import com.google.gson.JsonSerializer;
 
 public class LegalCaseReportResultAdaptor implements JsonSerializer<LegalCaseReportResult> {
 
-	@Override
-	public JsonElement serialize(LegalCaseReportResult legalcaseresult, Type typeOfSrc,
-			JsonSerializationContext context) {
-		final JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
-		jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
-		jsonObject.addProperty("casetitle", legalcaseresult.getCaseTitle());
-		jsonObject.addProperty("courtname", legalcaseresult.getCourtName());
-		jsonObject.addProperty("petitioners", legalcaseresult.getPetName());
-		//jsonObject.addProperty("Respondants", legalcaseresult.get);
-		jsonObject.addProperty("department", legalcaseresult.getAssignDept());
-		jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
-		jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
-		//jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
-		return jsonObject;
-	}
-	
-	
+    @Override
+    public JsonElement serialize(final LegalCaseReportResult legalcaseresult, final Type typeOfSrc,
+            final JsonSerializationContext context) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("casenumber", legalcaseresult.getCaseNumber());
+        jsonObject.addProperty("legalcaseno", legalcaseresult.getLcNumber());
+        jsonObject.addProperty("casetitle", legalcaseresult.getCaseTitle());
+        jsonObject.addProperty("courtname", legalcaseresult.getCourtName());
+        jsonObject.addProperty("petitioners", legalcaseresult.getPetName());
+        // jsonObject.addProperty("Respondants", legalcaseresult.get);
+        jsonObject.addProperty("department", legalcaseresult.getAssignDept());
+        jsonObject.addProperty("standingcouncil", legalcaseresult.getStandingCouncil());
+        jsonObject.addProperty("casestatus", legalcaseresult.getCaseStatus());
+        // jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
+        return jsonObject;
+    }
 
 }

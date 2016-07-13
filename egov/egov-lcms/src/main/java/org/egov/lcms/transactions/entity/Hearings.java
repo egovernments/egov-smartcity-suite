@@ -64,11 +64,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Hearings entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_HEARINGS")
 @SequenceGenerator(name = Hearings.SEQ_EGLC_HEARINGS, sequenceName = Hearings.SEQ_EGLC_HEARINGS, allocationSize = 1)
@@ -90,20 +85,18 @@ public class Hearings extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
-    private boolean isStandingcounselpresent;
+    private LegalCase legalCase;
+    private boolean isStandingCounselPresent;
     @Length(max = 128, message = "hearing.additionalLawyer.length")
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
     /*
-     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
-     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
-     * check
+     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
+     * Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to check
      */
     @Length(max = 1024, message = "hearing.outcome.length")
     private String hearingOutcome;
-    private boolean isSeniorStandingcounselpresent;
+    private boolean isSeniorStandingCounselPresent;
     @Length(max = 1024, message = "hearing.purpose.length")
     private String purposeofHearings;
     @ManyToOne
@@ -116,8 +109,7 @@ public class Hearings extends AbstractAuditable {
     private String referenceNumber;
 
     /*
-     * public void addEmployee(final PersonalInformation empObj) {
-     * eglcEmployeehearings.add(empObj); }
+     * public void addEmployee(final PersonalInformation empObj) { eglcEmployeehearings.add(empObj); }
      */
 
     public Date getHearingDate() {
@@ -128,12 +120,12 @@ public class Hearings extends AbstractAuditable {
         this.hearingDate = hearingDate;
     }
 
-    public Legalcase getLegalcase() {
-        return legalcase;
+    public LegalCase getLegalCase() {
+        return legalCase;
     }
 
-    public void setLegalcase(final Legalcase eglcLegalcase) {
-        legalcase = eglcLegalcase;
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
     public String getAdditionalLawyers() {
@@ -144,19 +136,10 @@ public class Hearings extends AbstractAuditable {
         this.additionalLawyers = additionalLawyers;
     }
 
-    public boolean getIsStandingcounselpresent() {
-        return isStandingcounselpresent;
-    }
-
-    public void setIsStandingcounselpresent(final boolean isStandingcounselpresent) {
-        this.isStandingcounselpresent = isStandingcounselpresent;
-    }
-
     /*
-     * public Set<PersonalInformation> getEglcEmployeehearings() { return
-     * eglcEmployeehearings; } public void setEglcEmployeehearings(final
-     * Set<PersonalInformation> eglcEmployeehearings) {
-     * this.eglcEmployeehearings = eglcEmployeehearings; }
+     * public Set<PersonalInformation> getEglcEmployeehearings() { return eglcEmployeehearings; } public void
+     * setEglcEmployeehearings(final Set<PersonalInformation> eglcEmployeehearings) { this.eglcEmployeehearings =
+     * eglcEmployeehearings; }
      */
 
     public String getHearingOutcome() {
@@ -168,11 +151,11 @@ public class Hearings extends AbstractAuditable {
     }
 
     public boolean getIsSeniorStandingcounselpresent() {
-        return isSeniorStandingcounselpresent;
+        return isSeniorStandingCounselPresent;
     }
 
     public void setIsSeniorStandingcounselpresent(final boolean isSeniorStandingcounselpresent) {
-        this.isSeniorStandingcounselpresent = isSeniorStandingcounselpresent;
+        this.isSeniorStandingCounselPresent = isSeniorStandingcounselpresent;
     }
 
     public String getPurposeofHearings() {
@@ -185,7 +168,7 @@ public class Hearings extends AbstractAuditable {
 
     public Date getCaDueDate() {
         Date caDueDate = null;
-        for (final Pwr pwr : getLegalcase().getEglcPwrs())
+        for (final Pwr pwr : getLegalCase().getEglcPwrs())
             caDueDate = pwr.getCaDueDate();
         return caDueDate;
     }
@@ -196,10 +179,10 @@ public class Hearings extends AbstractAuditable {
 
             if (getCaDueDate() != null && !DateUtils.compareDates(getHearingDate(), getCaDueDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caDueDate"));
-            if (legalcase.getCaseReceivingDate() != null
-                    && !DateUtils.compareDates(getHearingDate(), legalcase.getCaseReceivingDate()))
+            if (legalCase.getCaseReceivingDate() != null
+                    && !DateUtils.compareDates(getHearingDate(), legalCase.getCaseReceivingDate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseReceivingDate"));
-            if (!DateUtils.compareDates(getHearingDate(), legalcase.getCasedate()))
+            if (!DateUtils.compareDates(getHearingDate(), legalCase.getCasedate()))
                 errors.add(new ValidationError("hearingDate", "hearingDate.greaterThan.caseDate"));
 
         }
@@ -239,12 +222,20 @@ public class Hearings extends AbstractAuditable {
         this.id = id;
     }
 
-    public void setStandingcounselpresent(final boolean isStandingcounselpresent) {
-        this.isStandingcounselpresent = isStandingcounselpresent;
+    public boolean isStandingCounselPresent() {
+        return isStandingCounselPresent;
     }
 
-    public void setSeniorStandingcounselpresent(final boolean isSeniorStandingcounselpresent) {
-        this.isSeniorStandingcounselpresent = isSeniorStandingcounselpresent;
+    public void setStandingCounselPresent(boolean isStandingCounselPresent) {
+        this.isStandingCounselPresent = isStandingCounselPresent;
+    }
+
+    public boolean isSeniorStandingCounselPresent() {
+        return isSeniorStandingCounselPresent;
+    }
+
+    public void setSeniorStandingCounselPresent(boolean isSeniorStandingCounselPresent) {
+        this.isSeniorStandingCounselPresent = isSeniorStandingCounselPresent;
     }
 
 }

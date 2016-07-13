@@ -52,12 +52,10 @@ public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-   
-
     @Override
     public String generateLegalCaseNumber() {
-        String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
-       final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
         return String.format("%s%06d", "LC", nextSequence);
     }
 

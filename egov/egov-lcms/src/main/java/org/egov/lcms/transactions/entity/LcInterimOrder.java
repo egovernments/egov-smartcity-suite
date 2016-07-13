@@ -75,9 +75,9 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "EGLC_LCINTERIMORDER")
-@SequenceGenerator(name = Lcinterimorder.SEQ_EGLC_LCINTERIMORDER, sequenceName = Lcinterimorder.SEQ_EGLC_LCINTERIMORDER, allocationSize = 1)
+@SequenceGenerator(name = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, sequenceName = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, allocationSize = 1)
 @CompareDates(fromDate = "sendtoStandingCounsel", toDate = "iodate", dateFormat = "dd/MM/yyyy", message = "sendtoStandingCounsel.greaterThan.iodate")
-public class Lcinterimorder extends AbstractAuditable {
+public class LcInterimOrder extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LCINTERIMORDER = "SEQ_EGLC_LCINTERIMORDER";
 
@@ -88,7 +88,7 @@ public class Lcinterimorder extends AbstractAuditable {
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @Required(message = "io.select.iotype")
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
@@ -134,14 +134,6 @@ public class Lcinterimorder extends AbstractAuditable {
 
     public void setDocumentNum(final Long documentNum) {
         this.documentNum = documentNum;
-    }
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
     }
 
     public InterimOrder getInterimOrder() {
@@ -239,7 +231,7 @@ public class Lcinterimorder extends AbstractAuditable {
                 && getReportFilingDue() == null)
             errors.add(new ValidationError("reportFilingDue", "reportFilingDue.required"));
 
-        if (!DateUtils.compareDates(getIodate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getIodate(), legalCase.getCasedate()))
             errors.add(new ValidationError("ioDate", "ioDate.greaterThan.caseDate"));
 
         if (!DateUtils.compareDates(getPetitionFiledOn(), getSendtoStandingCounsel()))
@@ -292,6 +284,14 @@ public class Lcinterimorder extends AbstractAuditable {
             return Boolean.TRUE;
         else
             return Boolean.FALSE;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

@@ -69,20 +69,12 @@ public class PaperBook extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     private Date lastDateToDepositAmt;
     private Double depositedAmount;
     private String concernedOfficerName;
     private String remarks;
     private boolean isPaperBookRequired;
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
-    }
 
     public Date getLastDateToDepositAmt() {
         return lastDateToDepositAmt;
@@ -136,6 +128,14 @@ public class PaperBook extends AbstractAuditable {
 
     public void setPaperBookRequired(final boolean isPaperBookRequired) {
         this.isPaperBookRequired = isPaperBookRequired;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }
