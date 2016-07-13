@@ -102,7 +102,7 @@ $('#Cancel').click(function() {
 	$('#approvalDepartment').removeAttr('required', 'required');
 	$('#approvalDesignation').removeAttr('required', 'required');
 	$('#approvalPosition').removeAttr('required', 'required');
-	$('#approvalComent').attr('required');
+	$('#approvalComent').attr('required', 'required');
 	
 	if($('#mbHeader').valid()) {
 		flag = validateFormData();
@@ -112,7 +112,15 @@ $('#Cancel').click(function() {
 
 	
 	if($('#mbHeader').valid() && flag) {
-		submitForm("Cancel");
+		bootbox.confirm($('#cancelConfirm').val(), function(result) {
+			if(!result) {
+				bootbox.hideAll();
+				return false;
+			} else {
+				submitForm("Cancel");
+			}
+		});
+		
 	}
 	else
 		return false;

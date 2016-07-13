@@ -311,7 +311,8 @@ public class MBHeaderService {
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.NEW.toString()));
-            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
+                    && mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.CANCELLED.toString()));
             else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
@@ -374,8 +375,8 @@ public class MBHeaderService {
             if (searchRequestMBHeader.getMbStatus() != null)
                 criteria.add(
                         Restrictions.eq("status.id", Integer.valueOf(searchRequestMBHeader.getMbStatus().toString())));
-            else 
-                criteria.add(Restrictions.ne("status.code",WorksConstants.NEW));
+            else
+                criteria.add(Restrictions.ne("status.code", WorksConstants.NEW));
             if (searchRequestMBHeader.getCreatedBy() != null)
                 criteria.add(Restrictions.eq("mbh.createdBy.id", searchRequestMBHeader.getCreatedBy()));
 
@@ -640,9 +641,10 @@ public class MBHeaderService {
     public Double getTotalMBAmountOfMBs(final Long mbHeaderId, final Long workOrderEstimateId, final String statusCode) {
         return mbHeaderRepository.getTotalMBAmountOfMBs(mbHeaderId, workOrderEstimateId, statusCode);
     }
-    
+
     public List<MBHeader> getMBHeadersToCancelLOA(final WorkOrderEstimate workOrderEstimate) {
-        return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimate.getId(),WorksConstants.CANCELLED_STATUS);
+        return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimate.getId(),
+                WorksConstants.CANCELLED_STATUS);
     }
-    
+
 }

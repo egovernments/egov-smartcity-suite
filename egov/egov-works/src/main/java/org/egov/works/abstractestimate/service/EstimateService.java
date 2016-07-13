@@ -199,7 +199,7 @@ public class EstimateService {
 
     @Autowired
     private UOMService uomService;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
@@ -231,13 +231,13 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        if(abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()){
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                     EstimateStatus.ADMIN_SANCTIONED.toString()));
-        }else{
-        createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
-                workFlowAction);
+        } else {
+            createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
+                    workFlowAction);
         }
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
@@ -605,7 +605,8 @@ public class EstimateService {
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.NEW.toString()));
-            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION)
+                    && abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CANCELLED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
@@ -888,9 +889,9 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
-        
+
     }
-    
+
     public void validateTechnicalSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() == null)
@@ -936,7 +937,8 @@ public class EstimateService {
 
     public List<String> getAbstractEstimateNumbersToCancelLineEstimate(final Long lineEstimateId) {
         final List<String> estimateNumbers = abstractEstimateRepository
-                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId, AbstractEstimate.EstimateStatus.CANCELLED.toString());
+                .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId,
+                        AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
     }
 }
