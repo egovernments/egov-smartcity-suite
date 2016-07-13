@@ -71,8 +71,9 @@ windowhref=windowhref.replace("https://", "");
 cityUrl=windowhref.split(".");
 
 if(cityUrl.length > 1){
-	$('.title2').html(ucfirst(cityUrl[0])+" ERP Reports");
-	document.title = ucfirst(cityUrl[0])+" ERP Reports";
+	var text = $('#header-text').data('append-text');
+	$('#header-text').html(ucfirst(cityUrl[0])+" "+text);
+	document.title = ucfirst(cityUrl[0])+" "+text;
 }
 
 

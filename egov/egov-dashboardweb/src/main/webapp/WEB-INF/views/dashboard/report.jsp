@@ -47,8 +47,7 @@
 							<a class="navbar-brand" href="javascript:void(0);">
 								<!-- <img src="egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60"> -->
 								<div>
-									
-									<span class="title2">ERP Reports</span>
+									<span class="title2" id="header-text" data-append-text="ERP Reports">ERP Reports</span>
 								</div>
 							</a>
 						</div>
