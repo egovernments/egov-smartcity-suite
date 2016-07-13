@@ -214,7 +214,6 @@ $(document).ready(function(){
 							bootbox.hideAll();
 							return false;
 						} else {
-							
 							document.forms[0].submit();
 						}
 					});
@@ -236,6 +235,7 @@ $(document).ready(function(){
 			$('#approvalComent').removeAttr('required');
 		}
 		if(validateDeductionGrids()) {
+				$('#billdate').removeAttr('disabled');
 				document.forms[0].submit;
 				return true;
 		}

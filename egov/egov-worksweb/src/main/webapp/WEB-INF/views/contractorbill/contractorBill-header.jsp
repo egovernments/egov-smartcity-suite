@@ -67,7 +67,7 @@
 		<c:otherwise>
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:input id="billdate" path="billdate" class="form-control" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" readonly="true" />
+				<form:input id="billdate" path="billdate" class="form-control" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" disabled="true" />
 				<form:errors path="billdate" cssClass="add-margin error-msg" />
 			</div>
 		</c:otherwise>
