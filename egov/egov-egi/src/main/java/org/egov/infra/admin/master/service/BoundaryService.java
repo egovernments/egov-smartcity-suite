@@ -296,8 +296,12 @@ public class BoundaryService {
     }
 
     public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
+        return getBoundary(latitude, longitude).getId();
+    }
+
+    public Boundary getBoundary(final Double latitude, final Double longitude) {
         try {
-            Long boundaryId = 0L;
+            Boundary finalBoundary = null;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
@@ -323,13 +327,12 @@ public class BoundaryService {
                                         .getBoundaryTypeByNameAndHierarchyTypeName(bndryType, "ADMINISTRATION");
                                 final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
                                         boundaryNum);
-                                if (boundary != null && true)
-                                    boundaryId = boundary.getId();
+                                if (boundary != null)
+                                    finalBoundary = boundary;
                                 else {
                                     final BoundaryType cityBoundaryType = boundaryTypeService
                                             .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
-                                    final Boundary cityBoundary = this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
-                                    boundaryId = cityBoundary.getId();
+                                    finalBoundary = this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
                                 }
 
                             }
@@ -340,8 +343,8 @@ public class BoundaryService {
                     collection.close(iterator);
                 }
             }
-            LOG.debug("Found boundary data in GIS with boundary id : {}", boundaryId);
-            return boundaryId;
+            LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getBndryId());
+            return finalBoundary;
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }
