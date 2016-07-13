@@ -69,6 +69,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -296,10 +297,11 @@ public class BoundaryService {
     }
 
     public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
-        return getBoundary(latitude, longitude).getId();
+        Optional<Boundary> boundary = getBoundary(latitude, longitude);
+        return boundary.isPresent() ?  boundary.get().getId() : 0;
     }
 
-    public Boundary getBoundary(final Double latitude, final Double longitude) {
+    public Optional<Boundary> getBoundary(final Double latitude, final Double longitude) {
         try {
             Boundary finalBoundary = null;
             if (latitude != null && longitude != null) {
@@ -344,7 +346,7 @@ public class BoundaryService {
                 }
             }
             LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getBndryId());
-            return finalBoundary;
+            return Optional.ofNullable(finalBoundary);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }

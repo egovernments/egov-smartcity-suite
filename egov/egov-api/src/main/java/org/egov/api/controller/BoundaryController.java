@@ -53,6 +53,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/v1.0")
 public class BoundaryController extends ApiController{
@@ -65,11 +67,14 @@ public class BoundaryController extends ApiController{
     @RequestMapping(value = "/boundary/{lat}/{lng}", method = RequestMethod.GET)
     public ResponseEntity<String> getBoundaryDetails(@PathVariable Double lat, @PathVariable Double lng) {
         try {
-            Boundary boundary = boundaryService.getBoundary(lat, lng);
-            JsonObject boundaryJSON =new JsonObject();
-            boundaryJSON.addProperty("BoundaryNumber", boundary.getBoundaryNum());
-            boundaryJSON.addProperty("BoundaryName", boundary.getName());
-            return getResponseHandler().success(boundaryJSON);
+            Optional<Boundary> boundary = boundaryService.getBoundary(lat, lng);
+            if (boundary.isPresent()) {
+                JsonObject boundaryJSON = new JsonObject();
+                boundaryJSON.addProperty("BoundaryNumber", boundary.get().getBoundaryNum());
+                boundaryJSON.addProperty("BoundaryName", boundary.get().getName());
+                return getResponseHandler().success(boundaryJSON);
+            }
+            return getResponseHandler().error("Boundary Not Found");
         } catch (Exception e) {
             LOGGER.error("EGOV-API ERROR ", e);
             return getResponseHandler().error(getMessage("server.error"));
