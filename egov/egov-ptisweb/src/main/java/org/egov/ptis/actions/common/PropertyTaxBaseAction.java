@@ -752,9 +752,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .get(DEMANDRSN_STR_LIBRARY_CESS)));
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap
-                    .get(DEMANDRSN_STR_GENERAL_TAX)
+            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_GENERAL_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_GENERAL_TAX))
                     .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
                     .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
