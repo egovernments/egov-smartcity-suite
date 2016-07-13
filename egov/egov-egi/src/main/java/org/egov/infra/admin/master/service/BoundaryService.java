@@ -345,7 +345,7 @@ public class BoundaryService {
                     collection.close(iterator);
                 }
             }
-            LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getBndryId());
+            LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getId());
             return Optional.ofNullable(finalBoundary);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
