@@ -86,7 +86,7 @@
 		<form:errors path="eglcLegalcaseAdvocates[0].vakalatdate"
 			cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-right">CA Filing
+	<%-- <label class="col-sm-2 control-label text-right">CA Filing
 		Date<span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
 		<form:input path="eglcPwrs[0].caFilingdate"
@@ -95,7 +95,7 @@
 			id="cafillingDate" data-inputmask="'mask': 'd/m/y'" required="required"/>
 		<form:errors path="eglcPwrs[0].caFilingdate"
 			cssClass="add-margin error-msg" />
-	</div>
+	</div> --%>
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons">Is

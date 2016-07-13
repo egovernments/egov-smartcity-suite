@@ -94,7 +94,7 @@ else
 	$(".show-ManualLcNumber").hide(); 
 }
 document.getElementById("lcNumber").value="";	
-document.getElementById("wpYear").value="--select---";
+document.getElementById("finwpYear").value="";
  
 }
 	

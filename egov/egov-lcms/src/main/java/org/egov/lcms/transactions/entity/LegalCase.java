@@ -160,16 +160,16 @@ public class LegalCase extends AbstractAuditable {
     @Transient
     private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Judgment> judgment = new ArrayList<Judgment>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LcInterimOrder> lcInterimOrder = new ArrayList<LcInterimOrder>(0);
 
     @Transient
@@ -178,12 +178,12 @@ public class LegalCase extends AbstractAuditable {
     @Transient
     private String finwpYear;
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
@@ -197,25 +197,25 @@ public class LegalCase extends AbstractAuditable {
     @Column(name = "lcNumberType")
     @Enumerated(EnumType.STRING)
     private LCNumberType lcNumberType;
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
 
     @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
     private Date casefirstappearancedate;
 
-    @OneToMany(mappedBy = "legalcase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
 
     @DateFormat(message = "invalid.fieldvalue.model.previousDate")

@@ -97,9 +97,9 @@ public class JudgmentImpl extends AbstractAuditable {
     private String reason;
     @Length(max = 128, message = "details.maxlength")
     private String details;
-    @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contempt> contempt = new ArrayList<Contempt>(0);
-    @OneToMany(mappedBy = "judgmentimpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appeal> appeal = new ArrayList<Appeal>(0);
 
     public List<Contempt> getContempt() {

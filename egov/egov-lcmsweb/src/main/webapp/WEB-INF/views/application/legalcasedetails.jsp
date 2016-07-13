@@ -136,7 +136,7 @@
 	<div class="col-sm-2 add-margin text-center">
 		<form:select path="lcNumberType" data-first-option="false"
 			id="lcNumberType" name="lcNumberType" cssClass="form-control"
-			required="required" onChange="checkLCType();" readonly="readonly">
+			required="required" onChange="checkLCType();" >
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
