@@ -917,6 +917,9 @@ public class EstimateService {
             if (esistingAbstractEstimate != null)
                 errors.reject("error.technumber.unique", "error.technumber.unique");
         }
+        if (abstractEstimate.getLineEstimateDetails() != null
+                && abstractEstimate.getEstimateDate().before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
+            errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }
 
     public void validateAdminSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {

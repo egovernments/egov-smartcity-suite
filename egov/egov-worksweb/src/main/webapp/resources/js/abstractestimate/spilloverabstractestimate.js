@@ -121,10 +121,19 @@ function validateTechinicalSanctionDate(obj){
 }
 
 function validateAbstractEstimateDate(obj){
-	var estimateDate = $('#estimateDate').val();
+	var estimateDate = $('#estimateDate').data('datepicker').date;
 	var technicalSanctionDate = $('#technicalSanctionDate').val();
 	var adminSanctionDate = $('#approvedDate').val();
+	var adminSanctionDateLE = new Date($('#adminSanctionDateLE').val());
 	
+	if(estimateDate < adminSanctionDateLE){
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		bootbox.alert($('#errorAbstractLEAdminSanctionDate').val());
+		return false;	
+	}
+		
 	if(technicalSanctionDate != '')
 		validateTechinicalSanctionDate(obj);
 	if(adminSanctionDate != '')

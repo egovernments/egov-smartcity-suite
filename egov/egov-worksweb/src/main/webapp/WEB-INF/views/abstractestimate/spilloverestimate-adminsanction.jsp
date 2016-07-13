@@ -44,6 +44,12 @@
 	<input type="hidden"
 		value="<spring:message code="error.abstractestimatedate.null" />"
 		id="errorAbstractEstimateDate" />
+	<input type="hidden" id="adminSanctionDateLE"
+		value='<fmt:formatDate value="${abstractEstimate.lineEstimateDetails.lineEstimate.adminSanctionDate}"
+		pattern="yyyy-MM-dd" />' />
+	<input type="hidden"
+		value="<spring:message code="error.abstractadminsanctiondatele" />"
+		id="errorAbstractLEAdminSanctionDate" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
