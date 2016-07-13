@@ -74,10 +74,11 @@
 										</tr>
 									</thead>  
 									<tbody>
+									<c:set var="sorSlNo" value="${1}" scope="session" />
 									<c:forEach items="${mbHeader.getMbDetails()}" var="mbdetails" varStatus="item">
 					                <c:if test="${mbdetails.workOrderActivity.activity.schedule != null }">
 										<tr> 
-											<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+											<td><span><c:out value="${sorSlNo}" /></span></td>
 											<input type="hidden" name="unitrate" id="unitrate" value="${mbdetails.workOrderActivity.activity.rate}" />
 											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.scheduleCategory.code}"></c:out></td>
 											<td><c:out value="${mbdetails.workOrderActivity.activity.schedule.code}"></c:out></td>
@@ -99,6 +100,7 @@
 											<td class="text-right"><span id="approvedAmount"></span></td>
 											<td><c:out value="${mbdetails.remarks}" /></td>
 										</tr>
+										<c:set value="${sorSlNo + 1}" var="sorSlNo" scope="session" />
 										</c:if>
 										</c:forEach>
 									</tbody>
