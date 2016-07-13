@@ -174,6 +174,10 @@ public class UpdateMBController extends GenericWorkFlowController {
             jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
                     new String[] { mbHeader.getMbRefNo() },
                     null));
+        else if (workFlowAction.equalsIgnoreCase(WorksConstants.CANCEL_ACTION))
+            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.cancelled",
+                    new String[] { mbHeader.getMbRefNo() },
+                    null));
         else {
             final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
                     mbHeader.getId(), approvalPosition);

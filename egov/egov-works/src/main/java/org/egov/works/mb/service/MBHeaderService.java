@@ -311,6 +311,9 @@ public class MBHeaderService {
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.NEW.toString()));
+            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.CANCELLED.toString()));
             else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.CREATED.toString()));

@@ -278,6 +278,7 @@ $('#btncreatemb').click(function(e) {
 				});
 				$('.title2').html('Create Measurement Book');
 				$('#measurementBookDiv').removeAttr('hidden');
+				$('#Cancel').prop('type',"hidden");
 				$('.loader-class').modal('hide');
 			} else {
 				var json = $.parseJSON(value);

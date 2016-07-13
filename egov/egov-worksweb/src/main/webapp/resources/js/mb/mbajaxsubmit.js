@@ -93,6 +93,34 @@ $('#Forward').click(function() {
 	return false;
 });
 
+$('#Cancel').click(function() {
+	
+	var flag = true;
+
+	document.getElementById("workFlowAction").value = "Cancel";
+	
+	$('#approvalDepartment').removeAttr('required', 'required');
+	$('#approvalDesignation').removeAttr('required', 'required');
+	$('#approvalPosition').removeAttr('required', 'required');
+	$('#approvalComent').attr('required');
+	
+	if($('#mbHeader').valid()) {
+		flag = validateFormData();
+		if(!flag)
+			return false;
+	}
+
+	
+	if($('#mbHeader').valid() && flag) {
+		submitForm("Cancel");
+	}
+	else
+		return false;
+	
+	return false;
+});
+
+
 function submitForm(workFlowAction) {
 	$('.loader-class').modal('show', {
 		backdrop : 'static'
@@ -146,6 +174,7 @@ function submitForm(workFlowAction) {
 				});
 				
 				$('#successMessage').html(json.message);
+				$('#Cancel').prop('type',"submit");
 			} else {
 				$('#measurementBookDiv').remove();
 				$('#forwardMessage').html(json.message);

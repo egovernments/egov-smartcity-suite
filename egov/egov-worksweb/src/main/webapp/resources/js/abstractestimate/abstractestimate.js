@@ -79,6 +79,9 @@ $(document).ready(function(){
 		$('.alert-danger').show();
 	}
 	$mode = $("#mode").val();
+	$('#Cancel').prop('type',"hidden");
+	if($mode === 'edit')
+		$('#Cancel').prop('type',"submit");
 	if($mode == '') {
 		$("#latlonDiv").hide(); 
 	} else if($mode == 'view' || $mode == '') {
@@ -795,6 +798,12 @@ function calculateNonSorEstimateAmount(currentObj) {
 	if(!flag && uom == '') {
 		bootbox.alert($('#erroruom').val());
 		$('#nonSorUom_' + rowcount).val('');
+		$('.nonSorAmount_' + rowcount).html('');
+		$('.nonSorVatAmount_' + rowcount).html('');
+		$('.nonSorTotal_' + rowcount).html('');
+		calculateNonSorEstimateAmountTotal();
+		calculateNonSorVatAmountTotal();
+		nonSorTotal();
 		flag = true;
 	}
 	if(!flag) {
@@ -1342,6 +1351,10 @@ function validateQuantity() {
 function updateUom(obj) {
 	var rowId = $(obj).attr('id').split('_').pop();
 	$('#nonSorUomid_' + rowId).val($(obj).val());
+	$('#nonSorUomid_' + rowId).val($(obj).val());
+	$('#nonSorEstimateRate_' + rowId).val("");
+	$('#nonSorQuantity_' + rowId).val("");
+	calculateNonSorEstimateAmount($('#nonSorQuantity_' + rowId));
 }
 
 $(document).on('click', '#tblassetdetails tbody tr', function() {

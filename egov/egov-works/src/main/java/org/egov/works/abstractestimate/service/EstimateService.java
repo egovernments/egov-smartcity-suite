@@ -605,6 +605,9 @@ public class EstimateService {
             if (workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.NEW.toString()));
+            else if (workFlowAction.equals(WorksConstants.CANCEL_ACTION))
+                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                        EstimateStatus.CANCELLED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.CREATED.toString()));
