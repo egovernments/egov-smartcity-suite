@@ -62,8 +62,8 @@
 	<tbody>
 		<tr class="">
 			<td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanDetails[0].isrespondentgovernment"
-				id="bipartisanDetails[0].isrespondentgovernment"
+				name="bipartisanDetails[0].isRespondentGovernment"
+				id="bipartisanDetails[0].isRespondentGovernment"
 				onblur="onChangeofPetitioncheck()" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
@@ -118,8 +118,8 @@
 	<tbody>
 		<tr class="">
 			<td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanDetailsBeanList[0].isrespondentgovernment"
-				id="bipartisanDetailsBeanList[0].isrespondentgovernment"
+				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
+				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
 				onblur="onChangeofRespodantcheck()" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
@@ -186,10 +186,10 @@
 <label class="col-sm-3 control-label text-right"><font size="2"><spring:message code="lbl.mesg.document"/></font>	</label>
 	<div class="col-sm-3 add-margin">
 	
-				<input type="file" id="file" name="legalcaseDocuments[0].files" 
+				<input type="file" id="file" name="legalCaseDocuments[0].files" 
 				class="file-ellipsis upload-file">
 			
-		<form:errors path="legalcaseDocuments[0].files" cssClass="add-margin error-msg" />
+		<form:errors path="legalCaseDocuments[0].files" cssClass="add-margin error-msg" />
 		<%-- <div class="add-margin error-msg text-left" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div> --%></div>

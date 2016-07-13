@@ -63,7 +63,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
@@ -96,10 +95,6 @@ public class LegalCase extends AbstractAuditable {
 
     @DateFormat(message = "invalid.fieldvalue.model.nextDate")
     private Date nextDate;
-    // @Required(message = "case.sectionNumber.null")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FUNCTIONARY", nullable = false)
-    private Functionary functionary;
     @Required(message = "case.casetype.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
@@ -118,28 +113,27 @@ public class LegalCase extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "PETITIONTYPE", nullable = false)
     private PetitionTypeMaster petitionTypeMaster;
-    @Required(message = "case.number.null")
-    @Length(max = 50, message = "casenumber.length")
-    // @OptionalPattern(regex = LcmsConstants.caseNumberRegx, message =
-    // "case.number.alphanumeric")
+    @NotNull
+    @Column(name = "casenumber")
     private String caseNumber;
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
     // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
     // message = "invalid.case.date")
+    @Column(name = "casedate")
     private Date caseDate;
     @Required(message = "case.title.null")
     @Length(max = 1024, message = "casetitle.length")
     @Column(name = "casetitle")
     private String caseTitle;
     @Length(max = 50, message = "appealnum.length")
-    @Column(name = "appealNum")
+    @Column(name = "appealnum")
     private String appealNum;
     @Length(max = 1024, message = "remarks.length")
     private String remarks;
     @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.caseReceivingDate.date")
-    @Column(name = "caseReceivingDate")
+    @Column(name = "casereceivingdate")
     private Date caseReceivingDate;
     private Boolean isfiledbycorporation;
     @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
@@ -435,13 +429,6 @@ public class LegalCase extends AbstractAuditable {
         this.nextDate = nextDate;
     }
 
-    public Functionary getFunctionary() {
-        return functionary;
-    }
-
-    public void setFunctionary(final Functionary functionary) {
-        this.functionary = functionary;
-    }
 
     public CourtMaster getCourtMaster() {
         return courtMaster;
@@ -769,15 +756,17 @@ public class LegalCase extends AbstractAuditable {
         this.caseTypeMaster = caseTypeMaster;
     }
 
-    public String getCaseNumber() {
-        return caseNumber;
-    }
+    
 
-    public void setCaseNumber(final String caseNumber) {
-        this.caseNumber = caseNumber;
-    }
+	public String getCaseNumber() {
+		return caseNumber;
+	}
 
-    public List<Judgment> getJudgmentsBeanList() {
+	public void setCaseNumber(String caseNumber) {
+		this.caseNumber = caseNumber;
+	}
+
+	public List<Judgment> getJudgmentsBeanList() {
         return judgmentsBeanList;
     }
 

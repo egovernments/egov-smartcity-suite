@@ -44,8 +44,8 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.courttype" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="casetypeMaster" data-first-option="false"
-			cssClass="form-control" required="required">
+		<form:select path="" data-first-option="false"
+			cssClass="form-control" required="required" name="courtType" id="courtType">
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
@@ -53,12 +53,12 @@
 			<form:options items="${courtTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="courtType" />
 		</form:select>
-		<form:errors path="casetypeMaster" cssClass="add-margin error-msg" />
+		<form:errors path="" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.petitiontype" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="petitiontypeMaster" data-first-option="false"
+		<form:select path="petitionTypeMaster" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbls.select" />
@@ -67,7 +67,7 @@
 			<form:options items="${petitiontypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="petitionType" />
 		</form:select>
-		<form:errors path="petitiontypeMaster" cssClass="add-margin error-msg" />
+		<form:errors path="petitionTypeMaster" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
@@ -88,7 +88,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.casecatagory" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="casetypeMaster" data-first-option="false"
+		<form:select path="caseTypeMaster" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbls.select" />
@@ -97,7 +97,7 @@
 			<form:options items="${caseTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="caseType" />
 		</form:select>
-		<form:errors path="casetypeMaster" cssClass="add-margin error-msg" />
+		<form:errors path="caseTypeMaster" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">
@@ -105,8 +105,8 @@
 			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
 		<form:input class="form-control"
-			data-pattern="" maxlength="50" id="casenumber"
-			required="required" path="casenumber" />
+			data-pattern="" maxlength="50" id="caseNumber"
+			required="required" path="caseNumber" />
 	</div>
 	<div class="col-sm-2 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"
@@ -116,17 +116,9 @@
 			</form:option>
 			<form:options items="${wPYearList}" />
 		</form:select>
-		<form:errors path="casenumber" cssClass="add-margin error-msg" />
+		<form:errors path="caseNumber" cssClass="add-margin error-msg" />
 	</div>
-	<label class="col-sm-2 control-label text-left"><spring:message
-			code="lbl.casedate" /><span class="mandatory"></span>:</label>
-	<div class="col-sm-2 add-margin text-center">
-		<form:input path="caseDate" class="form-control datepicker"
-			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-			data-date-end-date="-1d" id="caseDate"
-			data-inputmask="'mask': 'd/m/y'" required="required" />
-		<form:errors path="caseDate" cssClass="add-margin error-msg" />
-	</div>
+	
 </div>
 
 <div class="form-group">
@@ -163,18 +155,14 @@
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.section" /><span class="mandatory"></span>:</label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="functionaryCode" data-first-option="false"
-			cssClass="form-control" required="required">
-			<form:option value="">
-				<spring:message code="lbls.select" />
-			</form:option>
-
-			<form:options items="${sectionlist}" />
-		</form:select>
-		<form:errors path="functionaryCode" cssClass="add-margin error-msg" />
+	<label class="col-sm-3 control-label text-left"><spring:message
+			code="lbl.casedate" /><span class="mandatory"></span>:</label>
+	<div class="col-sm-3 add-margin text-center">
+		<form:input path="caseDate" class="form-control datepicker"
+			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
+			data-date-end-date="-1d" id="caseDate"
+			data-inputmask="'mask': 'd/m/y'" required="required" />
+		<form:errors path="caseDate" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.previouscaseNumber" />:</label>

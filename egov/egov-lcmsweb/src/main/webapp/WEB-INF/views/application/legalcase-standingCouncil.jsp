@@ -37,12 +37,23 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<div class="panel-heading ">
-	<div class="panel-title">Assign Standing Counsel</div>
-</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<div class="row">
+	<div class="col-md-12">
+		<form:form method="post" action="" modelAttribute="legalcase"
+			id="standCouncilForm" class="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
+		<!-- 	<div class="panel-heading">
+					<div class="panel-title">
+						Assign Standing Counsel
+					</div>
+				</div> -->
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Standing
@@ -122,6 +133,17 @@
 			
 		</c:forEach>
 	</div>
+	<div class="form-group" id="seniordov3">
+	<label class="col-sm-2 control-label text-right">Assigned On:</label>
+	<div class="col-sm-3 add-margin">
+		<form:input path="eglcLegalcaseAdvocates[0].assignedtodateForsenior"
+			class="form-control datepicker" title="Please enter a valid date"
+			pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
+			id="assignedtodateForsenior" data-inputmask="'mask': 'd/m/y'" />
+		<form:errors path="eglcLegalcaseAdvocates[0].assignedtodateForsenior"
+			cssClass="add-margin error-msg" />
+	</div>
+</div>
 </div>
 <div id="seniordov2" class="form-group">
 	<label class="col-sm-3 control-label text-right">Order Date<span
@@ -148,17 +170,7 @@
 </div>
 
 
-<div class="form-group" id="seniordov3">
-	<label class="col-sm-3 control-label text-right">Assigned On:</label>
-	<div class="col-sm-3 add-margin">
-		<form:input path="eglcLegalcaseAdvocates[0].assignedtodateForsenior"
-			class="form-control datepicker" title="Please enter a valid date"
-			pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
-			id="assignedtodateForsenior" data-inputmask="'mask': 'd/m/y'" />
-		<form:errors path="eglcLegalcaseAdvocates[0].assignedtodateForsenior"
-			cssClass="add-margin error-msg" />
-	</div>
-</div>
+<%-- 
 <div class="form-group" >
 <label class="col-sm-3 control-label text-right"><font size="2"><spring:message code="lbl.mesg.document"/></font>	</label>
 	<div class="col-sm-3 add-margin">
@@ -167,10 +179,40 @@
 				class="file-ellipsis upload-file">
 			
 		<form:errors path="legalcaseDocuments[0].files" cssClass="add-margin error-msg" />
-		<%-- <div class="add-margin error-msg text-left" ><font size="2">
+		<div class="add-margin error-msg text-left" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
-								</font></div> --%></div>
-	</div> 
+								</font></div></div>
+	</div>  --%>
+	<div class="buttonbottom" align="center">
+				<div class="form-group text-center">
+					<button type="submit" class="btn btn-primary" value="Save"
+						id="buttonid">
+						<spring:message code="lbl.save.button" />
+					</button>
+					<a onclick="self.close()" class="btn btn-default"
+						href="javascript:void(0)"><spring:message
+							code="lbl.close.button" /></a>
+				</div>
+			</div>
+		</form:form>
+	</div>
+</div>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script
+	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+
+	
 <script>
 function enableSeniorDetails()
 {

@@ -53,10 +53,10 @@ $(document).ready(function(){
     
     $(".btn-primary").click(function(event){
 		
-		var caseNumber =$('#casenumber').val();
+		var caseNumber =$('#caseNumber').val();
 		var lcnumber=$('#lcNumber').val();
 		var lcNumberType=$('#lcNumberType').val();
-		if(caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
+		if(caseNumber !="" && caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
 			{
 			bootbox.alert("Select Case Number Year ");
 			return false;

@@ -37,14 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.lcms.web.controller.transactions;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
-import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,43 +49,44 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application/")
-public class CreateLegalcaseController extends GenericLegalCaseController {
+@RequestMapping("/standingCouncil")
+public class StandingCouncilController {
 
-    @Autowired
-    private LegalCaseService legalCaseService;
+	@Autowired
+	private LegalCaseService legalCaseService;
 
-    @Autowired
-    private LegalCaseNumberGenerator legalCaseNumberGenerator;
+	@RequestMapping(value = "/create/{lcNumber}", method = RequestMethod.GET)
+	public String viewForm(@ModelAttribute("legalCase") LegalCase legalCase, @PathVariable final String lcNumber,
+			final Model model, final HttpServletRequest request) {
+		model.addAttribute("legalcase", legalCase);
+		return "legalcase-standingCouncil";
+	}
 
-    @RequestMapping(value = "create/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final LegalCase legalcase, final Model model,
-            final HttpServletRequest request) {
-        model.addAttribute("legalcase", legalcase);
-        model.addAttribute("mode", "create");
-        return "legalCase-newForm";
-    }
+	@ModelAttribute
+	private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+		final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+		return legalcase;
+	}
 
-    @RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@ModelAttribute final LegalCase legalCase, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model,final HttpServletRequest request) {
-    	if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-    		legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        else
-        	legalCase.setLcnumber(legalCase.getLcNumber()
-                    + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
-        if (errors.hasErrors())
-            return "legalCase-newForm";
-        legalCaseService.createLegalCase(legalCase);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
-        model.addAttribute("message", "Legal Case created successfully.");
-        model.addAttribute("mode", "create");
-        return "legalcasedetails-view";
-    }
+	@RequestMapping(value = "/create/{lcNumber}", method = RequestMethod.POST)
+	public String create(@ModelAttribute("legalCase") LegalCase legalCase, final BindingResult errors,
+			final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
+			final HttpServletRequest request, final Model model) {
+		if (errors.hasErrors()) {
+			model.addAttribute("legalcase", legalCase);
+			return "legalcase-standingCouncil";
+		} else
+			legalCaseService.saveStandingCouncilEntity(legalCase);
+		redirectAttrs.addFlashAttribute("legalcase", legalCase);
+		model.addAttribute("message", "Standing Council Saved successfully.");
+		return "judgment-success";
+
+	}
 
 }

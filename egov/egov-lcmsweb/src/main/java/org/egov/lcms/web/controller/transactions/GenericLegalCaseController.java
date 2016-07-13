@@ -45,8 +45,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.commons.Functionary;
-import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
@@ -79,8 +77,6 @@ public class GenericLegalCaseController {
     @Autowired
     private CourtMasterService courtMasterService;
 
-    @Autowired
-    private FunctionaryHibernateDAO functionaryDAO;
 
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
         return courtTypeMasterService.getCourtTypeList();
@@ -94,14 +90,7 @@ public class GenericLegalCaseController {
         return governmentDepartmentService.findAll();
     }
 
-    public @ModelAttribute("sectionlist") List<String> getFunctionaryList() {
-        final List<String> funcLcmsList = new ArrayList<String>();
-        final List<Functionary> functionaryList = functionaryDAO.findAllActiveFunctionary();
-        for (final Functionary func : functionaryList)
-            funcLcmsList.add("LC" + func.getCode());
-        return funcLcmsList;
-    }
-
+   
     public @ModelAttribute("lcNumberTypes") Map<String, String> getLcNumberTypeTypes() {
         return getLcNumberTypesMap();
     }

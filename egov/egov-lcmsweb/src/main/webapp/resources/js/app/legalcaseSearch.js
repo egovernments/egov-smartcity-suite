@@ -140,7 +140,7 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 
-								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Create Hearing</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
 							}
 						} 
 						],
@@ -163,6 +163,14 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		var lcNumber = tableContainer.fnGetData($(this).parent().parent(), 0);
 		if (this.value == 1) {
 			var url = '/lcms/judgment/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		alert(this.value);
+		if (this.value == 2) {
+			var url = '/lcms/standingCouncil/create/'+ lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
