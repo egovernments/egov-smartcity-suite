@@ -307,7 +307,7 @@
 	</definition>
       
      <definition name="workorder-search" extends="base_layout">
-	   <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+	   <put-attribute name="page-title" value="lbl.createmb" cascade="true"/>
 	   <put-attribute name="body" value="/WEB-INF/views/mb/workorder-search.jsp"/>
      </definition>
      
