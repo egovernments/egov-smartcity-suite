@@ -117,7 +117,6 @@ public class LetterOfAcceptancePDFController {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
-
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
             reportParams.put("workOrderNumber",
@@ -141,7 +140,6 @@ public class LetterOfAcceptancePDFController {
                         estimate.getLineEstimateDetails().getLineEstimate().getModeOfAllotment().toString());
             else
                 reportParams.put("modeOfAllotment", "");
-
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));
@@ -153,6 +151,7 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("activitySize", workOrderActivities.size());
             reportParams.put("tenderFinalizedPercentage", workOrder.getTenderFinalizedPercentage());
             reportParams.put("currDate", sdf.format(new Date()));
+            reportParams.put("workValue", estimate.getWorkValue());
 
             if (!estimate.getEstimateTechnicalSanctions().isEmpty()) {
                 final String technicalSanctionByDesignation = worksUtils
