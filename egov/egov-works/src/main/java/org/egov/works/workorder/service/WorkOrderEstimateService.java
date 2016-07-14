@@ -230,4 +230,9 @@ public class WorkOrderEstimateService {
                 WorksConstants.APPROVED,OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
     }
 
+    public List<WorkOrderEstimate> getWorkOrderEstimatesToCancelEstimates(final String estimateNumber) {
+        return workOrderEstimateRepository
+                .findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeNotLike(estimateNumber,
+                        WorksConstants.CANCELLED_STATUS);
+    }
 }

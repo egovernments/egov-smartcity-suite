@@ -42,10 +42,11 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +61,7 @@ public class SearchEstimatesToCancelJson implements JsonSerializer<AbstractEstim
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
+    private WorkOrderEstimateService workOrderEstimateService;
 
     @Override
     public JsonElement serialize(final AbstractEstimate abstractEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -72,15 +73,18 @@ public class SearchEstimatesToCancelJson implements JsonSerializer<AbstractEstim
             jsonObject.addProperty("estimateDate", sdf.format(abstractEstimate.getEstimateDate()));
             jsonObject.addProperty("estimateValue", abstractEstimate.getEstimateValue());
             jsonObject.addProperty("winCode", abstractEstimate.getProjectCode().getCode());
-            jsonObject.addProperty("lineEstimateNumber",
-                    abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber());
-            jsonObject.addProperty("lineEstimateId", abstractEstimate.getLineEstimateDetails().getLineEstimate().getId());
-            final WorkOrder workOrder = letterOfAcceptanceService
-                    .getWorkOrderByEstimateNumber(abstractEstimate.getEstimateNumber());
-            if (workOrder == null)
+            if (abstractEstimate.getLineEstimateDetails() != null) {
+                jsonObject.addProperty("lineEstimateNumber",
+                        abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber());
+                jsonObject.addProperty("lineEstimateId", abstractEstimate.getLineEstimateDetails().getLineEstimate().getId());
+            }
+            
+            final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateService
+                    .getWorkOrderEstimatesToCancelEstimates(abstractEstimate.getEstimateNumber());
+            if (workOrderEstimates.isEmpty())
                 jsonObject.addProperty("loaNumber", "");
             else
-                jsonObject.addProperty("loaNumber", workOrder.getWorkOrderNumber());
+                jsonObject.addProperty("loaNumber", workOrderEstimates.get(0).getWorkOrder().getWorkOrderNumber());
         } else {
             jsonObject.addProperty("id", "");
             jsonObject.addProperty("estimateNumber", "");

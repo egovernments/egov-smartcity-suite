@@ -39,6 +39,8 @@
  */
 package org.egov.works.web.controller.abstractestimate;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.exception.ApplicationException;
@@ -47,6 +49,8 @@ import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.workorder.entity.WorkOrder;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -66,10 +70,10 @@ public class CancelAbstractEstimateController {
     private EstimateService estimateService;
 
     @Autowired
-    private LetterOfAcceptanceService letterOfAcceptanceService;
+    private WorkOrderEstimateService workOrderEstimateService;
 
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
-    public String showSearchMBForm(
+    public String showSearchEstimateForm(
             @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate,
             final Model model) throws ApplicationException {
         model.addAttribute("searchRequestCancelEstimate", searchRequestCancelEstimate);
@@ -77,7 +81,7 @@ public class CancelAbstractEstimateController {
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelMB(final HttpServletRequest request,
+    public String cancelEstimate(final HttpServletRequest request,
             final Model model) throws ApplicationException {
         final Long estimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
@@ -85,11 +89,11 @@ public class CancelAbstractEstimateController {
         AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(estimateId);
         String message = "";
 
-        final WorkOrder workOrder = letterOfAcceptanceService
-                .getWorkOrderByEstimateNumber(abstractEstimate.getEstimateNumber());
-        if (workOrder != null) {
+        final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateService
+                .getWorkOrderEstimatesToCancelEstimates(abstractEstimate.getEstimateNumber());
+        if (workOrderEstimates.isEmpty()) {
             model.addAttribute("errorMessage", messageSource.getMessage("error.estimate.loa.created",
-                    new String[] { workOrder.getWorkOrderNumber() }, null));
+                    new String[] { workOrderEstimates.get(0).getWorkOrder().getWorkOrderNumber() }, null));
             return "abstractEstimate-success";
         }
 

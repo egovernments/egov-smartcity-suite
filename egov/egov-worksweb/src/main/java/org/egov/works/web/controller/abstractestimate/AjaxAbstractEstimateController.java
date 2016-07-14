@@ -200,12 +200,12 @@ public class AjaxAbstractEstimateController {
             @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final List<AbstractEstimate> abstractEstimates = estimateService
                 .searchEstimatesToCancel(searchRequestCancelEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchMBsToCancelJson(abstractEstimates)).append("}")
+        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatesToCancelJson(abstractEstimates)).append("}")
                 .toString();
         return result;
     }
 
-    public Object toSearchMBsToCancelJson(final Object object) {
+    public Object toSearchEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson)
                 .create();

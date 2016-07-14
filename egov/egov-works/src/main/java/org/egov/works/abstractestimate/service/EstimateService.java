@@ -969,7 +969,7 @@ public class EstimateService {
             if (searchRequestCancelEstimate.getWinCode() != null)
                 criteria.add(Restrictions.ilike("pc.code", searchRequestCancelEstimate.getWinCode(), MatchMode.ANYWHERE));
             if (searchRequestCancelEstimate.getStatus() != null)
-                criteria.add(Restrictions.eq("status.description", searchRequestCancelEstimate.getStatus()).ignoreCase());
+                criteria.add(Restrictions.eq("status.code", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()).ignoreCase());
             if (searchRequestCancelEstimate.getFromDate() != null)
                 criteria.add(Restrictions.ge("ae.estimateDate", searchRequestCancelEstimate.getFromDate()));
             if (searchRequestCancelEstimate.getToDate() != null)
@@ -981,9 +981,9 @@ public class EstimateService {
     }
 
     public List<String> findEstimateNumbersToCancelEstimate(final String code) {
-        final List<String> workIdNumbers = abstractEstimateRepository
+        final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToCancelEstimate("%" + code + "%",
                         AbstractEstimate.EstimateStatus.CANCELLED.toString());
-        return workIdNumbers;
+        return estimateNumbers;
     }
 }
