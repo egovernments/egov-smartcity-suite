@@ -71,9 +71,9 @@ public class GenerateConnectionBillService {
                 "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
                         + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
                         + " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_dcb_view dcbinfo"
-                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on"
+                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
                         + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
-                        + " dcbinfo.locality = localboundary.id  INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+                        + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
