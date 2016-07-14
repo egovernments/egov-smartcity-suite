@@ -225,6 +225,7 @@ $('#designation').change(function(){
 	$.ajax({
 		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
 		type: "GET",
+		dataType: "json",
 		data: {
 			approvalDesignation : $('#designation').val(),
 			approvalDepartment : $('#executingDepartments').val()    
@@ -232,11 +233,11 @@ $('#designation').change(function(){
 		success: function (response) {
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
-			$.each(response, function(index, value) {
-				$('#authority').append($('<option>').text(value.name).attr('value', value.id));  
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
+				$('#authority').append($('<option>').text(value.name).attr('value', value.id));
+				$('#authority').val($('#authorityValue').val());
 			});
-			var authorityValue = $('#authorityValue').val();
-			$('#authority').val(authorityValue);
 		}, 
 		error: function (response) {
 			console.log("failed");
