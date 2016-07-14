@@ -45,8 +45,7 @@
 		<spring:message code="title.mbheader.search" />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover"
-			id="resultTable">
+		<table class="table table-bordered table-hover" id="resultTable">
 			<thead>
 				<tr id="mbheaderRow">
 					<th><spring:message code="lbl.slno" /></th>
@@ -61,6 +60,7 @@
 					<th class="statuscolumn"><spring:message code="lbl.status" /></th>
 					<th class="createdbycolumn"><spring:message code="lbl.createdby" /></th>
 					<th><spring:message code="lbl.currentowner" /></th>
+					<th><spring:message code="lbl.view" /></th>
 				</tr>
 			</thead>
 		</table>
