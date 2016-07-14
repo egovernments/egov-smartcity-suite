@@ -345,5 +345,10 @@
         <put-attribute name="page-title" value="title.mb.cancel" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mb/searchMBToCancel-form.jsp"/>
     </definition>
+    
+    <definition name="searchestimates-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.estimate.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchEstimateToCancel-form.jsp"/>
+    </definition>
 
 </tiles-definitions>  

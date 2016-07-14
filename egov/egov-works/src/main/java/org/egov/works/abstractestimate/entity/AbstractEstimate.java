@@ -277,6 +277,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
 
+    private String cancellationReason;
+
+    private String cancellationRemarks;
+
     @Override
     public Long getId() {
         return id;
@@ -789,4 +793,19 @@ public class AbstractEstimate extends StateAware implements Auditable {
         this.tempOverheadValues = tempOverheadValues;
     }
 
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(final String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationRemarks() {
+        return cancellationRemarks;
+    }
+
+    public void setCancellationRemarks(final String cancellationRemarks) {
+        this.cancellationRemarks = cancellationRemarks;
+    }
 }

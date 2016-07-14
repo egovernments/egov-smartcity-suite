@@ -52,6 +52,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
+import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.master.service.OverheadService;
@@ -62,6 +63,7 @@ import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
+import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -91,13 +93,16 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private EstimateService estimateService;
-    
+
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private UserService userService;
-    
+
+    @Autowired
+    private SearchEstimatesToCancelJson searchEstimatesToCancelJson;
+
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
@@ -175,7 +180,7 @@ public class AjaxAbstractEstimateController {
                 .append("}").toString();
         return result;
     }
-    
+
     @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET)
     public @ResponseBody List<User> getAssignmentByDesignation(
             @RequestParam("approvalDesignation") final Long approvalDesignation) {
@@ -188,5 +193,28 @@ public class AjaxAbstractEstimateController {
             users.add(userService.getUserById(assignment.getEmployee().getId()));
 
         return users;
+    }
+
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchEstimatesToCancel(final Model model,
+            @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate) {
+        final List<AbstractEstimate> abstractEstimates = estimateService
+                .searchEstimatesToCancel(searchRequestCancelEstimate);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchMBsToCancelJson(abstractEstimates)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchMBsToCancelJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxestimatenumbers-estimatetocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersToCancelEstimate(@RequestParam final String code) {
+        return estimateService.findEstimateNumbersToCancelEstimate(code);
     }
 }

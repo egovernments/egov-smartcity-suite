@@ -82,6 +82,7 @@ import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
+import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
 import org.egov.works.abstractestimate.repository.AbstractEstimateRepository;
 import org.egov.works.autonumber.TechnicalSanctionNumberGenerator;
 import org.egov.works.config.properties.WorksApplicationProperties;
@@ -232,13 +233,12 @@ public class EstimateService {
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
         if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                     EstimateStatus.ADMIN_SANCTIONED.toString()));
-        } else {
+        else
             createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
-        }
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -918,7 +918,8 @@ public class EstimateService {
                 errors.reject("error.technumber.unique", "error.technumber.unique");
         }
         if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getEstimateDate().before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
+                && abstractEstimate.getEstimateDate()
+                        .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }
 
@@ -943,5 +944,46 @@ public class EstimateService {
                 .findAbstractEstimateNumbersToCancelLineEstimate(lineEstimateId,
                         AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
+    }
+
+    @Transactional
+    public AbstractEstimate cancel(final AbstractEstimate abstractEstimate) {
+        abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                AbstractEstimate.EstimateStatus.CANCELLED.toString()));
+        final AbstractEstimate savedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
+        return savedAbstractEstimate;
+    }
+
+    public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class, "ae")
+                .createAlias("ae.egwStatus", "status")
+                .createAlias("ae.projectCode", "pc")
+                .createAlias("ae.lineEstimateDetails", "led")
+                .createAlias("led.lineEstimate", "le");
+        if (searchRequestCancelEstimate != null) {
+            if (searchRequestCancelEstimate.getEstimateNumber() != null)
+                criteria.add(Restrictions.eq("ae.estimateNumber", searchRequestCancelEstimate.getEstimateNumber()));
+            if (searchRequestCancelEstimate.getLineEstimateNumber() != null)
+                criteria.add(Restrictions.ilike("le.lineEstimateNumber", searchRequestCancelEstimate.getLineEstimateNumber(),
+                        MatchMode.ANYWHERE));
+            if (searchRequestCancelEstimate.getWinCode() != null)
+                criteria.add(Restrictions.ilike("pc.code", searchRequestCancelEstimate.getWinCode(), MatchMode.ANYWHERE));
+            if (searchRequestCancelEstimate.getStatus() != null)
+                criteria.add(Restrictions.eq("status.description", searchRequestCancelEstimate.getStatus()).ignoreCase());
+            if (searchRequestCancelEstimate.getFromDate() != null)
+                criteria.add(Restrictions.ge("ae.estimateDate", searchRequestCancelEstimate.getFromDate()));
+            if (searchRequestCancelEstimate.getToDate() != null)
+                criteria.add(Restrictions.le("ae.estimateDate", searchRequestCancelEstimate.getToDate()));
+        }
+        criteria.add(Restrictions.isNotEmpty("ae.activities"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria.list();
+    }
+
+    public List<String> findEstimateNumbersToCancelEstimate(final String code) {
+        final List<String> workIdNumbers = abstractEstimateRepository
+                .findAbstractEstimateNumbersToCancelEstimate("%" + code + "%",
+                        AbstractEstimate.EstimateStatus.CANCELLED.toString());
+        return workIdNumbers;
     }
 }

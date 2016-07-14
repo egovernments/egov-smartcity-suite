@@ -67,10 +67,15 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
 
     @Query("select distinct(ae.createdBy) from AbstractEstimate as ae where ae.executingDepartment.id in (:departmentIds)")
     List<User> findAbstractEstimateCreatedByUsers(@Param("departmentIds") final List<Long> departmentIds);
-    
-    AbstractEstimate findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(String technicalSanctionNumber, String statusCode);
-    
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.egwStatus.code != :status and exists(select distinct(activity.abstractEstimate.estimateNumber) from Activity as activity where activity.abstractEstimate = ae) and ae.lineEstimateDetails.lineEstimate.id = :lineEstimateId")
-    List<String> findAbstractEstimateNumbersToCancelLineEstimate(@Param("lineEstimateId") final Long lineEstimateId,@Param("status") final String status);
 
+    AbstractEstimate findByEstimateTechnicalSanctionsIgnoreCase_TechnicalSanctionNumberAndEgwStatus_CodeNot(
+            String technicalSanctionNumber, String statusCode);
+
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where ae.egwStatus.code != :status and exists(select distinct(activity.abstractEstimate.estimateNumber) from Activity as activity where activity.abstractEstimate = ae) and ae.lineEstimateDetails.lineEstimate.id = :lineEstimateId")
+    List<String> findAbstractEstimateNumbersToCancelLineEstimate(@Param("lineEstimateId") final Long lineEstimateId,
+            @Param("status") final String status);
+
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and not exists(select distinct(woe.workOrder) from WorkOrderEstimate as woe where upper(woe.estimate.estimateNumber) like upper(:code) and woe.workOrder.egwStatus.code = :status)")
+    List<String> findAbstractEstimateNumbersToCancelEstimate(@Param("code") final String code,
+            @Param("status") final String status);
 }
