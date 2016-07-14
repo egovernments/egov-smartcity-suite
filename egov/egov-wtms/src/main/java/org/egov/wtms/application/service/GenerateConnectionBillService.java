@@ -77,6 +77,7 @@ public class GenerateConnectionBillService {
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
+        queryStr.append(" and bill.is_cancelled ='N' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
         if (zone != null && !zone.isEmpty())
