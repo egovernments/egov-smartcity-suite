@@ -92,7 +92,7 @@
 				<c:choose>
 					<c:when test="${billDetailsMap == null || !isStatutaryDeductionsPresent}">
 						<tr id="statutorydeductionrow">
-							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode" onchange="resetCreditAccountDetails(this);" >
+							<td> <form:select path="statutoryDeductionDetailes[0].glcodeid" name="statutoryDeductionDetailes[0].creditGlcode" id="statutoryDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  class="form-control table-input creditGlcode" onchange="resetCreditAccountDetails(this);" >
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 										<c:forEach var="coa" items="${statutoryDeductionAccounCodes}">
 											<form:option value="${coa.id}">
@@ -104,7 +104,7 @@
 								<form:errors path="statutoryDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<form:input path="statutoryDeductionDetailes[0].creditamount" id="statutoryDeductionDetailes[0].creditamount" name="statutoryDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:input path="statutoryDeductionDetailes[0].creditamount" id="statutoryDeductionDetailes[0].creditamount" name="statutoryDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="statutoryDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -136,7 +136,7 @@
 										<form:errors path="statutoryDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<form:input path="statutoryDeductionDetailes[${rowIndex }].creditamount" id="statutoryDeductionDetailes[${rowIndex }].creditamount" name="statutoryDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:input path="statutoryDeductionDetailes[${rowIndex }].creditamount" id="statutoryDeductionDetailes[${rowIndex }].creditamount" name="statutoryDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="statutoryDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addStatutoryDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -172,7 +172,7 @@
 					<c:when test="${billDetailsMap == null || !isOtherDeductionsPresent}">
 						<tr id="otherdeductionrow">
 							<td>
-								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input otherDeductionCreditGlcode creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+								<input type="text" id="otherDeductionDetailes[0].creditGlcode" name="otherDeductionDetailes[0].creditGlcode" class="form-control table-input otherDeductionCreditGlcode creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"   placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
 								<form:hidden path="otherDeductionDetailes[0].glcodeid"  name="otherDeductionDetailes[0].glcodeid" id="otherDeductionDetailes[0].glcodeid" value="${egBilldetailes.glcodeid}" class="form-control table-input hidden-input otherdeductionid"/> 
 								<form:errors path="otherDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
@@ -180,7 +180,7 @@
 								<input type="text" id="otherDeductionDetailes[0].creditAccountHead" name="otherDeductionDetailes[0].creditAccountHead" value="${otherDeductionDetailes[0].creditAccountHead}" class="form-control otherdeductionname" disabled>  
 							</td>
 							<td>
-								<form:input path="otherDeductionDetailes[0].creditamount" id="otherDeductionDetailes[0].creditamount" name="otherDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:input path="otherDeductionDetailes[0].creditamount" id="otherDeductionDetailes[0].creditamount" name="otherDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="otherDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -193,7 +193,7 @@
 							<c:if test="${!billDetail.isDebit && !billDetail.isNetPayable && !billDetail.isStatutoryDeduction && !billDetail.isRetentionMoneyDeduction}">
 								<tr id="otherdeductionrow">
 									<td>
-										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditGlcode" name="otherDeductionDetailes[${rowIndex }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input otherDeductionCreditGlcode creditGlcode" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
+										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditGlcode" name="otherDeductionDetailes[${rowIndex }].creditGlcode" value="${billDetail.glcode} ~ ${billDetail.accountHead}" class="form-control table-input otherDeductionCreditGlcode creditGlcode" data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  placeholder="Type first 3 letters of Account code" onblur="resetCreditAccountDetails(this);"> 
 										<form:hidden path="otherDeductionDetailes[${rowIndex }].glcodeid" name="otherDeductionDetailes[${rowIndex }].glcodeid" value="${billDetail.glcodeId}" id="otherDeductionDetailes[${rowIndex }].glcodeid" class="form-control table-input hidden-input otherdeductionid"/> 
 										<form:errors path="otherDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
@@ -201,7 +201,7 @@
 										<input type="text" id="otherDeductionDetailes[${rowIndex }].creditAccountHead" name="otherDeductionDetailes[${rowIndex }].creditAccountHead" value="${billDetail.accountHead}" class="form-control otherdeductionname" disabled>  
 									</td>
 									<td>
-										<form:input path="otherDeductionDetailes[${rowIndex }].creditamount" id="otherDeductionDetailes[${rowIndex }].creditamount" name="otherDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:input path="otherDeductionDetailes[${rowIndex }].creditamount" id="otherDeductionDetailes[${rowIndex }].creditamount" name="otherDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="otherDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addOtherDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -235,7 +235,7 @@
 				<c:choose>
 					<c:when test="${billDetailsMap == null || !isRetentionMoneyDeductionsPresent}">
 						<tr id="retentionmoneydeductionrow">
-							<td> <form:select path="retentionMoneyDeductionDetailes[0].glcodeid" name="retentionMoneyDeductionDetailes[0].creditGlcode" id="retentionMoneyDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0" required="required" class="form-control table-input creditGlcode"  onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
+							<td> <form:select path="retentionMoneyDeductionDetailes[0].glcodeid" name="retentionMoneyDeductionDetailes[0].creditGlcode" id="retentionMoneyDeductionDetailes[0].creditGlcode"  data-errormsg="Account Code is mandatory!" data-idx="0" data-optional="0"  class="form-control table-input creditGlcode"  onchange="resetCreditAccountDetails(this);calculateRetentionMoneyDeductionAmount(this);calculateNetPayableAmount();">
 									<form:option value=""> <spring:message code="lbl.select" /> </form:option>
 										<c:forEach var="coa" items="${retentionMoneyDeductionAccounCodes}">
 											<form:option value="${coa.id}">
@@ -247,7 +247,7 @@
 								<form:errors path="retentionMoneyDeductionDetailes[0].glcodeid" cssClass="add-margin error-msg" /> 
 							</td>
 							<td>
-								<form:input path="retentionMoneyDeductionDetailes[0].creditamount" id="retentionMoneyDeductionDetailes[0].creditamount" name="retentionMoneyDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+								<form:input path="retentionMoneyDeductionDetailes[0].creditamount" id="retentionMoneyDeductionDetailes[0].creditamount" name="retentionMoneyDeductionDetailes[0].creditamount" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 								<form:errors path="retentionMoneyDeductionDetailes[0].creditamount" cssClass="add-margin error-msg" /> 
 							</td> 
 							<td class="text-center"><span style="cursor:pointer;" onclick="addRetentionMoneyDeductionRow();"><i class="fa fa-plus"></i></span>
@@ -279,7 +279,7 @@
 										<form:errors path="retentionMoneyDeductionDetailes[${rowIndex }].glcodeid" cssClass="add-margin error-msg" /> 
 									</td>
 									<td>
-										<form:input path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" id="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" name="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12" required="required" />
+										<form:input path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" id="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" name="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" value="${billDetail.amount }" data-errormsg="Credit Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right creditAmount" onblur="calculateNetPayableAmount();"  maxlength="12"  />
 										<form:errors path="retentionMoneyDeductionDetailes[${rowIndex }].creditamount" cssClass="add-margin error-msg" /> 
 									</td> 
 									<td class="text-center"><span style="cursor:pointer;" onclick="addRetentionMoneyDeductionRow();"><i class="fa fa-plus"></i></span>
