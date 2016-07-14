@@ -151,6 +151,9 @@ public class EditCollectionController {
         for (final DemandDetail demandDetList : tempDemandDetail)
             if (demandDetList != null)
                 demandDetailBeanList.add(demandDetList);
+        final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
+        model.addAttribute("mode", "editcollection");
+        model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("legacyReceipts", waterConnectionDetails.getLegacyReceipts().size());
         model.addAttribute("demandDetailBeanList", demandDetailBeanList);
         model.addAttribute("waterConnectionDetails", waterConnectionDetails);
