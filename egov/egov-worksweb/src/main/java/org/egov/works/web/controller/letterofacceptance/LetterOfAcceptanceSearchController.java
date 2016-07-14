@@ -52,6 +52,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -84,6 +85,17 @@ public class LetterOfAcceptanceSearchController {
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("searchRequestLetterOfAcceptance", searchRequestLetterOfAcceptance);
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.WORKORDER);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (!egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.ACCEPTANCE_LETTER_ACKNOWLEDGED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.ACCEPTANCE_LETTER_ISSUED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.AGREEMENT_ORDER_SIGNED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.WORK_ORDER_ACKNOWLEDGED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.WORK_COMMENCED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatuses.SITE_HANDED_OVER.toString()))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("egwStatus", newEgwStatuses);
         return "searchletterofacceptance-search";
     }
 
