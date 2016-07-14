@@ -320,7 +320,7 @@ public class CollectionReportHeadWiseService {
             final BigDecimal receiptCount = cashCnt.add(chequeddCnt).add(onlineCnt);
             collSummaryReportResult
             .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
-            collSummaryReportResult.setTotalAmount(((Double) arrayObjectInitialIndex[7] == null ? new Double(0.0): new Double(0.0).sum((Double) arrayObjectInitialIndex[7],(
+            collSummaryReportResult.setTotalAmount((new Double(0.0).sum((Double) arrayObjectInitialIndex[7] == null ? new Double(0.0):(Double) arrayObjectInitialIndex[7],(
                     new Double(0.0).sum((Double) arrayObjectInitialIndex[8] != null ? (Double) arrayObjectInitialIndex[8]
                                     : new Double(0.0),
                                     (Double) arrayObjectInitialIndex[9] != null ? (Double) arrayObjectInitialIndex[9]
