@@ -205,7 +205,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("technicalSanctionBy", request.getParameter("estimateTechnicalSanctions[0].technicalSanctionBy"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
-            model.addAttribute("mode", "edit");
             return "newAbstractEstimate-form";
         } else {
             if (abstractEstimate.getState() == null)
