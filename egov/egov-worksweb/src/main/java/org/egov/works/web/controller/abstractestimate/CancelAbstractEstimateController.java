@@ -41,7 +41,6 @@ package org.egov.works.web.controller.abstractestimate;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.SearchRequestCancelEstimate;
@@ -61,9 +60,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CancelAbstractEstimateController {
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
     private ResourceBundleMessageSource messageSource;
 
     @Autowired
@@ -76,7 +72,6 @@ public class CancelAbstractEstimateController {
     public String showSearchMBForm(
             @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate,
             final Model model) throws ApplicationException {
-        model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("searchRequestCancelEstimate", searchRequestCancelEstimate);
         return "searchestimates-cancel";
     }
