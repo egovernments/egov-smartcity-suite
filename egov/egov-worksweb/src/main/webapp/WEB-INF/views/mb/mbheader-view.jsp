@@ -57,6 +57,7 @@
 	accept-charset="utf-8"
 	enctype="multipart/form-data">
 <input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
+<input type="hidden" id="mode" name="mode" value="${mode }">
 <input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 <div class="position_alert1">
 	<spring:message code="lbl.tender.finalizedperc" /> : <span id="tenderPerc">${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}</span>

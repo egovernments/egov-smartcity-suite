@@ -69,7 +69,7 @@
 					<input name="mbDate" class="form-control datepicker required" id="mbDate" value='<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy" />' data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
 				</c:if>
 				<c:if test="${currentDate == null }">
-					<form:input path="mbDate" class="form-control datepicker required" id="mbDate" data-inputmask="'mask': 'd/m/y'" required="required" />
+					<form:input path="mbDate" class="form-control datepicker required" id="mbDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
 				</c:if>
 			</div>
 		</div>

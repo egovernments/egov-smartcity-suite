@@ -87,6 +87,9 @@ public class CreateMBController {
         Long approvalPosition = 0l;
         String approvalComment = "";
         String workFlowAction = "";
+        String mode = "";
+        if (request.getParameter("mode") != null)
+            mode = request.getParameter("mode");
         if (request.getParameter("approvalComment") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
@@ -100,7 +103,7 @@ public class CreateMBController {
         final JsonObject jsonObject = new JsonObject();
         mbHeaderService.validateMBInDrafts(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
         mbHeaderService.validateMBInWorkFlow(mbHeader.getWorkOrderEstimate().getId(), jsonObject, errors);
-        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder);
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
         workOrderEstimateService.getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(),
                 jsonObject);
 
@@ -113,9 +116,29 @@ public class CreateMBController {
 
         mbHeaderService.fillWorkflowData(jsonObject, request, savedMBHeader);
 
-        jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
-                new String[] { mbHeader.getMbRefNo() },
-                null));
+        if (workFlowAction.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
+            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.saved",
+                    new String[] { mbHeader.getMbRefNo() },
+                    null));
+        else {
+            final String pathVars = worksUtils.getPathVars(mbHeader.getEgwStatus(), mbHeader.getState(),
+                    mbHeader.getId(), approvalPosition);
+
+            final String[] keyNameArray = pathVars.split(",");
+            String approverName = "";
+            String nextDesign = "";
+            if (keyNameArray.length != 0 && keyNameArray.length > 0)
+                if (keyNameArray.length == 3)
+                    approverName = keyNameArray[1];
+                else {
+                    approverName = keyNameArray[1];
+                    nextDesign = keyNameArray[3];
+                }
+
+            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
+                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() },
+                    null));
+        }
 
         return jsonObject.toString();
     }

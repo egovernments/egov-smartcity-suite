@@ -40,6 +40,7 @@
 package org.egov.works.mb.service;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -540,10 +541,12 @@ public class MBHeaderService {
             jsonObject.add("detailIds", new JsonArray());
     }
 
-    public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors) {
+    public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors,
+            final String mode) {
         final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId(), mbHeader.getWorkOrderEstimate().getId(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
         String message = "";
+        final DecimalFormat df = new DecimalFormat("#.##");
         Double totalMBAmount = null;
         if (totalMBAmountOfMBs != null)
             totalMBAmount = totalMBAmountOfMBs + mbHeader.getMbAmount().doubleValue();
@@ -561,8 +564,8 @@ public class MBHeaderService {
         if (mbHeader.getWorkOrderEstimate().getWorkOrder()
                 .getWorkOrderAmount() < totalMBAmount) {
             message = messageSource.getMessage("error.sum.mb.workorder.amount",
-                    new String[] { totalMBAmount.toString(),
-                            new Double(mbHeader.getWorkOrder().getWorkOrderAmount()).toString() },
+                    new String[] { df.format(totalMBAmount),
+                            df.format(totalMBAmount - mbHeader.getWorkOrder().getWorkOrderAmount()) },
                     null);
             jsonObject.addProperty("errorSumOfMBWorkOrderAmount", message);
             errors.reject("errorSumOfMBWorkOrderAmount", message);
@@ -602,6 +605,9 @@ public class MBHeaderService {
             jsonObject.addProperty("errorFromToPageNumber", message);
             errors.reject("errorFromToPageNumber", message);
         }
+
+        if (!mode.equalsIgnoreCase("workflowView"))
+            validateMBDetails(mbHeader, jsonObject, errors);
     }
 
     public void validateMBDetails(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors) {
@@ -617,15 +623,20 @@ public class MBHeaderService {
             errors.reject("errorSorNonSorMandatory", message);
         }
 
-        for (final MBDetails details : mbHeader.getSorMbDetails())
+        for (final MBDetails details : mbHeader.getSorMbDetails()) {
+            details.setMbHeader(mbHeader);
             validateMBDetail(details, jsonObject, errors, Double.parseDouble(value.getValue()));
+        }
 
-        for (final MBDetails details : mbHeader.getNonSorMbDetails())
+        for (final MBDetails details : mbHeader.getNonSorMbDetails()) {
+            details.setMbHeader(mbHeader);
             validateMBDetail(details, jsonObject, errors, Double.parseDouble(value.getValue()));
+        }
     }
 
     private void validateMBDetail(final MBDetails details, final JsonObject jsonObject, final BindingResult errors,
             final Double toleranceLimit) {
+        details.setWorkOrderActivity(workOrderActivityService.getWorkOrderActivityById(details.getWorkOrderActivity().getId()));
         final String message = messageSource.getMessage("error.approved.quantity.cumulative",
                 new String[] {},
                 null);
@@ -638,6 +649,7 @@ public class MBHeaderService {
             jsonObject.addProperty("errorApprovedCumulativeQuantity", message);
             errors.reject("errorApprovedCumulativeQuantity", message);
         }
+        details.setPrevCumlvQuantity(prevCumulativeQuantity);
     }
 
     public Double getTotalMBAmountOfMBs(final Long mbHeaderId, final Long workOrderEstimateId, final String statusCode) {

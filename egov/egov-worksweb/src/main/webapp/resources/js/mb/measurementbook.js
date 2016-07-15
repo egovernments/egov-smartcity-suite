@@ -684,11 +684,12 @@ function validateFormData() {
 		bootbox.alert($('#errorMandatory').val());
 		return false;
 	}
-	
+	if (totalMBAmountOfMBs == "")
+		totalMBAmountOfMBs = 0;
 	if (parseFloat(workOrderAmount) < parseFloat(parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount))) {
 		var message = $('#errortotalmbamount').val();
 		message = message.replace(/\{0\}/g, parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount));
-		message = message.replace(/\{1\}/g, workOrderAmount);
+		message = message.replace(/\{1\}/g, parseFloat(parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount) - parseFloat(workOrderAmount)).toFixed(2));
 		bootbox.alert(message);
 		return false;
 	}

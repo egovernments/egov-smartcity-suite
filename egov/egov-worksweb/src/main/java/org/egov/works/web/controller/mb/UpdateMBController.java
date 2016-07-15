@@ -151,6 +151,9 @@ public class UpdateMBController extends GenericWorkFlowController {
         Long approvalPosition = 0l;
         String approvalComment = "";
         String workFlowAction = "";
+        String mode = "";
+        if (request.getParameter("mode") != null)
+            mode = request.getParameter("mode");
         if (request.getParameter("approvalComment") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
@@ -159,7 +162,7 @@ public class UpdateMBController extends GenericWorkFlowController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         final JsonObject jsonObject = new JsonObject();
-        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder);
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
 
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
@@ -249,7 +252,7 @@ public class UpdateMBController extends GenericWorkFlowController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         final JsonObject jsonObject = new JsonObject();
-        mbHeaderService.validateMBHeader(mbHeader, jsonObject, errors);
+        mbHeaderService.validateMBHeader(mbHeader, jsonObject, errors, mode);
 
         if (errors.hasErrors()) {
             model.addAttribute("removedMBDetailIds", removedDetailIds);
