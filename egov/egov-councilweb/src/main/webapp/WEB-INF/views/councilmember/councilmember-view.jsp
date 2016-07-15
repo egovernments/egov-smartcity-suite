@@ -48,7 +48,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">CouncilMember</div>
+					<div class="panel-title">Council Member</div>
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">
@@ -92,15 +92,15 @@
 							<spring:message code="lbl.birthdate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="MM/dd/yyyyy"
+							<fmt:formatDate pattern="dd/MM/yyyy"
 								value="${councilMember.birthDate}" />
 </div><div class="col-xs-3 add-margin"><spring:message code="lbl.electiondate" />
 </div><div class="col-sm-3 add-margin view-content">
-<fmt:formatDate pattern="MM/dd/yyyyy" value="${councilMember.electionDate}" />
+<fmt:formatDate pattern="dd/MM/yyyy" value="${councilMember.electionDate}" />
 </div></div>
 <div class="row add-border"><div class="col-xs-3 add-margin"><spring:message code="lbl.oathdate" />
 </div><div class="col-sm-3 add-margin view-content">
-<fmt:formatDate pattern="MM/dd/yyyyy" value="${councilMember.oathDate}" />
+<fmt:formatDate pattern="dd/MM/yyyy" value="${councilMember.oathDate}" />
 </div><div class="col-xs-3 add-margin"><spring:message code="lbl.mobilenumber" />
 </div><div class="col-sm-3 add-margin view-content">
 ${councilMember.mobileNumber}

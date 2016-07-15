@@ -37,11 +37,14 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="col-md-12">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
-			<div class="panel-title">CouncilMember</div>
+			<div class="panel-title">Council Member</div>
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
@@ -67,20 +70,9 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-
-						<c:forEach items="${councilDesignations}"
-							var="councilDesignations">
-							<c:if test="${councilDesignations.isActive}">
-								<option value="${councilDesignations.id}">
-									${councilDesignations.name}</option>
-							</c:if>
-						</c:forEach>
-
-						<%-- <form:options items="${councilDesignations}" itemValue="id"
-									itemLabel="name" /> --%>
-
+						<form:options items="${councilDesignations}" itemValue="id"
+									itemLabel="name" />
 					</form:select>
-
 					<form:errors path="designation" cssClass="error-msg" />
 				</div>
 			</div>
@@ -94,15 +86,8 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<c:forEach items="${councilQualifications}"
-							var="councilQualifications">
-							<c:if test="${councilQualifications.isActive}">
-								<option value="${councilQualifications.id}">
-									${councilQualifications.name}</option>
-							</c:if>
-						</c:forEach>
-						<%-- <form:options items="${councilQualifications}" itemValue="id"
-									itemLabel="name" /> --%>
+						<form:options items="${councilQualifications}" itemValue="id"
+									itemLabel="name" />
 					</form:select>
 					<form:errors path="qualification" cssClass="error-msg" />
 				</div>
@@ -114,14 +99,8 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<c:forEach items="${councilCastes}" var="councilCastes">
-							<c:if test="${councilCastes.isActive}">
-								<option value="${councilCastes.id}">
-									${councilCastes.name}</option>
-							</c:if>
-						</c:forEach>
-						<%-- <form:options items="${councilCastes}" itemValue="id"
-									itemLabel="name" /> --%>
+						<form:options items="${councilCastes}" itemValue="id"
+									itemLabel="name" />
 					</form:select>
 					<form:errors path="caste" cssClass="error-msg" />
 				</div>
@@ -171,7 +150,7 @@
 			<div class="form-group">
 
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.emailid" /><span class="mandatory"></label>
+						code="lbl.emailid" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:input type="text" cssClass="form-control patternvalidation"
 						data-pattern="regexp_alphabetspecialcharacters" path="emailId"
@@ -238,7 +217,7 @@
 					<form:errors path="partyAffiliation" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.photo" /> </span> </label>
+						code="lbl.photo" /></label>
 				<div class="col-sm-3 add-margin">
 					<c:choose>
 						<c:when test="${councilMember.photo != null}">
@@ -257,9 +236,6 @@
 								style="max-width: 25%; max-height: 25%;"
 								src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
 								alt="${councilMember.photo.fileName}" /></a>
-
-							</a>
-
 						</c:when>
 						<c:otherwise>
 							<input type="file" id="attachments" name="attachments"

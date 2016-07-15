@@ -44,10 +44,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.egov.council.entity.CouncilParty;
 import org.egov.council.repository.CouncilPartyRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -92,13 +94,16 @@ public class CouncilPartyService {
     public CouncilParty findOne(Long id) {
         return councilPartyRepository.findOne(id);
     }
-
+    
+    public List<CouncilParty> getActiveParties(){
+    	return councilPartyRepository.findByisActive(true);
+    }
+    
 	public List<CouncilParty> search(CouncilParty councilParty) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				CouncilParty.class);
 		if (null != councilParty.getName())
-			criteria.add(Restrictions.eq("name", councilParty.getName())
-					.ignoreCase());
+			criteria.add(Restrictions.ilike("name", councilParty.getName(), MatchMode.ANYWHERE));
 		if (councilParty.getIsActive() != null
 				&& councilParty.getIsActive() == true)
 			criteria.add(Restrictions.eq("isActive", councilParty.getIsActive()));

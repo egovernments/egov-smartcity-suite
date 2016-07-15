@@ -37,13 +37,16 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">PoliticalParty</div>
+					<div class="panel-title">Political Party</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
@@ -64,4 +67,8 @@
 					</div>
 					<input type="hidden" name="councilParty" value="${councilParty.id}" />
 					<form:hidden path="code" id="code" value="${councilParty.code}" />
-			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
