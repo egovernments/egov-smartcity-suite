@@ -60,13 +60,10 @@
 		</div>
 	</div>
 </form:form>
-</script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
 	<script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	
