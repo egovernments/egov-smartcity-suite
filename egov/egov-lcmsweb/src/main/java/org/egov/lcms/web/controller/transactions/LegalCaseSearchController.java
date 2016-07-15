@@ -44,16 +44,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.lcms.transactions.entity.LegalCaseReportResult;
 import org.egov.lcms.transactions.entity.LegalCaseReportResultAdaptor;
+import org.egov.lcms.transactions.service.SearchLegalCaseService;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -70,78 +68,50 @@ import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/search")
-public class LegalCaseSearchController extends GenericLegalCaseController{
-    
-    @Autowired
-    private EntityManager entityManager;
-    @ModelAttribute
-    private void getLegalCaseReport(final Model model)
-    {
-    	LegalCaseReportResult legalCaseReportResult=new LegalCaseReportResult();
-        model.addAttribute("legalCaseReportResult", legalCaseReportResult);
-    }
-    
-    @RequestMapping(method=RequestMethod.GET,value = "/searchForm")
-    public String saechForm(final Model model)
-    {
-        model.addAttribute("currDate", new Date());
-        return "search-legalCaseForm";
-    }
-    
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void getLegalCaseSearchResult(@RequestParam final String caseNumber,
-            @RequestParam final String lcNumber,final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException {
-        String caseNumbertemp="";
-        String lcNumbertemp="";
-        if (null != request.getParameter("caseNumber") && !request.getParameter("caseNumber").isEmpty())
-        	caseNumbertemp = request.getParameter("caseNumber");
-        if (null != request.getParameter("lcNumber") && !request.getParameter("lcNumber").isEmpty())
-        	lcNumbertemp = request.getParameter("lcNumber");
-        
-        List<LegalCaseReportResult>legalcaseSearchList=new ArrayList<LegalCaseReportResult>();
-        
-        final SQLQuery query =getLegalCaseReport(caseNumbertemp,lcNumbertemp);
-        legalcaseSearchList = query.list();
-         String result = null;
-       result = new StringBuilder("{ \"data\":").append(toJSON(legalcaseSearchList)).append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
-    }
- 
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(LegalCaseReportResult.class, new LegalCaseReportResultAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-    
-   
-    
-    public SQLQuery getLegalCaseReport(final String caseNumber, final String lcNumber) 
-           {
+public class LegalCaseSearchController extends GenericLegalCaseController {
 
-        final StringBuilder queryStr = new StringBuilder();
-        queryStr.append(
-                "select legalObj.casenumber as \"caseNumber\", legalObj.lcNumber as \"lcNumber\" from EGLC_LEGALCASE legalObj");
-     
-        if((caseNumber != null && !caseNumber.isEmpty()) || (lcNumber != null && !lcNumber.isEmpty()))
-        {
-        	 queryStr.append(" where ");
-        }
-        if (lcNumber != null && !lcNumber.isEmpty())
-            queryStr.append(" legalObj.lcNumber = " + "'" + lcNumber + "'");
-        if ((lcNumber.isEmpty()) && caseNumber != null && !caseNumber.isEmpty())
-            queryStr.append(" legalObj.casenumber = " + "'" + caseNumber + "'");
-        if ((lcNumber != null && !lcNumber.isEmpty()) && caseNumber != null && !caseNumber.isEmpty())
-            queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
-        final SQLQuery finalQuery = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(LegalCaseReportResult.class));
-        return finalQuery;
+	@Autowired
+	private SearchLegalCaseService searchLegalCaseService;
 
-    }
-   
+	@ModelAttribute
+	private void getLegalCaseReport(final Model model) {
+		final LegalCaseReportResult legalCaseReportResult = new LegalCaseReportResult();
+		model.addAttribute("legalCaseReportResult", legalCaseReportResult);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/searchForm")
+	public String saechForm(final Model model) {
+		model.addAttribute("currDate", new Date());
+		return "search-legalCaseForm";
+	}
+
+	@ExceptionHandler(Exception.class)
+	@RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody void getLegalCaseSearchResult(@RequestParam final String caseNumber,
+			@RequestParam final String lcNumber, @RequestParam final String court, @RequestParam final String caseType,
+			@RequestParam final String standingCouncil, @RequestParam final String courtType,
+			@RequestParam final String isStatusExcluded, final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {
+		Boolean caseExcluded = Boolean.FALSE;
+		if (request.getParameter("isStatusExcluded").equals("true"))
+			caseExcluded = Boolean.TRUE;
+		List<LegalCaseReportResult> legalcaseSearchList = new ArrayList<LegalCaseReportResult>();
+		final SQLQuery query = searchLegalCaseService.getLegalCaseReport(request.getParameter("caseNumber"),
+				request.getParameter("lcNumber"), request.getParameter("court"), request.getParameter("caseType"),
+				request.getParameter("standingCouncil"), request.getParameter("courtType"), null, caseExcluded);
+		legalcaseSearchList = query.list();
+		String result = null;
+		result = new StringBuilder("{ \"data\":").append(toJSON(legalcaseSearchList)).append("}").toString();
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		IOUtils.write(result, response.getWriter());
+	}
+
+	private Object toJSON(final Object object) {
+		final GsonBuilder gsonBuilder = new GsonBuilder();
+		final Gson gson = gsonBuilder
+				.registerTypeAdapter(LegalCaseReportResult.class, new LegalCaseReportResultAdaptor()).create();
+		final String json = gson.toJson(object);
+		return json;
+	}
 
 }

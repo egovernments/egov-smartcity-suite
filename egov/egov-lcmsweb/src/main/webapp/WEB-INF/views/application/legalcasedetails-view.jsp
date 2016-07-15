@@ -55,29 +55,29 @@
 			</div>
 			<div class="panel-body">
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">Court Type</div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${legalcase.casetypeMaster.code}" /></div>
+					<div class="col-xs-3 add-margin">Case Type</div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${legalCase.caseTypeMaster.code}" /></div>
 					<div class="col-xs-3 add-margin">Petition Type</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${legalcase.petitiontypeMaster.code}" />
+						<c:out value="${legalCase.petitionTypeMaster.code}" />
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">Court Name</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${legalcase.courtMaster.name}" />
+						<c:out value="${legalCase.courtMaster.name}" />
 					</div>
 					<div class="col-xs-3 add-margin">Case Number</div>
-					<div class="col-xs-3 add-margin view-content"><c:out value="${legalcase.casenumber}" /></div>
+					<div class="col-xs-3 add-margin view-content"><c:out value="${legalCase.caseNumber}" /></div>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">Lc Number</div>
 					<div class="col-xs-3 add-margin view-content">
-					 <c:out value="${legalcase.lcNumber}" />
+					 <c:out value="${legalCase.lcNumber}" />
                      </div>
                     <div class="col-xs-3 add-margin">Case Date</div>  
 					<div class="col-xs-3 add-margin view-content">
-					<fmt:formatDate pattern="dd/MM/yyyy" value="${legalcase.caseDate}" var="docsDate"/><c:out value="${legalcase.caseDate}" />
+					<fmt:formatDate pattern="dd/MM/yyyy" value="${legalCase.caseDate}" var="docsDate"/><c:out value="${legalCase.caseDate}" />
 					</div>
 					</div>
 					</div>

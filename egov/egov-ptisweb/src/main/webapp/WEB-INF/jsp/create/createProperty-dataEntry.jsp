@@ -127,7 +127,7 @@ jQuery(function ($) {
 		$('#Create').click(function(e){
 			console.log('called :)!');
 			return validateProperty();
-		});
+		}); 
 		
     	
 });
@@ -152,31 +152,8 @@ function validateProperty() {
 		success: function (response) {
 			console.log("success"+response);
 			if(response.exists) {
-				bootbox.dialog({ 
-			          message: "Entered assessment number is not unique, Do you want system to create unique assessment number and to keep entered assessment number as Old assessment number",
-					  show: true,
-					  backdrop: true,
-					  closeButton: true,
-					  animate: true,
-					  className: "my-modal",
-					  buttons: {
-					    success: {   
-					      label: "Yes",
-					      className: "btn-primary",
-					      callback: function() {
-					    	  jQuery('#updateUpicNo').val(true);
-					    	  isSubmit=true;
-					    	  jQuery('#Create').trigger('click');
-						  }
-					    },
-					    "No": {
-					      className: "btn-default",
-					      callback: function() {
-					    	
-						  }
-					    }
-					  }
-					});
+				bootbox.alert("Entered old assessment number is not unique and is already present in the system. Please enter unique old assessment number")
+				isSubmit = false;
 			} else {
 				isSubmit=true;
 		    	jQuery('#Create').trigger('click');
@@ -186,7 +163,8 @@ function validateProperty() {
 
 	return false;
 	
-}
+} 
+
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();

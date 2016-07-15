@@ -44,6 +44,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
+import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -121,6 +122,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static int noOfDays(final Date startDate, final Date endDate) {
         return (int)( (endDate.getTime() - startDate.getTime())
                 / (1000 * 60 * 60 * 24) );
+    }
+    
+    public static int noOfYears(final Date startDate, final Date endDate){
+    	final DateTime sDate = new DateTime(startDate);
+        final DateTime eDate = new DateTime(endDate);
+        Years years = Years.yearsBetween(sDate, eDate);
+        return years.getYears();
     }
 
     /**

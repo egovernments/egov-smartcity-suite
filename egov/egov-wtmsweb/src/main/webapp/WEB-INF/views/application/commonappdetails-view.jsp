@@ -130,7 +130,7 @@
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.current.due"/></div>
 			
 			<c:choose>
-				<c:when test="${null!=mode && (mode =='closureConnection' ||  mode=='meterEntry'  || mode =='changeOfUse' || mode=='search' || mode=='addconnection' || mode=='waterTaxCollection' || mode=='viewdcb') && waterTaxDueforParent > 0}">
+				<c:when test="${null!=mode && (mode =='closureConnection' ||  mode=='meterEntry'  || mode =='changeOfUse' || mode=='search' || mode=='addconnection' || mode=='waterTaxCollection' || mode=='viewdcb' || mode=='editdemand' || mode=='editcollection') && waterTaxDueforParent > 0}">
 					<div class="col-xs-3 add-margin view-content error-msg"><c:out value="${waterTaxDueforParent}" /></div>
 				</c:when>	
 				<c:otherwise>

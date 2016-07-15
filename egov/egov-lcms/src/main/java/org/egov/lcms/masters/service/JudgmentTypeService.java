@@ -88,6 +88,10 @@ public class JudgmentTypeService {
         return judgmentTypeRepository.findOne(id);
     }
 
+    public List<JudgmentType> getJudgmentTypeList() {
+        return judgmentTypeRepository.findAll();
+    }
+
     public List<JudgmentType> search(final JudgmentType judgmentType) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();

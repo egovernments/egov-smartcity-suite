@@ -1861,9 +1861,9 @@ public class PropertyTaxUtil {
         return demandNoticeDetailsInfo;
     }
 
-    public DepreciationMaster getDepreciationByDate(final Date depreciationDate) {
+    public DepreciationMaster getDepreciationByDate(final Date constructionDate, final Date effectiveDate) {
         String depreciationYear = null;
-        final int years = DateUtils.getNumberOfYearPassesed(depreciationDate, new Date());
+        final int years = DateUtils.noOfYears(constructionDate, effectiveDate);
         if (years >= 0 && years <= 25)
             depreciationYear = "0-25";
         else if (years > 25 && years <= 40)

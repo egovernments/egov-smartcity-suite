@@ -49,6 +49,7 @@
 		<th class="bluebgheadtd"><s:text name="Occupancy"/></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname"/></th>
 		<th class="bluebgheadtd"><s:text name="constrdate" /></th>
+		<th class="bluebgheadtd"><s:text name="effectiveDate" /></th>
 		<th class="bluebgheadtd"><s:text name="unstructuredLand" /></th>
 		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
 		<th class="bluebgheadtd"><s:text name="plinthBreadth" /></th>
@@ -93,10 +94,15 @@
 	    	<span class="bold"><s:property default="N/A" value="%{occupantName}" /> </span>
 	        </div>
 	    </td>	
-
+		
+		<td class="blueborderfortd" style="padding: 2px 2px">
+		    <s:date name="constructionDate" var="cdFormat" format="dd/MM/yyyy"/>
+		    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
+	    </td>
+	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-	    <s:date name="occupancyDate" var="cdFormat" format="dd/MM/yyyy"/>
-	    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
+		    <s:date name="occupancyDate" var="cdFormat" format="dd/MM/yyyy"/>
+		    <span class="bold"><s:property default="N/A" value="%{cdFormat}"/></span>
 	    </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">

@@ -41,6 +41,7 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -65,6 +66,7 @@ import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
@@ -95,6 +97,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -266,15 +269,17 @@ public class AjaxLineEstimateController {
         return lineEstimateService.findWorkIdentificationNumbersToSearchEstimatesForLoa(name);
     }
 
+
     @RequestMapping(value = "/workIdNumbersForEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersToSearchEstimates(@RequestParam final String name) {
         return lineEstimateService.findWorkIdentificationNumbersToSearchEstimates(name);
     }
 
-    @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET)
-    public @ResponseBody List<User> getAssignmentByDepartmentAndDesignation(
+    @RequestMapping(value = "/ajax-assignmentByDepartmentAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getAssignmentByDepartmentAndDesignation(
             @RequestParam("approvalDesignation") final Long approvalDesignation,
-            @RequestParam("approvalDepartment") final Long approvalDepartment) {
+            @RequestParam("approvalDepartment") final Long approvalDepartment)
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<User> users = new ArrayList<User>();
         List<Assignment> assignments = new ArrayList<Assignment>();
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
@@ -284,15 +289,19 @@ public class AjaxLineEstimateController {
 
         for (final Assignment assignment : assignments)
             users.add(userService.getUserById(assignment.getEmployee().getId()));
-
-        return users;
+        final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
+        return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
+        }.getType());
     }
-
-    @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET)
-    public @ResponseBody List<User> getLineEstimateCreatedUsersByDepartmentForCancelLineEstimate(
-            @RequestParam("department") final Long department) {
+    
+    @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getCreatedByDepartment(
+            @RequestParam("department") final Long department)
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<User> users = lineEstimateService.getLineEstimateCreatedByUsersForCancelLineEstimateByDepartment(department);
-        return users;
+        final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
+        return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
+        }.getType());
     }
 
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

@@ -45,6 +45,8 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Functionary;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +59,9 @@ public class LegalCaseUtil {
 
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
+    
+    @Autowired
+    private  CityService cityService;
 
     public Functionary getFunctionaryByCode(final String[] funcString) {
         final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
@@ -70,4 +75,7 @@ public class LegalCaseUtil {
         return status;
     }
 
+    public String getCityCode() {
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
+    }
 }

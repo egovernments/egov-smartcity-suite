@@ -441,9 +441,10 @@ public class PropertyService {
                                 "from StructureClassification sc where sc.id = ?",
                                 floor.getStructureClassification().getId());
 
-                    if (floor.getOccupancyDate() != null)
-                        floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getOccupancyDate()));
-
+                    if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null){
+                    	floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getConstructionDate(), floor.getOccupancyDate()));
+                    }
+                    
                     LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
                             + ", StructureClass: " + structureClass);
 
@@ -2673,12 +2674,6 @@ public class PropertyService {
         }
     }
     
-    public void updateAssessmentSeq() {
-        String maxAssessmentno = (String) propPerServ.getSession().createSQLQuery("select right(max(propertyid),6) from egpt_basic_property ").uniqueResult();
-        Integer nextVal = Integer.parseInt(maxAssessmentno);
-        String query = (String) propPerServ.getSession().createSQLQuery("SELECT setval('seq_egpt_assessment_number'," + nextVal + ")").uniqueResult().toString();
-    }
-
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
@@ -3049,8 +3044,8 @@ public class PropertyService {
 	                        structureClass = (StructureClassification) getPropPerServ().find(
 	                                "from StructureClassification sc where sc.id = ?",
 	                                floorProxy.getStructureClassification().getId());
-	                    if (floorProxy.getOccupancyDate() != null)
-	                    	savedFloor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floorProxy.getOccupancyDate()));
+	                    if (floorProxy.getOccupancyDate() != null && floorProxy.getConstructionDate() != null)
+	                    	savedFloor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floorProxy.getConstructionDate(),floorProxy.getOccupancyDate()));
 	                    
 	                    if (unitType != null
 	                            && unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT))

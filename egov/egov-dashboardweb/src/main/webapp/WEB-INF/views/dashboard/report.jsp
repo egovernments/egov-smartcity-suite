@@ -38,10 +38,7 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #------------------------------------------------------------------------------- -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-		<body class="page-body">
-		<div class="page-container" id="page-container">
+
 			<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
 				
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -50,8 +47,7 @@
 							<a class="navbar-brand" href="javascript:void(0);">
 								<!-- <img src="egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60"> -->
 								<div>
-									
-									<span class="title2">ERP Reports</span>
+									<span class="title2" id="header-text" data-append-text="ERP Reports">ERP Reports</span>
 								</div>
 							</a>
 						</div>
@@ -103,12 +99,12 @@
 			        				Grievance Redressal
 			        			</div>
 							  	<div class="panel-body">
-							  		<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
-			                        <li class="report-li"><a href="/pgr/report/complaintTypeReport" class="open-popup" data-strwindname="Grievance Type Wise Report">Grievance Type Wise Report</a></li>
-			                        <li class="report-li"><a href="/pgr/report/ageingReportByDept" class="open-popup" data-strwindname="Ageing Report - Department wise">Ageing Report - Department wise</a></li>
-			                        <li class="report-li hide"><a href="/pgr/report/ageingReportByBoundary" class="open-popup" data-strwindname="Ageing Report - Boundary wise">Ageing Report - Boundary wise</a></li>
-			                        <li class="report-li hide"><a href="/pgr/report/drillDownReportByBoundary" class="open-popup" data-strwindname="Status Drill Down Report - Department wise">Status Drill Down Report - Department wise</a></li>
-			                        <li class="report-li hide"><a href="/pgr/report/drillDownReportByDept" class="open-popup" data-strwindname="Status Drill Down Report - Boundary wise">Status Drill Down Report - Boundary wise</a></li>
+							  		<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+			                        <li class="report-li"><a href="/pgr/public/report/complaintTypeReport" class="open-popup">Grievance Type Wise Report</a></li>
+			                        <li class="report-li"><a href="/pgr/public/report/ageingReportByDept" class="open-popup">Ageing Report - Department wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/public/report/ageingReportByBoundary" class="open-popup">Ageing Report - Boundary wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/public/report/drillDownReportByDept" class="open-popup">Status Drill Down Report - Department wise</a></li>
+			                        <li class="report-li hide"><a href="/pgr/public/report/drillDownReportByBoundary" class="open-popup">Status Drill Down Report - Boundary wise</a></li>
 							 	</div>
 							</div>
 						</div>
@@ -119,13 +115,17 @@
        		        				Property Tax
        		        			</div>
 								<div class="panel-body">
-									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
-									<li class="report-li"><a href="/ptis/reports/collectionSummaryReport-wardWise.action" class="open-popup" data-strwindname="Revenue zone wise collection report">Revenue zone wise collection report</a></li>
-				                    <li class="report-li"><a href="/ptis/reports/defaultersReport-search.action#no-back-button" class="open-popup" data-strwindname="Defaulters Report">Defaulters Report</a></li>
-				                    <li class="report-li hide"><a href="/ptis/reports/dCBReport-search.action#no-back-button" class="open-popup" data-strwindname="DCB Report">DCB Report</a></li>
-				                    <li class="report-li hide"><a href="/ptis/report/baseRegister" class="open-popup" data-strwindname="Base Register">Base Register</a></li>
-				                    <li class="report-li hide"><a href="/ptis/report/dailyCollection" class="open-popup" data-strwindname="Daily collection report">Daily collection report</a></li>
-				                    <li class="report-li hide"><a href="/ptis/reports/arrearRegisterReport-index.action#no-back-button" class="open-popup" data-strwindname="Arrear Register report">Arrear Register report</a></li>
+									<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/ptis/reports/collectionSummaryReport-wardWise.action" class="open-popup">Revenue ward wise collection report</a></li>
+				                    <li class="report-li"><a href="/ptis/reports/collectionSummaryReport-localityWise.action" class="open-popup">Locality wise collection report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/collectionSummaryReport-zoneWise.action" class="open-popup">Zone wise collection report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/collectionSummaryReport-blockWise.action#no-back-button" class="open-popup">Block wise collection report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/defaultersReport-search.action#no-back-button" class="open-popup">Defaulters Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/dCBReport-search.action#no-back-button" class="open-popup">DCB Report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/baseRegister" class="open-popup">Base Register<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/dailyCollection" class="open-popup">Daily collection report</a></li>
+				                    <li class="report-li hide"><a href="/ptis/reports/arrearRegisterReport-index.action#no-back-button" class="open-popup">Arrear Register report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/ptis/report/currentInstDCB" class="open-popup">Current installment DCB report</a></li>
 								</div>
       						</div>
 				        </div>
@@ -136,13 +136,13 @@
        		        				Water Charge Management
        		        			</div>
 								<div class="panel-body">
-									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
-									<li class="report-li"><a href="/wtms/reports/dCBReport/wardWise" class="open-popup" data-strwindname="DCB Report revenue ward wise">DCB Report revenue ward wise</a></li>
-				                    <li class="report-li"><a href="/wtms/report/defaultersWTReport/search" class="open-popup" data-strwindname="Defaulters Report">Defaulters Report</a></li>
-				                    <li class="report-li hide"><a href="/wtms/report/dailyWTCollectionReport/search/" class="open-popup" data-strwindname="Daily collection report">Daily collection report</a></li>
-				                    <li class="report-li hide"><a href="/wtms/reports/dCBReport/localityWise" class="open-popup" data-strwindname="DCB Report locality wise">DCB Report locality wise</a></li>
-				                    <li class="report-li hide"><a href="/wtms/reports/coonectionReport/wardWise" class="open-popup" data-strwindname="Number of connections">Number of connections</a></li>
-				                    <li class="report-li hide"><a href="/wtms/report/baseRegister" class="open-popup" data-strwindname="Base Register report">Base Register report</a></li>
+									<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/wtms/reports/dCBReport/wardWise" class="open-popup">DCB Report revenue ward wise<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li"><a href="/wtms/report/defaultersWTReport/search" class="open-popup">Defaulters Report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/wtms/report/dailyWTCollectionReport/search" class="open-popup">Daily collection report</a></li>
+				                    <li class="report-li hide"><a href="/wtms/reports/dCBReport/localityWise" class="open-popup">DCB Report locality wise</a></li>
+				                    <li class="report-li hide"><a href="/wtms/reports/coonectionReport/wardWise" class="open-popup">Number of connections</a></li>
+				                    <li class="report-li hide"><a href="/wtms/report/baseRegister" class="open-popup">Base Register report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 								</div>
        						</div>
 				        </div>
@@ -155,10 +155,10 @@
 					   				Collection
 					   			</div>
 								<div class="panel-body">
-									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
-									<li class="report-li"><a href="/collection/reports/collectionSummary-criteria.action#no-back-button" class="open-popup" data-strwindname="Collection summary report">Collection summary report</a></li>
-				                    <li class="report-li"><a href="/collection/reports/remittanceVoucherReport-criteria.action#no-back-button" class="open-popup" data-strwindname="Remittance voucher report">Remittance voucher report</a></li>
-				                    <li class="report-li hide"><a href="/collection/reports/receiptRegisterReport-criteria.action#no-back-button" class="open-popup" data-strwindname="Receipt register report">Receipt register report</a></li>
+									<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/collection/reports/collectionSummary-criteria.action#no-back-button" class="open-popup">Collection summary report</a></li>
+				                    <li class="report-li"><a href="/collection/reports/remittanceVoucherReport-criteria.action#no-back-button" class="open-popup">Remittance voucher report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
+				                    <li class="report-li hide"><a href="/collection/reports/receiptRegisterReport-criteria.action#no-back-button" class="open-popup">Receipt register report<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 								</div>
 							</div>
 				        </div>
@@ -169,10 +169,10 @@
      		        				Works Management
      		        			</div>
 								<div class="panel-body">
-									<span><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
-									<li class="report-li"><a href="/egworks/reports/workprogressregister/searchform" class="open-popup" data-strwindname="Work Progress Register">Work Progress Register</a></li>
-				                    <li class="report-li"><a href="/egworks/reports/estimateabstractreport/departmentwise-searchform" class="open-popup" data-strwindname="Estimate abstract by department">Estimate abstract by department</a></li>
-				                    <li class="report-li hide"><a href="/egworks/reports/estimateabstractreport/typeofworkwise-searchform" class="open-popup" data-strwindname="Estimate abstract by type of work">Estimate abstract by type of work</a></li>
+									<span class="more"><a href="javascript:void(0)" class="accordion" data-collapse="more">More <i class="fa fa-angle-down" aria-hidden="true"></i></a></span>
+									<li class="report-li"><a href="/egworks/reports/workprogressregister/searchform" class="open-popup">Work Progress Register</a></li>
+				                    <li class="report-li"><a href="/egworks/reports/estimateabstractreport/departmentwise-searchform" class="open-popup">Estimate abstract by department</a></li>
+				                    <li class="report-li hide"><a href="/egworks/reports/estimateabstractreport/typeofworkwise-searchform" class="open-popup">Estimate abstract by type of work</a></li>
 								</div>
      						</div>
 				        </div>
@@ -183,8 +183,8 @@
        		        				Advertisement Tax
        		        			</div>
 								<div class="panel-body">
-									<li class="report-li"><a href="/adtax/reports/search-for-dcbreport" class="open-popup" data-strwindname="Advertisement Collection Report">Advertisement Collection Report</a></li>
-				                    <li class="report-li"><a href="/adtax/reports/search-dcbreport" class="open-popup" data-strwindname="Agency wise Collection Report">Agency wise Collection Report</a></li>
+									<li class="report-li"><a href="/adtax/reports/search-for-dcbreport" class="open-popup">Advertisement Collection Report</a></li>
+				                    <li class="report-li"><a href="/adtax/reports/search-dcbreport" class="open-popup">Agency wise Collection Report</a></li>
 								</div>
        						</div>
 				        </div>
@@ -197,8 +197,8 @@
        		        				Trade License
        		        			</div>
 								<div class="panel-body">
-									<li class="report-li"><a href="/tl/tlreports/dCBReport/licenseNumberWise#no-back" class="open-popup" data-strwindname="DCB Report by Trade">DCB Report by Trade</a></li>
-				                    <li class="report-li"><a href="/tl/search/searchTrade-newForm.action#no-back" class="open-popup" data-strwindname="View/Search Trade licenses">View/Search Trade licenses</a></li>
+									<li class="report-li"><a href="/tl/public/report/dCBReport/licenseNumberWise#no-back" class="open-popup">DCB Report by Trade</a></li>
+				                    <li class="report-li"><a href="/tl/search/searchTrade-newForm.action#no-back" class="open-popup">View/Search Trade licenses<span class="lock"> <i class="fa fa-lock"></i></span></a></li>
 								</div>
        						</div>
 				        </div>
@@ -207,7 +207,6 @@
 				</div>
 
 			</div>
-		</div>
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
@@ -217,8 +216,6 @@
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/js/report.js' />"></script>
 		
-		</body>
-</html>
 
 
 

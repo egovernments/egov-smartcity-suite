@@ -49,7 +49,8 @@
 		<th class="bluebgheadtd"><s:text name="firmName" /><span	class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupancy" /><span class="mandatory1" id="occMdtry">*</span></th>
 		<th class="bluebgheadtd"><s:text name="Occupantname" /></th>
-		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span></th>
+		<th class="bluebgheadtd"><s:text name="constrdate" /><span	class="mandatory1">*</span> </th>
+		<th class="bluebgheadtd"><s:text name="effectiveDate" /><span	class="mandatory1">*</span></th>
 		
 		<th class="bluebgheadtd"><s:text name="unstructuredLand" /><span class="mandatory1">*</span></th>
 		<th class="bluebgheadtd"><s:text name="plinthLength" /></th>
@@ -58,7 +59,7 @@
 		<th class="bluebgheadtd"><s:text name="building.permNo" />
 		<th class="bluebgheadtd"><s:text name="buildingpermdate" />
 		<th class="bluebgheadtd"><s:text name="buildingpermplintharea" />
-
+		
 		<th class="bluebgheadtd freeze-action-th"><s:text name="Add/Delete" /></th>
 	</tr>
 	<s:if test="propertyDetail.floorDetailsProxy.size()==0">
@@ -126,6 +127,16 @@
 						id="occupantName" size="20"
 						value="%{propertyDetail.floorDetailsProxy[0].occupantName}"
 						maxlength="32" cssStyle="width:100%" title="Name of the occupied by person"/>
+				</div>
+			</td>
+			
+			<td class="blueborderfortd" style="padding: 2px 2px">
+				<div align="center">
+					<s:date name="propertyDetail.floorDetailsProxy[0].constructionDate" var="constrDate" format="dd/MM/yyyy"/>
+					<s:textfield autocomplete="off"
+						name="propertyDetail.floorDetailsProxy[0].constructionDate" data-optional="0" 
+						id="propertyDetail.floorDetailsProxy[0].constructionDate" value="%{constrDate}" size="10"
+						maxlength="10" cssStyle="width:100%" cssClass="datepicker" title="Construction Date"></s:textfield>
 				</div>
 			</td>
 
@@ -299,6 +310,17 @@
  
  				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
+						<s:date name="propertyDetail.floorDetailsProxy[#floorsstatus.index].constructionDate" var="constrDate" format="dd/MM/yyyy"/>
+						<s:textfield autocomplete="off"
+							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].constructionDate" 
+							value="%{constrDate}"
+							id="propertyDetail.floorDetailsProxy[%#floorsstatus.index].constructionDate" size="10"
+							maxlength="10" cssStyle="width:100%" cssClass="datepicker"  title="Construction Date"></s:textfield>
+					</div>
+				</td>
+			
+ 				<td class="blueborderfortd" style="padding: 2px 2px">
+					<div align="center">
 						<s:date name="propertyDetail.floorDetailsProxy[#floorsstatus.index].occupancyDate" var="occDate" format="dd/MM/yyyy"/>
 						<s:textfield autocomplete="off"
 							name="propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].occupancyDate" 
@@ -374,7 +396,7 @@
 						cssStyle="width:100%" title="Plinth area in building plan"/>
 				</div>
 			</td>
-				
+			
 				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
 			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">

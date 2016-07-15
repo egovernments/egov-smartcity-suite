@@ -82,7 +82,7 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "legalcase")
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @Length(max = 128, message = "petitionerName.length")
     @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
     private String name;
@@ -91,13 +91,13 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
     @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
     private Long contactNumber;
     @Column(name = "isrespondent")
-    private Boolean isrepondent = false;
+    private Boolean isRepondent = false;
     @ManyToOne
     @Valid
     @JoinColumn(name = "respondentgovtdept")
     private GovernmentDepartment governmentDepartment;
     @Column(name = "isrespondentgovernment", nullable = false)
-    private Boolean isrespondentgovernment = false;
+    private Boolean isRespondentGovernment = false;
     @Column(name = "serialnumber")
     private Long serialNumber;
 
@@ -107,30 +107,6 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
 
     public void setGovernmentDepartment(final GovernmentDepartment governmentDepartment) {
         this.governmentDepartment = governmentDepartment;
-    }
-
-    public boolean getIsrespondentgovernment() {
-        return isrespondentgovernment;
-    }
-
-    public void setIsrespondentgovernment(final boolean isrespondentgovernment) {
-        this.isrespondentgovernment = isrespondentgovernment;
-    }
-
-    public boolean getIsrepondent() {
-        return isrepondent;
-    }
-
-    public void setIsrepondent(final boolean isrepondent) {
-        this.isrepondent = isrepondent;
-    }
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
     }
 
     public String getName() {
@@ -169,15 +145,15 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsrespondentgovernment() && getGovernmentDepartment() == null)
-            if (getIsrepondent())
+        if (getIsRespondentGovernment() && getGovernmentDepartment() == null)
+            if (getIsRepondent())
                 errors.add(new ValidationError("govtDept", "respondent.govtDept.select"));
             else
                 errors.add(new ValidationError("govtDept", "petitioner.govtDept.select"));
-        if (!getIsrespondentgovernment()) {
-            if (getIsrepondent() && StringUtils.isBlank(getName()))
+        if (!getIsRespondentGovernment()) {
+            if (getIsRepondent() && StringUtils.isBlank(getName()))
                 errors.add(new ValidationError("respondent", "respondentName.null"));
-            if (!getIsrepondent() && StringUtils.isBlank(getName()))
+            if (!getIsRepondent() && StringUtils.isBlank(getName()))
                 errors.add(new ValidationError("petitioner", "petitionerName.null"));
         }
         return errors;
@@ -189,6 +165,30 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
 
     public void setSerialNumber(final Long serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
+    }
+
+    public Boolean getIsRepondent() {
+        return isRepondent;
+    }
+
+    public void setIsRepondent(final Boolean isRepondent) {
+        this.isRepondent = isRepondent;
+    }
+
+    public Boolean getIsRespondentGovernment() {
+        return isRespondentGovernment;
+    }
+
+    public void setIsRespondentGovernment(final Boolean isRespondentGovernment) {
+        this.isRespondentGovernment = isRespondentGovernment;
     }
 
 }

@@ -131,5 +131,6 @@
 			class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" property-ref="floor"
 			cascade="none" />
 		<property name="floorUid" column="FLOOR_UID" type="java.lang.Integer"/>
+		<property name="constructionDate" column="constructiondate" type="java.util.Date"/>
 	</class>
 </hibernate-mapping>

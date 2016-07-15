@@ -86,10 +86,10 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final CouncilMember councilMember,
-            @RequestParam final MultipartFile attachments, final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors()) {
+    public String create(@Valid @ModelAttribute final CouncilMember councilMember,final BindingResult errors,
+            @RequestParam final MultipartFile attachments,final Model model,
+            final RedirectAttributes redirectAttrs){
+    	if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEMBER_NEW;
         }
@@ -108,8 +108,7 @@ public class CouncilMemberController {
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMember.success", null, null));
         return "redirect:/councilmember/result/" + councilMember.getId();
     }
-
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+   @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilMember councilMember = councilMemberService.findOne(id);

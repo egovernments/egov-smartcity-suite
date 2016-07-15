@@ -62,47 +62,34 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
 
-/**
- * Pwr entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_PWR")
-@SequenceGenerator(name = Pwr.SEQ_EGLC_1PWR, sequenceName = Pwr.SEQ_EGLC_1PWR, allocationSize = 1)
+@SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
 public class Pwr extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
-    public static final String SEQ_EGLC_1PWR = "seq_eglc_pwr";
+    public static final String SEQ_EGLC_PWR = "seq_eglc_pwr";
 
     @Id
-    @GeneratedValue(generator = SEQ_EGLC_1PWR, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGLC_PWR, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "LEGALCASE", nullable = false)
-    private Legalcase legalcase;
+    private LegalCase legalCase;
     @Transient
     private String uploadPwr;
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
-    @Column(name="cafilingdate")
+    @Column(name = "cafilingdate")
     private Date caFilingdate;
     @Transient
     private String uploadCa;
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
-    @Column(name="caduedate")
+    @Column(name = "caduedate")
     private Date caDueDate;
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
-    @Column(name="pwrduedate")
+    @Column(name = "pwrduedate")
     private Date pwrDueDate;
-
-    public Legalcase getLegalcase() {
-        return legalcase;
-    }
-
-    public void setLegalcase(final Legalcase legalcase) {
-        this.legalcase = legalcase;
-    }
 
     public String getUploadPwr() {
         return uploadPwr;
@@ -112,13 +99,11 @@ public class Pwr extends AbstractPersistable<Long> {
         this.uploadPwr = uploadPwr;
     }
 
-  
-
     public Date getCaFilingdate() {
         return caFilingdate;
     }
 
-    public void setCaFilingdate(Date caFilingdate) {
+    public void setCaFilingdate(final Date caFilingdate) {
         this.caFilingdate = caFilingdate;
     }
 
@@ -150,11 +135,11 @@ public class Pwr extends AbstractPersistable<Long> {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!DateUtils.compareDates(getCaDueDate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getCaDueDate(), legalCase.getCasedate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.less.casedate"));
-        if (!DateUtils.compareDates(getCaFilingdate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getCaFilingdate(), legalCase.getCasedate()))
             errors.add(new ValidationError("caFilingDate", "caFilingDate.less.casedate"));
-        if (!DateUtils.compareDates(getPwrDueDate(), legalcase.getCasedate()))
+        if (!DateUtils.compareDates(getPwrDueDate(), legalCase.getCasedate()))
             errors.add(new ValidationError("pwrDueDate", "pwrDueDate.less.casedate"));
         if (!DateUtils.compareDates(getCaDueDate(), getPwrDueDate()))
             errors.add(new ValidationError("caDueDate", "caDueDate.greaterThan.pwrDueDate"));
@@ -167,6 +152,14 @@ public class Pwr extends AbstractPersistable<Long> {
 
     public void setPwrDueDate(final Date pwrDueDate) {
         this.pwrDueDate = pwrDueDate;
+    }
+
+    public LegalCase getLegalCase() {
+        return legalCase;
+    }
+
+    public void setLegalCase(final LegalCase legalCase) {
+        this.legalCase = legalCase;
     }
 
 }

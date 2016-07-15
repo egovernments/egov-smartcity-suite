@@ -66,4 +66,4 @@
 				</table>
 			</div>
 		</form:form>  
-<script src="<c:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script
+<script src="<c:url value='/resources/js/lineestimate/spillover/spillover.js?rnd=${app_release_no}'/>"></script>

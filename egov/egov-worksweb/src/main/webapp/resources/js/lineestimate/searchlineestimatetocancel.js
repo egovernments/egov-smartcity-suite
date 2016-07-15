@@ -203,18 +203,20 @@ $('#departments').change(function(){
 		   $('#createdBy').append($('<option>').text('Select from below').attr('value', ''));
 			return;
 			} else {
-				$.ajax({
-					type: "GET",
-					url: "/egworks/lineestimate/ajaxsearchcreatedby",
-					cache: true,
-					data:{'department' : $('#departments').val()}
-				}).done(function(value) {
-					console.log(value);
-					$('#createdBy').empty();
-					$('#createdBy').append($("<option value=''>Select from below</option>"));
-					$.each(value, function(index, val) {
-					     $('#createdBy').append($('<option>').text(val.name).attr('value', val.id));
-					});
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/ajaxsearchcreatedby",
+				cache: true,
+				dataType: "json",
+				data:{'department' : $('#departments').val()}
+			}).done(function(value) {
+				console.log(value);
+				$('#createdBy').empty();
+				$('#createdBy').append($("<option value=''>Select from below</option>"));
+				var responseObj = JSON.parse(value);
+				$.each(responseObj, function(index, value) {
+					$('#createdBy').append($('<option>').text(value.name).attr('value', value.id));
 				});
-		}
-	});
+		});
+	}
+});

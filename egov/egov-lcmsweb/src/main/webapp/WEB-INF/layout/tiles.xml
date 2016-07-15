@@ -287,6 +287,37 @@
 	<put-attribute name="body" value="/WEB-INF/views/search/search-legalCaseForm.jsp"/>
 </definition>
 
+<definition name="judgment-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-new.jsp"/>
+</definition>
+
+<definition name="judgment-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-view.jsp"/>
+</definition>
+
+<definition name="judgment-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-edit.jsp"/>
+</definition>
+
+<definition name="judgment-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-result.jsp"/>
+</definition>
+
+<definition name="judgment-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-search.jsp"/>
+</definition>
+
+<definition name="judgment-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgment.success" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-success.jsp"/>
+</definition>
+
+
 
 
 </tiles-definitions>

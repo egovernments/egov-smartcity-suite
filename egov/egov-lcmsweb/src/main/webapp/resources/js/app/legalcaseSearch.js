@@ -43,6 +43,7 @@ jQuery(document).ready(
 		function($) {
 
 			tableContainer = $('#legalCaseResults');
+			var judgment = $('#judgment').val();
 			document.onkeydown = function(evt) {
 				var keyCode = evt ? (evt.which ? evt.which : evt.keyCode)
 						: event.keyCode;
@@ -59,15 +60,23 @@ function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
+	
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
+	var isCancelled	=jQuery('#isStatusExcluded').is(":checked");
 	reportdatatable = tableContainer
 			.dataTable({
 				ajax : {
 					url : "/lcms/search/legalsearchResult",
 					data : {
 						'caseNumber' : caseNumber,
-						'lcNumber' : lcNumber
+						'lcNumber' : lcNumber,
+						'court':$("#courtName").val(),
+						'caseType' :$("#caseCatogory").val(),
+						'standingCouncil':$("#standingCouncil").val(),
+						'courtType' :$("#courtType").val(),
+						'isStatusExcluded' :isCancelled
+						
 					}
 				},
 				"sPaginationType" : "bootstrap",
@@ -81,13 +90,49 @@ function submitForm() {
 				},
 				columns : [
 						{
-							"data" : "casenumber",
-
-							"sTitle" : "Case Number"
-						},
-						{
 							"data" : "legalcaseno",
 							"sTitle" : "Legal Case Number",
+							"className" : "text-right"
+						},
+						{
+							"data" : "casenumber",
+							"sTitle" : "Case Number",
+								"className" : "text-right"
+						},
+						
+						{
+							"data" : "casetitle",
+							"sTitle" : "Case Title",
+							"className" : "text-right"
+						},
+						{
+							"data" : "courtname",
+							"sTitle" : "Court",
+							"className" : "text-right"
+						},
+						/*{
+							"data" : "petitioners",
+							"sTitle" : "Petitioners",
+							"className" : "text-right"
+						},
+						{
+							"data" : "petitioners",
+							"sTitle" : "Respondants",
+							"className" : "text-right"
+						},*/
+						{
+							"data" : "department",
+							"sTitle" : "Departments",
+							"className" : "text-right"
+						},
+						{
+							"data" : "standingcouncil",
+							"sTitle" : "Standing Council",
+							"className" : "text-right"
+						},
+						{
+							"data" : "casestatus",
+							"sTitle" : "Case Status",
 							"className" : "text-right"
 						},
 						{
@@ -95,19 +140,10 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 
-								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Create Hearing</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
 							}
-						} /*
-							 * , { "data" : "casenumber2", "sTitle" : "case2",
-							 * "className": "text-right" }, { "data" :
-							 * "legalcaseno1", "sTitle" : "Legal1", "className":
-							 * "text-right"
-							 * 
-							 * },{ "data" : "legalcaseno2", "sTitle" : "legal2",
-							 * "className": "text-right" }, { "data" : "total",
-							 * "sTitle" : "Total", "className": "text-right"
-							 *  }
-							 */],
+						} 
+						],
 				"footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
@@ -121,3 +157,24 @@ function submitForm() {
 			});
 	$('.loader-class').modal('hide');
 }
+
+$("#legalCaseResults").on('change','tbody tr td .dropchange',
+		function() {
+		var lcNumber = tableContainer.fnGetData($(this).parent().parent(), 0);
+		if (this.value == 1) {
+			var url = '/lcms/judgment/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		alert(this.value);
+		if (this.value == 2) {
+			var url = '/lcms/standingCouncil/create/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		});
+		

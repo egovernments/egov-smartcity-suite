@@ -179,7 +179,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private String reportId;
     private boolean approved;
-    private boolean updateUpicNo;
 
     private BasicProperty basicProp;
     @Autowired
@@ -775,7 +774,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
              * propertyTaxUtil.getCurrentInstallment());
              */
         }
-
         LOGGER.debug("Exiting from prepare");
     }
 
@@ -1189,13 +1187,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         if (upicNo == null || upicNo.equals("")) {
             addActionError(getText("mandatory.indexNumber"));
             return "dataEntry";
-        } else {
-            String cityCode = (String) request.getSession().getAttribute("cityCode");
-            if (!cityCode.equals(upicNo.substring(0, 4))) {
-                addActionError(getText("assessmentno.incorrect"));
-                return "dataEntry";
-            }
-        }
+        } 
+        
         propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(
                 "from PropertyTypeMaster ptm where ptm.id = ?", Long.valueOf(propTypeId));
 
@@ -1207,11 +1200,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final BasicProperty basicProperty = createBasicProp(PropertyTaxConstants.STATUS_ISACTIVE);
         basicProperty.setUnderWorkflow(false);
         basicProperty.setSource(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY);
-        if (updateUpicNo) {
-            basicProperty.setOldMuncipalNum(upicNo);
-            basicProperty.setUpicNo(propertyTaxNumberGenerator.generateAssessmentNumber());
-        } else
-            basicProperty.setUpicNo(upicNo);
+        basicProperty.setOldMuncipalNum(upicNo);
+        basicProperty.setUpicNo(propertyTaxNumberGenerator.generateAssessmentNumber());
+       
         try {
             addDemandAndCompleteDate(PropertyTaxConstants.STATUS_ISACTIVE, basicProperty,
                     basicProperty.getPropertyMutationMaster());
@@ -1233,7 +1224,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         setAckMessage("Property data entry saved in the system successfully and created with Assessment No "
                 + basicProperty.getUpicNo());
         // setApplicationNoMessage(" with application number : ");
-        propService.updateAssessmentSeq();
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.info("create: Property created successfully in system" + "; Time taken(ms) = " + elapsedTimeMillis);
@@ -1749,14 +1739,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     public void setPropertyTaxDetailsMap(Map<String, BigDecimal> propertyTaxDetailsMap) {
         this.propertyTaxDetailsMap = propertyTaxDetailsMap;
-    }
-
-    public boolean isUpdateUpicNo() {
-        return updateUpicNo;
-    }
-
-    public void setUpdateUpicNo(boolean updateUpicNo) {
-        this.updateUpicNo = updateUpicNo;
     }
 
     public String getIndexNumber() {

@@ -82,39 +82,23 @@ public class Contempt extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "JUDGMENTIMPL")
-    private Judgmentimpl judgmentimpl;
+    private JudgmentImpl judgmentImpl;
     @Required(message = "canumber.null")
     @Length(max = 50, message = "canumber.length")
     @OptionalPattern(regex = LcmsConstants.alphaNumeric, message = "canumber.alpha")
     private String caNumber;
     @Required(message = "receivingdate.null")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
-    private Date receivingdate;
+    private Date receivingDate;
     private boolean iscommapprRequired = false;
     private Date commappDate;
 
-    public Judgmentimpl getJudgmentimpl() {
-        return judgmentimpl;
+    public JudgmentImpl getJudgmentImpl() {
+        return judgmentImpl;
     }
 
-    public void setJudgmentimpl(final Judgmentimpl judgmentimpl) {
-        this.judgmentimpl = judgmentimpl;
-    }
-
-    public String getCanumber() {
-        return caNumber;
-    }
-
-    public void setCanumber(final String canumber) {
-        caNumber = canumber;
-    }
-
-    public Date getReceivingdate() {
-        return receivingdate;
-    }
-
-    public void setReceivingdate(final Date receivingdate) {
-        this.receivingdate = receivingdate;
+    public void setJudgmentImpl(final JudgmentImpl judgmentImpl) {
+        this.judgmentImpl = judgmentImpl;
     }
 
     public boolean getIscommapprRequired() {
@@ -145,13 +129,29 @@ public class Contempt extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getReceivingdate() != null) {
-            if (!DateUtils.compareDates(getReceivingdate(), getJudgmentimpl().getJudgment().getOrderDate()))
+        if (getReceivingDate() != null) {
+            if (!DateUtils.compareDates(getReceivingDate(), getJudgmentImpl().getJudgment().getOrderDate()))
                 errors.add(new ValidationError("receivingDate", "receivingDate.less.orderDate"));
-            if (!DateUtils.compareDates(getCommappDate(), getReceivingdate()))
+            if (!DateUtils.compareDates(getCommappDate(), getReceivingDate()))
                 errors.add(new ValidationError("receivingDate", "commappDate.greaterThan.receivingDate"));
         }
         return errors;
+    }
+
+    public String getCaNumber() {
+        return caNumber;
+    }
+
+    public void setCaNumber(final String caNumber) {
+        this.caNumber = caNumber;
+    }
+
+    public Date getReceivingDate() {
+        return receivingDate;
+    }
+
+    public void setReceivingDate(final Date receivingDate) {
+        this.receivingDate = receivingDate;
     }
 
 }

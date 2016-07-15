@@ -57,14 +57,14 @@
 	<tbody>
 		<tr class="">
 			<td class="text-center"><form:checkbox
-					path="legalcaseDepartment[0].isPrimaryDepartment"
-					name="legalcaseDepartment[0].isPrimaryDepartment"
-					id="legalcaseDepartment[0].isPrimaryDepartment" /></td>
+					path="legalCaseDepartment[0].isPrimaryDepartment"
+					name="legalCaseDepartment[0].isPrimaryDepartment"
+					id="legalCaseDepartment[0].isPrimaryDepartment" /></td>
 			<td class="text-center"><form:input id="departmentName"
 					type="text" class="form-control " autocomplete="off"
-					path="legalcaseDepartment[0].department.name"
-					name="legalcaseDepartment[0].department.name"
-					value="${legalcaseDepartment[0].department.name}"
+					path="legalCaseDepartment[0].department.name"
+					name="legalCaseDepartment[0].department.name"
+					value="${legalCaseDepartment[0].department.name}"
 					placeholder="Department" /> <input type="hidden" id="departmentId"
 				value="" /> <c:forEach items="${departments}" var="department">
 					<a onclick="setDepartmentId(<c:out value="${department.id}"/>)"
@@ -74,9 +74,9 @@
 				</c:forEach></td>
 			<td class="text-right"><form:input id="positionName" type="text"
 					class="form-control " autocomplete="off"
-					path="legalcaseDepartment[0].position.name"
-					name="legalcase.legalcaseDepartment[0].position.name"
-					value="${legalcase.legalcaseDepartment[0].position.name}"
+					path="legalCaseDepartment[0].position.name"
+					name="legalcase.legalCaseDepartment[0].position.name"
+					value="${legalcase.legalCaseDepartment[0].position.name}"
 					placeholder="" /> <input type="hidden" id="positionId" value="" />
 				<c:forEach items="${departments}" var="position">
 					<a onclick="setPositionId(<c:out value="${position.id}"/>)"
@@ -85,10 +85,10 @@
 							value="${position.name }" /> </a>
 				</c:forEach></td>
 			<td class="text-right"><form:input type="text"
-					name="legalcaseDepartment[0].dateofreceiptofpwr"
-					path="legalcaseDepartment[0].dateofreceiptofpwr"
+					name="legalCaseDepartment[0].dateofreceiptofpwr"
+					path="legalCaseDepartment[0].dateofreceiptofpwr"
 					class="form-control datepicker" data-date-end-date="0d"
-					id="legalcaseDepartment[0].dateofreceiptofpwr"
+					id="legalCaseDepartment[0].dateofreceiptofpwr"
 					data-inputmask="'mask': 'd/m/y'" /></td>
 			<td class="text-center"><span style="cursor: pointer;"
 				id="addRowId"><i class="fa fa-plus"></i></span></td>

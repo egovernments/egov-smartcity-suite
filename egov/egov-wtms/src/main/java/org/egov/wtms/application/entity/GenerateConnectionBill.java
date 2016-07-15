@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.util.Date;
+
 public class GenerateConnectionBill {
 
     private String zone;
@@ -52,7 +54,7 @@ public class GenerateConnectionBill {
     private String revenueWard;
     private String houseNumber;
     private String billNo;
-    private String billDate;
+    private Date billDate;
     private String locality;
 
     public String getLocality() {
@@ -143,11 +145,11 @@ public class GenerateConnectionBill {
         this.billNo = billNo;
     }
 
-    public String getBillDate() {
+    public Date getBillDate() {
         return billDate;
     }
 
-    public void setBillDate(final String billDate) {
+    public void setBillDate(final Date billDate) {
         this.billDate = billDate;
     }
 

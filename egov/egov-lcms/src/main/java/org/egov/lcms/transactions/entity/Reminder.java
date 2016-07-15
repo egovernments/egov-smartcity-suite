@@ -73,17 +73,17 @@ public class Reminder extends AbstractAuditable {
     @NotNull
     @Valid
     @JoinColumn(name = "LEGALCASEDEPT", nullable = false)
-    private LegalcaseDepartment legalCaseDepartment;
+    private LegalCaseDepartment legalCaseDepartment;
     private String remarks;
     private Date date;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public LegalcaseDepartment getLegalCaseDepartment() {
+    public LegalCaseDepartment getLegalCaseDepartment() {
         return legalCaseDepartment;
     }
 
-    public void setLegalCaseDepartment(final LegalcaseDepartment legalCaseDepartment) {
+    public void setLegalCaseDepartment(final LegalCaseDepartment legalCaseDepartment) {
         this.legalCaseDepartment = legalCaseDepartment;
     }
 
@@ -113,10 +113,10 @@ public class Reminder extends AbstractAuditable {
                 && !getDate().before(legalCaseDepartment.getDateofreceiptofpwr()))
             errors.add(new ValidationError("date", "date.less.receiptOfPwr", getFormattedDate(),
                     sdf.format(legalCaseDepartment.getDateofreceiptofpwr())));
-        else if (legalCaseDepartment != null && legalCaseDepartment.getLegalcase().getCasedate() != null
-                && !getDate().after(legalCaseDepartment.getLegalcase().getCasedate()))
+        else if (legalCaseDepartment != null && legalCaseDepartment.getLegalCase().getCasedate() != null
+                && !getDate().after(legalCaseDepartment.getLegalCase().getCasedate()))
             errors.add(new ValidationError("date", "date.greater.casedate", getFormattedDate(),
-                    sdf.format(legalCaseDepartment.getLegalcase().getCasedate())));
+                    sdf.format(legalCaseDepartment.getLegalCase().getCasedate())));
 
         return errors;
     }

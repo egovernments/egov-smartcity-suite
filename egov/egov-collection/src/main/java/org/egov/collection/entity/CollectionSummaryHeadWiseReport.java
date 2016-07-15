@@ -47,13 +47,13 @@ public class CollectionSummaryHeadWiseReport {
     private String source;
     private String glCode;
     private String cashCount;
-    private BigDecimal cashAmount;
+    private Double cashAmount;
     private String chequeddCount;
-    private BigDecimal chequeddAmount;
+    private Double chequeddAmount;
     private String onlineCount;
-    private BigDecimal onlineAmount;
+    private Double onlineAmount;
     private String totalReceiptCount;
-    private BigDecimal totalAmount;
+    private Double totalAmount;
     private String employeeName;
     private String counterName;
 
@@ -81,11 +81,11 @@ public class CollectionSummaryHeadWiseReport {
         this.cashCount = cashCount;
     }
 
-    public BigDecimal getCashAmount() {
+    public Double getCashAmount() {
         return cashAmount;
     }
 
-    public void setCashAmount(final BigDecimal cashAmount) {
+    public void setCashAmount(final Double cashAmount) {
         this.cashAmount = cashAmount;
     }
 
@@ -97,11 +97,11 @@ public class CollectionSummaryHeadWiseReport {
         this.chequeddCount = chequeddCount;
     }
 
-    public BigDecimal getChequeddAmount() {
+    public Double getChequeddAmount() {
         return chequeddAmount;
     }
 
-    public void setChequeddAmount(final BigDecimal chequeddAmount) {
+    public void setChequeddAmount(final Double chequeddAmount) {
         this.chequeddAmount = chequeddAmount;
     }
 
@@ -113,11 +113,11 @@ public class CollectionSummaryHeadWiseReport {
         this.onlineCount = onlineCount;
     }
 
-    public BigDecimal getOnlineAmount() {
+    public Double getOnlineAmount() {
         return onlineAmount;
     }
 
-    public void setOnlineAmount(final BigDecimal onlineAmount) {
+    public void setOnlineAmount(final Double onlineAmount) {
         this.onlineAmount = onlineAmount;
     }
 
@@ -129,11 +129,11 @@ public class CollectionSummaryHeadWiseReport {
         this.totalReceiptCount = totalReceiptCount;
     }
 
-    public BigDecimal getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(final BigDecimal totalAmount) {
+    public void setTotalAmount(final Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
