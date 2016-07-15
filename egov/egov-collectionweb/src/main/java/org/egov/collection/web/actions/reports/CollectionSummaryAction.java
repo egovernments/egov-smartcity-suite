@@ -42,6 +42,7 @@ package org.egov.collection.web.actions.reports;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -80,16 +81,20 @@ public class CollectionSummaryAction extends ReportFormAction {
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
     private static final String EGOV_SERVICE_NAME = "EGOV_SERVICE_NAME";
     private static final String EGOV_STATUS="EGOV_STATUS";
+    private static final String EGOV_CLASSIFICATION="EGOV_CLASSIFICATION";
     
     private Integer statusId;
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
+    private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
     private CollectionsUtil collectionsUtil;
     @Autowired
     private CollectionReportService reportService;
     @PersistenceContext
     EntityManager entityManager;
+    private String serviceType;
+
     
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -140,6 +145,8 @@ public class CollectionSummaryAction extends ReportFormAction {
         setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("receiptStatuses",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.STATUS_OF_RECEIPTS));
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         return INDEX;
     }
 
@@ -154,7 +161,8 @@ public class CollectionSummaryAction extends ReportFormAction {
             EgwStatus statusObj = (EgwStatus) entityManager.find(EgwStatus.class, getStatusId());
             setStatusName(statusObj.getDescription());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         }
-        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(), getServiceId(),getStatusId()));
+        setClassification(getServiceType());
+        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(), getServiceId(),getStatusId(),getServiceType()));
         return super.report();
     }
 
@@ -267,7 +275,28 @@ public class CollectionSummaryAction extends ReportFormAction {
     public void setStatusName(final String statusName) {
         setReportParam(EGOV_STATUS, statusName);
     }
-
-
     
+    public TreeMap<String, String> getServiceTypeMap() {
+        return serviceTypeMap;
+    }
+
+    public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
+        this.serviceTypeMap = serviceTypeMap;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+    
+    public String getClassification() {
+        return (String) getReportParam(EGOV_CLASSIFICATION);
+    }
+
+    public void setClassification(final String classification) {
+        setReportParam(EGOV_CLASSIFICATION, classification);
+    }
 }

@@ -517,7 +517,7 @@ public class PropertyImpl extends StateAware implements Property {
                     flr.getManualAlv(), flr.getUnitType(), flr.getUnitTypeCategory(), flr.getWaterRate(), flr.getAlv(),
                     flr.getOccupancyDate(), flr.getOccupantName(), flr.getUnstructuredLand(), flr.getFloorDmdCalc(),
                     flr.getFirmName(), flr.getBuildingPermissionNo(), flr.getBuildingPermissionDate(),
-                    flr.getBuildingPlanPlinthArea(), flr.getFloorUid());
+                    flr.getBuildingPlanPlinthArea(), flr.getFloorUid(), flr.getConstructionDate());
             flrDtlsSet.add(floor);
         }
         return flrDtlsSet;

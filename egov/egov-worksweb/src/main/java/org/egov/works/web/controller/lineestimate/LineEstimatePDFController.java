@@ -125,7 +125,7 @@ public class LineEstimatePDFController {
             reportParams.put("function", lineEstimate.getFunction() != null ? lineEstimate.getFunction().getName() : "");
             reportParams.put("account", lineEstimate.getBudgetHead() != null ? lineEstimate.getBudgetHead().getName() : "");
             // reportParams.put("lineEstimateDetails",lineEstimate.getLineEstimateDetails() );
-            reportParams.put("modeOfAllotment", lineEstimate.getModeOfAllotment().toString());
+            reportParams.put("modeOfAllotment", lineEstimate.getModeOfAllotment());
             if (lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString()))
                 reportParams.put("typeOfSlum", "No");
             else

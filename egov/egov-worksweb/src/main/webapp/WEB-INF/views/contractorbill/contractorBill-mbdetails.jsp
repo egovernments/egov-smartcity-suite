@@ -72,4 +72,9 @@
 		<form:errors path="mbHeader.mbDate" cssClass="add-margin error-msg" />
 		<input type="hidden" id="errorMBDate" value="<spring:message code='error.validate.mbdate.lessthan.loadate' />" />
 	</div>
+	<label class="col-sm-2 control-label text-right workcompletion"><spring:message code="lbl.workcompletion.date" /><span class="mandatory"></span></label>
+	<div class="col-sm-3 add-margin workcompletion">
+		<form:input id="workCompletionDate" path="workOrderEstimate.workCompletionDate" class="form-control datepicker" data-date-end-date="0d" required=""/>
+		<form:errors path="workOrderEstimate.workCompletionDate" cssClass="add-margin error-msg" /> 
+	</div>
 </div>

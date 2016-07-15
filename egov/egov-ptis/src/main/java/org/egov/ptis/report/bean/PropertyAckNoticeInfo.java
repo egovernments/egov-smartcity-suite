@@ -105,6 +105,8 @@ public class PropertyAckNoticeInfo {
     private String newOwnerGuardianRelation;
     private String oldOwnerGuardianRelation;
     private String ownerTypeForReport;
+    private String applicationType;
+    private String transferpropertyText;
     
 
 	public String getCreationReason() {
@@ -594,5 +596,23 @@ public class PropertyAckNoticeInfo {
 	public void setOwnerTypeForReport(String ownerTypeForReport) {
 		this.ownerTypeForReport = ownerTypeForReport;
 	}
+
+	public String getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
+	}
+
+	public String getTransferpropertyText() {
+		return transferpropertyText;
+	}
+
+	public void setTransferpropertyText(String transferpropertyText) {
+		this.transferpropertyText = transferpropertyText;
+	}
+	
+	
 	
 }

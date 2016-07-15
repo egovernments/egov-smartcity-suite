@@ -215,13 +215,21 @@ function validate()
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
+	if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
+		dom.get("error_area").style.display="block";
+		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
+		window.scroll(0,0);
+		valSuccess=false;
+		return false;
+	}
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
-		{
+		{ 
 			dom.get("comparedatemessage").style.display="block";
 			window.scroll(0,0);
 			valSuccess= false;
+			return false;
 		}
 	}
 	else
@@ -229,6 +237,7 @@ function validate()
 		dom.get("comparedatemessage").style.display="none";
 		doLoadingMask('#loadingMask');
 		valSuccess= true;
+		return true;
 	}
 	return valSuccess;
 	
@@ -282,9 +291,17 @@ function checkviewforselectedrecord()
 
 }
 
+function onChangeServiceClass(obj)
+{
+    if(obj!=null && obj.value!=null && obj.value!='-1'){
+    	populateserviceType({serviceClass:obj.value});
+    }
+}
+
 </script> 
 </head>
 <body>
+<div class="errorstyle" id="error_area" style="display:none;"></div>
 <span align="center" style="display: none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
@@ -333,10 +350,18 @@ function checkviewforselectedrecord()
 
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
+			<td class="bluebox"> 
+				<s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
+				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select>
+			</td>
+			 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/></td>
 	      <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
+	      
+	      <%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td> --%>
 	    </tr>
 	     <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
@@ -375,7 +400,7 @@ function checkviewforselectedrecord()
 </div>
 <div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>
+      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
       <logic:empty name="results">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>

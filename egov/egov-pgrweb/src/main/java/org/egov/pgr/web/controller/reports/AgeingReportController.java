@@ -66,7 +66,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "/report")
+@RequestMapping(value = {"/report", "/public/report"})
 public class AgeingReportController {
 
     @Autowired
@@ -84,6 +84,7 @@ public class AgeingReportController {
         final Map<String, String> status = new LinkedHashMap<String, String>();
         status.put("Completed", "Completed");
         status.put("Pending", "Pending");
+        status.put("Rejected", "Rejected");
         model.addAttribute("status", status);
         model.addAttribute("reportHelper", reportHealperObj);
 

@@ -82,7 +82,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.reference" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.letter.reference" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="reference" cssClass="add-margin error-msg" />
@@ -94,11 +94,11 @@
 			</div>
 		</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.ward" /><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.election.ward" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:hidden path="ward" id="ward" value="" cssClass="selectwk" />
-					<form:input id="wardInput" path="ward.name" class="form-control" type="text" required="required"/>
+					<form:input id="wardInput" path="ward.boundaryNum" class="form-control" type="text" required="required"/>
 					<form:errors path="ward" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.location" /></label>
@@ -188,7 +188,7 @@
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${modeOfAllotment}" />
+					<form:options items="${modeOfAllotment}" itemValue="name" itemLabel="name" />
 				</form:select>
 				<form:errors path="modeOfAllotment" cssClass="add-margin error-msg" />
 			</div>

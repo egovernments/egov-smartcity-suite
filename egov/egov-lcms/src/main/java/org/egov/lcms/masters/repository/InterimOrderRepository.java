@@ -37,16 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.masters.repository;
 
-package org.egov.works.lineestimate.entity.enums;
+import org.egov.lcms.masters.entity.InterimOrder;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.apache.commons.lang.StringUtils;
+@Repository
+public interface InterimOrderRepository extends JpaRepository<InterimOrder, java.lang.Long> {
 
-public enum ModeOfAllotment {
-    NOMINATION, TENDERING, ePROCUREMENT;
+    InterimOrder findByCode(String code);
 
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
-    }
 }

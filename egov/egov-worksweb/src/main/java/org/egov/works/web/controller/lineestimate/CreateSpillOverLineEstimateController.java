@@ -50,10 +50,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -69,13 +67,13 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.master.service.LineEstimateUOMService;
+import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
-import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -101,12 +99,6 @@ public class CreateSpillOverLineEstimateController {
     private FundHibernateDAO fundHibernateDAO;
 
     @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
-
-    @Autowired
     private SchemeService schemeService;
 
     @Autowired
@@ -122,9 +114,6 @@ public class CreateSpillOverLineEstimateController {
     private DesignationService designationService;
 
     @Autowired
-    private ProjectCodeService projectCodeService;
-
-    @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
@@ -138,6 +127,12 @@ public class CreateSpillOverLineEstimateController {
     
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
+    
+    @Autowired
+    private ModeOfAllotmentService modeOfAllotmentService;
+    
+    @Autowired
+    private LineEstimateUOMService lineEstimateUOMService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -266,7 +261,8 @@ public class CreateSpillOverLineEstimateController {
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
+        model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
+        model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(

@@ -424,7 +424,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.occ"));
-
+                        
+                        if(floor.getConstructionDate() == null || floor.getConstructionDate().equals(""))
+                        	addActionError(getText("mandatory.floor.constrDate"));
+                        
                         Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
                         if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals(""))
                             addActionError(getText("mandatory.floor.docOcc"));
@@ -435,6 +438,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 addActionError(getText("constrDate.before.6inst",msgParams));
                         }
 
+                        if(floor.getOccupancyDate() != null && floor.getConstructionDate() != null 
+                        		&& floor.getOccupancyDate().before(floor.getConstructionDate()))
+                        	addActionError(getText("effectiveDate.before.constrDate.error"));
+                        
                         if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
                                 || floor.getBuiltUpArea().getArea().equals("")) {
                             addActionError(getText("mandatory.assbleArea"));
@@ -745,9 +752,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .get(DEMANDRSN_STR_LIBRARY_CESS)));
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap
-                    .get(DEMANDRSN_STR_GENERAL_TAX)
+            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_GENERAL_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_GENERAL_TAX))
                     .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
                     .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
@@ -763,12 +771,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         } else {
             propertyTaxDetailsMap.put("vacantLandTax",
-                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
-                            : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
-                    .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)).add(
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS)).add(
+                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_VACANT_TAX)).add(
                     demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_LIBRARY_CESS));
             if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {

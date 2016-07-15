@@ -114,7 +114,7 @@ function callajaxdatatableForDrilDownReport() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -277,7 +277,7 @@ function callAjaxByDepartment() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -394,7 +394,7 @@ function callAjaxByComplaintType() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -509,7 +509,7 @@ function callAjaxByUserNameType() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -624,7 +624,7 @@ function callAjaxByComplaintDetail() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -651,7 +651,7 @@ function callAjaxByComplaintDetail() {
 							"data" : "crn",
 							"sTitle" : "Complaint Number",
 							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/public/complaint/view/'
 										+ data
 										+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
 										+ data + '">' + data + '</a>';

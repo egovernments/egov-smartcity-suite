@@ -185,6 +185,14 @@
 					<div class="col-xs-3 add-margin view-content">
 						<fmt:formatDate value="${contractorBillRegister.mbHeader.mbDate}" pattern="dd/MM/yyyy" />
 					</div>
+					<c:if test="${contractorBillRegister.billtype == 'Final Bill'}">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.workcompletion.date" />
+					</div>
+					<div class="col-xs-3 add-margin view-content">
+						<fmt:formatDate value="${contractorBillRegister.workOrderEstimate.workCompletionDate}" pattern="dd/MM/yyyy" />
+					</div>
+					</c:if>
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">

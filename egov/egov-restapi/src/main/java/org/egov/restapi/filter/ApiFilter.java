@@ -150,6 +150,7 @@ public class ApiFilter implements Filter {
         final List<String> apOnlineIpAddress = restAPIApplicationProperties.aponlineIPAddress();
         final List<String> esevaIpAddress = restAPIApplicationProperties.esevaIPAddress();
         final List<String> softtechIpAddress = restAPIApplicationProperties.softtechIPAddress();
+        final List<String> cardIpAddress = restAPIApplicationProperties.cardIPAddress();
         if (apOnlineIpAddress != null && referer != null)
             for (final String aponlineIp : apOnlineIpAddress)
                 if (!aponlineIp.equals("") && referer.contains(aponlineIp)) {
@@ -166,6 +167,12 @@ public class ApiFilter implements Filter {
             for (final String Ip : softtechIpAddress)
                 if (!Ip.equals("") && referer.contains(Ip)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.SOFTTECH);
+                    return true;
+                }
+        if (cardIpAddress != null && referer != null)
+            for (final String cardIp : cardIpAddress)
+                if (!cardIp.equals("") && referer.contains(cardIp)) {
+                    httpServletRequest.getSession().setAttribute(SOURCE, Source.CARD);
                     return true;
                 }
         return false;

@@ -141,7 +141,7 @@ public class PositionMasterService {
         }
         return true;
     }
-
+   
     public List<Position> getPageOfPositions(final Long departmentId, final Long designationId) {
 
         if (departmentId != 0 && designationId != 0)

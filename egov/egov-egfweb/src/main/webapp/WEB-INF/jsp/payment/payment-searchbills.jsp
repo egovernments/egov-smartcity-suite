@@ -1169,7 +1169,7 @@ function checkContingentForSameMisAttribs(obj,len)
 				<table align="center" width="100%">
 					<tr>
 						<font size="small" color="red">*Maximum of 500 records are
-							displayed here<br>*You can select Maximum of 65 bills for single payment</font>
+							displayed here<br>*You can select Maximum of 125 bills for single payment</font>
 					</tr>
 					<tr>
 						<td class="modeofpayment"><strong><s:text

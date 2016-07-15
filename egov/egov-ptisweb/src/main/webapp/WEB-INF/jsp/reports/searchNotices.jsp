@@ -244,45 +244,7 @@
 				<div class="headingsmallbgnew" align="center"
 					style="text-align: center; width: 98%;">
 					<span class="searchvalue1">Search Criteria :</span>
-					<s:if test="noticeType!='-1'">
-						<s:text name="NoticeType" />: <span class="mandatory"><s:property
-								value="noticeType" /></span>
-					</s:if>
-					<s:if test="ownerName!=''">, <s:text name="OwnerName" />: <span
-							class="mandatory"><s:property value="ownerName" /></span>
-					</s:if>
-					<s:if test="zoneId!=-1">, <s:text name="Zone" />: <span
-							class="mandatory"><s:property
-								value="%{getBoundary(zoneId)}" /></span>
-					</s:if>
-					<s:if test="wardId!=-1">, <s:text name="Ward" />: <span
-							class="mandatory"><s:property
-								value="%{getBoundary(wardId)}" /></span>
-					</s:if>
-					<s:if test="propertyType!='-1'">, <s:text
-							name="PropertyType" />: <span class="mandatory"><s:property
-								value="%{getPropType(propertyType)}" /></span>
-					</s:if>
-					<s:if test="noticeNumber!=''">, <s:text name="noticeNum" />: <span
-							class="mandatory"><s:property value="noticeNumber" /></span>
-					</s:if>
-					<s:if test="noticeFromDate!=null">, 
-						<s:text name="noticeDateFrom" />: 
-						<s:date name="noticeFromDate" var="FromDateFormat"
-							format="dd/MM/yyyy" />
-						<span class="mandatory"><s:property value="FromDateFormat" /></span>
-					</s:if>
-					<s:if test="noticeToDate!=null">, 
-						<s:text name="noticeDateTo" />: 
-						<s:date name="noticeToDate" var="ToDateFormat" format="dd/MM/yyyy" />
-						<span class="mandatory"><s:property value="ToDateFormat" /></span>
-					</s:if>
-					<s:if test="indexNumber!=''">, <s:text name="prop.Id" />: <span
-							class="mandatory"><s:property value="indexNumber" /></span>
-					</s:if>
-					<s:if test="houseNumber!=''">, <s:text name="HouseNo" />: <span
-							class="mandatory"><s:property value="houseNumber" /></span>
-					</s:if>
+					<s:property value="reportHeader" />
 				</div>
 			</display:caption>
 

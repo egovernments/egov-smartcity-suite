@@ -49,8 +49,9 @@ $(document).ready(function()
 {
 
 $('#crosshierarchysave').unbind('click').bind('click', function(e) {
-	var selectedBoundary = $('#multiselect_to option:selected').length;
-	if(selectedBoundary > 0){
+	
+       $('#multiselect_to option').prop('selected', true);
+
 	   bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function(result) {
 		  if(result){
 			  document.forms["crossHierarchyForm"].submit();//submit it
@@ -58,10 +59,6 @@ $('#crosshierarchysave').unbind('click').bind('click', function(e) {
 			  //leave it.. Don't submit
 		  }
 		}); 
-	}
-	else{
-	   bootbox.alert("Select mapped Location");
-	}
 		
 });
 });

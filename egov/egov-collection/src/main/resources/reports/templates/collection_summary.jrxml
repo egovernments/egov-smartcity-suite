@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-06-03T19:16:37 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" language="groovy" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+ <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-07-07T22:13:51 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" pageWidth="800" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="700" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -41,6 +80,9 @@
 		<parameterDescription><![CDATA[Status]]></parameterDescription>
 		<defaultValueExpression><![CDATA["All Status"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_CLASSIFICATION" class="java.lang.String">
+		<defaultValueExpression><![CDATA["All "]]></defaultValueExpression>
+	</parameter>
 	<field name="aggrCollectionSummaryReportList" class="java.util.List"/>
 	<field name="collectionSummaryReportList" class="java.util.List"/>
 	<background>
@@ -73,7 +115,7 @@
 				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="570" y="110" width="131" height="25" uuid="b40f11e7-b17d-4eb9-8fa7-fa9b253addea">
+				<reportElement x="570" y="108" width="131" height="25" uuid="b40f11e7-b17d-4eb9-8fa7-fa9b253addea">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
@@ -105,7 +147,7 @@
 				<textFieldExpression><![CDATA[$P{EGOV_FROM_DATE} == null ? "NA" : $P{EGOV_FROM_DATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="472" y="110" width="98" height="25" uuid="85f00499-9266-4a4c-87b5-e26ae1db9d5c">
+				<reportElement x="472" y="108" width="98" height="25" uuid="85f00499-9266-4a4c-87b5-e26ae1db9d5c">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -142,7 +184,7 @@
 				<textFieldExpression><![CDATA[$P{EGOV_PAYMENT_MODE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="472" y="130" width="98" height="25" uuid="cb65b021-843d-4898-b31b-a97f6c412b40"/>
+				<reportElement x="472" y="128" width="98" height="25" uuid="cb65b021-843d-4898-b31b-a97f6c412b40"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
@@ -150,7 +192,7 @@
 				<text><![CDATA[Source:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="570" y="130" width="131" height="25" uuid="c8ded2ae-2ea4-4fdd-94b2-c6a69dff748e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="570" y="128" width="131" height="25" uuid="c8ded2ae-2ea4-4fdd-94b2-c6a69dff748e"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
@@ -176,7 +218,7 @@
 				<textFieldExpression><![CDATA[($P{EGOV_SERVICE_NAME})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="472" y="156" width="98" height="25" uuid="ea740607-64b0-4e92-a9be-26f8b4f46e39"/>
+				<reportElement x="472" y="154" width="98" height="25" uuid="ea740607-64b0-4e92-a9be-26f8b4f46e39"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
@@ -184,13 +226,31 @@
 				<text><![CDATA[Status:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
-				<reportElement stretchType="RelativeToTallestObject" x="571" y="156" width="131" height="25" uuid="b41aaab9-b8f9-4f0d-81b7-bb0fc6c8cd59"/>
+				<reportElement stretchType="RelativeToTallestObject" x="571" y="154" width="131" height="25" uuid="b41aaab9-b8f9-4f0d-81b7-bb0fc6c8cd59"/>
 				<box leftPadding="5" rightPadding="5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_STATUS}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="569" y="180" width="162" height="20" uuid="b0303d3b-703f-4189-ade4-aecf34c09d24"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("C")?"Challan Collection" :($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("M")?"Miscelleneous Collection":$P{EGOV_CLASSIFICATION}.equalsIgnoreCase("B")?"Bill Based":"ALL"))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="471" y="180" width="98" height="20" uuid="25336452-8470-4157-aebf-ad64271a0c19">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Classification:]]></text>
+			</staticText>
 		</band>
 	</title>
 	<columnHeader>
@@ -399,6 +459,24 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{EGOV_SOURCE}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="569" y="122" width="162" height="20" uuid="b986a420-d358-4237-b21c-83f5220f2f97"/>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("C")?"Challan Collection" :($P{EGOV_CLASSIFICATION}.equalsIgnoreCase("M")?"Miscelleneous Collection":$P{EGOV_CLASSIFICATION}.equalsIgnoreCase("B")?"Bill Based":"ALL"))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="471" y="122" width="98" height="20" uuid="391017c2-c5b0-44ef-89b0-1f6fc5524741">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5" rightPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Classification:]]></text>
+			</staticText>
 		</band>
 	</noData>
 </jasperReport>

@@ -89,7 +89,7 @@
 					</c:if>
 					<th><spring:message code="lbl.quantity"/></th>
 					<th><spring:message code="lbl.uom"/></th>
-					<th><spring:message code="lbl.beneficiary"/></th>
+					<th><spring:message code="lbl.expected.outcome"/></th>
 				</tr>
 			</thead>
 			<tbody id="lineEstimateDetailsTbl">

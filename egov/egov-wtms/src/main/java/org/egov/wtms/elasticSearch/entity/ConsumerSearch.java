@@ -103,7 +103,7 @@ public class ConsumerSearch implements Indexable {
     @Searchable(name = "closureType", group = Searchable.Group.SEARCHABLE)
     private String closureType;
 
-    @Searchable(name = "waterTaxDue", group = Searchable.Group.CLAUSES)
+    @Searchable(name = "waterTaxDue", group = Searchable.Group.SEARCHABLE)
     private BigDecimal waterTaxDue;
 
     @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
@@ -144,6 +144,15 @@ public class ConsumerSearch implements Indexable {
     
     @Searchable(name = "wardlocation", group = Searchable.Group.COMMON)
     private GeoPoint wardLocation;
+    
+    @Searchable(name = "arrearsDue", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal arrearsDue;
+    
+    @Searchable(name = "currentDue", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal currentDue;
+    
+    @Searchable(name = "monthlyRate", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal monthlyRate;
 
     public ConsumerSearch(final String consumerCode, final String mobileNumber, final String usageType, final String ulbName,
             final Date createdDate, final String districtName, final String regionName, final String grade) {
@@ -384,6 +393,30 @@ public class ConsumerSearch implements Indexable {
 
     public void setWardLocation(GeoPoint wardLocation) {
         this.wardLocation = wardLocation;
+    }
+    
+    public BigDecimal getArrearsDue() {
+        return arrearsDue;
+    }
+
+    public void setArrearsDue(final BigDecimal arrearsDue) {
+        this.arrearsDue = arrearsDue;
+    }
+
+    public BigDecimal getCurrentDue() {
+        return currentDue;
+    }
+
+    public void setCurrentDue(final BigDecimal currentDue) {
+        this.currentDue = currentDue;
+    }
+    
+    public BigDecimal getMonthlyRate() {
+        return monthlyRate;
+    }
+
+    public void setMonthlyRate(final BigDecimal monthlyRate) {
+        this.monthlyRate = monthlyRate;
     }
 
 }

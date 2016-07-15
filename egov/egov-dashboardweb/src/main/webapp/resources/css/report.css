@@ -44,13 +44,13 @@
 .panel-body {
     position: relative;
 }
-.panel-body span{
+.panel-body span.more{
 	position:absolute;
     right: 10px;
  			top: -28px;
 	font-size: 10px;
 }
-.panel-body span a{
+.panel-body span.more a{
 	text-decoration: underline;
 }
 .search-ul{
@@ -77,4 +77,8 @@
 	overflow:auto;
 	color:#333;
 	padding:0 5px;
+}
+.lock i{
+	color:red;
+	vertical-align:super;
 }

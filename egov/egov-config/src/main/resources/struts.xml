@@ -54,7 +54,7 @@
 	<constant name="struts.serve.static" value="true" />
 	<constant name="struts.i18n.reload" value="false" />
 	<constant name="struts.configuration.xml.reload" value="false" />
-	<constant name="struts.freemarker.beanwrapperCache" value="true" />
+	<constant name="struts.freemarker.beanwrapperCache" value="false" />
 	<!-- Performance Environment Setting Ends -->
 	<constant name="struts.convention.exclude.parentClassLoader" value="true" />
 	<constant name="struts.convention.action.fileProtocols" value="jar,vfsfile,vfszip,vfs,zip" />

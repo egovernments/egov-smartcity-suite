@@ -181,7 +181,7 @@ public class ArrearRegisterReportAction extends ReportFormAction {
     public String generateArrearReport() {
         final ReportInfo reportInfo = new ReportInfo();
         propertyWiseInfoList = new ArrayList<PropertyWiseArrearInfo>();
-        String strZoneNum = null, strWardNum = null, strBlockNum = null, strLocalityNum = null;
+        String strZoneNum = null, strWardNum = null, strBlockNum = null, strLocalityNum = null, strMunicipal=null, strDistrict=null;
         if ((localityId == null || localityId == -1) && zoneId != null && zoneId != -1)
             strZoneNum = boundaryService.getBoundaryById(zoneId).getName();
         else if (localityId != null && localityId != -1) {
@@ -193,7 +193,9 @@ public class ArrearRegisterReportAction extends ReportFormAction {
             strWardNum = boundaryService.getBoundaryById(wardId).getName();
         if (areaId != null && areaId != -1)
             strBlockNum = boundaryService.getBoundaryById(areaId).getName();
-
+        strMunicipal=getSession().get("citymunicipalityname").toString();
+        strDistrict=getSession().get("districtName").toString();
+        strDistrict=strDistrict.substring(0,1)+strDistrict.substring(1, strDistrict.length()).toLowerCase();
         final List<PropertyMaterlizeView> propertyViewList = propertyTaxUtil.prepareQueryforArrearRegisterReport(zoneId, wardId,
                 areaId, localityId);
         if (LOGGER.isDebugEnabled())
@@ -242,6 +244,8 @@ public class ArrearRegisterReportAction extends ReportFormAction {
         reportInfo.setWardNo(strWardNum);
         reportInfo.setBlockNo(strBlockNum);
         reportInfo.setLocalityNo(strLocalityNum);
+        reportInfo.setMunicipal(strMunicipal);
+        reportInfo.setDistrict(strDistrict);
         reportInfo.setPropertyWiseArrearInfoList(propertyWiseInfoList);
         setDataSourceType(ReportDataSourceType.JAVABEAN);
         setReportData(reportInfo);

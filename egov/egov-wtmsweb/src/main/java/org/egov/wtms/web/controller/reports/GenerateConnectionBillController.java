@@ -192,13 +192,8 @@ public class GenerateConnectionBillController {
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->"+Long.valueOf(count));
         List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)<1000){
-            generateconnectionBillList = generateConnectionBillService
-                .getBillData(generateConnectionBillList);
-        }
-        else
-        {
-             generateconnectionBillList = new ArrayList<>();
+        if (Long.valueOf(count)>1000){
+            generateconnectionBillList = new ArrayList<>();
         }
         result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -211,7 +206,7 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getCode());
+                        .getName());
         response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
@@ -386,7 +381,7 @@ public class GenerateConnectionBillController {
                 try {
                     final List<Long> filestoreList = generateConnectionBillService.getDocuments(
                             connectionbill.getHscNo(), connectionbill.getApplicationType());
-                    if (filestoreList != null && filestoreList.get(0) != null) {
+                    if (!filestoreList.isEmpty() && filestoreList.get(0) != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
                                 + "");
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);

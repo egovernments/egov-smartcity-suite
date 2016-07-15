@@ -40,35 +40,15 @@
 
 package org.egov.tl.web.controller;
 
-import org.egov.infra.admin.master.entity.Boundary;
-
 import java.math.BigInteger;
-import java.util.List;
 
 public class DCBReportResult {
 
-    private List<Boundary> zones;
-    private List<Boundary> wards;
-    private List<Boundary> blocks;
-    private List<Boundary> localitys;
-
-    private String boundaryName;
-    private String boundaryId;
-    private String propertyid;
-    private String address;
     private String mode;
-    private String selectedModeBndry;
     private String reportType;
     private String licensenumber;
     private Integer licenseid;
     private String username;
-    private Integer zoneid;
-    private Integer wardid;
-    private Integer block;
-    private Integer locality;
-    private Integer street;
-
-    private String connectiontype;
     private BigInteger curr_demand = BigInteger.ZERO;
     private BigInteger arr_demand = BigInteger.ZERO;
     private BigInteger curr_coll = BigInteger.ZERO;
@@ -76,18 +56,11 @@ public class DCBReportResult {
     private BigInteger curr_balance = BigInteger.ZERO;
     private BigInteger arr_balance = BigInteger.ZERO;
 
-    private BigInteger countofconsumerno = BigInteger.ZERO;
-
-    public Integer getId() {
-        return zoneid != null ? zoneid : wardid != null ? wardid : block != null ? block : locality != null ? locality
-                : null;
-    }
-
     public String getLicensenumber() {
         return licensenumber;
     }
 
-    public void setLicensenumber(String licensenumber) {
+    public void setLicensenumber(final String licensenumber) {
         this.licensenumber = licensenumber;
     }
 
@@ -97,14 +70,6 @@ public class DCBReportResult {
 
     public void setMode(final String mode) {
         this.mode = mode;
-    }
-
-    public String getSelectedModeBndry() {
-        return selectedModeBndry;
-    }
-
-    public void setSelectedModeBndry(final String selectedModeBndry) {
-        this.selectedModeBndry = selectedModeBndry;
     }
 
     public String getReportType() {
@@ -118,127 +83,12 @@ public class DCBReportResult {
     public void setId(final Integer id) {
     }
 
- 
-
-    public List<Boundary> getZones() {
-        return zones;
-    }
-
-    public void setZones(final List<Boundary> zones) {
-        this.zones = zones;
-    }
-
-    public List<Boundary> getLocalitys() {
-        return localitys;
-    }
-
-    public void setLocalitys(final List<Boundary> localitys) {
-        this.localitys = localitys;
-    }
-
-    public String getBoundaryName() {
-        return boundaryName;
-    }
-
-    public void setBoundaryName(final String boundaryName) {
-        this.boundaryName = boundaryName;
-    }
-
-    public String getBoundaryId() {
-        return boundaryId;
-    }
-
-    public void setBoundaryId(final String boundaryId) {
-        this.boundaryId = boundaryId;
-    }
-
-    public String getPropertyid() {
-        return propertyid;
-    }
-
-    public void setPropertyid(final String propertyid) {
-        this.propertyid = propertyid;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(final String address) {
-        this.address = address;
-    }
-
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(final String username) {
         this.username = username;
-    }
-
-    public Integer getZoneid() {
-        return zoneid;
-    }
-
-    public void setZoneid(final Integer zoneid) {
-        this.zoneid = zoneid;
-    }
-
-    public Integer getWardid() {
-        return wardid;
-    }
-
-    public void setWardid(final Integer wardid) {
-        this.wardid = wardid;
-    }
-
-    public Integer getBlock() {
-        return block;
-    }
-
-    public void setBlock(final Integer block) {
-        this.block = block;
-    }
-
-    public Integer getLocality() {
-        return locality;
-    }
-
-    public void setLocality(final Integer locality) {
-        this.locality = locality;
-    }
-
-    public Integer getStreet() {
-        return street;
-    }
-
-    public void setStreet(final Integer street) {
-        this.street = street;
-    }
-
-    public String getConnectiontype() {
-        return connectiontype;
-    }
-
-    public void setConnectiontype(final String connectiontype) {
-        this.connectiontype = connectiontype;
-    }
-
-    public List<Boundary> getWards() {
-        return wards;
-    }
-
-    public void setWards(final List<Boundary> wards) {
-        this.wards = wards;
-    }
-
-    public List<Boundary> getBlocks() {
-        return blocks;
-    }
-
-    public void setBlocks(final List<Boundary> blocks) {
-        this.blocks = blocks;
     }
 
     public BigInteger getCurr_demand() {
@@ -314,22 +164,12 @@ public class DCBReportResult {
     public void setTotal_balance(final BigInteger total_balance) {
     }
 
-    public BigInteger getCountofconsumerno() {
-        return countofconsumerno;
-    }
-
-    public void setCountofconsumerno(final BigInteger countofconsumerno) {
-        this.countofconsumerno = countofconsumerno;
-    }
-
     public Integer getLicenseid() {
         return licenseid;
     }
 
-    public void setLicenseid(Integer licenseid) {
+    public void setLicenseid(final Integer licenseid) {
         this.licenseid = licenseid;
     }
-
-    
 
 }

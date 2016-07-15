@@ -323,7 +323,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
                             calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));
                 else
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getToDate(),
+                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
                                     collectionDate, demandDetails.getAmount()));
         return installmentPenalty;
     }

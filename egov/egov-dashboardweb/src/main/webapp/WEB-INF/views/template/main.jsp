@@ -82,10 +82,10 @@
     	<![endif]-->    		
     </head>
     <body id="page-top" data-spy="scroll" />
-    	<div class="cover" id="cover"></div>
-    	<div class="preloader-container" id="preloader-container">
-    		<div class="preloader-logo">eGov<img src="resources/images/mask.gif">Dashboard</div>
-    	</div>
+	    <div id="loadingMask"></div>
+		<div id="loading">
+		    <div class="loading-indicator"><i class="fa fa-spinner fa-pulse fa-2x"></i></div>
+		</div>
 		<div class="page-container">
             <tiles:insertAttribute name="header"/>
                 <div class="main-content">
@@ -99,4 +99,10 @@
 	<script src="resources/js/highchart/highstock.js"></script>
 	<script src='resources/js/date.js' type="text/javascript"></script>
 	<script src='resources/js/home.js' type="text/javascript"></script>
+	<script type="text/javascript">
+		$(window).load(function(){
+	        document.getElementById("loading").style.display = "none";
+			document.getElementById("loadingMask").style.display = "none";
+	    });
+	</script>
 </html>

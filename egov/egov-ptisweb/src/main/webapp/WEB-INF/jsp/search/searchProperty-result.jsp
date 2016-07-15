@@ -46,7 +46,7 @@
 			function getPropdetails(obj, assessmentNum) {
 				var selectedValue = obj.options[obj.selectedIndex].value;
 				if (selectedValue == "TransferProperty") {
-					window.location = "../property/transfer/new.action?assessmentNo=" + assessmentNum;
+					window.location = "../property/transfer/redirect.action?assessmentNo=" + assessmentNum;
 				} else if (selectedValue == 'ADD_OR_ALTER') {
 					window.location = "../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=" + assessmentNum;
 				} /* else if (selectedValue=='Bifurcation') {

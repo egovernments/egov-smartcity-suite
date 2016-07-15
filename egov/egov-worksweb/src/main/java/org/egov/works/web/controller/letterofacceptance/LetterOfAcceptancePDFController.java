@@ -135,7 +135,7 @@ public class LetterOfAcceptancePDFController {
             reportParams.put("accountNo", workOrder.getContractor().getBankaccount() != null ? workOrder.getContractor()
                     .getBankaccount() : "");
             reportParams.put("subject", lineEstimateDetails.getNameOfWork());
-            reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment().toString());
+            reportParams.put("modeOfAllotment", lineEstimateDetails.getLineEstimate().getModeOfAllotment());
             reportParams.put("agreementAmount", df.format(workOrder.getWorkOrderAmount()));
             reportParams.put("emd", df.format(workOrder.getEmdAmountDeposited()));
             reportParams.put("asd", df.format(workOrder.getSecurityDeposit()));

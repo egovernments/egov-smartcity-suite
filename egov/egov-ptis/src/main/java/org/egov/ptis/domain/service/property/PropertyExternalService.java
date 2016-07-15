@@ -82,6 +82,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -197,6 +198,9 @@ public class PropertyExternalService {
 
     @Autowired
     BankHibernateDAO bankHibernateDAO;
+    
+    @Autowired
+    private PropertyMutationDAO propertyMutationDAO;
 
     public AssessmentDetails loadAssessmentDetails(final String propertyId, final Integer flag,
             final BasicPropertyStatus status) {
@@ -385,10 +389,18 @@ public class PropertyExternalService {
         PropertyTaxDetails propertyTaxDetails = null;
         final ErrorDetails errorDetails = new ErrorDetails();
         if (null != basicProperty) {
-            propertyTaxDetails = getPropertyTaxDetails(basicProperty);
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
-            propertyTaxDetails.setErrorDetails(errorDetails);
+        	Property property = basicProperty.getProperty();
+        	if(property != null && property.getIsExemptedFromTax()){
+        		propertyTaxDetails = new PropertyTaxDetails();
+                errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE);
+                errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG);
+                propertyTaxDetails.setErrorDetails(errorDetails);
+        	} else {
+	            propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+	            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+	            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+	            propertyTaxDetails.setErrorDetails(errorDetails);
+        	}
         } else {
             propertyTaxDetails = new PropertyTaxDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
@@ -1758,37 +1770,157 @@ public class PropertyExternalService {
     }
     
     /**
-     * Fetches Assessment Details - owner details, tax dues, plinth area
+     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information
      * @param assessmentNo
      * @return
      */
     public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
-        if (StringUtils.isBlank(assessmentNo))
-            throw new ApplicationRuntimeException("AssessmentNo is null or empty!");
-        assessmentDetails.setAssessmentNo(assessmentNo);
-        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentDetails.getAssessmentNo());
-        if (basicProperty != null) {
-            assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-            property = (PropertyImpl) basicProperty.getProperty();
-            assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
-            if (property != null) {
-            	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
-            	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
-            		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-            	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-            	BigDecimal totalTaxDue = BigDecimal.ZERO;
-            	if(currentPtdemand != null){
-            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
-            			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
-            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-            			}
-            		}
-            	}
-            	assessmentDetails.setTotalTaxDue(totalTaxDue);
-            	assessmentDetails.setIsMutationFeePaid("N");
-            }
-        }
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+        if(propertyMutation != null){
+        	basicProperty = propertyMutation.getBasicProperty();
+        	if (basicProperty != null) {
+        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+                property = (PropertyImpl) basicProperty.getProperty();
+                assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+                if (property != null) {
+                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                	BigDecimal totalTaxDue = BigDecimal.ZERO;
+                	if(currentPtdemand != null){
+                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
+                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                			}
+                		}
+                	}
+                	assessmentDetails.setTotalTaxDue(totalTaxDue);
+                }
+        	}
+        	assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+        	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
+    			assessmentDetails.setIsMutationFeePaid("Y");
+    			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+    			Date receiptDate = null;
+    			final Query qry = entityManager.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
+    	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
+    	        receiptDate = (Date) qry.getSingleResult();
+    	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
+    		}
+    		else
+    			assessmentDetails.setIsMutationFeePaid("N");
+    		
+    		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+        }else{
+    		assessmentDetails.setIsMutationFeePaid("N");
+    	}
         return assessmentDetails;
+    }
+    
+    /**
+     * API for Mutation Fee Payment
+     * @param payPropertyTaxDetails
+     * @return ReceiptDetails
+     */
+    public ReceiptDetails payMutationFee(final PayPropertyTaxDetails payPropertyTaxDetails) {
+        ReceiptDetails receiptDetails = null;
+        ErrorDetails errorDetails = null;
+        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropertyTaxDetails
+                .getAssessmentNo());
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(payPropertyTaxDetails.getAssessmentNo());
+        propertyTaxBillable.setBasicProperty(basicProperty);
+        ApplicationThreadLocals.setUserId(2L);
+        propertyTaxBillable.setTransanctionReferenceNumber(payPropertyTaxDetails.getTransactionId());
+        propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
+        propertyTaxBillable.setMutationFee(payPropertyTaxDetails.getPaymentAmount());
+        propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
+        propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
+        propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
+        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
+        
+        final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
+        final CollectionHelper collectionHelper = new CollectionHelper(egBill);
+        final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
+        paymentDetailsMap.put(PropertyTaxConstants.TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
+        paymentDetailsMap.put(PropertyTaxConstants.PAID_BY, egBill.getCitizenName());
+        if (PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails
+                .getPaymentMode().toLowerCase())
+                || PropertyTaxConstants.THIRD_PARTY_PAYMENT_MODE_DD.equalsIgnoreCase(payPropertyTaxDetails
+                        .getPaymentMode().toLowerCase())) {
+            paymentDetailsMap.put(ChequePayment.INSTRUMENTNUMBER, payPropertyTaxDetails.getChqddNo());
+            paymentDetailsMap.put(ChequePayment.INSTRUMENTDATE,
+                    ChequePayment.CHEQUE_DATE_FORMAT.format(payPropertyTaxDetails.getChqddDate()));
+            paymentDetailsMap.put(ChequePayment.BRANCHNAME, payPropertyTaxDetails.getBranchName());
+            final Long validatesBankId = validateBank(payPropertyTaxDetails.getBankName());
+            paymentDetailsMap.put(ChequePayment.BANKID, validatesBankId.toString());
+        }
+        final Payment payment = Payment.create(payPropertyTaxDetails.getPaymentMode().toLowerCase(), paymentDetailsMap);
+        collectionHelper.setIsMutationFeePayment(true);
+        final BillReceiptInfo billReceiptInfo = collectionHelper.executeCollection(payment,
+                payPropertyTaxDetails.getSource());
+
+        if (null != billReceiptInfo) {
+            receiptDetails = new ReceiptDetails();
+            receiptDetails.setReceiptNo(billReceiptInfo.getReceiptNum());
+            receiptDetails.setReceiptDate(formatDate(billReceiptInfo.getReceiptDate()));
+            receiptDetails.setPayeeName(billReceiptInfo.getPayeeName());
+            receiptDetails.setPayeeAddress(billReceiptInfo.getPayeeAddress());
+            receiptDetails.setBillReferenceNo(billReceiptInfo.getBillReferenceNum());
+            receiptDetails.setServiceName(billReceiptInfo.getServiceName());
+            receiptDetails.setDescription(billReceiptInfo.getDescription());
+            receiptDetails.setPaidBy(billReceiptInfo.getPaidBy());
+            receiptDetails.setPaymentAmount(billReceiptInfo.getTotalAmount());
+            receiptDetails.setPaymentMode(payPropertyTaxDetails.getPaymentMode());
+            receiptDetails.setTransactionId(billReceiptInfo.getManualReceiptNumber());
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+
+            receiptDetails.setErrorDetails(errorDetails);
+        }
+        return receiptDetails;
+    }
+    
+    /**
+     * Validate the payment amount entered for mutation
+     * @param assessmentNo
+     * @param paymentAmount
+     * @return boolean
+     */
+    public boolean validateMutationFee(String assessmentNo, BigDecimal paymentAmount){
+    	boolean validFee = true;
+    	PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+    	if(propertyMutation != null){
+    		if(paymentAmount.compareTo(propertyMutation.getMutationFee()) > 0){
+    			validFee = false;
+    		}
+    	}else{
+    		validFee = false;
+    	}
+    	return validFee;
+    }
+    
+    /**
+     * Fetch PropertyMutation for given assessmentNo and applicationNo
+     * @param assessmentNo
+     * @param applicationNo
+     * @return PropertyMutation
+     */
+    public PropertyMutation getPropertyMutationByAssesmentNoAndApplicationNo(String assessmentNo, String applicationNo){
+    	PropertyMutation propertyMutation = propertyMutationDAO.getPropertyMutationForAssessmentNoAndApplicationNumber(assessmentNo, applicationNo);
+    	return propertyMutation;
+    }
+    
+    /**
+     * Fetch PropertyMutation for given assessmentNo
+     * @param assessmentNo
+     * @return PropertyMutation
+     */
+    public PropertyMutation getLatestPropertyMutationByAssesmentNo(String assessmentNo){
+        PropertyMutation propertyMutation = propertyMutationDAO.getPropertyLatestMutationForAssessmentNo(assessmentNo);
+        return propertyMutation;
     }
 }

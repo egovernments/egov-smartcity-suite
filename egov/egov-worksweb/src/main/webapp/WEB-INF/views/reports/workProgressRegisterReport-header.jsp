@@ -72,9 +72,9 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /><span class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="department" data-first-option="false" id="department" class="form-control" required="required">
+				<form:select path="department" data-first-option="false" id="department" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
 					<form:options items="${departments}" itemValue="id" itemLabel="name" />
 				</form:select>

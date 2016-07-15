@@ -64,7 +64,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/report")
+@RequestMapping(value = {"/report", "/public/report"})
 public class DrillDownReportController {
 
     @Autowired

@@ -195,7 +195,7 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_VALID);
         	}
         }
-        if (waterConnDetailsObj != null && waterConnDetailsObj.getConnectionType().equals(ConnectionType.METERED)) {
+        if (waterConnDetailsObj != null && waterConnDetailsObj.getConnectionType().equals(ConnectionType.NON_METERED)) {
             final BigDecimal totalAmountDue = waterConnectionDetailsService.getTotalAmount(waterConnDetailsObj);
             LOG.error("totalAmountDue:" + totalAmountDue);
 

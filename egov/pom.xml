@@ -103,7 +103,7 @@
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 
 		<!-- Application core dependency versions -->
-		<egov-search-version>2.0.0-SNAPSHOT</egov-search-version>
+		<egov-search-version>2.0.1-SNAPSHOT</egov-search-version>
 
 		<!-- Application server provided dependency versions -->
 		<lucene-version>5.3.1</lucene-version>
@@ -189,6 +189,7 @@
 		<module>egov-commons</module>
 		<module>egov-eis</module>
 		<module>egov-egf</module>
+		<module>egov-lcms</module>
 		<module>egov-assets</module>
 		<module>egov-works</module>
 		<module>egov-portal</module>
@@ -203,6 +204,7 @@
 		<module>egov-eisweb</module>
 		<module>egov-egiweb</module>
 		<module>egov-egfweb</module>
+		<module>egov-lcmsweb</module>
 		<module>egov-assetsweb</module>
 		<module>egov-worksweb</module>
 		<module>egov-pgrweb</module>

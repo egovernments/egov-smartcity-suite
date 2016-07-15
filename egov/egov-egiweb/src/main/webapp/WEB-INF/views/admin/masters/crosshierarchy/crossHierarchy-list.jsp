@@ -68,7 +68,7 @@
 	                            <form:select path="parentType.name"  onchange="populateBoundary(this);"
 	                                         id="boundaryTypeName" cssClass="form-control" cssErrorClass="form-control error" required="required" >
 	                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-	                                <form:options items="${boundaryTypeList}" itemValue="id" itemLabel="name"/>
+	                                <form:options items="${boundaryTypeList}" itemValue="id" itemLabel="hierarchyType.code"/>
 	                            </form:select><input type="hidden" id="boundaryTypeId" value="" />
 	                            <form:errors path="parentType.name" cssClass="error-msg"/>
 	                        </div>

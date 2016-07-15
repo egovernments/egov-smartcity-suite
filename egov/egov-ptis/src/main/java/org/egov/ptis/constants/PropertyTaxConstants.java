@@ -624,6 +624,8 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_BILL_COLLECTOR_APPROVED = "Bill Collector Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Approved";
     public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
+    public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
+    public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -724,6 +726,9 @@ public interface PropertyTaxConstants {
     public static final String ADDTIONAL_RULE_ALTER_ASSESSMENT = "ALTER ASSESSMENT";
     public static final String ADDTIONAL_RULE_BIFURCATE_ASSESSMENT = "BIFURCATE ASSESSMENT";
     public static final String ADDTIONAL_RULE_PROPERTY_TRANSFER = "PROPERTY TRANSFER";
+    public static final String ADDTIONAL_RULE_PARTIAL_TRANSFER = "PARTIAL TRANSFER";
+    public static final String ADDTIONAL_RULE_FULL_TRANSFER = "FULL TRANSFER";
+    public static final String ADDTIONAL_RULE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
     public static final String WFSTATUS = "WFSTATUS";
     public static final String WFOWNER = "WFOWNER";
     public static final String DEMOLITION = "DEMOLITION";
@@ -1062,6 +1067,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_CODE = "PTAX102";
     public static final String PROPERTY_ACTIVE_ERR_CODE = "PTAX103";
     public static final String PROPERTY_INACTIVE_ERR_CODE = "PTAX104";
+    public static final String PROPERTY_EXEMPTED_ERR_CODE = "PTAX105";
 
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_PREFIX = "Property with assessment no ";
     public static final String PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX = " does not exist";
@@ -1069,6 +1075,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTY_MARK_DEACTIVATE_ERR_MSG = "Property is marked for deactivation";
     public static final String PROPERTY_ACTIVE_NOT_EXISTS = "Active property does not exists for the given assessment number";
     public static final String PROPERTY_INACTIVE_ERR_MSG = "Property is not active for the given assessment number";
+    public static final String PROPERTY_EXEMPTED_ERR_MSG = "Property is exempted";
 
     public static final String MARK_DEACTIVE = "MARK_DEACTIVE";
     public static final BigDecimal PENALTY_PERCENTAGE = new BigDecimal(2);
@@ -1192,6 +1199,18 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_ERR_CODE_BRANCHNAME_REQUIRED = "PTIS-REST-37";
     public static final String THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED = "Branch Name  is required";
+    
+    public static final String THIRD_PARTY_ERR_CODE_APPLICATION_NO_REQUIRED = "PTIS-REST-38";
+    public static final String THIRD_PARTY_ERR_MSG_APPLICATION_NO_REQUIRED = "Application number is required";
+    
+    public static final String THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE = "PTIS-REST-40";
+    public static final String THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE = "Mutation fee entered is excess";
+    
+    public static final String THIRD_PARTY_ERR_CODE_MUTATION_INVALID = "PTIS-REST-41";
+    public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "Mutation application number is invalid";
+    
+    public static final String THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY = "PTIS-REST-42";
+    public static final String THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY = "Property is Exempted";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1313,6 +1332,9 @@ public interface PropertyTaxConstants {
     public static final String NATURE_TAX_EXEMPTION = "Tax Exemption";
     public static final String NATURE_VACANCY_REMISSION = "Vacany Remission";
     public static final String NATURE_GENERAL_REVISION_PETITION = "General Revision Petition";
+    public static final String NATURE_REGISTERED_TRANSFER = "Registered Transfer";
+    public static final String NATURE_FULL_TRANSFER = "Full Transfer";
+    public static final String NATURE_PARTIAL_TRANSFER = "Partial Transfer";
     public static final String CITY_GRADE_CORPORATION = "Corp";
     public static final String VACANTLAND_MIN_CUR_CAPITALVALUE = "500";
     public static final String WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING = "UD Revenue Inspector Approval Pending";
@@ -1406,4 +1428,14 @@ public interface PropertyTaxConstants {
     public static final String SERVICE_CODE_VACANTLANDTAX = "VLT";
     public static final String SERVICE_CODE_PROPERTYTAX = "PT";
     public static final String SERVICE_CODE_MUTATION = "PTMF";
+    
+    public static final String MUTATION_TYPE_REGISTERED_TRANSFER = "REGISTERED TRANSFER";
+    public static final String PARTT="Transfer of ownership of part of property which needs to be registered in Registration and Stamps Office";
+    public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
+    public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
+    
+    public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
+    
+    public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
+    public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
 }

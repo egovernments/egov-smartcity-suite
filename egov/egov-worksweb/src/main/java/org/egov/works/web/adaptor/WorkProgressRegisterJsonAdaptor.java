@@ -69,7 +69,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
         final JsonObject jsonObject = new JsonObject();
         if (workProgressRegister != null) {
             if (workProgressRegister.getWard() != null)
-                jsonObject.addProperty("ward", workProgressRegister.getWard().getName());
+                jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
             else
                 jsonObject.addProperty("ward", "");
             if (workProgressRegister.getLocation() != null)
@@ -143,7 +143,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("estimateAmount", "");
             if (workProgressRegister.getModeOfAllotment() != null)
-                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment().toString());
+                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment());
             else
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)

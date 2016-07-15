@@ -43,7 +43,7 @@
 <tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<s:text name="transferDtls" />
+								<span class="bold"><s:text name="transferDtls" /></span>
 							</div>
 						</td>
 					</tr>

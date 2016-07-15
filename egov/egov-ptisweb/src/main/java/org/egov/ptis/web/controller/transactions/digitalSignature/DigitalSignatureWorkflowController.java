@@ -266,7 +266,7 @@ public class DigitalSignatureWorkflowController {
             final Assignment wfInitiator = getWorkflowInitiator(propertyMutation);
             final Position pos = wfInitiator.getPosition();
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
-                    null, ADDTIONAL_RULE_PROPERTY_TRANSFER, propertyMutation.getCurrentState().getValue(), null);
+                    null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction());

@@ -116,17 +116,17 @@ function callAjaxForDefaultersReport() {
 					"aButtons" : [
 					               {
 							            "sExtends": "pdf",
-				                        "sPdfMessage": "Report generated on : "+formattedDate,
-				                        "sTitle": "Defaulters Report",
+							            "sTitle": jQuery('#pdfTitle').val(),
+							            "sPdfMessage": jQuery('#reportTitle').html()
 					                },
 					                {
 							            "sExtends": "xls",
-			                            "sPdfMessage": "Report generated on : "+formattedDate,
-			                            "sTitle": "Defaulters Report"
+							            "sTitle": jQuery('#pdfTitle').val(),
+							            "sPdfMessage": jQuery('#reportTitle').html()
 						             },{
 							            "sExtends": "print",
-			                            "sPdfMessage": "Report generated on : "+formattedDate,
-			                            "sTitle": "Defaulters Report"
+							            "sTitle": jQuery('#pdfTitle').val(),
+							            "sPdfMessage": jQuery('#reportTitle').html()
 						             }
 					             ]
 				},

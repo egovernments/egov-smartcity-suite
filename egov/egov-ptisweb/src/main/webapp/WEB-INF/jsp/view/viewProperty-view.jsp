@@ -156,7 +156,7 @@
 									<input type="button" class="buttonsubmit"
 										name="btnTrnsProperty" id="btnTrnsProperty"
 										value="Transfer Ownership"
-										onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
+										onclick="window.location='../property/transfer/redirect.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
 									</s:if>
 									<%-- <input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
