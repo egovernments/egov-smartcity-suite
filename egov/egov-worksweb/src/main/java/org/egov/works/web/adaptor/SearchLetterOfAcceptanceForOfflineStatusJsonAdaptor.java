@@ -77,8 +77,13 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
                 jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
             else
                 jsonObject.addProperty("contractor", "");
-            if (workOrderEstimate.getWorkOrder().getEgwStatus() != null)
-                jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getCode());
+            if (workOrderEstimate.getWorkOrder().getEgwStatus() != null){
+            	List<OfflineStatus> offlineStatusses = offlineStatusService.getOfflineStatusByObjectIdAndType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
+            	if(!offlineStatusses.isEmpty()){
+            		jsonObject.addProperty("status", offlineStatusses.get(offlineStatusses.size()-1).getEgwStatus().getDescription().toUpperCase());
+            	} else
+            		jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getCode());
+            }
             else
                 jsonObject.addProperty("status", "");
             if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
