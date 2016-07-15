@@ -45,7 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <form:hidden path="billamount" name="billamount" id="billamount" />
-<input type="hidden" name="workCommencedDate" id="workCommencedDate" class="form-control datepicker" value="${offlinestatusWorkCommencedDate}"/>
+<input type="hidden" name="workCommencedDate" id="workCommencedDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${offlinestatusWorkCommencedDate}" pattern="dd/MM/yyyy"/>' >
 <input type="hidden" id="errorBillDateFinYear" value="<spring:message code='error.billdate.finyear' />" />
 <input type="hidden" id="errorBillDateWorkOrder" value="<spring:message code='error.billdate.workorderdate' />" />
 <input type="hidden" id="errorPartyBillDateBillDate" value="<spring:message code='error.partybilldate.billdate' />" />
