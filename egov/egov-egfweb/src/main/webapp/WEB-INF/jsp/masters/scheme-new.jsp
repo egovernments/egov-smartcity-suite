@@ -45,7 +45,6 @@
 <html>
 <head>
 <title><s:text name="scheme.create.title" /></title>
-<sx:head />
 <SCRIPT type="text/javascript">
     function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';

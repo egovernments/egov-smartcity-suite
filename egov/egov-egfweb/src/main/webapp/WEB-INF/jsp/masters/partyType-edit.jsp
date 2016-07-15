@@ -48,7 +48,6 @@
 	</s:if> <s:if test="%{showMode=='view'}">
 		<s:text name="party.view" />
 	</s:if></title>
-<sx:head />
 <script type="text/javascript">
 		
 	function disableControls(isDisable) {

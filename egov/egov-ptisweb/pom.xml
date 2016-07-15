@@ -105,10 +105,6 @@
             <artifactId>javax.el</artifactId>
         </dependency>
         <!-- JBOSS END -->
-        <dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-dojo-plugin</artifactId>
-		</dependency>
 
         <!-- HIBERNATE START -->
         <dependency>

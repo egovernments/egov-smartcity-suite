@@ -49,7 +49,6 @@
 	</s:if> <s:else>
 		<s:text name="subscheme.modify.title" />
 	</s:else></title>
-<sx:head />
 <SCRIPT type="text/javascript">
 	function validate() {
 		if (!validateForm_subSchemeForm()) {

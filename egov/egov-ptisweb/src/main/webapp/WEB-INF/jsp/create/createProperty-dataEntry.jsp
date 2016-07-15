@@ -46,7 +46,6 @@
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='dataentry.title' />
 	</s:if></title>
-<sx:head />
 <!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"

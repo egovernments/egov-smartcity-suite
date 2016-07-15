@@ -427,12 +427,6 @@
 				<version>${struts2-jquery-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-dojo-plugin</artifactId>
-				<version>${struts2-version}</version>
-			</dependency>
-
-			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
 				<artifactId>xstream</artifactId>
 				<version>${xstream-version}</version>

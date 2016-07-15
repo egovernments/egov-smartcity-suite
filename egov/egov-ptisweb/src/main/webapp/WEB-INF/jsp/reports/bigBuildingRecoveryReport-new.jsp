@@ -49,7 +49,6 @@
 		<title><s:text name="BigBuildingRec.title"/></title>
 		<script type="text/javascript">
 		</script>
-		<sx:head/>
 	</head>
 	<body>
 		<div align="left">
