@@ -957,7 +957,7 @@ public class EstimateService {
 
     public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and upper(woe.estimate.estimateNumber) like upper(:workOrder_EstimateNumber) and woe.workOrder.egwStatus.code != :workOrderStatus) ");
+        queryStr.append("select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
@@ -994,8 +994,6 @@ public class EstimateService {
             if (searchRequestCancelEstimate.getToDate() != null)
                 qry.setParameter("toDate", searchRequestCancelEstimate.getToDate());
         }
-        final String estimateNumber = searchRequestCancelEstimate.getEstimateNumber() == null ? "" : searchRequestCancelEstimate.getEstimateNumber();
-        qry.setParameter("workOrder_EstimateNumber", "%" + estimateNumber + "%");
         qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
         return qry;
     }
