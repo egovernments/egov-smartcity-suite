@@ -91,7 +91,7 @@ public class CancelAbstractEstimateController {
 
         final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateService
                 .getWorkOrderEstimatesToCancelEstimates(abstractEstimate.getEstimateNumber());
-        if (workOrderEstimates.isEmpty()) {
+        if (!workOrderEstimates.isEmpty()) {
             model.addAttribute("errorMessage", messageSource.getMessage("error.estimate.loa.created",
                     new String[] { workOrderEstimates.get(0).getWorkOrder().getWorkOrderNumber() }, null));
             return "abstractEstimate-success";

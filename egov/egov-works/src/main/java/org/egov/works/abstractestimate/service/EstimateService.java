@@ -955,6 +955,7 @@ public class EstimateService {
     }
 
     public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
+        final List<String> estimateNumbers = letterOfAcceptanceService.findEstimateNumbersToCancelAbstractEstimate();
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class, "ae")
                 .createAlias("ae.egwStatus", "status")
                 .createAlias("ae.projectCode", "pc")
@@ -976,6 +977,7 @@ public class EstimateService {
                 criteria.add(Restrictions.le("ae.estimateDate", searchRequestCancelEstimate.getToDate()));
         }
         criteria.add(Restrictions.isNotEmpty("ae.activities"));
+        criteria.add(Restrictions.not(Restrictions.in("ae.estimateNumber", estimateNumbers)));
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
