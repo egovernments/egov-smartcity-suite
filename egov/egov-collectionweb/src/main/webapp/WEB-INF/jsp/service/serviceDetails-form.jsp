@@ -187,7 +187,7 @@ function enableUrl(obj) {
 
 	<div class="subheadsmallnew">
 				<span class="subheadnew"> <s:text name="service.create.details.header"></s:text> </span>
-			</div><br>
+			</div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		    <td width="3%" class="bluebox"> &nbsp; </td>
@@ -244,12 +244,9 @@ function enableUrl(obj) {
 					id="callBackurl" value="%{callBackurl}" cols="18" rows="1"
 					maxlength="255" onkeyup="return ismaxlength(this)" /></td>
 		</tr>
-	</table>
-	
-	<div class="subheadsmallnew">
-				<span class="subheadnew"> <s:text name="service.create.findetails.header"></s:text> </span>
-			</div><br>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr >
+			<td colspan="5"><div class="subheadsmallnew"><s:text name="service.create.findetails.header"></s:text></div></td>
+		</tr>
 		<s:if test="%{shouldShowHeaderField('fund') || shouldShowHeaderField('department')}">
          <tr>
           <td width="4%" class="bluebox">&nbsp;</td>
@@ -326,7 +323,6 @@ function enableUrl(obj) {
          
         </tr>
         </s:if>
-    </table>
 		<s:hidden name="serviceCategory.id" id="serviceCategory.id"></s:hidden>
 		<s:hidden name="id"></s:hidden>
 	</table>
