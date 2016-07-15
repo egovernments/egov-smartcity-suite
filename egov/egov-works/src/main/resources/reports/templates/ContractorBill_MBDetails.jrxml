@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-13T17:26:21 -->
+<!-- 2016-07-15T15:36:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBill-mbDetails" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="00675b19-5e39-41a6-bded-6125aa557b4f">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infra.utils.*"/>
@@ -62,7 +62,9 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[MB Reference number]]></text>
 			</staticText>
 			<staticText>
@@ -73,7 +75,9 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[MB page numbers]]></text>
 			</staticText>
 			<staticText>
@@ -84,7 +88,9 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[MB Date ]]></text>
 			</staticText>
 			<staticText>
@@ -97,7 +103,9 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[MB Amount]]></text>
 			</staticText>
 		</band>
