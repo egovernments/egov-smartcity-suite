@@ -13,8 +13,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Unique(id = "id", tableName = "egcncl_designation", fields = {"name"}, columnName = { "name"}, enableDfltMsg = true)

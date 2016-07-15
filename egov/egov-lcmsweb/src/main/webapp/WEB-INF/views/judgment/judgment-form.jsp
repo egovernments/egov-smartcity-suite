@@ -133,18 +133,18 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydetails" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="enquirydetails"
+							<form:textarea path="enquiryDetails"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
 								maxlength="1024" />
-							<form:errors path="enquirydetails" cssClass="error-msg" />
+							<form:errors path="enquiryDetails" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydate" />: </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="enquirydate" class="form-control datepicker"
+							<form:input path="enquiryDate" class="form-control datepicker"
 								data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
-							<form:errors path="enquirydate" cssClass="error-msg" />
+							<form:errors path="enquiryDate" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group" id="exparteorder1"  style="display:none">

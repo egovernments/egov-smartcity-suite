@@ -44,10 +44,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.egov.council.entity.CouncilMember;
 import org.egov.council.repository.CouncilMemberRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -101,8 +103,7 @@ public class CouncilMemberService {
 			criteria.add(Restrictions.eq("partyAffiliation",
 					councilMember.getPartyAffiliation()));
 		if (null != councilMember.getName())
-			criteria.add(Restrictions.eq("name", councilMember.getName())//TODO: USE ILIKE 
-					.ignoreCase());
+			criteria.add(Restrictions.ilike("name", councilMember.getName(), MatchMode.ANYWHERE));
 		return criteria.list();
 	}
     

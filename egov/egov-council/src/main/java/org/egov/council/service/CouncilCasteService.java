@@ -46,9 +46,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilCaste;
+import org.egov.council.entity.CouncilDesignation;
 import org.egov.council.repository.CouncilCasteRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -96,12 +98,14 @@ public class CouncilCasteService {
 		return councilCasteRepository.findOne(id);
 	}
 
+	public List<CouncilCaste> getActiveCastes() {
+		return councilCasteRepository.findByisActive(true);
+	}
 	public List<CouncilCaste> search(CouncilCaste councilCaste) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				CouncilCaste.class);
 		if (null != councilCaste.getName())
-			criteria.add(Restrictions.eq("name", councilCaste.getName())
-					.ignoreCase());
+			criteria.add(Restrictions.ilike("name", councilCaste.getName(),MatchMode.ANYWHERE));
 		if (councilCaste.getIsActive() != null
 				&& councilCaste.getIsActive() == true)
 			criteria.add(Restrictions.eq("isActive", councilCaste.getIsActive()));

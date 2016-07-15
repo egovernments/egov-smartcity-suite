@@ -259,7 +259,7 @@ function submitButton()
 			   {title : 'Status',data : 'resource.clauses.status'},
 	           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 	           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
-	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.clauses.waterTaxDue'},
+	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.searchable.waterTaxDue'},
 		       {title : 'Actions',
 	        	   render : function(data,type,full) {
 	        		     
@@ -267,41 +267,41 @@ function submitButton()
 	        				   (full.resource.clauses.applicationcode == 'ADDNLCONNECTION' )) {
 	        			   if (full.resource.clauses.status == 'ACTIVE' ) {
 	        				   if ( citizenRole== 'true'   ) { 
-	        					   if(full.resource.clauses.waterTaxDue > 0)
+	        					   if(full.resource.searchable.waterTaxDue > 0)
 	        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
 	        					   else{
 	        						   return ('');   
 	        					   }
 	        				   }
-	        				   else if ( (billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="" ) && (cscUserRole==null || cscUserRole=="") )  && full.resource.clauses.waterTaxDue > 0  ) {
+	        				   else if ( (billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="" ) && (cscUserRole==null || cscUserRole=="") )  && full.resource.searchable.waterTaxDue > 0  ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 	        				   }
 	        				   else if (cscUserRole!=null && cscUserRole !="" && (billcollector==null ||  billcollector=="")  ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option></select>');
 	        				   }
-	        				   else if (cscUserRole!=null && cscUserRole !="" && billcollector!=null &&  billcollector!="" && full.resource.clauses.waterTaxDue > 0) {
+	        				   else if (cscUserRole!=null && cscUserRole !="" && billcollector!=null &&  billcollector!="" && full.resource.searchable.waterTaxDue > 0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="6">Collect Charge</option></select>');
 	        				   }
-	        				   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") ) &&  full.resource.clauses.waterTaxDue==0) {
+	        				   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") ) &&  full.resource.searchable.waterTaxDue==0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="2">Change of use</option><option value="11">View DCB Screen</option></select>');
 	  	        				}
 	        				   
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype =='METERED'&&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue > 0  ) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype =='METERED'&&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue > 0  ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				   else if ((( billcollector==null || billcollector=="") && ( ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype =='METERED'&&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="")   ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.clauses.waterTaxDue > 0||full.resource.clauses.waterTaxDue == 0)) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.searchable.waterTaxDue > 0||full.resource.searchable.waterTaxDue == 0)) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option><option value="6">Collect Charge</option></select>');
 	        				   }
 	        				   else if (((billcollector==null ||  billcollector=="") && ( ulbUserRole!=null &&  ulbUserRole!=""))  && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype =='METERED'&&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="")  && full.resource.clauses.waterTaxDue==0) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype =='METERED'&&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="")  && full.resource.searchable.waterTaxDue==0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue==0) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue==0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				   
@@ -345,38 +345,38 @@ function submitButton()
 	        					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
 	        					  
 	        				   }
-	        				   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole==""))    && full.resource.clauses.waterTaxDue > 0  ) {
+	        				   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole==""))    && full.resource.searchable.waterTaxDue > 0  ) {
 	        					  
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 	        				   }
 	        				   else if (((billcollector==null ||  billcollector=="") && cscUserRole!=null &&  cscUserRole!="") ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option></select>');
 	        				   }
-	        				   else if ((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") && full.resource.clauses.waterTaxDue > 0) {
+	        				   else if ((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") && full.resource.searchable.waterTaxDue > 0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="6">Collect Charge</option></select>');
 	        				   }
 	        				  
 	        				   
-	        				   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") ) &&  full.resource.clauses.waterTaxDue==0) {
+	        				   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") ) &&  full.resource.searchable.waterTaxDue==0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				   else if (((billcollector==null ||  billcollector=="") &&  ulbUserRole!=null &&  ulbUserRole!="")  && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype =='METERED' &&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue > 0 ) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.connectiontype =='METERED' &&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue > 0 ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				   
-	        				   else if (((billcollector!=null &&  billcollector!="") &&  ulbUserRole!=null &&  ulbUserRole!="") && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.clauses.waterTaxDue > 0||full.resource.clauses.waterTaxDue == 0)) {
+	        				   else if (((billcollector!=null &&  billcollector!="") &&  ulbUserRole!=null &&  ulbUserRole!="") && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.searchable.waterTaxDue > 0||full.resource.searchable.waterTaxDue == 0)) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				   else if (((billcollector==null ||  billcollector=="") &&  ulbUserRole!=null &&  ulbUserRole!="") && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") ) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype =='METERED' &&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue ==0) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( (billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!="")) && full.resource.clauses.connectiontype =='METERED' &&  (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue ==0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
-	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && (billcollector==null ||  billcollector==""))) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue == 0) {
+	        				   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && (billcollector==null ||  billcollector==""))) && full.resource.clauses.connectiontype !='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue == 0) {
 	        					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="1">Additional connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        				   }
 	        				  else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && (billcollector==null ||  billcollector=="")))  && full.resource.searchable.closureType =='T') {
@@ -409,34 +409,34 @@ function submitButton()
         					  return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
         					   
         				   }
-	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
+	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.searchable.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
         				   }
-	        			   else if ((cscUserRole!=null &&  cscUserRole!="" && (billcollector==null ||  billcollector=="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
+	        			   else if ((cscUserRole!=null &&  cscUserRole!="" && (billcollector==null ||  billcollector=="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option></select>');
 	        			   }
-	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
+	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 	        			   }
-	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue == 0) {
+	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.waterTaxDue == 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue > 0) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        			   }
 	        			   else if (( ulbUserRole!=null &&  ulbUserRole!="") && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") ) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if ((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="")  &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.clauses.waterTaxDue > 0||full.resource.clauses.waterTaxDue == 0)) {
+	        			   else if ((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="")  &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && (full.resource.searchable.waterTaxDue > 0||full.resource.searchable.waterTaxDue == 0)) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="9">Closure of Connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        			   }
 	        			   else if (( ulbUserRole!=null &&  ulbUserRole!="" ) &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") ) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="2">Change of use</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue == 0) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue == 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if (ulbUserRole!=null && ulbUserRole!="" && ( billcollector==null ||  billcollector=="") &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.clauses.waterTaxDue == 0) {
+	        			   else if (ulbUserRole!=null && ulbUserRole!="" && ( billcollector==null ||  billcollector=="") &&  full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype !='METERED'  && (full.resource.searchable.closureType==null || full.resource.searchable.closureType=="") && full.resource.searchable.waterTaxDue == 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="9">Closure of Connection</option><option value="11">View DCB Screen</option></select>');
 	        			   }
 	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||(  ( billcollector==null ||  billcollector=="") && ulbUserRole!=null &&  ulbUserRole!=""))  && full.resource.searchable.closureType =='T') {
@@ -463,28 +463,28 @@ function submitButton()
         					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
         					   
         				   }
-	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.clauses.waterTaxDue > 0  ) {
+	        			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.resource.searchable.waterTaxDue > 0  ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
         				   }
-	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.waterTaxDue > 0) {
+	        			   else if (((cscUserRole!=null &&  cscUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.waterTaxDue > 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="6">Collect Charge</option></select>');
 	        			   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED'  && full.resource.clauses.waterTaxDue > 0 ) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED'  && full.resource.searchable.waterTaxDue > 0 ) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
 	        			   }
 	        			   else if (( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector=="")) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED'   ) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T' && full.resource.clauses.waterTaxDue > 0) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") )  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T' && full.resource.searchable.waterTaxDue > 0) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="6">Collect Charge</option><option value="11">View DCB Screen</option></select>');
         				   }
 	        			   else if (( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T' ) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
         				   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.clauses.waterTaxDue == 0) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.resource.clauses.status == 'ACTIVE' && full.resource.clauses.connectiontype =='METERED' && full.resource.searchable.waterTaxDue == 0) {
 	        				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="11">View DCB Screen</option></select>');
 	        			   }
-	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector=="")))  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T' && full.resource.clauses.waterTaxDue == 0) {
+	        			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector=="")))  && full.resource.clauses.status == 'ACTIVE' && full.resource.searchable.closureType =='T' && full.resource.searchable.waterTaxDue == 0) {
         					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
         				   }
 	        			   else if(superUserRole!=null && superUserRole!=""){
