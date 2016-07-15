@@ -666,6 +666,7 @@ public class MBHeaderService {
                 .createAlias("mb.workOrderEstimate", "woe")
                 .createAlias("woe.workOrder", "wo")
                 .createAlias("woe.estimate", "estimate")
+                .createAlias("estimate.projectCode", "projectCode")
                 .createAlias("wo.contractor", "woc")
                 .createAlias("mb.egwStatus", "status");
         if (searchRequestCancelMB != null) {
@@ -678,7 +679,7 @@ public class MBHeaderService {
             if (searchRequestCancelMB.getDepartment() != null)
                 criteria.add(Restrictions.eq("estimate.executingDepartment.id", searchRequestCancelMB.getDepartment()));
             if (searchRequestCancelMB.getWorkIdentificationNumber() != null)
-                criteria.add(Restrictions.eq("estimate.projectCode.id", searchRequestCancelMB.getWorkIdentificationNumber()));
+                criteria.add(Restrictions.eq("projectCode.code", searchRequestCancelMB.getWorkIdentificationNumber()));
             if (searchRequestCancelMB.getStatus() != null)
                 criteria.add(Restrictions.eq("status.code", searchRequestCancelMB.getStatus()));
             if (searchRequestCancelMB.getLoaNumber() != null)
