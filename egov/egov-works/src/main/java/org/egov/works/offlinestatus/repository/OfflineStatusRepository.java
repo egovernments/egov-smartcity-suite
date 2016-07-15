@@ -43,6 +43,8 @@ import java.util.List;
 
 import org.egov.works.models.tender.OfflineStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -51,5 +53,8 @@ public interface OfflineStatusRepository extends JpaRepository<OfflineStatus, Lo
     List<OfflineStatus> findByObjectIdAndObjectType(final Long objectId, final String objectType);
     
     OfflineStatus findByObjectIdAndObjectTypeAndEgwStatus_code(final Long objectId, final String objectType, final String statusCode);
+    
+    @Query("select stat from OfflineStatus as stat where stat.id = (select max(os.id) from OfflineStatus as os where os.objectId = :objectId and os.objectType = :objectType) and stat.objectId = :objectId and stat.objectType = :objectType")
+    OfflineStatus getLastOfflineStatusByObjectIdAndObjectType(@Param("objectId") Long objectId, @Param("objectType") String objectType);
 
 }

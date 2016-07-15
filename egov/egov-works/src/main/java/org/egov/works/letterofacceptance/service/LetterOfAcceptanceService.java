@@ -967,34 +967,32 @@ public class LetterOfAcceptanceService {
     public List<WorkOrderEstimate> searchLetterOfAcceptanceForOfflineStatus(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         List<WorkOrderEstimate> workOrderList = new ArrayList<WorkOrderEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.id != null and woe.workOrder.egwStatus.code =:workOrderStatus ");
+        queryStr.append("select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.egwStatus.code =:workOrderStatus ");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                queryStr.append(" and woe.workOrder.workOrderNumber =:workOrderNumber");
+                queryStr.append(" and upper(woe.workOrder.workOrderNumber) =:workOrderNumber");
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
                 queryStr.append(" and woe.workOrder.fileNumber like upper(:fileNumber)");
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
-                queryStr.append(" and woe.workOrder.workOrderDate >= :workOrderDateFromDate");
+                queryStr.append(" and woe.workOrder.workOrderDate >= :workOrderFromDate");
             if (searchRequestLetterOfAcceptance.getToDate() != null)
-                queryStr.append(" and woe.workOrder.workOrderDate <= :workOrderDateToDate");
+                queryStr.append(" and woe.workOrder.workOrderDate <= :workOrderToDate");
             if (searchRequestLetterOfAcceptance.getContractor() != null)
                 queryStr.append(
                         " and upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorCode) ");
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
-                queryStr.append(
-                        " and exists (select distinct(woe.workOrder) from WorkOrderEstimate woe where woe.estimate.executingDepartment.id = :department and woe.workOrder = woe.workOrder)");
+                queryStr.append(" and woe.estimate.executingDepartment.id =:department");
             }            
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null) { 
-                queryStr.append(" and woe.estimate.estimateNumber =:estimateNumber");
+                queryStr.append(" and upper(woe.estimate.estimateNumber) =:estimateNumber");
             }
             if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
                 if (searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)) {
-                    queryStr.append(" and woe.workOrder.egwStatus.code =:workOrderStatus");
                     queryStr.append(
-                            " and woe.workOrder.id not in (select distinct(os.objectId) from OfflineStatus as os where os.objectType = :objectType )");
+                            " and not exists (select distinct(os.objectId) from OfflineStatus as os where os.objectType = :objectType and woe.workOrder.id = os.objectId )");
                 } else if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
                     queryStr.append(
-                            " and woe.workOrder.egwStatus.code =:workOrderStatus and woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
+                            " and woe.workOrder.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = woe.workOrder.id) and os.objectId = woe.workOrder.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
                 }
             }
         }
@@ -1008,13 +1006,13 @@ public class LetterOfAcceptanceService {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber());
+                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber().toUpperCase());
             if (searchRequestLetterOfAcceptance.getFileNumber() != null)
                 qry.setParameter("fileNumber", "%" + searchRequestLetterOfAcceptance.getFileNumber() + "%");
             if (searchRequestLetterOfAcceptance.getFromDate() != null)
-                qry.setParameter("workOrderDateFromDate", searchRequestLetterOfAcceptance.getFromDate());
+                qry.setParameter("workOrderFromDate", searchRequestLetterOfAcceptance.getFromDate());
             if (searchRequestLetterOfAcceptance.getToDate() != null)
-                qry.setParameter("workOrderDateToDate", searchRequestLetterOfAcceptance.getToDate());
+                qry.setParameter("workOrderToDate", searchRequestLetterOfAcceptance.getToDate());
             if (searchRequestLetterOfAcceptance.getContractor() != null) {
                 qry.setParameter("contractorName", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
                 qry.setParameter("contractorCode", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
@@ -1023,14 +1021,16 @@ public class LetterOfAcceptanceService {
                 qry.setParameter("department", searchRequestLetterOfAcceptance.getDepartmentName());
             }
             if (searchRequestLetterOfAcceptance.getEstimateNumber() != null) {
-                qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber());
+                qry.setParameter("estimateNumber", searchRequestLetterOfAcceptance.getEstimateNumber().toUpperCase());
             }
-            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
-                    qry.setParameter("offlineStatus",
-                            searchRequestLetterOfAcceptance.getEgwStatus().toString().toLowerCase());
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null ) {
+                    qry.setParameter("objectType", WorksConstants.WORKORDER);
+                    if(!searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)){
+                        qry.setParameter("offlineStatus",
+                                searchRequestLetterOfAcceptance.getEgwStatus().toString().toLowerCase());
+                    }
             }
             qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
-            qry.setParameter("objectType", WorksConstants.WORKORDER);
             
         }
         return qry;
