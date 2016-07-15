@@ -41,10 +41,10 @@
 package org.egov.infra.web.struts.utils;
 
 /**
- * Extension for {@link org.apache.struts2.dispatcher.ServletActionRedirectResult}<br/>
+ * Extension for {@link org.apache.struts2.result.ServletActionRedirectResult}<br/>
  * adding extra functionality to include model id, module name with request parameter.
  **/
-public class ServletActionRedirectResult extends org.apache.struts2.dispatcher.ServletActionRedirectResult {
+public class ServletActionRedirectResult extends org.apache.struts2.result.ServletActionRedirectResult {
 	
 	private static final long serialVersionUID = 1L;
 	

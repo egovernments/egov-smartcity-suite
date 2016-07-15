@@ -121,7 +121,7 @@
 		<postgres-version>9.4.1208</postgres-version>
 
 		<!-- Other application dependency versions -->
-		<struts2-version>2.3.24.1</struts2-version>
+		<struts2-version>2.5.2</struts2-version>
 		<struts2-jquery-version>3.7.1</struts2-jquery-version>
 		<struts-spring-version>3.2.3.RELEASE</struts-spring-version>
 		<xstream-version>1.4.2</xstream-version>
