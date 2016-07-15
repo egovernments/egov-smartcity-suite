@@ -259,7 +259,7 @@ function submitButton()
 			   {title : 'Status',data : 'resource.clauses.status'},
 	           {title : 'conntype',data : 'resource.clauses.connectiontype',"bVisible" : false},
 	           {title : 'conndate',data : 'resource.common.createdDate',"bVisible" : false},
-	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.clauses.waterTaxDue'},
+	           {title : 'Water Charge Due',class : 'text-right',data : 'resource.searchable.waterTaxDue'},
 		       {title : 'Actions',
 	        	   render : function(data,type,full) {
 	        		     
