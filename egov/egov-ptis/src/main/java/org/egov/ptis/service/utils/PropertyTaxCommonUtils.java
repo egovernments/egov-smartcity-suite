@@ -70,7 +70,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -78,9 +80,11 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 public class PropertyTaxCommonUtils {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
@@ -93,6 +97,11 @@ public class PropertyTaxCommonUtils {
     
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    private FinancialYearDAO financialYearDAO;
+    
+    @Autowired
+    private ApplicationContext beanProvider;
 
     /**
      * Gives the first half of the current financial year
@@ -223,5 +232,14 @@ public class PropertyTaxCommonUtils {
                 .setParameter("startdate", startDate)
                 .setMaxResults(PropertyTaxConstants.MAX_ADVANCES_ALLOWED).list();
     	return advanceInstallments;
+    }
+    
+    /**
+     * API to make the existing DemandBill inactive 
+     * @param assessmentNo
+     */
+    public void makeExistingDemandBillInactive(String assessmentNo){
+    	DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
+    	demandBillService.makeDemandBillInactive(assessmentNo);
     }
 }

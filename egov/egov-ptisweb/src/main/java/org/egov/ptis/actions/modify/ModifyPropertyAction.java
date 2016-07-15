@@ -646,6 +646,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             propertyModel.setStatus(STATUS_ISACTIVE);
             oldProperty.setStatus(STATUS_ISHISTORY);
             propertyTaxUtil.makeTheEgBillAsHistory(basicProp);
+            propertyTaxCommonUtils.makeExistingDemandBillInactive(basicProp.getUpicNo());
         }
         processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
         if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)

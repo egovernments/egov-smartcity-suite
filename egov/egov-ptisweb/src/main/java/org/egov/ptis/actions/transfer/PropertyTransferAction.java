@@ -439,6 +439,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         approverName = "";
         Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         mutationInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+        propertyTaxCommonUtils.makeExistingDemandBillInactive(basicproperty.getUpicNo());
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
