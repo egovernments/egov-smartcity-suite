@@ -40,52 +40,66 @@
 
 package org.egov.infra.admin.master.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Unique(id = "id", tableName = "eg_role", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
-@Table(name = "eg_role")
-@SequenceGenerator(name = Role.SEQ_ROLE, sequenceName = Role.SEQ_ROLE, allocationSize = 1)
-public class Role extends AbstractAuditable {
+@Table(name = "eg_feature")
+@SequenceGenerator(name = Feature.SEQ_FEATURE, sequenceName = Feature.SEQ_FEATURE, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
+public class Feature extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = 7034114743461088547L;
-    public static final String SEQ_ROLE = "SEQ_EG_ROLE";
+    private static final long serialVersionUID = -5308237250026445794L;
+    public static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
 
-    @DocumentId
     @Id
-    @GeneratedValue(generator = SEQ_ROLE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_FEATURE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
     private Long id;
 
-    @NotBlank
-    @SafeHtml
-    @Length(max = 32)
     private String name;
 
-    @SafeHtml
-    @Length(max = 150)
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "module")
+    private Module module;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "eg_feature_action", joinColumns = @JoinColumn(name = "feature") , inverseJoinColumns = @JoinColumn(name = "action") )
+    @Fetch(FetchMode.JOIN)
+    private Set<Action> actions;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "eg_feature_role", joinColumns = @JoinColumn(name = "feature") , inverseJoinColumns = @JoinColumn(name = "role") )
+    @Fetch(FetchMode.JOIN)
+    private Set<Role> roles;
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
     @Override
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -104,21 +118,41 @@ public class Role extends AbstractAuditable {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public Module getModule() {
+        return module;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Role role = (Role) o;
-        return Objects.equals(getName(), role.getName());
+    public void setModule(final Module module) {
+        this.module = module;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName());
+    public Set<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(final Set<Action> actions) {
+        this.actions = actions;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(final Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public boolean hasRole(Role role) {
+        return this.roles.contains(role);
+    }
+
+    public void addRole(Role role) {
+        if(!hasRole(role))
+            this.getRoles().add(role);
+    }
+
+    public void removeRole(Role role) {
+        if (hasRole(role))
+            this.getRoles().remove(role);
     }
 }

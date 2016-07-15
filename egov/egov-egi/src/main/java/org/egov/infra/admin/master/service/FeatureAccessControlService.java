@@ -40,59 +40,40 @@
 
 package org.egov.infra.admin.master.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.repository.ActionRepository;
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.admin.master.entity.Feature;
+import org.egov.infra.admin.master.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-@Transactional(readOnly = true)
-public class ActionService {
+@Transactional
+public class FeatureAccessControlService {
 
     @Autowired
-    private ActionRepository actionRepository;
+    private FeatureService featureService;
 
-    public Action getActionByName(final String name) {
-        return actionRepository.findByName(name);
-    }
+    @Autowired
+    private ActionService actionService;
 
-    public Action getActionById(final Long id) {
-        return actionRepository.findOne(id);
+    @Transactional
+    public void grantAccess(Feature feature, Role role) {
+        feature.addRole(role);
+        featureService.saveFeature(feature);
+        for (Action action : feature.getActions()) {
+            action.addRole(role);
+            actionService.saveAction(action);
+        }
     }
 
     @Transactional
-    public Action saveAction(Action action) {
-        return actionRepository.save(action);
-    }
-
-    public Action getActionByUrlAndContextRoot(final String url, final String contextRoot) {
-        Action action = null;
-        if (url.contains("?")) {
-            final String queryParams = WebUtils.extractQueryParamsFromUrl(url);
-            final String urlPart = WebUtils.extractURLWithoutQueryParams(url);
-            action = actionRepository.findByUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams);
-            if (action == null)
-                action = findNearestMatchingAction(urlPart,
-                        actionRepository.findByMatchingUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams));
-        } else {
-            action = actionRepository.findByUrlAndContextRootAndQueryParamsIsNull(url, contextRoot);
-            if (action == null)
-                action = findNearestMatchingAction(url, actionRepository.findByMatchingUrlAndContextRoot(url, contextRoot));
+    public void revokeAccess(Feature feature, Role role) {
+        feature.removeRole(role);
+        featureService.saveFeature(feature);
+        for (Action action : feature.getActions()) {
+            action.removeRole(role);
+            actionService.saveAction(action);
         }
-        return action;
     }
-
-    private Action findNearestMatchingAction(final String url, final List<Action> actions) {
-        // This is to avoid vertical escalation wrt to REST URL as much as
-        // possible. TODO This required to be reworked.
-        return actions.isEmpty() ? null
-                : actions.parallelStream().filter(action -> StringUtils.getLevenshteinDistance(url, action.getUrl()) < 1)
-                        .findFirst().orElse(actions.get(0));
-    }
-
 }
