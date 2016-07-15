@@ -47,6 +47,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.asset.service.AssetService;
@@ -955,31 +956,48 @@ public class EstimateService {
     }
 
     public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
-        final List<String> estimateNumbers = letterOfAcceptanceService.findEstimateNumbersToCancelAbstractEstimate();
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class, "ae")
-                .createAlias("ae.egwStatus", "status")
-                .createAlias("ae.projectCode", "pc")
-                .createAlias("ae.lineEstimateDetails", "led")
-                .createAlias("led.lineEstimate", "le");
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append("select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and upper(woe.estimate.estimateNumber) like upper(:workOrder_EstimateNumber) and woe.workOrder.egwStatus.code != :workOrderStatus) ");
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
-                criteria.add(Restrictions.eq("ae.estimateNumber", searchRequestCancelEstimate.getEstimateNumber()));
+                queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
             if (searchRequestCancelEstimate.getLineEstimateNumber() != null)
-                criteria.add(Restrictions.ilike("le.lineEstimateNumber", searchRequestCancelEstimate.getLineEstimateNumber(),
-                        MatchMode.ANYWHERE));
+                queryStr.append(" and upper(ae.lineEstimateDetails.lineEstimate.lineEstimateNumber) like upper(:lineEstimateNumber)");
             if (searchRequestCancelEstimate.getWinCode() != null)
-                criteria.add(Restrictions.ilike("pc.code", searchRequestCancelEstimate.getWinCode(), MatchMode.ANYWHERE));
+                queryStr.append(" and upper(ae.projectCode.code) like upper(:projectCode)");
             if (searchRequestCancelEstimate.getStatus() != null)
-                criteria.add(Restrictions.eq("status.code", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()).ignoreCase());
+                queryStr.append(" and upper(ae.egwStatus.code) = upper(:status)");
             if (searchRequestCancelEstimate.getFromDate() != null)
-                criteria.add(Restrictions.ge("ae.estimateDate", searchRequestCancelEstimate.getFromDate()));
+                queryStr.append(" and ae.estimateDate >= :fromDate");
             if (searchRequestCancelEstimate.getToDate() != null)
-                criteria.add(Restrictions.le("ae.estimateDate", searchRequestCancelEstimate.getToDate()));
+                queryStr.append(" and ae.estimateDate <= :toDate");
         }
-        criteria.add(Restrictions.isNotEmpty("ae.activities"));
-        criteria.add(Restrictions.not(Restrictions.in("ae.estimateNumber", estimateNumbers)));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        return criteria.list();
+        
+        final Query query = setQueryParametersForAbstractEstimate(searchRequestCancelEstimate, queryStr);
+        return query.getResultList();
+    }
+
+    private Query setQueryParametersForAbstractEstimate(SearchRequestCancelEstimate searchRequestCancelEstimate,
+            StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (searchRequestCancelEstimate != null) {
+            if (searchRequestCancelEstimate.getEstimateNumber() != null)
+                qry.setParameter("estimateNumber", searchRequestCancelEstimate.getEstimateNumber());
+            if (searchRequestCancelEstimate.getLineEstimateNumber() != null)
+                qry.setParameter("lineEstimateNumber", "%" + searchRequestCancelEstimate.getLineEstimateNumber() + "%");
+            if (searchRequestCancelEstimate.getWinCode() != null)
+                qry.setParameter("projectCode", "%" + searchRequestCancelEstimate.getWinCode() + "%");
+            if (searchRequestCancelEstimate.getStatus() != null)
+                qry.setParameter("status", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            if (searchRequestCancelEstimate.getFromDate() != null)
+                qry.setParameter("fromDate", searchRequestCancelEstimate.getFromDate());
+            if (searchRequestCancelEstimate.getToDate() != null)
+                qry.setParameter("toDate", searchRequestCancelEstimate.getToDate());
+        }
+        final String estimateNumber = searchRequestCancelEstimate.getEstimateNumber() == null ? "" : searchRequestCancelEstimate.getEstimateNumber();
+        qry.setParameter("workOrder_EstimateNumber", "%" + estimateNumber + "%");
+        qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
+        return qry;
     }
 
     public List<String> findEstimateNumbersToCancelEstimate(final String code) {

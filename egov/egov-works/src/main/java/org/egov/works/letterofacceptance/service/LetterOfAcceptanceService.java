@@ -1046,8 +1046,4 @@ public class LetterOfAcceptanceService {
         else
             return mbrefNumbres;
     }
-
-    public List<String> findEstimateNumbersToCancelAbstractEstimate() {
-        return letterOfAcceptanceRepository.findEstimateNumbersToCancelAbstractEstimate(WorksConstants.CANCELLED_STATUS);
-    }
 }
