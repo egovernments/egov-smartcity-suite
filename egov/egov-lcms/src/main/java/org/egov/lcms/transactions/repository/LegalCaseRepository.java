@@ -50,6 +50,4 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, Long> {
 
     LegalCase findByCaseNumber(String number);
 
-    /* Legalcase findByLcNumber(String lcnumber, String status); */
-
 }
