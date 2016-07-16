@@ -39,16 +39,21 @@
  */
 package org.egov.works.web.controller.abstractestimate;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
@@ -77,6 +82,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 @RequestMapping(value = "/abstractestimate")
@@ -181,9 +187,10 @@ public class AjaxAbstractEstimateController {
         return result;
     }
 
-    @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET)
-    public @ResponseBody List<User> getAssignmentByDesignation(
-            @RequestParam("approvalDesignation") final Long approvalDesignation) {
+    @RequestMapping(value = "/ajax-assignmentByDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getAssignmentByDesignation(
+            @RequestParam("approvalDesignation") final Long approvalDesignation)
+            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
         final List<User> users = new ArrayList<User>();
         List<Assignment> assignments = new ArrayList<Assignment>();
         if (approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1)
@@ -192,7 +199,9 @@ public class AjaxAbstractEstimateController {
         for (final Assignment assignment : assignments)
             users.add(userService.getUserById(assignment.getEmployee().getId()));
 
-        return users;
+        final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(User.class, new UserAdaptor()).create();
+        return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
+        }.getType());
     }
 
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
@@ -200,7 +209,8 @@ public class AjaxAbstractEstimateController {
             @ModelAttribute final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final List<AbstractEstimate> abstractEstimates = estimateService
                 .searchEstimatesToCancel(searchRequestCancelEstimate);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatesToCancelJson(abstractEstimates)).append("}")
+        final String result = new StringBuilder("{ \"data\":").append(toSearchEstimatesToCancelJson(abstractEstimates))
+                .append("}")
                 .toString();
         return result;
     }

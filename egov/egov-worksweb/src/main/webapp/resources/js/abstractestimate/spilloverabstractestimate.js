@@ -59,6 +59,7 @@ $('#designation').change(function(){
 	$.ajax({
 		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
 		type: "GET",
+		dataType: "json",
 		data: {
 			approvalDesignation : $('#designation').val(),
 			approvalDepartment : $('#executingDepartment').val()    
@@ -66,7 +67,8 @@ $('#designation').change(function(){
 		success: function (response) {
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
-			$.each(response, function(index, value) {
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
 				$('#authority').append($('<option>').text(value.name).attr('value', value.id));  
 			});
 			var authorityValue = $('#authorityValue').val();
@@ -205,13 +207,15 @@ $('#adminSanctionAuthority').change(function(){
 	$.ajax({
 		url: "/egworks/abstractestimate/ajax-assignmentByDesignation",     
 		type: "GET",
+		dataType: "json",
 		data: {
 			approvalDesignation : $('#adminSanctionAuthority').val(),
 		},
 		success: function (response) {
-			$('#adminSanctionAuthorityValue').empty();
-			$('#adminSanctionAuthorityValue').append($("<option value=''>Select from below</option>"));
-			$.each(response, function(index, value) {
+			$('#adminSanctionDesignation').empty();
+			$('#adminSanctionDesignation').append($("<option value=''>Select from below</option>"));
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
 				var selected="";
 				if($adminSanctionNameId)
 				{
@@ -221,6 +225,7 @@ $('#adminSanctionAuthority').change(function(){
 					}
 				}
 				$('#adminSanctionDesignation').append($("<option "+ selected +" value='" + value.id + "'>" + value.name + "</option>"));
+			
 			});
 			var adminSanctionAuthorityValue = $('#adminSanctionAuthorityValue').val();
 			$('#adminSanctionAuthorityValue').val(authorityValue);
