@@ -1,0 +1,2 @@
+---------------Deleting unused statuses for Abstract Estimate----------------------
+delete from EGW_STATUS where MODULETYPE='AbstractEstimate' and code in ('BUDGETARY_APPROPRIATION_DONE','DEPOSIT_CODE_APPR_DONE');
