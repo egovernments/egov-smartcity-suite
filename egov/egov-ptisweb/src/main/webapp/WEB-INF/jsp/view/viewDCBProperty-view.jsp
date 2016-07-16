@@ -801,11 +801,16 @@
 			</s:form>
 		</s:else>
 		<div align="center">
-			<s:if test="%{isCitizen}">
+			<s:if test="%{isCitizen && searchUrl.contains('onlineSearch')}">
+				<input id="SearchProperty" class="buttonsubmit" type="button"
+					onclick="window.location='/ptis/citizen/search/searchByAssessment-searchForm.action';"
+					value="Search Property" name="SearchProperty">
+			</s:if>
+			<s:elseif test="%{isCitizen}">
 				<input id="SearchProperty" class="buttonsubmit" type="button"
 					onclick="window.location='/ptis/citizen/search/search-searchForm.action';"
 					value="Search Property" name="SearchProperty">
-			</s:if>
+			</s:elseif>
 			<input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="return confirmClose();" />
 		</div>
