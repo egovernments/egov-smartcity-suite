@@ -39,11 +39,10 @@
  */
 package org.egov.collection.entity;
 
-import org.apache.struts.action.ActionForm;
-
+import java.io.Serializable;
 import java.util.Date;
 
-public class DishonoredChequeForm extends ActionForm
+public class DishonoredChequeForm implements Serializable
 {
     private static final long serialVersionUID = 2038253371190828409L;
     private String voucherHeaderId;
