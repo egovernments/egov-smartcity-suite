@@ -239,6 +239,9 @@ public class ScheduleOfRateAction extends SearchFormAction {
         scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         addDropdownData("scheduleCategoryList", scheduleCategoryList);
         addDropdownData("uomlist", uomService.getAllUOMs());
+        abstractEstimateList = scheduleOfRateService.getAllAbstractEstimateByScheduleOrRateId(scheduleOfRate.getId());
+        if(!abstractEstimateList.isEmpty() && mode.equals(WorksConstants.EDIT))
+        	displData="disable";
     }
 
     private void getPersistedRateDetails(final ScheduleOfRate sor) {
@@ -406,7 +409,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         final String value = trackFlagMap.get(0);
                         if (value != null && !value.equalsIgnoreCase(flagValue))
                             deletFlagMap.put(rate.getId(), "no");
-                    }
+                    } 
                 }
             }
         }        // end of for abstractestimate

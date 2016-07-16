@@ -47,7 +47,11 @@
 	</head>
 	<body id="home" onload="disableFields();">
 		<div class="new-page-header">
-		<s:text name="scheduleCategory.create.title" />
+			<s:if test="%{id!=null}">
+				<s:text name="scheduleCategory.create.title.modify" />
+			</s:if><s:else>
+				<s:text name="scheduleCategory.create.title" />
+			</s:else>
 		</div>
 		
 		<s:if test="%{hasErrors()}">

@@ -41,7 +41,11 @@
 <div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
-				<div class="panel-title"><s:text name="contractor.grade.header" /></div>
+				<div class="panel-title"><s:if test="%{mode=='edit'}">
+				<s:text name="contractor.grade.header.modify" />
+				</s:if><s:else>
+					<s:text name="contractor.grade.header" />
+				</s:else></div>
 			</div>
 			<input type="hidden" value="<s:text name='contractor.grade.maxamount.invalid' />" id='gradeError'>
 			<input type="hidden" value="<s:text name='contractorGrade.maxAmount.valid' />" id='gradeValidError'>

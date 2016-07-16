@@ -199,7 +199,11 @@ var makeContractorDataTable = function() {
 
 <div class="errorstyle" id="contractor_error" class="alert alert-danger" style="display: none;"></div>
 <div class="new-page-header">
-	<s:text name="contractor.master.title" />
+	<s:if test="%{mode=='edit'}">
+		<s:text name="contractor.master.title.modify" />
+	</s:if><s:else>
+		<s:text name="contractor.master.title" />
+	</s:else>
 </div>
 <div class="panel panel-primary" data-collapsed="0"
 	style="text-align: left">

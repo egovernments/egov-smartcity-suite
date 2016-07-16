@@ -216,7 +216,11 @@ var makeScheduleOfRateDataTable = function() {
 </span>
 
 <div class="new-page-header">
-	<s:text name="master.sor.rate.master" />
+	<s:if test="%{mode=='edit'}">
+		<s:text name="master.sor.rate.master.modify" />
+	</s:if><s:else>
+		<s:text name="master.sor.rate.master" />
+	</s:else>
 </div>
 	<input type="hidden" value="<s:text name="sor.uom.not.null" />" id="selectUOM" />
 	<input type="hidden" value="<s:text name="sor.code.not.empty" />" id="selectCodeForSor" />
@@ -235,6 +239,7 @@ var makeScheduleOfRateDataTable = function() {
 	<input type="hidden" value="<s:text name="sor.rate.dates.overlap" />" id="selectMarketRateEndDateValidate" />
 	<input type="hidden" value="<s:text name="sor.rate.endDate__empty" />" id="selectSOREndDate" />
 	<input type="hidden" value="<s:text name="sor.marketrate.endDate__empty" />" id="selectMarketRateEndDate" />
+	<s:hidden name="displData" id="displData" />
 	
 <div class="panel panel-primary" data-collapsed="0" style="text-align:left">
 	<div class="panel-heading">

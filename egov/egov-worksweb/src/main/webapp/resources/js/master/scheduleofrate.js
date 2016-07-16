@@ -178,6 +178,32 @@ function validateSORFormAndSubmit(){
     	    }
        }
     }
+    var elements = document.getElementsByClassName('rateforsor');
+    for (var i = 0; i < elements.length; i++) {
+    	if(document.getElementById('idyui-rec'+i).value != "")
+    		elements[i].disabled = false;
+    }
+    var startdate = document.getElementsByClassName('startdate');
+    for (var i = 0; i < startdate.length; i++) {
+    	if(document.getElementById('idyui-rec'+i).value != "")
+    		startdate[i].disabled = false;
+    }
     return true;
     
 }
+
+$(document).ready(function() {
+	var mode = document.getElementById('displData').value;
+	if (mode == 'disable') {
+		var elements = document.getElementsByClassName('rateforsor');
+		for (var i = 0; i < elements.length; i++) {
+			if (document.getElementById('idyui-rec' + i).value != "")
+				elements[i].disabled = true;
+		}
+		var startdate = document.getElementsByClassName('startdate');
+		for (var i = 0; i < startdate.length; i++) {
+			if (document.getElementById('idyui-rec' + i).value != "")
+				startdate[i].disabled = true;
+		}
+	}
+});

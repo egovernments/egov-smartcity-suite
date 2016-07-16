@@ -47,7 +47,11 @@
 	<body>
 	
 		<div class="new-page-header">
-			<s:text name="contractor.grade.header" />
+			<s:if test="%{mode == 'edit'}">
+				<s:text name="contractor.grade.header.modify" />
+			</s:if><s:else>
+				<s:text name="contractor.grade.header" />
+			</s:else>
 		</div>
 		
     	<s:if test="%{hasErrors()}">
