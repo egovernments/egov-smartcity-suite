@@ -94,9 +94,9 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("nameOfWork", "");
             if (workProgressRegister.getWinCode() != null)
-                jsonObject.addProperty("winCode", workProgressRegister.getWinCode());
+                jsonObject.addProperty("winCodeEstimateNumber", workProgressRegister.getWinCode() + ", " + workProgressRegister.getEstimateNumber());
             else
-                jsonObject.addProperty("winCode", "");
+                jsonObject.addProperty("winCodeEstimateNumber", "");
             if (workProgressRegister.getFund() != null)
                 jsonObject.addProperty("fund",
                         workProgressRegister.getFund().getCode() + " - " + workProgressRegister.getFund().getName());
@@ -199,6 +199,14 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("milestonePercentageCompleted", workProgressRegister.getMilestonePercentageCompleted());
             else
                 jsonObject.addProperty("milestonePercentageCompleted", "NA");
+            if (workProgressRegister.getWorkvalue() != null)
+                jsonObject.addProperty("workValue", workProgressRegister.getWorkvalue());
+            else
+                jsonObject.addProperty("workValue", "");
+            if (workProgressRegister.getWorkstatus() != null)
+                jsonObject.addProperty("workStatus", workProgressRegister.getWorkstatus());
+            else
+                jsonObject.addProperty("workStatus", "");
 
             jsonObject.addProperty("createdDate", formatter.format(workProgressRegister.getCreatedDate()));
         }

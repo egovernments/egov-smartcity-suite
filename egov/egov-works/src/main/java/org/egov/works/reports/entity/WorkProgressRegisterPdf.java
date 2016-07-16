@@ -97,6 +97,12 @@ public class WorkProgressRegisterPdf {
 
     private String milestonePercentageCompleted;
 
+    private String estimateNumber;
+
+    private String workValue;
+
+    private String workStatus;
+
     public String getWard() {
         return ward;
     }
@@ -319,6 +325,30 @@ public class WorkProgressRegisterPdf {
 
     public void setMilestonePercentageCompleted(final String milestonePercentageCompleted) {
         this.milestonePercentageCompleted = milestonePercentageCompleted;
+    }
+
+    public String getEstimateNumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimateNumber(final String estimateNumber) {
+        this.estimateNumber = estimateNumber;
+    }
+
+    public String getWorkValue() {
+        return workValue;
+    }
+
+    public void setWorkValue(final String workValue) {
+        this.workValue = workValue;
+    }
+
+    public String getWorkStatus() {
+        return workStatus;
+    }
+
+    public void setWorkStatus(final String workStatus) {
+        this.workStatus = workStatus;
     }
 
 }

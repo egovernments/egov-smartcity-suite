@@ -42,6 +42,7 @@ package org.egov.works.web.controller.reports;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
+import org.egov.works.reports.entity.enums.WorkStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,5 +68,6 @@ public class WorkProgressRegisterReportController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("workStatus", WorkStatus.values());
     }
 }

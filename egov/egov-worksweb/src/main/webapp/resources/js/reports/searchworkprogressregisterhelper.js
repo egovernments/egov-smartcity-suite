@@ -104,6 +104,7 @@ $('#btndownloadpdf').click(function() {
 	var workIdentificationNumber = $('#workIdentificationNumber').val();
 	var contractor = $('#contractor').val();
 	var department = $('#department').val();
+	var workStatus = $('#workStatus').val();
 	var spillOver = document.getElementById("spillOverFlag");
 	var spillOverFlag = spillOver.checked ? true : false;
 
@@ -118,6 +119,7 @@ $('#btndownloadpdf').click(function() {
 			+ "&department="
 			+ department
 			+ "&spillOverFlag=" + spillOverFlag
+			+ "&workStatus=" + workStatus
 			+ "&contentType=pdf", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 
@@ -170,6 +172,7 @@ function callAjaxSearch() {
 				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+//				"scrollY":        "300px",
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : []
@@ -186,30 +189,34 @@ function callAjaxSearch() {
 						$('td:eq(15)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(15)',row).html('NA');
+					if(data.workValue != "")
+						$('td:eq(16)',row).html(parseFloat(Math.round(data.workValue * 100) / 100).toFixed(2));
+					else
+						$('td:eq(16)',row).html('NA');
 					if(data.agreementAmount != "")
-						$('td:eq(19)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
+						$('td:eq(20)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
 					else
-						$('td:eq(19)',row).html('NA');
+						$('td:eq(20)',row).html('NA');
 					if(data.billAmount != "")
-						$('td:eq(24)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
-					else
-						$('td:eq(24)',row).html('NA');
-					if(data.totalBillAmount != "")
-						$('td:eq(25)',row).html(parseFloat(Math.round(data.totalBillAmount * 100) / 100).toFixed(2));
-					else
-						$('td:eq(25)',row).html('NA');
-					if(data.totalBillPaidSoFar != "")
-						$('td:eq(26)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
+						$('td:eq(26)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(26)',row).html('NA');
-					if(data.balanceValueOfWorkToBill != ""){
-						if(data.billType == "Final Bill" )
-							$('td:eq(27)',row).html(data.balanceValueOfWorkToBill);
-						else
-							$('td:eq(27)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
-					}
+					if(data.totalBillAmount != "")
+						$('td:eq(27)',row).html(parseFloat(Math.round(data.totalBillAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(27)',row).html('NA');
+					if(data.totalBillPaidSoFar != "")
+						$('td:eq(28)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
+					else
+						$('td:eq(28)',row).html('NA');
+					if(data.balanceValueOfWorkToBill != ""){
+						if(data.billType == "Final Bill" )
+							$('td:eq(29)',row).html(data.balanceValueOfWorkToBill);
+						else
+							$('td:eq(29)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					}
+					else
+						$('td:eq(29)',row).html('NA');
 					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
@@ -226,7 +233,7 @@ function callAjaxSearch() {
 					"data" : "typeOfSlum", "sClass" : "text-left"} ,{ 
 					"data" : "beneficiaries", "sClass" : "text-left"} ,{
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
-					"data" : "winCode", "sClass" : "text-left"} ,{
+					"data" : "winCodeEstimateNumber", "sClass" : "text-left"} ,{
 					"data" : "fund", "sClass" : "text-left"} ,{
 					"data" : "function", "sClass" : "text-left"} ,{ 
 					"data" : "budgetHead", "sClass" : "text-left"} ,{
@@ -236,10 +243,12 @@ function callAjaxSearch() {
 					"data" : "adminSanctionAmount", "sClass" : "text-right"}, {
 					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-center"}, {
 					"data" : "estimateAmount", "sClass" : "text-right"}, {
+					"data" : "workValue", "sClass" : "text-right"}, {
 					"data" : "modeOfAllotment", "sClass" : "text-right"}, {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
 					"data" : "contractorCodeName", "sClass" : "text-right"}, {
 					"data" : "agreementAmount", "sClass" : "text-right"}, {
+					"data" : "workStatus", "sClass" : "text-right"}, {
 					"data" : "milestonePercentageCompleted", "sClass" : "text-center"}, {
 					"data" : "latestMbNumberDate", "sClass" : "text-right"}, {
 					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {

@@ -48,6 +48,7 @@ public class WorkProgressRegisterSearchRequest {
     private String contractor;
     private Long department;
     private boolean spillOverFlag;
+    private String workStatus;
 
     public Date getAdminSanctionFromDate() {
         return adminSanctionFromDate;
@@ -95,5 +96,13 @@ public class WorkProgressRegisterSearchRequest {
 
     public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
+    }
+
+    public String getWorkStatus() {
+        return workStatus;
+    }
+
+    public void setWorkStatus(final String workStatus) {
+        this.workStatus = workStatus;
     }
 }

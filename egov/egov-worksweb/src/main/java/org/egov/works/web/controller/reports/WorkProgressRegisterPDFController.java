@@ -113,6 +113,7 @@ public class WorkProgressRegisterPDFController {
             @RequestParam("department") final Long department,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType,
+            @RequestParam("workStatus") final String workStatus,
             final HttpSession session) throws IOException {
         final WorkProgressRegisterSearchRequest searchRequest = new WorkProgressRegisterSearchRequest();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -122,6 +123,7 @@ public class WorkProgressRegisterPDFController {
         searchRequest.setWorkIdentificationNumber(workIdentificationNumber);
         searchRequest.setDepartment(department);
         searchRequest.setSpillOverFlag(spillOverFlag);
+        searchRequest.setWorkStatus(workStatus);
         final List<WorkProgressRegister> workProgressRegisters = workProgressRegisterService
                 .searchWorkProgressRegister(searchRequest);
 
@@ -153,7 +155,17 @@ public class WorkProgressRegisterPDFController {
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
 
         reportParams.put("queryParameters", queryParameters);
-
+        
+        if (contractor != null)
+            reportParams.put("isContractor", true);
+        else
+            reportParams.put("isContractor", false);
+        
+        if (workStatus != null)
+            reportParams.put("isWorkStatus", true);
+        else
+            reportParams.put("isWorkStatus", false);
+        
         return generateReport(workProgressRegisters, request, session, contentType);
     }
 
@@ -287,6 +299,18 @@ public class WorkProgressRegisterPDFController {
                                 wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 } else
                     pdf.setBalanceValueOfWorkToBill("NA");
+                if (wpr.getEstimateNumber() != null)
+                    pdf.setEstimateNumber(wpr.getEstimateNumber());
+                else
+                    pdf.setEstimateNumber("NA");
+                if (wpr.getWorkvalue() != null)
+                    pdf.setWorkValue(new BigDecimal(wpr.getWorkvalue()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setWorkValue("NA");
+                if (wpr.getWorkstatus() != null)
+                    pdf.setWorkStatus(wpr.getWorkstatus());
+                else
+                    pdf.setWorkStatus("NA");
 
                 dataRunDate = formatter.format(wpr.getCreatedDate());
 

@@ -246,6 +246,8 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     private Double workvalue;
 
+    private String estimateNumber;
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -636,7 +638,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return estimatestatuscode;
     }
 
-    public void setEstimatestatuscode(String estimatestatuscode) {
+    public void setEstimatestatuscode(final String estimatestatuscode) {
         this.estimatestatuscode = estimatestatuscode;
     }
 
@@ -644,7 +646,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return workstatus;
     }
 
-    public void setWorkstatus(String workstatus) {
+    public void setWorkstatus(final String workstatus) {
         this.workstatus = workstatus;
     }
 
@@ -652,7 +654,7 @@ public class WorkProgressRegister extends AbstractAuditable {
         return estimatevalue;
     }
 
-    public void setEstimatevalue(Double estimatevalue) {
+    public void setEstimatevalue(final Double estimatevalue) {
         this.estimatevalue = estimatevalue;
     }
 
@@ -660,8 +662,16 @@ public class WorkProgressRegister extends AbstractAuditable {
         return workvalue;
     }
 
-    public void setWorkvalue(Double workvalue) {
+    public void setWorkvalue(final Double workvalue) {
         this.workvalue = workvalue;
+    }
+
+    public String getEstimateNumber() {
+        return estimateNumber;
+    }
+
+    public void setEstimateNumber(final String estimateNumber) {
+        this.estimateNumber = estimateNumber;
     }
 
 }

@@ -104,7 +104,6 @@ public class WorkProgressRegisterService {
                         workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE),
                         Restrictions.ilike("contractor.name",
                                 workProgressRegisterSearchRequest.getContractor(), MatchMode.ANYWHERE)));
-
             }
             if (workProgressRegisterSearchRequest.getAdminSanctionFromDate() != null)
                 criteria.add(Restrictions.ge("adminSanctionDate",
@@ -112,9 +111,10 @@ public class WorkProgressRegisterService {
             if (workProgressRegisterSearchRequest.getAdminSanctionToDate() != null)
                 criteria.add(Restrictions.le("adminSanctionDate",
                         workProgressRegisterSearchRequest.getAdminSanctionToDate()));
-
             if (workProgressRegisterSearchRequest.isSpillOverFlag())
                 criteria.add(Restrictions.eq("spillOverFlag", workProgressRegisterSearchRequest.isSpillOverFlag()));
+            if (workProgressRegisterSearchRequest.getWorkStatus() != null)
+                criteria.add(Restrictions.eq("workstatus", workProgressRegisterSearchRequest.getWorkStatus()));
 
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();

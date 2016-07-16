@@ -56,7 +56,7 @@
 					<th><spring:message code="lbl.typeofslum" /></th>
 					<th><spring:message code="lbl.beneficiaries" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="lbl.wincode" /></th>
+					<th><spring:message code="lbl.wincode.estimatenumber" /></th>
 					<th><spring:message code="lbl.fund" /></th>
 					<th><spring:message code="lbl.function" /></th>
 					<th><spring:message code="lbl.budgethead" /></th>
@@ -66,10 +66,12 @@
 					<th><spring:message code="lbl.adminsanctionamount" /></th>
 					<th><spring:message code="lbl.technicalauthority.date" /></th>
 					<th><spring:message code="lbl.estimateamount" /></th>
+					<th><spring:message code="lbl.workvalue" /></th>
 					<th><spring:message code="lbl.modeofallotment" /></th>
 					<th><spring:message code="lbl.agreementnumber.date" /></th>
 					<th><spring:message code="lbl.contractorcode.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.workstatus" /></th>
 					<th><spring:message code="lbl.milestonePercentageCompleted" /></th>
 					<th><spring:message code="lbl.lastest.mb.number.date" /></th>
 					<th><spring:message code="lbl.lastest.bill.number.date" /></th>
