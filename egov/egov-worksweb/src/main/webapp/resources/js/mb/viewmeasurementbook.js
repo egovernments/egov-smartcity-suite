@@ -85,3 +85,8 @@ $(document).ready(function() {
 	 var pageTotal = parseFloat((parseFloat(sorTotal) + parseFloat(nonSorTotal))).toFixed(2);  
 	 $("#pageTotal").html(pageTotal);
 });
+
+function renderMBPDF() {
+	var mbId = $("#mbheaderid").val();
+	window.open("/egworks/measurementbook/measurementbookPDF/"+mbId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+}
