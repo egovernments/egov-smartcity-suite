@@ -60,13 +60,18 @@ public class EstimateAbstractReport {
     private Long currentFinancialYearId;
     private Long typeOfWork;
     private Long subTypeOfWork;
+    private String workStatus;
 
     private String departmentName;
     private Long lineEstimates;
     private Long adminSanctionedEstimates;
-    private String adminSanctionedAmountInCrores;
+    private String leAdminSanctionedAmountInCrores;
+    private String aeAdminSanctionedAmountInCrores;
+    private String workValueOfAdminSanctionedAEInCrores;
     private Long technicalSanctionedEstimates;
     private Long loaCreated;
+    private Long loaNotCreated;
+    private Long workNotCommenced;
     private String agreementValueInCrores;
     private Long workInProgress;
     private Long WorkCompleted;
@@ -189,12 +194,20 @@ public class EstimateAbstractReport {
         this.adminSanctionedEstimates = adminSanctionedEstimates;
     }
 
-    public String getAdminSanctionedAmountInCrores() {
-        return adminSanctionedAmountInCrores;
+    public String getLeAdminSanctionedAmountInCrores() {
+        return leAdminSanctionedAmountInCrores;
     }
 
-    public void setAdminSanctionedAmountInCrores(final String adminSanctionedAmountInCrores) {
-        this.adminSanctionedAmountInCrores = adminSanctionedAmountInCrores;
+    public void setLeAdminSanctionedAmountInCrores(String leAdminSanctionedAmountInCrores) {
+        this.leAdminSanctionedAmountInCrores = leAdminSanctionedAmountInCrores;
+    }
+
+    public String getAeAdminSanctionedAmountInCrores() {
+        return aeAdminSanctionedAmountInCrores;
+    }
+
+    public void setAeAdminSanctionedAmountInCrores(String aeAdminSanctionedAmountInCrores) {
+        this.aeAdminSanctionedAmountInCrores = aeAdminSanctionedAmountInCrores;
     }
 
     public Long getTechnicalSanctionedEstimates() {
@@ -307,6 +320,38 @@ public class EstimateAbstractReport {
 
     public void setSubTypeOfWorkName(final String subTypeOfWorkName) {
         this.subTypeOfWorkName = subTypeOfWorkName;
+    }
+
+    public String getWorkValueOfAdminSanctionedAEInCrores() {
+        return workValueOfAdminSanctionedAEInCrores;
+    }
+
+    public void setWorkValueOfAdminSanctionedAEInCrores(String workValueOfAdminSanctionedAEInCrores) {
+        this.workValueOfAdminSanctionedAEInCrores = workValueOfAdminSanctionedAEInCrores;
+    }
+
+    public Long getLoaNotCreated() {
+        return loaNotCreated;
+    }
+
+    public void setLoaNotCreated(Long loaNotCreated) {
+        this.loaNotCreated = loaNotCreated;
+    }
+
+    public Long getWorkNotCommenced() {
+        return workNotCommenced;
+    }
+
+    public void setWorkNotCommenced(Long workNotCommenced) {
+        this.workNotCommenced = workNotCommenced;
+    }
+
+    public String getWorkStatus() {
+        return workStatus;
+    }
+
+    public void setWorkStatus(String workStatus) {
+        this.workStatus = workStatus;
     }
 
 }

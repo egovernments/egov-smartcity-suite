@@ -222,11 +222,23 @@ public class EstimateAbstractReportPDFController {
                 else
                     pdf.setAdminSanctionedEstimates(null);
 
-                if (eadwr.getAdminSanctionedAmountInCrores() != null)
-                    pdf.setAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAdminSanctionedAmountInCrores())
+                if (eadwr.getLeAdminSanctionedAmountInCrores() != null)
+                    pdf.setLeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getLeAdminSanctionedAmountInCrores())
                             .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
-                    pdf.setAdminSanctionedAmountInCrores("NA");
+                    pdf.setLeAdminSanctionedAmountInCrores("NA");
+
+                if (eadwr.getAeAdminSanctionedAmountInCrores() != null)
+                    pdf.setAeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAeAdminSanctionedAmountInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setAeAdminSanctionedAmountInCrores("NA");
+
+                if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores(new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
 
                 if (eadwr.getTechnicalSanctionedEstimates() != null)
                     pdf.setTechnicalSanctionedEstimates(eadwr.getTechnicalSanctionedEstimates());
@@ -237,6 +249,16 @@ public class EstimateAbstractReportPDFController {
                     pdf.setLoaCreated(eadwr.getLoaCreated());
                 else
                     pdf.setLoaCreated(null);
+
+                if (eadwr.getLoaNotCreated() != null)
+                    pdf.setLoaNotCreated(eadwr.getLoaNotCreated());
+                else
+                    pdf.setLoaNotCreated(null);
+
+                if (eadwr.getWorkNotCommenced() != null)
+                    pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
+                else
+                    pdf.setWorkNotCommenced(null);
 
                 if (eadwr.getAgreementValueInCrores() != null)
                     pdf.setAgreementValueInCrores(new BigDecimal(eadwr.getAgreementValueInCrores())
@@ -411,7 +433,7 @@ public class EstimateAbstractReportPDFController {
                 if (eadwr.getSubTypeOfWorkName() != null)
                     pdf.setSubTypeOfWorkName(eadwr.getSubTypeOfWorkName());
                 else
-                    pdf.setTypeOfWorkName("");
+                    pdf.setSubTypeOfWorkName("");
 
                 if (eadwr.getLineEstimates() != null)
                     pdf.setLineEstimates(eadwr.getLineEstimates());
@@ -423,12 +445,23 @@ public class EstimateAbstractReportPDFController {
                 else
                     pdf.setAdminSanctionedEstimates(null);
 
-                if (eadwr.getAdminSanctionedAmountInCrores() != null)
-                    pdf.setAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAdminSanctionedAmountInCrores())
+                if (eadwr.getLeAdminSanctionedAmountInCrores() != null)
+                    pdf.setLeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getLeAdminSanctionedAmountInCrores())
                             .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
-                    pdf.setAdminSanctionedAmountInCrores("NA");
+                    pdf.setLeAdminSanctionedAmountInCrores("NA");
 
+                if (eadwr.getAeAdminSanctionedAmountInCrores() != null)
+                    pdf.setAeAdminSanctionedAmountInCrores(new BigDecimal(eadwr.getAeAdminSanctionedAmountInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setAeAdminSanctionedAmountInCrores("NA");
+
+                if (eadwr.getWorkValueOfAdminSanctionedAEInCrores() != null)
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores(new BigDecimal(eadwr.getWorkValueOfAdminSanctionedAEInCrores())
+                            .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                else
+                    pdf.setWorkValueOfAdminSanctionedAEInCrores("NA");
                 if (eadwr.getTechnicalSanctionedEstimates() != null)
                     pdf.setTechnicalSanctionedEstimates(eadwr.getTechnicalSanctionedEstimates());
                 else
@@ -438,6 +471,16 @@ public class EstimateAbstractReportPDFController {
                     pdf.setLoaCreated(eadwr.getLoaCreated());
                 else
                     pdf.setLoaCreated(null);
+
+                if (eadwr.getLoaNotCreated() != null)
+                    pdf.setLoaNotCreated(eadwr.getLoaNotCreated());
+                else
+                    pdf.setLoaNotCreated(null);
+
+                if (eadwr.getWorkNotCommenced() != null)
+                    pdf.setWorkNotCommenced(eadwr.getWorkNotCommenced());
+                else
+                    pdf.setWorkNotCommenced(null);
 
                 if (eadwr.getAgreementValueInCrores() != null)
                     pdf.setAgreementValueInCrores(new BigDecimal(eadwr.getAgreementValueInCrores())

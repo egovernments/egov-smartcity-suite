@@ -236,6 +236,16 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     private Double milestonePercentageCompleted;
 
+    @SafeHtml
+    private String estimatestatuscode;
+
+    @SafeHtml
+    private String workstatus;
+
+    private Double estimatevalue;
+
+    private Double workvalue;
+
     @Override
     protected void setId(final Long id) {
         this.id = id;
@@ -620,6 +630,38 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setMilestonePercentageCompleted(final Double milestonePercentageCompleted) {
         this.milestonePercentageCompleted = milestonePercentageCompleted;
+    }
+
+    public String getEstimatestatuscode() {
+        return estimatestatuscode;
+    }
+
+    public void setEstimatestatuscode(String estimatestatuscode) {
+        this.estimatestatuscode = estimatestatuscode;
+    }
+
+    public String getWorkstatus() {
+        return workstatus;
+    }
+
+    public void setWorkstatus(String workstatus) {
+        this.workstatus = workstatus;
+    }
+
+    public Double getEstimatevalue() {
+        return estimatevalue;
+    }
+
+    public void setEstimatevalue(Double estimatevalue) {
+        this.estimatevalue = estimatevalue;
+    }
+
+    public Double getWorkvalue() {
+        return workvalue;
+    }
+
+    public void setWorkvalue(Double workvalue) {
+        this.workvalue = workvalue;
     }
 
 }

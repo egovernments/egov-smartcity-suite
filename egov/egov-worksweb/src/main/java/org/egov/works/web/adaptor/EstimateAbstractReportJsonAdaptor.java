@@ -91,13 +91,29 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
             else
                 jsonObject.addProperty("adminSanctionedEstimates", "");
 
-            if (estimateAbstractReport.getAdminSanctionedAmountInCrores() != null)
+            if (estimateAbstractReport.getLeAdminSanctionedAmountInCrores() != null)
                 jsonObject.addProperty(
-                        "adminSanctionedAmountInCrores",
-                        new BigDecimal(estimateAbstractReport.getAdminSanctionedAmountInCrores()).setScale(2,
+                        "leAdminSanctionedAmountInCrores",
+                        new BigDecimal(estimateAbstractReport.getLeAdminSanctionedAmountInCrores()).setScale(2,
                                 BigDecimal.ROUND_HALF_EVEN).toString());
             else
-                jsonObject.addProperty("adminSanctionedAmountInCrores", "");
+                jsonObject.addProperty("leAdminSanctionedAmountInCrores", "");
+
+            if (estimateAbstractReport.getAeAdminSanctionedAmountInCrores() != null)
+                jsonObject.addProperty(
+                        "aeAdminSanctionedAmountInCrores",
+                        new BigDecimal(estimateAbstractReport.getAeAdminSanctionedAmountInCrores()).setScale(2,
+                                BigDecimal.ROUND_HALF_EVEN).toString());
+            else
+                jsonObject.addProperty("aeAdminSanctionedAmountInCrores", "");
+
+            if (estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores() != null)
+                jsonObject.addProperty(
+                        "workValueOfAdminSanctionedAEInCrores",
+                        new BigDecimal(estimateAbstractReport.getWorkValueOfAdminSanctionedAEInCrores()).setScale(2,
+                                BigDecimal.ROUND_HALF_EVEN).toString());
+            else
+                jsonObject.addProperty("aeAdminSanctionedAmountInCrores", "");
 
             if (estimateAbstractReport.getTechnicalSanctionedEstimates() != null)
                 jsonObject.addProperty("technicalSanctionedEstimates",
@@ -109,6 +125,16 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
                 jsonObject.addProperty("loaCreated", estimateAbstractReport.getLoaCreated());
             else
                 jsonObject.addProperty("loaCreated", "");
+
+            if (estimateAbstractReport.getLoaNotCreated() != null)
+                jsonObject.addProperty("loaNotCreated",estimateAbstractReport.getLoaNotCreated());
+            else
+                jsonObject.addProperty("loaNotCreated", "");
+            
+            if (estimateAbstractReport.getWorkNotCommenced() != null)
+                jsonObject.addProperty("workNotCommenced",estimateAbstractReport.getWorkNotCommenced());
+            else
+                jsonObject.addProperty("workNotCommenced", "");
 
             if (estimateAbstractReport.getAgreementValueInCrores() != null)
                 jsonObject.addProperty("agreementValueInCrores",

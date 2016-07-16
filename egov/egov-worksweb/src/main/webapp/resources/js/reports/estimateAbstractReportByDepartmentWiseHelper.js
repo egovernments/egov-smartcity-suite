@@ -245,15 +245,52 @@ function callAjaxSearch() {
 					"data" : "departmentName", "sClass" : "text-center"} ,{
 					"data" : "lineEstimates", "sClass" : "text-right"} ,{
 					"data" : "adminSanctionedEstimates", "sClass" : "text-right"} ,{ 
-					"data" : "adminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
+					"data" : "leAdminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
+					"data" : "aeAdminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
+					"data" : "workValueOfAdminSanctionedAEInCrores", "sClass" : "text-right"} ,{
 					"data" : "technicalSanctionedEstimates", "sClass" : "text-right"} ,{
 					"data" : "loaCreated", "sClass" : "text-right"} ,{
 					"data" : "agreementValueInCrores", "sClass" : "text-right"} ,{
+					"data" : "loaNotCreated", "sClass" : "text-right"} ,{
+					"data" : "workNotCommenced", "sClass" : "text-right"} ,{
 					"data" : "workInProgress", "sClass" : "text-right"} ,{ 
 					"data" : "workCompleted", "sClass" : "text-right"} ,{
 					"data" : "billsCreated", "sClass" : "text-right"} ,{
 					"data" : "billValueInCrores", "sClass" : "text-right"}]				
 				});
+		
+		//show/hide columns 
+		var workStatus = $("#workStatus").val();
+
+		if(workStatus!=""){
+			if(workStatus == 'LOA_Not_Created'){
+				var oTable = $('#resultTable').DataTable();
+				oTable.column(7).visible(false);
+				oTable.column(8).visible(false);
+				oTable.column(9).visible(false);
+				oTable.column(10).visible(false);
+				oTable.column(11).visible(false);
+				oTable.column(12).visible(false);
+				oTable.column(13).visible(false);
+				oTable.column(14).visible(false);
+			}
+			if(workStatus == 'Not_Commenced'){
+				var oTable = $('#resultTable').DataTable();
+				oTable.column(9).visible(false);
+				oTable.column(10).visible(false);
+				oTable.column(11).visible(false);
+				oTable.column(12).visible(false);
+				oTable.column(13).visible(false);
+				oTable.column(14).visible(false);
+			}
+			if(workStatus == 'In_Progress' || workStatus == 'Completed'){
+				var oTable = $('#resultTable').DataTable();
+				oTable.column(9).visible(false);
+				oTable.column(10).visible(false);
+				oTable.column(11).visible(false);
+				oTable.column(12).visible(false);
+			}
+		}
 }
 
 

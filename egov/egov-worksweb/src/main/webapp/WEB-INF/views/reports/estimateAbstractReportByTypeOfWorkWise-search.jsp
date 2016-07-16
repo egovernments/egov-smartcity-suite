@@ -54,10 +54,14 @@
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.lineestimate" /></th>
 					<th><spring:message code="lbl.adminsanctionedestimates" /></th>
-					<th><spring:message code="lbl.adminsanctionedamountincrores" /></th>
+					<th><spring:message code="lbl.leadminsanctionedamountincrores" /></th>
+					<th><spring:message code="lbl.aeadminsanctionedamountincrores" /></th>
+					<th><spring:message code="lbl.workvalueofadminsanctionedaeincrores" /></th>
 					<th><spring:message code="lbl.technicalsanctionedestimates" /></th>
 					<th><spring:message code="lbl.loacreated" /></th>
 					<th><spring:message code="lbl.agreementvalueincrores" /></th>
+					<th><spring:message code="lbl.loanotcreated" /></th>
+					<th><spring:message code="lbl.worknotcommenced" /></th>
 					<th><spring:message code="lbl.workinprogress" /></th>
 					<th><spring:message code="lbl.workcompleted" /></th>
 					<th><spring:message code="lbl.billscreated" /></th>

@@ -153,5 +153,17 @@
 			<form:hidden path="currentFinancialYearId" id = "currentFinancialYearId" />
 			</div>
 		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workstatus" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="workStatus" data-first-option="false" id="workStatus" class="form-control" >
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${workStatus}" />
+				</form:select>
+				<form:errors path="workStatus" cssClass="add-margin error-msg" /> 
+			</div>
+		</div>
 	</div>
   </div>

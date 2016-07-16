@@ -51,6 +51,7 @@ import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
+import org.egov.works.reports.entity.enums.WorkStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -110,5 +111,6 @@ public class EstimateAbstractReportController {
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
+        model.addAttribute("workStatus", WorkStatus.values());
     }
 }

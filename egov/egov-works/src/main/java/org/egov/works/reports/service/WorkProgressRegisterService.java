@@ -141,10 +141,17 @@ public class WorkProgressRegisterService {
                 .createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
                 .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
                 .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
-                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE).addScalar("loaCreated", LongType.INSTANCE)
-                .addScalar("agreementValueInCrores", StringType.INSTANCE).addScalar("workInProgress", LongType.INSTANCE)
-                .addScalar("workCompleted", LongType.INSTANCE).addScalar("billsCreated", LongType.INSTANCE)
+                .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
+                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
+                .addScalar("loaCreated", LongType.INSTANCE)
+                .addScalar("loaNotCreated", LongType.INSTANCE)
+                .addScalar("workNotCommenced", LongType.INSTANCE)
+                .addScalar("agreementValueInCrores", StringType.INSTANCE)
+                .addScalar("workInProgress", LongType.INSTANCE)
+                .addScalar("workCompleted", LongType.INSTANCE)
+                .addScalar("billsCreated", LongType.INSTANCE)
                 .addScalar("billValueInCrores", StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
@@ -254,26 +261,42 @@ public class WorkProgressRegisterService {
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
+                    .addScalar("departmentName", StringType.INSTANCE)
+                    .addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
                     .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE).addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE).addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE).addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaCreated", LongType.INSTANCE)
+                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaNotCreated", LongType.INSTANCE)
+                    .addScalar("workNotCommenced", LongType.INSTANCE)
+                    .addScalar("workInProgress", LongType.INSTANCE)
+                    .addScalar("workCompleted", LongType.INSTANCE)
+                    .addScalar("billsCreated", LongType.INSTANCE)
+                    .addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
         } else {
             query = entityManager.unwrap(Session.class)
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
-                    .addScalar("subTypeOfWorkName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
+                    .addScalar("subTypeOfWorkName", StringType.INSTANCE)
+                    .addScalar("lineEstimates", LongType.INSTANCE)
                     .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
+                    .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
                     .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE).addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE).addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE).addScalar("billValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaCreated", LongType.INSTANCE)
+                    .addScalar("agreementValueInCrores", StringType.INSTANCE)
+                    .addScalar("loaNotCreated", LongType.INSTANCE)
+                    .addScalar("workNotCommenced", LongType.INSTANCE)
+                    .addScalar("workInProgress", LongType.INSTANCE)
+                    .addScalar("workCompleted", LongType.INSTANCE)
+                    .addScalar("billsCreated", LongType.INSTANCE)
+                    .addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
 
@@ -325,10 +348,14 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
@@ -346,11 +373,15 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
                 workInProgessCondition.append(" 0                             AS billsCreated, ");
@@ -367,11 +398,15 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(" SELECT details.departmentName AS departmentName, ");
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
                 workInProgessCondition.append(" 0                             AS billsCreated, ");
@@ -390,25 +425,33 @@ public class WorkProgressRegisterService {
         query.append("SELECT departmentName AS departmentName, ");
         query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
         query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
-        query.append(" SUM(adminSanctionedAmountInCrores) AS adminSanctionedAmountInCrores,  ");
-        query.append(" SUM(adminSanctionedEstimates)      AS adminSanctionedEstimates,  ");
+        query.append(" SUM(leAdminSanctionedAmountInCrores) AS leAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(adminSanctionedEstimates)        AS adminSanctionedEstimates,  ");
+        query.append(" SUM(aeAdminSanctionedAmountInCrores) AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(workValueOfAdminSanctionedAEInCrores) AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" SUM(technicalSanctionedEstimates)  AS technicalSanctionedEstimates,  ");
         query.append(" SUM(loaCreated)                    AS loaCreated,  ");
         query.append(" SUM(agreementValueInCrores)        AS agreementValueInCrores,  ");
+        query.append(" SUM(loaNotCreated)                 AS loaNotCreated, ");
+        query.append(" SUM(workNotCommenced)              AS workNotCommenced, ");
         query.append(" SUM(workInProgress)                AS workInProgress,  ");
         query.append(" SUM(workCompleted)                 AS workCompleted ,  ");
         query.append(" SUM(billsCreated)                  AS billsCreated,  ");
         query.append(" SUM(billValueInCrores)             AS billValueInCrores  ");
         query.append(" FROM  ");
         query.append(" (  ");
-        query.append(" SELECT details.departmentName       AS departmentName,  ");
+        query.append(" SELECT details.departmentName        AS departmentName,  ");
         query.append(" COUNT(DISTINCT details.leid)         AS lineEstimates,  ");
         query.append(" COUNT(details.ledid)                 AS lineEstimateDetails,  ");
-        query.append(" SUM(details.estimateamount)/10000000 AS adminSanctionedAmountInCrores,  ");
-        query.append(" COUNT(details.lineestimatestatus)              AS adminSanctionedEstimates,  ");
+        query.append(" SUM(details.estimateamount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                    AS adminSanctionedEstimates,  ");
+        query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                    AS technicalSanctionedEstimates,  ");
         query.append(" 0                                    AS loaCreated,  ");
         query.append(" 0                                    AS agreementValueInCrores, ");
+        query.append(" 0                                    AS loaNotCreated, ");
+        query.append(" 0                                    AS workNotCommenced, ");
         query.append(" 0                                    AS workInProgress, ");
         query.append(" 0                                    AS workCompleted , ");
         query.append(" 0                                    AS billsCreated, ");
@@ -420,33 +463,64 @@ public class WorkProgressRegisterService {
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
+        query.append(" SELECT details.departmentName        AS departmentName, ");
+        query.append(" 0                                    AS lineEstimates, ");
+        query.append(" 0                                    AS lineEstimateDetails, ");
+        query.append(" 0                                    AS leAdminSanctionedAmountInCrores, ");
+        query.append(" COUNT(details.estimatestatuscode)    AS adminSanctionedEstimates, ");
+        query.append(" SUM(details.estimatevalue)/10000000  AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(details.workvalue)/10000000      AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                    AS technicalSanctionedEstimates, ");
+        query.append(" 0                                    AS loaCreated, ");
+        query.append(" 0                                    AS agreementValueInCrores, ");
+        query.append(" 0                                    AS loaNotCreated, ");
+        query.append(" 0                                    AS workNotCommenced, ");
+        query.append(" 0                                    AS workInProgress, ");
+        query.append(" 0                                    AS workCompleted , ");
+        query.append(" 0                                    AS billsCreated, ");
+        query.append(" 0                                    AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details, ");
+        query.append(" egw_status status ");
+        query.append(" WHERE details.estimatestatuscode = status.code ");
+        query.append(" AND status.code       IN ('ADMIN_SANCTIONED') ");
+        query.append(filterConditions.toString());
+        query.append(" GROUP BY details.departmentName ");
+        query.append(" UNION ");
         query.append(" SELECT details.departmentName AS departmentName, ");
         query.append(" 0                           AS lineEstimates, ");
         query.append(" 0                           AS lineEstimateDetails, ");
-        query.append(" 0                           AS adminSanctionedAmountInCrores, ");
+        query.append(" 0                           AS leAdminSanctionedAmountInCrores, ");
         query.append(" 0                           AS adminSanctionedEstimates, ");
-        query.append(" COUNT(details.lineestimatestatus)     AS technicalSanctionedEstimates, ");
+        query.append(" 0                           AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                           AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" COUNT(details.estimatestatuscode)     AS technicalSanctionedEstimates, ");
         query.append(" 0                           AS loaCreated, ");
         query.append(" 0                           AS agreementValueInCrores, ");
+        query.append(" 0                           AS loaNotCreated, ");
+        query.append(" 0                           AS workNotCommenced, ");
         query.append(" 0                           AS workInProgress, ");
         query.append(" 0                           AS workCompleted , ");
         query.append(" 0                           AS billsCreated, ");
         query.append(" 0                           AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details, ");
         query.append(" egw_status status ");
-        query.append(" WHERE details.lineestimatestatus = status.code ");
-        query.append(" AND status.code       IN ('TECHNICAL_SANCTIONED') ");
+        query.append(" WHERE details.estimatestatuscode = status.code ");
+        query.append(" AND status.code       IN ('ADMIN_SANCTIONED','TECH_SANCTIONED') ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName         AS departmentName, ");
         query.append(" 0                                     AS lineEstimates, ");
         query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS adminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
         query.append(" 0                                     AS adminSanctionedEstimates, ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
         query.append(" COUNT(details.ledid)                  AS loaCreated, ");
         query.append(" SUM(details.agreementamount)/10000000 AS agreementValueInCrores, ");
+        query.append(" 0                                     AS loaNotCreated, ");
+        query.append(" 0                                     AS workNotCommenced, ");
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
         query.append(" 0                                     AS billsCreated, ");
@@ -457,33 +531,83 @@ public class WorkProgressRegisterService {
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
+        query.append(" SELECT details.departmentName         AS departmentName, ");
+        query.append(" 0                                     AS lineEstimates, ");
+        query.append(" 0                                     AS lineEstimateDetails, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS adminSanctionedEstimates, ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                     AS technicalSanctionedEstimates, ");
+        query.append(" 0                                     AS loaCreated, ");
+        query.append(" 0                                     AS agreementValueInCrores, ");
+        query.append(" COUNT(details.ledid)                  AS loaNotCreated, ");
+        query.append(" 0                                     AS workNotCommenced, ");
+        query.append(" 0                                     AS workInProgress, ");
+        query.append(" 0                                     AS workCompleted, ");
+        query.append(" 0                                     AS billsCreated, ");
+        query.append(" 0                                     AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details ");
+        query.append(" WHERE details.workstatus       = 'LOA Not Created' ");
+        query.append(filterConditions.toString());
+        query.append(" GROUP BY details.departmentName ");
+        query.append(" UNION ");
+        query.append(" SELECT details.departmentName         AS departmentName, ");
+        query.append(" 0                                     AS lineEstimates, ");
+        query.append(" 0                                     AS lineEstimateDetails, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS adminSanctionedEstimates, ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                     AS technicalSanctionedEstimates, ");
+        query.append(" 0                                     AS loaCreated, ");
+        query.append(" 0                                     AS agreementValueInCrores, ");
+        query.append(" 0                                     AS loaNotCreated, ");
+        query.append(" COUNT(details.ledid)                  AS workNotCommenced, ");
+        query.append(" 0                                     AS workInProgress, ");
+        query.append(" 0                                     AS workCompleted, ");
+        query.append(" 0                                     AS billsCreated, ");
+        query.append(" 0                                     AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details ");
+        query.append(" WHERE details.workstatus       = 'Work Not Commenced'");
+        query.append(filterConditions.toString());
+        query.append(" GROUP BY details.departmentName ");
+        query.append(" UNION ");
         query.append(workInProgessCondition.toString());
         query.append(" UNION ");
         query.append(" SELECT details.departmentName AS departmentName, ");
         query.append(" 0                             AS lineEstimates, ");
         query.append(" 0                             AS lineEstimateDetails, ");
-        query.append(" 0                             AS adminSanctionedAmountInCrores, ");
+        query.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
         query.append(" 0                             AS adminSanctionedEstimates, ");
+        query.append(" 0                             AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                             AS technicalSanctionedEstimates, ");
         query.append(" 0                             AS loaCreated, ");
         query.append(" 0                             AS agreementValueInCrores, ");
+        query.append(" 0                             AS loaNotCreated, ");
+        query.append(" 0                             AS workNotCommenced, ");
         query.append(" 0                             AS workInProgress, ");
         query.append(" COUNT(DISTINCT details.ledid) AS workCompleted, ");
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workcompleted = true ");
+        query.append(" WHERE details.workstatus       = 'Work Completed' ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
         query.append(" SELECT details.departmentName       AS departmentName, ");
         query.append(" 0                                   AS lineEstimates, ");
         query.append(" 0                                   AS lineEstimateDetails, ");
-        query.append(" 0                                   AS adminSanctionedAmountInCrores, ");
+        query.append(" 0                                   AS leAdminSanctionedAmountInCrores, ");
         query.append(" 0                                   AS adminSanctionedEstimates, ");
+        query.append(" 0                                   AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                   AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                   AS technicalSanctionedEstimates, ");
         query.append(" 0                                   AS loaCreated, ");
         query.append(" 0                                   AS agreementValueInCrores, ");
+        query.append(" 0                                   AS loaNotCreated, ");
+        query.append(" 0                                   AS workNotCommenced, ");
         query.append(" 0                                   AS workInProgress, ");
         query.append(" 0                                   AS workCompleted , ");
         query.append(" COUNT(DISTINCT billdetail.billid)   AS billsCreated, ");
@@ -573,11 +697,15 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(selectQuery.toString());
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
                 workInProgessCondition.append(" 0                             AS billsCreated, ");
@@ -594,11 +722,15 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(selectQuery.toString());
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
                 workInProgessCondition.append(" 0                             AS billsCreated, ");
@@ -615,11 +747,15 @@ public class WorkProgressRegisterService {
                 workInProgessCondition.append(selectQuery.toString());
                 workInProgessCondition.append(" 0                             AS lineEstimates, ");
                 workInProgessCondition.append(" 0                             AS lineEstimateDetails, ");
-                workInProgessCondition.append(" 0                             AS adminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
                 workInProgessCondition.append(" 0                             AS adminSanctionedEstimates, ");
+                workInProgessCondition.append(" 0                             AS aeAdminSanctionedAmountInCrores, ");
+                workInProgessCondition.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
                 workInProgessCondition.append(" 0                             AS technicalSanctionedEstimates, ");
                 workInProgessCondition.append(" 0                             AS loaCreated, ");
                 workInProgessCondition.append(" 0                             AS agreementValueInCrores, ");
+                workInProgessCondition.append(" 0                             AS loaNotCreated, ");
+                workInProgessCondition.append(" 0                             AS workNotCommenced, ");
                 workInProgessCondition.append(" COUNT(DISTINCT details.ledid) AS workInProgress, ");
                 workInProgessCondition.append(" 0                             AS workCompleted, ");
                 workInProgessCondition.append(" 0                             AS billsCreated, ");
@@ -637,11 +773,15 @@ public class WorkProgressRegisterService {
         query.append(mainSelectQuery.toString());
         query.append(" SUM(lineEstimates)                 AS lineEstimates ,  ");
         query.append(" SUM(lineEstimateDetails)           AS lineEstimateDetails ,  ");
-        query.append(" SUM(adminSanctionedAmountInCrores) AS adminSanctionedAmountInCrores,  ");
-        query.append(" SUM(adminSanctionedEstimates)      AS adminSanctionedEstimates,  ");
+        query.append(" SUM(leAdminSanctionedAmountInCrores) AS leAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(adminSanctionedEstimates)        AS adminSanctionedEstimates,  ");
+        query.append(" SUM(aeAdminSanctionedAmountInCrores) AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(workValueOfAdminSanctionedAEInCrores) AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" SUM(technicalSanctionedEstimates)  AS technicalSanctionedEstimates,  ");
         query.append(" SUM(loaCreated)                    AS loaCreated,  ");
         query.append(" SUM(agreementValueInCrores)        AS agreementValueInCrores,  ");
+        query.append(" SUM(loaNotCreated)                 AS loaNotCreated, ");
+        query.append(" SUM(workNotCommenced)              AS workNotCommenced, ");
         query.append(" SUM(workInProgress)                AS workInProgress,  ");
         query.append(" SUM(workCompleted)                 AS workCompleted ,  ");
         query.append(" SUM(billsCreated)                  AS billsCreated,  ");
@@ -651,11 +791,15 @@ public class WorkProgressRegisterService {
         query.append(selectQuery.toString());
         query.append(" COUNT(DISTINCT details.leid)         AS lineEstimates,  ");
         query.append(" COUNT(details.ledid)                 AS lineEstimateDetails,  ");
-        query.append(" SUM(details.estimateamount)/10000000 AS adminSanctionedAmountInCrores,  ");
-        query.append(" COUNT(details.lineestimatestatus)              AS adminSanctionedEstimates,  ");
+        query.append(" SUM(details.estimateamount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                    AS adminSanctionedEstimates,  ");
+        query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                    AS technicalSanctionedEstimates,  ");
         query.append(" 0                                    AS loaCreated,  ");
         query.append(" 0                                    AS agreementValueInCrores, ");
+        query.append(" 0                                    AS loaNotCreated, ");
+        query.append(" 0                                    AS workNotCommenced, ");
         query.append(" 0                                    AS workInProgress, ");
         query.append(" 0                                    AS workCompleted , ");
         query.append(" 0                                    AS billsCreated, ");
@@ -668,32 +812,63 @@ public class WorkProgressRegisterService {
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
+        query.append(" 0                                    AS lineEstimates, ");
+        query.append(" 0                                    AS lineEstimateDetails, ");
+        query.append(" 0                                    AS leAdminSanctionedAmountInCrores, ");
+        query.append(" COUNT(details.estimatestatuscode)    AS adminSanctionedEstimates, ");
+        query.append(" SUM(details.estimatevalue)/10000000  AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(details.workvalue)/10000000      AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                    AS technicalSanctionedEstimates, ");
+        query.append(" 0                                    AS loaCreated, ");
+        query.append(" 0                                    AS agreementValueInCrores, ");
+        query.append(" 0                                    AS loaNotCreated, ");
+        query.append(" 0                                    AS workNotCommenced, ");
+        query.append(" 0                                    AS workInProgress, ");
+        query.append(" 0                                    AS workCompleted , ");
+        query.append(" 0                                    AS billsCreated, ");
+        query.append(" 0                                    AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details, ");
+        query.append(" egw_status status ");
+        query.append(" WHERE details.estimatestatuscode = status.code ");
+        query.append(" AND status.code       IN ('ADMIN_SANCTIONED') ");
+        query.append(filterConditions.toString());
+        query.append(groupByQuery.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
         query.append(" 0                           AS lineEstimates, ");
         query.append(" 0                           AS lineEstimateDetails, ");
-        query.append(" 0                           AS adminSanctionedAmountInCrores, ");
-        query.append(" 0                           AS adminSanctionedEstimates, ");
-        query.append(" COUNT(details.lineestimatestatus)     AS technicalSanctionedEstimates, ");
+        query.append(" 0                           AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                           AS adminSanctionedEstimates,  ");
+        query.append(" 0                           AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                           AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" COUNT(details.estimatestatuscode)     AS technicalSanctionedEstimates, ");
         query.append(" 0                           AS loaCreated, ");
         query.append(" 0                           AS agreementValueInCrores, ");
+        query.append(" 0                           AS loaNotCreated, ");
+        query.append(" 0                           AS workNotCommenced, ");
         query.append(" 0                           AS workInProgress, ");
         query.append(" 0                           AS workCompleted , ");
         query.append(" 0                           AS billsCreated, ");
         query.append(" 0                           AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details, ");
         query.append(" egw_status status ");
-        query.append(" WHERE details.lineestimatestatus = status.code ");
-        query.append(" AND status.code       IN ('TECHNICAL_SANCTIONED') ");
+        query.append(" WHERE details.estimatestatuscode = status.code ");
+        query.append(" AND status.code       IN ('ADMIN_SANCTIONED','TECH_SANCTIONED') ");
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
         query.append(" 0                                     AS lineEstimates, ");
         query.append(" 0                                     AS lineEstimateDetails, ");
-        query.append(" 0                                     AS adminSanctionedAmountInCrores, ");
-        query.append(" 0                                     AS adminSanctionedEstimates, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS adminSanctionedEstimates,  ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                     AS technicalSanctionedEstimates, ");
         query.append(" COUNT(details.ledid)                  AS loaCreated, ");
         query.append(" SUM(details.agreementamount)/10000000 AS agreementValueInCrores, ");
+        query.append(" 0                                     AS loaNotCreated, ");
+        query.append(" 0                                     AS workNotCommenced, ");
         query.append(" 0                                     AS workInProgress, ");
         query.append(" 0                                     AS workCompleted, ");
         query.append(" 0                                     AS billsCreated, ");
@@ -704,16 +879,62 @@ public class WorkProgressRegisterService {
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append(" 0                                     AS lineEstimates, ");
+        query.append(" 0                                     AS lineEstimateDetails, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS adminSanctionedEstimates,  ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                     AS technicalSanctionedEstimates, ");
+        query.append(" 0                                     AS loaCreated, ");
+        query.append(" 0                                     AS agreementValueInCrores, ");
+        query.append(" COUNT(details.ledid)                  AS loaNotCreated, ");
+        query.append(" 0                                     AS workNotCommenced, ");
+        query.append(" 0                                     AS workInProgress, ");
+        query.append(" 0                                     AS workCompleted, ");
+        query.append(" 0                                     AS billsCreated, ");
+        query.append(" 0                                     AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details ");
+        query.append(" WHERE details.workstatus       = 'LOA Not Created' ");
+        query.append(filterConditions.toString());
+        query.append(groupByQuery.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append(" 0                                     AS lineEstimates, ");
+        query.append(" 0                                     AS lineEstimateDetails, ");
+        query.append(" 0                                     AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                     AS adminSanctionedEstimates,  ");
+        query.append(" 0                                     AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                     AS workValueOfAdminSanctionedAEInCrores, ");
+        query.append(" 0                                     AS technicalSanctionedEstimates, ");
+        query.append(" 0                                     AS loaCreated, ");
+        query.append(" 0                                     AS agreementValueInCrores, ");
+        query.append(" 0                                     AS loaNotCreated, ");
+        query.append(" COUNT(details.ledid)                  AS workNotCommenced, ");
+        query.append(" 0                                     AS workInProgress, ");
+        query.append(" 0                                     AS workCompleted, ");
+        query.append(" 0                                     AS billsCreated, ");
+        query.append(" 0                                     AS billValueInCrores ");
+        query.append(" FROM egw_mv_work_progress_register details ");
+        query.append(" WHERE details.workstatus       = 'Work Not Commenced' ");
+        query.append(filterConditions.toString());
+        query.append(groupByQuery.toString());
+        query.append(" UNION ");
         query.append(workInProgessCondition.toString());
         query.append(" UNION ");
         query.append(selectQuery.toString());
         query.append(" 0                             AS lineEstimates, ");
         query.append(" 0                             AS lineEstimateDetails, ");
-        query.append(" 0                             AS adminSanctionedAmountInCrores, ");
-        query.append(" 0                             AS adminSanctionedEstimates, ");
+        query.append(" 0                             AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                             AS adminSanctionedEstimates,  ");
+        query.append(" 0                             AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                             AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                             AS technicalSanctionedEstimates, ");
         query.append(" 0                             AS loaCreated, ");
         query.append(" 0                             AS agreementValueInCrores, ");
+        query.append(" 0                             AS loaNotCreated, ");
+        query.append(" 0                             AS workNotCommenced, ");
         query.append(" 0                             AS workInProgress, ");
         query.append(" COUNT(DISTINCT details.ledid) AS workCompleted, ");
         query.append(" 0                             AS billsCreated, ");
@@ -726,11 +947,15 @@ public class WorkProgressRegisterService {
         query.append(selectQuery.toString());
         query.append(" 0                                   AS lineEstimates, ");
         query.append(" 0                                   AS lineEstimateDetails, ");
-        query.append(" 0                                   AS adminSanctionedAmountInCrores, ");
-        query.append(" 0                                   AS adminSanctionedEstimates, ");
+        query.append(" 0                                   AS leAdminSanctionedAmountInCrores, ");
+        query.append(" 0                                   AS adminSanctionedEstimates,  ");
+        query.append(" 0                                   AS aeAdminSanctionedAmountInCrores,  ");
+        query.append(" 0                                   AS workValueOfAdminSanctionedAEInCrores, ");
         query.append(" 0                                   AS technicalSanctionedEstimates, ");
         query.append(" 0                                   AS loaCreated, ");
         query.append(" 0                                   AS agreementValueInCrores, ");
+        query.append(" 0                                   AS loaNotCreated, ");
+        query.append(" 0                                   AS workNotCommenced, ");
         query.append(" 0                                   AS workInProgress, ");
         query.append(" 0                                   AS workCompleted , ");
         query.append(" COUNT(DISTINCT billdetail.billid)   AS billsCreated, ");

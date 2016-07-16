@@ -80,10 +80,10 @@ public class AjaxEstimateAbstractReportController {
     @RequestMapping(value = "/ajax-estimateabstractreportbytypeofworkwise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String showSearchEstimateAbstractReportByTypeOfWork(final Model model,
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport) {
-        final List<EstimateAbstractReport> estimateAbstractReportByDepartmentWise = workProgressRegisterService
+        final List<EstimateAbstractReport> estimateAbstractReportByTypeOfWorkWise = workProgressRegisterService
                 .searchEstimateAbstractReportByTypeOfWorkWise(estimateAbstractReport);
         final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByDepartmentWise))
+                .append(toSearchEstimateAbstractReportJson(estimateAbstractReportByTypeOfWorkWise))
                 .append("}").toString();
         return result;
     }
