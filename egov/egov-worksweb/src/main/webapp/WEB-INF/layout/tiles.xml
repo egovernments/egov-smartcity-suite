@@ -351,4 +351,14 @@
         <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchEstimateToCancel-form.jsp"/>
     </definition>
 
+    <definition name="searchAbstractEstimateForOfflineStatus-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.setofflinestatusforae" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/abstractestimate/searchAbstractEstimateForOfflineStatus-search.jsp"/>
+    </definition>
+    
+    <definition name="setabstractestimatestatus-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.setofflinestatusforae" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setAbstractEstimateStatus-form.jsp"/>
+	</definition>
+
 </tiles-definitions>  

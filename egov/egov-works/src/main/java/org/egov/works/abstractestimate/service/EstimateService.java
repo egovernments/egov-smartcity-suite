@@ -1004,4 +1004,73 @@ public class EstimateService {
                         AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
     }
+    
+    public List<AbstractEstimate> searchAbstractEstimatesForOfflineStatus(
+            final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
+        List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append("select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus ");
+        if (abstractEstimateForLoaSearchRequest != null) {
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null) {
+                queryStr.append(" and upper(ae.estimateNumber) =:abstractEstimateNumber");
+            }
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
+                queryStr.append(" and ae.approvedDate >= :abstractEstimateFromDate");
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
+                queryStr.append(" and ae.approvedDate <= :abstractEstimateToDate");
+
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
+                queryStr.append(" and ae.createdBy.id = :abstractEstimateCreatedBy");
+
+            if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
+                if (abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS)) {
+                    queryStr.append(
+                            " and not exists (select distinct(os.objectId) from OfflineStatus as os where os.objectType = :objectType and ae.id = os.objectId )");
+                } else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
+                    queryStr.append(
+                            " and ae.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = ae.id) and os.objectId = ae.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
+                }
+            }
+        }
+        final Query query = setQueryParametersForOfflineStatus(abstractEstimateForLoaSearchRequest, queryStr);
+        abstractEstimateList = query.getResultList();
+        return abstractEstimateList;
+    }
+
+    private Query setQueryParametersForOfflineStatus(
+            final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (abstractEstimateForLoaSearchRequest != null) {
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null) {
+                qry.setParameter("abstractEstimateNumber",
+                        abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber().toUpperCase());
+            }
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
+                qry.setParameter("abstractEstimateFromDate", abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate());
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
+                qry.setParameter("abstractEstimateToDate", abstractEstimateForLoaSearchRequest.getAdminSanctionToDate());
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
+                qry.setParameter("abstractEstimateCreatedBy", abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy());
+
+            if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
+                qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
+                if (!abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS)) {
+                    qry.setParameter("offlineStatus",
+                            abstractEstimateForLoaSearchRequest.getEgwStatus().toString().toLowerCase());
+                }
+            }
+            qry.setParameter("abstractEstimateStatus", WorksConstants.ADMIN_SANCTIONED_STATUS);
+
+        }
+        return qry;
+    }
+    
+    public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
+        final List<String> estimateNumbers = abstractEstimateRepository
+                .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
+                        WorksConstants.CANCELLED);
+        return estimateNumbers;
+    }
+    
 }

@@ -88,9 +88,12 @@ import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
+import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "EGW_ABSTRACTESTIMATE")
@@ -110,6 +113,15 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public enum Actions {
         SUBMIT_FOR_APPROVAL, TECH_SANCTION, BUDGET_DETAILS_SAVE, BUDGET_APPROPRIATION, ADMIN_SANCTION, REJECT, CANCEL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+    
+    public enum OfflineStatusesForAbstractEstimate {
+        NOTICEINVITINGTENDERRELEASED, TENDER_DOCUMENT_RELEASED, TENDER_OPENED, TECHNICAL_EVALUATION_DONE, COMMERCIAL_EVALUATION_DONE, L1_TENDER_FINALIZED;
 
         @Override
         public String toString() {
@@ -276,6 +288,10 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    
+    @JsonIgnore
+    @Transient
+    private List<OfflineStatus> offlineStatuses = new ArrayList<OfflineStatus>();
 
     private String cancellationReason;
 
@@ -791,6 +807,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     public void setTempOverheadValues(final List<OverheadValue> tempOverheadValues) {
         this.tempOverheadValues = tempOverheadValues;
+    }
+    
+    public List<OfflineStatus> getOfflineStatuses() {
+        return offlineStatuses;
+    }
+
+    public void setOfflineStatuses(final List<OfflineStatus> offlineStatuses) {
+        this.offlineStatuses = offlineStatuses;
     }
 
     public String getCancellationReason() {

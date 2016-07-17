@@ -48,6 +48,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
@@ -79,6 +82,9 @@ public class SetOfflineStatusController {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private EstimateService estimateService;
 
     @RequestMapping(value = "/setstatus-loa/{workOrderId}", method = RequestMethod.GET)
     public String setOffLineStatus(final Model model, @PathVariable final Long workOrderId,
@@ -100,13 +106,21 @@ public class SetOfflineStatusController {
     private void setDropDownValues(final Model model) {
 
         final List<String> offlineStatuses = new ArrayList<String>();
+        final List<String> offlineStatusesForAE = new ArrayList<String>();
 
         for (final WorkOrder.OfflineStatuses status : WorkOrder.OfflineStatuses.values())
             offlineStatuses.add(status.toString().toUpperCase());
+        
+        for (final AbstractEstimate.OfflineStatusesForAbstractEstimate status : AbstractEstimate.OfflineStatusesForAbstractEstimate.values())
+        	offlineStatusesForAE.add(status.toString().toUpperCase());
 
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorksConstants.WORKORDER,
                 offlineStatuses);
+        
+        final List<EgwStatus> abstractEstimateStatusses = egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorksConstants.ABSTRACTESTIMATE,
+        		offlineStatusesForAE);
         model.addAttribute("egwStatus", egwStatuses);
+        model.addAttribute("abstractEstimateStatusses", abstractEstimateStatusses);
     }
 
     @RequestMapping(value = "/offlinestatus-save", method = RequestMethod.POST)
@@ -162,6 +176,80 @@ public class SetOfflineStatusController {
         }
         final List<OfflineStatus> offlineStatuses = workOrder.getOfflineStatuses();
         offlineStatusService.create(offlineStatuses, workOrder.getId(), WorksConstants.WORKORDER);
+        model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
+                new String[] { "" }, null));
+        return "setstatus-success";
+    }
+    
+    @RequestMapping(value = "/setstatus-abstractestimate/{abstractEstimateId}", method = RequestMethod.GET)
+    public String setOffLineStatusForAbstractEstimate(final Model model, @PathVariable final Long abstractEstimateId,
+            final HttpServletRequest request)
+            throws ApplicationException {
+    	final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(abstractEstimateId);
+        final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(abstractEstimate.getId(),
+                WorksConstants.ABSTRACTESTIMATE);
+        final int offlineStatusSize = offlineStatuses.size();
+        abstractEstimate.setOfflineStatuses(offlineStatuses);
+        setDropDownValues(model);
+        model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("offlineStatusSize", offlineStatusSize);
+
+        return "setabstractestimatestatus-form";
+    }
+
+    @RequestMapping(value = "/offlinestatus-saveabstractestimate", method = RequestMethod.POST)
+    public String saveOffLineStatusForAbstractEstimate(@ModelAttribute final AbstractEstimate abstractEstimate, final Model model,
+            final HttpServletRequest request, final BindingResult resultBinder)
+            throws ApplicationException {
+
+        int i = 0;
+        // List of all status
+        final OfflineStatusesForAbstractEstimate[] statList = OfflineStatusesForAbstractEstimate.values();
+        final String[] statusName = new String[statList.length];
+        for (int j = 0; j < statList.length; j++)
+            statusName[j] = statList[j].name();
+        final List<String> OffStatuses = Arrays.asList(statusName);
+
+        // Get Selected status and add to string array
+        final List<OfflineStatus> selectedStatus = abstractEstimate.getOfflineStatuses();
+        final String[] selectedStatusArr = new String[selectedStatus.size()];
+        for (int j = 0; j < selectedStatus.size(); j++)
+            if (selectedStatus.get(j).getEgwStatus() != null) {
+                final EgwStatus egwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(j).getEgwStatus().getId(), false);
+                selectedStatusArr[j] = egwStatus.getCode();
+            }
+
+        // pass selected status to statusnamedetail if not matches return error
+        for (final String statName : offlineStatusService.getStatusNameDetails(selectedStatusArr)) {
+            if (!OffStatuses.isEmpty() && !statName.equals(OffStatuses.get(i))) {
+                resultBinder.reject("errors.status.order.incorrect",
+                        new String[] { statName.replaceAll("_", " "),
+                                OffStatuses.get(OffStatuses.indexOf(statName.replaceAll(" ", "_")) - 1).replaceAll("_", " ") },
+                        "errors.status.order.incorrect");
+                break;
+            }
+            i++;
+        }
+        final List<OfflineStatus> newOfflinestatus = abstractEstimate.getOfflineStatuses();
+        for (int k = 0; k < newOfflinestatus.size() - 1; k++)
+            if (newOfflinestatus.get(k).getStatusDate().after(newOfflinestatus.get(k + 1).getStatusDate())) {
+                final EgwStatus egwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k + 1).getEgwStatus().getId(),
+                        false);
+                final EgwStatus newEgwStatus = egwStatusHibernateDAO.findById(selectedStatus.get(k).getEgwStatus().getId(),
+                        false);
+                resultBinder.reject("errors.status.date.incorrect",
+                        new String[] { egwStatus.getDescription(), newEgwStatus.getDescription() },
+                        "errors.status.date.incorrect");
+                break;
+            }
+
+        if (resultBinder.hasErrors()) {
+            setDropDownValues(model);
+            model.addAttribute("abstractEstimate", abstractEstimate);
+            return "setabstractestimatestatus-form";
+        }
+        final List<OfflineStatus> offlineStatuses = abstractEstimate.getOfflineStatuses();
+        offlineStatusService.create(offlineStatuses, abstractEstimate.getId(), WorksConstants.ABSTRACTESTIMATE);
         model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
                 new String[] { "" }, null));
         return "setstatus-success";

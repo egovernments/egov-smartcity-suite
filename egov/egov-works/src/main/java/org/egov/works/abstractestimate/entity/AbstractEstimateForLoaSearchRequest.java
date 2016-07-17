@@ -50,6 +50,9 @@ public class AbstractEstimateForLoaSearchRequest {
     private Long abstractEstimateCreatedBy;
     private String workIdentificationNumber;
     private boolean spillOverFlag;
+    private String abstractEstimateNumber;
+    private Date estimateDate;
+    private String egwStatus;
 
     public AbstractEstimateForLoaSearchRequest() {
     }
@@ -116,5 +119,29 @@ public class AbstractEstimateForLoaSearchRequest {
 
     public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
+    }
+    
+    public String getAbstractEstimateNumber() {
+        return abstractEstimateNumber;
+    }
+
+    public void setAbstractEstimateNumber(final String abstractEstimateNumber) {
+        this.abstractEstimateNumber = abstractEstimateNumber;
+    }
+    
+    public Date getEstimateDate() {
+        return estimateDate;
+    }
+
+    public void setEstimateDate(Date estimateDate) {
+        this.estimateDate = estimateDate;
+    }
+    
+    public String getEgwStatus() {
+        return egwStatus;
+    }
+
+    public void setEgwStatus(final String egwStatus) {
+        this.egwStatus = egwStatus;
     }
 }

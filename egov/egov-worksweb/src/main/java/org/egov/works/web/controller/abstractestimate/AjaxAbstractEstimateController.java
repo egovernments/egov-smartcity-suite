@@ -69,6 +69,7 @@ import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
 import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
+import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -109,6 +110,9 @@ public class AjaxAbstractEstimateController {
     @Autowired
     private SearchEstimatesToCancelJson searchEstimatesToCancelJson;
 
+    @Autowired
+    private AbstractEstimateForOfflineStatusJsonAdaptor abstractEstimateForOfflineStatusJsonAdaptor;
+    
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
@@ -218,6 +222,24 @@ public class AjaxAbstractEstimateController {
     public Object toSearchEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson)
+        		.create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "/ajaxsearchabstractestimatesforofflinestatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxSearchAbstractEstimatesForOfflineStatus(final Model model,
+            @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
+        final List<AbstractEstimate> searchResultList = estimateService
+                .searchAbstractEstimatesForOfflineStatus(abstractEstimateForLoaSearchRequest);
+        final String result = new StringBuilder("{ \"data\":").append(toSearchAbstractEstimateForOfflineStatusJson(searchResultList))
+                .append("}").toString();
+        return result;
+    }
+    
+    public Object toSearchAbstractEstimateForOfflineStatusJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, abstractEstimateForOfflineStatusJsonAdaptor)
                 .create();
         final String json = gson.toJson(object);
         return json;
@@ -227,4 +249,10 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody List<String> findEstimateNumbersToCancelEstimate(@RequestParam final String code) {
         return estimateService.findEstimateNumbersToCancelEstimate(code);
     }
+    
+    @RequestMapping(value = "/ajaxestimatenumbers-forofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> getAbstractEstimateNumbersToSetOfflineStatus(@RequestParam final String code) {
+        return estimateService.getAbstractEstimateNumbersToSetOfflineStatus(code);
+    }
+    
 }

@@ -42,6 +42,8 @@ package org.egov.works.web.controller.abstractestimate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
@@ -50,6 +52,8 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
@@ -90,11 +94,25 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
             throws ApplicationException {
         setDropDownValues(model);
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+			if (!egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.COMMERCIAL_EVALUATION_DONE.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TECHNICAL_EVALUATION_DONE.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_DOCUMENT_RELEASED.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_OPENED.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.NOTICEINVITINGTENDERRELEASED.toString()))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("abstractEstimateStatus", newEgwStatuses);
         model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
         return "abstractestimate-search";
     }
@@ -161,5 +179,32 @@ public class SearchAbstractEstimateController {
         documentDetailsList = worksUtils.findByObjectIdAndObjectType(abstractEstimate.getId(),
                 WorksConstants.ABSTRACTESTIMATE);
         abstractEstimate.setDocumentDetails(documentDetailsList);
+    }
+    
+    @RequestMapping(value = "/searchabstractestimateforofflinestatus-form", method = RequestMethod.GET)
+    public String searchAbstractEstimateToSetOfflineStatus(
+            @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+            final Model model) {
+        setDropDownValues(model);
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        for (final EgwStatus egwStatus : egwStatuses)
+			if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW)
+					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
+					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
+					&& !egwStatus.getCode().equalsIgnoreCase(EstimateStatus.TECH_SANCTIONED.toString())
+					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
+					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
+                newEgwStatuses.add(egwStatus);
+        final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
+        final List<Long> departmentIds = new ArrayList<Long>();
+        if (departments != null)
+            for (final Department department : departments)
+                departmentIds.add(department.getId());
+        final List<User> abstractEstimateCreatedByUsers = estimateService.getAbstractEstimateCreatedByUsers(departmentIds);
+        model.addAttribute("egwStatus", newEgwStatuses);
+        model.addAttribute("abstractEstimateForLoaSearchRequest", abstractEstimateForLoaSearchRequest);
+        model.addAttribute("abstractEstimateCreatedByUsers", abstractEstimateCreatedByUsers);
+        return "searchAbstractEstimateForOfflineStatus-search";
     }
 }
