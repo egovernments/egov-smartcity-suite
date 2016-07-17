@@ -79,8 +79,8 @@ public class AbstractEstimateForOfflineStatusJsonAdaptor implements JsonSerializ
             else
                 jsonObject.addProperty("estimateDate", "");
         	
-        	 if (abstractEstimate.getLineEstimateDetails() != null)
-                 jsonObject.addProperty("nameOfWork", abstractEstimate.getLineEstimateDetails().getNameOfWork());
+        	 if (abstractEstimate.getName() != null)
+                 jsonObject.addProperty("nameOfWork", abstractEstimate.getName());
              else
                  jsonObject.addProperty("nameOfWork", "");
         	 if (abstractEstimate.getEstimateValue() != null)
