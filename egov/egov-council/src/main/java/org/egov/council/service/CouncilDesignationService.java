@@ -44,10 +44,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.egov.council.entity.CouncilDesignation;
 import org.egov.council.repository.CouncilDesignationRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -95,12 +97,15 @@ public class CouncilDesignationService {
 		return councilDesignationRepository.findOne(id);
 	}
 
+	public List<CouncilDesignation> getActiveDesignations() {
+		return councilDesignationRepository.findByisActive(true);
+	}
+	
 	public List<CouncilDesignation> search(CouncilDesignation councilDesignation) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				CouncilDesignation.class);
 		if (null != councilDesignation.getName())
-			criteria.add(Restrictions.eq("name", councilDesignation.getName())
-					.ignoreCase());
+			criteria.add(Restrictions.ilike("name", councilDesignation.getName(),MatchMode.ANYWHERE));
 		if (councilDesignation.getIsActive() != null
 				&& councilDesignation.getIsActive() == true)
 			criteria.add(Restrictions.eq("isActive",

@@ -42,14 +42,11 @@ package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.RoleRepository;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
@@ -57,9 +54,6 @@ import java.util.List;
 public class RoleService {
 
     private final RoleRepository roleRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     public RoleService(final RoleRepository roleRepository) {
@@ -93,13 +87,8 @@ public class RoleService {
         return roleRepository.findByName(name);
     }
 
-    public List<Role> getRolesByNameLike(final String name) {
-        return roleRepository.findByNameContainingIgnoreCase(name);
-    }
-
     public Role load(final Long id) {
-        // FIXME alternative ?
-        return (Role) entityManager.unwrap(Session.class).load(Role.class, id);
+        return roleRepository.getOne(id);
     }
 
 }

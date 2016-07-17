@@ -99,6 +99,7 @@ public class PropertyMaterlizeView implements Serializable {
     private BigDecimal capitalValue;
     private Date assessmentDate;
     private Date lastUpdated;
+    private String surveyNo;
 
 
     public Integer getBasicPropertyID() {
@@ -490,4 +491,14 @@ public class PropertyMaterlizeView implements Serializable {
     public void setLastUpdated(final Date lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
+
+	public String getSurveyNo() {
+		return surveyNo;
+	}
+
+	public void setSurveyNo(String surveyNo) {
+		this.surveyNo = surveyNo;
+	}
+    
+    
 }

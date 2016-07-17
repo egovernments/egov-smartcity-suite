@@ -69,11 +69,10 @@ public class CouncilMemberController {
         model.addAttribute("boundarys",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));// GET
                                                                                                                   // ELECTION
-                                                                                                                  // WARD.
-        model.addAttribute("councilDesignations", councilDesignationService.findAll());
-        model.addAttribute("councilQualifications", councilQualificationService.findAll());
-        model.addAttribute("councilCastes", councilCasteService.findAll());
-        model.addAttribute("councilPartys", councilPartyService.findAll());
+        model.addAttribute("councilDesignations",councilDesignationService.getActiveDesignations());                                                                                                      // WARD.
+        model.addAttribute("councilQualifications", councilQualificationService.getActiveQualifications());
+        model.addAttribute("councilCastes", councilCasteService.getActiveCastes());
+        model.addAttribute("councilPartys", councilPartyService.getActiveParties());
         // model.addAttribute("genders", genderService.findAll());
         // model.addAttribute("addresss", addressService.findAll());
     }

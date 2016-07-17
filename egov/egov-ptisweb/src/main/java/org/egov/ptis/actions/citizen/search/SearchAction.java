@@ -77,7 +77,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "search-new.jsp"),
-        @Result(name = SearchAction.TARGET, location = "search-result.jsp") })
+        @Result(name = SearchAction.TARGET, location = "search-result.jsp"),
+        @Result(name = SearchAction.NEWFORM, location = "onlinesearch-new.jsp"),
+        @Result(name = SearchAction.TARGETFORM, type = "redirectAction", location = "viewDCBProperty-displayPropInfo", params = {
+                "namespace", "/view", "propertyId", "${assessmentNum}", "searchUrl", "${searchUrl}" }) })
 public class SearchAction extends BaseFormAction implements ServletRequestAware {
     /**
      *
@@ -95,9 +98,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     private String searchUri;
     private String searchCreteria;
     private String searchValue;
+    private String searchUrl;
     private boolean isDemandActive;
+    
     List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
     public static final String TARGET = "result";
+    public static final String NEWFORM = "newForm";
+    public static final String TARGETFORM = "targetForm";
 
     @Autowired
     private UserService userService;
@@ -128,53 +135,71 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     /**
      * @return to citizen search property result screen
      */
- 
-       @ValidationErrorPage(value = "new")
-        @Action(value = "/citizen/search/search-srchByAssessmentAndOwnerDetail")
-        public String srchByAssessmentAndOwnerDetail(){
-               try {
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByAssessmentAndOwnerDetails(assessmentNum,ownerName,doorNo);
-                for (final PropertyMaterlizeView propMatview : propertyList) {
-                    if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
-                    setSearchResultList(getResultsFromMv(propMatview));
-                }
-                if (assessmentNum != null && !assessmentNum.equals(""))
-                    setSearchValue("Assessment Number : " + assessmentNum);
-                
-                setSearchCreteria("Search By Assessment and Owner detail");
-                if (ownerName != null && !ownerName.equals(""))
-                setSearchValue("Owner name :" + ownerName);
-                if (doorNo != null && !doorNo.equals(""))
-                setSearchValue("Door number :" + doorNo);
-                                  
 
-            } catch (final Exception e) {
-                LOGGER.error("Exception in Search Property By Door number ", e);
-                throw new ApplicationRuntimeException("Exception : ", e);
+    @ValidationErrorPage(value = "new")
+    @Action(value = "/citizen/search/search-srchByAssessmentAndOwnerDetail")
+    public String srchByAssessmentAndOwnerDetail() {
+        try {
+            final List<PropertyMaterlizeView> propertyList = propertyService
+                    .getPropertyByAssessmentAndOwnerDetails(assessmentNum, ownerName, doorNo);
+            for (final PropertyMaterlizeView propMatview : propertyList) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("srchByAssessmentAndOwner : Property : " + propMatview);
+                setSearchResultList(getResultsFromMv(propMatview));
             }
+            if (assessmentNum != null && !assessmentNum.equals(""))
+                setSearchValue("Assessment Number : " + assessmentNum);
+
+            setSearchCreteria("Search By Assessment and Owner detail");
+            if (ownerName != null && !ownerName.equals(""))
+                setSearchValue("Owner name :" + ownerName);
+            if (doorNo != null && !doorNo.equals(""))
+                setSearchValue("Door number :" + doorNo);
+
+        } catch (final Exception e) {
+            LOGGER.error("Exception in Search Property By Door number ", e);
+            throw new ApplicationRuntimeException("Exception : ", e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from srchByAssessmentAndOwenrDetails method ");
         return TARGET;
     }
-      
-    /*
-     * (non-Javadoc)
-     * @see com.opensymphony.xwork2.ActionSupport#validate()
-     * @description : validates assessment no. Throw error in case its empty.
-     */
-/*    @Override
-    public void validate() {
-        if (org.apache.commons.lang.StringUtils.equals(mode, "assessment"))
-            if (org.apache.commons.lang.StringUtils.isEmpty(assessmentNum)
-                    || org.apache.commons.lang.StringUtils.isBlank(assessmentNum))
-                addActionError(getText("mandatory.assessmentNo"));
+
+    @SkipValidation
+    @Action(value = "/citizen/search/search-searchByAssessmentForm")
+    public String searchByAssessmentForm() {
+        setAssessmentNum("");
+        return NEWFORM;
     }
 
-    *//**
-     * @param assessmentNumber
-     * @return search result based on assessment number.
-     */
+    @ValidationErrorPage(value = "new")
+    @Action(value = "/citizen/search/search-searchByAssessment")
+    public String srchByAssessmentNo() {
+        try {
+
+            BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
+            if (basicProperty != null) {
+                setSearchUrl("onlineSearch");
+                        checkIsDemandActive(basicProperty.getProperty());
+                if (isDemandActive == false) {
+                    addActionError(getText("dmd.inactive"));
+                    return NEWFORM;
+                }
+            } else {
+                addActionError(getText("record.not.found"));
+                return NEWFORM;
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Exception in Search Property By Door number ", e);
+            throw new ApplicationRuntimeException("Exception : ", e);
+        }
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Exit from srchByAssessment method ");
+
+        return TARGETFORM;
+    }
+
     private List<Map<String, String>> getResultsFromMv(final PropertyMaterlizeView pmv) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Entered into getSearchResults method");
@@ -221,13 +246,13 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
                             pmv.getAggrCurrSecondHalfDmd() == null ? "0" : pmv.getAggrCurrSecondHalfDmd().toString());
                     searchResultMap.put("currSecondHalfDemandDue",
                             (pmv.getAggrCurrSecondHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrSecondHalfDmd())
-                            .subtract(pmv.getAggrCurrSecondHalfColl() == null ? BigDecimal.ZERO
-                                    : pmv.getAggrCurrSecondHalfColl())
-                            .toString());
-                    searchResultMap.put("arrDemandDue", (pmv.getAggrArrDmd() == null ? BigDecimal.ZERO : pmv.getAggrArrDmd())
-                            .subtract(pmv.getAggrArrColl() == null ? BigDecimal.ZERO
-                                    : pmv.getAggrArrColl())
-                            .toString());
+                                    .subtract(pmv.getAggrCurrSecondHalfColl() == null ? BigDecimal.ZERO
+                                            : pmv.getAggrCurrSecondHalfColl())
+                                    .toString());
+                    searchResultMap.put("arrDemandDue",
+                            (pmv.getAggrArrDmd() == null ? BigDecimal.ZERO : pmv.getAggrArrDmd())
+                                    .subtract(pmv.getAggrArrColl() == null ? BigDecimal.ZERO : pmv.getAggrArrColl())
+                                    .toString());
                 }
                 searchList.add(searchResultMap);
             }
@@ -237,6 +262,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         }
         return searchList;
     }
+
     private void checkIsDemandActive(final Property property) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into checkIsDemandActive");
@@ -249,6 +275,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
             LOGGER.debug("Exiting from checkIsDemandActive");
         }
     }
+
     public List<Map<String, String>> getSearchResultList() {
         return searchResultList;
     }
@@ -302,6 +329,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public void setAssessmentNum(final String assessmentNum) {
         this.assessmentNum = assessmentNum;
     }
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -309,6 +337,7 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
     public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
+
     public String getDoorNo() {
         return doorNo;
     }
@@ -317,5 +346,12 @@ public class SearchAction extends BaseFormAction implements ServletRequestAware 
         this.doorNo = doorNo;
     }
 
-    
+    public String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public void setSearchUrl(String searchUrl) {
+        this.searchUrl = searchUrl;
+    }
+
 }

@@ -51,7 +51,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">SearchPoliticalParty</div>
+						<div class="panel-title">Search Political Party</div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
@@ -87,7 +87,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">CouncilParty Search
+	<div class="col-md-12 table-header text-left">Council Party Search
 		Result</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
@@ -96,6 +96,8 @@
 				<tr>
 					<th><spring:message code="lbl.name" /></th>
 					<th><spring:message code="lbl.isactive" /></th>
+					<th><spring:message code="lbl.view"/></th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
 		</table>
@@ -108,6 +110,7 @@
 			e.preventDefault();
 		}
 	});
+	
 </script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />

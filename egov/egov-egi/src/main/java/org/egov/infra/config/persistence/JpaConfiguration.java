@@ -115,6 +115,7 @@ public class JpaConfiguration {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
+        properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
         properties.put(DIALECT, env.getProperty(DIALECT));
         properties.put(GENERATE_STATISTICS, applicationProperties.getProperty(GENERATE_STATISTICS));
         properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));

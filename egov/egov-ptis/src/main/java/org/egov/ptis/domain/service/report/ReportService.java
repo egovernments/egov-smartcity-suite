@@ -51,10 +51,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
+import org.egov.commons.Installment;
 import org.egov.commons.RegionalHeirarchy;
 import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -64,7 +67,10 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
+import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
@@ -100,6 +106,9 @@ public class ReportService {
     private static final String PRIVATE = "PRIVATE";
     private PersistenceService propPerServ;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    private Properties taxRateProps = null;
+    public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
+    public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
    
     @Autowired
     private RegionalHeirarchyService regionalHeirarchyService;
@@ -110,6 +119,9 @@ public class ReportService {
     private @Autowired FinancialYearDAO financialYearDAO;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -889,4 +901,103 @@ public class ReportService {
         return query;
     }
 
+    /**
+     * Method gives List of properties with current and arrear individual demand
+     * details
+     * 
+     * @param ward
+     * @param block
+     * @return
+     */
+    public List<BaseRegisterVLTResult> getVLTPropertyByWardAndBlock(final String ward, final String block) {
+    	BigDecimal taxRate= getTaxRate(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX);
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append("select distinct pmv from PropertyMaterlizeView pmv where pmv.isActive = true ");
+
+        if (StringUtils.isNotBlank(ward))
+            queryStr.append(" and pmv.ward.id=:ward ");
+        if (StringUtils.isNotBlank(block))
+            queryStr.append(" and pmv.block.id=:block ");
+        queryStr.append("and pmv.propTypeMstrID.code='VAC_LAND'");
+        queryStr.append(" order by pmv.propertyId, pmv.ward");
+        final Query query = propPerServ.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(ward))
+            query.setLong("ward", Long.valueOf(ward));
+        if (StringUtils.isNotBlank(block))
+            query.setLong("block", Long.valueOf(block));
+
+        List<PropertyMaterlizeView> properties = query.list();
+        List<BaseRegisterVLTResult> baseRegisterVLTResultList = new LinkedList<BaseRegisterVLTResult>();
+
+        for (PropertyMaterlizeView propMatView : properties) {
+        	BigDecimal currFirstHalfLibCess=BigDecimal.ZERO;
+        	BigDecimal currSecondHalfLibCess=BigDecimal.ZERO;
+        			BaseRegisterVLTResult baseRegisterVLTResultObj = null;
+                    baseRegisterVLTResultObj = new BaseRegisterVLTResult();
+                    baseRegisterVLTResultObj.setAssessmentNo(propMatView.getPropertyId());
+                    baseRegisterVLTResultObj.setWard(propMatView.getWard().getName()+" ,"+propMatView.getWard().getBoundaryNum());
+                    baseRegisterVLTResultObj.setOwnerName(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName()
+                            .replace(",", " & ") : propMatView.getOwnerName());
+
+                    baseRegisterVLTResultObj.setSurveyNo(propMatView.getSurveyNo());
+                    baseRegisterVLTResultObj.setTaxationRate(taxRate);
+                    baseRegisterVLTResultObj.setMarketValue(propMatView.getMarketValue());
+                    baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue());
+                    if(propMatView.getMarketValue()!=null && propMatView.getCapitalValue()!=null )
+                    	baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue())>0?propMatView.getMarketValue():propMatView.getCapitalValue());
+                    baseRegisterVLTResultObj.setPropertyTaxFirstHlf(propMatView.getAggrCurrFirstHalfDmd());
+                    List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
+                            propMatView.getInstDmdColl());
+                    Map<String, Installment> currYearInstMap =propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+                    for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
+                    	  if(instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))){
+                        		currFirstHalfLibCess=instDmdCollObj.getLibCessTax();
+                            	baseRegisterVLTResultObj.setLibraryCessTaxFirstHlf(currFirstHalfLibCess);
+                        	}else if(instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))){
+                        		currSecondHalfLibCess=instDmdCollObj.getLibCessTax();
+                        		baseRegisterVLTResultObj.setLibraryCessTaxSecondHlf(currSecondHalfLibCess);
+                        	}else{
+                        	baseRegisterVLTResultObj.setArrearLibraryTax(instDmdCollObj.getLibCessTax());
+                        }
+                    }
+                    baseRegisterVLTResultObj.setPropertyTaxSecondHlf(propMatView.getAggrCurrSecondHalfDmd());
+                    baseRegisterVLTResultObj.setCurrTotal(propMatView.getAggrCurrFirstHalfDmd().add(currFirstHalfLibCess).
+                    		add(propMatView.getAggrCurrSecondHalfDmd()).add(currSecondHalfLibCess));
+                    BigDecimal currPenaltyFine=BigDecimal.ZERO;
+                    if(propMatView.getAggrCurrFirstHalfPenaly()!=null){
+                    	currPenaltyFine=currPenaltyFine.add(propMatView.getAggrCurrFirstHalfPenaly());
+                    }if(propMatView.getAggrCurrSecondHalfPenaly()!=null){
+                    	currPenaltyFine=currPenaltyFine.add(propMatView.getAggrCurrSecondHalfPenaly());
+                    }
+                    baseRegisterVLTResultObj.setPenaltyFines(currPenaltyFine);
+                    baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getArrearDemand());
+                    baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly());
+                    baseRegisterVLTResultObj.setArrearTotal(propMatView.getAggrArrDmd());
+                    
+
+                    String arrearPerFrom = "";
+                    String arrearPerTo = "";
+                    if (instDemandCollList.size() > 1) {
+                        arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size() - 2).getInstallment()
+                                .getToDate());
+                        arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
+                        baseRegisterVLTResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
+                    } else {
+                    	baseRegisterVLTResultObj.setArrearPeriod("N/A");
+                    }
+
+                baseRegisterVLTResultList.add(baseRegisterVLTResultObj);
+
+        }
+        return baseRegisterVLTResultList;
+    }
+    
+    private BigDecimal getTaxRate(String taxHead) {
+    	taxRateProps = propertyTaxUtil.loadTaxRates();
+        BigDecimal taxRate = BigDecimal.ZERO;
+        if (taxRateProps != null) {
+            taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
+        }
+        return taxRate;
+    }
 }
