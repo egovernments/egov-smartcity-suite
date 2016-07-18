@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-16T09:28:57 -->
+<!-- 2016-07-18T13:17:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MeasurementBookPDF" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b7d841e-c314-47e9-8795-c4395d9ecdf3">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -107,7 +107,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled"/>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Total: </style>"+$V{pageTotal}.setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Total (Rs): </style>"+$V{pageTotal}.setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,###.##">
 				<reportElement stretchType="RelativeToTallestObject" x="480" y="115" width="179" height="28" uuid="bdff57f3-84a5-4393-9589-685f876e0fa5">
@@ -265,7 +265,9 @@
 				<text><![CDATA[Completed Cost]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="611" y="0" width="90" height="30" uuid="4a47774d-25dc-4547-82df-aaa0630c3a21"/>
+				<reportElement x="611" y="0" width="86" height="30" uuid="4a47774d-25dc-4547-82df-aaa0630c3a21">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -278,7 +280,7 @@
 				<text><![CDATA[Current Measurement]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="701" y="0" width="90" height="30" uuid="1068f5d6-abd8-4bf7-ada9-1cb4a96ccf06"/>
+				<reportElement x="697" y="0" width="94" height="30" uuid="1068f5d6-abd8-4bf7-ada9-1cb4a96ccf06"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -376,7 +378,7 @@
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getUom().getUom()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,###.##">
-				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="90" height="30" uuid="9212861d-c844-4279-a23f-969cbd9a2c0a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="86" height="30" uuid="9212861d-c844-4279-a23f-969cbd9a2c0a"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -409,7 +411,7 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="701" y="0" width="90" height="30" uuid="95ac1db6-7086-447a-8edb-36a73b9a98ef"/>
+				<reportElement stretchType="RelativeToTallestObject" x="697" y="0" width="94" height="30" uuid="95ac1db6-7086-447a-8edb-36a73b9a98ef"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -421,8 +423,32 @@
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="30">
+	<pageFooter>
+		<band height="19">
+			<textField>
+				<reportElement x="571" y="1" width="219" height="18" uuid="7b9b7a4a-383d-4463-b75d-e3aba59409cf"/>
+				<box bottomPadding="1"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Report Run Date: " + $P{currDate} + " "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="359" y="1" width="70" height="18" uuid="f38de6fc-e7a3-457d-8b51-76abdc85cbce"/>
+				<box bottomPadding="1" rightPadding="1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="50" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="0" y="30" width="730" height="19" uuid="c02c51aa-06c0-4efd-8b45-e6487a0240f4"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workflowdetails}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("MeasurementBook_Workflowdetails.jasper")]]></subreportExpression>
+			</subreport>
 			<staticText>
 				<reportElement x="10" y="0" width="40" height="30" uuid="3aeea69a-051a-4ee4-adf4-5e041394f87c"/>
 				<box>
@@ -504,7 +530,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="611" y="0" width="90" height="30" uuid="7255bff9-6f6d-4c91-ad6e-e8e210e69c7c"/>
+				<reportElement x="611" y="0" width="86" height="30" uuid="7255bff9-6f6d-4c91-ad6e-e8e210e69c7c"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -514,10 +540,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total]]></text>
+				<text><![CDATA[Total (Rs)]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="701" y="0" width="90" height="30" uuid="7f3b4af4-83e3-4134-a622-f3742548da6b"/>
+				<reportElement x="697" y="0" width="94" height="30" uuid="7f3b4af4-83e3-4134-a622-f3742548da6b"/>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -527,33 +553,6 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{pageTotal}]]></textFieldExpression>
 			</textField>
-		</band>
-	</columnFooter>
-	<pageFooter>
-		<band height="19">
-			<textField>
-				<reportElement x="571" y="1" width="219" height="18" uuid="7b9b7a4a-383d-4463-b75d-e3aba59409cf"/>
-				<box bottomPadding="1"/>
-				<textElement verticalAlignment="Bottom"/>
-				<textFieldExpression><![CDATA["Report Run Date: " + $P{currDate} + " "]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="359" y="1" width="70" height="18" uuid="f38de6fc-e7a3-457d-8b51-76abdc85cbce"/>
-				<box bottomPadding="1" rightPadding="1"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
-	<summary>
-		<band height="20" splitType="Stretch">
-			<subreport>
-				<reportElement x="0" y="0" width="730" height="19" uuid="c02c51aa-06c0-4efd-8b45-e6487a0240f4"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{workflowdetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("MeasurementBook_Workflowdetails.jasper")]]></subreportExpression>
-			</subreport>
 		</band>
 	</summary>
 </jasperReport>

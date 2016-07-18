@@ -105,6 +105,10 @@ public class MeasurementBookPDFController {
             if (mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage() > 0)
                 reportParams.put("tenderFinalizedPerc",
                         "+" + mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage());
+            else
+                reportParams.put("tenderFinalizedPerc",String.valueOf(mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage()));
+                
+            
         }
 
         reportParams.put("currDate", sdf.format(new Date()));

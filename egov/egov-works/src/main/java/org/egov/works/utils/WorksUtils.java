@@ -277,7 +277,7 @@ public class WorksUtils {
                     if (StringUtils.isNotBlank(stateHistory.getNextAction())) {
                         HistoryMap.put("status", stateHistory.getValue() + "-" + stateHistory.getNextAction());
                     } else
-                        HistoryMap.put("status", stateHistory.getValue() + "-");
+                        HistoryMap.put("status", stateHistory.getValue());
                     user = stateHistory.getLastModifiedBy();
                     if (null != user) {
                         assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());

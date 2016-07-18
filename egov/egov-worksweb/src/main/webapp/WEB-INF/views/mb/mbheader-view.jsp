@@ -66,6 +66,7 @@
 	<div class="position_alert2">
 		<spring:message code="lbl.mb.amount" /> : &#8377 <fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbHeader.mbAmount}"/></fmt:formatNumber>
 	</div>
+	<input type="hidden" name="mbheaderid" id="mbheaderid" value="${mbHeader.id}"/>
 <div class="new-page-header"><spring:message code="title.viewmbheader" /></div>  
 	<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -105,7 +106,9 @@
 						</div>
 					</c:when>
 					<c:otherwise>
+					    <c:if test="${mbHeader.mbDetails != null && mbHeader.mbDetails.size() > 0}">
 					    <a href="javascript:void(0)" class="btn btn-primary" onclick="renderMBPDF()"><spring:message code="lbl.viewmb.pdf" /></a>
+					    </c:if>
 	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</c:otherwise>
 				</c:choose>
