@@ -1086,8 +1086,7 @@ public class EstimateService {
             final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
             final AppConfigValues value = appConfigvalues.get(0);
-            if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
-                    && abstractEstimate.getAssetValues().isEmpty())
+            if (value.getValue().equalsIgnoreCase("Yes") && StringUtils.isBlank(abstractEstimate.getLocation()))
                 bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
         }
     }
