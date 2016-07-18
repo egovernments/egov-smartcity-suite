@@ -58,42 +58,20 @@
 						<tr id="statusRow">
 						<td>
 							<span class="spansno"><c:out value="${item.index + 1}" /></span>
-							<form:hidden path="offlineStatuses[${item.index}].id" name="offlineStatuses[${item.index}].id" value="${offlineStat.id}" class="form-control table-input hidden-input"/>
+							<form:hidden path="offlineStatuses[${item.index}].id" name="offlineStatuses[${item.index}].id" value="${offlineStat.id}" id="offlineStatusesId_${item.index}" class="form-control table-input hidden-input"/>
 						</td>
 						<td>
-						<c:choose>
-						<c:when test="${offlineStat.id != null }">
-							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses_${item.index}" class="form-control offlineStatusValue"  disabled="true" required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${abstractEstimateStatusses}" varStatus="i">
-							 		<c:if test="${i.index == item.index}">
-							 			<form:option value="${status.id}" selected="true"><c:out value="${status.description}" /> </form:option>
-							 		</c:if>
-							 		<c:if test="${i.index != item.index}">
-							 			<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 		</c:if>
-							 	</c:forEach>
-							</form:select>
-						</c:when>
-						<c:otherwise>
-							<form:select disabled="true" path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses_${item.index}" class="form-control offlineStatusValue" required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${abstractEstimateStatusses}" varStatus="i">
-							 		<c:if test="${i.index == item.index}">
-							 			<form:option value="${status.id}" selected="true"><c:out value="${status.description}" /> </form:option>
-							 		</c:if>
-							 		<c:if test="${i.index != item.index}">
-							 			<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 		</c:if>
-							 	</c:forEach>
-							</form:select>
-						</c:otherwise>
-						</c:choose>
+							<c:forEach var="status" items="${abstractEstimateStatusses}" varStatus="i">
+						 		<c:if test="${i.index == item.index}">
+						 			<form:hidden path="offlineStatuses[${item.index}].egwStatus.id" value="${status.id }"/>
+									${status.description}
+						 		</c:if>
+						 	</c:forEach>
 							<form:errors path="offlineStatuses[${item.index}].egwStatus.id" cssClass="add-margin error-msg" />
 						</td>
 						<td>
 						<c:choose>
-						<c:when test="${offlineStat.id != null }">
+						<c:when test="${abstractEstimate.offlineStatuses[item.index].id != null }">
 							<form:input path="offlineStatuses[${item.index}].statusDate" id="statusDate_${item.index }" name="offlineStatuses[${item.index}].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate "	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  disabled="true" required="required" />
 						</c:when>
 						<c:otherwise>

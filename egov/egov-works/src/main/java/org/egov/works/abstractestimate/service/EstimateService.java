@@ -1009,7 +1009,7 @@ public class EstimateService {
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
         List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus ");
+        queryStr.append("select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
         if (abstractEstimateForLoaSearchRequest != null) {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null) {
                 queryStr.append(" and upper(ae.estimateNumber) =:abstractEstimateNumber");
@@ -1061,6 +1061,7 @@ public class EstimateService {
                 }
             }
             qry.setParameter("abstractEstimateStatus", WorksConstants.ADMIN_SANCTIONED_STATUS);
+            qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
 
         }
         return qry;
@@ -1069,7 +1070,7 @@ public class EstimateService {
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
-                        WorksConstants.CANCELLED);
+                        WorksConstants.ADMIN_SANCTIONED_STATUS, WorksConstants.CANCELLED_STATUS);
         return estimateNumbers;
     }
     

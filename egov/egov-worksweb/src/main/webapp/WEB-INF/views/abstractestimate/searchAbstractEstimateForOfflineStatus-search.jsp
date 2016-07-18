@@ -57,18 +57,6 @@
 									<form:input path="abstractEstimateNumber" id="abstractEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract Estimate Number"/>
 									<form:errors path="abstractEstimateNumber" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
-								<div class="col-sm-3 add-margin">
-									<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" placeholder="Admin Sanction Date" />
-									<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
-								<div class="col-sm-3 add-margin">
-									<form:input path="adminSanctionToDate" class="form-control datepicker"	id="adminSanctionToDate" data-inputmask="'mask': 'd/m/y'" placeholder="Admin Sanction Date" />
-									<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
-								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="abstractEstimateCreatedBy" data-first-option="false" id="abstractEstimateCreatedBy" class="form-control">
@@ -79,13 +67,20 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
-								<div class="col-sm-3 control-label text-left">
-									<input class="form-control" value='<spring:message code="lbl.adminsanctioned"/>' disabled="disabled"/>
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" placeholder="Admin Sanction Date" />
+									<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
 								</div>
-								<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.status" /></label>
-						<div class="col-sm-3 add-margin">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input path="adminSanctionToDate" class="form-control datepicker"	id="adminSanctionToDate" data-inputmask="'mask': 'd/m/y'" placeholder="Admin Sanction Date" />
+									<form:errors path="adminSanctionToDate" cssClass="add-margin error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+							<div class="col-sm-3 add-margin">
 							<form:select path="egwStatus" data-first-option="false"
 								id="egwStatus" class="form-control">
 								<form:option value="">

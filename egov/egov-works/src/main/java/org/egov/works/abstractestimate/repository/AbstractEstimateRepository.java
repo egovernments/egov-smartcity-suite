@@ -79,7 +79,7 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<String> findAbstractEstimateNumbersToCancelEstimate(@Param("code") final String code,
             @Param("status") final String status);
     
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and not exists (select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where ae.estimateNumber = woe.workOrder.estimateNumber and woe.workOrder.egwStatus.code != upper(:status))")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code = :abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.workOrder.id and woe.workOrder.egwStatus.code != upper(:workOrderStatus))")
     List<String> findAbstractEstimateNumbersToSetOfflineStatus(@Param("code") final String code,
-            @Param("status") final String status);
+            @Param("abstractEstimateStatus") final String abstractEstimateStatus,@Param("workOrderStatus") final String workOrderStatus);
 }

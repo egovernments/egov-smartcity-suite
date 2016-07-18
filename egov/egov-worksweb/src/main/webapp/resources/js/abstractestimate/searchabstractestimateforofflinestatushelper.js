@@ -98,6 +98,7 @@ function callAjaxSearch() {
 									'<a href="javascript:void(0);" onclick="setStatus(\''
 											+ data.abstractEstimateId + '\')">View work status for Abstract Estimate</a>');
 						}
+					$('td:eq(4)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
 					return row;
 				},
 				aaSorting: [],				
@@ -106,7 +107,7 @@ function callAjaxSearch() {
 					"data" : "estimateNumber", "sClass" : "text-center"} ,{
 					"data" : "estimateDate", "sClass" : "text-center"} ,{
 					"data" : "nameOfWork", "sClass" : "text-center"} ,{
-					"data" : "estimateAmount", "sClass" : "text-center"} ,{
+					"data" : "estimateAmount", "sClass" : "text-right"} ,{
 					"data" : "createdBy", "sClass" : "text-center"} ,{
 					"data" : "", "sClass" : "text-right"
 					}]				

@@ -39,7 +39,6 @@
  */
 $(document).ready(function() {
 	
-	$('.offlineStatuses').trigger('change');
 	initializeDatePicker();
 	
 });
@@ -56,22 +55,31 @@ function getRow(obj) {
 }
 
 function validateForm(){
-	$('.offlineStatusValue').prop('required', false);
 	$('.statusdate').prop('required', false);
 	var tbl=document.getElementById('tblsetstatus');		
 	var flag = false;
-	var length = $('.offlineStatusValue').length;
-	for (var i = 0; i < length; i++) {
-		var offlineStatusValue = document.getElementById('offlineStatuses_' + i ).value;
-		var statusDate = document.getElementById('statusDate_' + i ).value;
-		if(offlineStatusValue != "" && statusDate != ""){
-			for (var j = 0; j < i; j++) {
-				$('#statusDate_' + j).prop('required', 'required');
+	var length = $('.statusdate').length;
+	
+	if(document.getElementById('statusDate_0').value == ""){
+		$('#statusDate_0').prop('required', 'required');
+		return false;
+	}
+	
+	for (var j = 0; j < length; j++) {
+		var offlineStatusesId = document.getElementById('offlineStatusesId_' + j ).value;
+		if(offlineStatusesId != ""){
+			var k=j+1;
+			var statusDate = document.getElementById('statusDate_' + k ).value;
+			if(statusDate == ""){
+				$('#statusDate_' + k).prop('required', 'required');
+				return false;
 			}
-		} else {
-			$('#statusDate_' + i).removeAttr('required');
 		}
-		if(offlineStatusValue != "" && statusDate == "" && !flag){
+	}
+
+	for (var i = 0; i < length; i++) {
+		var statusDate = document.getElementById('statusDate_' + i ).value;
+		if(statusDate == "" && !flag){
 			flag = true;
 			index = i + 1;
 		}
@@ -81,7 +89,6 @@ function validateForm(){
 	}
 	
 	if($('#offlineStatuses').valid()){
-		$(".offlineStatusValue").removeAttr('disabled');
 		$(".statusdate").removeAttr('disabled');
 		return true;
 	}
