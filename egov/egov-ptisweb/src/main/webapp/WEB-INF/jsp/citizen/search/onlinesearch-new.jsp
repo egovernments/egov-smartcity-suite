@@ -56,7 +56,7 @@
 		}
 	}
 </script>
-<title><s:text name="searchProp.title"></s:text></title>
+<title><s:text name="citizenPaytax.title"></s:text></title>
 </head>
 <body>
 	<div class="formmainbox">
@@ -75,7 +75,7 @@
 				<tr>
 					<td width="100%" colspan="4" class="headingbg">
 						<div class="headingbg" style="text-align: left">
-							<s:text name="citizen.search.welcome" />
+							<s:text name="citizen.paytax.welcome" />
 						</div>
 					</td>
 				</tr>
