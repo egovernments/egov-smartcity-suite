@@ -54,6 +54,7 @@ import org.egov.works.web.adaptor.SearchLetterOfAcceptanceForOfflineStatusJsonAd
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCancelJson;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
+import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToMofifyJsonAdaptor;
 import org.egov.works.web.adaptor.SearchWorkOrderForMBHeaderJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -108,6 +109,9 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
+    
+    @Autowired
+    private SearchLetterOfAcceptanceToMofifyJsonAdaptor searchLetterOfAcceptanceToMofifyJsonAdaptor;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -245,11 +249,19 @@ public class AjaxLetterOfAcceptanceController {
     @RequestMapping(value = "/ajaxsearch-loatomodify", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchLoaToModify(final Model model,
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
-        final List<WorkOrder> searchLoaList = letterOfAcceptanceService
+        final List<WorkOrderEstimate> searchLoaList = letterOfAcceptanceService
                 .searchLetterOfAcceptanceToModify(searchRequestLetterOfAcceptance);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
+        final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJsonForModify(searchLoaList))
                 .append("}").toString();
         return result;
+    }
+    
+    public Object toSearchLetterOfAcceptanceJsonForModify(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceToMofifyJsonAdaptor)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
     @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
