@@ -65,7 +65,7 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${abstractEstimate.overheadValues.size() == 0}">
+					<c:when test="${abstractEstimate.tempOverheadValues.size() == 0}">
 						<tr id="overheadRow">
 							<td><span id="sno" class="spansno" data-sno>1</span>
 								<form:hidden path="tempOverheadValues[0].id"  name="tempOverheadValues[0].id" id="tempOverheadValues[0].id"  class="form-control table-input hidden-input"/>
@@ -129,7 +129,7 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
-						<c:forEach items="${abstractEstimate.overheadValues}" var="overheadValue" varStatus="item">
+						<c:forEach items="${abstractEstimate.tempOverheadValues}" var="overheadValue" varStatus="item">
 							<tr id="overheadRow">
 								<td><span id="sno" class="spansno" data-sno><c:out value="${item.index + 1}"/></span>
 								<form:hidden path="tempOverheadValues[${item.index }].id"  name="tempOverheadValues[${item.index }].id" id="tempOverheadValues[${item.index }].id" value="${overheadValue.id }"  class="form-control table-input hidden-input"/>
