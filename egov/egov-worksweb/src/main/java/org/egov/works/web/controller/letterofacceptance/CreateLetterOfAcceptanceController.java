@@ -295,6 +295,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS))
             message = messageSource.getMessage("msg.letterofacceptance.saved",
                     new String[] { approverName, nextDesign, workOrder.getWorkOrderNumber() }, null);
+        if (workOrder.getEgwStatus().getCode().equals(WorksConstants.RESUBMITTED_STATUS))
+            message = messageSource.getMessage("msg.letterofacceptance.resubmitted",
+                    new String[] { approverName, nextDesign, workOrder.getWorkOrderNumber() }, null);
         else if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED))
             message = messageSource.getMessage("msg.letterofacceptance.rejected",
                     new String[] { workOrder.getWorkOrderNumber(), approverName, nextDesign }, null);

@@ -549,7 +549,8 @@ public class LineEstimateService {
         final WorkFlowMatrix wfmatrix = lineEstimateWorkflowService.getWfMatrix(lineEstimate.getStateType(), null, null,
                 additionalRule, lineEstimate.getCurrentState().getValue(), null);
         if (lineEstimate.getStatus() != null && lineEstimate.getStatus().getCode() != null)
-            if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString())
+            if ((lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CREATED.toString()) ||
+                    lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString()))
                     && lineEstimate.getState() != null)
                 if (mode.equals("edit"))
                     approvalPosition = lineEstimate.getState().getOwnerPosition().getId();
@@ -667,6 +668,10 @@ public class LineEstimateService {
                     && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
+                && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                    LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -685,7 +690,7 @@ public class LineEstimateService {
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                        LineEstimateStatus.CREATED.toString()));
+                        LineEstimateStatus.RESUBMITTED.toString()));
 
     }
 

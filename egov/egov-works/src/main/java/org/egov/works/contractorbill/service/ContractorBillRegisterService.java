@@ -306,8 +306,10 @@ public class ContractorBillRegisterService {
                 contractorBillRegister.getStateType(), null, null, additionalRule,
                 contractorBillRegister.getCurrentState().getValue(), null);
         if (contractorBillRegister.getStatus() != null && contractorBillRegister.getStatus().getCode() != null)
-            if (contractorBillRegister.getStatus().getCode()
-                    .equals(ContractorBillRegister.BillStatus.CREATED.toString())
+            if ((contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.CREATED.toString()) ||
+                    contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.RESUBMITTED.toString()))
                     && contractorBillRegister.getState() != null
                     && !contractorBillRegister.getState().getHistory().isEmpty())
                 if (mode.equals("edit") || workFlowAction.equals(WorksConstants.REJECT_ACTION))
@@ -380,6 +382,11 @@ public class ContractorBillRegisterService {
                     && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
                 contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.APPROVED.toString()));
+            else if (contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.RESUBMITTED.toString())
+                    && workFlowAction.equalsIgnoreCase(WorksConstants.ACTION_APPROVE))
+                contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
+                        WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.APPROVED.toString()));
             else if (workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.REJECTED.toString()));
@@ -392,7 +399,7 @@ public class ContractorBillRegisterService {
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
-                        WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.CREATED.toString()));
+                        WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.RESUBMITTED.toString()));
 
     }
 
@@ -481,8 +488,13 @@ public class ContractorBillRegisterService {
                 mbHeader.setCreatedDate(existingMBHeader.getCreatedDate());
             }
             mbHeader.setMbAmount(contractorBillRegister.getBillamount());
-            mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
-                    MBHeader.MeasurementBookStatus.CREATED.toString()));
+            if (contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.RESUBMITTED.toString()));
+            else
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.CREATED.toString()));
             mbHeader.setEgBillregister(contractorBillRegister);
             mbHeader.setWorkOrderEstimate(contractorBillRegister.getWorkOrderEstimate());
             mbHeader.setWorkOrder(contractorBillRegister.getWorkOrderEstimate().getWorkOrder());

@@ -334,7 +334,7 @@ public class MBHeaderService {
             else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
-                        MBHeader.MeasurementBookStatus.CREATED.toString()));
+                        MBHeader.MeasurementBookStatus.RESUBMITTED.toString()));
     }
 
     @Transactional
@@ -432,7 +432,8 @@ public class MBHeaderService {
         final WorkFlowMatrix wfmatrix = mbHeaderWorkflowService.getWfMatrix(mbHeader.getStateType(),
                 null, null, additionalRule, mbHeader.getCurrentState().getValue(), null);
         if (mbHeader.getEgwStatus() != null && mbHeader.getEgwStatus().getCode() != null)
-            if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CREATED.toString())
+            if ((mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.CREATED.toString()) ||
+                    mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.RESUBMITTED.toString()))
                     && !WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)
                     && mbHeader.getState() != null)
                 if (mode.equals("edit"))

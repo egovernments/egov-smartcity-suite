@@ -72,7 +72,7 @@ public class ContractorBillRegister extends EgBillregister {
     private static final long serialVersionUID = -6056638534067396998L;
 
     public enum BillStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED
+        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
     }
 
     private Integer billSequenceNumber;

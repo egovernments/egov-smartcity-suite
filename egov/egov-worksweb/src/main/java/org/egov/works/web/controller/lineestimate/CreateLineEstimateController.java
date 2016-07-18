@@ -350,6 +350,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
                 && !lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.lineestimate.create.success",
                     new String[] { approverName, nextDesign, lineEstimate.getLineEstimateNumber() }, null);
+        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
+                && !lineEstimate.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.lineestimate.resubmit.success",
+                    new String[] { approverName, nextDesign, lineEstimate.getLineEstimateNumber() }, null);
         else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString()))
             message = messageSource.getMessage("msg.lineestimate.check.success",
                     new String[] { lineEstimate.getLineEstimateNumber(), approverName, nextDesign }, null);

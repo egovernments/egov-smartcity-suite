@@ -491,7 +491,8 @@ public class EstimateService {
         final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(),
                 null, null, additionalRule, abstractEstimate.getCurrentState().getValue(), null);
         if (abstractEstimate.getEgwStatus() != null && abstractEstimate.getEgwStatus().getCode() != null)
-            if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
+            if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
+                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
                     && abstractEstimate.getState() != null)
                 if (mode.equals("edit"))
                     approvalPosition = abstractEstimate.getState().getOwnerPosition().getId();
@@ -542,8 +543,9 @@ public class EstimateService {
                 worksUtils.persistDocuments(documentDetails);
             }
         } else {
-            if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
-                    && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+            if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
+                    abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
+                        && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 saveTechnicalSanctionDetails(abstractEstimate);
 
             if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
@@ -624,6 +626,10 @@ public class EstimateService {
                     && abstractEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                         EstimateStatus.TECH_SANCTIONED.toString()));
+            else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString())
+                    && abstractEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+                        EstimateStatus.TECH_SANCTIONED.toString()));
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
@@ -638,7 +644,7 @@ public class EstimateService {
             else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())
                     && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 abstractEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                        EstimateStatus.CREATED.toString()));
+                        EstimateStatus.RESUBMITTED.toString()));
     }
 
     public void createAbstractEstimateWorkflowTransition(final AbstractEstimate abstractEstimate,

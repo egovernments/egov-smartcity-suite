@@ -108,7 +108,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private static final long serialVersionUID = 5010991868891221454L;
 
     public enum EstimateStatus {
-        NEW, CREATED, TECH_SANCTIONED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED
+        NEW, CREATED, TECH_SANCTIONED, ADMIN_SANCTIONED, REJECTED, CANCELLED, APPROVED, RESUBMITTED
     }
 
     public enum Actions {

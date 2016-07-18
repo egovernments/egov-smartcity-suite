@@ -476,6 +476,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 .equalsIgnoreCase(ContractorBillRegister.BillStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.contractorbill.approved.success",
                     new String[] { contractorBillRegister.getBillnumber() }, null);
+        else if (contractorBillRegister.getStatus().getCode()
+                .equalsIgnoreCase(ContractorBillRegister.BillStatus.RESUBMITTED.toString()))
+            message = messageSource.getMessage("msg.contractorbill.resubmit.success",
+                    new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);
         else if (contractorBillRegister.getState().getValue().equalsIgnoreCase(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.contractorbill.reject",
                     new String[] { contractorBillRegister.getBillnumber(), approverName, nextDesign }, null);

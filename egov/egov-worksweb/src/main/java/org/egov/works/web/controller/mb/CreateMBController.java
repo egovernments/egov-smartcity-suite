@@ -206,6 +206,10 @@ public class CreateMBController {
                 && !mbHeader.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             message = messageSource.getMessage("msg.mbheader.created",
                     new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null);
+        else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.RESUBMITTED.toString())
+                && !mbHeader.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
+            message = messageSource.getMessage("msg.mbheader.resubmitted",
+                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() }, null);
         else if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.APPROVED.toString()))
             message = messageSource.getMessage("msg.mbheader.approved",
                     new String[] { mbHeader.getMbRefNo() }, null);

@@ -304,6 +304,11 @@ public class LetterOfAcceptanceService {
             } else {
                 workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                         WorksConstants.CREATED_STATUS));
+                if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED.toString())
+                        && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
+                    workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                            WorksConstants.RESUBMITTED_STATUS));
+                
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
                         workOrder.getCurrentState().getValue(), null);
                 workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
@@ -321,7 +326,8 @@ public class LetterOfAcceptanceService {
         final WorkFlowMatrix wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null,
                 additionalRule, workOrder.getCurrentState().getValue(), null);
         if (workOrder.getEgwStatus() != null && workOrder.getEgwStatus().getCode() != null)
-            if (workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS)
+            if ((workOrder.getEgwStatus().getCode().equals(WorksConstants.CREATED_STATUS) ||
+                    workOrder.getEgwStatus().getCode().equals(WorksConstants.RESUBMITTED_STATUS))
                     && workOrder.getState() != null)
                 if (mode.equals("edit"))
                     approvalPosition = workOrder.getState().getOwnerPosition().getId();
