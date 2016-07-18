@@ -65,6 +65,7 @@ import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
+import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -127,6 +128,7 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("workCategory") final String workCategory,
             @RequestParam("typeOfSlum") final String typeOfSlum,
             @RequestParam("beneficiary") final String beneficiary,
+            @RequestParam("workStatus") final String workStatus,
             @RequestParam("natureOfWork") final Long natureOfWork,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType,
@@ -141,6 +143,7 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setWorkCategory(workCategory);
         searchRequest.setTypeOfSlum(typeOfSlum);
         searchRequest.setBeneficiary(beneficiary);
+        searchRequest.setWorkStatus(workStatus);
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
 
@@ -193,16 +196,17 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType);
+        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType,searchRequest);
     }
 
     private ResponseEntity<byte[]> generateReportDepartmentWise(final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType) {
+            final HttpSession session, final String contentType,EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         String dataRunDate = "";
+        
 
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
@@ -287,6 +291,39 @@ public class EstimateAbstractReportPDFController {
                 else
                     pdf.setBillValueInCrores("NA");
 
+             // Making value NA based on work status
+                if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
+                        pdf.setLoaCreated("NA");
+                        pdf.setAgreementValueInCrores("NA");
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                        pdf.setBillsCreated("NA");
+                        pdf.setBillValueInCrores("NA");
+                    }
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Not_Commenced.toString())) {
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                        pdf.setBillsCreated("NA");
+                        pdf.setBillValueInCrores("NA");
+                    }
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.In_Progress.toString())
+                            || searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Completed.toString())) {
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                    }
+
+                }
+
                 dataRunDate = formatter.format(workProgressRegisterService.getReportSchedulerRunDate());
 
                 estimateAbstractReportPdfList.add(pdf);
@@ -327,6 +364,7 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("typeOfSlum") final String typeOfSlum,
             @RequestParam("beneficiary") final String beneficiary,
             @RequestParam("natureOfWork") final Long natureOfWork,
+            @RequestParam("workStatus") final String workStatus,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
             @RequestParam("contentType") final String contentType,
             final HttpSession session) throws IOException {
@@ -342,6 +380,7 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setWorkCategory(workCategory);
         searchRequest.setTypeOfSlum(typeOfSlum);
         searchRequest.setBeneficiary(beneficiary);
+        searchRequest.setWorkStatus(workStatus);
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
 
@@ -406,12 +445,12 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, departments);
+        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType,searchRequest);
     }
 
     private ResponseEntity<byte[]> generateReportTypeOfWorkWise(final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType, final Set<Department> departments) {
+            final HttpSession session, final String contentType,EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
@@ -509,6 +548,39 @@ public class EstimateAbstractReportPDFController {
                 else
                     pdf.setBillValueInCrores("NA");
 
+                // Making value NA based on work status
+                if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
+                        pdf.setLoaCreated("NA");
+                        pdf.setAgreementValueInCrores("NA");
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                        pdf.setBillsCreated("NA");
+                        pdf.setBillValueInCrores("NA");
+                    }
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Not_Commenced.toString())) {
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                        pdf.setBillsCreated("NA");
+                        pdf.setBillValueInCrores("NA");
+                    }
+
+                    if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.In_Progress.toString())
+                            || searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.Completed.toString())) {
+                        pdf.setLoaNotCreated("NA");
+                        pdf.setWorkNotCommenced("NA");
+                        pdf.setWorkInProgress("NA");
+                        pdf.setWorkCompleted("NA");
+                    }
+
+                }
+                
                 dataRunDate = formatter.format(workProgressRegisterService.getReportSchedulerRunDate());
 
                 estimateAbstractReportPdfList.add(pdf);
@@ -517,7 +589,7 @@ public class EstimateAbstractReportPDFController {
         reportParams.put("heading", messageSource.getMessage("msg.estimateabstractreport.by.typeofworkwise", null, null));
         reportParams.put("reportRunDate", formatter.format(new Date()));
         reportParams.put("dataRunDate", dataRunDate);
-        if (departments != null && !departments.toString().equalsIgnoreCase("[null]"))
+        if (searchRequest.getDepartments() != null && !searchRequest.getDepartments().toString().equalsIgnoreCase("[null]"))
             reportInput = new ReportRequest(messageSource.getMessage("msg.estimateabstractreportbytypeofworkwisewithdeptpdf",
                     null, null), estimateAbstractReportPdfList,
                     reportParams);

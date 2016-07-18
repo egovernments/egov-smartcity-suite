@@ -103,7 +103,6 @@ jQuery('#btnsearch').click(function(e) {
         queryParameters += "Nature Of Work : " + $('#natureOfWork').find(":selected").text() + ", ";
     }
     
-    
     if (queryParameters.endsWith(", "))
         queryParameters = queryParameters.substring(0, queryParameters.length - 2);
     
@@ -121,6 +120,7 @@ $('#btndownloadpdf').click(function() {
 	var typeOfSlum = $('#typeOfSlum').val();
 	var beneficiary = $('#beneficiary').val();
 	var natureOfWork = $('#natureOfWork').val();
+	var workStatus = $('#workStatus').find(":selected").text();
 	var spillOver = document.getElementById("spillOverFlag");
 	
 	var spillOverFlag = spillOver.checked ? true : false;
@@ -143,6 +143,8 @@ $('#btndownloadpdf').click(function() {
 			+ beneficiary
 			+ "&natureOfWork="
 			+ natureOfWork
+			+ "&workStatus="
+			+ workStatus
 			+ "&spillOverFlag=" + spillOverFlag
 			+ "&contentType=pdf", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
@@ -157,6 +159,7 @@ $('#btndownloadexcel').click(function() {
 	var typeOfSlum = $('#typeOfSlum').val();
 	var beneficiary = $('#beneficiary').val();
 	var natureOfWork = $('#natureOfWork').val();
+	var workStatus = $('#workStatus').find(":selected").text();
 	var spillOver = document.getElementById("spillOverFlag");
 	
 	var spillOverFlag = spillOver.checked ? true : false;
@@ -179,6 +182,8 @@ $('#btndownloadexcel').click(function() {
 			+ beneficiary
 			+ "&natureOfWork="
 			+ natureOfWork
+			+ "&workStatus="
+			+ workStatus
 			+ "&spillOverFlag=" + spillOverFlag
 			+ "&contentType=excel", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
@@ -415,4 +420,10 @@ $(document).ready(function(){
 	});
 	var selectedFYId = $("#financialYear").val();
 	getFinancialYearDatesByFYId(selectedFYId);
+	
+	$('#workStatus option').each(function() {
+		   var $this = $(this);
+		   $this.text($this.text().replace(/_/g, ' '));
+	});
+	
 });

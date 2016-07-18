@@ -53,6 +53,7 @@ import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
+import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.reports.repository.WorkProgressRegisterRepository;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
@@ -139,19 +140,19 @@ public class WorkProgressRegisterService {
         Query query = null;
         query = entityManager.unwrap(Session.class)
                 .createSQLQuery(getQueryForDepartmentWiseReport(estimateAbstractReport))
-                .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", LongType.INSTANCE)
-                .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
+                .addScalar("departmentName", StringType.INSTANCE).addScalar("lineEstimates", StringType.INSTANCE)
+                .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
                 .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
                 .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
                 .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                .addScalar("loaCreated", LongType.INSTANCE)
-                .addScalar("loaNotCreated", LongType.INSTANCE)
-                .addScalar("workNotCommenced", LongType.INSTANCE)
+                .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
+                .addScalar("loaCreated", StringType.INSTANCE)
+                .addScalar("loaNotCreated", StringType.INSTANCE)
+                .addScalar("workNotCommenced", StringType.INSTANCE)
                 .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                .addScalar("workInProgress", LongType.INSTANCE)
-                .addScalar("workCompleted", LongType.INSTANCE)
-                .addScalar("billsCreated", LongType.INSTANCE)
+                .addScalar("workInProgress", StringType.INSTANCE)
+                .addScalar("workCompleted", StringType.INSTANCE)
+                .addScalar("billsCreated", StringType.INSTANCE)
                 .addScalar("billValueInCrores", StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
         query = setParameterForDepartmentWiseReport(estimateAbstractReport, query);
@@ -262,19 +263,19 @@ public class WorkProgressRegisterService {
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
                     .addScalar("departmentName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
+                    .addScalar("lineEstimates", StringType.INSTANCE)
+                    .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
                     .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
+                    .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
+                    .addScalar("loaCreated", StringType.INSTANCE)
                     .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("loaNotCreated", LongType.INSTANCE)
-                    .addScalar("workNotCommenced", LongType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
+                    .addScalar("loaNotCreated", StringType.INSTANCE)
+                    .addScalar("workNotCommenced", StringType.INSTANCE)
+                    .addScalar("workInProgress", StringType.INSTANCE)
+                    .addScalar("workCompleted", StringType.INSTANCE)
+                    .addScalar("billsCreated", StringType.INSTANCE)
                     .addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
@@ -283,19 +284,19 @@ public class WorkProgressRegisterService {
                     .createSQLQuery(getQueryForTypeOfWorkWiseReport(estimateAbstractReport))
                     .addScalar("typeOfWorkName", StringType.INSTANCE)
                     .addScalar("subTypeOfWorkName", StringType.INSTANCE)
-                    .addScalar("lineEstimates", LongType.INSTANCE)
-                    .addScalar("adminSanctionedEstimates", LongType.INSTANCE)
+                    .addScalar("lineEstimates", StringType.INSTANCE)
+                    .addScalar("adminSanctionedEstimates", StringType.INSTANCE)
                     .addScalar("leAdminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("aeAdminSanctionedAmountInCrores", StringType.INSTANCE)
                     .addScalar("workValueOfAdminSanctionedAEInCrores", StringType.INSTANCE)
-                    .addScalar("technicalSanctionedEstimates", LongType.INSTANCE)
-                    .addScalar("loaCreated", LongType.INSTANCE)
+                    .addScalar("technicalSanctionedEstimates", StringType.INSTANCE)
+                    .addScalar("loaCreated", StringType.INSTANCE)
                     .addScalar("agreementValueInCrores", StringType.INSTANCE)
-                    .addScalar("loaNotCreated", LongType.INSTANCE)
-                    .addScalar("workNotCommenced", LongType.INSTANCE)
-                    .addScalar("workInProgress", LongType.INSTANCE)
-                    .addScalar("workCompleted", LongType.INSTANCE)
-                    .addScalar("billsCreated", LongType.INSTANCE)
+                    .addScalar("loaNotCreated", StringType.INSTANCE)
+                    .addScalar("workNotCommenced", StringType.INSTANCE)
+                    .addScalar("workInProgress", StringType.INSTANCE)
+                    .addScalar("workCompleted", StringType.INSTANCE)
+                    .addScalar("billsCreated", StringType.INSTANCE)
                     .addScalar("billValueInCrores", StringType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(EstimateAbstractReport.class));
             query = setParameterForTypeOfWorkWiseReport(estimateAbstractReport, query);
@@ -548,7 +549,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billsCreated, ");
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workstatus       = 'LOA Not Created' ");
+        query.append(" WHERE details.workstatus       = '" + WorkStatus.LOA_Not_Created.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
@@ -569,7 +570,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billsCreated, ");
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workstatus       = 'Work Not Commenced'");
+        query.append(" WHERE details.workstatus       = '" + WorkStatus.Not_Commenced.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
@@ -592,7 +593,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workstatus       = 'Work Completed' ");
+        query.append(" WHERE details.workstatus       = '" + WorkStatus.Completed.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(" GROUP BY details.departmentName ");
         query.append(" UNION ");
@@ -896,7 +897,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billsCreated, ");
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workstatus       = 'LOA Not Created' ");
+        query.append(" WHERE details.workstatus       = '" + WorkStatus.LOA_Not_Created.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
@@ -917,7 +918,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                                     AS billsCreated, ");
         query.append(" 0                                     AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workstatus       = 'Work Not Commenced' ");
+        query.append(" WHERE details.workstatus       = '" + WorkStatus.Not_Commenced.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");
@@ -940,7 +941,7 @@ public class WorkProgressRegisterService {
         query.append(" 0                             AS billsCreated, ");
         query.append(" 0                             AS billValueInCrores ");
         query.append(" FROM egw_mv_work_progress_register details ");
-        query.append(" WHERE details.workcompleted = true ");
+        query.append(" WHERE details.workstatus = '" + WorkStatus.Completed.toString() + "' ");
         query.append(filterConditions.toString());
         query.append(groupByQuery.toString());
         query.append(" UNION ");

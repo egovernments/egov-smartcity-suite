@@ -63,21 +63,21 @@ public class EstimateAbstractReport {
     private String workStatus;
 
     private String departmentName;
-    private Long lineEstimates;
-    private Long adminSanctionedEstimates;
+    private String lineEstimates;
+    private String adminSanctionedEstimates;
     private String leAdminSanctionedAmountInCrores;
     private String aeAdminSanctionedAmountInCrores;
     private String workValueOfAdminSanctionedAEInCrores;
-    private Long technicalSanctionedEstimates;
-    private Long loaCreated;
-    private Long loaNotCreated;
-    private Long workNotCommenced;
+    private String technicalSanctionedEstimates;
+    private String loaCreated;
+    private String loaNotCreated;
+    private String workNotCommenced;
     private String agreementValueInCrores;
-    private Long workInProgress;
-    private Long WorkCompleted;
-    private Long billsCreated;
+    private String workInProgress;
+    private String WorkCompleted;
+    private String billsCreated;
     private String BillValueInCrores;
-    private Date createdDate;
+    private String createdDate;
     private String typeOfWorkName;
     private String subTypeOfWorkName;
     private Set<Department> departments = new HashSet<>();
@@ -86,7 +86,7 @@ public class EstimateAbstractReport {
         return financialYear;
     }
 
-    public void setFinancialYear(final Long financialYear) {
+    public void setFinancialYear(Long financialYear) {
         this.financialYear = financialYear;
     }
 
@@ -94,7 +94,7 @@ public class EstimateAbstractReport {
         return department;
     }
 
-    public void setDepartment(final Long department) {
+    public void setDepartment(Long department) {
         this.department = department;
     }
 
@@ -102,7 +102,7 @@ public class EstimateAbstractReport {
         return adminSanctionFromDate;
     }
 
-    public void setAdminSanctionFromDate(final Date adminSanctionFromDate) {
+    public void setAdminSanctionFromDate(Date adminSanctionFromDate) {
         this.adminSanctionFromDate = adminSanctionFromDate;
     }
 
@@ -110,7 +110,7 @@ public class EstimateAbstractReport {
         return adminSanctionToDate;
     }
 
-    public void setAdminSanctionToDate(final Date adminSanctionToDate) {
+    public void setAdminSanctionToDate(Date adminSanctionToDate) {
         this.adminSanctionToDate = adminSanctionToDate;
     }
 
@@ -118,7 +118,7 @@ public class EstimateAbstractReport {
         return scheme;
     }
 
-    public void setScheme(final Integer scheme) {
+    public void setScheme(Integer scheme) {
         this.scheme = scheme;
     }
 
@@ -126,23 +126,15 @@ public class EstimateAbstractReport {
         return subScheme;
     }
 
-    public void setSubScheme(final Integer subScheme) {
+    public void setSubScheme(Integer subScheme) {
         this.subScheme = subScheme;
-    }
-
-    public String getTypeOfSlum() {
-        return typeOfSlum;
-    }
-
-    public void setTypeOfSlum(final String typeOfSlum) {
-        this.typeOfSlum = typeOfSlum;
     }
 
     public Long getNatureOfWork() {
         return natureOfWork;
     }
 
-    public void setNatureOfWork(final Long natureOfWork) {
+    public void setNatureOfWork(Long natureOfWork) {
         this.natureOfWork = natureOfWork;
     }
 
@@ -150,15 +142,23 @@ public class EstimateAbstractReport {
         return workCategory;
     }
 
-    public void setWorkCategory(final String workCategory) {
+    public void setWorkCategory(String workCategory) {
         this.workCategory = workCategory;
+    }
+
+    public String getTypeOfSlum() {
+        return typeOfSlum;
+    }
+
+    public void setTypeOfSlum(String typeOfSlum) {
+        this.typeOfSlum = typeOfSlum;
     }
 
     public String getBeneficiary() {
         return beneficiary;
     }
 
-    public void setBeneficiary(final String beneficiary) {
+    public void setBeneficiary(String beneficiary) {
         this.beneficiary = beneficiary;
     }
 
@@ -166,31 +166,63 @@ public class EstimateAbstractReport {
         return spillOverFlag;
     }
 
-    public void setSpillOverFlag(final boolean spillOverFlag) {
+    public void setSpillOverFlag(boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
+    }
+
+    public Long getCurrentFinancialYearId() {
+        return currentFinancialYearId;
+    }
+
+    public void setCurrentFinancialYearId(Long currentFinancialYearId) {
+        this.currentFinancialYearId = currentFinancialYearId;
+    }
+
+    public Long getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(Long typeOfWork) {
+        this.typeOfWork = typeOfWork;
+    }
+
+    public Long getSubTypeOfWork() {
+        return subTypeOfWork;
+    }
+
+    public void setSubTypeOfWork(Long subTypeOfWork) {
+        this.subTypeOfWork = subTypeOfWork;
+    }
+
+    public String getWorkStatus() {
+        return workStatus;
+    }
+
+    public void setWorkStatus(String workStatus) {
+        this.workStatus = workStatus;
     }
 
     public String getDepartmentName() {
         return departmentName;
     }
 
-    public void setDepartmentName(final String departmentName) {
+    public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
 
-    public Long getLineEstimates() {
+    public String getLineEstimates() {
         return lineEstimates;
     }
 
-    public void setLineEstimates(final Long lineEstimates) {
+    public void setLineEstimates(String lineEstimates) {
         this.lineEstimates = lineEstimates;
     }
 
-    public Long getAdminSanctionedEstimates() {
+    public String getAdminSanctionedEstimates() {
         return adminSanctionedEstimates;
     }
 
-    public void setAdminSanctionedEstimates(final Long adminSanctionedEstimates) {
+    public void setAdminSanctionedEstimates(String adminSanctionedEstimates) {
         this.adminSanctionedEstimates = adminSanctionedEstimates;
     }
 
@@ -210,118 +242,6 @@ public class EstimateAbstractReport {
         this.aeAdminSanctionedAmountInCrores = aeAdminSanctionedAmountInCrores;
     }
 
-    public Long getTechnicalSanctionedEstimates() {
-        return technicalSanctionedEstimates;
-    }
-
-    public void setTechnicalSanctionedEstimates(final Long technicalSanctionedEstimates) {
-        this.technicalSanctionedEstimates = technicalSanctionedEstimates;
-    }
-
-    public Long getLoaCreated() {
-        return loaCreated;
-    }
-
-    public void setLoaCreated(final Long loaCreated) {
-        this.loaCreated = loaCreated;
-    }
-
-    public String getAgreementValueInCrores() {
-        return agreementValueInCrores;
-    }
-
-    public void setAgreementValueInCrores(final String agreementValueInCrores) {
-        this.agreementValueInCrores = agreementValueInCrores;
-    }
-
-    public Long getWorkInProgress() {
-        return workInProgress;
-    }
-
-    public void setWorkInProgress(final Long workInProgress) {
-        this.workInProgress = workInProgress;
-    }
-
-    public Long getWorkCompleted() {
-        return WorkCompleted;
-    }
-
-    public void setWorkCompleted(final Long workCompleted) {
-        WorkCompleted = workCompleted;
-    }
-
-    public Long getBillsCreated() {
-        return billsCreated;
-    }
-
-    public void setBillsCreated(final Long billsCreated) {
-        this.billsCreated = billsCreated;
-    }
-
-    public String getBillValueInCrores() {
-        return BillValueInCrores;
-    }
-
-    public void setBillValueInCrores(final String billValueInCrores) {
-        BillValueInCrores = billValueInCrores;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Long getCurrentFinancialYearId() {
-        return currentFinancialYearId;
-    }
-
-    public void setCurrentFinancialYearId(final Long currentFinancialYearId) {
-        this.currentFinancialYearId = currentFinancialYearId;
-    }
-
-    public Long getTypeOfWork() {
-        return typeOfWork;
-    }
-
-    public void setTypeOfWork(final Long typeOfWork) {
-        this.typeOfWork = typeOfWork;
-    }
-
-    public Long getSubTypeOfWork() {
-        return subTypeOfWork;
-    }
-
-    public void setSubTypeOfWork(final Long subTypeOfWork) {
-        this.subTypeOfWork = subTypeOfWork;
-    }
-
-    public String getTypeOfWorkName() {
-        return typeOfWorkName;
-    }
-
-    public void setTypeOfWorkName(final String typeOfWorkName) {
-        this.typeOfWorkName = typeOfWorkName;
-    }
-
-    public Set<Department> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(final Set<Department> departments) {
-        this.departments = departments;
-    }
-
-    public String getSubTypeOfWorkName() {
-        return subTypeOfWorkName;
-    }
-
-    public void setSubTypeOfWorkName(final String subTypeOfWorkName) {
-        this.subTypeOfWorkName = subTypeOfWorkName;
-    }
-
     public String getWorkValueOfAdminSanctionedAEInCrores() {
         return workValueOfAdminSanctionedAEInCrores;
     }
@@ -330,28 +250,108 @@ public class EstimateAbstractReport {
         this.workValueOfAdminSanctionedAEInCrores = workValueOfAdminSanctionedAEInCrores;
     }
 
-    public Long getLoaNotCreated() {
+    public String getTechnicalSanctionedEstimates() {
+        return technicalSanctionedEstimates;
+    }
+
+    public void setTechnicalSanctionedEstimates(String technicalSanctionedEstimates) {
+        this.technicalSanctionedEstimates = technicalSanctionedEstimates;
+    }
+
+    public String getLoaCreated() {
+        return loaCreated;
+    }
+
+    public void setLoaCreated(String loaCreated) {
+        this.loaCreated = loaCreated;
+    }
+
+    public String getLoaNotCreated() {
         return loaNotCreated;
     }
 
-    public void setLoaNotCreated(Long loaNotCreated) {
+    public void setLoaNotCreated(String loaNotCreated) {
         this.loaNotCreated = loaNotCreated;
     }
 
-    public Long getWorkNotCommenced() {
+    public String getWorkNotCommenced() {
         return workNotCommenced;
     }
 
-    public void setWorkNotCommenced(Long workNotCommenced) {
+    public void setWorkNotCommenced(String workNotCommenced) {
         this.workNotCommenced = workNotCommenced;
     }
 
-    public String getWorkStatus() {
-        return workStatus;
+    public String getAgreementValueInCrores() {
+        return agreementValueInCrores;
     }
 
-    public void setWorkStatus(String workStatus) {
-        this.workStatus = workStatus;
+    public void setAgreementValueInCrores(String agreementValueInCrores) {
+        this.agreementValueInCrores = agreementValueInCrores;
+    }
+
+    public String getWorkInProgress() {
+        return workInProgress;
+    }
+
+    public void setWorkInProgress(String workInProgress) {
+        this.workInProgress = workInProgress;
+    }
+
+    public String getWorkCompleted() {
+        return WorkCompleted;
+    }
+
+    public void setWorkCompleted(String workCompleted) {
+        WorkCompleted = workCompleted;
+    }
+
+    public String getBillsCreated() {
+        return billsCreated;
+    }
+
+    public void setBillsCreated(String billsCreated) {
+        this.billsCreated = billsCreated;
+    }
+
+    public String getBillValueInCrores() {
+        return BillValueInCrores;
+    }
+
+    public void setBillValueInCrores(String billValueInCrores) {
+        BillValueInCrores = billValueInCrores;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getTypeOfWorkName() {
+        return typeOfWorkName;
+    }
+
+    public void setTypeOfWorkName(String typeOfWorkName) {
+        this.typeOfWorkName = typeOfWorkName;
+    }
+
+    public String getSubTypeOfWorkName() {
+        return subTypeOfWorkName;
+    }
+
+    public void setSubTypeOfWorkName(String subTypeOfWorkName) {
+        this.subTypeOfWorkName = subTypeOfWorkName;
+    }
+
+    public Set<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(Set<Department> departments) {
+        this.departments = departments;
     }
 
 }

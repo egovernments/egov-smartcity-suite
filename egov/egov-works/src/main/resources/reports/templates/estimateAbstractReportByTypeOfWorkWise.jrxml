@@ -77,34 +77,34 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="lineEstimates" class="java.lang.Long">
+	<field name="lineEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="typeOfWorkName" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="adminSanctionedEstimates" class="java.lang.Long">
+	<field name="adminSanctionedEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="leAdminSanctionedAmountInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="technicalSanctionedEstimates" class="java.lang.Long">
+	<field name="technicalSanctionedEstimates" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="loaCreated" class="java.lang.Long">
+	<field name="loaCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="agreementValueInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workInProgress" class="java.lang.Long">
+	<field name="workInProgress" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workCompleted" class="java.lang.Long">
+	<field name="workCompleted" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="billsCreated" class="java.lang.Long">
+	<field name="billsCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="billValueInCrores" class="java.lang.String">
@@ -116,10 +116,10 @@
 	<field name="aeAdminSanctionedAmountInCrores" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="loaNotCreated" class="java.lang.Long">
+	<field name="loaNotCreated" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="workNotCommenced" class="java.lang.Long">
+	<field name="workNotCommenced" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="workValueOfAdminSanctionedAEInCrores" class="java.lang.String">
