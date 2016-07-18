@@ -126,7 +126,7 @@ public class MeasurementBookPDFController {
                 final Double prevCumulativeAmount = mBHeaderService.getPreviousCumulativeQuantity(mBHeader.getId(),
                         mBDetail.getWorkOrderActivity().getId());
                 if (prevCumulativeAmount != null)
-                    mBDetail.getWorkOrderActivity().setPrevCumlvQuantity(prevCumulativeAmount);
+                    mBDetail.setPrevCumlvQuantity(prevCumulativeAmount);
             }
         return mBHeader.getMbDetails();
     }

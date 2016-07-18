@@ -69,8 +69,8 @@ public class ViewMBController {
                 final Double prevCumulativeAmount = mBHeaderService.getPreviousCumulativeQuantity(mBHeader.getId(),
                         mBDetail.getWorkOrderActivity().getId());
                 if (prevCumulativeAmount != null)
-                    mBDetail.getWorkOrderActivity().setPrevCumlvQuantity(prevCumulativeAmount);
-            }
+                    mBDetail.setPrevCumlvQuantity(prevCumulativeAmount);
+            } 
         mBHeader.setDocumentDetails(worksUtils.findByObjectIdAndObjectType(mBHeader.getId(), WorksConstants.MBHEADER));
         model.addAttribute("mbHeader", mBHeader);
         model.addAttribute("documentDetails",mBHeader.getDocumentDetails());
