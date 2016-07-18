@@ -1576,6 +1576,7 @@ function validateWorkFlowApprover(name) {
 				if (parseFloat($(this).val()) <= 0)
 					flag = false;
 			});
+			
 			if (!flag) {
 				bootbox.alert($('#errorquantityzero').val());
 				return false;
@@ -1636,6 +1637,14 @@ function validateWorkFlowApprover(name) {
 		if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
 			bootbox.alert($('#errorsornonsor').val());
 			return false;
+		}
+		
+		$locationAppConfig = $('#locationAppConfig').val();
+		if($locationAppConfig == 'true') {
+			if($('#location').val() == '') {
+				bootbox.alert($('#errorlocation').val());
+				return false;
+			}
 		}
 		
 		flag = validateSORDetails();

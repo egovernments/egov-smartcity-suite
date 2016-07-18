@@ -174,6 +174,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateMultiYearEstimates(abstractEstimate, errors);
             estimateService.validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
+            estimateService.validateLocationDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
                 if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
@@ -232,6 +233,14 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        
+        final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
+        final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
+        if (locationAppConfigValue.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isLocationDetailsRequired", true);
+        else
+            model.addAttribute("isLocationDetailsRequired", false);
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));

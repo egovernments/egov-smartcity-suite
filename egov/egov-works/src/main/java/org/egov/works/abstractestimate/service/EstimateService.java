@@ -466,6 +466,13 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
+        final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
+        if (locationAppConfigValue.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isLocationDetailsRequired", true);
+        else
+            model.addAttribute("isLocationDetailsRequired", false);
     }
 
     public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
@@ -1072,6 +1079,17 @@ public class EstimateService {
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
                         WorksConstants.ADMIN_SANCTIONED_STATUS, WorksConstants.CANCELLED_STATUS);
         return estimateNumbers;
+    }
+    
+    public void validateLocationDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
+        if (worksApplicationProperties.locationDetailsRequired().toString().equalsIgnoreCase("Yes")) {
+            final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                    WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
+            final AppConfigValues value = appConfigvalues.get(0);
+            if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
+                    && abstractEstimate.getAssetValues().isEmpty())
+                bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
+        }
     }
     
 }

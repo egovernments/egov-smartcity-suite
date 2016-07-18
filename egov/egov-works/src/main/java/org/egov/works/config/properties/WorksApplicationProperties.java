@@ -18,4 +18,8 @@ public class WorksApplicationProperties {
     public String assetRequired() {
         return environment.getProperty("asset.required", String.class);
     }
+    
+    public String locationDetailsRequired() {
+        return environment.getProperty("location.required", String.class);
+    }
 }
