@@ -96,6 +96,10 @@ jQuery('#btnsearch').click(function(e) {
     
     $('#searchCriteria').html(queryParameters);
     
+    $('#resultTable').stickyTableHeaders({
+    	 									fixedOffset: $('nav').outerHeight()
+    	 								});
+    
 });
 
 $('#btndownloadpdf').click(function() {

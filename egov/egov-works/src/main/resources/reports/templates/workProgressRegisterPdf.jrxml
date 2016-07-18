@@ -74,8 +74,6 @@
 	<parameter name="queryParameters" class="java.lang.String"/>
 	<parameter name="reportRunDate" class="java.lang.String"/>
 	<parameter name="dataRunDate" class="java.lang.String"/>
-	<parameter name="isContractor" class="java.lang.Boolean"/>
-	<parameter name="isWorkStatus" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -405,9 +403,7 @@
 				<text><![CDATA[Agreement amount (Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1000" y="0" width="60" height="47" isRemoveLineWhenBlank="true" uuid="f35dfd84-5d7e-4486-b3a7-cb07fdb07a16">
-					<printWhenExpression><![CDATA[$P{isContractor} == Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="1000" y="0" width="60" height="47" isRemoveLineWhenBlank="true" uuid="f35dfd84-5d7e-4486-b3a7-cb07fdb07a16"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -563,9 +559,7 @@
 				<text><![CDATA[Work Value (Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1120" y="0" width="61" height="47" isRemoveLineWhenBlank="true" uuid="4f08a3b1-6328-4dd4-8c5f-6a762b583abc">
-					<printWhenExpression><![CDATA[$P{isWorkStatus} == Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="1120" y="0" width="61" height="47" isRemoveLineWhenBlank="true" uuid="4f08a3b1-6328-4dd4-8c5f-6a762b583abc"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -621,9 +615,7 @@
 				<textFieldExpression><![CDATA[$F{agreementAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="1000" y="0" width="60" height="40" isRemoveLineWhenBlank="true" uuid="d56c8234-90fe-49a5-a8e2-c1a80f02e828">
-					<printWhenExpression><![CDATA[$P{isContractor} == Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" x="1000" y="0" width="60" height="40" uuid="d56c8234-90fe-49a5-a8e2-c1a80f02e828"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -948,9 +940,7 @@
 				<textFieldExpression><![CDATA[$F{workValue}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="1120" y="0" width="61" height="40" isRemoveLineWhenBlank="true" uuid="875e84b9-b8d8-41e9-a518-65ecd72475e2">
-					<printWhenExpression><![CDATA[$P{isWorkStatus} == Boolean.FALSE]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" x="1120" y="0" width="61" height="40" uuid="875e84b9-b8d8-41e9-a518-65ecd72475e2"/>
 				<box topPadding="0" leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

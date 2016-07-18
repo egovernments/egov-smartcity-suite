@@ -70,4 +70,7 @@
 		}
 	});
 </script>
+<script
+ 	src="<c:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
+ 	type="text/javascript"></script>
 <script src="<c:url value='/resources/js/reports/searchworkprogressregisterhelper.js?rnd=${app_release_no}'/>"></script>

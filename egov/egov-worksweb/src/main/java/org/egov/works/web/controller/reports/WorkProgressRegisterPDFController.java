@@ -156,16 +156,6 @@ public class WorkProgressRegisterPDFController {
 
         reportParams.put("queryParameters", queryParameters);
         
-        if (contractor != null)
-            reportParams.put("isContractor", true);
-        else
-            reportParams.put("isContractor", false);
-        
-        if (workStatus != null)
-            reportParams.put("isWorkStatus", true);
-        else
-            reportParams.put("isWorkStatus", false);
-        
         return generateReport(workProgressRegisters, request, session, contentType);
     }
 
