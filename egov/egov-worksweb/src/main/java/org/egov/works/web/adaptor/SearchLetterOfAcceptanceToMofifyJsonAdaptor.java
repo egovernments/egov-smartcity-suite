@@ -42,10 +42,7 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 
-import org.egov.works.utils.WorksConstants;
-import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -55,9 +52,6 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceToMofifyJsonAdaptor implements JsonSerializer<WorkOrderEstimate> {
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -99,17 +93,6 @@ public class SearchLetterOfAcceptanceToMofifyJsonAdaptor implements JsonSerializ
             jsonObject.addProperty("workOrderAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrderEstimate.getWorkOrder().getId());
-
-            if (workOrderEstimate.getWorkOrder().getState() != null) {
-                if (workOrderEstimate.getWorkOrder().getEgwStatus() != null
-                        && (workOrderEstimate.getWorkOrder().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
-                                || workOrderEstimate.getWorkOrder().getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)))
-                    jsonObject.addProperty("currentowner", "NA");
-                else
-                    jsonObject.addProperty("currentowner",
-                            worksUtils.getApproverName(workOrderEstimate.getWorkOrder().getState().getOwnerPosition().getId()));
-            } else
-                jsonObject.addProperty("currentowner", "NA");
 
         }
         return jsonObject;

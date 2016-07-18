@@ -1,0 +1,2 @@
+update eg_action set ordernumber = 1 where name='WorksSearchAbstractEstimateToSetOfflineStattus' and parentmodule = (select id from eg_module where name = 'WorksOfflineStatus');
+update eg_action set ordernumber = 2 where name='WorksSearchLOAToSetOfflineStattus' and parentmodule = (select id from eg_module where name = 'WorksOfflineStatus');
