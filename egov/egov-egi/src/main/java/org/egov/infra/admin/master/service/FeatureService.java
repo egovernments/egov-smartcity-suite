@@ -40,7 +40,9 @@
 
 package org.egov.infra.admin.master.service;
 
+import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Feature;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,5 +68,9 @@ public class FeatureService {
     @Transactional
     public Feature saveFeature(Feature feature) {
         return this.featureRepository.save(feature);
+    }
+
+    public Long getNumberOfFeatureByRoleAction(Role role, Action action) {
+        return this.featureRepository.countByRolesInAndActionsIn(role, action);
     }
 }

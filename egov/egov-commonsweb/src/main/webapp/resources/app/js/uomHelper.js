@@ -38,16 +38,52 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+jQuery('#btnsearch').click(function(e) {
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+	callAjaxSearch();
+});
 
-@Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
+function getFormData($form){
+	var unindexed_array = $form.serializeArray();
+	var indexed_array = {};
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+	$.map(unindexed_array, function(n, i){
+		indexed_array[n['name']] = n['value'];
+	});
+
+	return indexed_array;
+}
+
+function callAjaxSearch() {
+	drillDowntableContainer = jQuery("#resultTable");		
+	jQuery('.report-section').removeClass('display-hide');
+	reportdatatable = drillDowntableContainer
+	.dataTable({
+		ajax : {
+			url : "/common/uom/ajaxsearch/"+$('#mode').val(),      
+			type: "POST",
+			"data":  getFormData(jQuery('form'))
+		},
+		"fnRowCallback": function (row, data, index) {
+			$(row).on('click', function() {
+				console.log(data.id);
+				window.open('/common/uom/'+ $('#mode').val() +'/'+data.id,'','width=800, height=600');
+			});
+		},
+		"sPaginationType" : "bootstrap",
+		"bDestroy" : true,
+		"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
+		"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
+		"oTableTools" : {
+			"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+			"aButtons" : [ "xls", "pdf", "print" ]
+		},
+		aaSorting: [],				
+		columns : [ { 
+			"data" : "uomCategory", "sClass" : "text-left"} ,{ 
+				"data" : "uom", "sClass" : "text-left"} ,{ 
+					"data" : "narration", "sClass" : "text-left"} ,{ 
+						"data" : "convFactor", "sClass" : "text-right"} ,{ 
+							"data" : "baseuom", "sClass" : "text-left"}]				
+	});
 }

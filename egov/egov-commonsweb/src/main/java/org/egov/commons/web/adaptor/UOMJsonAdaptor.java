@@ -38,16 +38,44 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.commons.web.adaptor;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.lang.reflect.Type;
 
-@Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
+import org.egov.common.entity.UOM;
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+public class UOMJsonAdaptor implements JsonSerializer<UOM> {
+    @Override
+    public JsonElement serialize(final UOM uom, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (uom != null) {
+            if (uom.getUomCategory() != null)
+                jsonObject.addProperty("uomCategory", uom.getUomCategory().getCategory());
+            else
+                jsonObject.addProperty("uomCategory", "");
+            if (uom.getUom() != null)
+                jsonObject.addProperty("uom", uom.getUom());
+            else
+                jsonObject.addProperty("uom", "");
+            if (uom.getNarration() != null)
+                jsonObject.addProperty("narration", uom.getNarration());
+            else
+                jsonObject.addProperty("narration", "");
+            if (uom.getConvFactor() != null)
+                jsonObject.addProperty("convFactor", uom.getConvFactor());
+            else
+                jsonObject.addProperty("convFactor", "");
+            if (uom.getBaseuom() != null)
+                jsonObject.addProperty("baseuom", uom.getBaseuom());
+            else
+                jsonObject.addProperty("baseuom", "");
+            jsonObject.addProperty("id", uom.getId());
+        }
+        return jsonObject;
+    }
 }

@@ -185,4 +185,4 @@
 					</div>
 
 					<input type="hidden" name="judgment" value="${judgment.id}" />
-					<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
+			

@@ -151,7 +151,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Autowired
     private PropertyUsageService propertyUsageService;
     @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    protected PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();

@@ -38,16 +38,20 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.commons.repository;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
+import java.util.List;
+
+import org.egov.common.entity.UOM;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
+public interface UOMRepository extends JpaRepository<UOM, Long> {
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+    @Query("from UOM where uom=:uom order by id desc")
+    List<UOM> findByUOM(@Param("uom") String uom);
+
 }

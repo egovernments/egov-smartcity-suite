@@ -85,5 +85,30 @@
 		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-search.jsp"/>
 	</definition>
 
+	<definition name="uom-new" extends="base_layout">
+		<put-attribute name="page-title" value="title.uom.new" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uom/uom-new.jsp"/>
+	</definition>
+
+	<definition name="uom-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.uom.view" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uom/uom-view.jsp"/>
+	</definition>
+
+	<definition name="uom-edit" extends="base_layout">
+		<put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uom/uom-edit.jsp"/>
+	</definition>
+
+	<definition name="uom-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.uom.result" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uom/uom-result.jsp"/>
+	</definition>
+
+	<definition name="uom-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/uom/uom-search.jsp"/>
+	</definition>
+
 
 </tiles-definitions>

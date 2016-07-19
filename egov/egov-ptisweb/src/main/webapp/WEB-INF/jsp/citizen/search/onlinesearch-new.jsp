@@ -44,48 +44,46 @@
 <head>
 <sx:head />
 <script type="text/javascript">
-	function populateWard() {
-		populatewardId({
-			zoneId : document.getElementById("zoneId").value
-		});
-	}
-
 	function onSubmit() {
 
-		if (jQuery("#assessmentNum").val() == ''
-				&& jQuery("#ownerName").val() == ''
-				&& jQuery("#doorNo").val() == '') {
-			bootbox.alert("Any one value is mandatory");
+		if (jQuery("#assessmentNum").val() == '') {
+			bootbox.alert("Assessment number is mandatory");
 			return false;
 		} else {
-			document.assessmentform.action = '${pageContext.request.contextPath}/citizen/search/search-srchByAssessmentAndOwnerDetail.action';
+			document.assessmentform.action = '${pageContext.request.contextPath}/citizen/search/search-searchByAssessment.action';
 			document.assessmentform.submit();
 			return true;
 		}
 	}
 </script>
-<title><s:text name="citizen.search.welcome"></s:text></title>
+<title><s:text name="citizenPaytax.title"></s:text></title>
 </head>
 <body>
 	<div class="formmainbox">
 		<s:if test="%{hasErrors()}">
-			<div align="left">
+			<div class="errorstyle" id="property_error_area">
+			
+				<div class="errortext"><span style="font-size: 12px; color: red;"> 
 				<s:actionerror />
+				<s:fielderror />
+				</div>
 			</div>
 		</s:if>
+		
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<s:form name="assessmentform" id="assessmentform" theme="simple">
 				<tr>
 					<td width="100%" colspan="4" class="headingbg">
 						<div class="headingbg" style="text-align: left">
-							<s:text name="citizen.search.welcome" />
+							<s:text name="citizen.paytax.welcome" />
 						</div>
 					</td>
 				</tr>
 
 				<tr>
 					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="citizen.prop.id" /> :</td>
+					<td class="bluebox"><s:text name="citizen.prop.id" /><span
+						class="mandatory1">*</span> :</td>
 
 					<td class="bluebox"><s:textfield name="assessmentNum"
 							id="assessmentNum" value="%{assessmentNum}"
@@ -94,40 +92,20 @@
 					<td class="bluebox">&nbsp;</td>
 				</tr>
 				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="citizen.prop.owner" /> :</td>
-					<td class="bluebox"><s:textfield name="ownerName"
-							id="ownerName" value="%{ownerName}" maxlength="30" /></td>
-					<td class="bluebox">&nbsp;</td>
-				</tr>
-				<tr>
-					<td class="bluebox">&nbsp;</td>
-					<td class="bluebox"><s:text name="citizen.prop.doorno" /> :</td>
-					<td class="bluebox"><s:textfield name="doorNo" id="doorNo"
-							value="%{doorNo}" maxlength="10" /></td>
-					<td class="bluebox">&nbsp;</td>
-				</tr>
-
-				<tr>
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox" colspan="2">
 						<div class="greybox" style="text-align: center">
 
 							<s:submit name="search" value="Search" cssClass="buttonsubmit"
 								onclick="return onSubmit();"></s:submit>
-
-						</div>
+								
+                               </div>
 					</td>
-					
+
 				</tr>
 
 			</s:form>
 		</table>
-
-
-		<div align="left"><span style="font-size: 16px; color: red"> 
-			<s:text name="citizen.note" /></span>
-		</div>
 
 		</center>
 	</div>

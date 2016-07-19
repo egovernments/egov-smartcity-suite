@@ -287,8 +287,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
                     }
-                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
                 		buildSMS(property, workFlowAction);
+                		propertyTaxCommonUtils.makeExistingDemandBillInactive(property.getBasicProperty().getUpicNo());
+                    }
                 }
             }
         }

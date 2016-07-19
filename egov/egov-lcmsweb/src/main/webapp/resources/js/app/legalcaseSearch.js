@@ -60,6 +60,7 @@ function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
+	var judgmentId = $("#judgmentId").val();
 	
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();
@@ -140,7 +141,7 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 
-								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
 							}
 						} 
 						],
@@ -168,9 +169,17 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			window.location = url;
 			
 		}
-		alert(this.value);
+		
 		if (this.value == 2) {
 			var url = '/lcms/standingCouncil/create/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		
+		if (this.value == 5) {
+			var url = '/lcms/judgment/edit/'+ lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;

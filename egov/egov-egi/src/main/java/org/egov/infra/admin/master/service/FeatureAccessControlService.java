@@ -59,21 +59,23 @@ public class FeatureAccessControlService {
 
     @Transactional
     public void grantAccess(Feature feature, Role role) {
-        feature.addRole(role);
-        featureService.saveFeature(feature);
         for (Action action : feature.getActions()) {
             action.addRole(role);
             actionService.saveAction(action);
         }
+        feature.addRole(role);
+        featureService.saveFeature(feature);
     }
 
     @Transactional
     public void revokeAccess(Feature feature, Role role) {
+        for (Action action : feature.getActions()) {
+            if (featureService.getNumberOfFeatureByRoleAction(role, action) == 1) {
+                action.removeRole(role);
+                actionService.saveAction(action);
+            }
+        }
         feature.removeRole(role);
         featureService.saveFeature(feature);
-        for (Action action : feature.getActions()) {
-            action.removeRole(role);
-            actionService.saveAction(action);
-        }
     }
 }

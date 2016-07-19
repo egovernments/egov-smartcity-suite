@@ -41,140 +41,104 @@
 package org.egov.common.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-public class UOM implements java.io.Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-	private static final long serialVersionUID = 8964393733499647786L;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 
-	private Integer id;
+@Entity
+@Table(name = "eg_uom")
+@Unique(id = "id", tableName = "eg_uom", fields = { "uom" }, columnName = { "uom" }, enableDfltMsg = true)
+@SequenceGenerator(name = UOM.SEQ_UOM, sequenceName = UOM.SEQ_UOM, allocationSize = 1)
+public class UOM extends AbstractAuditable {
 
-	private UOMCategory uomCategory;
+    private static final long serialVersionUID = 8964393733499647786L;
 
-	private String uom;
+    public static final String SEQ_UOM = "SEQ_EG_UOM";
 
-	private String narration;
+    @Id
+    @GeneratedValue(generator = SEQ_UOM, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	private BigDecimal convFactor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "uomcategoryid")
+    private UOMCategory uomCategory;
 
-	private boolean baseuom;
+    @NotNull
+    @Length(min = 1, max = 25)
+    private String uom;
 
-	private Date lastmodified;
+    @Length(min = 1, max = 25)
+    private String narration;
 
-	private Date createddate;
+    @NotNull
+    @Column(name = "conv_factor")
+    private BigDecimal convFactor;
 
-	private BigDecimal createdby;
+    @NotNull
+    private Boolean baseuom;
 
-	private BigDecimal lastmodifiedby;
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public UOM() {
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public UOM(final Integer id, final UOMCategory egUomcategory, final String uom, final BigDecimal convFactor,
-			final boolean baseuom, final Date lastmodified, final Date createddate, final BigDecimal createdby) {
-		this.id = id;
-		this.uomCategory = egUomcategory;
-		this.uom = uom;
-		this.convFactor = convFactor;
-		this.baseuom = baseuom;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-	}
+    public UOMCategory getUomCategory() {
+        return uomCategory;
+    }
 
-	public UOM(final Integer id, final UOMCategory egUomcategory, final String uom, final String narration,
-			final BigDecimal convFactor, final boolean baseuom, final Date lastmodified, final Date createddate,
-			final BigDecimal createdby, final BigDecimal lastmodifiedby) {
-		this.id = id;
-		this.uomCategory = egUomcategory;
-		this.uom = uom;
-		this.narration = narration;
-		this.convFactor = convFactor;
-		this.baseuom = baseuom;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-		this.lastmodifiedby = lastmodifiedby;
-	}
+    public void setUomCategory(final UOMCategory uomCategory) {
+        this.uomCategory = uomCategory;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public String getUom() {
+        return uom;
+    }
 
-	public void setId(final Integer id) {
-		this.id = id;
-	}
+    public void setUom(final String uom) {
+        this.uom = uom;
+    }
 
-	public UOMCategory getUomCategory() {
-		return uomCategory;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public void setUomCategory(final UOMCategory uomCategory) {
-		this.uomCategory = uomCategory;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public String getUom() {
-		return uom;
-	}
+    public BigDecimal getConvFactor() {
+        return convFactor;
+    }
 
-	public void setUom(final String uom) {
-		this.uom = uom;
-	}
+    public void setConvFactor(final BigDecimal convFactor) {
+        this.convFactor = convFactor;
+    }
 
-	public String getNarration() {
-		return narration;
-	}
+    public Boolean getBaseuom() {
+        return baseuom;
+    }
 
-	public void setNarration(final String narration) {
-		this.narration = narration;
-	}
-
-	public BigDecimal getConvFactor() {
-		return convFactor;
-	}
-
-	public void setConvFactor(final BigDecimal convFactor) {
-		this.convFactor = convFactor;
-	}
-
-	public boolean isBaseuom() {
-		return baseuom;
-	}
-
-	public void setBaseuom(final boolean baseuom) {
-		this.baseuom = baseuom;
-	}
-
-	public Date getLastmodified() {
-		return lastmodified;
-	}
-
-	public void setLastmodified(final Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-
-	public Date getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(final Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public BigDecimal getCreatedby() {
-		return createdby;
-	}
-
-	public void setCreatedby(final BigDecimal createdby) {
-		this.createdby = createdby;
-	}
-
-	public BigDecimal getLastmodifiedby() {
-		return lastmodifiedby;
-	}
-
-	public void setLastmodifiedby(final BigDecimal lastmodifiedby) {
-		this.lastmodifiedby = lastmodifiedby;
-	}
+    public void setBaseuom(final Boolean baseuom) {
+        this.baseuom = baseuom;
+    }
 
 }

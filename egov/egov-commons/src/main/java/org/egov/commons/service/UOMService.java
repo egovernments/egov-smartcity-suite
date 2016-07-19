@@ -38,16 +38,55 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.commons.service;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+import org.egov.common.entity.UOM;
+import org.egov.commons.repository.UOMRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class UOMService {
+
+    private final UOMRepository uomRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    public UOMService(final UOMRepository uomRepository) {
+        this.uomRepository = uomRepository;
+    }
+
+    @Transactional
+    public UOM create(final UOM uom) {
+        return uomRepository.save(uom);
+    }
+
+    @Transactional
+    public UOM update(final UOM uom) {
+        return uomRepository.save(uom);
+    }
+
+    public List<UOM> findAll() {
+        return uomRepository.findAll(new Sort(Sort.Direction.ASC, "uom"));
+    }
+
+    public UOM findOne(final Long id) {
+        return uomRepository.findOne(id);
+    }
+
+    public List<UOM> search(final UOM uom) {
+        if (uom.getUom() != null)
+            return uomRepository.findByUOM(uom.getUom());
+        else
+            return uomRepository.findAll();
+    }
 }

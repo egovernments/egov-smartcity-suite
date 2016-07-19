@@ -72,7 +72,7 @@
 						test="%{searchResultList != null && searchResultList.size >0}">
 						<tr>
 							<display:table name="searchResultList" id="linksTables"
-								pagesize="10" export="true" requestURI="" class="tablebottom"
+								pagesize="10" requestURI="" class="tablebottom"
 								style="width:100%" uid="currentRowObject">
 								<display:column title="Assessment Number" headerClass="bluebgheadtd" media="html" class="blueborderfortd" style="text-align:center">
 									<a href="../../view/viewProperty-viewForm.action?propertyId=${currentRowObject.assessmentNum}&isCitizen=true">
@@ -113,12 +113,7 @@
 								<display:setProperty name="paging.banner.item" value="Record" />
 								<display:setProperty name="paging.banner.items_name"
 									value="Records" />
-								<display:setProperty name="export.pdf" value="false" />
-								<display:setProperty name="export.rtf" value="false" />
-								<display:setProperty name="export.xml" value="true" />
-								<display:setProperty name="export.csv" value="true" />
-								<display:setProperty name="export.excel" value="true" />
-							</display:table>
+								</display:table>
 						</tr>
 					</s:if>
 					<s:else>
