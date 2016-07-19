@@ -52,12 +52,12 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.commons.service.UOMService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.service.EstimateTemplateService;
-import org.egov.works.master.service.UOMService;
 import org.egov.works.models.masters.EstimateTemplate;
 import org.egov.works.models.masters.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
@@ -203,7 +203,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     protected void populateNonSorActivities() {
         for (final EstimateTemplateActivity activity : nonSorActivities)
             if (activity != null) {
-                activity.setUom(uomService.getUOMById(activity.getNonSor().getUom().getId().intValue()));
+                activity.setUom(uomService.findOne(activity.getNonSor().getUom().getId()));
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
                 activity.getNonSor().setLastModifiedBy(worksService.getCurrentLoggedInUser());

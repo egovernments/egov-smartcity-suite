@@ -194,7 +194,7 @@
 							</td>
 							<td>
 								<span class="uom_0"></span>
-								<form:hidden path="sorActivities[0].uom.id" id="sorUomid_0" class="uomhiddenid"/>
+								<form:hidden path="sorActivities[0].uom" id="sorUomid_0" class="uomhiddenid"/>
 							</td>
 							<td align="right">
 								<span class="estimateRate estimateRate_0"></span>
@@ -242,7 +242,7 @@
 									</td>
 									<td>
 										<span class="uom_${item.index }">${activity.schedule.uom.uom }</span>
-										<form:hidden path="sorActivities[${item.index }].uom.id" id="sorUomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
+										<form:hidden path="sorActivities[${item.index }].uom" id="sorUomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
 									</td>
 									<td align="right">
 										<span class="estimateRate estimateRate_${item.index }">${activity.estimateRate }</span>

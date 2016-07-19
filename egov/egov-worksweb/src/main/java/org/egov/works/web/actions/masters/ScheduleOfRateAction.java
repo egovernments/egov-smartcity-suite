@@ -55,6 +55,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.common.entity.UOM;
+import org.egov.commons.service.UOMService;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.validation.exception.ValidationError;
@@ -64,7 +65,6 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.ScheduleOfRateService;
-import org.egov.works.master.service.UOMService;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleCategory;
@@ -238,7 +238,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
         super.prepare();
         scheduleCategoryList = scheduleCategoryService.getAllScheduleCategories();
         addDropdownData("scheduleCategoryList", scheduleCategoryList);
-        addDropdownData("uomlist", uomService.getAllUOMs());
+        addDropdownData("uomlist", uomService.findAll());
         abstractEstimateList = scheduleOfRateService.getAllAbstractEstimateByScheduleOrRateId(scheduleOfRate.getId());
         if(!abstractEstimateList.isEmpty() && mode.equals(WorksConstants.EDIT))
         	displData="disable";

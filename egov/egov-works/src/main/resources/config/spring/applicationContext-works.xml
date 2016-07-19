@@ -490,9 +490,6 @@
 	<bean id="contractorGradeService" class="org.egov.works.master.service.ContractorGradeService">
 		<property name="type" value="org.egov.commons.ContractorGrade"/>
 	</bean>
-	<bean id="uomService" class="org.egov.works.master.service.UOMService">
-		<property name="type" value="org.egov.common.entity.UOM"/>
-	</bean>
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
       <constructor-arg index="0" value="org.egov.commons.Scheme" />
     </bean>

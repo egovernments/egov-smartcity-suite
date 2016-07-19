@@ -57,6 +57,7 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.service.UOMService;
 import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -95,7 +96,6 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
-import org.egov.works.master.service.UOMService;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.egov.works.utils.WorksConstants;
@@ -887,7 +887,7 @@ public class EstimateService {
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
         model.addAttribute("finYear", financialYearDAO.findAll());
-        model.addAttribute("uoms", uomService.getAllUOMs());
+        model.addAttribute("uoms", uomService.findAll());
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);

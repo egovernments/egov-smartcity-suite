@@ -96,7 +96,7 @@
 								<form:input path="nonSorActivities[0].nonSor.description" id="nonSorDesc_0" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
 							</td>
 							<td>
-								<form:select path="nonSorActivities[0].nonSor.uom.id" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+								<form:select path="nonSorActivities[0].nonSor.uom" id="nonSorUom_0" data-idx="0" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -104,7 +104,7 @@
 										<form:option value="${uom.id }">${uom.uomCategory.category } -- ${uom.uom }</form:option>
 									</c:forEach>
 								</form:select>
-								<form:hidden path="nonSorActivities[0].uom.id" id="nonSorUomid_0" class="uomhiddenid"/>
+								<form:hidden path="nonSorActivities[0].uom" id="nonSorUomid_0" class="uomhiddenid"/>
 							</td>
 							<td align="right">
 								<form:input path="nonSorActivities[0].estimateRate" id="nonSorEstimateRate_0" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
@@ -144,7 +144,7 @@
 										<form:input path="nonSorActivities[${item.index }].nonSor.description" id="nonSorDesc_${item.index }" value="${activity.nonSor.description }" class="form-control table-input text-left nonSorDesc" maxlength="256"/>
 									</td>
 									<td>
-										<form:select path="nonSorActivities[${item.index }].nonSor.uom.id" id="nonSorUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
+										<form:select path="nonSorActivities[${item.index }].nonSor.uom" id="nonSorUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control nonSorUom" onchange="updateUom(this);">
 											<form:option value="">
 												<spring:message code="lbl.select" />
 											</form:option>
@@ -157,7 +157,7 @@
 												</c:if>
 											</c:forEach>
 										</form:select>
-										<form:hidden path="nonSorActivities[${item.index }].uom.id" value="${activity.uom.id }" id="nonSorUomid_${item.index }" class="uomhiddenid"/>
+										<form:hidden path="nonSorActivities[${item.index }].uom" value="${activity.uom.id }" id="nonSorUomid_${item.index }" class="uomhiddenid"/>
 									</td>
 									<td align="right">
 										<form:input path="nonSorActivities[${item.index }].estimateRate" id="nonSorEstimateRate_${item.index }" value="${activity.estimateRate }" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
