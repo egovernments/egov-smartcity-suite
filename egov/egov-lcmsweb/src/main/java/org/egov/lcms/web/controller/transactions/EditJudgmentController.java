@@ -60,7 +60,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/judgment")
-public class ViewandEditJudgmentController {
+public class EditJudgmentController {
 
     @Autowired
     private JudgmentTypeService judgmentTypeService;

@@ -129,6 +129,10 @@
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
+					
+					
+	
+				
 					<div class="form-group" id="enquirydetails"  style="display:none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydetails" /> :</label>
