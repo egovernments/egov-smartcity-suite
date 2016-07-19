@@ -3,7 +3,10 @@
 <form:form role="form" method="post" modelAttribute="judgment"
 	id="judgmentform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<jsp:include page="../application/viewCompleteCase.jsp" />
+	<div class="panel-heading">
+					<div class="panel-title">Edit Judgment</div>
+				</div>
+	 <jsp:include page="../application/viewSummarizedCase.jsp"/>  
 	<%@ include file="judgment-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 

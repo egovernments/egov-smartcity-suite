@@ -81,6 +81,7 @@ public class JudgmentController {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("judgment", judgment);
+        model.addAttribute("mode", "create");
         return "judgment-new";
     }
 
