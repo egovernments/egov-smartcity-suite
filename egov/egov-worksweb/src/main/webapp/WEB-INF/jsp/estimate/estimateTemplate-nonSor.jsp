@@ -131,7 +131,7 @@ function createNonSorHiddenFormatter(el, oRecord, oColumn, oData){
 var hiddenFormatter = function(el, oRecord, oColumn, oData) {
     var value = (YAHOO.lang.isValue(oData))?oData:"";
     var id=oColumn.getKey()+oRecord.getId();
-    var fieldName = "nonSorActivities[" + oRecord.getCount() + "]." + "nonSor.uom";
+    var fieldName = "nonSorActivities[" + oRecord.getCount() + "]." + "nonSor.uom.id";
     var fieldValue=value;
     markup="<input type='hidden' id='"+id+"' name='"+fieldName+"' value='"+fieldValue+"' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
     el.innerHTML = markup;
@@ -253,8 +253,8 @@ function resetNonSorTable(){
             nonSorDataTable.addRow({NonSorID:'<s:property value="nonSor.id"/>',
                                     SlNo:'<s:property value="#row_status.count"/>',
                                     nonSordescription:'<s:property value="nonSor.descriptionJS" escape="false"/>',
-                                    Uom:'<s:property value="nonSor.uom"/>',
-                                    nonSorUom:'<s:property value="nonSor.uom"/>',
+                                    Uom:'<s:property value="nonSor.uom.id"/>',
+                                    nonSorUom:'<s:property value="nonSor.uom.id"/>',
                                     rate:'<s:property value="rate"/>',
                                     Delete:'X'});
         var record = nonSorDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
@@ -269,7 +269,7 @@ function resetNonSorTable(){
       
         column = nonSorDataTable.getColumn('Uom');
         for(i=0; i < uomDropdownOptions.length; i++) {
-            if (uomDropdownOptions[i].value == '<s:property value="nonSor.uom"/>') {
+            if (uomDropdownOptions[i].value == '<s:property value="nonSor.uom.id"/>') {
                 nonSorDataTable.getTdEl({record:record, column:column}).getElementsByTagName("select").item(0).selectedIndex = i;
             }
         }

@@ -57,7 +57,7 @@
    	"sor":"no",
    	"Id":"<s:property value="nonSor.id"/>",
    	"Description":"<s:property value="nonSor.descriptionJS" escape="false"/>",
-   	"UOM":"<s:property value="nonSor.uom"/>",
+   	"UOM":"<s:property value="nonSor.uom.id"/>",
    	"UnitRate":"<s:property value="rate"/>",
    	"Code":"",
    	"FullDescription":""

@@ -355,4 +355,15 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
+    
+    @RequestMapping(value = "/ajaxestimatenumbers-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForModifyLOA(@RequestParam final String estimateNumber) {
+        return letterOfAcceptanceService.getApprovedEstimateNumbersForModfyLOA(estimateNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxloanumber-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLoaNumbersForModifyLOA(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getApprovedWorkOrderNumberForModfyLOA(workOrderNumber);
+    }
+
 }

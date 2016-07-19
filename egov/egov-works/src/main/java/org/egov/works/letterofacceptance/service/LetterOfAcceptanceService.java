@@ -1074,4 +1074,16 @@ public class LetterOfAcceptanceService {
         else
             return mbrefNumbres;
     }
+        
+    public List<String> getApprovedEstimateNumbersForModfyLOA(final String estimateNumber) {
+        final List<String> estimateNumbers = letterOfAcceptanceRepository
+                .findEstimateNumbersToModifyLOA("%" + estimateNumber + "%", WorksConstants.APPROVED.toString());
+        return estimateNumbers;
+    }
+    
+    public List<String> getApprovedWorkOrderNumberForModfyLOA(final String workOrderNumber) {
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository
+                .findWorkOrderNumbersToModifyLOA("%" + workOrderNumber + "%", WorksConstants.APPROVED.toString());
+        return workOrderNumbers;
+    }
 }

@@ -37,6 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <div class="row">
 	<div class="col-md-12">
@@ -68,70 +69,78 @@
 					<div class="col-xs-3 add-margin view-content">
 						<s:property value="%{workType.code}" />
 					</div>
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<s:text name="page.title.estimate.SOR" />
-							</div>
+					<s:if test="%{subType.code != null}" >
+						<div class="col-xs-3 add-margin">
+							<s:text name="estimate.work.subtype" />
 						</div>
-						<div class="panel-body">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th><s:text name="column.title.SLNo" /></th>
-										<th><s:text name="scheduleCategory.sor.category" /></th>
-										<th><s:text name="estimate.template.code" /></th>
-										<th><s:text name="estimate.template.description" /></th>
-										<th><s:text name="column.title.UOM" /></th>
-									</tr>
-								</thead>
-								<tbody>
-									<s:iterator id="soriterator" value="SORActivities" status="row_status">
-										<tr>
-											<td><s:property value="#row_status.count" /></td>
-											<td><s:property value="%{schedule.scheduleCategory.code}" /></td>
-											<td><s:property value="%{schedule.code}" /></td>
-											<td><s:property value="%{schedule.descriptionJS}" /></td>
-											<td><s:property value="%{schedule.uom.uom}" /></td>
-										</tr>
-									</s:iterator>
-								</tbody>
-
-							</table>
-
+						<div class="col-xs-3 add-margin view-content">
+							<s:property value="%{subType.code}" />
 						</div>
-						<div class="panel-heading">
-							<div class="panel-title">
-								<s:text name="page.title.estimate.NonSOR" />
-							</div>
-						</div>
-						<div class="panel-body">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th><s:text name="column.title.SLNo" /></th>
-										<th><s:text name="estimate.template.description" /></th>
-										<th><s:text name="column.title.UOM" /></th>
-										<th><s:text name="column.title.unitrate" /></th>
-									</tr>
-								</thead>
-								<tbody>
-									<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">
-										<tr>
-											<td><s:property value="#row_status.count" /></td>
-											<td><s:property value="%{nonSor.descriptionJS}" /></td>
-											<td><s:property value="%{uom.uom}" /></td>
-											<td align="right">
-											<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
-											</td>
-										</tr>
-									</s:iterator>
-								</tbody>
-							</table>
-						</div>
-					</div>
+					</s:if>
 				</div>
 			</div>
 		</div>
+	</div>
+</div>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="page.title.estimate.SOR" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th><s:text name="column.title.SLNo" /></th>
+					<th><s:text name="scheduleCategory.sor.category" /></th>
+					<th><s:text name="estimate.template.code" /></th>
+					<th><s:text name="estimate.template.description" /></th>
+					<th><s:text name="column.title.UOM" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<s:iterator id="soriterator" value="SORActivities" status="row_status">
+					<tr>
+						<td><s:property value="#row_status.count" /></td>
+						<td><s:property value="%{schedule.scheduleCategory.code}" /></td>
+						<td><s:property value="%{schedule.code}" /></td>
+						<td><s:property value="%{schedule.descriptionJS}" /></td>
+						<td><s:property value="%{schedule.uom.uom}" /></td>
+					</tr>
+				</s:iterator>
+			</tbody>
+
+		</table>
+
+	</div>
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="page.title.estimate.NonSOR" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th><s:text name="column.title.SLNo" /></th>
+					<th><s:text name="estimate.template.description" /></th>
+					<th><s:text name="column.title.UOM" /></th>
+					<th><s:text name="column.title.unitrate" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">
+					<tr>
+						<td><s:property value="#row_status.count" /></td>
+						<td><s:property value="%{nonSor.descriptionJS}" /></td>
+						<td><s:property value="%{uom.uom}" /></td>
+						<td align="right">
+						<fmt:formatNumber  maxFractionDigits="2" minFractionDigits="2" pattern="#.##"><s:property value="%{rate}" /></fmt:formatNumber>
+						</td>
+					</tr>
+				</s:iterator>
+			</tbody>
+		</table>
 	</div>
 </div>

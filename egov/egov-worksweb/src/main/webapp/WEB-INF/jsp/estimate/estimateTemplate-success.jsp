@@ -50,7 +50,7 @@
 </s:if>
 <s:hidden name="id" id="id" />
 
-	<%@ include file="estimateTemplate-commonView.jsp" %>
+	<%@ include file='estimateTemplate-commonView.jsp' %>
 
 <div class="row text-center">
 	<div class="add-margin">

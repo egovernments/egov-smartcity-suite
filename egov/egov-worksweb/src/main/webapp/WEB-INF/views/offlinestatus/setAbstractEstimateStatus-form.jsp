@@ -46,6 +46,7 @@
 <input type="hidden" value="<spring:message code="error.offlinestatus.status.aedate" />" id="errorStatusAEDate" />
 <input type="hidden" value="<spring:message code="error.offlinestatus.status.date" />" id="errorStatusDate" />
 <input type="hidden" value="<spring:message code="error.offlinestatus.status.date.null" />" id="errorStatusDateNull" />
+<input type="hidden" value="<spring:message code="error.offlinestatus.status.date.between.null" />" id="errorStatusDateIntermediate" />
 <form:form id="offlineStatuses" name="offlineStatuses" role="form" action="/egworks/offlinestatus/offlinestatus-saveabstractestimate" modelAttribute="abstractEstimate" class="form-horizontal form-groups-bordered">
 	<div class="row">
 	<spring:hasBindErrors name="abstractEstimate">

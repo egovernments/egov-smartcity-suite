@@ -1,0 +1,2 @@
+update eg_module set ordernumber = 5 where name='WorksScheduleCategoryMaster' and parentmodule = (select id from eg_module where name = 'WorksMasters');
+update eg_module set ordernumber = 6 where name='WorksScheduleOfRateMaster' and parentmodule = (select id from eg_module where name = 'WorksMasters');

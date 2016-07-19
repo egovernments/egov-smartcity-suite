@@ -98,7 +98,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Autowired
     private UOMService uomService;
-
+    
     public EstimateTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
         addRelatedEntity("subType", EgwTypeOfWork.class);
@@ -137,8 +137,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         setupDropdownDataExcluding("workType", "subType");
         addDropdownData("parentCategoryList",
                 getPersistenceService().findAllBy("from EgwTypeOfWork etw1 where etw1.parentid is null"));
-        final List<UOM> uomList = getPersistenceService().findAllBy("from UOM  order by upper(uom)");
-        addDropdownData("uomList", uomList);
+        addDropdownData("uomList", uomService.findAll());
         addDropdownData("scheduleCategoryList",
                 getPersistenceService().findAllBy("from ScheduleCategory order by upper(code)"));
         populateCategoryList(ajaxEstimateAction, estimateTemplate.getWorkType() != null);
@@ -204,6 +203,7 @@ public class EstimateTemplateAction extends SearchFormAction {
         for (final EstimateTemplateActivity activity : nonSorActivities)
             if (activity != null) {
                 activity.setUom(uomService.findOne(activity.getNonSor().getUom().getId()));
+                activity.getNonSor().setUom(activity.getUom());
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
                 activity.getNonSor().setLastModifiedBy(worksService.getCurrentLoggedInUser());

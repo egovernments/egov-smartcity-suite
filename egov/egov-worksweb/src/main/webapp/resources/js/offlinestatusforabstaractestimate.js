@@ -76,7 +76,19 @@ function validateForm(){
 			}
 		}
 	}
-
+	
+	for (var i = 0; i < length; i++) {
+		var statusDate = document.getElementById('statusDate_' + i ).value;
+		if(statusDate == "" && !flag){
+			flag = true;
+		}
+		if(statusDate != "" && flag){
+			var message = document.getElementById('errorStatusDateIntermediate').value;
+			bootbox.alert(message);
+			return false;
+		}
+	}
+	flag = false;
 	for (var i = 0; i < length; i++) {
 		var statusDate = document.getElementById('statusDate_' + i ).value;
 		if(statusDate == "" && !flag){
@@ -85,7 +97,6 @@ function validateForm(){
 		}
 		if(flag)
 			tbl.deleteRow(index);
-		
 	}
 	
 	if($('#offlineStatuses').valid()){
