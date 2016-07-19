@@ -89,7 +89,7 @@
 		</c:if>
 		<div class="form-group">
 			<label class="col-sm-2 control-label text-right">
-			    <spring:message code="lbl.location" />
+			    <spring:message code="lbl.location" /><span id="spanlocation" class="mandatory"></span>
 			</label>
 		     <div class="col-sm-3 add-margin">
                   <div class="input-group">

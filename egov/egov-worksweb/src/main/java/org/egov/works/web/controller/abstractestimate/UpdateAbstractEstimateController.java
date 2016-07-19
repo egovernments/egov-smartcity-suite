@@ -234,14 +234,8 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         else
             model.addAttribute("isServiceVATRequired", false);
         
-        final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
-        final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
-        if (locationAppConfigValue.getValue().equalsIgnoreCase("Yes"))
-            model.addAttribute("isLocationDetailsRequired", true);
-        else
-            model.addAttribute("isLocationDetailsRequired", false);
-
+        estimateService.loadLocationAppConfigValue(model);
+        
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

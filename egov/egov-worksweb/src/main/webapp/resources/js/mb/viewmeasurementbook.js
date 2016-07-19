@@ -57,7 +57,7 @@ $(document).ready(function() {
          var apprAmt = parseFloat(parseFloat(unitrate) * parseFloat(apprQuantity)).toFixed(2);
          
          $(this).find('span[id="amountCurrentEntry"]').html(amountCurrMBEntry);
-         $(this).find('span[id="cumulativeAmountCurrentEntry"]').html(amountCurrMBEntry);
+         $(this).find('span[id="cumulativeAmountCurrentEntry"]').html(cumulativeAmtCurrEnrty);
          $(this).find('span[id="approvedAmount"]').html(apprAmt);
          if(cumulativeAmtCurrEnrty != 'NaN')
          sorTotal = parseFloat((parseFloat(sorTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 
@@ -75,7 +75,7 @@ $(document).ready(function() {
          var apprAmt = parseFloat(parseFloat(unitrate) * parseFloat(apprQuantity)).toFixed(2);
          
          $(this).find('span[id="nonSorAmountCurrentEntry"]').html(amountCurrMBEntry);
-         $(this).find('span[id="nonSorCumulativeAmountCurrentEntry"]').html(amountCurrMBEntry);
+         $(this).find('span[id="nonSorCumulativeAmountCurrentEntry"]').html(cumulativeAmtCurrEnrty);
          $(this).find('span[id="nonSorApprovedAmount"]').html(apprAmt);
          if(cumulativeAmtCurrEnrty != 'NaN')
            nonSorTotal = parseFloat((parseFloat(nonSorTotal) + parseFloat(amountCurrMBEntry))).toFixed(2); 

@@ -1641,11 +1641,12 @@ function validateWorkFlowApprover(name) {
 		
 		$locationAppConfig = $('#locationAppConfig').val();
 		if($locationAppConfig == 'true') {
+			$('#spanlocation').show();
 			if($('#location').val() == '') {
 				bootbox.alert($('#errorlocation').val());
 				return false;
 			}
-		}
+		} else $('#spanlocation').hide();
 		
 		flag = validateSORDetails();
 		

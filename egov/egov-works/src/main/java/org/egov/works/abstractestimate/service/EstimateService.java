@@ -466,13 +466,6 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
-        final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
-        final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
-        if (locationAppConfigValue.getValue().equalsIgnoreCase("Yes"))
-            model.addAttribute("isLocationDetailsRequired", true);
-        else
-            model.addAttribute("isLocationDetailsRequired", false);
     }
 
     public void validateAssetDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
@@ -903,6 +896,7 @@ public class EstimateService {
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
+        loadLocationAppConfigValue(model);
 
     }
 
@@ -1095,6 +1089,16 @@ public class EstimateService {
             if (value.getValue().equalsIgnoreCase("Yes") && StringUtils.isBlank(abstractEstimate.getLocation()))
                 bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
         }
+    }
+    
+    public void loadLocationAppConfigValue(final Model model){
+        final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
+        final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
+        if (locationAppConfigValue.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isLocationDetailsRequired", true);
+        else
+            model.addAttribute("isLocationDetailsRequired", false);
     }
     
 }
