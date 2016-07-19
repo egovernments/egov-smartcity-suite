@@ -39,6 +39,7 @@
  */
 package org.egov.works.mb.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
@@ -106,7 +107,15 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mb.egwStatus.code != :statusCode)")
     MBHeader findLatestMBHeaderToValidateMB(@Param("workOrderEstimateId") final Long workOrderEstimateId,
             @Param("statusCode") final String statusCode);
-    
+
     @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :woeId and (mbh.createdDate < (select createdDate from MBHeader where id = :mbHeaderId  and mbh.egwStatus.code != :status) or (select count(*) from MBHeader where id = :mbHeaderId) = 0) order by mbh.id")
     List<MBHeader> getPreviousMBHeaders(@Param("mbHeaderId") final Long mbHeaderId, @Param("woeId") final Long woeId, @Param("status") final String status);
+
+    @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mb.egwStatus.code = :approvedStatusCode and mb.egBillregister = null) or createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mb.egwStatus.code = :cancelStatusCode and mb.egBillregister != null)")
+    MBHeader findLatestMBHeaderToValidateBillDate(@Param("workOrderEstimateId") final Long workOrderEstimateId,
+            @Param("approvedStatusCode") final String approvedStatusCode,@Param("cancelStatusCode") final String cancelStatusCode);
+    
+    @Query("select mb from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId  and mbDate <= :billDate and mb.createdDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and (mb.egBillregister = null or (mb.egBillregister != null and mb.egwStatus.code != :cancelStatusCode ))")
+    List<MBHeader> findMBHeaderBasedOnbillDate(@Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("billDate") final Date billDate, @Param("approvedStatusCode") final String approvedStatusCode,@Param("cancelStatusCode") final String cancelStatusCode );
+
 }

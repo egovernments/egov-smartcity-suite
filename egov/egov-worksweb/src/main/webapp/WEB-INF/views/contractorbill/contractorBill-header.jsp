@@ -54,10 +54,11 @@
 <input type="hidden" id="errorWorkCompletionDateFutureDate" value="<spring:message code='error.workcompletiondate.futuredate' />" /> 
 <input type="hidden" id="errorWorkCompletionDategreaterThanWorkCommencedDate" value="<spring:message code='error.workcompletiondate.workcommenceddate' />" /> 
 <input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
+<input type="hidden" id="errorBillDateGreaterThanMbDate" value="<spring:message code='error.billdate.mbdate' />" />
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
 	<c:choose>
-		<c:when test="${workOrderEstimate.estimate.lineEstimateDetails!=null && workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }">
+		<c:when test="${workOrderEstimate.estimate.lineEstimateDetails!=null && workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag && mode != 'edit'}">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" />

@@ -121,6 +121,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private OfflineStatusService offlineStatusService;
+    
+    @Autowired
+    private MBHeaderService mBHeaderService;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -293,6 +296,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     .getMbDate().before(workOrderEstimate.getWorkOrder().getWorkOrderDate()))
 
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
+            
+            if (contractorBillRegister.getMbHeader().getMbDate() != null 
+                    && contractorBillRegister.getBilldate()
+                    .before(contractorBillRegister.getMbHeader().getMbDate()))
+                resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
 
         if (StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
@@ -327,6 +335,11 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             if (workCompletionDate.after(contractorBillRegister.getBilldate())) {
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
             }
+        }
+        
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId());
+        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getCreatedDate())) {
+            resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
     }
 
@@ -408,7 +421,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("billAssetValue", newcontractorBillRegister.getAssetDetailsList().get(0));
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
-        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeaderBasedOnBillDate(newcontractorBillRegister.getWorkOrderEstimate().getId(),newcontractorBillRegister.getBilldate());
         if (mbHeaders != null && !mbHeaders.isEmpty())
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
         if (newcontractorBillRegister.getStatus() != null

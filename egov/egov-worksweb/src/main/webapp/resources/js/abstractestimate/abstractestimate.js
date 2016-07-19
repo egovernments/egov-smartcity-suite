@@ -96,6 +96,13 @@ $(document).ready(function(){
 	        } else 
 	        	$("#latlonDiv").hide();
 	}
+	
+	$locationAppConfig = $('#locationAppConfig').val();
+	if($locationAppConfig == 'true') {
+		$('#spanlocation').show();
+	} else 
+		$('#spanlocation').hide();
+	
 	$isServiceVATRequired = $('#isServiceVATRequired').val();
 	
 	if($isServiceVATRequired == 'true') {
@@ -1641,7 +1648,6 @@ function validateWorkFlowApprover(name) {
 		
 		$locationAppConfig = $('#locationAppConfig').val();
 		if($locationAppConfig == 'true') {
-			$('#spanlocation').show();
 			if($('#location').val() == '') {
 				bootbox.alert($('#errorlocation').val());
 				return false;

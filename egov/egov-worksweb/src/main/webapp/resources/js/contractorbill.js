@@ -101,6 +101,7 @@ $(document).ready(function(){
 				$('#billdate').val(""); 
 				return false;
 			}
+		
 			var billType = $('#billtype').val();
 			if(billType == 'Final Bill') {
 				$('#workCompletionDate').attr('required', 'required');
@@ -160,6 +161,11 @@ $(document).ready(function(){
 				if(workOrderDate > mbDate) {
 					bootbox.alert($('#errorMBDate').val());
 					$('#mbDate').val("");
+					return false;
+				}
+				if(billDate < mbDate) {
+					bootbox.alert($('#errorBillDateGreaterThanMbDate').val());
+					$('#mbDate').val(""); 
 					return false;
 				}
 			}	
@@ -670,3 +676,106 @@ $('#billtype').change(function() {
 	}
 });
 
+jQuery( "#billdate" ).datepicker({ 
+	 format: 'dd/mm/yyyy',
+	 autoclose:true,
+ }).on('changeDate', function(ev) {
+	 bootbox.confirm('Measurement book details will be modified on change of date  Do you want to proceed',function(result) {
+		 if(!result) {
+			    jQuery( "#billdate" ).val('');
+				bootbox.hideAll();
+				return false;
+			} else {
+				 jQuery.ajax({
+		    			url: "/egworks/measurementbook/ajax-loadmbbasedonbilldate",
+		    			type: "GET",
+		    			data: {
+		    				workOrderEstimateId : jQuery('#woeId').val(),
+		    				billDate : jQuery('#billdate').val()
+		    			},
+		    			cache: false,
+		    			dataType: "json",
+		    			success: function (response) {
+		    				if(response.length == 0 ) {
+		    					bootbox.alert("Atleast one MB should be created for LOA for given date "+jQuery( "#billdate" ).val());
+		    					jQuery( "#billdate" ).val('');
+		    					return false;
+		    				} else {
+		    					var tbl=document.getElementById('mbdetails');
+		    					var rows=tbl.rows.length;
+		    					for(i=2;i<rows-1;i++) {
+		    						if(i != 1)
+		    						$("#mbdetails tr:eq(2)").remove();
+		    					}
+		    					var json_obj = $.parseJSON(response);//parse JSON
+		    					index = 0;
+		    					var totalMBAmount = 0;
+		    		            for (i=0;i<json_obj.length;i++) 
+		    		            { 
+		    		            		 $('#mbrefno_'+index).html(json_obj[i].mbRefNo); 
+		    		            		 $('#pageno_'+index).html(json_obj[i].mbpageno); 
+		    		            		 $('#mbdate_'+index).html(json_obj[i].mbDate);
+		    		            		 $('#mbamount_'+index).html(json_obj[i].mbamount);
+		    		            		 totalMBAmount = parseFloat(parseFloat(totalMBAmount) + parseFloat($('#mbamount_'+index).html())).toFixed(2);
+		    		            		 index++;
+		    		            		 if(i != json_obj.length - 1)
+		    		                     addRow('mbdetails','mbdetailsrow');
+		    		            	
+		    		            }
+		    		            $('#mbTotalAmount').html(totalMBAmount); 
+		    		            $('#debitamount').val(totalMBAmount);
+		    		            calculateNetPayableAmount();
+         				}
+		    			},error : function(jqXHR, textStatus, errorThrown) {
+		    				consol.log("Atleast one MB should be created for LOA");
+						}
+			  });
+			}
+	 });
+ }).data('datepicker');
+
+
+
+function addRow(tableName,rowName) {
+	if (document.getElementById(rowName) != null) {
+		// get Next Row Index to Generate
+		var nextIdx = 0;
+		var sno = 1;
+		nextIdx = jQuery("#"+tableName+" tbody tr").length;
+		sno = nextIdx + 1;
+		
+		// Generate all textboxes Id and name with new index
+		jQuery("#"+rowName).clone().find("a, input, select, span, input:hidden").each(function() {	
+			var classval = jQuery(this).attr('class');
+			if (jQuery(this).data('server')) {
+				jQuery(this).removeAttr('data-server');
+			}
+			if(classval == 'spansno') {
+				jQuery(this).text(sno);
+			}
+			
+			if(classval == 'assetdetail') {
+				 $(this).html('');
+			     $(this).val(''); 
+			} 
+			jQuery(this).attr(
+					{
+						'name' : function(_, name) {
+							if(!(jQuery(this).attr('name')===undefined))
+								return name.replace(/\d+/, nextIdx); 
+						},
+						'id' : function(_, id) {
+							if(!(jQuery(this).attr('id')===undefined))
+								return id.replace(/\d+/, nextIdx); 
+						},
+						'class' : function(_, name) {
+							if(!(jQuery(this).attr('class')===undefined))
+								return name.replace(/\d+/, nextIdx); 
+						}
+					});
+
+		}).end().appendTo("#"+tableName+" tbody");	
+		sno++;
+		
+	}
+}

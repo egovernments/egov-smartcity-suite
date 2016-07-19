@@ -727,9 +727,19 @@ public class MBHeaderService {
         return mbHeaderRepository.findLatestMBHeaderToValidateMB(workOrderEstimateId,
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
-    
+
     public List<MBHeader> getPreviousMBHeaders(final Long mbHeaderId, final Long workOrderEstimateId) {
         return mbHeaderRepository.getPreviousMBHeaders(mbHeaderId, workOrderEstimateId,
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
+
+    public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId) {
+        return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId,MBHeader.MeasurementBookStatus.APPROVED.toString(),
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
+    
+    public List<MBHeader> getMBHeaderBasedOnBillDate(final Long workOrderEstimateId,final Date billDate) {
+        return mbHeaderRepository.findMBHeaderBasedOnbillDate(workOrderEstimateId,billDate,MBHeader.MeasurementBookStatus.APPROVED.toString(),MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
+
 }

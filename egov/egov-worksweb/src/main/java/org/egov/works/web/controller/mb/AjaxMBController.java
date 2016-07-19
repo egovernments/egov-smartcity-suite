@@ -42,6 +42,7 @@ package org.egov.works.web.controller.mb;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -243,4 +244,15 @@ public class AjaxMBController {
             return latestMBHeader.getMbRefNo();
         return "";
     }
+    
+    @RequestMapping(value = "/measurementbook/ajax-loadmbbasedonbilldate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String loadMBBasedOnBillDate(@RequestParam final Long workOrderEstimateId,@RequestParam final Date billDate) {
+        List<MBHeader> mBHeaderList = mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimateId,billDate);
+        final StringBuilder result = new StringBuilder(searchMBHeader(mBHeaderList).toString());
+        if(result.length() != 2)
+            return result.toString();
+        else
+        return "";
+    }
+  
 }

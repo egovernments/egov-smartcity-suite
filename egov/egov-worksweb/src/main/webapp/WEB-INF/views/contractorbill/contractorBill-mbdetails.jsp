@@ -118,7 +118,7 @@
 	</c:if>
 	</br>
 	</br>
-	<table class="table table-bordered">
+	<table class="table table-bordered" id="mbdetails">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.slNo" /></th>
@@ -132,15 +132,15 @@
 			<c:choose>
 				<c:when test="${workOrderEstimate.mbHeaders.size() != 0}">
 					<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mbDtls" varStatus="item">
-						<c:if test="${mbDtls.egwStatus.code == 'APPROVED' && ((mbDtls.egBillregister == null || 
+						<c:if test="${mbDtls.egwStatus.code == 'APPROVED' && mbDtls.mbDate <= contractorBillRegister.billdate && ((mbDtls.egBillregister == null || 
 						(mbDtls.egBillregister !=null && mbDtls.egBillregister.billstatus == 'CANCELLED')) || 
 						(mbDtls.egBillregister != null && contractorBillRegister.id != null && mbDtls.egBillregister.id == contractorBillRegister.id))}">
-							<tr><c:set var="slNo" value="${slNo + 1}" />
+							<tr id="mbdetailsrow"><c:set var="slNo" value="${slNo + 1}" />
 								<td><span class="spansno"><c:out value="${slNo}" /></span></td>
-								<td><a href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
-								<td><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></td>
-								<td><fmt:formatDate value="${mbDtls.mbDate}" pattern="dd/MM/yyyy" /></td>
-								<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></td>
+								<td><a id="mbrefno_${item.index}" href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
+								<td><span id="pageno_${item.index}"><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></span></td>
+								<td><span id="mbdate_${item.index}"><fmt:formatDate value="${mbDtls.mbDate}" pattern="dd/MM/yyyy" /></span></td>
+								<td class="text-right"><span id="mbamount_${item.index}"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></span></td>
 							</tr>
 						</c:if>
 					</c:forEach>
@@ -153,7 +153,7 @@
 			<c:set var="mbtotal" value="${0}" scope="session" />
 			<c:if test="${workOrderEstimate.mbHeaders.size() != 0}">
 				<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mb">
-					<c:if test="${mb.egwStatus.code == 'APPROVED' && ((mb.egBillregister == null || 
+					<c:if test="${mb.egwStatus.code == 'APPROVED' && mb.mbDate <= contractorBillRegister.billdate && ((mb.egBillregister == null || 
 						(mb.egBillregister !=null && mb.egBillregister.billstatus == 'CANCELLED')) || 
 						(mb.egBillregister != null && contractorBillRegister.id != null && mb.egBillregister.id == contractorBillRegister.id))}">
 						<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />

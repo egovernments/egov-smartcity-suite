@@ -69,6 +69,8 @@ import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
@@ -120,6 +122,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private OfflineStatusService offlineStatusService;
+    
+    @Autowired
+    private MBHeaderService mBHeaderService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(
@@ -135,8 +140,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         model.addAttribute("woeId", woeId);
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
-
-        model.addAttribute("mode", "edit");
+        contractorBillRegister.setBilldate(new Date());
+        model.addAttribute("mode", "new");
 
         // TODO: remove this condition to check if spillover
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
@@ -326,9 +331,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             totalBillAmountIncludingCurrentBill = totalBillAmountIncludingCurrentBill
                     .add(workOrderEstimate.getEstimate().getLineEstimateDetails().getGrossAmountBilled());
         if (totalBillAmountIncludingCurrentBill.doubleValue() > contractorBillRegister.getWorkOrderEstimate()
-                .getWorkOrder()
-
-                .getWorkOrderAmount())
+                .getWorkOrder().getWorkOrderAmount())
             resultBinder.reject("error.contractorbill.totalbillamount.exceeds.workorderamount", new String[] {
                     String.valueOf(totalBillAmountIncludingCurrentBill),
                     String.valueOf(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount()) },
@@ -372,6 +375,12 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     && contractorBillRegister.getMbHeader().getMbDate()
                             .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
+            
+            if (contractorBillRegister.getMbHeader().getMbDate() != null 
+                    && contractorBillRegister.getBilldate()
+                    .before(contractorBillRegister.getMbHeader().getMbDate()))
+                resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
+                
         }
 
         if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
@@ -425,6 +434,11 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("billdate", "error.billdate.workorderdate");
             if (contractorBillRegister.getBilldate().before(currentFinYear))
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
+        }
+        
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId());
+        if (contractorBillRegister.getBilldate().before(mBHeader.getCreatedDate())) {
+            resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
     }
 
