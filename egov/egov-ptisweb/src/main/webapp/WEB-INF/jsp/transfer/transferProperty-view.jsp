@@ -404,6 +404,24 @@
 											value="%{mutationFee}" default="N/A" /></span></td>
 							</tr>
 						</s:if>
+						<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) &&
+						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
+						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
+							<tr>
+								<td class="greybox2">&nbsp;</td>
+								<td class="greybox"><s:text name="regst.details.titledeed" /> :</td>
+								<td class="greybox">
+									<s:if test="%{mutationRegistrationDetails.documentLink != null}">
+										<input type="button" value="Download" class="buttonsubmit" onclick="javascript:window.open('<s:property value="%{mutationRegistrationDetails.documentLink}"/>','window','scrollbars=yes,resizable=no,height=400,width=400,status=yes');"/>
+									</s:if>
+									<s:else>
+										<span class="bold"><s:property value="%{mutationRegistrationDetails.documentLink}" default="N/A"/></span>
+									</s:else>
+								</td>
+								<td class="greybox2" colspan="2">&nbsp;</td>
+							</tr>
+						</s:if>
 					</table>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
