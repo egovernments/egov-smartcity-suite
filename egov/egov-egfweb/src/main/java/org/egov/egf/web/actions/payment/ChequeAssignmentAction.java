@@ -798,16 +798,49 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         {
             if (bankaccount != null)
             {
-                final List<Object[]> yearCodeList = persistenceService
-                        .findAllBy(
-                                "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
-                                        + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
-                                        + " order by serialNo desc ", bankaccount);
-
-                if (yearCodeList != null)
+                if (department != null)
                 {
-                    for (final Object[] s : yearCodeList)
-                        chequeSlNoMap.put(s[0], s[1]);
+                    final List<Object[]> yearCodeList = persistenceService
+                            .findAllBy(
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
+                                            + department + ")"
+                                            + " order by serialNo desc ", bankaccount);
+
+                    if (yearCodeList != null)
+                    {
+                        for (final Object[] s : yearCodeList)
+                            chequeSlNoMap.put(s[0], s[1]);
+                    }
+                }
+                else if (departmentId != null)
+                {
+                    final List<Object[]> yearCodeList = persistenceService
+                            .findAllBy(
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id = "
+                                            + departmentId + ")"
+                                            + " order by serialNo desc ", bankaccount);
+
+                    if (yearCodeList != null)
+                    {
+                        for (final Object[] s : yearCodeList)
+                            chequeSlNoMap.put(s[0], s[1]);
+                    }
+                }
+                else
+                {
+                    final List<Object[]> yearCodeList = persistenceService
+                            .findAllBy(
+                                    "select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
+                                            + "and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where upper(name) = 'ACCOUNTS')"
+                                            + " order by serialNo desc ", bankaccount);
+
+                    if (yearCodeList != null)
+                    {
+                        for (final Object[] s : yearCodeList)
+                            chequeSlNoMap.put(s[0], s[1]);
+                    }
                 }
             }
         } catch (final HibernateException e) {
@@ -1879,6 +1912,11 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             for (final ChequeAssignment assignment : chequeAssignmentList)
                 if (assignment.getIsSelected())
                 {
+                    if (assignment.getSerialNo() == null) {
+
+                        addFieldError("Year code should not be empty", getMessage("payment.yearcode.invalid"));
+                        break;
+                    }
                     if (null == assignment.getChequeNumber() || "".equals(assignment.getChequeNumber()))
                     {
                         addFieldError("chequeAssignmentList[" + i + "].chequeNumber", getMessage("payment.chequeno.empty"));
