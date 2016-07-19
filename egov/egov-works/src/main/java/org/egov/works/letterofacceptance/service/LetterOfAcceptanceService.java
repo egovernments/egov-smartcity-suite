@@ -302,12 +302,13 @@ public class LetterOfAcceptanceService {
                 workOrder.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate());
             } else {
-                workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
-                        WorksConstants.CREATED_STATUS));
                 if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED.toString())
                         && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                     workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
                             WorksConstants.RESUBMITTED_STATUS));
+                else
+                    workOrder.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.WORKORDER,
+                            WorksConstants.CREATED_STATUS));
                 
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
                         workOrder.getCurrentState().getValue(), null);

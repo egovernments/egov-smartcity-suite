@@ -668,7 +668,7 @@ public class LineEstimateService {
                     && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
-        if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
+            else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
                 && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
             lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                     LineEstimateStatus.CHECKED.toString()));
