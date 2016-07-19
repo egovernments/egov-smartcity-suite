@@ -203,7 +203,7 @@ public class EstimateTemplateAction extends SearchFormAction {
     protected void populateNonSorActivities() {
         for (final EstimateTemplateActivity activity : nonSorActivities)
             if (activity != null) {
-                activity.setUom(uomService.getUOMById(activity.getNonSor().getUom().getId()));
+                activity.setUom(uomService.getUOMById(activity.getNonSor().getUom().getId().intValue()));
                 activity.getNonSor().setCreatedBy(worksService.getCurrentLoggedInUser());
                 activity.getNonSor().setCreatedDate(new Date());
                 activity.getNonSor().setLastModifiedBy(worksService.getCurrentLoggedInUser());
