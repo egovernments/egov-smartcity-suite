@@ -195,6 +195,9 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
 
+            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
+                query.setString("workstatus", estimateAbstractReport.getWorkStatus().replace("_", " "));
+
         }
         return query;
     }
@@ -246,6 +249,8 @@ public class WorkProgressRegisterService {
             if (estimateAbstractReport.getNatureOfWork() != null)
                 query.setLong("natureofwork", estimateAbstractReport.getNatureOfWork());
 
+            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
+                query.setString("workstatus", estimateAbstractReport.getWorkStatus().replace("_", " "));
         }
         return query;
     }
@@ -341,8 +346,12 @@ public class WorkProgressRegisterService {
 
             if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
+
             if (estimateAbstractReport.isSpillOverFlag())
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
+
+            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
+                filterConditions.append(" AND details.workstatus =:workstatus ");
 
         }
         final StringBuilder query = new StringBuilder();
@@ -633,8 +642,12 @@ public class WorkProgressRegisterService {
 
             if (estimateAbstractReport.getNatureOfWork() != null)
                 filterConditions.append(" AND details.natureofwork =:natureofwork ");
+
             if (estimateAbstractReport.isSpillOverFlag())
                 filterConditions.append(" AND details.spilloverflag =:spilloverflag ");
+
+            if (estimateAbstractReport.getWorkStatus() != null && !estimateAbstractReport.getWorkStatus().equalsIgnoreCase(""))
+                filterConditions.append(" AND details.workstatus =:workstatus ");
         }
         final StringBuilder query = new StringBuilder();
         query.append(mainSelectQuery.toString());
