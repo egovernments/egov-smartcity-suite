@@ -130,6 +130,14 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
             final AppConfigValues value = values.get(0);
 
             jsonObject.addProperty("quantityTolerance", value.getValue());
+            
+            final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(-1L, workOrderEstimate.getId());
+            
+            if (!previousMBHeaders.isEmpty()) {
+                jsonObject.addProperty("previousMBDate",
+                        sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
+            } else
+                jsonObject.addProperty("previousMBDate", "");
 
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
         }

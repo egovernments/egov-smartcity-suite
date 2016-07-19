@@ -330,6 +330,15 @@ public class UpdateMBController extends GenericWorkFlowController {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
         if (totalMBAmountOfMBs != null)
             model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - updatedMBHeader.getMbAmount().doubleValue());
+        
+        final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(mbHeader.getId(),
+                mbHeader.getWorkOrderEstimate().getId());
+        
+        if (!previousMBHeaders.isEmpty()) {
+            model.addAttribute("previousMBDate",
+                    sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
+        } else
+            model.addAttribute("previousMBDate", "");
 
         // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||

@@ -665,6 +665,7 @@ function validateSORDetails() {
 function validateFormData() {
 	var flag = true;
 	var isRequired = true;
+	var previousMBDate = $('#previousMBDate').val();
 	var mbDate = $('#mbDate').data('datepicker').date;
 	var workCommencedDate = $('#workCommencedDate').val();
 	var mbIssuedDate = $('#mbIssuedDate').data('datepicker').date;
@@ -691,6 +692,12 @@ function validateFormData() {
 		message = message.replace(/\{0\}/g, parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount));
 		message = message.replace(/\{1\}/g, parseFloat(parseFloat(totalMBAmountOfMBs) + parseFloat(mbAmount) - parseFloat(workOrderAmount)).toFixed(2));
 		bootbox.alert(message);
+		return false;
+	}
+	
+	if(previousMBDate != "" && new Date(previousMBDate).getTime() > mbDate.getTime()) {
+		bootbox.alert($('#errorpreviousmbdate').val());
+		$('#mbDate').val('');
 		return false;
 	}
 	

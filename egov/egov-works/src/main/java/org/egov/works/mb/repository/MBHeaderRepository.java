@@ -106,4 +106,7 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mb.egwStatus.code != :statusCode)")
     MBHeader findLatestMBHeaderToValidateMB(@Param("workOrderEstimateId") final Long workOrderEstimateId,
             @Param("statusCode") final String statusCode);
+    
+    @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :woeId and (mbh.createdDate < (select createdDate from MBHeader where id = :mbHeaderId  and mbh.egwStatus.code != :status) or (select count(*) from MBHeader where id = :mbHeaderId) = 0) order by mbh.id")
+    List<MBHeader> getPreviousMBHeaders(@Param("mbHeaderId") final Long mbHeaderId, @Param("woeId") final Long woeId, @Param("status") final String status);
 }

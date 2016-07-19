@@ -561,6 +561,18 @@ public class MBHeaderService {
             jsonObject.addProperty("errorMBEntryFutureDate", message);
             errors.reject("errorMBEntryFutureDate", message);
         }
+        
+        final List<MBHeader> previousMBHeaders = getPreviousMBHeaders(mbHeader.getId(),
+                mbHeader.getWorkOrderEstimate().getId());
+        
+        if (!previousMBHeaders.isEmpty()
+                && previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate().after(mbHeader.getMbDate())) {
+            message = messageSource.getMessage("error.previous.mb.date",
+                    new String[] {},
+                    null);
+            jsonObject.addProperty("errorPreviousMBDate", message);
+            errors.reject("errorPreviousMBDate", message);
+        }
 
         if (mbHeader.getWorkOrderEstimate().getWorkOrder()
                 .getWorkOrderAmount() < totalMBAmount) {
@@ -713,6 +725,11 @@ public class MBHeaderService {
 
     public MBHeader getLatestMBHeader(final Long workOrderEstimateId) {
         return mbHeaderRepository.findLatestMBHeaderToValidateMB(workOrderEstimateId,
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
+    
+    public List<MBHeader> getPreviousMBHeaders(final Long mbHeaderId, final Long workOrderEstimateId) {
+        return mbHeaderRepository.getPreviousMBHeaders(mbHeaderId, workOrderEstimateId,
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 }

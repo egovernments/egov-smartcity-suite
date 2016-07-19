@@ -64,6 +64,7 @@
 	
 	<input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
 	<input name="workCommencedDate" type="hidden" id="workCommencedDate" value="${workCommencedDate }" />
+	<input name="previousMBDate" type="hidden" id="previousMBDate" value="${previousMBDate }" />
 	<input name="totalMBAmountOfMBs" type="hidden" id="totalMBAmountOfMBs" value="${totalMBAmountOfMBs }" />
 	<input name="workOrderAmount" type="hidden" id="workOrderAmount" value="${mbHeader.workOrderEstimate.workOrder.workOrderAmount }" />
 	<input name="quantityTolerance" type="hidden" id="quantityTolerance" value="${quantityTolerance }" />
@@ -73,6 +74,7 @@
 	<input type="hidden" id="errorsornonsor" value="<spring:message code='error.mb.sor.nonsor.required' />">
 	<input type="hidden" id="errortotalmbamount" value="<spring:message code='error.sum.mb.workorder.amount' />">
 	<input type="hidden" id="errortoleranceexceeded" value="<spring:message code='error.tolerance.exceeded' />">
+	<input type="hidden" id="errorpreviousmbdate" value="<spring:message code='error.previous.mb.date' />">
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.mb.confirm" />" />
 	<input id="errorMandatory" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	<input type="hidden" id="mode" name="mode" value="${mode }">
