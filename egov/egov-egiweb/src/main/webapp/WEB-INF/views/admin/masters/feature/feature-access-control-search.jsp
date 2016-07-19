@@ -45,7 +45,7 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="feature" id="featureForm">
+        <form:form  mothod ="post" class="form-horizontal form-groups-bordered" id="featureForm">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
@@ -55,16 +55,31 @@
 
                 <div class="panel-body custom-form">
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.module"/>
+                        </label>
+                        <div class="col-sm-6" style="padding-top: 7px">
+                            <select name="moduleId" id="module" class="form-control">
+                                <option value=""><spring:message code="lbl.select"/></option>
+                                <c:forEach items="${modules}" var="module">
+                                    <option value="${module.id}">${module.displayName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <c:if test="${not empty features}">
                             <label class="col-sm-3 control-label">
                                 <spring:message code="lbl.feature.name"/>
                                 <span class="mandatory"></span>
                             </label>
                             <div class="col-sm-6" style="padding-top: 7px">
-                                <form:select path="id" required="required">
-                                    <form:option value=""><spring:message code="lbl.select"/></form:option>
-                                    <form:options items="${features}" itemLabel="name" itemValue="id"/>
-                                </form:select>
+                                <select name="featureId" id="feature" required="required" class="form-control">
+                                    <option value=""><spring:message code="lbl.select"/></option>
+                                    <c:forEach items="${features}" var="feature">
+                                        <option value="${feature.id}">${feature.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </c:if>
                         <c:if test="${not empty roles}">
@@ -73,10 +88,12 @@
                                 <span class="mandatory"></span>
                             </label>
                             <div class="col-sm-6" style="padding-top: 7px">
-                                <form:select path="id" required="required">
-                                    <form:option value=""><spring:message code="lbl.select"/></form:option>
-                                    <form:options items="${roles}" itemLabel="name" itemValue="id"/>
-                                </form:select>
+                                <select name="roleId" required="required" class="form-control">
+                                    <option value=""><spring:message code="lbl.select"/></option>
+                                    <c:forEach items="${roles}" var="role">
+                                        <option value="${role.id}" title="${role.description}">${role.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </c:if>
                     </div>
@@ -85,9 +102,25 @@
             <div class="row">
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
+                    <button type="button" class="btn btn-default" onclick="window.location.reload()"><spring:message code="lbl.reset" /></button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
                 </div>
             </div>
         </form:form>
     </div>
 </div>
+<script>
+    $("#module").change(function () {
+        if($("#feature").length) {
+            $.ajax({
+                url: "list-by-module/" + $(this).val(),
+                cache: true
+            }).done(function(data) {
+                $("#feature").find('option:gt(0)').remove();
+                $.each(data, function(key,value) {
+                    $('#feature').append('<option value="'+value.id+'">' + value.name + '</option>');
+                });
+            });
+        }
+    });
+</script>

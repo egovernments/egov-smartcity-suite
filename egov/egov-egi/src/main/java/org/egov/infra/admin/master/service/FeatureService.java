@@ -60,7 +60,11 @@ public class FeatureService {
     public List<Feature> getAllFeatures() {
         return featureRepository.findAll();
     }
-    
+
+    public List<Feature> getAllFeaturesByModuleId(Long moduleId) {
+        return featureRepository.findByModuleId(moduleId);
+    }
+
     public Feature getFeatureById(Long id) {
         return featureRepository.findOne(id);
     }

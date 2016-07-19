@@ -38,22 +38,24 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.accesscontrol;
+package org.egov.infra.web.controller.admin.masters.feature;
 
 import org.egov.infra.admin.master.entity.Feature;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.FeatureAccessControlService;
 import org.egov.infra.admin.master.service.FeatureService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/feature/access-control")
@@ -66,36 +68,36 @@ public class FeatureAccessControlController {
     private RoleService roleService;
 
     @Autowired
-    private FeatureAccessControlService featureAccessControlService;
+    private ModuleService moduleService;
 
-    @ModelAttribute
-    public Feature feature() {
-        return new Feature();
-    }
+    @Autowired
+    private FeatureAccessControlService featureAccessControlService;
 
     @RequestMapping(value = "/by-feature", method = RequestMethod.GET)
     public String createByFeature(Model model) {
         model.addAttribute("features", featureService.getAllFeatures());
+        model.addAttribute("modules", moduleService.getAllTopModules());
         return "accesscontrol-search";
     }
 
     @RequestMapping(value = "/by-role", method = RequestMethod.GET)
     public String createByRole(Model model) {
         model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("modules", moduleService.getAllTopModules());
         return "accesscontrol-search";
     }
 
     @RequestMapping(value = "/by-feature", method = RequestMethod.POST)
-    public String createByFeature(@RequestParam Long id, Model model) {
+    public String createByFeature(@RequestParam Long featureId, Model model) {
         model.addAttribute("roles", roleService.getAllRoles());
-        model.addAttribute("feature", featureService.getFeatureById(id));
+        model.addAttribute("feature", featureService.getFeatureById(featureId));
         return "accesscontrol";
     }
 
     @RequestMapping(value = "/by-role", method = RequestMethod.POST)
-    public String createByRole(@RequestParam Long id, Model model) {
-        model.addAttribute("features", featureService.getAllFeatures());
-        model.addAttribute("role", roleService.getRoleById(id));
+    public String createByRole(@RequestParam Long roleId, @RequestParam(required = false) Long moduleId, Model model) {
+        model.addAttribute("features", moduleId == null ? featureService.getAllFeatures() : featureService.getAllFeaturesByModuleId(moduleId));
+        model.addAttribute("role", roleService.getRoleById(roleId));
         return "accesscontrol";
     }
 
@@ -111,6 +113,12 @@ public class FeatureAccessControlController {
     public String removeFeatureRoleMapping(@PathVariable("featureId") Feature feature, @PathVariable("roleId") Role role){
         featureAccessControlService.revokeAccess(feature, role);
         return "DONE";
+    }
+
+    @RequestMapping(value = "/list-by-module/{moduleId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Feature> featuresByModule(@PathVariable Long moduleId) {
+        return featureService.getAllFeaturesByModuleId(moduleId);
     }
 
 }

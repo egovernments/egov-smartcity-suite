@@ -45,7 +45,7 @@
 
 <div class="row" id="page-content">
     <div class="col-md-12">
-        <form:form  mothod ="post" class="form-horizontal form-groups-bordered" modelAttribute="feature" id="featureForm">
+        <form:form  mothod ="post" class="form-horizontal form-groups-bordered" id="featureForm">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
