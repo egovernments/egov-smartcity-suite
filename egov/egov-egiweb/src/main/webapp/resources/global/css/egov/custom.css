@@ -1932,3 +1932,6 @@ footer.main {
 footer.main a {
   color: #f2851f;
 }
+.DTTT_print_info {
+  display: none;
+}
