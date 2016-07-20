@@ -2,7 +2,7 @@
 Create table EGW_MEASUREMENTSHEET( 
 id bigint,
 	slNo smallint,
-	identifier ,
+	identifier character(1),  
 	remarks varchar(1024),
 	no bigint,
 	length numeric (13,2),
