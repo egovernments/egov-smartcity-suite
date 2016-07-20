@@ -743,7 +743,7 @@ public class EstimateService {
         List<AbstractEstimate> abstractEstimates = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append(
-                "select distinct(estimate) from AbstractEstimate estimate where estimate.egwStatus.code = :aeStatus and exists (select distinct(ae.estimateNumber) from AbstractEstimate as ae where estimate.id = ae.id and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:woStatus) and upper(ae.egwStatus.code) = upper(:aeStatus)))");
+                "select distinct(estimate) from AbstractEstimate estimate where estimate.egwStatus.code = :aeStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where estimate.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:woStatus) and upper(estimate.egwStatus.code) = upper(:aeStatus))");
 
         queryStr.append(
                 " and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id )");
