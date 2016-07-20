@@ -81,7 +81,7 @@
 			</ul>
 		</div>
 		<div class="tab-content">
-			<div class="tab-pane fade in active" id="estimateheader">
+			<div class="tab-pane fade in active" id="estimateheader">   
 				<%@ include file="estimate-header.jsp"%>
 				<%@ include file="estimate-multiYearEstimate.jsp"%>
 				<c:if test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }">
@@ -124,13 +124,16 @@
 					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+                      
 					</div>
 				</div>
 		    </c:otherwise>
 	  </c:choose>
 		</div>
 	</div>
-</form:form>
+  
+
+</form:form> 
 <%@ include file="estimate-map.jsp"%>
 <script type="text/javascript" src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
@@ -139,3 +142,7 @@
 <script type="text/javascript"
 	src="<c:url value='/resources/js/abstractestimate/spilloverabstractestimate.js?rnd=${app_release_no}'/>"></script>
 </c:if>
+
+<div id="measurement" >
+<%@ include file="../measurementsheet/measurementsheet-formtable.jsp"%>
+</div>      

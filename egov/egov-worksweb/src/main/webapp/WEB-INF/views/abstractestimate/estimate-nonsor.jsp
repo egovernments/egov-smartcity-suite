@@ -109,11 +109,21 @@
 							<td align="right">
 								<form:input path="nonSorActivities[0].estimateRate" id="nonSorEstimateRate_0" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 								<form:hidden path="nonSorActivities[0].rate" id="nonSorRate_0"  class="activityRate form-control table-input text-right nonSorRate" />
-								
+
 							</td>
+
 							<td>
 								<form:input path="nonSorActivities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+								<button class="btn btn-default" name="nonSorActivities[0].msadd" id="nonSorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 							</td>
+                             <td hidden="true">
+                             <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorActivities[0].mspresent" id="nonSorActivities[0].mspresent" data-idx="0"/>
+                             <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorActivities[0].msopen" id="nonSorActivities[0].msopen" data-idx="0"/>
+                            
+                             <span name="nonSorActivities[0].mstd" class="nonSorActivities[0].mstd" id="nonSorActivities[0].mstd" data-idx="0"></span>
+                             
+                             </td>
+				 
 							<td align="right">
 								<span class="nonSorAmount_0 nonsoramount"></span>
 							</td>

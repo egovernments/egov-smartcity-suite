@@ -142,7 +142,11 @@
 				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display:none;"></div>
 			</div>
 		</div>
-		
+		<div align="right">
+			<input type="button" value="Close All MSheet" class="btn btn-sm btn-secondary"
+				onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+				value="Open All MSheet" onclick="openAllmsheet()" />
+		</div>
 		<table class="table table-bordered" id="tblsor">
 			<thead>
 				<tr>
@@ -203,7 +207,12 @@
 							</td>
 							<td>
 								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+								<button class="btn btn-default" name="sorActivities[0].msadd" id="sorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 							</td>
+							<td hidden="true">
+                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorActivities[0].mspresent" id="sorActivities[0].mspresent" data-idx="0"/>
+                            <input class="classmsopen" type="hidden" disabled="disabled" name="sorActivities[0].msopen" id="sorActivities[0].msopen" data-idx="0"/>
+                            <span  class="sorActivities[0].mstd" id="sorActivities[0].mstd" data-idx="0"></span></td>
 							<td align="right">
 								<span class="amount_0 amount"></span>
 							</td>
@@ -220,6 +229,7 @@
 								<span class="add-padding delete_0" onclick="deleteSor(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
 							</td>
 						</tr>
+
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${abstractEstimate.sorActivities}" var="activity" varStatus="item">
@@ -251,7 +261,15 @@
 									</td>
 									<td>
 										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-									</td>
+					                  <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>				
+                                     </td>
+                                     <td hidden="true">
+                          	        <input class="classmspresent" type="hidden" disabled="disabled" name="sorActivities[${item.index }].mspresent" id="sorActivities[${item.index }].mspresent" data-idx="${item.index }"/>
+                                    <input class="classmsopen" type="hidden" disabled="disabled" name="sorActivities[${item.index }].msopen" id="sorActivities[${item.index }].msopen" data-idx="${item.index }"/>
+                                   <span  class="sorActivities[${item.index }].mstd" id="sorActivities[${item.index }].mstd" data-idx="${item.index }">
+                                   
+                                   
+                                   </span></td>
 									<td align="right">
 										<span class="amount_${item.index } amount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 									</td>
