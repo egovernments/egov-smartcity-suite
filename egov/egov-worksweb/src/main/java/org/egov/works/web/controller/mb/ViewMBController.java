@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.mb;
 
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
@@ -60,6 +61,9 @@ public class ViewMBController {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     @RequestMapping(value = "/view/{mbheaderId}", method = RequestMethod.GET)
     public String showSearchWorkOrder(@PathVariable final String mbheaderId, final Model model) {
@@ -75,6 +79,8 @@ public class ViewMBController {
         model.addAttribute("mbHeader", mBHeader);
         model.addAttribute("documentDetails",mBHeader.getDocumentDetails());
         model.addAttribute("mode", "view");
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(mBHeader.getState(), mBHeader.getStateHistory()));
         return "mbheader-view";
     }
 

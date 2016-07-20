@@ -451,6 +451,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
         model.addAttribute("createdbybydesignation",
                 worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
+        model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(),
+                contractorBillRegister.getStateHistory()));
         return responsePage;
     }
 

@@ -134,6 +134,7 @@ $('#btndownloadexcel').click(function() {
 	var contractor = $('#contractor').val();
 	var department = $('#department').val();
 	var spillOver = document.getElementById("spillOverFlag");
+	var workStatus = $('#workStatus').val();
 	var spillOverFlag = spillOver.checked ? true : false;
 
 	window.open("/egworks/reports/workprogressregister/pdf?adminSanctionFromDate="
@@ -147,6 +148,7 @@ $('#btndownloadexcel').click(function() {
 			+ "&department="
 			+ department
 			+ "&spillOverFlag=" + spillOverFlag
+			+ "&workStatus=" + workStatus
 			+ "&contentType=excel", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 });
 	

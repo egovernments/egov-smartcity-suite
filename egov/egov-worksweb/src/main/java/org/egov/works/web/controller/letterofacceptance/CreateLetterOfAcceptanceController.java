@@ -62,6 +62,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.autonumber.LetterOfAcceptanceNumberGenerator;
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.master.service.ContractorService;
 import org.egov.works.utils.WorksConstants;
@@ -119,6 +120,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewForm(@ModelAttribute("workOrder") WorkOrder workOrder, final Model model,
@@ -139,6 +143,8 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("workOrder", workOrder);
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "createLetterOfAcceptance-form";
     }
 

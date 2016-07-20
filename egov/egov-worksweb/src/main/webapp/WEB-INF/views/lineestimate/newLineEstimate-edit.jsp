@@ -68,7 +68,7 @@
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' || lineEstimate.status.code == 'TECHNICAL_SANCTIONED' }">
 			<jsp:include page="lineEstimateTechnicalSanctionDetails.jsp"/>
 		</c:if>
-			<c:if test="${!workflowHistory.isEmpty()}">
+		<c:if test="${!workflowHistory.isEmpty()}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">

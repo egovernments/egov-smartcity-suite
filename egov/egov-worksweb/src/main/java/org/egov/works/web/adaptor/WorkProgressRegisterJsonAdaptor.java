@@ -160,7 +160,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("agreementAmount", workProgressRegister.getAgreementAmount());
             else
                 jsonObject.addProperty("agreementAmount", "");
-            if (workProgressRegister.getLatestBillNumber() != null && workProgressRegister.getLatestBillDate() != null)
+            if (workProgressRegister.getLatestMbNumber() != null && workProgressRegister.getLatestMbDate() != null)
                 jsonObject.addProperty("latestMbNumberDate",
                         workProgressRegister.getLatestMbNumber() + ", " + sdf.format(workProgressRegister.getLatestMbDate()));
             else

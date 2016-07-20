@@ -146,6 +146,8 @@ public class SearchAbstractEstimateController {
             techSanctionBy = worksUtils.getUserDesignation(abstractEstimate.getEstimateTechnicalSanctions()
                     .get(abstractEstimate.getEstimateTechnicalSanctions().size()-1).getTechnicalSanctionBy());
         model.addAttribute("technicalsanctionbydesignation", techSanctionBy);
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
 
         return "abstractestimate-view";
     }

@@ -134,6 +134,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("workOrder", newWorkOrder);
             model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+            model.addAttribute("workflowHistory",
+                    lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
             return "letterOfAcceptance-view";
         }
     }
@@ -173,6 +175,8 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("mode", "modify");
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "letterOfAcceptance-modify";
     }
 
