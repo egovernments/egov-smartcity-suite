@@ -52,8 +52,7 @@
         	<form:form role="form" action="feematrix/create" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
             cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	            <div class="form-group">
-	            	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> <span
-		              class="mandatory"></span> </label>
+	            	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /></label>
 		            <div class="col-sm-3 add-margin">
 		              <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" cssErrorClass="form-control error">
 		                <form:option value="">
@@ -62,8 +61,7 @@
 		                <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
 		              </form:select>
 		            </div>
-		            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory" /> <span
-		                class="mandatory"></span> </label>
+		            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory" /></label>
 		              <div class="col-sm-3 add-margin">
 		                <form:select path="subCategory" id="subCategory" cssClass="form-control" cssErrorClass="form-control error">
 		                  <form:option value="">
