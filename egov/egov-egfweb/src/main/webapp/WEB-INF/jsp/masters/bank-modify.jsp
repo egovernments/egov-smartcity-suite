@@ -53,7 +53,7 @@
 	href="../resources/css/jquery/ui.jqgrid.css" />
 <script>
     var fundJson = "<s:property value='getFundsJSON()'/>";
-    var accTypeJson = <s:property value='getAccountTypesJSON()' escape='false'/>;
+    var accTypeJson = <s:property value='getAccountTypesJSON()' escapeHtml='false'/>;
     var bankAccTypeJson = "<s:property value='getBankAccountTypesJSON()'/>";
     var autoBankGLCode =  "<s:property value='isAutoBankAccountGLCodeEnabled()'/>";
 	</script>

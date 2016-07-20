@@ -96,10 +96,10 @@
 </style>
 <script>
 	function openSource(){
-		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escape='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
+		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
 			bootbox.alert('Source is not available');
 		else{
-			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escape="false"/>'+ '&showMode=view' 
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'+ '&showMode=view' 
 			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 		}   
 			

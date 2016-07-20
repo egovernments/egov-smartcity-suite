@@ -148,7 +148,7 @@
 									class="serialNo" list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
-									size="6" maxLength="6" id="chequeNumber%{#s.index}"
+									size="6" maxlength="6" id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
@@ -175,7 +175,7 @@
 									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
 									size="6"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-									maxLength="6" /></td>
+									maxlength="6" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -210,7 +210,7 @@
 									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
 									onchange="validateReassignSurrenderChequeNumber(this)"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
@@ -235,7 +235,7 @@
 									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
 									onchange="validateChequeNumber(this)"
 									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>

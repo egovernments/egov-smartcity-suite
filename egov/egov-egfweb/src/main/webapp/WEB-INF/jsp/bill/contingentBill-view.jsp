@@ -561,7 +561,7 @@ function onSubmit()
 					</table>
 					<br />
 					<div align="center" style="font-family: arial; font-size: 12pt;">
-						<s:property value="sanctionedMessge" escape="false" />
+						<s:property value="sanctionedMessge" escapeHtml="false" />
 					</div>
 					<br />
 				</div>

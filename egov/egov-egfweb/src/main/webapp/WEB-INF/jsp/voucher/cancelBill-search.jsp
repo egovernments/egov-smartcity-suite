@@ -42,10 +42,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tags/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tags/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tags/struts-nested.tld" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/tags/c.tld" prefix="c"%>
 
 <html>

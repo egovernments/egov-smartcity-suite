@@ -187,7 +187,7 @@
 						<td class="bluebox"><strong>Valid From</strong><span
 							class="mandatory1"> *</span></td>
 						<td class="bluebox"><s:date name="subScheme.validfrom"
-								id="validfromId" format="dd/MM/yyyy" /> <s:textfield
+								var="validfromId" format="dd/MM/yyyy" /> <s:textfield
 								id="validfrom" name="validfrom" value="%{validfromId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
@@ -195,7 +195,7 @@
 								<td class="bluebox"><strong>Valid To</strong><span
 							class="mandatory1"> *</span></td>
 						<td class="bluebox"><s:date name="subScheme.validto"
-								id="validtoId" format="dd/MM/yyyy" /> <s:textfield
+								var="validtoId" format="dd/MM/yyyy" /> <s:textfield
 								id="validtoId" name="validto" value="%{validtoId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
 								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
@@ -228,7 +228,7 @@
 								Date</strong></td>
 						<td class="bluebox"><s:date
 								name="subScheme.councilLoanProposalDate"
-								id="councilLoanProposalDateId" format="dd/MM/yyyy" /> <s:textfield
+								var="councilLoanProposalDateId" format="dd/MM/yyyy" /> <s:textfield
 								id="subScheme.councilLoanProposalDate"
 								name="councilLoanProposalDate"
 								value="%{councilLoanProposalDateId}"
@@ -248,7 +248,7 @@
 								Date</strong></td>
 						<td class="greybox"><s:date
 								name="subScheme.councilAdminSanctionDate"
-								id="councilAdminSanctionDateId" format="dd/MM/yyyy" />
+								var="councilAdminSanctionDateId" format="dd/MM/yyyy" />
 							<s:textfield id="councilAdminSanctionDate"
 								name="councilAdminSanctionDate"
 								value="%{councilAdminSanctionDateId}"
@@ -267,7 +267,7 @@
 								Date</strong></td>
 						<td class="bluebox"><s:date
 								name="subScheme.govtLoanProposalDate"
-								id="govtLoanProposalDateId" format="dd/MM/yyyy" />
+								var="govtLoanProposalDateId" format="dd/MM/yyyy" />
 							<s:textfield id="govtLoanProposalDate"
 								name="govtLoanProposalDate" value="%{govtLoanProposalDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -285,7 +285,7 @@
 								Sanction Date</strong></td>
 						<td class="greybox"><s:date
 								name="subScheme.govtAdminSanctionDate"
-								id="govtAdminSanctionDateId" format="dd/MM/yyyy" /> <s:textfield
+								var="govtAdminSanctionDateId" format="dd/MM/yyyy" /> <s:textfield
 								id="govtAdminSanctionDate" name="govtAdminSanctionDate"
 								value="%{govtAdminSanctionDateId}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
