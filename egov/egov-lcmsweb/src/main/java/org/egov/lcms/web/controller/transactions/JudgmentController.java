@@ -78,16 +78,17 @@ public class JudgmentController {
     public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @PathVariable final String lcNumber,
             final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
-        final LegalCase legalcase = getLegalCase(lcNumber, request);
-        model.addAttribute("legalcase", legalcase);
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        model.addAttribute("legalCase", legalCase);
         model.addAttribute("judgment", judgment);
+        model.addAttribute("mode", "create");
         return "judgment-new";
     }
 
     @ModelAttribute
     private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalcase = legalcaseService.findByLcNumber(lcNumber);
-        return legalcase;
+        final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
+        return legalCase;
     }
 
     @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)

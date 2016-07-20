@@ -41,9 +41,11 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
+			<c:if test="${mode == 'create'}">
 				<div class="panel-heading">
 					<div class="panel-title">Judgment</div>
 				</div>
+				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -129,6 +131,10 @@
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
+					
+					
+	
+				
 					<div class="form-group" id="enquirydetails"  style="display:none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydetails" /> :</label>

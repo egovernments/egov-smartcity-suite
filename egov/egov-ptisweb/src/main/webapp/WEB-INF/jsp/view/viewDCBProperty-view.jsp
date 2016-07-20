@@ -803,7 +803,7 @@
 		<div align="center">
 			<s:if test="%{isCitizen && searchUrl.contains('onlineSearch')}">
 				<input id="SearchProperty" class="buttonsubmit" type="button"
-					onclick="window.location='/ptis/citizen/search/searchByAssessment-searchForm.action';"
+					onclick="window.location='/ptis/citizen/search/search-searchByAssessmentForm.action';"
 					value="Search Property" name="SearchProperty">
 			</s:if>
 			<s:elseif test="%{isCitizen}">

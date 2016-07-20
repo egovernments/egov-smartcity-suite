@@ -48,9 +48,10 @@
 		});
 	}
 
-	function onChangeBankAccount(branchId) {
+	function onChangeBankAccount(branchId,serviceId) {
 		populatebankAccountId({
 			branchId : branchId,
+			serviceId : serviceId,
 		});
 	}
 	function populateService(serviceId) {
@@ -105,7 +106,7 @@
 								headerValue="----Choose----" name="branchId" id="branchId"
 								cssClass="selectwk" list="dropdownData.bankBranchList"
 								listKey="id" listValue="branchname" value="%{branchId}"
-								onChange="onChangeBankAccount(this.value)" /> <egov:ajaxdropdown
+								onChange="onChangeBankAccount(this.value,document.getElementById('serviceDetailsId').value)" /> <egov:ajaxdropdown
 								id="bankbranchIdDropDown" fields="['Text','Value']"
 								dropdownId='bankAccountId'
 								url='receipts/ajaxBankRemittance-bankAccountByBankBranch.action' /></td>

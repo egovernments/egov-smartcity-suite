@@ -40,21 +40,30 @@
 
 package org.egov.common.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "eg_uomcategory")
-@Unique(id = "id", tableName = "eg_uomcategory", fields = { "category" }, columnName = {"category" }, enableDfltMsg = true)
+@Unique(id = "id", tableName = "eg_uomcategory", fields = { "category" }, columnName = {
+        "category" }, enableDfltMsg = true)
 @SequenceGenerator(name = UOMCategory.SEQ_UOMCATEGORY, sequenceName = UOMCategory.SEQ_UOMCATEGORY, allocationSize = 1)
 public class UOMCategory extends AbstractAuditable {
 
@@ -71,11 +80,18 @@ public class UOMCategory extends AbstractAuditable {
 
     @Length(min = 1, max = 25)
     private String narration;
-    
+
+    @OneToMany(mappedBy = "uomCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC ")
+    @NotAudited
+    private final List<UOM> uom = new ArrayList<UOM>(0);
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
@@ -96,4 +112,13 @@ public class UOMCategory extends AbstractAuditable {
         this.narration = narration;
     }
 
+    public List<UOM> getUOM() {
+        return uom;
+    }
+
+    public void setUOM(final List<UOM> uom) {
+        this.uom.clear();
+        if (uom != null)
+            this.uom.addAll(uom);
+    }
 }

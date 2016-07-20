@@ -154,6 +154,13 @@
 						<div class="col-sm-3 add-margin view-content">
 							${judgment.setasidePetitionDetails}</div>
 					</div>
+					<%--  <div class="row add-border">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.judgmentdocuments" /></div>
+						<div class="col-sm-3 add-margin view-content">
+							${judgment.judgmentDocuments[0].files}
+						</div>
+						</div>  --%>
+						<%-- <jsp:include page="uploadDocuments.jsp"/> --%>
 
 				</div>
 			</div>

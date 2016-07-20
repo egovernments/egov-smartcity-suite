@@ -143,18 +143,17 @@
 									value='%{surrendarReasons[#stat.index]}' /> <s:if
 									test="%{!isChequeNoGenerationAuto()}">
 									<td style="text-align: right" class="blueborderfortdnew">
-										<s:select name="newSerialNo" id="newSerialNo%{#stat.index}"
-											list="chequeSlNoMap" value='%{newSerialNo[#stat.index]}' />
+										<s:select name="newSerialNo" id="newSerialNo"
+											list="chequeSlNoMap" value='%{newSerialNo[#stat.index]}'
+											class="newSerialNo" />
 									</td>
-									<td style="text-align: left" class="blueborderfortdnew"><s:textfield maxlength="6"
-											size="6"
-											name="newInstrumentNumber"
+									<td style="text-align: left" class="blueborderfortdnew"><s:textfield
+											maxlength="6" size="6" name="newInstrumentNumber"
 											id="newInstrumentNumber%{#stat.index}"
 											value='%{newInstrumentNumber[#stat.index]}'
-											onkeypress='return event.charCode >= 48 && event.charCode <= 57' 
+											onkeypress='return event.charCode >= 48 && event.charCode <= 57'
 											onblur="validatechequeno(this)" /></td>
-									<td style="text-align: left"
-										class="blueborderfortdnew"><s:textfield
+									<td style="text-align: left" class="blueborderfortdnew"><s:textfield
 											id="newInstrumentDate" name="newInstrumentDate"
 											value="%{newInstrumentDate[#stat.index]}"
 											data-date-end-date="0d"
@@ -170,7 +169,7 @@
 							<s:select name="department" id="department"
 								list="dropdownData.departmentList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----"
-								value="%{department}" /></td>
+								value="%{department}" onChange="populateYearcode(this);" /></td>
 						<td class="greybox" colspan="10"></td>
 					</tr>
 				</s:if>
@@ -274,10 +273,17 @@
 	 		var newChqNoObj=document.getElementsByName('newInstrumentNumber');
 	 		var newChqDateObj=document.getElementsByName('newInstrumentDate');
 			var i;
+			var srlNo=document.getElementById('newSerialNo').value;
+			console.log(srlNo);
 	 		for(i=0;i<surrenderObj.length;i++)
 	 		{
 	 		 if(surrenderObj[i].checked==true)
 	 			{
+	 			if(srlNo=="")
+	 			{
+	 				bootbox.alert("Year code should not be empty");
+	 				return false;
+	 			}
 	 				if(newChqNoObj[i].value==""||newChqNoObj[i].value==undefined)
 					{
 						bootbox.alert(alertNumber);
@@ -308,7 +314,33 @@
 		document.chequeAssignment.submit();
 		
  	}
- 	
+  	function  populateYearcode(departmentid){
+		console.log('departmentid'+departmentid.value);
+		console.log('bankaccount'+document.getElementById('bankaccount').value);
+		jQuery.ajax({
+			url: "/EGF/voucher/common-ajaxYearCode.action?departmentId="+departmentid.value+"&bankaccount="+document.getElementById('bankaccount').value,
+			method: 'GET',
+		    async : false,
+		    
+			success: function(data)
+			   {
+				//console.log("inside success") ;  
+				jQuery('.newSerialNo').empty();
+				var output = '';
+				//console.log("inside data"+data+"---"+data.ResultSet+"---"+data.ResultSet.Result) ;  
+				for(i=0;i<data.ResultSet.Result.length;i++){
+					output = output+ '<option value=' + data.ResultSet.Result[i].Value + '>'
+					+ data.ResultSet.Result[i].Text+ '</option>';
+				  }
+				jQuery('.newSerialNo').append(output);  
+			   },
+			error: function(jqXHR, textStatus, errorThrown)
+			  {
+				console.log("inside Failure"+errorThrown) ;  
+			  }         
+		});
+
+    }
  		
 	</script>
 </body>
