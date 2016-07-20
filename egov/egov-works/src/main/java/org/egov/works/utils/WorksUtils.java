@@ -49,6 +49,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwStatus;
@@ -61,6 +64,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -69,6 +73,7 @@ import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.DocumentDetailsRepository;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -102,6 +107,9 @@ public class WorksUtils {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void persistDocuments(final List<DocumentDetails> documentDetailsList) {
         if (documentDetailsList != null && !documentDetailsList.isEmpty())
@@ -304,6 +312,20 @@ public class WorksUtils {
             }
         }
         return historyTable;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FileStoreMapper> getLatestSorRateUploadOriginalFiles() {
+        return (List<FileStoreMapper>) entityManager.unwrap(Session.class)
+                .createQuery("from FileStoreMapper where fileName like '%sor_original%' order by id desc ").setMaxResults(5)
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FileStoreMapper> getLatestSorRateUploadOutPutFiles() {
+        return (List<FileStoreMapper>) entityManager.unwrap(Session.class)
+                .createQuery("from FileStoreMapper where fileName like '%sor_output%' order by id desc ").setMaxResults(5)
+                .list();
     }
 
 }

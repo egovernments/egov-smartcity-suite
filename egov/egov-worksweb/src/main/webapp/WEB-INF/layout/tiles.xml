@@ -360,5 +360,15 @@
 		<put-attribute name="page-title" value="lbl.setofflinestatusforae" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setAbstractEstimateStatus-form.jsp"/>
 	</definition>
+	
+	<definition name="uploadSorRates" extends="base_layout">
+        <put-attribute name="page-title" value="title.upload.sor.rates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uploadsorrates/uploadSorRates.jsp"/>
+    </definition>
+    
+    <definition name="uploadSorRates-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.upload.sor.rates.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uploadsorrates/uploadSorRates-result.jsp"/>
+    </definition>
 
 </tiles-definitions>  

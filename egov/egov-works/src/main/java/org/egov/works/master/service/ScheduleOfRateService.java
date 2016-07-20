@@ -50,6 +50,9 @@ import javax.persistence.Query;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.works.master.repository.ScheduleOfRateRepository;
@@ -57,6 +60,8 @@ import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
+import org.egov.works.uploadsorrates.UploadSORRate;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -187,9 +192,60 @@ public class ScheduleOfRateService {
     public ScheduleOfRate getByCode(final String code) {
         return scheduleOfRateRepository.findByCode(code);
     }
-    
-    public ScheduleOfRate getByCodeAndScheduleCategoryId(final String code,final Long id) {
-        return scheduleOfRateRepository.findByCodeAndScheduleCategory_id(code,id);
+
+    public ScheduleOfRate getByCodeAndScheduleCategoryId(final String code, final Long id) {
+        return scheduleOfRateRepository.findByCodeAndScheduleCategory_id(code, id);
     }
-    
+
+    @Transactional
+    public List<UploadSORRate> createScheduleOfRate(List<UploadSORRate> uploadSORRatesList) {
+        Date currentDate = new Date();
+        for (UploadSORRate obj : uploadSORRatesList) {
+
+            if (obj.getCreateSor()) {
+                ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
+                SORRate sorRate = new SORRate();
+                MarketRate marketRate = new MarketRate();
+                scheduleOfRate.setCode(obj.getSorCode());
+                scheduleOfRate.setScheduleCategory(obj.getScheduleCategory());
+                scheduleOfRate.setUom(obj.getUom());
+                scheduleOfRate.setDescription(obj.getSorDescription());
+                sorRate.setRate(new Money(obj.getRate().doubleValue()));
+                sorRate.setValidity(new Period(obj.getFromDate(), (obj.getToDate() != null ? obj.getToDate() : null)));
+                sorRate.setScheduleOfRate(scheduleOfRate);
+                sorRate.setCreatedBy(
+                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                sorRate.setCreatedDate(currentDate);
+                sorRate.setModifiedBy(
+                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                sorRate.setModifiedDate(currentDate);
+                scheduleOfRate.getSorRates().add(sorRate);
+                if (obj.getMarketRate() != null) {
+
+                    marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
+                    marketRate.setValidity(
+                            new Period(obj.getMarketFromDate(), (obj.getMarketToDate() != null ? obj.getMarketToDate() : null)));
+                    marketRate.setCreatedBy(
+                            (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                    marketRate.setCreatedDate(currentDate);
+                    marketRate.setModifiedBy(
+                            (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                    marketRate.setModifiedDate(currentDate);
+                    marketRate.setScheduleOfRate(scheduleOfRate);
+                }
+                scheduleOfRate.getMarketRates().add(marketRate);
+                scheduleOfRate.setCreatedBy(
+                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                scheduleOfRate.setCreatedDate(currentDate);
+                scheduleOfRate.setModifiedBy(
+                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                scheduleOfRate.setModifiedDate(currentDate);
+                save(scheduleOfRate);
+            }
+            obj.setFinalStatus("Success");
+        }
+
+        return uploadSORRatesList;
+    }
+
 }
