@@ -96,7 +96,7 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
 								<div class="col-sm-3 control-label text-left">
-									<input class="form-control" value='<spring:message code="lbl.adminsanctioned"/>' disabled="disabled"/>
+									<input class="form-control" value='L1 Tender finalised' disabled="disabled"/>
 								</div>
 								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 								<div class="col-sm-3 add-margin">

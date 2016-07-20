@@ -127,8 +127,6 @@ public class EstimateService {
 
     private final AbstractEstimateRepository abstractEstimateRepository;
 
-    private final LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
     @Autowired
     private EstimateTechnicalSanctionService estimateTechnicalSanctionService;
 
@@ -213,7 +211,6 @@ public class EstimateService {
     public EstimateService(final AbstractEstimateRepository abstractEstimateRepository,
             final LineEstimateDetailsRepository lineEstimateDetailsRepository) {
         this.abstractEstimateRepository = abstractEstimateRepository;
-        this.lineEstimateDetailsRepository = lineEstimateDetailsRepository;
     }
 
     public AbstractEstimate getAbstractEstimateById(final Long id) {
@@ -538,7 +535,7 @@ public class EstimateService {
         } else {
             if ((abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString()) ||
                     abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.RESUBMITTED.toString()))
-                        && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                    && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
                 saveTechnicalSanctionDetails(abstractEstimate);
 
             if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.TECH_SANCTIONED.toString())
@@ -743,54 +740,66 @@ public class EstimateService {
 
     public List<AbstractEstimate> searchAbstractEstimatesForLoa(
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
+        List<AbstractEstimate> abstractEstimates = new ArrayList<AbstractEstimate>();
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append(
+                "select distinct(estimate) from AbstractEstimate estimate where estimate.egwStatus.code = :aeStatus and exists (select distinct(ae.estimateNumber) from AbstractEstimate as ae where estimate.id = ae.id and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where ae.id = woe.estimate.id and upper(woe.workOrder.egwStatus.code) != upper(:woStatus) and upper(ae.egwStatus.code) = upper(:aeStatus)))");
 
-        final List<String> lineEstimateNumbers = lineEstimateDetailsRepository
-                .findEstimateNumbersToSearchAbstractEstimatesForLoa(
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString().toUpperCase(),
-                        WorksConstants.CANCELLED_STATUS);
+        queryStr.append(
+                " and exists (select act.abstractEstimate from Activity as act where estimate.id = act.abstractEstimate.id )");
 
-        if (!lineEstimateNumbers.isEmpty()) {
-            final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(AbstractEstimate.class)
-                    .createAlias("createdBy", "createdBy").createAlias("lineEstimateDetails", "lineEstimateDetails")
-                    .createAlias("egwStatus", "aeStatus")
-                    .createAlias("lineEstimateDetails.lineEstimate", "lineEstimate")
-                    .createAlias("projectCode", "projectCode");
-            if (abstractEstimateForLoaSearchRequest != null) {
-                if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
-                    criteria.add(Restrictions.ilike("lineEstimate.adminSanctionNumber",
-                            abstractEstimateForLoaSearchRequest.getAdminSanctionNumber()));
-                if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
-                    criteria.add(Restrictions.eq("executingDepartment.id",
-                            abstractEstimateForLoaSearchRequest.getExecutingDepartment()));
-                if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
-                    criteria.add(
-                            Restrictions.eq("estimateNumber", abstractEstimateForLoaSearchRequest.getEstimateNumber())
-                                    .ignoreCase());
-                if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
-                    criteria.add(Restrictions.ge("approvedDate",
-                            abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate()));
-                if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
-                    criteria.add(Restrictions.le("approvedDate",
-                            abstractEstimateForLoaSearchRequest.getAdminSanctionToDate()));
-                if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
-                    criteria.add(Restrictions.eq("createdBy.id",
-                            abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy()));
-                if (abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
-                    criteria.add(Restrictions
-                            .eq("projectCode.code", abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber())
-                            .ignoreCase());
-                criteria.add(Restrictions.in("estimateNumber", lineEstimateNumbers));
-                criteria.add(Restrictions.eq("aeStatus.code",
-                        AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString()).ignoreCase());
-                if (abstractEstimateForLoaSearchRequest.isSpillOverFlag())
-                    criteria.add(Restrictions.eq("lineEstimate.spillOverFlag",
-                            abstractEstimateForLoaSearchRequest.isSpillOverFlag()));
-            }
+        queryStr.append(
+                " and exists (select off.id from OfflineStatus as off where off.objectId = estimate.id and off.objectType = :objectType and upper(off.egwStatus.code) = upper(:offStatus) )");
 
-            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-            return criteria.list();
-        } else
-            return new ArrayList<AbstractEstimate>();
+        if (abstractEstimateForLoaSearchRequest != null) {
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
+                queryStr.append(
+                        " and upper(estimate.lineEstimateDetails.lineEstimate.adminSanctionNumber) like upper(:adminSanctionNumber)");
+            if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
+                queryStr.append(" and estimate.executingDepartment.id = :departmentId");
+            if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
+                queryStr.append(" and upper(estimate.estimateNumber) = upper(:estimateNumber)");
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
+                queryStr.append(" and estimate.approvedDate >= :fromDate");
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
+                queryStr.append(" and estimate.approvedDate <= :toDate");
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
+                queryStr.append(
+                        " and estimate.createdBy.id = :createdById");
+            if (abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
+                queryStr.append(" and upper(estimate.projectCode.code) = upper(:projectCode)");
+        }
+        queryStr.append(" and estimate.lineEstimateDetails.lineEstimate.spillOverFlag = :spillOverFlag");
+        final Query query = setQueryParametersForModifyLOA(abstractEstimateForLoaSearchRequest, queryStr);
+        abstractEstimates = query.getResultList();
+        return abstractEstimates;
+    }
+
+    private Query setQueryParametersForModifyLOA(final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
+            final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+        if (abstractEstimateForLoaSearchRequest != null) {
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() != null)
+                qry.setParameter("adminSanctionNumber", "%" + abstractEstimateForLoaSearchRequest.getAdminSanctionNumber() + "%");
+            if (abstractEstimateForLoaSearchRequest.getExecutingDepartment() != null)
+                qry.setParameter("departmentId", abstractEstimateForLoaSearchRequest.getExecutingDepartment());
+            if (abstractEstimateForLoaSearchRequest.getEstimateNumber() != null)
+                qry.setParameter("estimateNumber", abstractEstimateForLoaSearchRequest.getEstimateNumber());
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
+                qry.setParameter("fromDate", abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate());
+            if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
+                qry.setParameter("toDate", abstractEstimateForLoaSearchRequest.getAdminSanctionToDate());
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
+                qry.setParameter("createdById", abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy());
+            if (abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber() != null)
+                qry.setParameter("projectCode", abstractEstimateForLoaSearchRequest.getWorkIdentificationNumber());
+            qry.setParameter("spillOverFlag", abstractEstimateForLoaSearchRequest.isSpillOverFlag());
+            qry.setParameter("woStatus", WorksConstants.CANCELLED_STATUS);
+            qry.setParameter("aeStatus", AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+            qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
+            qry.setParameter("offStatus", AbstractEstimate.OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        }
+        return qry;
     }
 
     public List<AbstractEstimateForLoaSearchResult> searchAbstractEstimatesForLOA(
@@ -964,12 +973,14 @@ public class EstimateService {
 
     public List<AbstractEstimate> searchEstimatesToCancel(final SearchRequestCancelEstimate searchRequestCancelEstimate) {
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
+        queryStr.append(
+                "select distinct(ae) from AbstractEstimate ae where exists (select distinct(activity.id) from Activity activity where activity.abstractEstimate.id = ae.id) and not exists (select distinct(woe) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus) ");
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) = upper(:estimateNumber)");
             if (searchRequestCancelEstimate.getLineEstimateNumber() != null)
-                queryStr.append(" and upper(ae.lineEstimateDetails.lineEstimate.lineEstimateNumber) like upper(:lineEstimateNumber)");
+                queryStr.append(
+                        " and upper(ae.lineEstimateDetails.lineEstimate.lineEstimateNumber) like upper(:lineEstimateNumber)");
             if (searchRequestCancelEstimate.getWinCode() != null)
                 queryStr.append(" and upper(ae.projectCode.code) like upper(:projectCode)");
             if (searchRequestCancelEstimate.getStatus() != null)
@@ -979,13 +990,13 @@ public class EstimateService {
             if (searchRequestCancelEstimate.getToDate() != null)
                 queryStr.append(" and ae.estimateDate <= :toDate");
         }
-        
+
         final Query query = setQueryParametersForAbstractEstimate(searchRequestCancelEstimate, queryStr);
         return query.getResultList();
     }
 
-    private Query setQueryParametersForAbstractEstimate(SearchRequestCancelEstimate searchRequestCancelEstimate,
-            StringBuilder queryStr) {
+    private Query setQueryParametersForAbstractEstimate(final SearchRequestCancelEstimate searchRequestCancelEstimate,
+            final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (searchRequestCancelEstimate != null) {
             if (searchRequestCancelEstimate.getEstimateNumber() != null)
@@ -1011,16 +1022,16 @@ public class EstimateService {
                         AbstractEstimate.EstimateStatus.CANCELLED.toString());
         return estimateNumbers;
     }
-    
+
     public List<AbstractEstimate> searchAbstractEstimatesForOfflineStatus(
             final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
         List<AbstractEstimate> abstractEstimateList = new ArrayList<AbstractEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
+        queryStr.append(
+                "select distinct(ae) from AbstractEstimate ae where ae.egwStatus.code =:abstractEstimateStatus and not exists (select distinct(woe.estimate) from WorkOrderEstimate as woe where woe.estimate.id = ae.id and woe.workOrder.egwStatus.code != :workOrderStatus )");
         if (abstractEstimateForLoaSearchRequest != null) {
-            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null) {
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
                 queryStr.append(" and upper(ae.estimateNumber) =:abstractEstimateNumber");
-            }
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
                 queryStr.append(" and ae.approvedDate >= :abstractEstimateFromDate");
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
@@ -1029,15 +1040,13 @@ public class EstimateService {
             if (abstractEstimateForLoaSearchRequest.getAbstractEstimateCreatedBy() != null)
                 queryStr.append(" and ae.createdBy.id = :abstractEstimateCreatedBy");
 
-            if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
-                if (abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS)) {
+            if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null)
+                if (abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS))
                     queryStr.append(
                             " and not exists (select distinct(os.objectId) from OfflineStatus as os where os.objectType = :objectType and ae.id = os.objectId )");
-                } else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
+                else if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null)
                     queryStr.append(
                             " and ae.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = ae.id) and os.objectId = ae.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
-                }
-            }
         }
         final Query query = setQueryParametersForOfflineStatus(abstractEstimateForLoaSearchRequest, queryStr);
         abstractEstimateList = query.getResultList();
@@ -1049,10 +1058,9 @@ public class EstimateService {
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (abstractEstimateForLoaSearchRequest != null) {
-            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null) {
+            if (abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber() != null)
                 qry.setParameter("abstractEstimateNumber",
                         abstractEstimateForLoaSearchRequest.getAbstractEstimateNumber().toUpperCase());
-            }
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate() != null)
                 qry.setParameter("abstractEstimateFromDate", abstractEstimateForLoaSearchRequest.getAdminSanctionFromDate());
             if (abstractEstimateForLoaSearchRequest.getAdminSanctionToDate() != null)
@@ -1062,10 +1070,9 @@ public class EstimateService {
 
             if (abstractEstimateForLoaSearchRequest.getEgwStatus() != null) {
                 qry.setParameter("objectType", WorksConstants.ABSTRACTESTIMATE);
-                if (!abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS)) {
+                if (!abstractEstimateForLoaSearchRequest.getEgwStatus().equals(WorksConstants.ADMIN_SANCTIONED_STATUS))
                     qry.setParameter("offlineStatus",
                             abstractEstimateForLoaSearchRequest.getEgwStatus().toString().toLowerCase());
-                }
             }
             qry.setParameter("abstractEstimateStatus", WorksConstants.ADMIN_SANCTIONED_STATUS);
             qry.setParameter("workOrderStatus", WorksConstants.CANCELLED_STATUS);
@@ -1073,14 +1080,14 @@ public class EstimateService {
         }
         return qry;
     }
-    
+
     public List<String> getAbstractEstimateNumbersToSetOfflineStatus(final String code) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findAbstractEstimateNumbersToSetOfflineStatus("%" + code + "%",
                         WorksConstants.ADMIN_SANCTIONED_STATUS, WorksConstants.CANCELLED_STATUS);
         return estimateNumbers;
     }
-    
+
     public void validateLocationDetails(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
         if (worksApplicationProperties.locationDetailsRequired().toString().equalsIgnoreCase("Yes")) {
             final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -1090,8 +1097,8 @@ public class EstimateService {
                 bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
         }
     }
-    
-    public void loadLocationAppConfigValue(final Model model){
+
+    public void loadLocationAppConfigValue(final Model model) {
         final List<AppConfigValues> locationAppConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
         final AppConfigValues locationAppConfigValue = locationAppConfigvalues.get(0);
@@ -1100,5 +1107,5 @@ public class EstimateService {
         else
             model.addAttribute("isLocationDetailsRequired", false);
     }
-    
+
 }
