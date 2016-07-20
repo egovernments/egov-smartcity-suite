@@ -51,6 +51,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
@@ -146,7 +147,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @Override
-    @ValidationErrorPage(Constants.NEW)
+    @ValidationErrorPageExt(action = Constants.NEW, makeCall = true, toMethod = "prepareShowForApproval")
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
 
