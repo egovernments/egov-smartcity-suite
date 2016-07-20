@@ -125,9 +125,8 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
 		<div class="col-xs-3 add-margin view-content">
-		
-		<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
-		<s:text  name="commencementDate" id="startdate"  /><s:property value="%{formattedStartDate}" /></div>
+			<s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
+			<s:text  name="commencementDate" id="startdate"  /><s:property value="%{commencementDateFrmttd}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
 	</div>
@@ -142,7 +141,8 @@
 <div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.agreementDate.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content">
-		<s:date  name="agreementDate" id="agreementdate" format="dd-MMM-yyyy" /><s:property value="%{agreementdate}" /></div>
+			<s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
+			<s:property value="%{agreementDateFrmttd}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.agreementDocNo.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{agreementDocNo}" /></div>
 	</div>
