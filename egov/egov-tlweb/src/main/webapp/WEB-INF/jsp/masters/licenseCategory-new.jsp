@@ -69,10 +69,7 @@
 	}
 
 	function reload(){
-		document.getElementById("code").value="";
-		document.getElementById("name").value="";
-		document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action';
-    	document.licenseCategoryForm.submit();
+		jQuery("#licenseCategoryForm").trigger("reset");
 		
 	}
 
@@ -144,8 +141,7 @@
 				<s:actionmessage theme="simple" />
 			</div>
 			</s:if>
-			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple"
-				cssClass="form-horizontal form-groups-bordered"> 
+			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple" cssClass="form-horizontal form-groups-bordered" id="licenseCategoryForm">
 				<s:token name="%{tokenName()}"/> 
 				<s:push value="model">
 				<div class="panel panel-primary" data-collapsed="0">
