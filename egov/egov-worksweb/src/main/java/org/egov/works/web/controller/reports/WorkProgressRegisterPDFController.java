@@ -42,6 +42,7 @@ package org.egov.works.web.controller.reports;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -165,6 +166,7 @@ public class WorkProgressRegisterPDFController {
         final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<WorkProgressRegisterPdf>();
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+        final DecimalFormat df = new DecimalFormat("#.##");
 
         String dataRunDate = "";
 
@@ -232,8 +234,8 @@ public class WorkProgressRegisterPDFController {
                             + sdf.format(wpr.getTechnicalSanctionDate()));
                 else
                     pdf.setTechnicalSanctionAuthorityDate("");
-                if (wpr.getEstimateAmount() != null)
-                    pdf.setEstimateAmount(wpr.getEstimateAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                if (wpr.getEstimatevalue() != null)
+                    pdf.setEstimateAmount(df.format(wpr.getEstimatevalue()));
                 else
                     pdf.setEstimateAmount("NA");
                 if (wpr.getModeOfAllotment() != null)

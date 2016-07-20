@@ -150,7 +150,6 @@ public class WorkProgressRegister extends AbstractAuditable {
     @JoinColumn(name = "technicalSanctionBy")
     private User technicalSanctionBy;
 
-    private BigDecimal estimateAmount;
 
     private String modeOfAllotment;
 
@@ -392,14 +391,6 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setTechnicalSanctionBy(final User technicalSanctionBy) {
         this.technicalSanctionBy = technicalSanctionBy;
-    }
-
-    public BigDecimal getEstimateAmount() {
-        return estimateAmount;
-    }
-
-    public void setEstimateAmount(final BigDecimal estimateAmount) {
-        this.estimateAmount = estimateAmount;
     }
 
     public String getModeOfAllotment() {
