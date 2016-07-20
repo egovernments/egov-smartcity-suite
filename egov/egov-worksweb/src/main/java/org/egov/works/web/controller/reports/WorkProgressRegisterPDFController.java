@@ -233,7 +233,7 @@ public class WorkProgressRegisterPDFController {
                             + wpr.getTechnicalSanctionBy().getName() + ", "
                             + sdf.format(wpr.getTechnicalSanctionDate()));
                 else
-                    pdf.setTechnicalSanctionAuthorityDate("");
+                    pdf.setTechnicalSanctionAuthorityDate("NA");
                 if (wpr.getEstimatevalue() != null)
                     pdf.setEstimateAmount(df.format(wpr.getEstimatevalue()));
                 else
