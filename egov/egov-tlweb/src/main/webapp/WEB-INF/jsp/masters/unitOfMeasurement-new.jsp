@@ -191,13 +191,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32" value="%{name}" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="32" value="%{name}" onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" class="form-control patternvalidation" data-pattern="alphabetwithspace" value="%{code}" onchange="return validateData(this,'code')"  maxLength="5"/>
+								<s:textfield id="code"	name="code" class="form-control patternvalidation" data-pattern="alphabetwithspace" value="%{code}" onchange="return validateData(this,'code')"  maxlength="5"/>
 							</div>
 						</div>
 						
