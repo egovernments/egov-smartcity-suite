@@ -37,11 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.uploadsorrates;
+package org.egov.works.uploadsor;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class UploadSORRates {
+public class UploadSOR {
     private MultipartFile file;
 
     public MultipartFile getFile() {

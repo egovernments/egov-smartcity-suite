@@ -60,7 +60,7 @@ import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
-import org.egov.works.uploadsorrates.UploadSORRate;
+import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,9 +198,9 @@ public class ScheduleOfRateService {
     }
 
     @Transactional
-    public List<UploadSORRate> createScheduleOfRate(List<UploadSORRate> uploadSORRatesList) {
+    public List<UploadScheduleOfRate> createScheduleOfRate(List<UploadScheduleOfRate> uploadSORRatesList) {
         Date currentDate = new Date();
-        for (UploadSORRate obj : uploadSORRatesList) {
+        for (UploadScheduleOfRate obj : uploadSORRatesList) {
 
             if (obj.getCreateSor()) {
                 ScheduleOfRate scheduleOfRate = new ScheduleOfRate();

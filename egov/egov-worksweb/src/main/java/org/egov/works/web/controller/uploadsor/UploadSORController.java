@@ -73,8 +73,8 @@ import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.uploadsorrates.UploadSORRate;
-import org.egov.works.uploadsorrates.UploadSORRates;
+import org.egov.works.uploadsor.UploadSOR;
+import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.jboss.logging.Logger;
@@ -135,7 +135,7 @@ public class UploadSORController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
-    public String showNewLineEstimateForm(@ModelAttribute("uploadSORRates") final UploadSORRates uploadSORRates,
+    public String showNewLineEstimateForm(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
             final Model model) throws ApplicationException {
         model.addAttribute("originalFiles", worksUtils.getLatestSorRateUploadOriginalFiles());
         model.addAttribute("outPutFiles", worksUtils.getLatestSorRateUploadOutPutFiles());
@@ -144,15 +144,15 @@ public class UploadSORController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.POST)
-    public String create(@ModelAttribute("uploadSORRates") final UploadSORRates uploadSORRates,
+    public String create(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors)
             throws ApplicationException, IOException {
 
         try {
             errorInMasterData = false;
-            File convFile = new File(uploadSORRates.getFile().getOriginalFilename());
+            File convFile = new File(uploadSOR.getFile().getOriginalFilename());
             inputFile = convFile;
-            uploadSORRates.getFile().transferTo(convFile);
+            uploadSOR.getFile().transferTo(convFile);
             FileInputStream inputFile = new FileInputStream(convFile);
             final POIFSFileSystem fs = new POIFSFileSystem(inputFile);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -160,7 +160,7 @@ public class UploadSORController {
             timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_");
             final HSSFSheet sheet = wb.getSheetAt(0);
 
-            List<UploadSORRate> uploadSORRatesList = loadToList(sheet);
+            List<UploadScheduleOfRate> uploadSORRatesList = loadToList(sheet);
 
             validateDuplicateData(uploadSORRatesList);
 
@@ -168,17 +168,17 @@ public class UploadSORController {
 
             validateMandatoryFeilds(uploadSORRatesList);
 
-            prepareOriginalFileName(uploadSORRates.getFile().getOriginalFilename(), errors);
+            prepareOriginalFileName(uploadSOR.getFile().getOriginalFilename(), errors);
 
-            final FileStoreMapper originalFileStore = fileStoreService.store(uploadSORRates.getFile().getInputStream(),
-                    loadSorRateOriginalFileName, uploadSORRates.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
+            final FileStoreMapper originalFileStore = fileStoreService.store(uploadSOR.getFile().getInputStream(),
+                    loadSorRateOriginalFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
 
             persistenceService.persist(originalFileStore);
             originalFileStoreId = originalFileStore.getFileStoreId();
 
             if (errorInMasterData) {
                 inputFile.close();
-                prepareOutPutFileWithErrors(uploadSORRatesList, uploadSORRates, errors);
+                prepareOutPutFileWithErrors(uploadSORRatesList, uploadSOR, errors);
                 errors.reject("error.while.validating.data", "error.while.validating.data");
                 model.addAttribute("originalFileStoreId", originalFileStoreId);
                 model.addAttribute("outPutFileStoreId", outPutFileStoreId);
@@ -189,7 +189,7 @@ public class UploadSORController {
 
             inputFile.close();
 
-            prepareOutPutFileWithFinalStatus(uploadSORRatesList, uploadSORRates, errors);
+            prepareOutPutFileWithFinalStatus(uploadSORRatesList, uploadSOR, errors);
 
             model.addAttribute("message", messageSource.getMessage("msg.load.sor.rates.sucessful", null, null));
 
@@ -257,8 +257,8 @@ public class UploadSORController {
         }
     }
 
-    private void validateMandatoryFeilds(List<UploadSORRate> uploadSORRatesList) {
-        List<UploadSORRate> tempList = new ArrayList<>();
+    private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
+        List<UploadScheduleOfRate> tempList = new ArrayList<>();
         try {
             String error = "";
             Map<String, ScheduleOfRate> sorMap = new HashMap<String, ScheduleOfRate>();
@@ -274,7 +274,7 @@ public class UploadSORController {
             for (UOM uom : uomList)
                 uomMap.put(uom.getUom(), uom);
 
-            for (UploadSORRate obj : uploadSORRatesList) {
+            for (UploadScheduleOfRate obj : uploadSORRatesList) {
                 error = "";
 
                 // Validating SOR code
@@ -389,10 +389,10 @@ public class UploadSORController {
         }
     }
 
-    private void validateDuplicateData(List<UploadSORRate> uploadSORRatesList) {
+    private void validateDuplicateData(List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
-            Map<String, UploadSORRate> uploadSORRateMap = new HashMap<String, UploadSORRate>();
-            for (UploadSORRate obj : uploadSORRatesList) {
+            Map<String, UploadScheduleOfRate> uploadSORRateMap = new HashMap<String, UploadScheduleOfRate>();
+            for (UploadScheduleOfRate obj : uploadSORRatesList) {
                 if (obj.getSorCode() != null && obj.getSorCategoryCode() != null && !obj.getSorCode().equalsIgnoreCase("")
                         && !obj.getSorCategoryCode().equalsIgnoreCase(""))
                     if (uploadSORRateMap.get(obj.getSorCode() + "-" + obj.getSorCategoryCode()) == null)
@@ -419,8 +419,8 @@ public class UploadSORController {
         }
     }
 
-    private List<UploadSORRate> loadToList(HSSFSheet sheet) {
-        List<UploadSORRate> uploadSORRatesList = new ArrayList<UploadSORRate>();
+    private List<UploadScheduleOfRate> loadToList(HSSFSheet sheet) {
+        List<UploadScheduleOfRate> uploadSORRatesList = new ArrayList<UploadScheduleOfRate>();
         try {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++)
@@ -436,8 +436,8 @@ public class UploadSORController {
 
     }
 
-    private UploadSORRate getRowData(HSSFRow row) {
-        UploadSORRate sorRate = new UploadSORRate();
+    private UploadScheduleOfRate getRowData(HSSFRow row) {
+        UploadScheduleOfRate sorRate = new UploadScheduleOfRate();
         try {
             if (row != null) {
                 sorRate.setSorCode(getStrValue(row.getCell(SORCODE_CELL_INDEX)) == null ? null : getStrValue(row
@@ -493,7 +493,7 @@ public class UploadSORController {
         return sorRate;
     }
 
-    private void prepareOutPutFileWithErrors(List<UploadSORRate> uploadSORRatesList, UploadSORRates uploadSORRates,
+    private void prepareOutPutFileWithErrors(List<UploadScheduleOfRate> uploadSORRatesList, UploadSOR uploadSOR,
             BindingResult errors) {
         try {
             FileInputStream fIS = new FileInputStream(inputFile);
@@ -507,7 +507,7 @@ public class UploadSORController {
             HSSFCell cell = row.createCell(10);
             cell.setCellValue("Error Reason");
 
-            for (UploadSORRate obj : uploadSORRatesList)
+            for (UploadScheduleOfRate obj : uploadSORRatesList)
                 errorsMap.put(obj.getSorCode() + "-" + obj.getSorCategoryCode() + "-" + obj.getSorDescription() + "-"
                         + obj.getUomCode() + "-" + obj.getRate(), obj.getErrorReason());
 
@@ -525,10 +525,10 @@ public class UploadSORController {
             wb.write(output_file);
             output_file.close();
 
-            prepareOutPutFileName(uploadSORRates.getFile().getOriginalFilename(), errors);
+            prepareOutPutFileName(uploadSOR.getFile().getOriginalFilename(), errors);
 
             final FileStoreMapper outPutFileStore = fileStoreService.store(inputFile,
-                    loadSorRateOutPutFileName, uploadSORRates.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
+                    loadSorRateOutPutFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
 
             persistenceService.persist(outPutFileStore);
 
@@ -542,7 +542,7 @@ public class UploadSORController {
         }
     }
 
-    private void prepareOutPutFileWithFinalStatus(List<UploadSORRate> uploadSORRatesList, UploadSORRates uploadSORRates,
+    private void prepareOutPutFileWithFinalStatus(List<UploadScheduleOfRate> uploadSORRatesList, UploadSOR uploadSOR,
             BindingResult errors) {
         try {
             FileInputStream fIS = new FileInputStream(inputFile);
@@ -556,7 +556,7 @@ public class UploadSORController {
             HSSFCell cell = row.createCell(10);
             cell.setCellValue("Status");
 
-            for (UploadSORRate obj : uploadSORRatesList)
+            for (UploadScheduleOfRate obj : uploadSORRatesList)
                 finalStatusMap.put(obj.getSorCode() + "-" + obj.getSorCategoryCode() + "-" + obj.getSorDescription() + "-"
                         + obj.getUomCode() + "-" + obj.getRate(), obj.getFinalStatus());
 
@@ -574,10 +574,10 @@ public class UploadSORController {
             wb.write(output_file);
             output_file.close();
 
-            prepareOutPutFileName(uploadSORRates.getFile().getOriginalFilename(), errors);
+            prepareOutPutFileName(uploadSOR.getFile().getOriginalFilename(), errors);
 
             final FileStoreMapper outPutFileStore = fileStoreService.store(inputFile,
-                    loadSorRateOutPutFileName, uploadSORRates.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
+                    loadSorRateOutPutFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
 
             persistenceService.persist(outPutFileStore);
 
@@ -591,9 +591,9 @@ public class UploadSORController {
         }
     }
 
-    private List<UploadSORRate> removeEmptyRows(List<UploadSORRate> uploadSORRatesList) {
-        List<UploadSORRate> tempList = new ArrayList<>();
-        for (UploadSORRate obj : uploadSORRatesList) {
+    private List<UploadScheduleOfRate> removeEmptyRows(List<UploadScheduleOfRate> uploadSORRatesList) {
+        List<UploadScheduleOfRate> tempList = new ArrayList<>();
+        for (UploadScheduleOfRate obj : uploadSORRatesList) {
             if (obj.getErrorReason() != null && obj.getErrorReason().equalsIgnoreCase("Empty Record"))
                 continue;
             else

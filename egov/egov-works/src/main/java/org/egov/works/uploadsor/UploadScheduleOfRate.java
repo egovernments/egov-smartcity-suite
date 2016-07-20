@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.uploadsorrates;
+package org.egov.works.uploadsor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -46,7 +46,7 @@ import org.egov.common.entity.UOM;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 
-public class UploadSORRate {
+public class UploadScheduleOfRate {
 
     private String sorCode;
 

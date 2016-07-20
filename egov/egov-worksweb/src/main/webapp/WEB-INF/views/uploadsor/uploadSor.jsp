@@ -56,7 +56,7 @@
 	  padding:10px;
 	}
 </style>
-<form:form name="uploadSORRatesForm" role="form" method="post" modelAttribute="uploadSORRates" id="uploadSORRates" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form name="uploadSORForm" role="form" method="post" modelAttribute="uploadSOR" id="uploadSOR" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 		<div class="panel-heading">
 			<div class="panel-title">
