@@ -431,7 +431,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("mbDetails", mbHeaders);
         
         //Set MBHeaders in edit
-        model.addAttribute("mbHeaders",mBHeaderService.getMBHeaderBasedOnBillDate(newcontractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate()));
+        model.addAttribute("mbHeaders",mbHeaders);
         return "contractorBill-update";
     }
 
