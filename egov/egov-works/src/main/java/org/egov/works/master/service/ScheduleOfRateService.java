@@ -187,4 +187,9 @@ public class ScheduleOfRateService {
     public ScheduleOfRate getByCode(final String code) {
         return scheduleOfRateRepository.findByCode(code);
     }
+    
+    public ScheduleOfRate getByCodeAndScheduleCategoryId(final String code,final Long id) {
+        return scheduleOfRateRepository.findByCodeAndScheduleCategory_id(code,id);
+    }
+    
 }

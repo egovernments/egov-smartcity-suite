@@ -174,7 +174,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
             getRateDetailsForSORIdForREValidation(true);
         }
         if (scheduleOfRate != null) {
-            final ScheduleOfRate newScheduleOfRate = scheduleOfRateService.getByCode(code);
+            final ScheduleOfRate newScheduleOfRate = scheduleOfRateService.getByCodeAndScheduleCategoryId(code, scheduleOfRate.getScheduleCategory().getId());
             if (newScheduleOfRate != null && scheduleOfRate.getId() != newScheduleOfRate.getId()) {
                 addActionMessage(getText("sor.code.isunique"));
                 return NEW;

@@ -57,4 +57,6 @@ public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, 
 
     ScheduleOfRate findByCode(final String sorCode);
 
+    ScheduleOfRate findByCodeAndScheduleCategory_id(final String sorCode,final Long categoryId);
+    
 }
