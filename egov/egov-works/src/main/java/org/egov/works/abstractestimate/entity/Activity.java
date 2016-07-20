@@ -42,6 +42,7 @@ package org.egov.works.abstractestimate.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -55,6 +56,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -132,6 +134,18 @@ public class Activity extends AbstractAuditable {
 
     @Transient
     private String signValue;
+    
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="activity",targetEntity=MeasurementSheet.class )
+    private List<MeasurementSheet> measurementSheetList = new LinkedList<MeasurementSheet>();
+
+
+    public List<MeasurementSheet> getMeasurementSheetList() {
+        return measurementSheetList;
+    }
+
+    public void setMeasurementSheetList(List<MeasurementSheet> measurementSheetList) {
+        this.measurementSheetList = measurementSheetList;
+    }
 
     public Activity() {
     }
