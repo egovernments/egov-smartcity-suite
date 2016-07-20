@@ -587,6 +587,8 @@ public class ConnectionDemandService {
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
         EgDemand demandObj = null;
+       Installment currenticnstallment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
             demandObj = new EgDemand();
         else
@@ -606,11 +608,7 @@ public class ConnectionDemandService {
             }
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        final int listlength = demandObj.getEgDemandDetails().size() - 1;
-        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
-                WaterTaxConstants.PROPERTY_MODULE_NAME,
-                waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
-        demandObj.setEgInstallmentMaster(installObj);
+        demandObj.setEgInstallmentMaster(currenticnstallment);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
