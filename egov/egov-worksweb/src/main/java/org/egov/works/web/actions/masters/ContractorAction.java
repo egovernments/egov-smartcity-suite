@@ -181,6 +181,10 @@ public class ContractorAction extends SearchFormAction {
     @Action(value = "/masters/contractor-save")
     public String save() {
         populateContractorDetails(mode);
+        for (final ContractorDetail contractorDetail : actionContractorDetails) {
+        	if(contractorDetail != null)
+        		validateContractorDetail(contractorDetail);
+        }
         contractorService.applyAuditing(contractor);
         contractor = contractorService.persist(contractor);
         if (mode == null || mode.equals(""))
@@ -234,7 +238,6 @@ public class ContractorAction extends SearchFormAction {
                     setPrimaryDetails(contractorDetail);
                 contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
-                validateContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
                     contractorDetail.setDepartment(null);
@@ -253,9 +256,9 @@ public class ContractorAction extends SearchFormAction {
                     setPrimaryDetails(contractorDetail);
                 contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
-                validateContractorDetail(contractorDetail);
             }
         }
+        
     }
 
     protected boolean validContractorDetail(final ContractorDetail contractorDetail) {
