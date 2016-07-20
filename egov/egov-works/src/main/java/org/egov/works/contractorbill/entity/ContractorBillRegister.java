@@ -121,6 +121,9 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private MBHeader mbHeader;
+    
+    @Transient
+    private Long[] mbHeaderIds;
 
     private String cancellationReason;
 
@@ -299,6 +302,14 @@ public class ContractorBillRegister extends EgBillregister {
 
     public void setRetentionMoneyDeductionDetailes(final List<EgBilldetails> retentionMoneyDeductionDetailes) {
         this.retentionMoneyDeductionDetailes = retentionMoneyDeductionDetailes;
+    }
+
+    public Long[] getMbHeaderIds() {
+        return mbHeaderIds;
+    }
+
+    public void setMbHeaderIds(Long[] mbHeaderIds) {
+        this.mbHeaderIds = mbHeaderIds;
     }
 
 }

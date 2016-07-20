@@ -42,6 +42,7 @@ package org.egov.works.contractorbill.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -74,10 +75,8 @@ import org.egov.works.mb.entity.MBForCancelledBill;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.models.masters.Contractor;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -500,17 +499,12 @@ public class ContractorBillRegisterService {
             mbHeader.setWorkOrder(contractorBillRegister.getWorkOrderEstimate().getWorkOrder());
             mbHeaderService.save(mbHeader);
         } else {
-            final List<MBHeader> mBHeaders = contractorBillRegister.getWorkOrderEstimate().getMbHeaders();
-            if (mBHeaders != null && !mBHeaders.isEmpty())
-                for (final MBHeader mb : mBHeaders)
-                    if (mb.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.APPROVED.toString())
-                            && (mb.getEgBillregister() == null
-                                    || mb.getEgBillregister() != null && mb.getEgBillregister().getBillstatus()
-                                            .equals(ContractorBillRegister.BillStatus.CANCELLED.toString())
-                                    || mb.getEgBillregister() != null && contractorBillRegister.getId() != null
-                                            && mb.getEgBillregister().getId() == contractorBillRegister.getId())) {
-                        mb.setEgBillregister(contractorBillRegister);
-                        mbHeaderService.save(mb);
+            final List<Long> mBHeaderIds = new ArrayList<Long>(Arrays.asList(contractorBillRegister.getMbHeaderIds())); 
+            if (mBHeaderIds != null && !mBHeaderIds.isEmpty())
+                for (final Long mbId : mBHeaderIds) {
+                        MBHeader mBHeader = mbHeaderService.getMBHeaderById(mbId);
+                        mBHeader.setEgBillregister(contractorBillRegister);
+                        mbHeaderService.save(mBHeader);
                     }
         }
     }

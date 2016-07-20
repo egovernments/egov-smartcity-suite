@@ -337,8 +337,8 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             }
         }
         
-        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId());
-        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getCreatedDate())) {
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
+        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
     }
@@ -421,7 +421,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("billAssetValue", newcontractorBillRegister.getAssetDetailsList().get(0));
         model.addAttribute("contractorBillRegister", newcontractorBillRegister);
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
-        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeaderBasedOnBillDate(newcontractorBillRegister.getWorkOrderEstimate().getId(),newcontractorBillRegister.getBilldate());
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
         if (mbHeaders != null && !mbHeaders.isEmpty())
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
         if (newcontractorBillRegister.getStatus() != null
@@ -429,7 +429,9 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("mbDetails",   mbForCancelledBillService.getMBHeadersForCancelledBillListByContractorBillRegister(newcontractorBillRegister));
         else
             model.addAttribute("mbDetails", mbHeaders);
-
+        
+        //Set MBHeaders in edit
+        model.addAttribute("mbHeaders",mBHeaderService.getMBHeaderBasedOnBillDate(newcontractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate()));
         return "contractorBill-update";
     }
 

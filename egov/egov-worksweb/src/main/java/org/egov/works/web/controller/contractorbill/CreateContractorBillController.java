@@ -142,7 +142,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
         contractorBillRegister.setBilldate(new Date());
         model.addAttribute("mode", "new");
-
+        model.addAttribute("mbHeaders",mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),contractorBillRegister.getBilldate()));
         // TODO: remove this condition to check if spillover
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                 && !workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
@@ -223,6 +223,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     offlineStatus != null ? offlineStatus.getStatusDate() : "");
             model.addAttribute("workOrderEstimate", workOrderEstimate);
             model.addAttribute("contractorBillRegister", contractorBillRegister);
+            model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),contractorBillRegister.getBilldate()));
             return "contractorBill-form";
         } else {
 
@@ -436,8 +437,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
         }
         
-        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId());
-        if (contractorBillRegister.getBilldate().before(mBHeader.getCreatedDate())) {
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
+        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
     }

@@ -733,8 +733,8 @@ public class MBHeaderService {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 
-    public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId) {
-        return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId,MBHeader.MeasurementBookStatus.APPROVED.toString(),
+    public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId,final Date billDate) {
+        return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId,billDate,MBHeader.MeasurementBookStatus.APPROVED.toString(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
     

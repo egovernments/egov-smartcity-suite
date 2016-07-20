@@ -130,19 +130,18 @@
 		</thead>
 		<tbody>
 			<c:choose>
-				<c:when test="${workOrderEstimate.mbHeaders.size() != 0}">
-					<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mbDtls" varStatus="item">
-						<c:if test="${mbDtls.egwStatus.code == 'APPROVED' && mbDtls.mbDate <= contractorBillRegister.billdate && ((mbDtls.egBillregister == null || 
-						(mbDtls.egBillregister !=null && mbDtls.egBillregister.billstatus == 'CANCELLED')) || 
-						(mbDtls.egBillregister != null && contractorBillRegister.id != null && mbDtls.egBillregister.id == contractorBillRegister.id))}">
-							<tr id="mbdetailsrow"><c:set var="slNo" value="${slNo + 1}" />
-								<td><span class="spansno"><c:out value="${slNo}" /></span></td>
+				<c:when test="${mbHeaders.size() != 0}">
+				    <c:set var="SlNo" value="${1}" scope="session" />
+					<c:forEach items="${mbHeaders}" var="mbDtls" varStatus="item">
+							<tr id="mbdetailsrow">
+							    <form:hidden path="mbHeaderIds" id="mbheaderid_${item.index}" value="${mbDtls.id}"/>
+								<td><span class="spansno"><c:out value="${SlNo}" /></span></td>
 								<td><a id="mbrefno_${item.index}" href='javascript:void(0)' onclick="viewMB('<c:out value="${mbDtls.id}"/>')"><c:out value="${mbDtls.mbRefNo}"/></a></td>
 								<td><span id="pageno_${item.index}"><c:out value="${mbDtls.fromPageNo} - ${mbDtls.toPageNo}"></c:out></span></td>
 								<td><span id="mbdate_${item.index}"><fmt:formatDate value="${mbDtls.mbDate}" pattern="dd/MM/yyyy" /></span></td>
 								<td class="text-right"><span id="mbamount_${item.index}"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${mbDtls.mbAmount}" /></fmt:formatNumber></span></td>
 							</tr>
-						</c:if>
+							<c:set value="${SlNo + 1}" var="SlNo" scope="session" />
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
@@ -151,13 +150,9 @@
 		</tbody>
 		<tfoot>
 			<c:set var="mbtotal" value="${0}" scope="session" />
-			<c:if test="${workOrderEstimate.mbHeaders.size() != 0}">
-				<c:forEach items="${workOrderEstimate.getMbHeaders()}" var="mb">
-					<c:if test="${mb.egwStatus.code == 'APPROVED' && mb.mbDate <= contractorBillRegister.billdate && ((mb.egBillregister == null || 
-						(mb.egBillregister !=null && mb.egBillregister.billstatus == 'CANCELLED')) || 
-						(mb.egBillregister != null && contractorBillRegister.id != null && mb.egBillregister.id == contractorBillRegister.id))}">
-						<c:set var="mbtotal"	value="${mbtotal + mb.mbAmount }" />
-					</c:if>  
+			<c:if test="${mbHeaders.size() != 0}">
+				<c:forEach items="${mbHeaders}" var="mb">
+						<c:set var="mbtotal" value="${mbtotal + mb.mbAmount }" />
 				</c:forEach>
 			</c:if>
 			<tr>

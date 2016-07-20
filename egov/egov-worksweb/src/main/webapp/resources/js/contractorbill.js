@@ -676,13 +676,13 @@ $('#billtype').change(function() {
 	}
 });
 
+
 jQuery( "#billdate" ).datepicker({ 
 	 format: 'dd/mm/yyyy',
 	 autoclose:true,
  }).on('changeDate', function(ev) {
-	 bootbox.confirm('Measurement book details will be modified on change of date  Do you want to proceed',function(result) {
+	 bootbox.confirm($('#confirmmsg').val(),function(result) {
 		 if(!result) {
-			    jQuery( "#billdate" ).val('');
 				bootbox.hideAll();
 				return false;
 			} else {
@@ -697,7 +697,7 @@ jQuery( "#billdate" ).datepicker({
 		    			dataType: "json",
 		    			success: function (response) {
 		    				if(response.length == 0 ) {
-		    					bootbox.alert("Atleast one MB should be created for LOA for given date "+jQuery( "#billdate" ).val());
+		    					bootbox.alert($('#errormsg').val(),+jQuery( "#billdate" ).val());
 		    					jQuery( "#billdate" ).val('');
 		    					return false;
 		    				} else {
@@ -716,6 +716,8 @@ jQuery( "#billdate" ).datepicker({
 		    		            		 $('#pageno_'+index).html(json_obj[i].mbpageno); 
 		    		            		 $('#mbdate_'+index).html(json_obj[i].mbDate);
 		    		            		 $('#mbamount_'+index).html(json_obj[i].mbamount);
+		    		            		 $('#mbamount_'+index).html(json_obj[i].mbamount);
+		    		            		 $('#mbheaderid_'+index).html(json_obj[i].mbheaderId);
 		    		            		 totalMBAmount = parseFloat(parseFloat(totalMBAmount) + parseFloat($('#mbamount_'+index).html())).toFixed(2);
 		    		            		 index++;
 		    		            		 if(i != json_obj.length - 1)
@@ -776,6 +778,9 @@ function addRow(tableName,rowName) {
 
 		}).end().appendTo("#"+tableName+" tbody");	
 		sno++;
-		
 	}
+}
+
+function viewMB(mbHeaderId) {
+	window.open("/egworks/mb/view/"+mbHeaderId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 }
