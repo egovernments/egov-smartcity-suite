@@ -122,7 +122,6 @@
 	</script>
 </head>
 <body>
-<%try{ %>
 <div class="errorstyle" id="errorMessages" style="display:none;"></div>
 <s:if test="%{hasErrors()}">
     <div id="actionErrorMessages" class="errorstyle">
@@ -176,7 +175,7 @@
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchChallanForm.action='searchChallan-reset.action';"/></label>&nbsp;
       <input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
 </div>
-<logic:notEmpty name="results">
+<s:if test="%{!results.isEmpty()}">
 <display:table name="results" uid="currentRow" pagesize = "30" style="border:1px;width:100%" cellpadding="0" cellspacing="0" export="false" requestURI="">
 <display:caption media="pdf">&nbsp;</display:caption>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd"
@@ -197,8 +196,8 @@
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Status" style="width:20%" ><div align="center"><s:hidden name="currentRow.challan.status.description" value="%{currentRow.challan.status.description}"/>  <c:if test="${not empty currentRow.challan.status.description}">   <c:out value="${currentRow.challan.status.description}"/></c:if>&nbsp;</div></display:column>
 
 </display:table>
-</logic:notEmpty>
-<logic:empty name="results">
+</s:if>
+ <s:if test="%{results.isEmpty()}">
 	<s:if test="target=='searchresult'">
 	
 		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
@@ -209,10 +208,6 @@
 		</table>
 	
 	</s:if>
-</logic:empty>
+</s:if>
 </s:form>
-<%}catch(Exception e) {
-    e.printStackTrace();
-}
-%>
 </body>

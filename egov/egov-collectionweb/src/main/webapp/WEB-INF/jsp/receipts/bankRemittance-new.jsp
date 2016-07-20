@@ -379,7 +379,7 @@
 							<input name="search" type="submit" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
-					<logic:notEmpty name="paramList">
+					    <s:if test="%{!paramList.isEmpty()}">
 						<display:table name="paramList" uid="currentRow" pagesize="30"
 							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
 							export="false" requestURI="" excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
@@ -520,10 +520,10 @@
 						&nbsp; <input name="buttonClose" type="button" class="button"
 							id="button" value="Close" onclick="window.close()" />
 					</div>
-					</logic:notEmpty>
+					</s:if>
 					<s:if test="%{isListData}">
-					<logic:empty name="paramList">
-						<div class="formmainbox">
+					<s:if test="%{paramList.isEmpty()}">
+					<div class="formmainbox">
 							<table width="90%" border="0" align="center" cellpadding="0"
 								cellspacing="0">
 								<tr>
@@ -539,7 +539,7 @@
 							<input name="buttonClose" type="button" class="button"
 								id="buttonClose" value="Close" onclick="window.close()" />
 						</div>
-					</logic:empty>
+					</s:if>
 					</s:if>
 		</div>
 		</s:push>

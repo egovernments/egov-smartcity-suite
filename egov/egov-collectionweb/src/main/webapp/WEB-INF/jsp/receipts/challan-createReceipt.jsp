@@ -523,12 +523,7 @@ function checkForCurrentDate(obj)
 
 function onBodyLoad()
 {
-	<s:if test="%{model.id!=null}">
-	if(document.getElementById('challanDate').value!=""){
-		document.getElementById("challanDate").disabled=true;
-	}
-    </s:if>
-	<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
+	<s:if test='%{model.id!=null && model.status.code=="PENDING" && model.challan.status.code=="VALIDATED"}'>
 		loadDropDownCodesBank();
 	
 		// To hide delete button in cheque grid on page load
@@ -547,14 +542,13 @@ function onBodyLoad()
 		if(document.getElementById('instrumentChequeAmount').value==""){
 			document.getElementById('instrumentChequeAmount').value="";
 		}
-		
+		if(document.getElementById('challanDate').value!=""){
+			document.getElementById("challanDate").disabled=true;
+		}
 		displayPaytModes();
 		displayPaymentDetails();
 		loadchequedetails();
-		
 	</s:if>
-
-	
 }
 
 function displayPaymentDetails(){
@@ -1044,8 +1038,7 @@ function validate()
 	</div>
 
 </s:if>
-<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
-	
+<s:if test='%{model.id!=null && model.status.code=="PENDING" && model.challan.status.code=="VALIDATED"}'>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">   <!-- main table -->
 		<tr>
 		<td>

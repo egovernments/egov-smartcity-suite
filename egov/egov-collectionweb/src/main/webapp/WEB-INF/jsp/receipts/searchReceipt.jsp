@@ -402,20 +402,20 @@ function onChangeServiceClass(obj)
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
-      <logic:empty name="results">
+      <s:if test="%{results.isEmpty()}">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
-      </logic:empty>
+      </s:if>
       
 </div>
-<logic:empty name="resultList">
+<s:if test='%{resultList.isEmpty()}'>
 		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr> 
 			<div>&nbsp;</div>
 			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
 		</tr>
 		</table>
-</logic:empty>
-<logic:notEmpty name="resultList">
+</s:if>
+<s:if test='%{!resultList.isEmpty()}'>
 
 <div align="center">		
 <display:table name="searchResult" uid="currentRow" pagesize = "20" style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="false" requestURI="">
@@ -456,7 +456,7 @@ function onChangeServiceClass(obj)
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
-</logic:notEmpty>
+</s:if>
 </s:form>
 </body>
 
