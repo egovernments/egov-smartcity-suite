@@ -671,7 +671,7 @@ public class WorkProgressRegisterService {
         query.append(selectQuery.toString());
         query.append(" COUNT(DISTINCT details.leid)         AS lineEstimates,  ");
         query.append(" COUNT(details.ledid)                 AS lineEstimateDetails,  ");
-        query.append(" SUM(details.estimateamount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
+        query.append(" SUM(details.adminSanctionAmount)/10000000 AS leAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                    AS adminSanctionedEstimates,  ");
         query.append(" 0                                    AS aeAdminSanctionedAmountInCrores,  ");
         query.append(" 0                                    AS workValueOfAdminSanctionedAEInCrores, ");
