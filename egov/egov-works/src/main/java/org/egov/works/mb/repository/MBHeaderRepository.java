@@ -111,11 +111,11 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :woeId and (mbh.createdDate < (select createdDate from MBHeader where id = :mbHeaderId  and mbh.egwStatus.code != :status) or (select count(*) from MBHeader where id = :mbHeaderId) = 0) order by mbh.id")
     List<MBHeader> getPreviousMBHeaders(@Param("mbHeaderId") final Long mbHeaderId, @Param("woeId") final Long woeId, @Param("status") final String status);
 
-    @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mbDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and not exists (select cbr from ContractorBillRegister cbr where cbr.status.code = :cancelStatusCode and cbr = mb.egBillregister))")
+    @Query("select mbh from MBHeader as mbh where createdDate = (select max(mb.createdDate) from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId and mbDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and not exists (select cbr from ContractorBillRegister cbr where cbr.status.code != :cancelStatusCode and cbr = mb.egBillregister))")
     MBHeader findLatestMBHeaderToValidateBillDate(@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("billDate") final Date billDate,
             @Param("approvedStatusCode") final String approvedStatusCode,@Param("cancelStatusCode") final String cancelStatusCode);
     
-    @Query("select mb from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId  and mbDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and not exists (select cbr from ContractorBillRegister cbr where cbr.status.code = :cancelStatusCode and cbr = mb.egBillregister))")
+    @Query("select mb from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId  and mbDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and not exists (select cbr from ContractorBillRegister cbr where cbr.status.code != :cancelStatusCode and cbr = mb.egBillregister))")
     List<MBHeader> findMBHeaderBasedOnbillDate(@Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("billDate") final Date billDate, @Param("approvedStatusCode") final String approvedStatusCode,@Param("cancelStatusCode") final String cancelStatusCode );
 
 }
