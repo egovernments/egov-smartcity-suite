@@ -121,14 +121,20 @@
 		<div class="col-xs-3 add-margin"><s:text name='license.subCategory.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.name}" /></div>
 	</div>
-	
+    <div class="row add-border">
+        <div class="col-xs-3 add-margin"><s:text name='license.uom.lbl' /></div>
+        <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" /></div>
+        <div class="col-xs-3 add-margin"><s:text name='license.premises.lbl' /></div>
+        <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeArea_weight}" /></div>
+    </div>
 	<div class="row">
-		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
-		<div class="col-xs-3 add-margin view-content">
-			<s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
-			<s:text  name="commencementDate" id="startdate"  /><s:property value="%{commencementDateFrmttd}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
+        <div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
+        <div class="col-xs-3 add-margin view-content">
+            <s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
+            <s:property value="%{commencementDateFrmttd}" />
+        </div>
 	</div>
 	
 </div>
