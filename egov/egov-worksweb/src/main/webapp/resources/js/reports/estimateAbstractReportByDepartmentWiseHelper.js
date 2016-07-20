@@ -122,7 +122,9 @@ $('#btndownloadpdf').click(function() {
 	var natureOfWork = $('#natureOfWork').val();
 	var workStatus = $('#workStatus').find(":selected").text();
 	var spillOver = document.getElementById("spillOverFlag");
-	
+
+	if(workStatus.trim()=="Select from below")
+		workStatus = "";
 	var spillOverFlag = spillOver.checked ? true : false;
 
 	window.open("/egworks/reports/estimateabstractreport/departmentwise/pdf?adminSanctionFromDate="
@@ -161,6 +163,9 @@ $('#btndownloadexcel').click(function() {
 	var natureOfWork = $('#natureOfWork').val();
 	var workStatus = $('#workStatus').find(":selected").text();
 	var spillOver = document.getElementById("spillOverFlag");
+	
+	if(workStatus.trim()=="Select from below")
+		workStatus = "";
 	
 	var spillOverFlag = spillOver.checked ? true : false;
 

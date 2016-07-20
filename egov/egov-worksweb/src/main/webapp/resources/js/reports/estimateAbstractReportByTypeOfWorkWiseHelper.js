@@ -143,7 +143,9 @@ $('#btndownloadpdf').click(function() {
 	var workStatus = $('#workStatus').find(":selected").text();
 	var natureOfWork = $('#natureOfWork').val();
 	var spillOver = document.getElementById("spillOverFlag");
-	
+
+	if(workStatus.trim()=="Select from below")
+		workStatus = "";
 	var spillOverFlag = spillOver.checked ? true : false;
 	
 	if(departments == null)
@@ -193,7 +195,9 @@ $('#btndownloadexcel').click(function() {
 	var natureOfWork = $('#natureOfWork').val();
 	var workStatus = $('#workStatus').find(":selected").text();
 	var spillOver = document.getElementById("spillOverFlag");
-	
+
+	if(workStatus.trim()=="Select from below")
+		workStatus = "";
 	var spillOverFlag = spillOver.checked ? true : false;
 	if(departments == null)
 		departments = 0;
