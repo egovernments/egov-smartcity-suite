@@ -53,7 +53,11 @@ public class MeasurementSheet extends AbstractAuditable {
         return id;
     }
 
-    @Override
+    public BigDecimal getLength() {
+		return length;
+	}
+
+	@Override
     public void setId(Long id) {
         this.id = id;
     }
