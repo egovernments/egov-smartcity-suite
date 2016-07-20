@@ -181,7 +181,6 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         estimateService.validateActivities(abstractEstimate, bindErrors);
-        estimateService.validateLocationDetails(abstractEstimate, bindErrors);
         
         //Added server side validation for selected abstract estimate created flag
         if (abstractEstimate.getLineEstimateDetails() != null
@@ -192,9 +191,11 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             
         }
             
-        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION))
+        if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
             if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                 bindErrors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
+            estimateService.validateLocationDetails(abstractEstimate, bindErrors);
+        }
         if (bindErrors.hasErrors()) {
             for (final Activity activity : abstractEstimate.getSorActivities())
                 activity.setSchedule(scheduleOfRateService.getScheduleOfRateById(activity.getSchedule().getId()));
