@@ -176,7 +176,7 @@
 						<td class="bluebox"><s:text name="reconciliationdate" /> <span
 							class="bluebox"><span class="mandatory1">*</span></span></td>
 						<td class="greybox"><s:date name="reconciliationDate"
-								id="reconciliationDate" format="dd/MM/yyyy" /> <s:textfield
+								var="reconciliationDate" format="dd/MM/yyyy" /> <s:textfield
 								id="reconciliationDate" name="reconciliationDate"
 								value="%{reconciliationDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -187,7 +187,7 @@
 						<td class="greybox"></td>
 						<td class="greybox"><s:text name="fromdate" /> <span
 							class="greybox"><span class="mandatory1">*</span></span></td>
-						<td class="greybox"><s:date name="fromDate" id="fromDate"
+						<td class="greybox"><s:date name="fromDate" var="fromDate"
 								format="dd/MM/yyyy" /> <s:textfield id="fromDate"
 								name="fromDate" value="%{fromDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -196,7 +196,7 @@
 						<td class="greybox"><s:text name="todate" /> <span
 							class="greybox"><span class="mandatory1">*</span></span></td>
 
-						<td class="greybox"><s:date name="toDate" id="toDate"
+						<td class="greybox"><s:date name="toDate" var="toDate"
 								format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
 								value="%{toDate}"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"

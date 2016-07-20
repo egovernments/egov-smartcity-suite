@@ -327,7 +327,7 @@
 
 						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
 							class="mandatory1">*</span></td>
-						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
+						<s:date name='voucherDate' var="voucherDateId" format='dd/MM/yyyy' />
 						<td class="bluebox" width="34%">
 							<div name="daterow">
 								<s:textfield id="voucherDate" name="voucherDate"

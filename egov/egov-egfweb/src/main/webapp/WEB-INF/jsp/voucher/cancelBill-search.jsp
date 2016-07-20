@@ -130,7 +130,7 @@ function validateCancel()
 				<td class="bluebox" ></td>
 					<td class="bluebox"><s:text name="from.date" /></td>
 
-					<td class="bluebox"><s:date name="fromDate" id="fromDate"
+					<td class="bluebox"><s:date name="fromDate" var="fromDate"
 							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
 							name="fromDate" value="%{fromDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -139,7 +139,7 @@ function validateCancel()
 					<td class="bluebox"><s:text name="to.date" /></td>
 
 
-					<td class="bluebox"><s:date name="toDate" id="toDate"
+					<td class="bluebox"><s:date name="toDate" var="toDate"
 							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
 							value="%{toDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

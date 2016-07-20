@@ -547,7 +547,7 @@ function onSubmit()
 									name="commonBean.billNumber" /></td>
 							<td class="bluebox"><s:text name="bill.Date" /><span
 								class="mandatory1"> *</span></td>
-							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+							<s:date name='commonBean.billDate' var="commonBean.billDateId"
 								format='dd/MM/yyyy' />
 							<td class="bluebox"><s:textfield name="commonBean.billDate"
 									id="billDate"

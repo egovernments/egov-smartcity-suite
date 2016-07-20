@@ -166,7 +166,7 @@
 							<td class="greybox"><s:text name="subLedger.startDate" /><span
 								class="mandatory"></span></td>
 
-							<td class="greybox"><s:date name="startDate" id="startDate"
+							<td class="greybox"><s:date name="startDate" var="startDate"
 									format="dd/MM/yyyy" /> <s:textfield id="startDate"
 									name="startDate" value="%{startDate}"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -177,7 +177,7 @@
 							<td class="greybox"><s:text name="subLedger.endDate" /><span
 								class="mandatory"></span></td>
 
-							<td class="greybox"><s:date name="endDate" id="endDate"
+							<td class="greybox"><s:date name="endDate" var="endDate"
 									format="dd/MM/yyyy" /> <s:textfield id="endDate"
 									name="endDate" value="%{endDate}"
 									onkeyup="DateFormat(this,this.value,event,false,'3')"
