@@ -222,12 +222,6 @@ public class ContractorAction extends SearchFormAction {
         contractor.getContractorDetails().clear();
 
         for (final ContractorDetail contractorDetail : actionContractorDetails) {
-            if (contractorDetail != null) {
-                List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-                validationErrors = contractorDetail.validate();
-                if (validationErrors != null)
-                    throw new ValidationException(validationErrors);
-            }
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
@@ -240,6 +234,7 @@ public class ContractorAction extends SearchFormAction {
                     setPrimaryDetails(contractorDetail);
                 contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
+                validateContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
                     contractorDetail.setDepartment(null);
@@ -258,6 +253,7 @@ public class ContractorAction extends SearchFormAction {
                     setPrimaryDetails(contractorDetail);
                 contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
+                validateContractorDetail(contractorDetail);
             }
         }
     }
@@ -454,6 +450,17 @@ public class ContractorAction extends SearchFormAction {
         criteriaMap.put(WorksConstants.GRADE_ID, gradeId);
         criteriaMap.put(WorksConstants.SEARCH_DATE, searchDate);
         return criteriaMap;
+    }
+    
+    public void validateContractorDetail(final ContractorDetail contractorDetail) {
+        for (final ContractorDetail contDetail : actionContractorDetails) {
+            if (contDetail != null) {
+                List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+                validationErrors = contractorDetail.validate();
+                if (validationErrors != null)
+                    throw new ValidationException(validationErrors);
+            }
+        }
     }
 
 }

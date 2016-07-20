@@ -88,3 +88,23 @@ function validateContractorGradeFormAndSubmit(){
 function createNewContractorGrade() {
 	window.location = "/egworks/masters/contractorGrade-newform.action";
 }
+
+function validateMinimumAmount(elem) {
+	var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
+
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
+}
+
+function validateMaximumAmount(elem) {
+	var valid = /^[0-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
+
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
+}
