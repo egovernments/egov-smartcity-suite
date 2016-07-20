@@ -58,7 +58,7 @@
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.contractor" /></th>
 					<th><spring:message code="lbl.billvalue" /></th>
-					<th><spring:message code="lbl.status" /></th>
+					<th align="left"><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.currentowner" /></th>
 					<th><spring:message code="lbl.action" /></th>
 					

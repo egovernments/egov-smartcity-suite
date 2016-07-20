@@ -41,6 +41,7 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.util.List;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -49,6 +50,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,6 +70,9 @@ public class SearchContractorBillController {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @RequestMapping(value = "/searchcontractorform", method = RequestMethod.GET)
     public String showSearchContractorBill(
@@ -83,7 +88,7 @@ public class SearchContractorBillController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("billTypes", BillTypes.values());
-        model.addAttribute("billStatus", BillStatus.values());
+        model.addAttribute("billStatus", egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTORBILL));
         model.addAttribute("departments", departmentService.getAllDepartments());
     }
 

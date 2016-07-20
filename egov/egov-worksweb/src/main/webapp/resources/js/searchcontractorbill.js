@@ -102,6 +102,7 @@ function callAjaxSearch() {
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
+					$('td:eq(8)',row).html(parseFloat(Math.round(data.billValue * 100) / 100).toFixed(2));
 					if(data.billStatus == 'APPROVED')
 						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option></select>');
 					else
@@ -144,8 +145,7 @@ function callAjaxSearch() {
 					       return full.contractorName + " - " + full.contractorCode;
 					    } 
 				}, {
-					"data" : "billValue","width": "6%",
-					"sClass" : "text-right"
+					"data" : "billValue","width": "6%","sClass" : "text-right"
 				}, {
 					"data" : "billStatus",
 					"sClass" : "text-center","autoWidth": "false"

@@ -84,7 +84,7 @@
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>
-				<form:options items="${billStatus}" />
+				<form:options items="${billStatus}" itemValue="code" itemLabel="description"/>
 			</form:select>
 			<form:errors path="status" cssClass="add-margin error-msg" />
 		</div>
