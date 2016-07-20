@@ -91,7 +91,7 @@ public class UOMService {
     }
 
     public List<UOM> findAllOrderByCategory() {
-        return uomRepository.findAllByOrderByUOMCategoryIdAsc();
+        return uomRepository.findAllByOrderByUomCategoryIdAsc();
     }
     
         

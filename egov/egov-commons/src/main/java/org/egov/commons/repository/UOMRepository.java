@@ -54,6 +54,6 @@ public interface UOMRepository extends JpaRepository<UOM, Long> {
     @Query("from UOM where uom=:uom order by id desc")
     List<UOM> findByUOM(@Param("uom") String uom);
     
-    List<UOM> findAllByOrderByUOMCategoryIdAsc();
+    List<UOM> findAllByOrderByUomCategoryIdAsc();
 
 }
