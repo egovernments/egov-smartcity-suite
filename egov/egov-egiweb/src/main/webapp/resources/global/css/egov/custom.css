@@ -231,17 +231,53 @@ label.error {
 }
 .page-container.horizontal-menu .search {
   position: fixed;
-  top: 64px;
+  top: 63px;
   left: 0;
   z-index: 10;
   width: 250px;
   background: #6b4f2c;
 }
 .page-container.horizontal-menu .search #searchtree {
-  padding: 14px;
+  position: relative;
+  padding: 15px;
   width: 250px;
   color: #fff;
   background: #6b4f2c;
+  /* active state */
+}
+.page-container.horizontal-menu .search #searchtree::-webkit-input-placeholder {
+  color: #bbb !important;
+}
+.page-container.horizontal-menu .search #searchtree:hover,
+.page-container.horizontal-menu .search #searchtree:focus {
+  background: #7c603d;
+}
+.page-container.horizontal-menu .search #searchtree ~ .applyanimation {
+  position: relative;
+  display: block;
+  width: 250px;
+}
+.page-container.horizontal-menu .search #searchtree ~ .applyanimation:before,
+.page-container.horizontal-menu .search #searchtree ~ .applyanimation:after {
+  content: '';
+  height: 3px;
+  width: 0;
+  bottom: -1px;
+  position: absolute;
+  background: #f2851f;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+.page-container.horizontal-menu .search #searchtree ~ .applyanimation:before {
+  left: 50%;
+}
+.page-container.horizontal-menu .search #searchtree ~ .applyanimation:after {
+  right: 50%;
+}
+.page-container.horizontal-menu .search #searchtree:focus ~ .applyanimation:before,
+.page-container.horizontal-menu .search #searchtree:focus ~ .applyanimation:after {
+  width: 50%;
 }
 .page-container.horizontal-menu .search .searchicon {
   position: absolute;
