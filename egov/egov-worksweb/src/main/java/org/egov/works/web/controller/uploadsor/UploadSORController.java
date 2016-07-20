@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.uploadsorrates;
+package org.egov.works.web.controller.uploadsor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,10 +90,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/uploadsorrates/form")
-public class UploadSORRatesController {
+@RequestMapping(value = "/uploadsor/form")
+public class UploadSORController {
 
-    private static final Logger LOGGER = Logger.getLogger(UploadSORRatesController.class);
+    private static final Logger LOGGER = Logger.getLogger(UploadSORController.class);
     private static final int DATA_STARTING_ROW_INDEX = 1;
     private static final int SORCODE_CELL_INDEX = 0;
     private static final int SORCATEGORY_CELL_INDEX = 1;
@@ -139,7 +139,7 @@ public class UploadSORRatesController {
             final Model model) throws ApplicationException {
         model.addAttribute("originalFiles", worksUtils.getLatestSorRateUploadOriginalFiles());
         model.addAttribute("outPutFiles", worksUtils.getLatestSorRateUploadOutPutFiles());
-        return "uploadSorRates";
+        return "uploadSor";
     }
 
     @SuppressWarnings("unchecked")
@@ -207,7 +207,7 @@ public class UploadSORRatesController {
         }
         model.addAttribute("originalFileStoreId", originalFileStoreId);
         model.addAttribute("outPutFileStoreId", outPutFileStoreId);
-        return "uploadSorRates-result";
+        return "uploadSor-result";
     }
 
     private void prepareOriginalFileName(String originalFilename, BindingResult errors) {

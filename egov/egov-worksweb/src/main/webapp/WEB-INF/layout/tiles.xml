@@ -361,14 +361,14 @@
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setAbstractEstimateStatus-form.jsp"/>
 	</definition>
 	
-	<definition name="uploadSorRates" extends="base_layout">
-        <put-attribute name="page-title" value="title.upload.sor.rates" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uploadsorrates/uploadSorRates.jsp"/>
+	<definition name="uploadSor" extends="base_layout">
+        <put-attribute name="page-title" value="title.upload.sor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uploadsor/uploadSor.jsp"/>
     </definition>
     
     <definition name="uploadSorRates-result" extends="base_layout">
-        <put-attribute name="page-title" value="title.upload.sor.rates.result" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uploadsorrates/uploadSorRates-result.jsp"/>
+        <put-attribute name="page-title" value="title.upload.sor.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uploadsor/uploadSor-result.jsp"/>
     </definition>
 
 </tiles-definitions>  

@@ -45,7 +45,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<script src="<egov:url path='resources/js/uploadsorrates/uploadsorrates.js?rnd=${app_release_no}'/>"></script>
+<script src="<egov:url path='resources/js/uploadsor/uploadsor.js?rnd=${app_release_no}'/>"></script>
 <style>
 	.file-ellipsis {
 		width : auto !Important;
@@ -60,7 +60,7 @@
 	<div class="panel panel-primary" data-collapsed="0" style=" scrollable:true;">
 		<div class="panel-heading">
 			<div class="panel-title">
-					<spring:message code="title.upload.sor.rates" />
+					<spring:message code="title.upload.sor" />
 			</div>
 		</div>
 		<input type="hidden"  id="documentsSize">
@@ -124,6 +124,13 @@
 							</td>
 						</tr>
 					</tbody>	
+				</table>
+				<table>
+					<tr>
+						 <td>
+								&nbsp&nbsp&nbsp <a href="/egworks/resources/app/formats/Upload_Schedule_Of_Rate_Template.xls"><spring:message code="lbl.download.template" /></a>
+						 </td>
+					</tr>
 				</table>
 			</div>
 	</div>
