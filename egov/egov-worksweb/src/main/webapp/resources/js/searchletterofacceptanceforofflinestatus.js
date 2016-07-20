@@ -75,14 +75,14 @@ $(document).ready(function() {
 	   $this.text($this.text().replace(/_/g, ' '));
 	});
 
-	//Showing WorkOrder Number Which are in approved status
+	//Showing WorkOrder Number Which are in approved status With BOQ
 	var workOrderNumber = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxsearch-loanumber?workOrderNumber=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxloanumber-loaofflinestatus?workOrderNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {
@@ -111,7 +111,7 @@ $(document).ready(function() {
 				},
 				queryTokenizer : Bloodhound.tokenizers.whitespace,
 				remote : {
-					url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
+					url : '/egworks/letterofacceptance/ajaxcontractors-loaofflinestatus?contractorName=%QUERY',
 					filter : function(data) {
 						return $.map(data, function(ct) {
 							return {
@@ -136,14 +136,14 @@ $(document).ready(function() {
 				$("#contractor").val(data.value);
 			});
 	
-	//Showing Estimate Numbers for LOA which are in approved status
+	//Showing Estimate Numbers for LOA which are in approved status With BOQ
 	var estimateNumber = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxestimatenumbers-loa?estimateNumber=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxestimatenumbers-loaofflinestatus?estimateNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {

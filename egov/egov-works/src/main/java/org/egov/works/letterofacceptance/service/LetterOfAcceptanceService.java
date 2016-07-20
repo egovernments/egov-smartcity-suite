@@ -995,7 +995,8 @@ public class LetterOfAcceptanceService {
     public List<WorkOrderEstimate> searchLetterOfAcceptanceForOfflineStatus(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         List<WorkOrderEstimate> workOrderList = new ArrayList<WorkOrderEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(woe) from WorkOrderEstimate woe where woe.workOrder.egwStatus.code =:workOrderStatus ");
+        queryStr.append("select distinct(woe) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code =:workOrderStatus ");
+        queryStr.append(" and exists (select woa.workOrderEstimate from WorkOrderActivity as woa where woe.id = woa.workOrderEstimate.id )");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 queryStr.append(" and upper(woe.workOrder.workOrderNumber) =:workOrderNumber");
@@ -1005,9 +1006,6 @@ public class LetterOfAcceptanceService {
                 queryStr.append(" and woe.workOrder.workOrderDate >= :workOrderFromDate");
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 queryStr.append(" and woe.workOrder.workOrderDate <= :workOrderToDate");
-            if (searchRequestLetterOfAcceptance.getContractor() != null)
-                queryStr.append(
-                        " and upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorCode) ");
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
                 queryStr.append(" and woe.estimate.executingDepartment.id =:department");
             }            
@@ -1024,6 +1022,9 @@ public class LetterOfAcceptanceService {
                 }
             }
         }
+        if (searchRequestLetterOfAcceptance.getContractorName() != null)
+            queryStr.append(
+                    " and (upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorCode)) ");
         final Query query = setQueryParametersForOfflineStatus(searchRequestLetterOfAcceptance, queryStr);
         workOrderList = query.getResultList();
         return workOrderList;
@@ -1041,9 +1042,9 @@ public class LetterOfAcceptanceService {
                 qry.setParameter("workOrderFromDate", searchRequestLetterOfAcceptance.getFromDate());
             if (searchRequestLetterOfAcceptance.getToDate() != null)
                 qry.setParameter("workOrderToDate", searchRequestLetterOfAcceptance.getToDate());
-            if (searchRequestLetterOfAcceptance.getContractor() != null) {
-                qry.setParameter("contractorName", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
-                qry.setParameter("contractorCode", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
+            if (searchRequestLetterOfAcceptance.getContractorName() != null) {
+                qry.setParameter("contractorName", "%" + searchRequestLetterOfAcceptance.getContractorName() + "%");
+                qry.setParameter("contractorCode", "%" + searchRequestLetterOfAcceptance.getContractorName() + "%");
             }
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
                 qry.setParameter("department", searchRequestLetterOfAcceptance.getDepartmentName());
@@ -1086,4 +1087,23 @@ public class LetterOfAcceptanceService {
                 .findWorkOrderNumbersToModifyLOA("%" + workOrderNumber + "%", WorksConstants.APPROVED.toString());
         return workOrderNumbers;
     }
+    
+    public List<String> getApprovedEstimateNumbersForSetOfflineStatus(final String estimateNumber) {
+        final List<String> estimateNumbers = letterOfAcceptanceRepository
+                .findEstimateNumbersToSetOfflineStatus("%" + estimateNumber + "%", WorksConstants.APPROVED.toString());
+        return estimateNumbers;
+    }
+    
+    public List<String> getApprovedWorkOrderNumberForSetOfflineStatus(final String workOrderNumber) {
+        final List<String> workOrderNumbers = letterOfAcceptanceRepository
+                .findWorkOrderNumbersToSetOfflineStatus("%" + workOrderNumber + "%", WorksConstants.APPROVED.toString());
+        return workOrderNumbers;
+    }
+    
+    public List<String> getApprovedContractorForSetOfflineStatus(final String contractorName) {
+        final List<String> contractorNames = letterOfAcceptanceRepository
+                .findContractorToSetOfflineStatus("%" + contractorName + "%", WorksConstants.APPROVED.toString());
+        return contractorNames;
+    }
+
 }

@@ -365,5 +365,20 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody List<String> findLoaNumbersForModifyLOA(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.getApprovedWorkOrderNumberForModfyLOA(workOrderNumber);
     }
+    
+    @RequestMapping(value = "/ajaxestimatenumbers-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findEstimateNumbersForOfflineStatus(@RequestParam final String estimateNumber) {
+        return letterOfAcceptanceService.getApprovedEstimateNumbersForSetOfflineStatus(estimateNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxloanumber-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findLoaNumbersForForOfflineStatus(@RequestParam final String workOrderNumber) {
+        return letterOfAcceptanceService.getApprovedWorkOrderNumberForSetOfflineStatus(workOrderNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxcontractors-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorNameOrCodeForForOfflineStatus(@RequestParam final String contractorName) {
+        return letterOfAcceptanceService.getApprovedContractorForSetOfflineStatus(contractorName);
+    }
 
 }

@@ -137,5 +137,17 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and not exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
     List<String> findWorkOrderNumbersToModifyLOA(@Param("workOrderNumber") String workOrderNumber,
             @Param("workOrderStatus") String workOrderStatus);
+    
+    @Query("select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.estimate.estimateNumber) like upper(:estimateNumber) and exists(select distinct(woa.workOrderEstimate.estimate.estimateNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    List<String> findEstimateNumbersToSetOfflineStatus(@Param("estimateNumber") String estimateNumber,
+            @Param("workOrderStatus") String workOrderStatus);
+    
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and exists(select distinct(woa.workOrderEstimate.workOrder.workOrderNumber) from WorkOrderActivity woa where woa.workOrderEstimate = woe)")
+    List<String> findWorkOrderNumbersToSetOfflineStatus(@Param("workOrderNumber") String workOrderNumber,
+            @Param("workOrderStatus") String workOrderStatus);
+    
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code = :workOrderStatus and (upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorName)) and exists (select distinct(woa.workOrderEstimate) from WorkOrderActivity woa where woa.workOrderEstimate = woe.id)")
+    List<String> findContractorToSetOfflineStatus(@Param("contractorName") String contractorName,
+            @Param("workOrderStatus") String workOrderStatus);
 
 }
