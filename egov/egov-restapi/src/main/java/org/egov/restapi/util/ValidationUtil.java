@@ -42,13 +42,17 @@ package org.egov.restapi.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
+import org.egov.ptis.domain.model.MobilePaymentDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.restapi.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
@@ -63,6 +67,7 @@ import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 @Service
 public class ValidationUtil {
@@ -71,6 +76,9 @@ public class ValidationUtil {
     
     @Autowired
     private PropertyExternalService propertyExternalService;
+    
+    @Autowired
+    private PtDemandDao ptDemandDAO;
     
     /**
      * Validates Property Transfer request
@@ -543,6 +551,67 @@ public class ValidationUtil {
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MUTATION_INVALID);
     	}
+    	return errorDetails;
+    }
+    
+    /**
+     * Validates payment details for Mobile App
+     * @param mobilePaymentDetails
+     * @return
+     */
+    public ErrorDetails validatePaymentDetails(MobilePaymentDetails mobilePaymentDetails){
+    	ErrorDetails errorDetails = null;
+    	if(StringUtils.isBlank(mobilePaymentDetails.getAssessmentNo())){
+    		errorDetails = new ErrorDetails();
+    		errorDetails.setErrorCode(RestApiConstants.ASSESSMENT_NO_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.ASSESSMENT_NO_REQ_MSG);
+    	}
+    	if(StringUtils.isBlank(mobilePaymentDetails.getUlbCode())){
+    		errorDetails = new ErrorDetails();
+    		errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQUIRED);
+            errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG);
+    	}
+    	if(mobilePaymentDetails.getAmountToBePaid().compareTo(BigDecimal.ZERO) < 1){
+    		errorDetails = new ErrorDetails();
+    		errorDetails.setErrorCode(RestApiConstants.INVALID_PAYMENT_AMOUNT_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.INVALID_PAYMENT_AMOUNT_MSG);
+    	}
+    	if(StringUtils.isBlank(mobilePaymentDetails.getMobileNumber())){
+    		errorDetails = new ErrorDetails();
+    		errorDetails.setErrorCode(RestApiConstants.MOBILE_NO_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.MOBILE_NO_REQ_MSG);
+    	}
+    	if (!basicPropertyDAO.isAssessmentNoExist(mobilePaymentDetails.getAssessmentNo())) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+        }
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(mobilePaymentDetails.getAssessmentNo());
+        if(basicProperty != null){
+        	Property property = basicProperty.getProperty();
+        	if(property != null){
+        		if(property.getIsExemptedFromTax()){
+        			errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
+        		}
+        		Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            	BigDecimal totalTaxDue = BigDecimal.ZERO;
+            	if(currentPtdemand != null){
+            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+            			if(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0){
+            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+            	    	}
+            	    }
+            	}
+            	if(mobilePaymentDetails.getAmountToBePaid().compareTo(totalTaxDue) > 0){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.PTIS_DEMAND_AMOUNT_GREATER_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.PTIS_DEMAND_AMOUNT_GREATER_MSG);
+            	}
+        	}
+        }
+    	
     	return errorDetails;
     }
 
