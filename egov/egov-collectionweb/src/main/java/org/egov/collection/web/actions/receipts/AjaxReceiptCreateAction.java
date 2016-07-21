@@ -376,6 +376,22 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
                 && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
             serviceList = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY, Long.valueOf(parameters.get("serviceCatId")[0]),
+                    Boolean.TRUE);
+        else
+            serviceList = Collections.EMPTY_LIST;
+
+        return "serviceList";
+
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForChallan")
+    public String ajaxLoadServiceByCategoryForChallan() {
+
+        if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
+                && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
+            serviceList = getPersistenceService().findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
                     Long.valueOf(parameters.get("serviceCatId")[0]),
                     CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE);
