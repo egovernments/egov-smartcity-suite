@@ -85,7 +85,7 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.measurement.abstract" />
 					</div>
-					<div class="col-xs-2 add-margin view-content">
+					<div class="col-xs-9 add-margin view-content">
 						<c:out default="N/A" value="${mbHeader.mbAbstract}"></c:out>
 					</div>
 				</div>
@@ -114,7 +114,7 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.nameofthework" />
 					</div>
-					<div class="col-xs-2 add-margin view-content">
+					<div class="col-xs-4 add-margin view-content">
 						<c:out default="N/A" value="${mbHeader.workOrderEstimate.estimate.name}"></c:out>
 					</div>
 				</div>
@@ -128,7 +128,7 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.loanumber" />
 					</div>
-					<div class="col-xs-2 add-margin view-content">
+					<div class="col-xs-4 add-margin view-content">
 						<c:out default="N/A" value="${mbHeader.workOrderEstimate.workOrder.workOrderNumber}"></c:out>
 					</div>
 				</div>
@@ -142,7 +142,7 @@
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.work.assigned" />
 					</div>
-					<div class="col-xs-2 add-margin view-content">
+					<div class="col-xs-4 add-margin view-content">
 						<c:out default="N/A" value="${mbHeader.workOrderEstimate.workOrder.engineerIncharge.name}"></c:out> 
 					</div>
 				</div>
@@ -151,13 +151,29 @@
 						<spring:message code="lbl.mb.issued.date" />
 					</div>
 					<div class="col-xs-2 add-margin view-content">
-						<fmt:formatDate value="${mbHeader.mbIssuedDate}" pattern="dd/MM/yyyy" />
+						<c:choose>
+							<c:when test="${mbHeader.mbIssuedDate != null}">
+								<fmt:formatDate value="${mbHeader.mbIssuedDate}"
+									pattern="dd/MM/yyyy" />
+							</c:when>
+							<c:otherwise>
+								<c:out default="N/A" value="N/A"></c:out>
+							</c:otherwise>
+						</c:choose>
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.contractor.comments" /> 
 					</div>
-					<div class="col-xs-2 add-margin view-content">
-						<c:out default="N/A" value="${mbHeader.contractorComments}"></c:out> 
+					<div class="col-xs-4 add-margin view-content">
+					<c:choose>
+							<c:when test="${mbHeader.contractorComments != ''}">
+								<c:out default="N/A" value="${mbHeader.contractorComments}"></c:out> 
+							</c:when>
+							<c:otherwise>
+								<c:out default="N/A" value="N/A"></c:out>
+							</c:otherwise>
+						</c:choose>
+						
 					</div>
 				</div>
 			</div>

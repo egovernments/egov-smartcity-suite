@@ -47,6 +47,11 @@ $detailsRowCount = $('#detailsSize').val();
 $budgetHeadId=0;
 $(document).ready(function(){
 	
+	$(".quantity").each(function() {
+		if (parseFloat($(this).val()) <= 0)
+			$(this).val('');
+	});
+	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
 	
 	if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') {
@@ -549,6 +554,7 @@ function validateWorkFlowApprover(name) {
 				return true;
 			}
 		}
+		
 	}
 	if (button != null && button == 'Reject') {
 		$('#approvalDepartment').removeAttr('required');
@@ -581,6 +587,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
+		
 	}
 
 	document.forms[0].submit;

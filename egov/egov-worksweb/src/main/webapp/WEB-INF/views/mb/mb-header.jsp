@@ -115,7 +115,7 @@
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.mb.nameofwork" />
 			</label>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-5 add-margin view-content">
 				<span name="nameOfWork" id="nameOfWork">${mbHeader.workOrderEstimate.estimate.name }</span>
 			</div>
 		</div>

@@ -88,7 +88,7 @@
 					<jsp:include page="contractorBillCancel-view.jsp"></jsp:include>
 				</div>
 			</c:if>
-			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
+			<c:if test="${!workflowHistory.isEmpty() && mode == 'readOnly' || mode == 'view' }">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
 						<div class="panel-title">

@@ -66,9 +66,6 @@ $(document).ready(function(){
 	if(beneficiary != undefined) {
 		$('#beneficiary').val($('#beneficiary').val().replace(/_/g, '/'));
 	}
-	$('#sorSearch').blur(function() {
-		$('#sorSearch').val('');
-	});
 	$( "input[name$='percentage']" ).each(function() {
 		var value = $(this).val();
 		if(value != 0)
@@ -290,7 +287,7 @@ $(document).ready(function(){
 			$('#rate_' + key).val(getUnitRate($('.uom_' + key).html(),$('#estimateRate_' + key).val()));
 
 		}
-		$('#sorSearch').val('');
+		$('#sorSearch').typeahead('val','');
 	});
 
 

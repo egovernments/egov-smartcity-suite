@@ -47,6 +47,11 @@ $budgetHeadId=0;
 $functionId = 0;
 $(document).ready(function(){
 	
+	$(".quantity").each(function() {
+		if (parseFloat($(this).val()) <= 0)
+			$(this).val('');
+	});
+	
 	$locationId = $('#locationValue').val();
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$budgetHeadId = $('#budgetHeadValue').val();
