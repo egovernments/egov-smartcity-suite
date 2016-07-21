@@ -51,16 +51,21 @@ $(document).ready(function(){
         $this.find("select, button").prop("disabled", true);
     });
     
+    
     $(".btn-primary").click(function(event){
 		
 		var caseNumber =$('#caseNumber').val();
 		var lcnumber=$('#lcNumber').val();
 		var lcNumberType=$('#lcNumberType').val();
+		var mode=$('#mode').val();
+		
+		if(mode=='create')
 		if(caseNumber !="" && caseNumber !=null && ($('#wpYear').val() ==null || $('#wpYear').val() =='') )
 			{
 			bootbox.alert("Select Case Number Year ");
 			return false;
 			}
+		
 		if(lcNumberType =='MANUAL'){
 			if(lcnumber=="" ||  lcnumber ==null )
 			{
@@ -77,7 +82,9 @@ $(document).ready(function(){
 			return true;
 			event.preventDefault();
 		
+		
 	});
+    
 	
 });
 
@@ -259,3 +266,25 @@ $(document).on('click',"#res_delete_row",function (){
 		return true;
 	}
 });
+$('#btnclose').click(function(){
+	bootbox.confirm({
+	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+	    buttons: {
+	        'cancel': {
+	            label: 'No',
+	            className: 'btn-default pull-right'
+	        },
+	        'confirm': {
+	            label: 'Yes',
+	            className: 'btn-danger pull-right'
+	        }
+	    },
+	    callback: function(result) {
+	        if (result) {
+	             window.close();
+	        }
+	    }
+	});
+	
+});
+

@@ -201,6 +201,13 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			window.location = url;
 			
 		}
+		if (this.value == 3) {
+			var url = '/lcms/application/edit/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
 		});
 
 
