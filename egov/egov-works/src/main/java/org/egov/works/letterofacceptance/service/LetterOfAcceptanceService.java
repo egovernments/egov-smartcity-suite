@@ -296,11 +296,9 @@ public class LetterOfAcceptanceService {
                 wfmatrix = workOrderWorkflowService.getWfMatrix(workOrder.getStateType(), null, null, additionalRule,
                         workOrder.getCurrentState().getValue(), null);
                 workOrder.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withStateValue(wfmatrix.getCurrentDesignation() + " Approved")
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction("")
                         .withNatureOfTask(natureOfwork);
-                workOrder.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate());
             } else {
                 if (workOrder.getEgwStatus().getCode().equals(WorksConstants.REJECTED.toString())
                         && workFlowAction.equals(WorksConstants.FORWARD_ACTION))
