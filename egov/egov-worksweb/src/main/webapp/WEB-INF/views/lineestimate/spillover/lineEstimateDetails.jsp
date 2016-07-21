@@ -123,7 +123,7 @@
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
+								<form:input path="lineEstimateDetails[0].beneficiary" id="quantity" name="lineEstimateDetails[0].beneficiary" data-errormsg="Expected Outcome is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
 								<form:errors path="lineEstimateDetails[0].beneficiary" cssClass="add-margin error-msg" />
 							</td>
 							<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>
@@ -170,7 +170,7 @@
 									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].beneficiary" id="quantity" name="lineEstimateDetails[${item.index}].beneficiary" data-errormsg="Beneficiary is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].beneficiary" id="quantity" name="lineEstimateDetails[${item.index}].beneficiary" data-errormsg="Expected Outcome is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="64" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].beneficiary" cssClass="add-margin error-msg" />
 								</td>
 								<td> <span class="add-padding" onclick="deleteLineEstimate(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>

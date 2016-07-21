@@ -380,5 +380,10 @@ public class AjaxLetterOfAcceptanceController {
     public @ResponseBody List<String> findContractorNameOrCodeForForOfflineStatus(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getApprovedContractorForSetOfflineStatus(contractorName);
     }
+    
+    @RequestMapping(value = "/ajaxcontractors-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsForModifyLOA(@RequestParam final String contractorName) {
+        return letterOfAcceptanceService.getApprovedContractorsForModfyLOA(contractorName);
+    }
 
 }

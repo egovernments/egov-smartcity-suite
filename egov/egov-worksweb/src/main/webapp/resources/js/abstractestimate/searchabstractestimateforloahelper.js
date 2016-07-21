@@ -134,7 +134,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/lineEstimateNumbersForLoa?name=%QUERY',
+            url: '/egworks/abstractestimate/ajaxestimatenumbers-tocreateloa?estimateNumber=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
@@ -161,7 +161,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/adminSanctionNumbersForLoa?name=%QUERY',
+            url: '/egworks/abstractestimate/ajaxadminsanctionnumbers-tocreateloa?adminSanctionNumber=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
@@ -188,7 +188,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/lineestimate/workIdNumbersForLoa?name=%QUERY',
+            url: '/egworks/abstractestimate/ajaxworkidentificationnumbers-tocreateloa?workIdentificationNumber=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {

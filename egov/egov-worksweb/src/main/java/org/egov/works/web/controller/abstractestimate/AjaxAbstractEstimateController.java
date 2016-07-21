@@ -255,4 +255,19 @@ public class AjaxAbstractEstimateController {
         return estimateService.getAbstractEstimateNumbersToSetOfflineStatus(code);
     }
     
+    @RequestMapping(value = "/ajaxestimatenumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findApprovedEstimateNumbersForCreateLOA(@RequestParam final String estimateNumber) {
+        return estimateService.getApprovedEstimateNumbersForCreateLOA(estimateNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxadminsanctionnumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findApprovedAdminSanctionNumbersForCreateLOA(@RequestParam final String adminSanctionNumber) {
+        return estimateService.getApprovedAdminSanctionNumbersForCreateLOA(adminSanctionNumber);
+    }
+    
+    @RequestMapping(value = "/ajaxworkidentificationnumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findApprovedWorkIdentificationNumbersForCreateLOA(@RequestParam final String workIdentificationNumber) {
+        return estimateService.getApprovedWorkIdentificationNumbersForCreateLOA(workIdentificationNumber);
+    }
+    
 }

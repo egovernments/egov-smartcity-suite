@@ -806,7 +806,7 @@ public class LetterOfAcceptanceService {
                 queryStr.append(" and woe.workOrder.workOrderDate <= :workOrderToDate");
             if (searchRequestLetterOfAcceptance.getName() != null)
                 queryStr.append(
-                        " and upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorCode) ");
+                        " and (upper(woe.workOrder.contractor.name) like upper(:contractorName) or upper(woe.workOrder.contractor.code) like upper(:contractorCode)) ");
             if (searchRequestLetterOfAcceptance.getDepartmentName() != null) {
                 queryStr.append(" and woe.estimate.executingDepartment.id =:department");
             }
@@ -1103,6 +1103,12 @@ public class LetterOfAcceptanceService {
     public List<String> getApprovedContractorForSetOfflineStatus(final String contractorName) {
         final List<String> contractorNames = letterOfAcceptanceRepository
                 .findContractorToSetOfflineStatus("%" + contractorName + "%", WorksConstants.APPROVED.toString());
+        return contractorNames;
+    }
+    
+    public List<String> getApprovedContractorsForModfyLOA(final String contractorName) {
+        final List<String> contractorNames = letterOfAcceptanceRepository
+                .findContractorToModifyLOA("%" + contractorName + "%", WorksConstants.APPROVED.toString());
         return contractorNames;
     }
 

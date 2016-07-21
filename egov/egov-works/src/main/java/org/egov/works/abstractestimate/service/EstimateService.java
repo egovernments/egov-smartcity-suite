@@ -75,6 +75,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesForAbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchResult;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -1107,5 +1108,32 @@ public class EstimateService {
         else
             model.addAttribute("isLocationDetailsRequired", false);
     }
-
+    
+    public List<String> getApprovedEstimateNumbersForCreateLOA(final String estimateNumber) {
+        final List<String> estimateNumbers = abstractEstimateRepository
+                .findEstimateNumbersToCreateLOA("%" + estimateNumber + "%",
+                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        WorksConstants.ABSTRACTESTIMATE,
+                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        return estimateNumbers;
+    }
+    
+    public List<String> getApprovedAdminSanctionNumbersForCreateLOA(final String adminSanctionNumber) {
+        final List<String> adminSanctionNumbers = abstractEstimateRepository
+                .findAdminSanctionNumbersToCreateLOA("%" + adminSanctionNumber + "%",
+                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        WorksConstants.ABSTRACTESTIMATE,
+                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        return adminSanctionNumbers;
+    }
+    
+    public List<String> getApprovedWorkIdentificationNumbersForCreateLOA(final String workIdentificationNumber) {
+        final List<String> workIdentificationNumbers = abstractEstimateRepository
+                .findWorkIdentificationNumbersToCreateLOA("%" + workIdentificationNumber + "%",
+                        EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
+                        WorksConstants.ABSTRACTESTIMATE,
+                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+        return workIdentificationNumbers;
+    }
+    
 }

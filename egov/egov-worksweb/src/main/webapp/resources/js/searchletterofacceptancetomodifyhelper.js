@@ -191,7 +191,7 @@ $(document).ready(function() {
 				},
 				queryTokenizer : Bloodhound.tokenizers.whitespace,
 				remote : {
-					url : '/egworks/letterofacceptance/ajaxsearchcontractors-loa?contractorname=%QUERY',
+					url : '/egworks/letterofacceptance/ajaxcontractors-modifyloa?contractorName=%QUERY',
 					filter : function(data) {
 						return $.map(data, function(ct) {
 							return {
