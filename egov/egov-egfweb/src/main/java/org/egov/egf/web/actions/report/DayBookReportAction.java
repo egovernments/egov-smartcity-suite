@@ -39,11 +39,15 @@
  */
 package org.egov.egf.web.actions.report;
 
-import com.exilant.GLEngine.DayBook;
-import com.exilant.eGov.src.reports.DayBookReportBean;
-import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -62,14 +66,11 @@ import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.exilant.GLEngine.DayBook;
+import com.exilant.eGov.src.reports.DayBookReportBean;
+import com.exilant.exility.common.TaskFailedException;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({
@@ -78,10 +79,9 @@ import java.util.List;
                 + FinancialConstants.STRUTS_RESULT_PAGE_SEARCH + ".jsp")
 })
 public class DayBookReportAction extends BaseFormAction {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     /**
      *
@@ -92,6 +92,8 @@ public class DayBookReportAction extends BaseFormAction {
     protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     protected List<DayBook> dayBookDisplayList = new ArrayList<DayBook>();
     String heading = "";
+    private Date todayDate = new Date();
+    private String currentDate;
 
     public DayBookReportAction() {
         super();
@@ -108,7 +110,7 @@ public class DayBookReportAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         addDropdownData("fundList",
                 persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
-
+        currentDate = formatter.format(todayDate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside  Prepare ........");
 
@@ -262,6 +264,22 @@ public class DayBookReportAction extends BaseFormAction {
 
     public void setHeading(final String heading) {
         this.heading = heading;
+    }
+
+    public Date getTodayDate() {
+        return todayDate;
+    }
+
+    public void setTodayDate(Date todayDate) {
+        this.todayDate = todayDate;
+    }
+
+    public String getCurrentDate() {
+        return currentDate;
+    }
+
+    public void setCurrentDate(String currentDate) {
+        this.currentDate = currentDate;
     }
 
 }
