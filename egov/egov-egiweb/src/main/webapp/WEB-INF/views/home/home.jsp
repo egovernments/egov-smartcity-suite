@@ -111,7 +111,8 @@
 		</div>
 		<div class="page-container horizontal-menu">
 			<div class="search">
-				<input type="text" id="searchtree" ><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+				<input type="text" id="searchtree" placeholder="Quick Find"><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+				<span class="applyanimation"></span>
 			</div>
 			<div class="search_list">
 				<div class="list"><ul class="ullist"></ul></div>

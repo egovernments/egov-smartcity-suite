@@ -54,7 +54,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
-import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -109,8 +108,7 @@ public class JudgmentService {
         return judgmentRepository.findOne(id);
     }
 
-   
- protected void processAndStoreApplicationDocuments(final Judgment judgment) {
+    protected void processAndStoreApplicationDocuments(final Judgment judgment) {
         if (!judgment.getJudgmentDocuments().isEmpty())
             for (final JudgmentDocuments applicationDocument : judgment.getJudgmentDocuments()) {
                 applicationDocument.setJudgment(judgment);

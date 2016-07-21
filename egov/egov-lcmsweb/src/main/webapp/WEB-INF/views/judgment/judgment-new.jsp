@@ -47,16 +47,19 @@
 
 <form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
 		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
-	<%-- <form:hidden name="lcNumber" id="lcNumber" value="${judgment.legalcase.lcNumber}"/> --%>
+	<%-- <form:hidden name="lcNumber" id="lcNumber" value="${judgment.legalcase.lcNumber}"/>  --%>
+	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
+	 <jsp:include page="../application/viewSummarizedCase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
+	 <input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
 	</div>
 	</div>
 	</div>
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-		<form:button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></form:button>
-		<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
+			<button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
+			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
 		</div>
 	</div>
 </form:form>

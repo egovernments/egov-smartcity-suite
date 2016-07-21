@@ -69,7 +69,7 @@ function loadDateFields(){
 
 });
 
-$('#button2').click(function(){
+$('#btnclose').click(function(){
 	bootbox.confirm({
 	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
 	    buttons: {

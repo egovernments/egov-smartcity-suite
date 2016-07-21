@@ -93,7 +93,8 @@
 					<s:elseif
 						test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.serialno" /></th>
+								name="chq.assignment.instrument.serialno" /><span
+							class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew" width="10%"><s:text
 								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
@@ -308,7 +309,16 @@
 					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
-				
+				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
+				for(var index=0;index<chequeSize;index++){
+					//console.log(document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value);
+				var srlNo=document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value;
+				if(srlNo=='')
+				{
+					bootbox.alert('Year code should not be empty');
+					return false;
+				}
+				}
 				<s:if test="%{paymentMode=='rtgs'}">
 					result= validateForRtgsMode();  
 				</s:if>    
@@ -319,7 +329,7 @@
 					 result=validateChequeDateForChequeMode();
 				</s:if> 
 				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action?departmentId='+document.getElementById('departmentid').value;
 		    	document.forms[0].submit();
 				
 				return result;   
@@ -347,7 +357,6 @@
 				               
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
-					
 					if(document.getElementById('isSelected'+index).checked){
 					//bootbox.alert(document.getElementById('isSelected'+index).checked);
 					chkCount++;
@@ -387,7 +396,7 @@
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
 						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
-							bootbox.alert('Cheque Date cannot be less than than payment Date', function() {
+							bootbox.alert('Cheque Date cannot be less than payment Date', function() {
 								document.getElementById('chequeDt').value='';
 								document.getElementById('chequeDt').focus();
 								flag =  false;
@@ -412,7 +421,7 @@
 					if(document.getElementById('isSelected'+index).checked){
 						chkCount++;
 						if( compareDate(paymentDate,chequeDate) == -1){               
-							bootbox.alert('Cheque Date cannot be less than than payment Date');
+							bootbox.alert('Cheque Date cannot be less than payment Date');
 							document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].value='';
 							document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].focus();
 							return false;

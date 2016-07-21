@@ -56,6 +56,9 @@ jQuery(document).ready(
 			});
 
 		});
+
+
+		
 function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
@@ -140,8 +143,14 @@ function submitForm() {
 							title : 'Actions',
 							"className" : "text-right",
 							render : function(data, type, full) {
+								
+								if(full.casestatus=='LCCREATED') {
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
+			        			   }
+								else if(full.casestatus=='JUDGMENT'){
 
-								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
+							}
 							}
 						} 
 						],
@@ -185,5 +194,14 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			window.location = url;
 			
 		}
+		if (this.value == 4) {
+			var url = '/lcms/application/view/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
 		});
+
+
 		

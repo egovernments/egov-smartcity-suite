@@ -945,7 +945,7 @@ public class ReportService {
                     baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue());
                     if(propMatView.getMarketValue()!=null && propMatView.getCapitalValue()!=null )
                     	baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue())>0?propMatView.getMarketValue():propMatView.getCapitalValue());
-                    baseRegisterVLTResultObj.setPropertyTaxFirstHlf(propMatView.getAggrCurrFirstHalfDmd());
+                    baseRegisterVLTResultObj.setPropertyTaxFirstHlf(propMatView.getAggrCurrFirstHalfDmd()!=null ? propMatView.getAggrCurrFirstHalfDmd() : BigDecimal.ZERO);
                     List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                             propMatView.getInstDmdColl());
                     Map<String, Installment> currYearInstMap =propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -960,9 +960,9 @@ public class ReportService {
                         	baseRegisterVLTResultObj.setArrearLibraryTax(instDmdCollObj.getLibCessTax());
                         }
                     }
-                    baseRegisterVLTResultObj.setPropertyTaxSecondHlf(propMatView.getAggrCurrSecondHalfDmd());
-                    baseRegisterVLTResultObj.setCurrTotal(propMatView.getAggrCurrFirstHalfDmd().add(currFirstHalfLibCess).
-                    		add(propMatView.getAggrCurrSecondHalfDmd()).add(currSecondHalfLibCess));
+                    baseRegisterVLTResultObj.setPropertyTaxSecondHlf(propMatView.getAggrCurrSecondHalfDmd()!=null ? propMatView.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO);
+                    baseRegisterVLTResultObj.setCurrTotal((propMatView.getAggrCurrFirstHalfDmd()!=null ? propMatView.getAggrCurrFirstHalfDmd() : BigDecimal.ZERO).add(currFirstHalfLibCess).
+                    		add((propMatView.getAggrCurrSecondHalfDmd()!=null ? propMatView.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO)).add(currSecondHalfLibCess));
                     BigDecimal currPenaltyFine=BigDecimal.ZERO;
                     if(propMatView.getAggrCurrFirstHalfPenaly()!=null){
                     	currPenaltyFine=currPenaltyFine.add(propMatView.getAggrCurrFirstHalfPenaly());

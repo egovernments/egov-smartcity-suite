@@ -56,7 +56,7 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     private String seller;
     private String buyer;
     private String typeOfTransfer;
-    private String documnerNo;
+    private String documentNo;
     private Date documentDate;
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
@@ -70,6 +70,7 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     private Double plotArea;
     private String sroName;
     private BigDecimal documentValue;
+    private String documentLink;
     
     public String getTypeOfTransfer() {
         return typeOfTransfer;
@@ -77,11 +78,11 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     public void setTypeOfTransfer(String typeOfTransfer) {
         this.typeOfTransfer = typeOfTransfer;
     }
-    public String getDocumnerNo() {
-        return documnerNo;
+    public String getDocumentNo() {
+        return documentNo;
     }
-    public void setDocumnerNo(String documnerNo) {
-        this.documnerNo = documnerNo;
+    public void setDocumentNo(String documentNo) {
+        this.documentNo = documentNo;
     }
     public Date getDocumentDate() {
         return documentDate;
@@ -181,6 +182,12 @@ public class MutationRegistrationDetails extends AbstractPersistable<Long> {
     }
     public void setDocumentValue(BigDecimal documentValue) {
         this.documentValue = documentValue;
+    }
+    public String getDocumentLink() {
+        return documentLink;
+    }
+    public void setDocumentLink(String documentLink) {
+        this.documentLink = documentLink;
     }
 
 }
