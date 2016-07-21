@@ -214,7 +214,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
-            model.addAttribute("mode", "edit");
+            model.addAttribute("mode", "new");
             model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister,model));
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
@@ -441,6 +441,15 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
+        
+        if (contractorBillRegister.getWorkOrderEstimate() != null
+                && !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
+         final List<MBHeader> mbheaders = mBHeaderService.getMBHeaderBasedOnBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
+         if (mbheaders != null && mbheaders.isEmpty()) {
+             resultBinder.reject("error.mbnotexists.tocreatebill", "error.mbnotexists.tocreatebill");
+         }
+        }
+        
     }
 
     private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,

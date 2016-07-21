@@ -249,7 +249,7 @@ public class AjaxMBController {
     public @ResponseBody String loadMBBasedOnBillDate(@RequestParam final Long workOrderEstimateId,@RequestParam final Date billDate) {
         List<MBHeader> mBHeaderList = mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimateId,billDate);
         final StringBuilder result = new StringBuilder(searchMBHeader(mBHeaderList).toString());
-        if(result.length() != 2)
+        if(!mBHeaderList.isEmpty())
             return result.toString();
         else
         return "";

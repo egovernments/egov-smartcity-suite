@@ -65,6 +65,8 @@
 			<div class="col-sm-3 add-margin">
 				<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-format="dd/mm/yyyy" data-date-end-date="0d" required="required" />
 				<form:errors path="billdate" cssClass="add-margin error-msg" />
+				<fmt:formatDate value="${contractorBillRegister.billdate}" pattern="dd/MM/yyyy"  var="billdate"/>
+				<input type="hidden" id="billdatehidden" name="billdatehidden" value="${billdate}" class="form-control datepicker" data-date-end-date="0d"  data-date-format="dd/mm/yyyy"/>
 			</div>
 		</c:when>
 		<c:otherwise>

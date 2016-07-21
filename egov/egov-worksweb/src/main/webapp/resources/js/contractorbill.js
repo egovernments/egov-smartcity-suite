@@ -681,11 +681,14 @@ jQuery( "#billdate" ).datepicker({
 	 format: 'dd/mm/yyyy',
 	 autoclose:true,
  }).on('changeDate', function(ev) {
+	 if($('#activitiesSize').val() != 0) {
 	 bootbox.confirm($('#confirmmsg').val(),function(result) {
 		 if(!result) {
-				bootbox.hideAll();
+			    jQuery( "#billdate" ).val(jQuery( "#billdatehidden" ).val());  
+				bootbox.hideAll(); 
 				return false;
 			} else {
+				 jQuery( "#billdatehidden" ).val(jQuery("#billdate").val());  
 				 jQuery.ajax({
 		    			url: "/egworks/measurementbook/ajax-loadmbbasedonbilldate",
 		    			type: "GET",
@@ -697,7 +700,7 @@ jQuery( "#billdate" ).datepicker({
 		    			dataType: "json",
 		    			success: function (response) {
 		    				if(response.length == 0 ) {
-		    					bootbox.alert($('#errormsg').val(),+jQuery( "#billdate" ).val());
+		    					bootbox.alert($('#errormsg').val()+ " " +jQuery("#billdate").val());
 		    					jQuery( "#billdate" ).val('');
 		    					return false;
 		    				} else {
@@ -715,8 +718,7 @@ jQuery( "#billdate" ).datepicker({
 		    		            		 $('#mbrefno_'+index).html(json_obj[i].mbRefNo); 
 		    		            		 $('#pageno_'+index).html(json_obj[i].mbpageno); 
 		    		            		 $('#mbdate_'+index).html(json_obj[i].mbDate);
-		    		            		 $('#mbamount_'+index).html(json_obj[i].mbamount);
-		    		            		 $('#mbamount_'+index).html(json_obj[i].mbamount);
+		    		            		 $('#mbamount_'+index).html(parseFloat(json_obj[i].mbamount).toFixed(2));
 		    		            		 $('#mbheaderid_'+index).html(json_obj[i].mbheaderId);
 		    		            		 totalMBAmount = parseFloat(parseFloat(totalMBAmount) + parseFloat($('#mbamount_'+index).html())).toFixed(2);
 		    		            		 index++;
@@ -734,6 +736,7 @@ jQuery( "#billdate" ).datepicker({
 			  });
 			}
 	 });
+	 }
  }).data('datepicker');
 
 
