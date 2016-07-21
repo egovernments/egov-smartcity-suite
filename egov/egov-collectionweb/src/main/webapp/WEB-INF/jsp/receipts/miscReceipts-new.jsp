@@ -333,7 +333,7 @@ var valid=true;
      <s:if test="%{isFieldMandatory('voucherdate')}"> 
                  if(null != document.getElementById('voucherDate') && document.getElementById('voucherDate').value.trim().length == 0){
 
-                    document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.voucherdate.errormessage" />'+ "<br>";
+                    document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.receiptdate.errormessage" />'+ "<br>";
                     valid=false;
                 }
                   var currDate = "${currDate}";
@@ -341,7 +341,7 @@ var valid=true;
                     if(vhDate.trim().length != 0){
                         if(!checkFdateTdate(vhDate,currDate))
                         {
-                            document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.voucherdate.incorrectmessage" />'+ "<br>";
+                            document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.receiptdate.incorrectmessage" />'+ "<br>";
                             valid=false;
                         }
                     }
