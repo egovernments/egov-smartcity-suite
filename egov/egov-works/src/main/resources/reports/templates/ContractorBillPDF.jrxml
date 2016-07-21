@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-20T19:08:12 -->
+<!-- 2016-07-21T13:47:52 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractorBillPDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e5b9c4d7-5374-4222-b26c-49c47331df4d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -169,22 +169,13 @@
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="490" y="15" width="62" height="15" uuid="6ed8b8b8-ab41-40ec-9b41-5e5d35df2f64">
+				<reportElement x="374" y="15" width="178" height="15" uuid="6ed8b8b8-ab41-40ec-9b41-5e5d35df2f64">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<printWhenExpression><![CDATA[$P{billType}.equals("Final Bill")]]></printWhenExpression>
 				</reportElement>
-				<textFieldExpression><![CDATA[$P{workCommencedDate}]]></textFieldExpression>
+				<textElement markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work Completion Date : </style>"+$P{workCommencedDate}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="350" y="15" width="140" height="15" uuid="3591c810-c7e4-40e0-9cf7-519a83e156fc">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<printWhenExpression><![CDATA[$P{billType}.equals("Final Bill")]]></printWhenExpression>
-				</reportElement>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Work Completion Date :]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="FixRelativeToBottom" x="11" y="50" width="363" height="16" uuid="210af1a5-c0c0-495e-ba50-850d1e003ab9">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -207,7 +198,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement markup="styled"/>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Bill Amount(Rs): </style>"+$P{billAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Bill Amount (Rs): </style>"+$P{billAmount}]]></textFieldExpression>
 			</textField>
 			<subreport>
 				<reportElement x="11" y="34" width="524" height="14" uuid="75c20b5b-ffd0-4bc8-aad8-62ec5e16a1e2">
