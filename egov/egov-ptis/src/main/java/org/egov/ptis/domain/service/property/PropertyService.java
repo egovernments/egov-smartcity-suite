@@ -75,7 +75,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
@@ -641,24 +640,21 @@ public class PropertyService {
         LOGGER.debug("createDemandForModify: instList: " + instList);
         Ptdemand ptDemandOld = new Ptdemand();
         Ptdemand ptDemandNew = new Ptdemand();
-        final Installment currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
-        final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
-        ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
-        final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
-        final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
-        
         Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-
+        final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
+        ptDemandOld = oldPtdemandMap.get(installmentFirstHalf.getDescription());
+        final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
+        final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
+        
         if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
                 || !oldProperty.getIsExemptedFromTax() ^ !newProperty.getIsExemptedFromTax())
-            for (final Installment installment : instList)
-                createAllDmdDetails(oldProperty, newProperty, installment, instList, instTaxMap);
+                createAllDmdDetails(oldProperty, newProperty, installmentFirstHalf, instList, instTaxMap);
 
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
-        ptDemandNew = newPtdemandMap.get(currentInstall.getDescription());
+        ptDemandNew = newPtdemandMap.get(installmentFirstHalf.getDescription());
 
         final Map<Installment, Set<EgDemandDetails>> newDemandDtlsMap = getEgDemandDetailsSetAsMap(new ArrayList(
                 ptDemandNew.getEgDemandDetails()), instList);
@@ -912,8 +908,6 @@ public class PropertyService {
         LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + ", newProperty: " + newProperty
                 + ",installment: " + installment + ", instList: " + instList);
         final Set<EgDemandDetails> adjustedDmdDetailsSet = new HashSet<EgDemandDetails>();
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
@@ -969,7 +963,7 @@ public class PropertyService {
             }
         };
 
-        ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
+        ptDemandOld = oldPtdemandMap.get(installment.getDescription());
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
 
         LOGGER.info("instList==========" + instList);
@@ -983,87 +977,84 @@ public class PropertyService {
 
             oldEgDemandDetailsSet = oldDemandDtlsMap.get(inst);
 
-            if (inst.getFromDate().before(installment.getFromDate())
-                    || inst.getFromDate().equals(installment.getFromDate())) {
-                LOGGER.info("inst==========" + inst);
-                final Set<EgDemandDetails> demandDtls = demandDetails.get(inst);
-                if (demandDtls != null)
-                    for (final EgDemandDetails dd : demandDtls) {
-                        final EgDemandDetails ddClone = (EgDemandDetails) dd.clone();
-                        ddClone.setEgDemand(ptDemandNew);
-                        adjustedDmdDetailsSet.add(ddClone);
-                    }
-                else {
-
-                    EgDemandDetails oldEgdmndDetails = null;
-                    EgDemandDetails newEgDmndDetails = null;
-
-                    newEgDemandDetailsSet = new HashSet<EgDemandDetails>();
-
-                    // Getting EgDemandDetails for inst installment
-
-                    for (final EgDemandDetails edd : ptDemandNew.getEgDemandDetails())
-                        if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
-                            newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
-
-                    final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-                            .getPropertyTypeMaster();
-
-                    LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
-                    LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
-
-                    if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
-                        for (int i = 0; i < adjstmntReasons.size(); i++) {
-                            final String oldPropRsn = adjstmntReasons.get(i);
-                            String newPropRsn = null;
-
-                            /*
-                             * Gives EgDemandDetails from newEgDemandDetailsSet for demand reason oldPropRsn, if we dont have
-                             * EgDemandDetails then doing collection adjustments
-                             */
-                            newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
-
-                            if (newEgDmndDetails == null) {
-                                /*
-                                 * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
-                                 */
-                                newPropRsn = rsnsForNewResProp.get(i);
-                                /*
-                                 * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
-                                 * rsnsForNewNonResProp.get(i);
-                                 */
-
-                                oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
-                                newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
-
-                                if (newEgDmndDetails != null && oldEgdmndDetails != null)
-                                    newEgDmndDetails.setAmtCollected(newEgDmndDetails.getAmtCollected().add(
-                                            oldEgdmndDetails.getAmtCollected()));
-                                else
-                                    continue;
-                            }
-                        }
-                    else if (!oldProperty.getIsExemptedFromTax())
-                        newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
-                                newEgDemandDetailsSet, inst);
-
-                    // Collection carry forward logic (This logic is moved out
-                    // of this method, bcoz it has to be invoked in all usecases
-                    // and not only when there is property type change
-
-                    newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
-                            ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
-                    LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);
-                    adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
-                    demandDetails.put(inst, newEgDemandDetailsSet);
+            LOGGER.info("inst==========" + inst);
+            final Set<EgDemandDetails> demandDtls = demandDetails.get(inst);
+            if (demandDtls != null)
+                for (final EgDemandDetails dd : demandDtls) {
+                    final EgDemandDetails ddClone = (EgDemandDetails) dd.clone();
+                    ddClone.setEgDemand(ptDemandNew);
+                    adjustedDmdDetailsSet.add(ddClone);
                 }
+            else {
+
+                EgDemandDetails oldEgdmndDetails = null;
+                EgDemandDetails newEgDmndDetails = null;
+
+                newEgDemandDetailsSet = new HashSet<EgDemandDetails>();
+
+                // Getting EgDemandDetails for inst installment
+
+                for (final EgDemandDetails edd : ptDemandNew.getEgDemandDetails())
+                    if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
+                        newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
+
+                final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
+                        .getPropertyTypeMaster();
+
+                LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
+                LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
+
+                if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
+                    for (int i = 0; i < adjstmntReasons.size(); i++) {
+                        final String oldPropRsn = adjstmntReasons.get(i);
+                        String newPropRsn = null;
+
+                        /*
+                         * Gives EgDemandDetails from newEgDemandDetailsSet for demand reason oldPropRsn, if we dont have
+                         * EgDemandDetails then doing collection adjustments
+                         */
+                        newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
+
+                        if (newEgDmndDetails == null) {
+                            /*
+                             * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
+                             */
+                            newPropRsn = rsnsForNewResProp.get(i);
+                            /*
+                             * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
+                             * rsnsForNewNonResProp.get(i);
+                             */
+
+                            oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
+                            newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
+
+                            if (newEgDmndDetails != null && oldEgdmndDetails != null)
+                                newEgDmndDetails.setAmtCollected(newEgDmndDetails.getAmtCollected().add(
+                                        oldEgdmndDetails.getAmtCollected()));
+                            else
+                                continue;
+                        }
+                    }
+                else if (!oldProperty.getIsExemptedFromTax())
+                    newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
+                            newEgDemandDetailsSet, inst);
+
+                // Collection carry forward logic (This logic is moved out
+                // of this method, bcoz it has to be invoked in all usecases
+                // and not only when there is property type change
+
+                /*newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
+                        ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
+                LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);*/
+                adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
+                demandDetails.put(inst, newEgDemandDetailsSet);
             }
         }
 
         // forwards the base collection for current installment Ptdemand
-        if (installment.equals(currentInstall)) {
-            final Ptdemand ptdOld = oldPtdemandMap.get(currentInstall.getDescription());
-            final Ptdemand ptdNew = newPtdemandMap.get(currentInstall.getDescription());
+        if (installment.equals(installment)) {
+            final Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
+            final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
             ptdNew.setAmtCollected(ptdOld.getAmtCollected());
         }
 
