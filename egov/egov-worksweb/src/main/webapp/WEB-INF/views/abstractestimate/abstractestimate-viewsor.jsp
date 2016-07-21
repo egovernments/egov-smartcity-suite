@@ -105,7 +105,7 @@
 								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><c:out value="${sorDtls.rate}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
 								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">

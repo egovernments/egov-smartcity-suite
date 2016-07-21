@@ -73,7 +73,7 @@
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.rate}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
 								 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">
