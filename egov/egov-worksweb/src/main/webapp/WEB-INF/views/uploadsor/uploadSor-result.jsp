@@ -68,7 +68,7 @@
 			<c:out value="${message}" /><br />
 		</div>
 		<div>
-			<spring:hasBindErrors name="uploadSORRates">
+			<spring:hasBindErrors name="uploadSOR">
 				<div class="alert alert-danger col-md-10 col-md-offset-1">
 		      			<form:errors path="*" /><br/>
 		      	</div>

@@ -232,8 +232,9 @@ public class ScheduleOfRateService {
                             (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                     marketRate.setModifiedDate(currentDate);
                     marketRate.setScheduleOfRate(scheduleOfRate);
+                    scheduleOfRate.getMarketRates().add(marketRate);
                 }
-                scheduleOfRate.getMarketRates().add(marketRate);
+                
                 scheduleOfRate.setCreatedBy(
                         (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 scheduleOfRate.setCreatedDate(currentDate);

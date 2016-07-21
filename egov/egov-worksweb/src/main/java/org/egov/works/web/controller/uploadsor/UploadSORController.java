@@ -144,7 +144,7 @@ public class UploadSORController {
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.POST)
-    public String create(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
+    public String create(@ModelAttribute("uploadSOR") final UploadSOR uploadSOR,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors)
             throws ApplicationException, IOException {
 
@@ -182,7 +182,7 @@ public class UploadSORController {
                 errors.reject("error.while.validating.data", "error.while.validating.data");
                 model.addAttribute("originalFileStoreId", originalFileStoreId);
                 model.addAttribute("outPutFileStoreId", outPutFileStoreId);
-                return "uploadSorRates-result";
+                return "uploadSor-result";
             }
 
             uploadSORRatesList = scheduleOfRateService.createScheduleOfRate(uploadSORRatesList);
@@ -268,18 +268,18 @@ public class UploadSORController {
             List<ScheduleCategory> sorCategoryList = scheduleCategoryService.getAllScheduleCategories();
             List<UOM> uomList = uomService.findAll();
             for (ScheduleOfRate sor : sorList)
-                sorMap.put(sor.getCode(), sor);
+                sorMap.put(sor.getCode().toLowerCase(), sor);
             for (ScheduleCategory scheduleCategory : sorCategoryList)
-                sorCategoryMap.put(scheduleCategory.getCode(), scheduleCategory);
+                sorCategoryMap.put(scheduleCategory.getCode().toLowerCase(), scheduleCategory);
             for (UOM uom : uomList)
-                uomMap.put(uom.getUom(), uom);
+                uomMap.put(uom.getUom().toLowerCase(), uom);
 
             for (UploadScheduleOfRate obj : uploadSORRatesList) {
                 error = "";
 
                 // Validating SOR code
                 if (obj.getSorCode() != null && !obj.getSorCode().equalsIgnoreCase("")) {
-                    if (sorMap.get(obj.getSorCode()) == null)
+                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null)
                         if (isContainsWhitespace(obj.getSorCode())) {
                             error = error + " "
                                     + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null)
@@ -287,7 +287,7 @@ public class UploadSORController {
                         } else
                             obj.setCreateSor(true);
                     else {
-                        obj.setScheduleOfRate(sorMap.get(obj.getSorCode()));
+                        obj.setScheduleOfRate(sorMap.get(obj.getSorCode().toLowerCase()));
                         obj.setCreateSor(false);
                     }
                 } else {
@@ -295,17 +295,21 @@ public class UploadSORController {
 
                 }
 
+                if (obj.getSorCode() != null && obj.getSorCode().length() > 255) {
+                    error = error + " " + messageSource.getMessage("error.sor.code.length", null, null) + ",";
+                }
+
                 // Validating SOR Category Code
                 if (obj.getSorCategoryCode() == null || obj.getSorCategoryCode().equalsIgnoreCase(""))
                     error = error + " " + messageSource.getMessage("error.schedulecategory.code.is.required", null, null) + ",";
 
                 else if (obj.getSorCategoryCode() != null && !obj.getSorCategoryCode().equalsIgnoreCase("")
-                        && sorCategoryMap.get(obj.getSorCategoryCode()) == null)
+                        && sorCategoryMap.get(obj.getSorCategoryCode().toLowerCase()) == null)
                     error = error + " " + messageSource.getMessage("error.schedulecategory.is.not.exist", null, null)
                             + obj.getSorCategoryCode() + ",";
                 else
 
-                    obj.setScheduleCategory(sorCategoryMap.get(obj.getSorCategoryCode()));
+                    obj.setScheduleCategory(sorCategoryMap.get(obj.getSorCategoryCode().toLowerCase()));
 
                 // Validating SOR description
                 if (obj.getSorDescription() == null || obj.getSorDescription().equalsIgnoreCase(""))
@@ -316,22 +320,30 @@ public class UploadSORController {
                             + messageSource.getMessage("error.special.characters.is.not.allowed.in.sor.description", null, null)
                             + ",";
 
+                if (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000) {
+                    error = error + " " + messageSource.getMessage("error.sor.description.length", null, null) + ",";
+                }
+
                 // Validating uom code
                 if (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase(""))
                     error = error + " " + messageSource.getMessage("error.uom.is.required", null, null) + ",";
 
                 else if (obj.getUomCode() != null && !obj.getUomCode().equalsIgnoreCase("")
-                        && uomMap.get(obj.getUomCode()) == null)
+                        && uomMap.get(obj.getUomCode().toLowerCase()) == null)
                     error = error + " " + messageSource.getMessage("error.uom.is.not.exist", null, null)
                             + obj.getUomCode() + ",";
                 else
-                    obj.setUom(uomMap.get(obj.getUomCode()));
+                    obj.setUom(uomMap.get(obj.getUomCode().toLowerCase()));
 
                 // Validating rate
                 if (obj.getRate() == null)
                     error = error + " " + messageSource.getMessage("error.rate.is.required", null, null) + ",";
                 else if (obj.getRate().compareTo(BigDecimal.ZERO) == -1 || obj.getRate().compareTo(BigDecimal.ZERO) == 0)
                     error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.rate", null, null)
+                            + obj.getRate() + ",";
+                else if (!(obj.getRate().toString().matches("[0-9]+([,.][0-9]{1,4})?")))
+                    error = error + " "
+                            + messageSource.getMessage("error.more.then.four.decimal.places.not.allowed.rate", null, null)
                             + obj.getRate() + ",";
 
                 // Validating from date
@@ -353,6 +365,10 @@ public class UploadSORController {
                 if (obj.getMarketRate() != null && obj.getMarketFromDate() == null) {
                     error = error + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ",";
                 }
+                if (obj.getMarketRate() != null && !(obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,4})?")))
+                    error = error + " "
+                            + messageSource.getMessage("error.more.then.four.decimal.places.not.allowed.market.rate", null, null)
+                            + obj.getRate() + ",";
 
                 if (obj.getMarketFromDate() != null && obj.getMarketRate() == null) {
                     error = error + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ",";
@@ -373,7 +389,7 @@ public class UploadSORController {
                                 .getMessage("error.sorcode.already.exists", null, null) + ",";
                 }
 
-                obj.setErrorReason(error);
+                obj.setErrorReason(obj.getErrorReason() != null ? obj.getErrorReason() : "" + error);
                 if (!error.equalsIgnoreCase("")) {
                     errorInMasterData = true;
                 }
@@ -398,7 +414,8 @@ public class UploadSORController {
                     if (uploadSORRateMap.get(obj.getSorCode() + "-" + obj.getSorCategoryCode()) == null)
                         uploadSORRateMap.put(obj.getSorCode() + "-" + obj.getSorCategoryCode(), obj);
                     else {
-                        obj.setErrorReason(obj.getErrorReason() + messageSource.getMessage("error.duplicate.record", null, null));
+                        obj.setErrorReason(obj.getErrorReason() != null ? obj.getErrorReason()
+                                : "" + messageSource.getMessage("error.duplicate.record", null, null));
                         errorInMasterData = true;
                     }
                 else if ((obj.getSorCode() == null || obj.getSorCode().equalsIgnoreCase(""))
@@ -455,15 +472,13 @@ public class UploadSORController {
                             row.getCell(FROMDATE_CELL_INDEX) == null ? null
                                     : row.getCell(FROMDATE_CELL_INDEX).getDateCellValue());
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(
-                            sorRate.getErrorReason() + messageSource.getMessage("error.fromdate.invalid", null, null));
+                    sorRate.setErrorReason(messageSource.getMessage("error.fromdate.invalid", null, null));
                 }
                 try {
                     sorRate.setToDate(
                             row.getCell(TODATE_CELL_INDEX) == null ? null : row.getCell(TODATE_CELL_INDEX).getDateCellValue());
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(
-                            sorRate.getErrorReason() + messageSource.getMessage("error.todate.invalid", null, null));
+                    sorRate.setErrorReason(messageSource.getMessage("error.todate.invalid", null, null));
                 }
                 sorRate.setMarketRate(
                         getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)) == null ? null : getNumericValue(row
@@ -472,15 +487,13 @@ public class UploadSORController {
                     sorRate.setMarketFromDate(row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX) == null ? null
                             : row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX).getDateCellValue());
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(
-                            sorRate.getErrorReason() + messageSource.getMessage("error.market.fromdate.invalid", null, null));
+                    sorRate.setErrorReason(messageSource.getMessage("error.market.fromdate.invalid", null, null));
                 }
                 try {
                     sorRate.setMarketToDate(row.getCell(MARKET_RATE_TODATE_CELL_INDEX) == null ? null
                             : row.getCell(MARKET_RATE_TODATE_CELL_INDEX).getDateCellValue());
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(
-                            sorRate.getErrorReason() + messageSource.getMessage("error.market.todate.invalid", null, null));
+                    sorRate.setErrorReason(messageSource.getMessage("error.market.todate.invalid", null, null));
                 }
             }
         } catch (final ValidationException e) {
@@ -636,7 +649,7 @@ public class UploadSORController {
             break;
         case HSSFCell.CELL_TYPE_STRING:
             strValue = cell.getStringCellValue();
-            strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
+           // strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
             if (strValue != null && strValue.contains("E+")) {
                 final String[] split = strValue.split("E+");
                 String mantissa = split[0].replaceAll(".", "");
