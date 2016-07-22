@@ -45,12 +45,13 @@ import java.util.Set;
 
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillInfo;
+import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
-import org.egov.infstr.models.ServiceCategory;
+import org.egov.collection.integration.pgi.PaymentRequest;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -183,4 +184,12 @@ public interface CollectionIntegrationService {
      * @return List of <code>ReceiptDetail</code>
      */
     public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(String receiptNumber);
+    
+    /**
+     * This method returns Payment Request to process payments through mobile
+     * @param billInfo
+     * @return PaymentRequest
+     */
+    public PaymentRequest processMobilePayments(BillInfoImpl billInfo);
+
 }
