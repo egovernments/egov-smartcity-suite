@@ -245,12 +245,12 @@ public class WorkProgressRegisterPDFController {
                 if (wpr.getAgreementNumber() != null)
                     pdf.setAgreementNumberDate(wpr.getAgreementNumber() + " - " + sdf.format(wpr.getAgreementDate()));
                 else
-                    pdf.setAgreementNumberDate("");
+                    pdf.setAgreementNumberDate("NA");
                 if (wpr.getContractor() != null)
                     pdf.setContractorCodeName(wpr.getContractor().getCode() + " - "
                             + wpr.getContractor().getName());
                 else
-                    pdf.setContractorCodeName("");
+                    pdf.setContractorCodeName("NA");
                 if (wpr.getAgreementAmount() != null)
                     pdf.setAgreementAmount(wpr.getAgreementAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else

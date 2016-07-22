@@ -150,12 +150,12 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("agreementNumberDate",
                         workProgressRegister.getAgreementNumber() + " - " + sdf.format(workProgressRegister.getAgreementDate()));
             else
-                jsonObject.addProperty("agreementNumberDate", "");
+                jsonObject.addProperty("agreementNumberDate", "NA");
             if (workProgressRegister.getContractor() != null)
                 jsonObject.addProperty("contractorCodeName", workProgressRegister.getContractor().getCode() + " - "
                         + workProgressRegister.getContractor().getName());
             else
-                jsonObject.addProperty("contractorCodeName", "");
+                jsonObject.addProperty("contractorCodeName", "NA");
             if (workProgressRegister.getAgreementAmount() != null)
                 jsonObject.addProperty("agreementAmount", workProgressRegister.getAgreementAmount());
             else
