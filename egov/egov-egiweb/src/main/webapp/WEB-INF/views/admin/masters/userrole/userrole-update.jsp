@@ -55,31 +55,28 @@
 				<form:form id="updateuserRoleForm" action="${user.id}" method="post"
 					modelAttribute="user" commandName="user"
 					class="form-horizontal form-groups-bordered">
-					<div class="row">
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.userrole.selecteduserName" />
-							: &nbsp;&nbsp;&nbsp;&nbsp;<b> <c:out value="${user.username}"></b>
-							</c:out>
-							<form:hidden path="id" id="id" value="${user.id}" />
-							<form:hidden path="username" id="username"
-								value="${user.username}" />
-						</div>
-					</div>
+					
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
-								<strong><spring:message code="lbl.hdr.userrole.info" /></strong>
+								<strong><spring:message code="lbl.hdr.userrole.info" /> For : <span style="
+    font-family: semibold;
+    font-size: 16px;
+"><c:out value="${user.username}"></c:out></span></strong>
 							</div>
 						</div>
+						<form:hidden path="id" id="id" value="${user.id}" />
+						<form:hidden path="username" id="username" value="${user.username}" />
 						<div class="row">
 							<div class="col-md-12 text-center">
 								<div class="panel-body">
 									<div class="row">
 										<div class="col-xs-5">
 											<div>
-												<spring:message code="lbl.userRole" />
+												<spring:message code="lbl.roles" />
 											</div>
-											<form:select path="roles" multiple="true" size="10"
+											<br/>
+											<form:select path="roles" multiple="true" size="11"
 												id="multiselect" cssClass="form-control"
 												cssErrorClass="form-control error">
 												<form:options items="${roles}" itemValue="id"
@@ -88,6 +85,7 @@
 										</div>
 										<div class="col-xs-2">
 											<div>&nbsp;</div>
+											<br/>
 												<button type="button" id="multiselect_rightSelected"
 													class="btn btn-block btn-default">
 													<i class="glyphicon glyphicon-chevron-right"></i>
@@ -99,9 +97,10 @@
 										</div>
 										<div class="col-xs-5">
 											<div>
-												<spring:message code="lbl.mappedUserRoles" />
+												<spring:message code="lbl.assigned.roles" />
 											</div>
-											<form:select path="roles" multiple="true" size="10"
+											<br/>
+											<form:select path="roles" multiple="true" size="11"
 												id="multiselect_to" cssClass="form-control"
 												cssErrorClass="form-control">
 											</form:select>
