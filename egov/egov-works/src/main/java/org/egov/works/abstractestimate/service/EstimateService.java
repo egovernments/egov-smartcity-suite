@@ -50,7 +50,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.asset.service.AssetService;
+import org.egov.assets.service.AssetService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
@@ -259,7 +259,7 @@ public class EstimateService {
 
         for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
             assetsForEstimate.setAbstractEstimate(abstractEstimate);
-            assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+            assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
         }
         for (final Activity act : abstractEstimate.getActivities())
             act.setAbstractEstimate(abstractEstimate);
@@ -355,7 +355,7 @@ public class EstimateService {
 
         for (final AssetsForEstimate assetsForEstimate : newAbstractEstimate.getAssetValues()) {
             assetsForEstimate.setAbstractEstimate(abstractEstimateFromDB);
-            assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+            assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
             abstractEstimateFromDB.addAssetValue(assetsForEstimate);
         }
         abstractEstimateFromDB.setEstimateValue(newAbstractEstimate.getEstimateValue());
@@ -539,7 +539,7 @@ public class EstimateService {
 
             for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
                 assetsForEstimate.setAbstractEstimate(abstractEstimate);
-                assetsForEstimate.setAsset(assetService.getAssetByCode(assetsForEstimate.getAsset().getCode()));
+                assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
             }
 
             mergeSorAndNonSorActivities(abstractEstimate);

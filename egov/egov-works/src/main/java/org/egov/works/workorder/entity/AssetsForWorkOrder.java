@@ -49,7 +49,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.asset.model.Asset;
+import org.egov.assets.model.Asset;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
