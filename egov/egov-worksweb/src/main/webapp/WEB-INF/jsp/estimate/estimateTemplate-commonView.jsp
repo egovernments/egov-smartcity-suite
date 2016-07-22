@@ -57,6 +57,8 @@
 					<div class="col-xs-3 add-margin view-content">
 						<s:property value="%{name}" />
 					</div>
+				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<s:text name="estimate.template.description" />
 					</div>
@@ -69,15 +71,17 @@
 					<div class="col-xs-3 add-margin view-content">
 						<s:property value="%{workType.code}" />
 					</div>
-					<s:if test="%{subType.code != null}" >
-						<div class="col-xs-3 add-margin">
-							<s:text name="estimate.work.subtype" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<s:property value="%{subType.code}" />
-						</div>
-					</s:if>
 				</div>
+				<s:if test="%{subType.code != null}" >
+					<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<s:text name="estimate.work.subtype" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<s:property value="%{subType.code}" />
+							</div>
+					</div>
+				</s:if>
 			</div>
 		</div>
 	</div>

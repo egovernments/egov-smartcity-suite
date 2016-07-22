@@ -73,7 +73,7 @@ body
 			<s:actionmessage theme="simple" escape="false"/>
 		</div>
 	</s:if>
-<div class="errorstyle" id="sor_error" class="alert alert-danger" style="display: none;"></div>
+<div class="alert alert-danger" id="sor_error" class="alert alert-danger" style="display: none;"></div>
 <s:form action="scheduleOfRate-save" theme="simple" name="scheduleOfRate" onsubmit="return validateSORFormAndSubmit();" cssClass="form-horizontal form-groups-bordered"><s:token/> 
 <s:hidden name="mode" id="mode" />
 <s:hidden  name="model.id" id="id"/> 
@@ -87,7 +87,6 @@ body
 </s:if>
 <s:if test="%{model.id==null}">
 	<s:submit type="submit" cssClass="btn btn-primary" value="Save" id="saveButton" name="button" method="save"  onclick="return validateSORFormAndSubmit();" />&nbsp;
-	<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();" > &nbsp;
 </s:if>
 	<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 </p>

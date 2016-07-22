@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<div class="errorstyle" id="schedulecategory_error" class="alert alert-danger" style="display: none;"></div>
+<div class="alert alert-danger" id="schedulecategory_error" class="alert alert-danger" style="display: none;"></div>
 <div class="panel panel-primary" data-collapsed="0" style="text-align: left">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -51,7 +51,7 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.code" /><span class="mandatory"></span></label>
+		<label class="col-sm-3 control-label text-right"> <s:text name="schedCategory.code" /><span class="mandatory"></span></label>
 			<s:hidden name="id"	id="id" />
 			<s:hidden name="mode" id="mode" />
 		<div class="col-sm-3 add-margin">

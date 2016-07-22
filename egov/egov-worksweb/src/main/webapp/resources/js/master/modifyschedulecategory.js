@@ -96,12 +96,10 @@ function callAjaxSearch() {
 					return row;
 				},
 				aaSorting : [],
-				columns : [ {
-						"data" : "code","sClass" : "text-center"},{
-						"data" : "description","sClass" : "text-center"},{
-						"data" : "",
-						"sClass" : "text-center","sWidth": "1%"	
-				} ]
+				columns : [ 
+			            {"data" : "code"},
+			            {"data" : "description"},
+						{"data" : ""} ]
 			});
 }
 

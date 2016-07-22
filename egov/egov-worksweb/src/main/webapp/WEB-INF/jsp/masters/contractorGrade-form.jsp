@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="errorstyle" id="contractorgrade_error" class="alert alert-danger" style="display: none;"></div>
+<div class="alert alert-danger fade in" id="contractorgrade_error" style="display:none"></div>
 <div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
@@ -56,7 +56,7 @@
 			<div class="panel-body">
 			
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right"> 
+					<label class="col-sm-3 control-label text-right"> 
 					   <s:text name="contractor.grade.master.grade" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -71,7 +71,7 @@
 				</div>
 				
 				<div class="form-group">
-					<label class="col-sm-2 control-label text-right"> 
+					<label class="col-sm-3 control-label text-right"> 
 					   <s:text name="contractor.grade.master.minamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">

@@ -59,22 +59,30 @@
 						<s:property value="%{code}" />
 					</div>
 
+					
+				</div>
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<s:text name="master.sor.description" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-9 add-margin view-content">
 						<s:property value="%{description}" />
 					</div>
-					
+				</div>
+				
+				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<s:text name="master.sor.uom" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div class="col-xs-9 add-margin view-content">
 						<s:property value="%{uom.uom}" />
 					</div>
 				</div>
 			</div>		
 							
+		
+		</div>
+		
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -139,5 +147,6 @@
 				</table>
 			</div>
 		</s:if>
-		</div>
+		
+</div>
 </div>

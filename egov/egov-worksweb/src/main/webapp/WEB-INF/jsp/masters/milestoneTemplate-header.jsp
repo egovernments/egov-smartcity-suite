@@ -53,7 +53,7 @@
 	</div>
 	<div class="panel-body no-margin-bottom">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="milestone.template.code" /> <span class="mandatory" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -84,7 +84,7 @@
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="milestone.template.name" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -102,7 +102,7 @@
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="milestone.template.type" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">

@@ -48,7 +48,7 @@
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.overheadname" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.overheadname" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="overheadName" class="form-control" id="overheadName" placeholder="Type first 3 letters of Overhead Name" />
 				<form:errors path="overheadName" cssClass="add-margin error-msg" />

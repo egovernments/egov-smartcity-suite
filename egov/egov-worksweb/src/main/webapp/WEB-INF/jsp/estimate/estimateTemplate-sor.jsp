@@ -329,7 +329,7 @@ function showProcessImage(event) {
 	<input type="hidden" value="<s:text name='estimate.template.no.sorfound' />" id='noSORFound'>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="estimate.scheduleCategory.name" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -338,7 +338,7 @@ function showProcessImage(event) {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-3 control-label text-right"> 
 				<s:text	name="estimate.addSOR" />
 			</label>
 			<div class="col-sm-offset-2 col-sm-8 add-margin">
@@ -353,12 +353,12 @@ function showProcessImage(event) {
 			</div>
 		</div>
 		<div class="form-group no-margin-bottom">
-			<div class="col-sm-offset-2 col-sm-8">
+			<div class="col-sm-offset-3 col-sm-8">
 			<div></div>
 			</div>
 		</div>
 		<div class="form-group no-margin-bottom">
-			<div class="col-sm-offset-2 col-sm-8">
+			<div class="col-sm-offset-3 col-sm-8">
 				<div class="alert alert-danger no-margin mt-5" id="sor_error" style="display: none;"></div>
 			</div>
 		</div>

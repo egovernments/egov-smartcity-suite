@@ -78,7 +78,7 @@
 						<div class="panel-body">
 						
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"> 
+								<label class="col-sm-3 control-label text-right"> 
 								   <s:text name="contractor.grade.master.grade" />
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -87,7 +87,7 @@
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"> 
+								<label class="col-sm-3 control-label text-right"> 
 								   <s:text name="contractor.grade.master.minamount" />
 								</label>
 								<div class="col-sm-3 add-margin">
@@ -184,14 +184,6 @@
 					</div>
 				</s:elseif>
 		</s:form>
-	<s:if test="%{searchResult.fullListSize != 0 }">
-	<div class="row">
-		<div class="col-sm-12 text-center buttonholdersearch">
-			<input type="button" class="btn btn-default" value="Close"
-				id="closeButton" name="button" onclick="window.close();" />
-		</div>
-	</div>
-	</s:if>
 <script type="text/javascript">
 <s:if test="%{mode == 'view'}"> 
 jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {

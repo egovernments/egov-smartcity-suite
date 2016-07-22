@@ -208,7 +208,6 @@ var makeScheduleOfRateDataTable = function() {
 }
 
 </script>
-<div class="errorstyle" id="sor_error" style="display: none;"></div>
 <span align="center" style="display:none" id="selectcategory">
  	<div class="errorstyle" >
          <s:text name="sor.code.categoryType.null"/>
@@ -250,7 +249,7 @@ var makeScheduleOfRateDataTable = function() {
 
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="master.sor.category" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -266,7 +265,7 @@ var makeScheduleOfRateDataTable = function() {
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="master.sor.description" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">

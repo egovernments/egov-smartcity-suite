@@ -43,6 +43,12 @@
 <html>
 <title><s:text name="page.title.estimate.template" /></title>
 <body>
+<style>
+ul{
+list-style-type:none;
+padding:0;
+}
+</style>
 <s:if test="%{hasActionMessages()}">
 <div id="msgsDiv" class="new-page-header">
 	<s:actionmessage theme="simple" />

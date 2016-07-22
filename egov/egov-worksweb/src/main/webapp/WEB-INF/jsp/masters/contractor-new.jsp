@@ -65,7 +65,7 @@ body {
 </head>
 <body>
 	<s:if test="%{hasErrors()}">
-		<div class="errorstyle">
+		<div class="alert alert-danger fade in">
 			<s:actionerror />
 			<s:fielderror />
 		</div>
@@ -91,8 +91,6 @@ body {
 				<s:submit type="submit" cssClass="btn btn-primary" value="Save"
 					id="saveButton" name="button" method="save" onclick="return validateContractorFormAndSubmit();"/>&nbsp;
 
-				<input type="button" class="btn btn-default" value="Clear"
-					id="button" name="clear" onclick="this.form.reset();">&nbsp;
 		</s:if>
 			<input type="button" class="btn btn-default" value="Close"
 				id="closeButton" name="closeButton" onclick="window.close();" />

@@ -61,10 +61,4 @@
 			</thead>
 		</table>
 	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<a href='javascript:void(0)' class='btn btn-default' style="display: none;" id="close"
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
 </div>

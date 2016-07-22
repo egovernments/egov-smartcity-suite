@@ -80,7 +80,7 @@ body
 	<div class="panel-body">
 	    <s:if test="%{scheduleCategoryList.size != 0}">
 		   <div class="form-group">
-				<label class="col-sm-2 control-label text-right">
+				<label class="col-sm-3 control-label text-right">
 				    <s:text name="master.sor.category" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -90,7 +90,7 @@ body
 		</s:if>
 		
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="master.sor.code" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -190,12 +190,6 @@ body
 	</div>
 </s:elseif>
 </s:form>
-
-<s:if test="%{searchResult.fullListSize != 0}">
-	<div align="center">
-		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
-	</div>
-</s:if>
 <script type="text/javascript">
 <s:if test="%{mode == 'view'}"> 
 jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {

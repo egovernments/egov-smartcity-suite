@@ -81,9 +81,7 @@
 						</s:if><s:else>
 							<s:submit value="Modify" method="save" cssClass="btn btn-primary" id="modifyButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
 						</s:else>
-						<s:if test="%{model.id==null}" >
-							<input type="button" value="Clear" class="btn btn-default" onclick="this.form.reset();"/>&nbsp;
-						</s:if>
+						
 						<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 				     </div>
 				</div>

@@ -135,9 +135,6 @@ function validateEstimateTemplateFormAndSubmit() {
 		</s:if><s:else>
 		<input type="submit" class="btn btn-primary" value="Modify" id="modifyButton" name="button" onclick="return validateEstimateTemplateFormAndSubmit()"/>&nbsp;
 		</s:else>
-		<s:if test="%{model.id==null}" >
-			<input type="button" class="btn btn-default" value="Clear" id="button" name="clear" onclick="this.form.reset();">&nbsp;
-		</s:if>
 			<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 	</div>
 </div>

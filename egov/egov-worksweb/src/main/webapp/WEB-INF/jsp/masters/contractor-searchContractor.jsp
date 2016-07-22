@@ -71,7 +71,7 @@
 	
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-3 control-label text-right"> 
 			   <s:text name="contractor.name" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -86,7 +86,7 @@
 		</div>
 				
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-3 control-label text-right"> 
 			   <s:text name="contractor.department" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -101,7 +101,7 @@
 		</div>
 				
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-3 control-label text-right"> 
 			   <s:text name="contractor.grade" />
 			</label>
 			<div class="col-sm-3 add-margin">

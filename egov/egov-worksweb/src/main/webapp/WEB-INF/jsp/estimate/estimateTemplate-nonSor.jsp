@@ -145,7 +145,7 @@ var makeNonSORDataTable = function() {
 	var nonSorColumnDefs = [ 
 		{key:"NonSorId", hidden:true,sortable:false, resizeable:false} ,
 		{key:"SlNo", label:'Sl No', width:50,sortable:false, resizeable:false},
-		{key:"nonSordescription", width:450,label:'Description<span class="mandatory"></span>', formatter:textboxDescFormatter, sortable:false, resizeable:true},		
+		{key:"nonSordescription", width:450,label:'Description<span class="mandatory"></span>', formatter:textboxDescFormatter, sortable:false, resizeable:false},		
 		{key:"Uom", label:'UOM<span class="mandatory"></span>', width:250,formatter:"dropdown", dropdownOptions:uomDropdownOptions},
 		{key:"nonSorUom", hidden:true, formatter:nonSorHiddenFormatter, sortable:false, resizeable:false},
 		{key:"rate",label:'Unit Rate<span class="mandatory"></span>',width:150, formatter:textboxFormatter,sortable:false, resizeable:false},

@@ -93,7 +93,6 @@
 			</s:if>
 			<s:else>
 				<s:submit type="submit" cssClass="btn btn-primary" value="Save"	id="saveButton" name="button" method="save" onclick="return validateFormBeforeSubmit();" />&nbsp;
-				<input type="button" class="btn btn-default" value="Clear" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
 			</s:else>
 				<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 		</div>

@@ -115,12 +115,20 @@ var dateFormatter = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionContractorDetails[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
 	var id = oColumn.getKey() + oRecord.getId();
 	
-    var markup= "<input type='text' id='"+id+"'   class='selectmultilinewk' size='15' maxlength='10' style=\"width:100px\" name='"+fieldName 
+    var markup= "<input type='text' id='"+id+"'   class='selectmultilinewk datepicker' size='15' maxlength='10' style=\"width:100px\" name='"+fieldName 
 	            + "'  onkeyup=\"DateFormat(this,this.value,event,false,'3')\" onblur=\"validateDateFormat(this)\" />"
 				+ " <span id='error"+ id +"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span>";
 	 e2.innerHTML = markup;
   
 	
+}
+
+function initializeDatePicker()
+{
+	jQuery(".datepicker").datepicker({
+		format : "dd/mm/yyyy",
+		autoclose:true
+	});
 }
 
 function createHiddenFormatter(el, oRecord, oColumn){
@@ -197,7 +205,7 @@ var makeContractorDataTable = function() {
 
 </script>
 
-<div class="errorstyle" id="contractor_error" class="alert alert-danger" style="display: none;"></div>
+<div class="alert alert-danger fade in" id="contractor_error" style="display:none"></div>
 <div class="new-page-header">
 	<s:if test="%{mode=='edit'}">
 		<s:text name="contractor.master.title.modify" />
@@ -213,7 +221,7 @@ var makeContractorDataTable = function() {
 	<div class="panel-body">
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -230,7 +238,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.correspondenceAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -248,7 +256,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.contactPerson" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -265,7 +273,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.narration" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -275,7 +283,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.panNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -292,7 +300,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.bank" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -311,7 +319,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-3 control-label text-right"> <s:text
 					name="contractor.bankAccount" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -328,7 +336,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-3 control-label text-right"> 
 			<s:text	name="contractor.exemptionFrom" /></label>
 			<div class="col-sm-3 add-margin">
 
@@ -348,7 +356,7 @@ var makeContractorDataTable = function() {
 			<div class="form-group">
 				<div class="text-right add-margin">
 				<button class="btn btn-primary"
-				onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">
+				onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});initializeDatePicker();return false;">
 				<s:text name="contractor.addContractorDetail" /></button>
 				</div>
 

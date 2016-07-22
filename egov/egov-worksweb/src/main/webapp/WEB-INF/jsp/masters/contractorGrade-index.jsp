@@ -43,7 +43,12 @@
 <html>
 <title><s:text name="contractor.grade.list" /></title>
 <body>
-
+<style>
+    ul{
+    	list-style-type:none;
+    	padding: 0;
+    }
+    </style>
 <s:if test="%{hasErrors()}">
 	<div class="alert alert-danger">
 		<s:actionerror />
@@ -55,18 +60,21 @@
 <s:hidden name="mode"/>
 <div class="row">
 	<div class="col-md-12">
+		
+		<s:if test="%{hasActionMessages()}">
+			<div id="msgDiv" class="new-page-header">
+				<s:actionmessage theme="simple" />
+			</div>
+		</s:if>
+		<s:else>
+			<div id="msgDiv" class="new-page-header">
+				<s:text name="contractor.grade.master" />
+			</div>
+		</s:else>
 		<div class="panel panel-primary" data-collapsed="0">
 
 			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<s:if test="%{hasActionMessages()}">
-						<s:actionmessage theme="simple" />
-					</s:if>
-					<s:else>
-						<s:text name="contractor.grade.master" />
-					</s:else>
-				</div>
-
+				
 			</div>
 			<div class="panel-body">
 					<div class="row add-border">

@@ -113,7 +113,7 @@ function bodyOnLoad(){
 	</div>
 	<div class="panel-body">
 	  	<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.work.type" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -129,7 +129,7 @@ function bodyOnLoad(){
 	  	</div>
 		
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.template.search.code" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -144,7 +144,7 @@ function bodyOnLoad(){
 		</div>
 		
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.template.search.status" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -157,7 +157,6 @@ function bodyOnLoad(){
 <div class="row">
 	<div class="col-xs-12 text-center buttonholdersearch">
 		<input type="submit" class="btn btn-primary" value="Search" id="searchButton" name="button" onclick="submitEstimateTemplateSearchForm()" />&nbsp;
-        <input type="button" class="btn btn-default" value="Reset" id="resetbutton" name="clear" onclick="this.form.reset();">&nbsp;
         <input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 	</div>
 </div>

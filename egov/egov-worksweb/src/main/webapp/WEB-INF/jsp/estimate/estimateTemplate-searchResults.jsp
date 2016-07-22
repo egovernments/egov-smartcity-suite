@@ -141,11 +141,6 @@
 			</div>
 	</s:elseif>   
  </div>
-<s:if test="%{!sourcePage.equals('searchForEstimate') && searchResult.fullListSize != 0}">
-	<div align="center">
-		<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
-	</div>
-</s:if>
 <script type="text/javascript">
 <s:if test="%{mode == 'view'}"> 
 jQuery(document).on("click", ".report-table-container table tbody tr", function(e) {

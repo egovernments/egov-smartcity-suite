@@ -74,18 +74,18 @@ window.close();
 	        <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Sl No"
 			   titleKey="column.title.SLNo"
-			   style="width:3%;text-align:left" >
+			   style="width:3%;text-align:left;cursor:pointer" >
 			     <s:property value="#attr.currentRow_rowNum + (page-1)*pageSize"/>
 			</display:column>
 			
-			<display:column class="hidden" headerClass="hidden" title="fsd" style="width:13%;text-align:left;;cursor:pointer">
+			<display:column class="hidden" headerClass="hidden" title="fsd" style="width:13%;text-align:left;cursor:pointer">
 				<s:property value="#attr.currentRow.id" />
 			</display:column>
 	        
 	        <display:column headerClass="pagetableth"
 		       class="pagetabletd" title="Template Code"
 			   titleKey="milestone.template.search.code"
-			   style="width:8%;text-align:left">
+			   style="width:8%;text-align:left;cursor:pointer">
 				<s:property  value='%{#attr.currentRow.code}' />
             </display:column>
                    
@@ -99,28 +99,28 @@ window.close();
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Template Description"
 			   titleKey="milestone.template.search.description"
-			   style="width:15%;text-align:left" >
+			   style="width:15%;text-align:left;cursor:pointer" >
 			       <s:property  value='%{#attr.currentRow.description}' />
 		    </display:column>
                      
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Type of Work"
 			   titleKey="milestone.template.search.type"
-			   style="width:10%;text-align:left" >
+			   style="width:10%;text-align:left;cursor:pointer" >
 				   <s:property value="%{#attr.currentRow.typeOfWork.description}" />
 			</display:column>
                 
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="SubType of Work"
 			   titleKey="milestone.template.search.subtype"
-			   style="width:10%;text-align:left" >
+			   style="width:10%;text-align:left;cursor:pointer" >
 			      <s:property value="%{#attr.currentRow.subTypeOfWork.description}" />
 			</display:column>
                 			  
 			<display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Status"
 			   titleKey="milestone.template.status"
-			   style="width:6%;text-align:left" >
+			   style="width:6%;text-align:left;cursor:pointer" >
 			      <s:if test="%{#attr.currentRow.status == 0}">
 					 <s:property value="%{'INACTIVE'}" />
 				  </s:if>
@@ -131,7 +131,7 @@ window.close();
 			
 			<s:if test="%{mode != 'view'}">
 				<display:column headerClass="pagetableth" class="pagetabletd"
-					title="Modify" style="width:13%;text-align:left;;cursor:pointer">
+					title="Modify" style="width:13%;text-align:left;cursor:pointer">
 					<a href="${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
 						<s:text name="column.title.modify" />
 					</a>
@@ -161,12 +161,7 @@ window.close();
 			   <div class="alert alert-warning no-margin"><s:text name="label.no.records.found"/></div>
 			</div>
 		 </div>
-	</s:elseif>   
-	<s:if test="%{searchResult.fullListSize != 0 && mode == 'edit'}"> 
-	<div align="center">
-		<input type="button" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
-	</div>
-</s:if>
+	</s:elseif>
  </div>
 <script type="text/javascript">
 <s:if test="%{mode == 'view'}"> 

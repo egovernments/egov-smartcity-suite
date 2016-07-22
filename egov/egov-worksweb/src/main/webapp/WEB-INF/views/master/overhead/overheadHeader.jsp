@@ -56,7 +56,7 @@
 	
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.name" /><span
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" /><span
 						class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="name" name="name" value="${name}" data-errormsg="Name is mandatory!" data-idx="0" data-optional="0" class="form-control table-input name" required="required"/>
@@ -70,7 +70,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.account" /><span
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.account" /><span
 						class="mandatory"></span></label>	
 			<div class="col-sm-3 add-margin">
 				<form:select id="accountCode" path="accountCode.id" data-first-option="false" class="form-control" required="required">

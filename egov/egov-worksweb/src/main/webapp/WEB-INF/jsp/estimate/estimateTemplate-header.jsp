@@ -120,7 +120,7 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.template.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -144,7 +144,7 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 		</div>
 		
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.template.name" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -160,7 +160,7 @@ for(i=0;i<document.estimateTemplateForm.elements.length;i++){
 		</div>
 					
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-3 control-label text-right">
 			    <s:text name="estimate.template.type" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
