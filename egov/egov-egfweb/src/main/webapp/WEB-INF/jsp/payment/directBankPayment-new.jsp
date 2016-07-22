@@ -56,6 +56,8 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
+	type="text/css" />
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
