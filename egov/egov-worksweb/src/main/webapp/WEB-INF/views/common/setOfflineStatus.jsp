@@ -42,123 +42,46 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<script src="<c:url value='/resources/js/offlinestatus.js?rnd=${app_release_no}'/>"></script>
 
-		<input type="hidden" value="${workOrder.offlineStatuses.size() }" id="statusSize" />
-		<input type="hidden" value="${offlineStatusSize }" id="offlineStatusSize" />
-		<input type="hidden" value="true" id="isOfflineStatusValuesLoading" />
-		<table class="table table-bordered" id="tblsetstatus">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno"/></th>
-					<th><spring:message code="lbl.status"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.date"/><span class="mandatory"></span></th>
-					<c:if test="${offlineStatusSize != 6 }" >
-						<th><spring:message code="lbl.action"/></th>
-					</c:if>
-				</tr>
-			</thead>
-			<tbody id="setStatusTbl">
-			<c:choose>
-				<c:when test="${workOrder.offlineStatuses.size() == 0}">
-					<tr id="statusRow">
-						<td>
-							<span class="spansno">1</span>
-							<form:hidden path="offlineStatuses[0].id" name="offlineStatuses[0].id" value="${offlineStatuses.id}" class="form-control table-input hidden-input"/>
-						</td>
-						<td>
-						<c:choose>
-						<c:when test="${offlineStatuses.id != null }">
-							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${egwStatus}">
-							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 	</c:forEach>
-							</form:select>
-						</c:when>
-						<c:otherwise>
-							<form:select path="offlineStatuses[0].egwStatus.id" data-first-option="false" id="offlineStatuses[0].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${egwStatus}">
-							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 	</c:forEach>
-							</form:select>
-						</c:otherwise>
-						</c:choose>
-							<form:errors path="offlineStatuses[0].egwStatus.id" cssClass="add-margin error-msg" />
-						</td>
-						<td>
-							<form:input path="offlineStatuses[0].statusDate" id="offlineStatuses[0].statusDate" data-inputmask="'mask': 'd/m/y'" name="offlineStatuses[0].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate statusdatedisable"	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d"  required="required" />
-							<form:errors path="offlineStatuses[0].statusDate" cssClass="add-margin error-msg" />
-						</td>
-						<c:if test="${offlineStatusSize != 6 }" >
-							<td>
-								<span name="spandelete" data-idx="0" class="add-padding spandelete"  id="spandelete_0" onclick="deleteSetStatus(this);" readonly="true" ><i class="fa fa-trash spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-							</td>
-						</c:if>
-					</tr>
+<input type="hidden" value="${workOrder.offlineStatuses.size() }" id="statusSize" />
+<input type="hidden" value="${offlineStatusSize }" id="offlineStatusSize" />
+<table class="table table-bordered" id="tblsetstatus">
+	<thead>
+		<tr>
+			<th><spring:message code="lbl.slno"/></th>
+			<th><spring:message code="lbl.status"/><span class="mandatory"></span></th>
+			<th><spring:message code="lbl.date"/><span class="mandatory"></span></th>
+		</tr>
+	</thead>
+	<tbody id="setStatusTbl">
+			<c:forEach var="i" begin="0" end="5" varStatus="item">
+				<tr id="statusRow">
+				<td>
+					<span class="spansno"><c:out value="${item.index + 1}" /></span>
+					<form:hidden path="offlineStatuses[${item.index}].id" name="offlineStatuses[${item.index}].id" value="${offlineStat.id}" id="offlineStatusesId_${item.index}" class="form-control table-input hidden-input"/>
+				</td>
+				<td>
+					<c:forEach var="status" items="${egwStatus}" varStatus="i">
+				 		<c:if test="${i.index == item.index}">
+				 			<form:hidden path="offlineStatuses[${item.index}].egwStatus.id" value="${status.id }"/>
+							${status.description}
+				 		</c:if>
+				 	</c:forEach>
+					<form:errors path="offlineStatuses[${item.index}].egwStatus.id" cssClass="add-margin error-msg" />
+				</td>
+				<td>
+				<c:choose>
+				<c:when test="${workOrder.offlineStatuses[item.index].id != null }">
+					<form:input path="offlineStatuses[${item.index}].statusDate" id="statusDate_${item.index }" name="offlineStatuses[${item.index}].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate "	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  disabled="true" required="required" />
 				</c:when>
 				<c:otherwise>
-					<c:forEach items="${workOrder.getOfflineStatuses()}" var="offlineStat" varStatus="item">
-						<tr id="statusRow">
-						<td>
-							<span class="spansno"><c:out value="${item.index + 1}" /></span>
-							<form:hidden path="offlineStatuses[${item.index}].id" name="offlineStatuses[${item.index}].id" value="${offlineStat.id}" class="form-control table-input hidden-input"/>
-						</td>
-						<td>
-						<c:choose>
-						<c:when test="${offlineStat.id != null }">
-							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);"  disabled="true" required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${egwStatus}">
-							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 	</c:forEach>
-							</form:select>
-						</c:when>
-						<c:otherwise>
-							<form:select path="offlineStatuses[${item.index}].egwStatus.id" data-first-option="false" id="offlineStatuses[${item.index}].egwStatus" class="form-control offlineStatusValue" onchange="checkOfflineStatus(this);" required="required">
-							 	<form:option value=""><spring:message code="lbl.select" /></form:option>
-							 	<c:forEach var="status" items="${egwStatus}">
-							 		<form:option value="${status.id}"><c:out value="${status.description}" /> </form:option>
-							 	</c:forEach>
-							</form:select>
-						</c:otherwise>
-						</c:choose>
-							<form:errors path="offlineStatuses[${item.index}].egwStatus.id" cssClass="add-margin error-msg" />
-						</td>
-						<td>
-						<c:choose>
-						<c:when test="${offlineStat.id != null }">
-							<form:input path="offlineStatuses[${item.index}].statusDate" id="offlineStatuses[${item.index}].statusDate" name="offlineStatuses[${item.index}].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate "	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  disabled="true" required="required" />
-						</c:when>
-						<c:otherwise>
-							<form:input path="offlineStatuses[${item.index}].statusDate" id="offlineStatuses[${item.index}].statusDate" name="offlineStatuses[${item.index}].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate"	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  required="required"/>
-						</c:otherwise>
-						</c:choose>
-							<form:errors path="offlineStatuses[${item.index}].statusDate" cssClass="add-margin error-msg" />
-						</td>
-						<c:if test="${offlineStatusSize != 6 }" >
-							<td>
-							<c:choose>
-								<c:when test="${offlineStat.id != null }">
-									<span style="display: none;" name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-								</c:when>
-								<c:otherwise>
-									<span name="spandelete" data-idx="0" class="add-padding spandelete" id="spandelete_${item.index}" onclick="deleteSetStatus(this);" ><i class="fa fa-trash spandelete" id="spandelete" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
-								</c:otherwise>
-							</c:choose>
-							</td>
-						</c:if>
-					</tr>
-					</c:forEach>
+					<form:input path="offlineStatuses[${item.index}].statusDate" id="statusDate_${item.index }" name="offlineStatuses[${item.index}].statusDate" value="" data-errormsg="Status Date is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker statusdate"	maxlength="10" data-date-format="dd/mm/yyyy" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  required="required"/>
 				</c:otherwise>
-			</c:choose>
-				</tbody>
-		</table>
-		<c:if test="${offlineStatusSize != 6 }" >
-			<div id="offlineStatus">
-			</div>
-			<div class="col-sm-12 text-center">
-				<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addNewStatus()"><spring:message code="lbl.addstatus" /></button>
-			</div>
-		</c:if>
+				</c:choose> 
+					<form:errors path="offlineStatuses[${item.index}].statusDate" cssClass="add-margin error-msg" />
+				</td>
+			</tr>
+			</c:forEach>
+		</tbody>
+</table>
+<script src="<c:url value='/resources/js/offlinestatus.js?rnd=${app_release_no}'/>"></script>

@@ -55,6 +55,8 @@
 	</spring:hasBindErrors>
 	</div>
 	<input type="hidden" value="<spring:message code="error.offlinestatus.status.date" />" id="errorStatusDates" />
+	<input type="hidden" value="<spring:message code="error.offlinestatus.status.date.null" />" id="errorStatusDateNull" />
+	<input type="hidden" value="<spring:message code="error.offlinestatus.status.date.between.null" />" id="errorStatusDateIntermediate" />
 	<input type="hidden" name="workOrder" value="${workOrder.id}" />
 	<input type="hidden" id="workOrderDate" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="yyyy-MM-dd" />' />
 	<div class="panel panel-primary" data-collapsed="0">
@@ -91,7 +93,7 @@
 	<div class="col-sm-12 text-center">
 	<c:if test="${offlineStatusSize != 6 }" >
 		<form:button type="submit" name="submit" id="save"
-			class="btn btn-primary" value="Save" onclick="validateForm();">
+			class="btn btn-primary" value="Save" onclick="return validateForm();">
 			<spring:message code="lbl.save" />
 		</form:button>
 	</c:if>

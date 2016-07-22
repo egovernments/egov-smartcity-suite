@@ -39,162 +39,9 @@
  */
 $(document).ready(function() {
 	
-	$('.offlineStatuses').trigger('change');
-	resetOfflineStatusses();
-	$('#isOfflineStatusValuesLoading').val('false');
 	initializeDatePicker();
 		
 });
-
-function addNewStatus() {
-	if($('#offlineStatuses').valid()){
-	var rowcount = $("#tblsetstatus tbody tr").length;
-	if (rowcount < 6) {
-		if (document.getElementById('statusRow') != null) {
-			// get Next Row Index to Generate
-			var nextIdx = $("#tblsetstatus tbody tr").length;
-			var isValid = 1;// for default have success value 0
-
-			// validate existing rows in table
-			$("#tblsetstatus tbody tr").find('input, select, textarea').each(
-					function() {
-						if (($(this).data('optional') === 0)
-								&& (!$(this).val())) {
-							$(this).focus();
-							bootbox.alert($(this).data('errormsg'));
-							isValid = 0;// set validation failure
-							return false;
-						}
-			});
-
-			if (isValid === 0) {
-				return false;
-			}
-			
-			// Generate all textboxes Id and name with new index
-			$("#statusRow").clone().find("input, select, span[name='spandelete']").each(
-					function() {
-
-						if ($(this).data('server')) {
-							$(this).removeAttr('data-server');
-						}
-						
-							$(this).attr(
-									{
-										'id' : function(_, id) {
-											return id.replace(/\d+/, nextIdx);
-										},
-										'name' : function(_, name) {
-											return name.replace(/\d+/, nextIdx);
-										},
-										'data-idx' : function(_,dataIdx)
-										{
-											return nextIdx;
-										}
-									});
-
-							// if element is static attribute hold values for
-							// next row, otherwise it will be reset
-							if (!$(this).data('static')) {
-								$(this).val('');
-								// set default selection for dropdown
-								if ($(this).is("select")) {
-									$(this).prop('selectedIndex', 0);
-								}
-							}
-							
-							$(this).attr('readonly', false);
-							$(this).removeAttr('disabled');
-							$(this).prop('checked', false);
-
-					}).end().appendTo("#tblsetstatus tbody");
-			generateSno();
-			$("#spandelete_" + nextIdx).removeAttr('style');
-		}
-	} else {
-		  bootbox.alert('limit reached!');
-	}
-	}
-	
-	initializeDatePicker();
-	
-	return false;
-}
-
-function generateSno()
-{
-	var idx=1;
-	$(".spansno").each(function(){
-		$(this).text(idx);
-		idx++;
-	});
-}
-
-function resetOfflineStatusses(){
-	addedOfflineStatus = new Array();
-	var resultLength = jQuery('#tblsetstatus tr').length-1;
-	var index;
-	for (var i = 0; i < resultLength; i++) {
-		index = i;
-		var offlineStatusValue = document.getElementById('offlineStatuses['
-				+ index + '].egwStatus').value;
-		if(offlineStatusValue != "")
-			addedOfflineStatus.push(offlineStatusValue);
-	}
-}
-
-function deleteSetStatus(obj) {
-    var rIndex = getRow(obj).rowIndex;
-    var id = $(getRow(obj)).children('td:first').children('input:first').val();
-    //To get all the deleted rows id
-    var aIndex = rIndex - 1;
-
-	var tbl=document.getElementById('tblsetstatus');	
-	var rowcount=$("#tblsetstatus tbody tr").length;
-	if(rowcount<=1) {
-    	bootbox.alert("This row can not be deleted");
-		return false;
-	} else {
-		tbl.deleteRow(rIndex);
-		//starting index for table fields
-		var idx= 0;
-		var sno = 1;
-		//regenerate index existing inputs in table row
-		jQuery("#tblsetstatus tbody tr").each(function() {
-		
-				jQuery(this).find("input, select, errors, span, input:hidden").each(function() {
-					var classval = jQuery(this).attr('class');
-					if(classval == 'spansno') {
-						jQuery(this).text(sno);
-						sno++;
-					} else {
-					jQuery(this).attr({
-					      'name': function(_, name) {
-					    	  if(!(jQuery(this).attr('name')===undefined))
-					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'id': function(_, id) {
-					    	  if(!(jQuery(this).attr('id')===undefined))
-					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
-					      },
-					      'class' : function(_, name) {
-								if(!(jQuery(this).attr('class')===undefined))
-									return name.replace(/\[.\]/g, '['+ idx +']'); 
-							},
-						  'data-idx' : function(_,dataIdx)
-						  {
-							  return idx;
-						  }
-					   });
-					}
-			    });
-				
-				idx++;
-		});
-		resetOfflineStatusses();
-		return true;
-	}	
-}
 
 function getRow(obj) {
 	if(!obj)return null;
@@ -207,55 +54,87 @@ function getRow(obj) {
 	return null;
 }
 
-var addedOfflineStatus = new Array();
-
-function checkOfflineStatus(offlineStatuses) {
-	if(offlineStatuses.value==""){
-		resetOfflineStatusses();
-	}else
-		if(addedOfflineStatus.indexOf(offlineStatuses.value) == -1) {
-			if($('#isOfflineStatusValuesLoading').val() == 'false')
-				resetOfflineStatusses();
-			var objName = offlineStatuses.name;
-			var index =objName.substring(objName.indexOf("[")+1,objName.indexOf("]")); 
-		}
-				else{
-		var index =offlineStatuses.name.substring(offlineStatuses.name.indexOf("[")+1,offlineStatuses.name.indexOf("]")); 
-		offlineStatuses.value= "";
-		bootbox.alert("The Offline Status is already added");
-		resetOfflineStatusses();
-	}
-}
-
 function validateForm(){
-	if($('#offlineStatuses').valid()){
-		$(".offlineStatusValue").removeAttr('disabled');
-		$(".statusdate").removeAttr('disabled');
+	$('.statusdate').prop('required', false);
+	var tbl=document.getElementById('tblsetstatus');		
+	var flag = false;
+	var length = $('.statusdate').length;
+	
+	if(document.getElementById('statusDate_0').value == ""){
+		$('#statusDate_0').prop('required', 'required');
 		return false;
 	}
+	
+	for (var j = 0; j < length; j++) {
+		var offlineStatusesId = document.getElementById('offlineStatusesId_' + j ).value;
+		if(offlineStatusesId != ""){
+			var k=j+1;
+			var statusDate = document.getElementById('statusDate_' + k ).value;
+			if(statusDate == ""){
+				$('#statusDate_' + k).prop('required', 'required');
+				return false;
+			}
+		}
+	}
+	
+	for (var i = 0; i < length; i++) {
+		var statusDate = document.getElementById('statusDate_' + i ).value;
+		if(statusDate == "" && !flag){
+			flag = true;
+		}
+		if(statusDate != "" && flag){
+			var message = document.getElementById('errorStatusDateIntermediate').value;
+			bootbox.alert(message);
+			return false;
+		}
+	}
+	flag = false;
+	for (var i = 0; i < length; i++) {
+		var statusDate = document.getElementById('statusDate_' + i ).value;
+		if(statusDate == "" && !flag){
+			flag = true;
+			index = i + 1;
+		}
+		if(flag)
+			tbl.deleteRow(index);
+	}
+	
+	if($('#offlineStatuses').valid()){
+		$(".statusdate").removeAttr('disabled');
+		return true;
+	}
+	else
+		return false;
+	
 }
 
 function validateStatusDates(obj){
-	var resultLength = jQuery('#tblsetstatus tr').length-1;
+	var rIndex = getRow(obj).rowIndex - 1;
+	k = rIndex-1;
 	var workOrderDate=new Date($('#workOrderDate').val());
 	var statusDate = $(obj).data('datepicker').date;
-	if(resultLength == 1 && statusDate<workOrderDate)
+	if(rIndex == 0 && statusDate<workOrderDate)
 	{
 		var message = document.getElementById('errorStatusLOADate').value;
-		bootbox.alert(message);
 		$(obj).datepicker("setDate", new Date());
-		$(obj).datepicker('update');
 		$(obj).val('');
-		i++;
+		$(obj).datepicker('update');
+		bootbox.alert(message);
 		return false;	
 	}
-	
 	var rowcount = $("#tblsetstatus tbody tr").length;
-	if(rowcount > 1){
-		var rIndex = getRow(obj).rowIndex - 1;
+	if(k >= 0){
 		
-		var statusDate = document.getElementById('offlineStatuses['+ (rIndex-1) + '].statusDate').value;
-		var currentDate = document.getElementById('offlineStatuses['+ (rIndex) + '].statusDate').value;
+		var statusDate = document.getElementById('statusDate_' + k).value;
+		if(statusDate == ""){
+			var message = document.getElementById('errorStatusDateNull').value;
+			$(obj).datepicker("setDate", new Date());
+			$(obj).val('');
+			$(obj).datepicker('update');
+			bootbox.alert(message);
+		}
+			
+		var currentDate = document.getElementById('statusDate_'+ rIndex).value;
 		if(new Date((currentDate.split('/').reverse().join('-'))).getTime() < new Date((statusDate.split('/').reverse().join('-'))).getTime())
 		{	
 			var message = document.getElementById('errorStatusDate').value;
