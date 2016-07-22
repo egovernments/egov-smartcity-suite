@@ -57,6 +57,7 @@ import javax.validation.constraints.Max;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * Created by mani on 16/6/16.
@@ -68,11 +69,13 @@ import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 public class MBMeasurementSheet extends AbstractAuditable {
 
     private static final long serialVersionUID = -5841511908573164177L;
-    public static final String SEQ = "SEQ_EGW_WO_MEASUREMENTSHEET";
+    public static final String SEQ = "SEQ_EGW_MB_MEASUREMENTSHEET";
 
     @Id
     @GeneratedValue(generator = MBMeasurementSheet.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
+    @Length(max = 1024, message = "estimate.measurementSheet.remarks.length")
+    private String remarks;
     @Max(9999)
     private Long no;
     private BigDecimal length;

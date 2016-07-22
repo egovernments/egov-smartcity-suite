@@ -56,29 +56,23 @@ import javax.validation.constraints.Max;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * Created by mani on 16/6/16.
  */
 @Entity
-@Table(name="EGW_WO_MEASUREMENTSHEET")
+@Table(name = "EGW_WO_MEASUREMENTSHEET")
 @SequenceGenerator(name = WorkOrderMeasurementSheet.SEQ, sequenceName = WorkOrderMeasurementSheet.SEQ, allocationSize = 1)
 
 public class WorkOrderMeasurementSheet extends AbstractAuditable {
-    public static final String SEQ = "SEQ_EGW_WO_MEASUREMENTSHEET";
 
+    private static final long serialVersionUID = 8061200667202701020L;
+    public static final String SEQ = "SEQ_EGW_WO_MEASUREMENTSHEET";
 
     @Id
     @GeneratedValue(generator = WorkOrderMeasurementSheet.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Integer slNo;
-    private char identifier;
-    @Length(max = 1024, message = "estimate.measurementSheet.remarks.length")
-    private String remarks;
-
     @Max(9999)
     private Long no;
     private BigDecimal length;
@@ -89,58 +83,41 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "woactivityid")
     private WorkOrderActivity woActivity;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "msheetid")
-    private MeasurementSheet measurementSheet;  
-    
-    @Transient
-    private BigDecimal cumulativeQuantity; 
+    private MeasurementSheet measurementSheet;
 
+    @Transient
+    private BigDecimal cumulativeQuantity;
 
     public BigDecimal getCumulativeQuantity() {
-		return cumulativeQuantity;
-	}
+        return cumulativeQuantity;
+    }
 
-	public void setCumulativeQuantity(BigDecimal cumulativeQuantity) {
-		this.cumulativeQuantity = cumulativeQuantity;
-	}
+    public void setCumulativeQuantity(final BigDecimal cumulativeQuantity) {
+        this.cumulativeQuantity = cumulativeQuantity;
+    }
 
-	@Override
+    @Override
     public Long getId() {
         return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Integer getSlNo() {
-        return slNo;
-    }
-
-    public void setSlNo(Integer slNo) {
-        this.slNo = slNo;
-    }
-
-    public char getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(char identifier) {
-        this.identifier = identifier;
     }
 
     public Long getNo() {
         return no;
     }
 
-    public void setNo(Long no) {
+    public void setNo(final Long no) {
         this.no = no;
     }
 
-    public void setLength(BigDecimal length) {
+    public void setLength(final BigDecimal length) {
         this.length = length;
     }
 
@@ -148,7 +125,7 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
         return width;
     }
 
-    public void setWidth(BigDecimal width) {
+    public void setWidth(final BigDecimal width) {
         this.width = width;
     }
 
@@ -156,50 +133,36 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
         return depthOrHeight;
     }
 
-    public void setDepthOrHeight(BigDecimal depthOrHeight) {
+    public void setDepthOrHeight(final BigDecimal depthOrHeight) {
         this.depthOrHeight = depthOrHeight;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
     }
 
     public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(final BigDecimal quantity) {
         this.quantity = quantity;
     }
 
-	public WorkOrderActivity getWoActivity() {
-		return woActivity;
-	}
+    public WorkOrderActivity getWoActivity() {
+        return woActivity;
+    }
 
-	public void setWoActivity(WorkOrderActivity woActivity) {
-		this.woActivity = woActivity;
-	}
+    public void setWoActivity(final WorkOrderActivity woActivity) {
+        this.woActivity = woActivity;
+    }
 
-	public MeasurementSheet getMeasurementSheet() {
-		return measurementSheet;
-	}
+    public MeasurementSheet getMeasurementSheet() {
+        return measurementSheet;
+    }
 
-	public void setMeasurementSheet(MeasurementSheet measurementSheet) {
-		this.measurementSheet = measurementSheet;
-	}
+    public void setMeasurementSheet(final MeasurementSheet measurementSheet) {
+        this.measurementSheet = measurementSheet;
+    }
 
-	public BigDecimal getLength() {
-		return length;
-	}
-
-   
-
-
-
-
+    public BigDecimal getLength() {
+        return length;
+    }
 
 }
