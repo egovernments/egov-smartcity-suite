@@ -253,13 +253,13 @@ public class BankAdviceReportAction extends BaseFormAction {
                     // detailKey=tempMap.get((Integer)obj[1]);
                     if (null != tempMap && tempMap.containsKey(obj[1])) {
                         detailKeyAmt = tempMap.get(obj[1]).add(
-                                (BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+                                (((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                         tempMap.put(obj[1], detailKeyAmt);
                     } else
-                        tempMap.put(obj[1], (BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+                        tempMap.put(obj[1], (((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                 } else {
                     detailKeyMap = new HashMap<Object, BigDecimal>();
-                    detailKeyMap.put(obj[1], (BigDecimal.valueOf((Double) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
+                    detailKeyMap.put(obj[1], (((BigDecimal) obj[2]).setScale(2, BigDecimal.ROUND_HALF_EVEN)));
                     detailTypeMap.put(obj[0], detailKeyMap);
                 }
             }

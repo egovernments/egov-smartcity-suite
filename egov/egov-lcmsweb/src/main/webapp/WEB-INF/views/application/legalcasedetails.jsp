@@ -44,7 +44,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.courttype" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="" data-first-option="false" cssClass="form-control"
+		<form:select path="courtMaster.courtType" data-first-option="false" cssClass="form-control"
 			required="required" name="courtType" id="courtType">
 			<form:option value="">
 				<spring:message code="lbls.select" />
@@ -53,7 +53,7 @@
 			<form:options items="${courtTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="courtType" />
 		</form:select>
-		<form:errors path="" cssClass="add-margin error-msg" />
+		<form:errors path="courtMaster.courtType" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.petitiontype" /><span class="mandatory"></span>:</label>

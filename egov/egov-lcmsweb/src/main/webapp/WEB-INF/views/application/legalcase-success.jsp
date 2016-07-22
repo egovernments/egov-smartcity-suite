@@ -186,41 +186,50 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${pettempList}"
+					<c:forEach var="bipartisanDetails" items="${legalCase.bipartisanDetails}"
 						varStatus="status">
 						<tr>
-							<td><form:input type="hidden"
+							<td>
+								<form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
 
-								<input type="text"
-								id="table_isRespondentGovernment${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center"
-								value="${bipartisanDetails.isRespondentGovernment}" /></td>
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].name"
-									path="bipartisanDetails[${status.index}].name" /> <input
-								type="text" id="table_name${status.index}" class="form-control"
+									<input type="text"
+										id="table_isRespondentGovernment${status.index}"
+										class="form-control" readonly="readonly" style="text-align: center"
+										value="${bipartisanDetails.isRespondentGovernment}" />
+								</td>
+								<td>
+								 <form:input type="hidden"
+											id="bipartisanDetails[${status.index}].name"
+											path="bipartisanDetails[${status.index}].name" /> 
+									<input type="text" id="table_name${status.index}" class="form-control"
 								readonly="readonly" style="text-align: center"
-								value="${bipartisanDetails.name}" /></td>
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].address"
-									path="bipartisanDetails[${status.index}].address" /> <input
-								type="text" id="table_address${status.index}"
-								class="form-control" readonly="readonly"
-								style="text-align: center" value="${bipartisanDetails.address}" />
-							</td>
-
-							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].contactNumber"
-									path="bipartisanDetails[${status.index}].contactNumber" /> <input
-								type="text" id="table_contactNumber${status.index}"
+								value="${bipartisanDetails.name}" /> 
+								</td>
+								<td>
+								<form:input type="hidden" 
+								     id="bipartisanDetails[${status.index}].address"
+									path="bipartisanDetails[${status.index}].address" /> 
+								<input type="text" id="table_address${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.contactNumber}" /></td>
-
-							<td><form:input type="hidden"
+								value="${bipartisanDetails.address}" /> 
+								</td>
+								
+								<td>
+								<form:input type="hidden"
+									id="bipartisanDetails[${status.index}].contactNumber"
+									path="bipartisanDetails[${status.index}].contactNumber" /> 
+									<input type="text" id="table_contactNumber${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.contactNumber}" /> 
+								</td>
+								
+								<td>
+								<form:input
+									type="hidden"
 									id="bipartisanDetails[${status.index}].governmentDepartment"
 									path="bipartisanDetails[${status.index}].governmentDepartment" />
 								<input type="text"
@@ -235,107 +244,117 @@
 			</table>
 		</div>
 		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="lbl.bipartisanDetails.respondant" />
-			</div>
-		</div>
-		<table class="table table-striped table-bordered"
-			id="respodantDetails">
-			<thead>
-				<tr>
-					<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
-					<th class="text-center"><spring:message code="lbl.name" /><span
-						class="mandatory"></span></th>
-					<th class="text-center"><spring:message code="lbl.discription" /></th>
-					<th class="text-center"><spring:message
-							code="lbl.contactnumber" /></th>
-					<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-				</tr>
-			</thead>
-			<tbody>
-
-				<c:forEach var="bipartisanDetailsBeanList" items="${respoTempList}"
-					varStatus="status">
-					<tr>
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
-								path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
-
-							<input type="text"
-							id="table_isRespondentGovernment${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.isRespondentGovernment}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].name"
-								path="bipartisanDetailsBeanList[${status.index}].name" /> <input
-							type="text" id="table_name${status.index}" class="form-control"
-							readonly="readonly" style="text-align: center"
-							value="${bipartisanDetailsBeanList.name}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].address"
-								path="bipartisanDetailsBeanList[${status.index}].address" /> <input
-							type="text" id="table_address${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.address}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].contactNumber"
-								path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
-							<input type="text" id="table_contactNumber${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
-								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
-							<input type="text" id="table_governmentDepartment${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
-
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
+	<div class="panel-title">
+		<spring:message code="lbl.bipartisanDetails.respondant" />
 	</div>
-	<div class="main-content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-body">
-						<div class="form-group">
-							<div class="row add-border">
-								<div class="col-xs-2 add-margin">
-									<spring:message code="lbl.representedby" />
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.representedby}" />
-								</div>
-								<div class="col-xs-2 add-margin">Standing Council Name:</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.oppPartyAdvocate}" />
-								</div>
-							</div>
+</div>
+<table class="table table-striped table-bordered" id="respodantDetails">
+	<thead>
+		<tr>
+			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+			<th class="text-center"><spring:message code="lbl.name" /><span
+				class="mandatory"></span></th>
+			<th class="text-center"><spring:message code="lbl.discription" /></th>
+			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
+			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+		</tr>
+	</thead>
+				<tbody>
+				
+				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.bipartisanDetailsBeanList}"
+						varStatus="status">
+						<tr>
+							<td>
+							<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
+									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
 
-							<div class="row add-border">
-								<div class="col-xs-2 add-margin">Remarks:</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.remarks}" />
+								<input type="text"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								</td>
+								
+								<td>
+								<form:input
+									type="hidden" id="bipartisanDetailsBeanList[${status.index}].name"
+									path="bipartisanDetailsBeanList[${status.index}].name" /> 
+									
+									<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${bipartisanDetailsBeanList.name}" /> 
+								</td>
+								
+								<td>
+								<form:input
+									type="hidden" id="bipartisanDetailsBeanList[${status.index}].address"
+									path="bipartisanDetailsBeanList[${status.index}].address" /> <input
+								type="text" id="table_address${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.address}" /> 
+								</td>
+								
+								<td>
+								<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].contactNumber"
+									path="bipartisanDetailsBeanList[${status.index}].contactNumber" /> 
+									<input
+								type="text" id="table_contactNumber${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.contactNumber}" /> 
+								</td>
+								
+								<td>
+								<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
+									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
+								<input type="text"
+								id="table_governmentDepartment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</div>
+		<div class="main-content">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body">
+							<div class="form-group">
+								<div class="row add-border">
+									<div class="col-xs-3 add-margin">
+										<spring:message code="lbl.representedby" />
+									</div>
+									<div class="col-xs-3 add-margin view-content">
+										<c:out value="${legalCase.representedby}" />
+									</div>
+									<div class="col-xs-2 add-margin">Standing Council Name:</div>
+									<div class="col-xs-3 add-margin view-content">
+										<c:out value="${legalCase.oppPartyAdvocate}" />
+									</div>
+									</div>
+							
+								<div class="row add-border">
+									<div class="col-xs-2 add-margin">Remarks:</div>
+									<div class="col-xs-3 add-margin view-content">
+										<c:out value="${legalCase.remarks}" />
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+			</div>
 
-	<%-- <div class="form-group">
+			<%-- <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><font
 			size="2"><spring:message code="lbl.mesg.document" /></font> </label>
 		<div class="col-sm-3 add-margin">
@@ -347,10 +366,10 @@
 				cssClass="add-margin error-msg" />
 		</div>
 	</div> --%>
-	<div class="form-group">
-		<div class="text-center">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()"><spring:message code="lbl.close" /></a>
-		</div>
-	</div>
+			<div class="form-group">
+				<div class="text-center">
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
+				</div>
+			</div>
 </form:form>

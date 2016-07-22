@@ -47,34 +47,34 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form method="post" action="" modelAttribute="legalcase"
-			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
+		<form:form method="post" action="" modelAttribute="legalCase"
+			id="egalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden id="mode" path="" value="${mode}" />
+			<input type="hidden" name="legalCase" value="${legalCase.id}" />
+			<input type="hidden" name="pettempList" value="${pettempList}" />
+			<input type="hidden" name="respoTempList" value="${respoTempList}" />
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.createlegal" />
+						<spring:message code="lbl.editlegalcase" />
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
-					<%@ include file="legalcase-petitiondetails.jsp"%>
-					<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%>
-					<%@ include file="legalcase-standingCouncil.jsp"%> --%>
+					<%@ include file="legalcase-edit-petitiondetails.jsp"%>
 
 				</div>
 			</div>
 
 			<div class="buttonbottom" align="center">
 				<div class="form-group text-center">
-					<button type="submit" class="btn btn-primary" value="Save"
-						id="buttonid">
-						<spring:message code="lbl.save.button" />
+					<button type='submit' class='btn btn-primary' id="buttonSubmit">
+						<spring:message code='lbl.update' />
 					</button>
 					<button type="button" class="btn btn-default" id="btnclose">
-						<spring:message code="lbl.close" />
-					</button>
+				<spring:message code="lbl.close" />
+			</button>
 				</div>
 			</div>
 		</form:form>

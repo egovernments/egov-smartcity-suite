@@ -594,7 +594,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         // To set proxy list at approval stage
         if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
                 && (propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED)
-                || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)))
+                || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)
+                || propertyMutation.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING)))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())

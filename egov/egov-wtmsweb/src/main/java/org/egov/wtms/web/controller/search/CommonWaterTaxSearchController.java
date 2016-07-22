@@ -245,6 +245,21 @@ public class CommonWaterTaxSearchController {
                 // model.addAttribute("validMessage", "InValid Number");
                 return COMMON_FORM_SEARCH;
             }
+        
+        if (applicationType != null && applicationType.equals(WaterTaxConstants.GENERATEBILL))
+            if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION)
+                    ||  waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE)
+                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                            && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
+                return "redirect:/report/generateBillForHSCNo/"
+                        + waterConnectionDetails.getConnection().getConsumerCode();
+            else {
+                model.addAttribute("mode", "errorMode");
+                resultBinder.rejectValue("consumerCode", "invalid.consumernuber");
+                // model.addAttribute("validMessage", "InValid Number");
+                return COMMON_FORM_SEARCH;
+            }
 
         return "";
 
