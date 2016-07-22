@@ -2305,7 +2305,8 @@ function reindex(tableId)
 		//console.log('for loop');
 		$(this).find("input,select,textarea").each(function() {
 			var classval = jQuery(this).attr('class');	
-			if(classval.indexOf("spanslno") > -1) {
+			 
+			if(classval && classval.indexOf("spanslno") > -1) {
 				jQuery(this).val(idx+1);
 				$(this).attr('value', $(this).val());
 			}
@@ -2334,11 +2335,28 @@ function reindex(tableId)
 $(document).on('click','.delete-ms',function () {
 
 	$(this).closest('tr').hide();
-})
+});
+
+$(document).on('click','.reset-ms',function () {
+
+	var len=$(this).closest('table').find('tr').length;
+	var msrowname= $(this).closest('table').attr('id');
+	var tbl=document.getElementById(msrowname);
+	var sid=msrowname.split(".")[0];
+	var newrow= document.getElementById("templatesorActivities[0].mstr").innerHTML;
+
+	newrow=  newrow.replace(/msrowtemplate/g,'msrow'+sid);
+	newrow=  newrow.replace(/templatesorActivities\[0\]/g,sid);
+	document.getElementById(sid+".mstr").innerHTML=newrow;
+	
+	
+});
 
 $(document).on('click','.add-msrow',function () {
 	var len=$(this).closest('table').find('tr').length;
 	var msrowname= $(this).closest('table').attr('id');
+	
+ 
 
 	//var msrowname1=	msrowname.id;
 	len=len-2;
@@ -2558,37 +2576,52 @@ function openAllmsheet()
 
 function closeAllmsheet()
 {
-	var open=false;
-	$('.classmsopen').each(function (index)
+	var retVal = confirm("This will validate and update quantities . Do you want to continue?");
+	if( retVal == false )
+	{
+		return ;
+	}
+	else{
+
+
+		var open=false;
+		$('.classmsopen').each(function (index)
+				{
+
+			if($( this ).val()==1)
 			{
 
-		if($( this ).val()==1)
-		{
-			var sid=$( this ).attr('id');
-			// var sid=k.closest('tr').attr("id");
-			var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
-			document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
+				var sid=$( this ).attr('id');
+				var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
+				if(!validateMsheet(qobj1))
+				{
+					return false;
+				}
+				
+				var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
+				document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
 
-			mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
+				mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
 
-			document.getElementById(sid.split(".")[0]+".mstr")
-			document.getElementById(sid.split(".")[0]+".mstd")
-			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
-			document.getElementById(sid.split(".")[0]+".msopen").value="0";
-			var mstr=document.getElementById(sid.split(".")[0]+".mstr");
-			$(mstr).remove(); 
-			var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
-			$(qobj).attr("readonly","readonly");
-			if(sid.split(".")[0].indexOf("sorActivities") >= 0)
-			{
-				calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-			}else
-			{
-				calculateNonSorEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-			}
+				document.getElementById(sid.split(".")[0]+".mstr")
+				document.getElementById(sid.split(".")[0]+".mstd")
+				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
+				document.getElementById(sid.split(".")[0]+".msopen").value="0";
+				var mstr=document.getElementById(sid.split(".")[0]+".mstr");
+				$(mstr).remove(); 
+				var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
+				$(qobj).attr("readonly","readonly");
+				if(sid.split(".")[0].indexOf("sorActivities") >= 0)
+				{
+					calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+				}else
+				{
+					calculateNonSorEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+				}
 
-		}
-			});
+			    }
+				});
+	}
 	//console.log("mssheet open:"+open);
 	return open;
 

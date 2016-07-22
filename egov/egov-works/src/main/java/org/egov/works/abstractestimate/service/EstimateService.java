@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -307,6 +308,70 @@ public class EstimateService {
         }
     }
 
+    private List<MeasurementSheet> mergeMeasurementSheet(Activity oldActivity, Activity activity) {
+    	List<MeasurementSheet> newMsList=new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
+    	for(MeasurementSheet msnew:activity.getMeasurementSheetList())
+		 {
+			if(msnew.getId()==null)
+			{
+				 msnew.setActivity(oldActivity);
+	    		 oldActivity.getMeasurementSheetList().add(msnew);
+	    		 continue;
+			}
+			
+    		
+    		for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
+			 {
+				
+				 if(msnew.getId()==msold.getId())
+				 {
+					 msold.setLength(msnew.getLength());
+					 msold.setWidth(msnew.getWidth());
+					 msold.setDepthOrHeight(msnew.getDepthOrHeight());
+					 msold.setNo(msnew.getNo());
+					 msold.setActivity(msnew.getActivity());
+					 msold.setIdentifier(msnew.getIdentifier());
+					 msold.setRemarks(msnew.getRemarks());
+					 msold.setSlNo(msnew.getSlNo());
+					 msold.setQuantity(msnew.getQuantity());
+					 newMsList.add(msold);
+					 
+					 
+				 }
+				 
+			 }
+    		
+			 
+		 }
+    	List<MeasurementSheet> toRemove=new LinkedList<MeasurementSheet>();
+    	for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
+    	{
+    		Boolean found=false;
+    	for(MeasurementSheet msnew:activity.getMeasurementSheetList())
+		 {
+    		 if(msnew.getId()==msold.getId())
+			 {
+			found=true;
+			 }
+			
+		 }
+    	if(!found)
+    	{
+    		toRemove.add(msold);
+    	}
+    	
+    	}
+    	
+    	for(MeasurementSheet msremove:toRemove)
+    	{
+    		oldActivity.getMeasurementSheetList().remove(msremove);
+    	}
+				
+    	return oldActivity.getMeasurementSheetList();
+		
+    	
+	}
+ 
     private void updateActivity(final Activity oldActivity, final Activity activity) {
         oldActivity.setSchedule(activity.getSchedule());
         oldActivity.setAmt(activity.getAmt());
@@ -316,6 +381,7 @@ public class EstimateService {
         oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
         oldActivity.setEstimateRate(activity.getEstimateRate());
         oldActivity.setUom(activity.getUom());
+        oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity,activity));
     }
 
     @Transactional

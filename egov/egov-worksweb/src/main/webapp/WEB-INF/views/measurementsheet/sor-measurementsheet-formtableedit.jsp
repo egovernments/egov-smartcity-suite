@@ -124,7 +124,7 @@
                 <tr>
                     <td colspan="6" class="text-right">
                         <input type="button" value ="Add Row" class="btn btn-xs btn-info add-msrow">
-                        <button   class="btn btn-xs btn-danger">Reset</button>
+                        <button   class="btn btn-xs btn-danger reset-ms">Reset</button>
                         <input type="button" value="Submit"  id="sorActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
                     <td class="text-right">Grand Total</td>

@@ -37,8 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
- 
- <%try{ %>
+  
 <div id="baseNonSORTable" class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -215,9 +214,4 @@
 		</table>
 	</div>
 </div>
- <%
- }catch(Exception e){ 
-	 System.out.print("estimate non sor-------------------------");
-	 e.printStackTrace();
- }
- %>
+ 
