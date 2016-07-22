@@ -74,7 +74,12 @@
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
 								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-								 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out></td>
+								 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out>
+								 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
+								 	 <button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 	</c:if>
+								 	</td>
+								 		<%@ include file="../measurementsheet/nonsor-measurementsheet-formtableview.jsp"%>  
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">
 										<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>

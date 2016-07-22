@@ -37,7 +37,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
+ 
+ <%try{ %>
 <div id="baseNonSORTable" class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -175,7 +176,11 @@
 									</td>
 									<td>
 										<form:input path="nonSorActivities[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+									<button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 									</td>
+ 
+									<%@ include file="../measurementsheet/nonsor-measurementsheet-formtableedit.jsp"%>  
+									
 									<td align="right">
 										<span class="nonSorAmount_${item.index } nonsoramount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 									</td>
@@ -210,3 +215,9 @@
 		</table>
 	</div>
 </div>
+ <%
+ }catch(Exception e){ 
+	 System.out.print("estimate non sor-------------------------");
+	 e.printStackTrace();
+ }
+ %>

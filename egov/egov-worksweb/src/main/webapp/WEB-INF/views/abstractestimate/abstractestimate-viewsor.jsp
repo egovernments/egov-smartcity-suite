@@ -106,7 +106,12 @@
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out></td>
+								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out>
+								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
+								 		 <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 	 </c:if>
+								 	</td>
+								 		<%@ include file="../measurementsheet/sor-measurementsheet-formtableview.jsp" %>  
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>

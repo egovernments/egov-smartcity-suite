@@ -44,6 +44,12 @@ $schemeId = "";
 $subSchemeId = 0;
 var sorMsArray=new Array(200);
 var nonSorMsArray=new Array(200);
+var headstart="<!--only for validity head start -->";
+var headend="<!--only for validity head end -->";
+var tailstart="<!--only for validity tail start -->";
+var tailend="<!--only for validity tail end -->";
+
+
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
 $(document).ready(function(){
 	if($('#estimateNumber').val() != '') {
@@ -237,8 +243,8 @@ $(document).ready(function(){
 			});
 		}
 		else {
-			var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
-			var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
+			var hiddenRowCount = $("#tblsor > tbody > tr:hidden[id='sorRow']").length;
+			var key = $("#tblsor > tbody > tr:visible[id='sorRow']").length;
 			if(hiddenRowCount == 0) {
 				addRow('tblsor', 'sorRow');
 				resetIndexes();
@@ -254,14 +260,14 @@ $(document).ready(function(){
 				//generateSorSno();
 			} else {
 				$('#quantity_0').val('');
-				$('#quantity_' + key).removeAttr('readonly');
+				$('#quantity_0').removeAttr('readonly');
 				$('#vat_0').val('');
 				key = 0;
 				$('#message').attr('hidden', 'true');;
 				$('#sorRow').removeAttr('hidden');
 				$('#sorRow').removeAttr('sorinvisible');
-				document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
-				document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
+				document.getElementById('sorActivities[0].mstd').innerHTML=""; 
+				document.getElementById('sorActivities[0].mspresent').value="0"; 
 			}
 
 			$.each(data, function(id, val) {
@@ -630,7 +636,7 @@ function deleteSor(obj) {
 	$("#removedActivityIds").val($("#removedActivityIds").val()+id);
 
 	var tbl=document.getElementById('tblsor');	
-	var rowcount=$("#tblsor tbody tr").length;
+	var rowcount=$("#tblsor > tbody >tr").length;
 	if(rowcount==2) {
 		var rowId = $(obj).attr('class').split('_').pop();
 		$('#soractivityid_' + rowId).val('');
@@ -771,12 +777,19 @@ function resetIndexes() {
 					'name' : function(_, name) {
 						console.log(name);
 						if(name)
-							return name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							{
+							return name= name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							return name.replace(/_\d+/,"_"+idx);
+							}
 					},
 					'id' : function(_, id) {
 						console.log(id);
 						if(id)
-							return id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							{
+							id= id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							return id.replace(/_\d+/,"_"+idx);
+							}
+							
 					},
 					'data-idx' : function(_, dataIdx) {
 						return idx;
@@ -787,13 +800,18 @@ function resetIndexes() {
 					'class' : function(_, name) {
 						console.log(name);
 						if(name)
-							return name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							{
+							name= name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+						return	name=name.replace(/_\d+/,"_"+idx);
+							
+							}
 					},
 					'id' : function(_, id) {
 						if(id)
 						{
 							console.log(id);
-							return id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							id= id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							return id.replace(/_\d+/,"_"+idx);
 						}
 					}
 				});
@@ -829,7 +847,10 @@ function resetIndexes() {
 					},
 					'id' : function(_, id) {
 						if(id)
-							return id.replace(/nonSorActivities\[.\]/g, "nonSorActivities["+idx+"]");
+							{	
+							id= id.replace(/nonSorActivities\[.\]/g, "nonSorActivities["+idx+"]");
+							return id.replace(/_\d+/,"_"+idx);
+								}
 					}
 				});
 			}
@@ -1841,6 +1862,7 @@ function addRow(tableName,rowName) {
 		var sno = 1;
 		//nextIdx =document.getElementsByName("sorRow").length;
 		nextIdx = jQuery("#"+tableName+" > tbody > tr").length-1;
+		 
 		//sno = nextIdx;
 
 		//console.log('TABLE ->', tableName);
@@ -1848,7 +1870,15 @@ function addRow(tableName,rowName) {
 		//console.log('NEXT IDX ->', nextIdx);
 
 		// Generate all textboxes Id and name with new index
+		var $row;
+		if(tableName.indexOf("overheadTable")>=0)
+			{
+			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
+			nextIdx=nextIdx+1;
+			}else
+				{
 		var $row=jQuery("#"+tableName+" tr:eq(2)").clone();
+				}
 
 		$row.find("input,select, errors,button, span,textarea").each(function() {
 			var classval = jQuery(this).attr('class');
@@ -1856,6 +1886,10 @@ function addRow(tableName,rowName) {
 				jQuery(this).removeAttr('data-server');
 			}
 			if(classval == 'spansorslno') {
+				jQuery(this).text(nextIdx+1);
+			}
+			
+			if(classval == 'spansno') {
 				jQuery(this).text(nextIdx+1);
 			}
 
@@ -2045,7 +2079,7 @@ function viewEstimatePDF() {
 	var estimateId = $("#estimateId").val();
 	window.open("/egworks/abstractestimate/abstractEstimatePDF/" + estimateId, "", "height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 }
-function addMSheet(obj)
+function addMSheet(obj)    
 {
 //	console.log("adding msheet for "+obj.id);
 	var rowid=obj.id;
@@ -2062,6 +2096,14 @@ function addMSheet(obj)
 
 	if(mscontent!='')
 	{
+		  if(mscontent.indexOf(headstart) >=0)
+			  {
+			  var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
+			  var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
+			  mscontent= mscontent.replace(head,"");
+			  mscontent= mscontent.replace(tail,"");
+			  }
+		
 		var curRow = $(obj).closest('tr');
 		var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
 		mscontent=k+mscontent+"</td></tr>";
@@ -2190,11 +2232,11 @@ $(document).on('change','.runtime-update',function (e) {
 	//$(this).closest('tr').hide();
 });
 
-$(document).on('click','.ms-submit',function () {
+/*$(document).on('click','.ms-submit',function () {
 
 	var sid=$(this).attr("id");
 	var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
-});
+});*/
 
 $(document).on('click','.ms-submit',function () {
 
@@ -2265,6 +2307,7 @@ function reindex(tableId)
 			var classval = jQuery(this).attr('class');	
 			if(classval.indexOf("spanslno") > -1) {
 				jQuery(this).val(idx+1);
+				$(this).attr('value', $(this).val());
 			}
 
 			$(this).attr({
@@ -2399,6 +2442,120 @@ function findNet(obj)
 
 
 }
+
+function closeAllViewmsheet()
+{
+	var open=false;
+	$('.classmsopen').each(function (index)
+			{
+
+		if($( this ).val()==1)
+		{
+			var sid=$( this ).attr('id');
+			var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
+			mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
+			document.getElementById(sid.split(".")[0]+".msopen").value="0";
+			var mstr=document.getElementById(sid.split(".")[0]+".mstr");
+			$(mstr).remove(); 
+		}
+			});
+	
+}
+function openAllViewmsheet()
+{
+	var open=false;
+	$('.classmsopen').each(function (index)
+			{
+
+		if($( this ).val()==0)
+			
+		{
+			var sid=$( this ).attr('id');
+			var	sortable=sid.split(".")[0];
+			if(document.getElementById(sid.split(".")[0]+".mspresent").value==1)
+			{
+				
+				var   mscontent=document.getElementById(sid.replace("msopen","mstd")).innerHTML;
+
+				if(mscontent!='')
+				{
+					if(mscontent.indexOf(headstart) >=0)
+					{
+						var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
+						var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
+						mscontent= mscontent.replace(head,"");
+						mscontent= mscontent.replace(tail,"");
+					}
+
+					var curRow = $(this).closest('tr');
+					var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
+					mscontent=k+mscontent+"</td></tr>";
+					curRow.after(mscontent);
+					document.getElementById(sid.replace("msopen","mstd")).innerHTML="";
+					$( this ).val(1);
+				}
+
+			}
+		}
+
+			});
+	return open;	
+}
+
+function openAllmsheet()
+{
+	var open=false;
+	$('.classmsopen').each(function (index)
+			{
+
+		if($( this ).val()==0)
+			
+		{
+			var sid=$( this ).attr('id');
+			var	sortable=sid.split(".")[0];
+			if(document.getElementById(sid.split(".")[0]+".mspresent").value==1)
+			{
+				
+				var   mscontent=document.getElementById(sid.replace("msopen","mstd")).innerHTML;
+
+				if(mscontent!='')
+				{
+					if(mscontent.indexOf(headstart) >=0)
+					{
+						var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
+						var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
+						mscontent= mscontent.replace(head,"");
+						mscontent= mscontent.replace(tail,"");
+					}
+
+					var curRow = $(this).closest('tr');
+					var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
+					mscontent=k+mscontent+"</td></tr>";
+					curRow.after(mscontent);
+					document.getElementById(sid.replace("msopen","mstd")).innerHTML="";
+					$( this ).val(1);
+					var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
+					
+					if(sortable.indexOf("sorActivities") >= 0)
+					{
+						sorMsArray[idx]=mscontent;
+					}
+					else
+					{
+						nonSorMsArray[idx]=mscontent;
+					}
+
+					
+				}
+
+			}
+		}
+
+			});
+	return open;	
+}
+
 function closeAllmsheet()
 {
 	var open=false;
@@ -2417,7 +2574,7 @@ function closeAllmsheet()
 			document.getElementById(sid.split(".")[0]+".mstr")
 			document.getElementById(sid.split(".")[0]+".mstd")
 			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
-			document.getElementById(sid.split(".")[0]+".msopen").value="false";
+			document.getElementById(sid.split(".")[0]+".msopen").value="0";
 			var mstr=document.getElementById(sid.split(".")[0]+".mstr");
 			$(mstr).remove(); 
 			var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];

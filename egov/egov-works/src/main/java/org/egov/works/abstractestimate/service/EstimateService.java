@@ -82,6 +82,7 @@ import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.EstimateTechnicalSanction;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
+import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.abstractestimate.entity.OverheadValue;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
@@ -283,6 +284,27 @@ public class EstimateService {
                 for (final Activity oldActivity : abstractEstimate.getNonSORActivities())
                     if (oldActivity.getId().equals(activity.getId()))
                         updateActivity(oldActivity, activity);
+        
+        
+        for(Activity ac:abstractEstimate.getSorActivities())
+        {
+        	for(MeasurementSheet ms:ac.getMeasurementSheetList())
+        	{
+        		if(ms.getActivity()==null)
+        		ms.setActivity(ac);
+        		 
+        	}
+        }
+        
+        for(Activity ac:abstractEstimate.getNonSorActivities())
+        {
+        	for(MeasurementSheet ms:ac.getMeasurementSheetList())
+        	{
+        		if(ms.getActivity()==null)
+        		ms.setActivity(ac);
+        		 
+        	}
+        }
     }
 
     private void updateActivity(final Activity oldActivity, final Activity activity) {

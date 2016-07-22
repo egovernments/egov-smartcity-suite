@@ -162,8 +162,11 @@ public class AjaxLineEstimateController {
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
             ApplicationException {
+    	if(schemeId!=null && !schemeId.equals("undefined"))
+    	{
         final String jsonResponse = toJSONSubScheme(subSchemeService.getBySchemeId(Integer.parseInt(schemeId)));
         return jsonResponse;
+    	}else return "";
     }
 
     @RequestMapping(value = "/getfinancilyearbyid", method = RequestMethod.GET)

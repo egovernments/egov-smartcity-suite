@@ -38,7 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-
+<%try{ %>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -263,13 +263,7 @@
 										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 					                  <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>				
                                      </td>
-                                     <td hidden="true">
-                          	        <input class="classmspresent" type="hidden" disabled="disabled" name="sorActivities[${item.index }].mspresent" id="sorActivities[${item.index }].mspresent" data-idx="${item.index }"/>
-                                    <input class="classmsopen" type="hidden" disabled="disabled" name="sorActivities[${item.index }].msopen" id="sorActivities[${item.index }].msopen" data-idx="${item.index }"/>
-                                   <span  class="sorActivities[${item.index }].mstd" id="sorActivities[${item.index }].mstd" data-idx="${item.index }">
-                                   
-                                   
-                                   </span></td>
+                                	<%@ include file="../measurementsheet/sor-measurementsheet-formtableedit.jsp"%>
 									<td align="right">
 										<span class="amount_${item.index } amount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 									</td>
@@ -304,3 +298,9 @@
 		</table>
 	</div>
 </div>
+ <%
+ }catch(Exception e){ 
+	 System.out.print("estimate  sor-------------------------");
+	 e.printStackTrace();
+ }
+ %>
