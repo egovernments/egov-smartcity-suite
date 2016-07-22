@@ -41,12 +41,15 @@ package org.egov.ptis.domain.service.property;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_ACTIVE_NOT_EXISTS;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR_MSG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
 import java.io.File;
@@ -413,7 +416,7 @@ public class PropertyExternalService {
         return ownerNames;
     }
 
-    public PropertyTaxDetails getPropertyTaxDetails(final String assessmentNo) {
+    public PropertyTaxDetails getPropertyTaxDetails(final String assessmentNo, final String category) {
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         PropertyTaxDetails propertyTaxDetails = null;
         final ErrorDetails errorDetails = new ErrorDetails();
@@ -421,14 +424,16 @@ public class PropertyExternalService {
         	Property property = basicProperty.getProperty();
         	if(property != null && property.getIsExemptedFromTax()){
         		propertyTaxDetails = new PropertyTaxDetails();
-                errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE);
-                errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG);
-                propertyTaxDetails.setErrorDetails(errorDetails);
+                    errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_CODE);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_EXEMPTED_ERR_MSG);
+                    propertyTaxDetails.setErrorDetails(errorDetails);
         	} else {
-	            propertyTaxDetails = getPropertyTaxDetails(basicProperty);
-	            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
-	            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
-	            propertyTaxDetails.setErrorDetails(errorDetails);
+	            propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
+	            if (propertyTaxDetails.getErrorDetails().getErrorCode() == null) {
+	                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+	                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+	                propertyTaxDetails.setErrorDetails(errorDetails);
+	            }
         	}
         } else {
             propertyTaxDetails = new PropertyTaxDetails();
@@ -441,13 +446,13 @@ public class PropertyExternalService {
     }
     
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
-            final String mobileNumber) {
+            final String mobileNumber, final String category) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo, ownerName,
                 mobileNumber);
         List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
         if (null != basicProperties && !basicProperties.isEmpty()) {
             for (final BasicProperty basicProperty : basicProperties) {
-                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
                 propTxDetailsList.add(propertyTaxDetails);
             }
         } else {
@@ -471,7 +476,7 @@ public class PropertyExternalService {
         if (null != basicPropertyList) {
             propTxDetailsList = new ArrayList<PropertyTaxDetails>();
             for (final BasicProperty basicProperty : basicPropertyList) {
-                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty, null);
                 propTxDetailsList.add(propertyTaxDetails);
             }
         }
@@ -495,7 +500,7 @@ public class PropertyExternalService {
         this.userId = userId;
     }
 
-    private PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty) {
+    private PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty, String category) {
         final PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         final ErrorDetails errorDetails = new ErrorDetails();
         final String assessmentNo = basicProperty.getUpicNo();
@@ -503,6 +508,7 @@ public class PropertyExternalService {
             if (!basicProperty.isActive()) {
                 errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
                 errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG);
+                propertyTaxDetails.setErrorDetails(errorDetails);
             } else {
                 final Set<PropertyStatusValues> statusValues = basicProperty.getPropertyStatusValuesSet();
                 if (null != statusValues && !statusValues.isEmpty())
@@ -511,10 +517,34 @@ public class PropertyExternalService {
                             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
                             errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }
+                propertyTaxDetails.setErrorDetails(errorDetails);
             }
             final Property property = basicProperty.getProperty();
             ptDemandDAO.getDemandCollMap(property);
-
+            
+            if (!StringUtils.isBlank(category)) {
+                String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
+                if (CATEGORY_TYPE_PROPERTY_TAX.equals(category)) {
+                    if (propType.equals(PROPERTY_TYPE_CODE_VACANT)) {
+                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+                        propertyTaxDetails.setErrorDetails(errorDetails);
+                        return propertyTaxDetails;
+                    }
+                } else if (CATEGORY_TYPE_VACANTLAND_TAX.equals(category)) {
+                    if (!propType.equals(PROPERTY_TYPE_CODE_VACANT)) {
+                        errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND);
+                        errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
+                        propertyTaxDetails.setErrorDetails(errorDetails);
+                        return propertyTaxDetails;
+                    }
+                } else {
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_WRONG_CATEGORY);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+                    propertyTaxDetails.setErrorDetails(errorDetails);
+                    return propertyTaxDetails;
+                }
+            }
             final List<PropertyOwnerInfo> propOwnerInfos = property.getBasicProperty().getPropertyOwnerInfo();
             propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
             OwnerDetails ow;

@@ -151,8 +151,9 @@ public class AssessmentService {
                 AssessmentRequest.class);
         try {
             String assessmentNo = assessmentReq.getAssessmentNo();
+            String category = assessmentReq.getCategory();
             if (null != assessmentNo) {
-                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);
@@ -207,8 +208,9 @@ public class AssessmentService {
             String assessmentNo = assessmentReq.getAssessmentNo();
             String ownerName = assessmentReq.getOwnerName();
             String mobileNumber = assessmentReq.getMobileNumber();
+            String category = assessmentReq.getCategory();
             if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber);
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
