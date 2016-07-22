@@ -56,30 +56,23 @@ import javax.validation.constraints.Max;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.works.abstractestimate.entity.MeasurementSheet;
-import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * Created by mani on 16/6/16.
  */
 @Entity
-@Table(name="EGW_MB_MEASUREMENTSHEET")
+@Table(name = "EGW_MB_MEASUREMENTSHEET")
 @SequenceGenerator(name = MBMeasurementSheet.SEQ, sequenceName = MBMeasurementSheet.SEQ, allocationSize = 1)
 
 public class MBMeasurementSheet extends AbstractAuditable {
-    public static final String SEQ = "SEQ_EGW_WO_MEASUREMENTSHEET";
 
+    private static final long serialVersionUID = -5841511908573164177L;
+    public static final String SEQ = "SEQ_EGW_WO_MEASUREMENTSHEET";
 
     @Id
     @GeneratedValue(generator = MBMeasurementSheet.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private Integer slNo;
-    private char identifier;
-    @Length(max = 1024, message = "estimate.measurementSheet.remarks.length")
-    private String remarks;
-
     @Max(9999)
     private Long no;
     private BigDecimal length;
@@ -90,61 +83,44 @@ public class MBMeasurementSheet extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mbdetails")
     private MBDetails mbDetails;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "msheetid")
-    private WorkOrderMeasurementSheet woMeasurementSheet;  
-    
+    private WorkOrderMeasurementSheet woMeasurementSheet;
+
     @Transient
-    private BigDecimal cumulativeQuantity; 
-    
+    private BigDecimal cumulativeQuantity;
+
     @Transient
     private double mbMSheetTotalQuantity;
 
-
     public BigDecimal getCumulativeQuantity() {
-		return cumulativeQuantity;
-	}
+        return cumulativeQuantity;
+    }
 
-	public void setCumulativeQuantity(BigDecimal cumulativeQuantity) {
-		this.cumulativeQuantity = cumulativeQuantity;
-	}
+    public void setCumulativeQuantity(final BigDecimal cumulativeQuantity) {
+        this.cumulativeQuantity = cumulativeQuantity;
+    }
 
-	@Override
+    @Override
     public Long getId() {
         return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
-    }
-
-    public Integer getSlNo() {
-        return slNo;
-    }
-
-    public void setSlNo(Integer slNo) {
-        this.slNo = slNo;
-    }
-
-    public char getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(char identifier) {
-        this.identifier = identifier;
     }
 
     public Long getNo() {
         return no;
     }
 
-    public void setNo(Long no) {
+    public void setNo(final Long no) {
         this.no = no;
     }
 
-    public void setLength(BigDecimal length) {
+    public void setLength(final BigDecimal length) {
         this.length = length;
     }
 
@@ -152,7 +128,7 @@ public class MBMeasurementSheet extends AbstractAuditable {
         return width;
     }
 
-    public void setWidth(BigDecimal width) {
+    public void setWidth(final BigDecimal width) {
         this.width = width;
     }
 
@@ -160,60 +136,44 @@ public class MBMeasurementSheet extends AbstractAuditable {
         return depthOrHeight;
     }
 
-    public void setDepthOrHeight(BigDecimal depthOrHeight) {
+    public void setDepthOrHeight(final BigDecimal depthOrHeight) {
         this.depthOrHeight = depthOrHeight;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
     }
 
     public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(final BigDecimal quantity) {
         this.quantity = quantity;
     }
 
-	
+    public MBDetails getMbDetails() {
+        return mbDetails;
+    }
 
-	public MBDetails getMbDetails() {
-		return mbDetails;
-	}
+    public void setMbDetails(final MBDetails mbDetails) {
+        this.mbDetails = mbDetails;
+    }
 
-	public void setMbDetails(MBDetails mbDetails) {
-		this.mbDetails = mbDetails;
-	}
+    public WorkOrderMeasurementSheet getWoMeasurementSheet() {
+        return woMeasurementSheet;
+    }
 
-	public WorkOrderMeasurementSheet getWoMeasurementSheet() {
-		return woMeasurementSheet;
-	}
+    public void setWoMeasurementSheet(final WorkOrderMeasurementSheet woMeasurementSheet) {
+        this.woMeasurementSheet = woMeasurementSheet;
+    }
 
-	public void setWoMeasurementSheet(WorkOrderMeasurementSheet woMeasurementSheet) {
-		this.woMeasurementSheet = woMeasurementSheet;
-	}
+    public double getMbMSheetTotalQuantity() {
+        return mbMSheetTotalQuantity;
+    }
 
-	public double getMbMSheetTotalQuantity() {
-		return mbMSheetTotalQuantity;
-	}
+    public void setMbMSheetTotalQuantity(final double mbMSheetTotalQuantity) {
+        this.mbMSheetTotalQuantity = mbMSheetTotalQuantity;
+    }
 
-	public void setMbMSheetTotalQuantity(double mbMSheetTotalQuantity) {
-		this.mbMSheetTotalQuantity = mbMSheetTotalQuantity;
-	}
-
-	public BigDecimal getLength() {
-		return length;
-	}
-
-   
-
-
-
-
+    public BigDecimal getLength() {
+        return length;
+    }
 
 }

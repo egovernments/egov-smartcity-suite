@@ -157,7 +157,7 @@ public class MBDetails extends AbstractAuditable {
     private double amount = 0.0;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mbDetails", targetEntity = MBMeasurementSheet.class)
-    private final List<MBMeasurementSheet> measurementSheets = new LinkedList<MBMeasurementSheet>();
+    private List<MBMeasurementSheet> measurementSheets = new LinkedList<MBMeasurementSheet>();
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
@@ -295,4 +295,11 @@ public class MBDetails extends AbstractAuditable {
         this.id = id;
     }
 
+    public final List<MBMeasurementSheet> getMeasurementSheets() {
+        return measurementSheets;
+    }
+
+    public final void setMeasurementSheets(final List<MBMeasurementSheet> measurementSheets) {
+        this.measurementSheets = measurementSheets;
+    }
 }
