@@ -44,4 +44,6 @@ public interface WaterConnectionBillService {
     public void printDemandBill(String assessmentNo);
 
     public void bulkBillGeneration(Integer modulo, Integer billsCount);
+    
+    public void generateBillForConsumercode(String consumerCode);
 }
