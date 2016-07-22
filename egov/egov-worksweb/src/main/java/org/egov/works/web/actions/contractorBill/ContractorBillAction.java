@@ -65,8 +65,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.asset.model.Asset;
-import org.egov.asset.service.CommonAssetsService;
+import org.egov.assets.model.Asset;
+import org.egov.assets.service.AssetService;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
@@ -156,7 +156,8 @@ public class ContractorBillAction extends BaseFormAction {
     private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private CommonAssetsService commonAssetsService;
+    @Autowired
+    private AssetService assetService;
     private MeasurementBookServiceImpl measurementBookService;
     private EgovCommon egovCommon;
     @Autowired
@@ -1447,7 +1448,7 @@ public class ContractorBillAction extends BaseFormAction {
     private void addAssetForBill(final AssetForBill adb) {
         if (!workOrderEstimate.getAssetValues().isEmpty() && adb.getAsset() != null) {
             final AssetForBill assetForBill = new AssetForBill();
-            final Asset assetNew = commonAssetsService.getAssetById(adb.getAsset().getId());
+            final Asset assetNew = assetService.findOne(adb.getAsset().getId());
             final String value = worksService.getWorksConfigValue("WORKS_ASSET_STATUS");
             if (StringUtils.isBlank(value)) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1744,8 +1745,8 @@ public class ContractorBillAction extends BaseFormAction {
         this.completionDate = completionDate;
     }
 
-    public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
-        this.commonAssetsService = commonAssetsService;
+    public void setCommonAssetsService(final AssetService assetService) {
+        this.assetService = assetService;
     }
 
     public ContractorBillRegister getContractorBillRegister() {

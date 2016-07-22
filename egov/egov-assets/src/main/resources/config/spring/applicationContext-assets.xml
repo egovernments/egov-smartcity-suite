@@ -45,50 +45,7 @@
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
 
-	<context:component-scan base-package="org.egov.asset" />
-
-     <!-- Services for assets -->
-	 <bean class="org.egov.asset.service.AppService" id="appService" scope="prototype">
-	</bean>
+	<context:component-scan base-package="org.egov.assets" />
 	
-	<bean class="org.egov.asset.service.CommonAssetsService" id="commonAssetsService" scope="prototype">
-		<property name="genericService" ref="persistenceService" />		
-		<property name="assetCategoryService" ref="assetCategoryService" />
-		<property name="assetService" ref="assetService" />
-	</bean>
-	
-	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
-	</bean>
-	
-	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl" id="assetCategoryService" scope="prototype">
-		<constructor-arg>
-			<bean parent="persistenceService">
-				<property name="type" value="org.egov.asset.model.AssetCategory" />
-			</bean>
-		</constructor-arg>	
-		<property name="appService" ref="appService" />
-		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator"/>
-	</bean>
-	
-	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
-	</bean>
-	
-	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService" scope="prototype">
-		<constructor-arg>
-			<bean parent="persistenceService">
-				<property name="type" value="org.egov.asset.model.Asset" />
-			</bean>
-		</constructor-arg>				
-		<property name="appService" ref="appService" />
-		<property name="assetNumberGenrator" ref="assetNumberGenrator"/>
-	</bean>
-	
-	<bean class="org.egov.asset.service.impl.AssetActivitiesServiceImpl" id="assetActivitiesService" scope="prototype">
-		<constructor-arg>
-			<bean parent="persistenceService">
-				<property name="type" value="org.egov.asset.model.AssetActivities" />
-			</bean>
-		</constructor-arg>
-	</bean>
 	
 </beans>

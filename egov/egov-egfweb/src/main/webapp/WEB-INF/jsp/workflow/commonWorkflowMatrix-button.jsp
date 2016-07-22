@@ -64,6 +64,13 @@
 				return false;
 	    	}
 		}
+	    if ((name=="Cancel" || name=="cancel")) {
+	    	var approverComments = document.getElementById("approverComments").value;
+	    	if (approverComments == null || approverComments == "") {
+	    		bootbox.alert("Please Enter Approver Remarks ");
+				return false;
+	    	}
+		}
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
 	    	bootbox.alert("Please Select the Approver ");
