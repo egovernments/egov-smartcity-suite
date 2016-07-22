@@ -39,8 +39,11 @@
  */
 package org.egov.works.workorder.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,6 +54,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -123,6 +127,9 @@ public class WorkOrderActivity extends AbstractAuditable {
     private double prevCumlvQuantity;
 
     private transient Long mbHeaderId;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "woActivity", targetEntity = WorkOrderMeasurementSheet.class)
+    private List<WorkOrderMeasurementSheet> workOrderMeasurementSheets = new ArrayList<WorkOrderMeasurementSheet>();
 
     public Activity getActivity() {
         return activity;
@@ -273,6 +280,14 @@ public class WorkOrderActivity extends AbstractAuditable {
 
     public void setMbHeaderId(final Long mbHeaderId) {
         this.mbHeaderId = mbHeaderId;
+    }
+
+    public final List<WorkOrderMeasurementSheet> getWorkOrderMeasurementSheets() {
+        return workOrderMeasurementSheets;
+    }
+
+    public final void setWorkOrderMeasurementSheets(final List<WorkOrderMeasurementSheet> workOrderMeasurementSheets) {
+        this.workOrderMeasurementSheets = workOrderMeasurementSheets;
     }
 
 }

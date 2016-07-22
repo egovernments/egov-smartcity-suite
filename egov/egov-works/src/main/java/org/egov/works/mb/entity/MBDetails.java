@@ -41,8 +41,10 @@ package org.egov.works.mb.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -53,6 +55,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -152,6 +155,9 @@ public class MBDetails extends AbstractAuditable {
     private double totalEstQuantity; // Added for RE
 
     private double amount = 0.0;
+
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "mbDetails", targetEntity = MBMeasurementSheet.class)
+    private final List<MBMeasurementSheet> measurementSheets = new LinkedList<MBMeasurementSheet>();
 
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
