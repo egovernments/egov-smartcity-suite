@@ -88,7 +88,7 @@ public class MBMeasurementSheet extends AbstractAuditable {
     private MBDetails mbDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "msheetid")
+    @JoinColumn(name = "womsheetid")
     private WorkOrderMeasurementSheet woMeasurementSheet;
 
     @Transient
