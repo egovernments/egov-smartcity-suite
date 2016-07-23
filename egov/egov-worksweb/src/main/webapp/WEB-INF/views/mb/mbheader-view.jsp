@@ -87,19 +87,19 @@
 			<div class="tab-pane" id="tenderitems">
 				<%@ include file="mbheader-viewtenderitems.jsp"%>
 			</div>
+			<c:if test="${!workflowHistory.isEmpty()}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message  code="lbl.apphistory"/>
+						</div>
+					</div>
+					<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
+				</div>
+			</c:if>
 			<div class="text-center">
 				<c:choose>
 					<c:when test="${mode == 'workflowView' }">
-						<c:if test="${!workflowHistory.isEmpty()}">
-							<div class="panel panel-primary" data-collapsed="0">
-								<div class="panel-heading">
-									<div class="panel-title">
-										<spring:message  code="lbl.apphistory"/>
-									</div>
-								</div>
-								<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
-							</div>
-						</c:if>
 						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 						<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />

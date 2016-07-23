@@ -86,9 +86,9 @@
 												<a href="#" class="hintanchor"	title="<c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out>"><i
 													class="fa fa-question-circle" aria-hidden="true"></i></a></td>   
 											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
-											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
+											<td class="text-right" ><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
-											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
+											<td class="text-right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
 											<td><c:out value="${mbdetails.quantity}" /></td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />

@@ -165,7 +165,7 @@
 						<spring:message code="lbl.contractor.comments" /> 
 					</div>
 					<div class="col-xs-4 add-margin view-content">
-					<c:choose>
+						<c:choose>
 							<c:when test="${mbHeader.contractorComments != ''}">
 								<c:out default="N/A" value="${mbHeader.contractorComments}"></c:out> 
 							</c:when>
@@ -173,7 +173,6 @@
 								<c:out default="N/A" value="N/A"></c:out>
 							</c:otherwise>
 						</c:choose>
-						
 					</div>
 				</div>
 			</div>
