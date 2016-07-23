@@ -875,11 +875,11 @@ public class LineEstimateService {
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             lineEstimateDetails.setLineEstimate(lineEstimate);
 
-        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
-
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
-
+        
+        LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
+        
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
         final AppConfigValues value = values.get(0);
