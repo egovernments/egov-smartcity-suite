@@ -96,14 +96,28 @@
 			</div> 
 		
 			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.financialDetails[0].scheme.name}"></c:out>
+				<c:choose>
+					<c:when test="${abstractEstimate.financialDetails[0].scheme.name != null}">
+						<c:out value="${abstractEstimate.financialDetails[0].scheme.name}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.subscheme" />
 			</div> 
 		
 			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.financialDetails[0].subScheme.name}"></c:out>
+				<c:choose>
+					<c:when test="${abstractEstimate.financialDetails[0].subScheme.name != null}">
+						<c:out value="${abstractEstimate.financialDetails[0].subScheme.name}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 	</div>

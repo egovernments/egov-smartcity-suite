@@ -41,6 +41,11 @@
 <div id="overheadsHeaderTable" class="panel panel-primary" data-collapsed="0">
 
 <div class="panel-body">
+<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="tab.header.overhead" />
+		</div>
+	</div>
 
 <table class="table table-bordered" >
 			<thead>

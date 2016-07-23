@@ -79,32 +79,48 @@
 		</c:if>
 	</c:if>	
 	<div class="row add-border">
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.location" />
-				</div> 
-			
-				<div class="col-xs-3 add-margin view-content">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.location" />
+		</div> 
+		<div class="col-xs-3 add-margin view-content">
+			<c:choose>
+				<c:when test="${abstractEstimate.location != null}">
 					<c:out value="${abstractEstimate.location}"></c:out>
-				</div>
+				</c:when>
+				<c:otherwise>
+					<c:out default="N/A" value="N/A"></c:out>
+				</c:otherwise>
+			</c:choose>
+		</div>
 	</div>
-	<c:if test="${abstractEstimate.latitude != '' && abstractEstimate.longitude != ''}">
 	<div class="row add-border">
 	     <div class="col-xs-3 add-margin">
 				<spring:message code="lbl.latitude" />
 			</div>  
-		
 			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.latitude}"></c:out>
+				<c:choose>
+					<c:when test="${abstractEstimate.latitude != null}">
+						<c:out value="${abstractEstimate.latitude}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.longitude" />
 			</div> 
-		
 			<div class="col-xs-3 add-margin view-content">
-				<c:out value="${abstractEstimate.longitude}"></c:out>
+				<c:choose>
+					<c:when test="${abstractEstimate.longitude != null}">
+						<c:out value="${abstractEstimate.longitude}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
-	</c:if>
 	<div class="row add-border">
 				<div class="col-xs-3 add-margin">
 					<spring:message code="lbl.nameofwork" />
