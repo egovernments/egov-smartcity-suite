@@ -185,11 +185,14 @@ public class ContractorBillRegisterService {
         } catch (final ValidationException e) {
             throw new ValidationException(e.getErrors());
         }
-        final ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository
+       ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository
                 .save(contractorBillRegister);
 
         createContractorBillRegisterWorkflowTransition(savedContractorBillRegister, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
+        
+        savedContractorBillRegister = contractorBillRegisterRepository
+                .save(contractorBillRegister);
 
         populateAndSaveMBHeader(savedContractorBillRegister);
 
@@ -242,7 +245,9 @@ public class ContractorBillRegisterService {
 
         createContractorBillRegisterWorkflowTransition(updatedContractorBillRegister, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
-
+        
+        updatedContractorBillRegister = contractorBillRegisterRepository.save(contractorBillRegister);
+        
         return updatedContractorBillRegister;
     }
 

@@ -42,7 +42,6 @@ package org.egov.works.lineestimate.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -213,6 +212,8 @@ public class LineEstimateService {
         createLineEstimateWorkflowTransition(newLineEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
+        lineEstimateRepository.save(newLineEstimate);
+        
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -620,6 +621,8 @@ public class LineEstimateService {
 
         createLineEstimateWorkflowTransition(updatedLineEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
+        
+        updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
 
         return updatedLineEstimate;
     }

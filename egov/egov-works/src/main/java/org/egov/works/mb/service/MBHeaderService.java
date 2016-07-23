@@ -202,10 +202,12 @@ public class MBHeaderService {
                 mbHeader.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.NEW.toString()));
         mergeSorAndNonSorMBDetails(mbHeader);
-        final MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
+        MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
 
         createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
+        
+        savedMBHeader = mbHeaderRepository.save(savedMBHeader);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedMBHeader,
                 WorksConstants.MBHEADER);
@@ -247,7 +249,7 @@ public class MBHeaderService {
             }
         }
 
-        final MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);
+        MBHeader updatedMBHeader = mbHeaderRepository.save(mbHeader);
 
         mbHeaderStatusChange(updatedMBHeader, workFlowAction);
 
@@ -256,6 +258,8 @@ public class MBHeaderService {
 
         createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
+        
+        updatedMBHeader = mbHeaderRepository.save(updatedMBHeader);
 
         return updatedMBHeader;
     }

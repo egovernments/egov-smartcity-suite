@@ -240,6 +240,9 @@ public class EstimateService {
         else
             createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
+        
+        abstractEstimateRepository.save(newAbstractEstimate);
+        
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -634,11 +637,13 @@ public class EstimateService {
 
         updatedAbstractEstimate = abstractEstimateRepository.save(abstractEstimate);
 
-        abstractEstimateStatusChange(abstractEstimate, workFlowAction);
+        abstractEstimateStatusChange(updatedAbstractEstimate, workFlowAction);
 
         createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
-
+        
+        abstractEstimateRepository.save(updatedAbstractEstimate);
+        
         return updatedAbstractEstimate;
     }
 
@@ -783,7 +788,7 @@ public class EstimateService {
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             }
-        }
+        }        
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
