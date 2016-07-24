@@ -2215,7 +2215,7 @@ $(document).on('change','.runtime-update',function (e) {
 		//console.log('input value change triggered!');
 		$(this).attr('value', $(this).val());
 		//console.log('OnChange', $(this).attr('value'));
-		findTotal(this);
+		
 
 	}
 	else if($(this).is("select"))
@@ -2238,7 +2238,10 @@ $(document).on('change','.runtime-update',function (e) {
 		//console.log('dropdown value change triggered!');
 		$(this).html($(this).val());
 	}
-
+	if($(this).attr('id').indexOf("quantity")>=0)
+		findNet(this);
+	else
+	findTotal(this);
 	//$(this).closest('tr').hide();
 });
 
@@ -2434,8 +2437,10 @@ function findTotal(obj)
 			depthOrHeight = 1;
 		if (width === undefined || width == '' || width == 0)
 			width = 1;
+		var net=parseFloat(length * no * width * depthOrHeight).toFixed(4);
 
-		$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',parseFloat(length * no * width * depthOrHeight).toFixed(4));
+		document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
+		$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
 
 	}
 	var netObj=document.getElementById(name[0]+'.'+name[1]+'.quantity');
@@ -2491,6 +2496,7 @@ function findNet(obj)
 	sum=parseFloat(sum).toFixed(4);
 	//console.log(document.getElementById(netName).innerHTML);
 	document.getElementById(netName).innerHTML=sum;
+	return true;
 
 
 }
