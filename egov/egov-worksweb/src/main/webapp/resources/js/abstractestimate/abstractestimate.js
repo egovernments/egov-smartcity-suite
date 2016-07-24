@@ -2220,8 +2220,18 @@ $(document).on('change','.runtime-update',function (e) {
 	}
 	else if($(this).is("select"))
 	{
-		//console.log('dropdown value change triggered!');
-		$(this).find('option:selected').attr('selected', 'selected');
+		if($(this).val()=='A')
+			{
+			$(this).find('option[value="D"]').removeAttr('selected');	
+			//console.log('dropdown value change triggered!');
+			$(this).find('option[value="A"]').attr('selected', 'selected');
+			}else
+				{
+				$(this).find('option[value="A"]').removeAttr('selected');	
+				//console.log('dropdown value change triggered!');
+				$(this).find('option[value="D"]').attr('selected', 'selected');	
+				}
+		
 	}
 	else if($(this).is("textarea"))
 	{
@@ -2283,8 +2293,32 @@ function  deleteThisRow(obj) {
 	var rowcount=$(obj).closest('table').find('tr').length;
 	//console.log(tbl);
 	if(rowcount<=3) {
-		bootbox.alert("This row can not be deleted");
-		return false;
+		
+		var retVal = confirm("This action will remove complete Measurement Sheet for SOR/NonSOR. Do you want to continue ?");
+		if( retVal == false )
+		{
+			return ;
+		}
+		else{
+	   var sid=	tablename.split(".")[0];	
+	   var mstr=document.getElementById(sid+".msopen").value=0;
+	   var mstr=document.getElementById(sid+".mspresent").value=0;
+	   var mstr=document.getElementById(sid+".mstd").innerHTML="";
+	   document.getElementsByName(sid+".quantity")[0].value=0;
+	   var quantity=document.getElementsByName(sid+".quantity")[0];
+	   $(quantity).removeAttr("readonly");
+	   var mstr=document.getElementById(sid+".mstr");
+	   $(mstr).remove();
+	   if(sid.indexOf("sorActivities") >= 0)
+		{
+			calculateEstimateAmount(document.getElementsByName(sid+".quantity")[0]);
+		}else
+		{
+			calculateNonSorEstimateAmount(document.getElementsByName(sid+".quantity")[0]);
+		}
+		}
+	//	bootbox.alert("This row can not be deleted");
+		return ;
 	} else {
 		tbl.deleteRow(rIndex);
 	}
@@ -2603,8 +2637,7 @@ function closeAllmsheet()
 
 				mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
 
-				document.getElementById(sid.split(".")[0]+".mstr")
-				document.getElementById(sid.split(".")[0]+".mstd")
+				
 				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
 				document.getElementById(sid.split(".")[0]+".msopen").value="0";
 				var mstr=document.getElementById(sid.split(".")[0]+".mstr");

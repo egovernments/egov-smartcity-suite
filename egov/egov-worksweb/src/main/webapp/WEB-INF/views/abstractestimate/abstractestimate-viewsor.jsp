@@ -74,6 +74,14 @@
 		</div>
 	</div>
 	<div class="panel-body">
+	<c:if test="${abstractEstimate.activities.size() != 0}">
+	
+	<div align="right">
+			<input type="button" value="Close All MSheet" class="btn btn-sm btn-secondary"
+				onclick="closeAllViewmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+				value="Open All MSheet" onclick="openAllViewmsheet()" />
+		</div>
+		</c:if>
 		
 		<table class="table table-bordered">
 			<thead>

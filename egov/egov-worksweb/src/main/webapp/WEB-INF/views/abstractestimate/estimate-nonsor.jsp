@@ -37,7 +37,12 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>  
+
 <div id="baseNonSORTable" class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -173,10 +178,14 @@
 										<form:input path="nonSorActivities[${item.index }].estimateRate" id="nonSorEstimateRate_${item.index }" value="${activity.estimateRate }" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right nonSorEstimateRate" maxlength="256" onblur="calculateNonSorEstimateAmount(this);" onkeyup="validateInput(this);"/>
 										<form:hidden path="nonSorActivities[${item.index }].rate" id="nonSorRate_${item.index }" class="activityRate form-control table-input text-right nonSorRate"  />
 									</td>
+									<c:set var="isreadonly" value="false"/>
+									<c:if test="${activity.measurementSheetList.size() > 0 }">
+										<c:set var="isreadonly" value="true"/>
+									</c:if>
 									<td>
-										<form:input path="nonSorActivities[${item.index }].quantity" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-									<button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-									</td>
+										<form:input path="nonSorActivities[${item.index }].quantity" readonly="${isreadonly}" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
+									     <button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									</td>       
  
 									<%@ include file="../measurementsheet/nonsor-measurementsheet-formtableedit.jsp"%>  
 									

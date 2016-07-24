@@ -37,8 +37,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%try{ %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
@@ -259,8 +262,12 @@
 										<form:hidden path="sorActivities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
 										<form:hidden path="sorActivities[${item.index }].estimateRate" id="estimateRate_${item.index }" value="${activity.estimateRate }" />
 									</td>
+									<c:set var="isreadonly" value="false"/>
+									<c:if test="${activity.measurementSheetList.size() > 0 }">
+									<c:set var="isreadonly" value="true"/>
+									</c:if>
 									<td>
-										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+									<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" readonly="${isreadonly}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 					                  <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>				
                                      </td>
                                 	<%@ include file="../measurementsheet/sor-measurementsheet-formtableedit.jsp"%>
@@ -298,9 +305,3 @@
 		</table>
 	</div>
 </div>
- <%
- }catch(Exception e){ 
-	 System.out.print("estimate  sor-------------------------");
-	 e.printStackTrace();
- }
- %>
