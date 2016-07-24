@@ -39,11 +39,18 @@
  */
 package org.egov.works.abstractestimate.repository;
 
+import java.util.List;
+
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasurementSheetRepository extends JpaRepository<MeasurementSheet, Long> {
+    
+    @Query("select ms from MeasurementSheet ms where ms.activity.abstractEstimate.id = :abstractEstimateId")
+    List<MeasurementSheet> getMeasurementsForActivites(@Param("abstractEstimateId") final Long abstractEstimateId);
 
 }

@@ -131,7 +131,7 @@ function callAjaxSearch() {
 					"sClass" : "text-left","autoWidth": "false"
 				}, {
 					"data" : "adminSanctionNumber","width": "6%",
-					"sClass" : "text-right"
+					"sClass" : "text-left"
 				}, {
 					"data" : "workIdentificationNumber",
 					"sClass" : "text-center","autoWidth": "false"

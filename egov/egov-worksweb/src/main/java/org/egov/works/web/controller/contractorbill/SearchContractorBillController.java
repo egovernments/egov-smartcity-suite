@@ -39,8 +39,10 @@
  */
 package org.egov.works.web.controller.contractorbill;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -88,7 +90,12 @@ public class SearchContractorBillController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("billTypes", BillTypes.values());
-        model.addAttribute("billStatus", egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTORBILL));
+        final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
+        final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.CONTRACTORBILL);
+        for (final EgwStatus egwStatus : egwStatuses)
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW))
+                newEgwStatuses.add(egwStatus);
+        model.addAttribute("billStatus", newEgwStatuses);
         model.addAttribute("departments", departmentService.getAllDepartments());
     }
 

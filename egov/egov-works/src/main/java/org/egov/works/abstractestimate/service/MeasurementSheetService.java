@@ -86,4 +86,8 @@ public class MeasurementSheetService {
     public List<MeasurementSheet> search(final MeasurementSheet measurementSheet) {
         return measurementSheetRepository.findAll();
     }
+    
+    public List<MeasurementSheet> findMeasurementForEstimateActivities(final Long abstractEstimateId) {
+        return measurementSheetRepository.getMeasurementsForActivites(abstractEstimateId);
+    }
 }

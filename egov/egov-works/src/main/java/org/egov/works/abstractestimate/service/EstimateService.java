@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -288,93 +289,86 @@ public class EstimateService {
                 for (final Activity oldActivity : abstractEstimate.getNonSORActivities())
                     if (oldActivity.getId().equals(activity.getId()))
                         updateActivity(oldActivity, activity);
-        
+
         
         for(Activity ac:abstractEstimate.getSorActivities())
         {
         	for(MeasurementSheet ms:ac.getMeasurementSheetList())
         	{
-        		if(ms.getActivity()==null)
-        		ms.setActivity(ac);
-        		 
-        	}
+                if (ms.getActivity() == null)
+                    ms.setActivity(ac);
+
+            }
         }
-        
-        for(Activity ac:abstractEstimate.getNonSorActivities())
-        {
-        	for(MeasurementSheet ms:ac.getMeasurementSheetList())
-        	{
-        		if(ms.getActivity()==null)
-        		ms.setActivity(ac);
-        		 
-        	}
+
+        for (Activity ac : abstractEstimate.getNonSorActivities()) {
+            for (MeasurementSheet ms : ac.getMeasurementSheetList()) {
+                if (ms.getActivity() == null)
+                    ms.setActivity(ac);
+
+            }
         }
     }
 
     private List<MeasurementSheet> mergeMeasurementSheet(Activity oldActivity, Activity activity) {
-    	List<MeasurementSheet> newMsList=new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
-    	for(MeasurementSheet msnew:activity.getMeasurementSheetList())
-		 {
-			if(msnew.getId()==null)
-			{
-				 msnew.setActivity(oldActivity);
-	    		 oldActivity.getMeasurementSheetList().add(msnew);
-	    		 continue;
-			}
-			
-    		
+        List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
+        for (MeasurementSheet msnew : activity.getMeasurementSheetList()) {
+            if (msnew.getId() == null) {
+                msnew.setActivity(oldActivity);
+                oldActivity.getMeasurementSheetList().add(msnew);
+                continue;
+            }
+
+
     		for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
 			 {
 				
 				 if(msnew.getId()==msold.getId())
 				 {
-					 msold.setLength(msnew.getLength());
-					 msold.setWidth(msnew.getWidth());
-					 msold.setDepthOrHeight(msnew.getDepthOrHeight());
-					 msold.setNo(msnew.getNo());
-					 msold.setActivity(msnew.getActivity());
-					 msold.setIdentifier(msnew.getIdentifier());
-					 msold.setRemarks(msnew.getRemarks());
-					 msold.setSlNo(msnew.getSlNo());
-					 msold.setQuantity(msnew.getQuantity());
-					 newMsList.add(msold);
-					 
-					 
-				 }
-				 
-			 }
-    		
-			 
-		 }
-    	List<MeasurementSheet> toRemove=new LinkedList<MeasurementSheet>();
+                    msold.setLength(msnew.getLength());
+                    msold.setWidth(msnew.getWidth());
+                    msold.setDepthOrHeight(msnew.getDepthOrHeight());
+                    msold.setNo(msnew.getNo());
+                    msold.setActivity(msnew.getActivity());
+                    msold.setIdentifier(msnew.getIdentifier());
+                    msold.setRemarks(msnew.getRemarks());
+                    msold.setSlNo(msnew.getSlNo());
+                    msold.setQuantity(msnew.getQuantity());
+                    newMsList.add(msold);
+
+                }
+
+            }
+
+        }
+        List<MeasurementSheet> toRemove = new LinkedList<MeasurementSheet>();
     	for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
     	{
-    		Boolean found=false;
+            Boolean found = false;
     	for(MeasurementSheet msnew:activity.getMeasurementSheetList())
 		 {
     		 if(msnew.getId()==msold.getId())
 			 {
-			found=true;
-			 }
-			
-		 }
+                    found = true;
+                }
+
+            }
     	if(!found)
     	{
-    		toRemove.add(msold);
-    	}
-    	
-    	}
-    	
+                toRemove.add(msold);
+            }
+
+        }
+
     	for(MeasurementSheet msremove:toRemove)
     	{
-    		oldActivity.getMeasurementSheetList().remove(msremove);
-    	}
-				
-    	return oldActivity.getMeasurementSheetList();
-		
-    	
-	}
- 
+            oldActivity.getMeasurementSheetList().remove(msremove);
+        }
+
+        return oldActivity.getMeasurementSheetList();
+
+    }
+
     private void updateActivity(final Activity oldActivity, final Activity activity) {
         oldActivity.setSchedule(activity.getSchedule());
         oldActivity.setAmt(activity.getAmt());
@@ -384,7 +378,7 @@ public class EstimateService {
         oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
         oldActivity.setEstimateRate(activity.getEstimateRate());
         oldActivity.setUom(activity.getUom());
-        oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity,activity));
+        oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity, activity));
     }
 
     @Transactional
@@ -641,9 +635,9 @@ public class EstimateService {
 
         createAbstractEstimateWorkflowTransition(updatedAbstractEstimate, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
-        
+
         abstractEstimateRepository.save(updatedAbstractEstimate);
-        
+
         return updatedAbstractEstimate;
     }
 
@@ -788,7 +782,7 @@ public class EstimateService {
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             }
-        }        
+        }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
@@ -1030,7 +1024,7 @@ public class EstimateService {
         }
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getEstimateDate()
-                        .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
+                .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }
 
@@ -1201,7 +1195,7 @@ public class EstimateService {
         else
             model.addAttribute("isLocationDetailsRequired", false);
     }
-    
+
     public List<String> getApprovedEstimateNumbersForCreateLOA(final String estimateNumber) {
         final List<String> estimateNumbers = abstractEstimateRepository
                 .findEstimateNumbersToCreateLOA("%" + estimateNumber + "%",
@@ -1210,16 +1204,16 @@ public class EstimateService {
                         OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return estimateNumbers;
     }
-    
+
     public List<String> getApprovedAdminSanctionNumbersForCreateLOA(final String adminSanctionNumber) {
         final List<String> adminSanctionNumbers = abstractEstimateRepository
                 .findAdminSanctionNumbersToCreateLOA("%" + adminSanctionNumber + "%",
                         EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
-                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+                OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return adminSanctionNumbers;
     }
-    
+
     public List<String> getApprovedWorkIdentificationNumbersForCreateLOA(final String workIdentificationNumber) {
         final List<String> workIdentificationNumbers = abstractEstimateRepository
                 .findWorkIdentificationNumbersToCreateLOA("%" + workIdentificationNumber + "%",
@@ -1228,5 +1222,87 @@ public class EstimateService {
                         OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return workIdentificationNumbers;
     }
-    
+
+    public List<Hashtable<String, Object>> getMeasurementSheetForEstimate(final AbstractEstimate abstractEstimate) {
+        final List<Hashtable<String, Object>> measurementSheetList = new ArrayList<Hashtable<String, Object>>();
+        int slno = 1;
+        Hashtable<String, Object> measurementSheetMap = null;
+        for (Activity activity : abstractEstimate.getActivities()) {
+            if (activity.getMeasurementSheetList().size() != 0) {
+                measurementSheetList.add(addActivityName(activity, slno++));
+                for (MeasurementSheet ms : activity.getMeasurementSheetList()) {
+                    measurementSheetMap = new Hashtable<String, Object>(0);
+                    measurementSheetMap.put("sNo", "");
+                    measurementSheetMap.put("no", ms.getNo());
+                    measurementSheetMap.put("scheduleCategory", "");
+                    measurementSheetMap.put("scheduleCode", "");
+                    measurementSheetMap.put("description", "");
+                    measurementSheetMap.put("length", ms.getLength());
+                    measurementSheetMap.put("width", ms.getWidth());
+                    measurementSheetMap.put("depthHeigth", ms.getDepthOrHeight());
+                    if (ms.getIdentifier() == 'D')
+                        measurementSheetMap.put("quantity", BigDecimal.ZERO.subtract(ms.getQuantity()));
+                    else
+                        measurementSheetMap.put("quantity", ms.getQuantity());
+                    measurementSheetMap.put("rate", "");
+                    measurementSheetMap.put("uom", "");
+                    measurementSheetMap.put("amount", "");
+                    if (ms.getIdentifier() == 'D')
+                        measurementSheetMap.put("identifier", ms.getIdentifier());
+
+                    measurementSheetList.add(measurementSheetMap);
+                }
+                if (activity.getMeasurementSheetList().size() > 1) {
+                    measurementSheetMap = new Hashtable<String, Object>(0);
+                    measurementSheetMap.put("sNo", "");
+                    measurementSheetMap.put("no", "");
+                    measurementSheetMap.put("scheduleCategory", "");
+                    measurementSheetMap.put("scheduleCode", "");
+                    measurementSheetMap.put("description", "");
+                    measurementSheetMap.put("length", "");
+                    measurementSheetMap.put("width", "");
+                    measurementSheetMap.put("depthHeigth", "");
+                    measurementSheetMap.put("quantity", activity.getQuantity());
+                    measurementSheetMap.put("rate", activity.getRate());
+                    measurementSheetMap.put("uom", activity.getUom().getUom());
+                    measurementSheetMap.put("amount", activity.getAmount().getValue());
+                    measurementSheetList.add(measurementSheetMap);
+                }
+            } else
+                measurementSheetList.add(addActivityName(activity, slno++));
+        }
+
+        return measurementSheetList;
+    }
+
+    private Hashtable<String, Object> addActivityName(Activity activity, int slNo) {
+        final Hashtable<String, Object> measurementSheetMap = new Hashtable<String, Object>(0);
+        measurementSheetMap.put("sNo", slNo);
+        measurementSheetMap.put("no", "");
+        if (activity.getSchedule() != null) {
+            measurementSheetMap.put("scheduleCategory", activity.getSchedule().getScheduleCategory().getCode());
+            measurementSheetMap.put("scheduleCode", activity.getSchedule().getCode());
+            measurementSheetMap.put("description", activity.getSchedule().getDescription());
+        } else {
+            measurementSheetMap.put("scheduleCategory", "N/A");
+            measurementSheetMap.put("scheduleCode", "N/A");
+            measurementSheetMap.put("description", activity.getNonSor().getDescription());
+        }
+        measurementSheetMap.put("length", "");
+        measurementSheetMap.put("width", "");
+        measurementSheetMap.put("depthHeigth", "");
+        if (activity.getMeasurementSheetList().size() != 0) {
+            measurementSheetMap.put("quantity", "");
+            measurementSheetMap.put("rate", "");
+            measurementSheetMap.put("uom", "");
+            measurementSheetMap.put("amount", "");
+        } else {
+            measurementSheetMap.put("quantity", activity.getQuantity());
+            measurementSheetMap.put("rate", activity.getEstimateRate());
+            measurementSheetMap.put("uom", activity.getUom().getUom());
+            measurementSheetMap.put("amount", activity.getAmount().getValue());
+        }
+        return measurementSheetMap;
+    }
+
 }

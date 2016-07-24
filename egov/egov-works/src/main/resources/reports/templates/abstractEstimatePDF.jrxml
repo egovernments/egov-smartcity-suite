@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-13T10:43:17 -->
+<!-- 2016-07-22T18:04:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -51,6 +51,7 @@
 	<parameter name="activities" class="java.util.List"/>
 	<parameter name="workflowdetails" class="java.util.List"/>
 	<parameter name="currDate" class="java.lang.String"/>
+	<parameter name="measurementExists" class="java.lang.Boolean"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -66,10 +67,115 @@
 	<field name="estimateValue" class="java.math.BigDecimal"/>
 	<field name="name" class="java.lang.String"/>
 	<variable name="overheadvalue" class="java.math.BigDecimal"/>
+	<group name="Group1" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+		<groupHeader>
+			<band height="49">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="28" width="190" height="21" uuid="85ff36b1-cf4e-4c2e-b73f-91effe97d2b3"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+						<paragraph lineSpacingSize="0.0"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Estimate Number : "+$F{estimateNumber}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="28" width="180" height="21" uuid="c959ad0c-719a-4498-b8c9-fe8c2e3349bb"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA["WIN Code : "+$F{projectCode}.getCode()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="28" width="170" height="21" uuid="87197316-2bce-400c-b3b3-571999c7fb49"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Proceedings Number : "+$F{lineEstimateDetails}.getLineEstimate().getAdminSanctionNumber()]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="20">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="190" height="20" uuid="30f63d9f-1619-42f1-b6d9-01ae5b9e2bcd"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Estimate Date : "+$P{estimateDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="180" height="20" uuid="81c9e575-9004-4c55-a765-ce872a0057ce"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Election Ward : "+$F{ward}.getBoundaryNum()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="0" width="170" height="20" uuid="bb5ca7a8-c230-45ed-a245-d9fcf97fc71a"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{location} == null ? "Location : "+ "N/A" : "Location : "+ $F{location}]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="21">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="540" height="21" uuid="d0f6165b-8b01-4dcf-a123-555898d2d27f"/>
+					<box leftPadding="1">
+						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Times New Roman"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Name of the work : "+$F{name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
 	<background>
 		<band height="802" splitType="Stretch">
 			<rectangle>
-				<reportElement x="1" y="0" width="559" height="800" uuid="00573b41-de99-4449-a1d2-2a92f8462cc0"/>
+				<reportElement x="1" y="0" width="559" height="802" uuid="00573b41-de99-4449-a1d2-2a92f8462cc0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<graphicElement>
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
@@ -100,107 +206,11 @@
 			</textField>
 		</band>
 	</title>
-	<pageHeader>
-		<band height="90" splitType="Stretch">
+	<detail>
+		<band height="180">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="10" y="28" width="190" height="21" uuid="bb1b7bc8-b049-47f0-a5b0-dd55678c3e25"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-					<paragraph lineSpacingSize="0.0"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Estimate Number : "+$F{estimateNumber}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="380" y="28" width="170" height="21" uuid="51944308-3353-48af-b839-d09c9d3d8bd5"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Proceedings Number : "+$F{lineEstimateDetails}.getLineEstimate().getAdminSanctionNumber()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="10" y="49" width="190" height="20" uuid="30f63d9f-1619-42f1-b6d9-01ae5b9e2bcd"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Estimate Date : "+$P{estimateDate}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="200" y="49" width="180" height="20" uuid="81c9e575-9004-4c55-a765-ce872a0057ce"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Election Ward : "+$F{ward}.getBoundaryNum()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" x="380" y="49" width="170" height="20" uuid="bb5ca7a8-c230-45ed-a245-d9fcf97fc71a"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{location} == null ? "Location : "+ "N/A" : "Location : "+ $F{location}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="10" y="69" width="540" height="21" uuid="d0f6165b-8b01-4dcf-a123-555898d2d27f"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Name of the work : "+$F{name}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToTallestObject" x="200" y="28" width="180" height="21" uuid="5c48b4ba-420f-46dd-ab76-62376ba741a6"/>
-				<box leftPadding="1">
-					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Times New Roman"/>
-				</textElement>
-				<textFieldExpression><![CDATA["WIN Code : "+$F{projectCode}.getCode()]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="175" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="10" y="0" width="540" height="30" uuid="81f7e317-4887-40d6-9284-1b59ba0aa75a"/>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="10" y="0" width="540" height="20" uuid="81f7e317-4887-40d6-9284-1b59ba0aa75a"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -362,8 +372,6 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
-	</columnHeader>
-	<detail>
 		<band height="31" splitType="Stretch">
 			<subreport>
 				<reportElement x="1" y="1" width="479" height="29" uuid="0ca56e34-2c40-4ce8-9389-a8d19f940a4e"/>
@@ -395,9 +403,9 @@
 	<summary>
 		<band height="36" splitType="Stretch">
 			<subreport>
-				<reportElement x="1" y="3" width="479" height="27" uuid="57f8c47b-57b9-4b89-8791-600dc94101cc"/>
+				<reportElement x="10" y="3" width="510" height="27" uuid="57f8c47b-57b9-4b89-8791-600dc94101cc"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{activities}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("abstractEstimate_BOQ.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{measurementExists} == true ? ReportUtil.getTemplateAsStream("abstractEstimate_measurementSheet.jasper") : ReportUtil.getTemplateAsStream("abstractEstimate_BOQ.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</summary>

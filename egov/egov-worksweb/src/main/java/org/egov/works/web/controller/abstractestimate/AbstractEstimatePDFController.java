@@ -56,7 +56,9 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -82,6 +84,9 @@ public class AbstractEstimatePDFController {
     @Autowired
     private WorksUtils worksUtils;
 
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
+
     public static final String ABSTRACTESTIMATEPDF = "abstractEstimatePDF";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
     private ReportRequest reportInput = null;
@@ -103,14 +108,24 @@ public class AbstractEstimatePDFController {
         reportParams.put("cityName", cityName);
         if (abstractEstimate != null) {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
+            reportParams.put("abstractEstimate", abstractEstimate);
             activities.addAll(abstractEstimate.getSORActivities());
             activities.addAll(abstractEstimate.getNonSORActivities());
             if (abstractEstimate.getState() != null)
                 reportParams.put("workflowdetails",
                         worksUtils.getWorkFlowHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
 
-            reportParams.put("activities", activities);
+            List<MeasurementSheet> measurementSheets = measurementSheetService
+                    .findMeasurementForEstimateActivities(abstractEstimate.getId());
+            if (measurementSheets != null && !measurementSheets.isEmpty()) {
+                reportParams.put("measurementExists", Boolean.TRUE);
+                reportParams.put("activities", estimateService.getMeasurementSheetForEstimate(abstractEstimate));
+            } else {
+                reportParams.put("measurementExists", Boolean.FALSE);
+                reportParams.put("activities", activities);
+            }
         }
+
         reportParams.put("currDate", sdf.format(new Date()));
         reportInput = new ReportRequest(ABSTRACTESTIMATEPDF, abstractEstimate, reportParams);
         final HttpHeaders headers = new HttpHeaders();
