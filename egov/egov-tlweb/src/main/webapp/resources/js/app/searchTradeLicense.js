@@ -289,6 +289,7 @@ jQuery(document).ready(function() {
 	
 	drillDowntableContainer = jQuery("#tblSearchTrade");
 	jQuery('#btnsearch').click(function(e) {
+		jQuery('.report-section').show();
 		document.getElementById("tradeSearchError").style.display='none';
         document.getElementById("tradeSearchError").innerHTML='';
         var applicationNumber = jQuery('#applicationNumber').val();
@@ -309,10 +310,12 @@ jQuery(document).ready(function() {
 				(isCancelled == null || isCancelled == '' || isCancelled == false)) {
 			document.getElementById("tradeSearchError").style.display='';
 	        document.getElementById("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
-			return false;
+	        jQuery('.report-section').hide();
+	        return false;
+	            
 		}
+			callAjaxForSearchTrade();
 		
-		callAjaxForSearchTrade();
 	});
 	
 });
@@ -377,50 +380,50 @@ function callAjaxForSearchTrade() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				aaSorting: [],				
 				columns : [ {
-							"data" : function(row, type, set, meta){
-									return { name:row.applicationNumber, id:row.licenseId };
-							},
-							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="licenseId" data-eleval="'
-										+ data.id + '">' + data.name + '</a>';
-							},
-							"sTitle" : "Application Number"
-						}, {
-							"data" : "tlNumber",
-							"sTitle" : "TL Number"
-						}, {
-							"data" : "oldTLNumber",
-							"sTitle" : "Old TL Number"
-						}, {
-							"data" : "category",
-							"sTitle" : "Category"
-						}, {
-							"data" : "subCategory",
-							"sTitle" : "Sub Category"
-						}, {
-							"data" : "tradeTittle",
-							"sTitle" : "Tittle of Trade"
-						}, {
-							"data" : "tradeOwner",
-							"sTitle" : "Trade Owner"
-						}, {
-							"data" : "mobileNumber",
-							"sTitle" : "Mobile Number"
-						}, {
-							"data" : "propertyAssmntNo",
-							"sTitle" : "Property Assessment Number"
-						}, {
-							"sTitle" : "Actions",
-				        	  "render" : function(data,type,row) {
-				        		  var showActions = row.actions; 
-				        		  var option = "<option>Select from Below</option>";
-				        		  jQuery.each(JSON.parse(row.actions),function(key,value){
-	        			             option+= "<option>"+value.key+"</option>";
-	        			         });
-				        		  console.log("Option Text"+option); 
-				        		  return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-											+ row.licenseId + '" onChange="goToAction(this);" >'+option+'</select>');
-				        	   }
+					"data" : function(row, type, set, meta){
+							return { name:row.applicationNumber, id:row.licenseId };
+					},
+					"render" : function(data, type, row) {
+						return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="licenseId" data-eleval="'
+								+ data.id + '">' + data.name + '</a>';
+					},
+					"sTitle" : "Application Number"
+				}, {
+					"data" : "tlNumber",
+					"sTitle" : "TL Number"
+				}, {
+					"data" : "oldTLNumber",
+					"sTitle" : "Old TL Number"
+				}, {
+					"data" : "category",
+					"sTitle" : "Category"
+				}, {
+					"data" : "subCategory",
+					"sTitle" : "Sub Category"
+				}, {
+					"data" : "tradeTittle",
+					"sTitle" : "Tittle of Trade"
+				}, {
+					"data" : "tradeOwner",
+					"sTitle" : "Trade Owner"
+				}, {
+					"data" : "mobileNumber",
+					"sTitle" : "Mobile Number"
+				}, {
+					"data" : "propertyAssmntNo",
+					"sTitle" : "Property Assessment Number"
+				}, {
+					"sTitle" : "Actions",
+		        	  "render" : function(data,type,row) {
+		        		  var showActions = row.actions; 
+		        		  var option = "<option>Select from Below</option>";
+		        		  jQuery.each(JSON.parse(row.actions),function(key,value){
+    			             option+= "<option>"+value.key+"</option>";
+    			         });
+		        		  console.log("Option Text"+option); 
+		        		  return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
+									+ row.licenseId + '" onChange="goToAction(this);" >'+option+'</select>');
+		        	   }
 						}]				
 			});
 }
