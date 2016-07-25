@@ -465,8 +465,9 @@ public class UploadSORController {
                         .getCell(SOR_DESCRIPTION_CELL_INDEX)));
                 sorRate.setUomCode(getStrValue(row.getCell(UOM_CELL_INDEX)) == null ? null : getStrValue(row
                         .getCell(UOM_CELL_INDEX)));
-                sorRate.setRate(getNumericValue(row.getCell(RATE_CELL_INDEX)) == null ? null : getNumericValue(row
-                        .getCell(RATE_CELL_INDEX)));
+                sorRate.setRate(
+                        getNumericValue(row.getCell(RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null : getNumericValue(row
+                                .getCell(RATE_CELL_INDEX)));
                 try {
                     sorRate.setFromDate(
                             row.getCell(FROMDATE_CELL_INDEX) == null ? null
@@ -481,8 +482,9 @@ public class UploadSORController {
                     sorRate.setErrorReason(messageSource.getMessage("error.todate.invalid", null, null));
                 }
                 sorRate.setMarketRate(
-                        getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)) == null ? null : getNumericValue(row
-                                .getCell(MARKET_RATE_CELL_INDEX)));
+                        getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null
+                                : getNumericValue(row
+                                        .getCell(MARKET_RATE_CELL_INDEX)));
                 try {
                     sorRate.setMarketFromDate(row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX) == null ? null
                             : row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX).getDateCellValue());
@@ -531,7 +533,8 @@ public class UploadSORController {
                         + getStrValue(sheet.getRow(i).getCell(SORCATEGORY_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SOR_DESCRIPTION_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(UOM_CELL_INDEX)) + "-"
-                        + getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX)))));
+                        + (getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null
+                                : getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX))))));
             }
 
             FileOutputStream output_file = new FileOutputStream(inputFile);
@@ -649,7 +652,7 @@ public class UploadSORController {
             break;
         case HSSFCell.CELL_TYPE_STRING:
             strValue = cell.getStringCellValue();
-           // strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
+            // strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
             if (strValue != null && strValue.contains("E+")) {
                 final String[] split = strValue.split("E+");
                 String mantissa = split[0].replaceAll(".", "");
