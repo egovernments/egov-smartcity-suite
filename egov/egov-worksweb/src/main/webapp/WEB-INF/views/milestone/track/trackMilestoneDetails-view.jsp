@@ -96,7 +96,15 @@
 						</td>
 						<td><fmt:formatDate value="${activity.completionDate}"
 								pattern="dd/MM/yyyy" /></td>
-						<td><c:out value="${activity.remarks}" /></td>
+						<td>
+						<c:choose>
+							<c:when test="${activity.remarks != null}">
+								<c:out value="${activity.remarks}"></c:out>
+							</c:when>
+							<c:otherwise>
+								<c:out default="N/A" value="N/A"></c:out>
+							</c:otherwise>
+						</c:choose>
 					</tr>
 				</c:forEach>
 			</tbody>

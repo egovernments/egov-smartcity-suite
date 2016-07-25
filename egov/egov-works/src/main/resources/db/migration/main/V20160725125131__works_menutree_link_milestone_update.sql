@@ -1,0 +1,2 @@
+update eg_action set displayname = 'Search Milestone' where name='ViewMilestone' and parentmodule = (select id from eg_module where name = 'WorksMilestone');
+update eg_action set displayname = 'Search Tracked Milestone' where name='TrackedMilestoneView' and parentmodule = (select id from eg_module where name = 'WorksMilestone');

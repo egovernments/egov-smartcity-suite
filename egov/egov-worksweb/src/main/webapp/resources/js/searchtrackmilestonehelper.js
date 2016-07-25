@@ -159,13 +159,13 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sWidth" : "10%"
+					"sWidth" : "3%"
 				}, {
 					"data" : "",
 					"sWidth" : "10%"
 				}, {
 					"data" : "nameOfWork",
-					"sWidth" : "10%"
+					"sWidth" : "30%"
 				}, {
 					"data" : "department",
 					"sWidth" : "10%"
@@ -177,7 +177,6 @@ function callAjaxSearch() {
 					"sWidth" : "10%"
 				}, {
 					"data" : "typeOfWork",
-					"sClass" : "text-right",
 					"sWidth" : "10%"
 				}, {
 					"data" : "subTypeOfWork",
