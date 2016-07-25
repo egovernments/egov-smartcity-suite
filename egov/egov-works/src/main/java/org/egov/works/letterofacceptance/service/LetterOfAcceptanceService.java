@@ -850,7 +850,7 @@ public class LetterOfAcceptanceService {
     public List<WorkOrder> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(wo) from WorkOrder wo where wo.id != null ");
+        queryStr.append("select distinct(wo) from WorkOrder wo where wo.id != null and wo.egwStatus.code =:workOrderStatus");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 queryStr.append(" and wo.workOrderNumber =:workOrderNumber");
@@ -865,13 +865,10 @@ public class LetterOfAcceptanceService {
                 queryStr.append(
                         " and exists (select distinct(woe.workOrder) from WorkOrderEstimate woe where woe.estimate.projectCode.code = :projectCode and woe.workOrder = wo)"); 
             }
-            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
-                if (searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)) {
-                    queryStr.append(" and wo.egwStatus.code =:workOrderStatus");
-                } else if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
-                    queryStr.append(
-                            " and wo.egwStatus.code =:workOrderStatus and wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = wo.id) and os.objectId = wo.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
-                }
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null
+                    && !searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)) {
+                queryStr.append(
+                        " and wo.id = (select distinct(os.objectId) from OfflineStatus as os where os.id = (select max(status.id) from OfflineStatus status where status.objectType = :objectType and status.objectId = wo.id) and os.objectId = wo.id and lower(os.egwStatus.code) = :offlineStatus and os.objectType = :objectType )");
             }
         }
         final Query query = setQueryParameters(searchRequestLetterOfAcceptance, queryStr);
@@ -895,16 +892,12 @@ public class LetterOfAcceptanceService {
             if (searchRequestLetterOfAcceptance.getWorkIdentificationNumber() != null) {
                 qry.setParameter("projectCode", searchRequestLetterOfAcceptance.getWorkIdentificationNumber());
             }
-            if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
-                if (searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED))
-                    qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
-                else if (searchRequestLetterOfAcceptance.getEgwStatus() != null) {
-                    qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
-                    qry.setParameter("offlineStatus",
-                            searchRequestLetterOfAcceptance.getEgwStatus().toString().toLowerCase());
-                    qry.setParameter("objectType", WorksConstants.WORKORDER);
-                }
+            if (searchRequestLetterOfAcceptance.getEgwStatus() != null && !searchRequestLetterOfAcceptance.getEgwStatus().equals(WorksConstants.APPROVED)) {
+                qry.setParameter("offlineStatus",
+                        searchRequestLetterOfAcceptance.getEgwStatus().toString().toLowerCase());
+                qry.setParameter("objectType", WorksConstants.WORKORDER);
             }
+            qry.setParameter("workOrderStatus", WorksConstants.APPROVED);
         }
         return qry;
     }

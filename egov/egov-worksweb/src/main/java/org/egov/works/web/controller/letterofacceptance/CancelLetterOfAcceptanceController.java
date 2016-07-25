@@ -95,7 +95,8 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         for (final EgwStatus egwStatus : egwStatuses)
             if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
                     && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
-                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED))
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("egwStatus", newEgwStatuses);
         model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
