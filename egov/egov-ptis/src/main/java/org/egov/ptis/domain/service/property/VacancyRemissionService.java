@@ -368,14 +368,14 @@ public class VacancyRemissionService {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        final Designation designation = propertyTaxUtil.getDesignationForUser(user.getId());
+        final String designationList = propertyTaxCommonUtils.getAllDesignationsForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
 
         if (vacancyRemissionApproval.getId() != null
                 && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
                         .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)))
-            if (designation.getName().equalsIgnoreCase(REVENUE_INSPECTOR_DESGN))
+            if (designationList.contains(REVENUE_INSPECTOR_DESGN))
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval
                         .getVacancyRemission().getCreatedBy().getId());
             else
@@ -391,8 +391,8 @@ public class VacancyRemissionService {
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             String stateValue = "";
             String nextAction = "";
-            if (designation.getName().equalsIgnoreCase(REVENUE_OFFICER_DESGN)
-                    || designation.getName().equalsIgnoreCase(COMMISSIONER_DESGN)) {
+            if (designationList.contains(REVENUE_OFFICER_DESGN)
+                    || designationList.contains(COMMISSIONER_DESGN)) {
                 stateValue = WF_STATE_REJECTED;
                 nextAction = WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
             } else {
