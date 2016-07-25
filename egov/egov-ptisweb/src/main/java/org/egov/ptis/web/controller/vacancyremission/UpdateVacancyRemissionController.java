@@ -101,6 +101,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
 
         String senderName = vacancyRemission.getCurrentState().getSenderName();
+        senderName=senderName.substring(senderName.lastIndexOf(":") + 1);
         if (!resultBinder.hasErrors()) {
             String workFlowAction = "";
             if (request.getParameter("workFlowAction") != null)
@@ -119,13 +120,14 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                     workFlowAction,propertyByEmployee);
 
-            if (StringUtils.isNotBlank(workFlowAction)) {
+            if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
                 if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE)) {
                     successMsg = "Vacancy Remission Approved Successfully in the System";
                 } else if (workFlowAction.equalsIgnoreCase(PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT)) {
                     successMsg = "Vacancy Remission rejected successfully and forwarded to : "
                             + vacancyRemissionService.getInitiatorName(vacancyRemission);
-                } else {
+                }
+                else {
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition)+" with application number : "+vacancyRemission.getApplicationNumber();
                 }
