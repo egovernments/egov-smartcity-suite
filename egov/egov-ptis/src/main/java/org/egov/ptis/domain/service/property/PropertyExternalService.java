@@ -1831,30 +1831,30 @@ public class PropertyExternalService {
      */
     public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
+        basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
+        if(basicProperty != null){
+        	assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+    		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            property = (PropertyImpl) basicProperty.getProperty();
+            assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+            if (property != null) {
+            	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+            	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+            		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+            	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            	BigDecimal totalTaxDue = BigDecimal.ZERO;
+            	if(currentPtdemand != null){
+            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+            			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
+            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+            			}
+            		}
+            	}
+            	assessmentDetails.setTotalTaxDue(totalTaxDue);
+            }
+        }
         PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
         if(propertyMutation != null){
-        	basicProperty = propertyMutation.getBasicProperty();
-        	if (basicProperty != null) {
-        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
-        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-                property = (PropertyImpl) basicProperty.getProperty();
-                assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
-                if (property != null) {
-                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
-                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
-                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-                	BigDecimal totalTaxDue = BigDecimal.ZERO;
-                	if(currentPtdemand != null){
-                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
-                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
-                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-                			}
-                		}
-                	}
-                	assessmentDetails.setTotalTaxDue(totalTaxDue);
-                }
-        	}
         	assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
         	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
     			assessmentDetails.setIsMutationFeePaid("Y");
@@ -1871,6 +1871,9 @@ public class PropertyExternalService {
     		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
         }else{
     		assessmentDetails.setIsMutationFeePaid("N");
+    		assessmentDetails.setFeeReceipt("");
+    		assessmentDetails.setFeeReceiptDate("");
+    		assessmentDetails.setApplicationNo("");
     	}
         return assessmentDetails;
     }
@@ -1892,7 +1895,8 @@ public class PropertyExternalService {
         propertyTaxBillable.setMutationFeePayment(Boolean.TRUE);
         propertyTaxBillable.setMutationFee(payPropertyTaxDetails.getPaymentAmount());
         propertyTaxBillable.setCallbackForApportion(Boolean.FALSE);
-        propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
+        if(propertyMutation != null)
+        	propertyTaxBillable.setMutationApplicationNo(propertyMutation.getApplicationNo());
         propertyTaxBillable.setUserId(ApplicationThreadLocals.getUserId());
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateManualBillNumber(basicProperty.getPropertyID()));
         

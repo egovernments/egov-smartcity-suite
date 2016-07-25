@@ -541,12 +541,6 @@ public class ValidationUtil {
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
         }
-    	PropertyMutation propertyMutation = propertyExternalService.getLatestPropertyMutationByAssesmentNo(assessmentRequest.getAssessmentNo());
-    	if(propertyMutation == null){
-    		errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);
-            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MUTATION_INVALID);
-    	}
     	return errorDetails;
     }
     

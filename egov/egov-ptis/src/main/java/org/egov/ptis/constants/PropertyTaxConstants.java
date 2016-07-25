@@ -1207,7 +1207,7 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE = "Mutation fee entered is excess";
     
     public static final String THIRD_PARTY_ERR_CODE_MUTATION_INVALID = "PTIS-REST-41";
-    public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "Mutation application number is invalid";
+    public static final String THIRD_PARTY_ERR_MSG_MUTATION_INVALID = "There are no mutations done for this assessment number";
     
     public static final String THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY = "PTIS-REST-42";
     public static final String THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY = "Property is Exempted";
