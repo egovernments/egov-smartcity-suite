@@ -56,7 +56,7 @@
 						<input id="LOACreatedMessage" type="hidden" value='<spring:message code="error.lineestimate.loa.created" />' />
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimatenumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control" placeholder="Type first 3 letters of Line Estimate Number"/>
 									<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />
@@ -71,7 +71,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.createdby" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.createdby" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="createdBy" data-first-option="false" id="createdBy" class="form-control" >
 										<form:option value=""><spring:message code="lbl.select"/></form:option>

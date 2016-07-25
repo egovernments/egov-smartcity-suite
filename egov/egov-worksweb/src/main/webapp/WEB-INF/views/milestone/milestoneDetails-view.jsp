@@ -102,7 +102,7 @@
 						<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 								minFractionDigits="2" value="${percentage}" /></span>
 					</td>
-					<td></td>
+					<td></td><td></td>
 				</tr>
 			</tfoot>
 		</table>

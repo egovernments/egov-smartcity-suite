@@ -49,7 +49,7 @@
 	<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.bill.conform" />' />
 	<input id="voucherCreatedMessage" type="hidden" value='<spring:message code="error.contractorbill.voucher.created" />' />
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:select path="department" data-first-option="false" id="department" class="form-control">
 				<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -65,7 +65,7 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" placeholder="Type first 3 letters of Work Identification Number" />
 			<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
@@ -78,7 +78,7 @@
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="status" id="status" class="form-control" value="APPROVED" readonly="true" />
 			<form:errors path="status" cssClass="add-margin error-msg" />

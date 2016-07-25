@@ -82,21 +82,20 @@
 		<div class="col-sm-12 text-center">
 		<c:choose>
 			<c:when test="${mode == 'workflowView'}">
-				<div class="row">
 					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 					</div>
-				</div>
 			</c:when>
 			<c:otherwise>
 				<c:if test="${mode == 'modify' }">
 					<form:button type="submit" name="submit" id="modify" class="btn btn-primary" ><spring:message code="lbl.modify"/></form:button>
 				</c:if>
-				<a href='javascript:void(0)' class='btn btn-default'
-					onclick='self.close()'><spring:message code='lbl.close' /></a> <a
+				<a
 					href="javascript:void(0)" class="btn btn-primary"
 					onclick="renderPDF()"><spring:message code="lbl.view.loapdf" /></a>
+					<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a> 
 			</c:otherwise>
 		</c:choose>
 		</div>

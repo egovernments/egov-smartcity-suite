@@ -103,13 +103,13 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} , {
-					"data" : "estimateNumber", "sClass" : "text-center"} ,{
-					"data" : "estimateDate", "sClass" : "text-center"} ,{
-					"data" : "nameOfWork", "sClass" : "text-center"} ,{
+					"data" : ""} , {
+					"data" : "estimateNumber"} ,{
+					"data" : "estimateDate"} ,{
+					"data" : "nameOfWork"} ,{
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
-					"data" : "createdBy", "sClass" : "text-center"} ,{
-					"data" : "", "sClass" : "text-right"
+					"data" : "createdBy"} ,{
+					"data" : ""
 					}]				
 				});
 			}

@@ -140,14 +140,14 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				"columns" : [{
-					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "appropriationNumber", "sClass" : "text-left"} ,{
-					"data" : "appropriationDate", "sClass" : "text-left" },{
+					"data" : ""} ,{ 
+					"data" : "appropriationNumber"} ,{
+					"data" : "appropriationDate"},{
 					"data" : "appropriationValue", "sClass" : "text-right"} ,{ 
-					"data" : "estimateNumber", "sClass" : "text-left"} ,{
-					"data" : "workIdentificationNumber", "sClass" : "text-left"} ,{
-					"data" : "nameOfWork", "sClass" : "text-left"} ,{
-					"data" : "estimateDate", "sClass" : "text-left"} ,{
+					"data" : "estimateNumber"} ,{
+					"data" : "workIdentificationNumber"} ,{
+					"data" : "nameOfWork"} ,{
+					"data" : "estimateDate"} ,{
 					"data" : "estimateValue", "sClass" : "text-right"} ,{
 					"data" : "cumulativeTotal", "sClass" : "text-right"} ,{
 					"data" : "balanceAvailable", "sClass" : "text-right"}],

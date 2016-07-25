@@ -288,22 +288,22 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					/*"data" : "", "sClass" : "text-center"} ,{*/ 
-					"data" : "typeOfWorkName", "sClass" : "text-center"} ,{
-					"data" : "subTypeOfWorkName", "sClass" : "text-center"} ,{
-					"data" : "departmentName", "sClass" : "text-center"} ,{
-					"data" : "lineEstimates", "sClass" : "text-right"} ,{
-					"data" : "adminSanctionedEstimates", "sClass" : "text-right"} ,{ 
+					"data" : "typeOfWorkName"} ,{
+					"data" : "subTypeOfWorkName"} ,{
+					"data" : "departmentName"} ,{
+					"data" : "lineEstimates"} ,{
+					"data" : "adminSanctionedEstimates"} ,{ 
 					"data" : "leAdminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
 					"data" : "aeAdminSanctionedAmountInCrores", "sClass" : "text-right"} ,{
 					"data" : "workValueOfAdminSanctionedAEInCrores", "sClass" : "text-right"} ,{
-					"data" : "technicalSanctionedEstimates", "sClass" : "text-right"} ,{
-					"data" : "loaCreated", "sClass" : "text-right"} ,{
+					"data" : "technicalSanctionedEstimates"} ,{
+					"data" : "loaCreated"} ,{
 					"data" : "agreementValueInCrores", "sClass" : "text-right"} ,{
-					"data" : "loaNotCreated", "sClass" : "text-right"} ,{
-					"data" : "workNotCommenced", "sClass" : "text-right"} ,{
-					"data" : "workInProgress", "sClass" : "text-right"} ,{ 
-					"data" : "workCompleted", "sClass" : "text-right"} ,{
-					"data" : "billsCreated", "sClass" : "text-right"} ,{
+					"data" : "loaNotCreated"} ,{
+					"data" : "workNotCommenced"} ,{
+					"data" : "workInProgress"} ,{ 
+					"data" : "workCompleted"} ,{
+					"data" : "billsCreated"} ,{
 					"data" : "billValueInCrores", "sClass" : "text-right"}]				
 				});
 		

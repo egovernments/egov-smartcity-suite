@@ -73,6 +73,8 @@ function renderPDF(){
 	window.open("/egworks/letterofacceptance/letterOfAcceptancePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
+$('#btnmodifyloa').hide();
+
 function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");
 	jQuery('.report-section').removeClass('display-hide');
@@ -102,21 +104,18 @@ function callAjaxSearch() {
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(7)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+					$('#btnmodifyloa').show();
 					return row;
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "workOrderNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "workOrderNumber","autoWidth": "false"
 				}, {
-					"data" : "workOrderDate",
-					"sClass" : "text-left" ,"width": "6%",
+					"data" : "workOrderDate" ,"width": "6%",
 					render: function (data, type, full) {
 						if(full!=null &&  full.workOrderDate != undefined) {
 							var regDateSplit = full.workOrderDate.split("T")[0].split("-");		
@@ -125,14 +124,11 @@ function callAjaxSearch() {
 						else return "";
 			    	}
 				}, {
-					"data" : "estimateNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "estimateNumber","autoWidth": "false"
 				}, {
-					"data" : "nameOfWork",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "nameOfWork","autoWidth": "false"
 				}, {
-					"data" : "contractor",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "contractor","autoWidth": "false"
 				}, {
 					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"

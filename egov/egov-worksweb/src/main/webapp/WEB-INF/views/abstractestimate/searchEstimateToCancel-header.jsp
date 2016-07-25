@@ -49,7 +49,7 @@
 	<input id="errorLOACreated" type="hidden" value='<spring:message code="error.estimate.loa.created" />' />
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 				<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
@@ -61,7 +61,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="fromDate" class="form-control datepicker" id="fromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="fromDate" cssClass="add-margin error-msg" />
@@ -73,7 +73,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.lineestimateno" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.lineestimateno" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="lineEstimateNumber" id="lineEstimateNumber" class="form-control"/>
 				<form:errors path="lineEstimateNumber" cssClass="add-margin error-msg" />

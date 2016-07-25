@@ -37,17 +37,15 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<%try{ %>
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
 			<spring:message code="title.estimatetemplate" />
 		</div>
 	</div>
+	<div class="panel-body">
 	<div class="form-group">
 		<input type="hidden" id="msgschedulecategory" value="<spring:message code='msg.select.scheduleofcategory' />">
 		<input type="hidden" id="msgestimatedate" value="<spring:message code='error.abstractestimate.estimate.date' />">
@@ -56,42 +54,43 @@
 		<input type="hidden" id="errorquantityzero" value="<spring:message code='error.quantity.zero' />">
 		<input type="hidden" id="errorsornonsor" value="<spring:message code='error.sor.nonsor.required' />">
 		<input type="hidden" value="${abstractEstimate.sorActivities.size() }" id="sorActivitiesSize" />
-		<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.typeofwork" />
-		</label>
-		<div class="col-sm-3 add-margin">
-			<form:select path="parentCategory" data-first-option="false" id="parentCategory" class="form-control disablefield"
-				required="required">
-				<form:option value="">
-					<spring:message code="lbl.select" />
-				</form:option>
-				<form:options items="${typeOfWork}" itemValue="id"
-					itemLabel="description" />
-			</form:select>
-		</div>
-
-		<label class="col-sm-2 control-label text-right"> <spring:message
-				code="lbl.subtypeofwork" />
-		</label>
-		<div class="col-sm-3 add-margin">
-            <input type="hidden" id="subTypeOfWorkValue" value="${abstractEstimate.category.id }"/>
-			<form:select path="category" data-first-option="false" id="category" class="form-control disablefield">
-				<form:option value="">
-					<spring:message code="lbl.select" />
-				</form:option>
-				<form:options items="${typeOfWork}" itemValue="id"
-					itemLabel="description" />
-			</form:select>
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofwork" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="parentCategory" data-first-option="false" id="parentCategory" class="form-control disablefield"
+					required="required">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${typeOfWork}" itemValue="id"
+						itemLabel="description" />
+				</form:select>
+				</div>
+	
+			<label class="col-sm-2 control-label text-right"> <spring:message
+					code="lbl.subtypeofwork" />
+			</label>
+			<div class="col-sm-3 add-margin">
+	            <input type="hidden" id="subTypeOfWorkValue" value="${abstractEstimate.category.id }"/>
+				<form:select path="category" data-first-option="false" id="category" class="form-control disablefield">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${typeOfWork}" itemValue="id"
+						itemLabel="description" />
+				</form:select>
+			</div>
 		</div>
 
 	</div>
-	<div class="panel-body custom-form">  
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /></label>
-			<div class="col-sm-3 add-margin">
-			<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
-			<input type="hidden" value="" id="templateId" />	
-			<input type="hidden" id="estimateTemplateConfirmMsg"  value="<spring:message code='msg.estimate.template.confirm.reset' />"/>
-			</div>
+
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.templatecode" /></label>
+		<div class="col-sm-3 add-margin">
+		<input name="code" id="templateCode" class="form-control" placeholder="Type first 3 letters of Template Code" />
+		<input type="hidden" value="" id="templateId" />	
+		<input type="hidden" id="estimateTemplateConfirmMsg"  value="<spring:message code='msg.estimate.template.confirm.reset' />"/>
 		</div>
 	</div>
 	
@@ -102,6 +101,7 @@
 	</div>
 	<br/>
 	<div class="add-margin error-msg text-right"><spring:message code="estimate.template.rate.disclaimer" />&nbsp;&nbsp;&nbsp;</div>
+</div>
 </div>
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
@@ -262,12 +262,8 @@
 										<form:hidden path="sorActivities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
 										<form:hidden path="sorActivities[${item.index }].estimateRate" id="estimateRate_${item.index }" value="${activity.estimateRate }" />
 									</td>
-									<c:set var="isreadonly" value="false"/>
-									<c:if test="${activity.measurementSheetList.size() > 0 }">
-									<c:set var="isreadonly" value="true"/>
-									</c:if>
 									<td>
-									<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" readonly="${isreadonly}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+										<form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
 					                  <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>				
                                      </td>
                                 	<%@ include file="../measurementsheet/sor-measurementsheet-formtableedit.jsp"%>
@@ -305,3 +301,9 @@
 		</table>
 	</div>
 </div>
+ <%
+ }catch(Exception e){ 
+	 System.out.print("estimate  sor-------------------------");
+	 e.printStackTrace();
+ }
+ %>

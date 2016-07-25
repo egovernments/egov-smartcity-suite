@@ -47,7 +47,6 @@
 		</div>
 	</div>
 		<c:if test="${mbHeader.mbDetails.size() != 0}">
-						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
@@ -117,8 +116,6 @@
 									</tfoot>
 								</table>
 							</div>
-						</div>
-						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body">
 								<div class="panel-heading">
 									<div class="panel-title">
@@ -184,6 +181,5 @@
 									</tfoot>
 								</table>
 							</div>
-						</div>
 					</c:if>
 </div>

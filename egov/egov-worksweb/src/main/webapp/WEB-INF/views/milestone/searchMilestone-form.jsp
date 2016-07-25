@@ -49,7 +49,7 @@
 	<input type="hidden" id="workorderid" value="${workOrder.id }"/>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="department" data-first-option="false" id="department" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -64,7 +64,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.milestone.from.date" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.milestone.from.date" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="milestoneFromDate" class="form-control datepicker" id="milestoneFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="milestoneFromDate" cssClass="add-margin error-msg" />
@@ -76,7 +76,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="typeOfWork" data-first-option="false" id="typeofwork" class="form-control">
 					<form:option value="">
@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="workOrderNumber" id="workOrderNumber" class="form-control"/>
 				<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />

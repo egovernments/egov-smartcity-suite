@@ -222,19 +222,19 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ { 
-						"data" : "", "sClass" : "text-center"} , {
-						"data" : "estimateNumber", "sClass" : "text-center"} ,{
-						"data" : "workOrderNumber", "sClass" : "text-center"} ,{
-						"data" : "department", "sClass" : "text-center"} ,{
-						"data" : "contractor", "sClass" : "text-center"} ,{
+						"data" : ""} , {
+						"data" : "estimateNumber"} ,{
+						"data" : "workOrderNumber"} ,{
+						"data" : "department"} ,{
+						"data" : "contractor"} ,{
 						"data" : "agreemantAmount", "sClass" : "text-right"},{
-						"data" : "mbrefnumberdate", "sClass" : "text-center"},{
-						"data" : "mbpageno", "sClass" : "text-center"},{
+						"data" : "mbrefnumberdate"},{
+						"data" : "mbpageno"},{
 						"data" : "mbamount", "sClass" : "text-right"},{
-						"data" : "status", "sClass" : "text-center"},{
-						"data" : "createdBy", "sClass" : "text-center"},{
-						"data" : "currentOwner", "sClass" : "text-center"} ,{
-						"data" : "","sClass" : "text-center","sWidth" : "10%"
+						"data" : "status"},{
+						"data" : "createdBy"},{
+						"data" : "currentOwner"} ,{
+						"data" : "","sWidth" : "10%"
 						}]  
 			});
 } 

@@ -80,14 +80,11 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "","autoWidth": "false"
 				}, {
-					"data" : "workOrderDate",
-					"sClass" : "text-center" ,"width": "6%",
+					"data" : "workOrderDate","width": "6%",
 					render: function (data, type, full) {
 						if(full!=null &&  full.workOrderDate != undefined) {
 							var regDateSplit = full.workOrderDate.split(" ")[0].split("-");		
@@ -99,14 +96,12 @@ function callAjaxSearch() {
 					"data" : "workOrderAmount",
 					"sClass" : "text-right","autoWidth": "false"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false",
+					"data" : "","autoWidth": "false",
 					 "render":function(data, type, full, meta){
 					       return full.contractorcode + " - " + full.contractor;
 					    } 
 				}, {
-					"data" : "workIdentificationNumber",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "workIdentificationNumber","autoWidth": "false"
 				}, ]
 			});
 }

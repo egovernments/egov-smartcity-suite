@@ -190,7 +190,7 @@
 							code="lbl.total" /></td>
 					<td class="text-right"><span id="totalPercentage"><c:out
 								value="${percentage}" /></span></td>
-					<td></td>
+					<td></td><td></td><td></td><td></td>
 				</tr>
 			</tfoot>
 		</table>

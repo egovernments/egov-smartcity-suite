@@ -76,26 +76,20 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "","autoWidth": "false"
 				}, {
-					"data" : "workOrderDate",
-					"sClass" : "text-center" ,"width": "6%"
+					"data" : "workOrderDate","width": "6%"
 				}, {
 					"data" : "",
 					"sClass" : "text-right","autoWidth": "false"
 				}, {
-					"data" : "contractor",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "contractor","autoWidth": "false"
 				}, {
-					"data" : "workIdentificationNumber",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "workIdentificationNumber","autoWidth": "false"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "","autoWidth": "false"
 				} ]
 			});
 }

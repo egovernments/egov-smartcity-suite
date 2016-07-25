@@ -40,11 +40,11 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
+<div class="display-hide report-section">
+	<div class="table-header text-left">
 		<spring:message code="title.mbheader.search" />
 	</div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="form-group report-table-container">
 		<table class="table table-bordered table-hover" id="resultTable">
 			<thead>
 				<tr id="mbheaderRow">

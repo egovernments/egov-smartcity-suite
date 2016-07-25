@@ -50,7 +50,7 @@
 	<input type="hidden" value="<spring:message code='error.trackmilestonedate.validate' />" id='validateDate'>
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="department" data-first-option="false" id="department" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -65,7 +65,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.trackmilestone.from.date" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.trackmilestone.from.date" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="trackMilestoneFromDate" class="form-control datepicker" id="trackMilestoneFromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="trackMilestoneFromDate" cssClass="add-margin error-msg" />
@@ -77,7 +77,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.typeofwork" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="typeOfWork" data-first-option="false" id="typeofwork" class="form-control">
 					<form:option value="">
@@ -96,7 +96,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="workOrderNumber" id="workOrderNumber" class="form-control"/>
 				<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />

@@ -40,6 +40,7 @@
 
 $subTypeOfWorkId = 0;
 $(document).ready(function(){
+	$('#createMilestone').hide();
 	$('#typeofwork').trigger('blur');
 	$('#subTypeOfWork').trigger('blur');
 });
@@ -208,16 +209,17 @@ function callAjaxSearch() {
 							'<a href="javascript:void(0);" onclick="openLetterOfAcceptance(\''
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
+					$('#createMilestone').show();
 					return row;
 				},
 				aaSorting : [],
 				columns : [ {
-						"data" : "", "sClass" : "text-center","sWidth": "1%"} ,{ 
+						"data" : "","sWidth": "1%"} ,{ 
 						"data" : "","autoWidth": "false",},{
-						"data" : "estimateNumber","sClass" : "text-left"}, {
-						"data" : "typeOfWork","sClass" : "text-left"}, {
-						"data" : "subTypeOfWork","sClass" : "text-left"}, {
-						"data" : "estimateDate","sClass" : "text-left",
+						"data" : "estimateNumber"}, {
+						"data" : "typeOfWork"}, {
+						"data" : "subTypeOfWork"}, {
+						"data" : "estimateDate",
 						render: function (data, type, full) {
 							if(full!=null &&  full.estimateDate != undefined) {
 								var regDateSplit = full.estimateDate.split(" ")[0].split("-");		
@@ -225,10 +227,10 @@ function callAjaxSearch() {
 							}
 							else return "";
 				    	}}, {
-						"data" : "nameOfTheWork","sClass" : "text-left"}, {
-						"data" : "workIdentificationNumber","sClass" : "text-left"	}, {
-						"data" : "workOrderNumber","sClass" : "text-left"}, {
-						"data" : "workOrderDate","sClass" : "text-center",
+						"data" : "nameOfTheWork"}, {
+						"data" : "workIdentificationNumber"	}, {
+						"data" : "workOrderNumber"}, {
+						"data" : "workOrderDate",
 						render: function (data, type, full) {
 							if(full!=null &&  full.workOrderDate != undefined) {
 								var regDateSplit = full.workOrderDate.split(" ")[0].split("-");		

@@ -52,7 +52,6 @@
 		</div>
 	</div>
 	
-	<div class="row">
 			<div class="col-sm-12 text-center">
 				<button type='button' class='btn btn-primary' id="btnsearch">
 					<spring:message code='lbl.search' />
@@ -60,7 +59,6 @@
 				<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
-	</div>
 </form:form>
 <jsp:include page="mbheader-searchResult.jsp" />
 <script src="<c:url value='/resources/js/mb/searchmbheader.js?rnd=${app_release_no}'/>"></script>

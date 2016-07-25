@@ -132,6 +132,7 @@
 							<%-- <c:out
 								value="${totalPercentage}" /> --%>
 					</span></td>
+					<td></td><td></td>
 				</tr>
 			</tfoot>
 		</table>

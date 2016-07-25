@@ -96,7 +96,6 @@
           </spring:hasBindErrors>
 	</div>
 
-	<div class="main-content">
 		<div class="position_alert1">
 			<spring:message code="lbl.mb.amount" /><span class="mandatory"></span> : &#8377 <span id="mbAmountSpan">${mbHeader.mbAmount }</span>
 			<form:hidden path="mbAmount" value="${mbHeader.mbAmount }" id="mbAmount" class="form-control"/>
@@ -142,11 +141,8 @@
 				</div>
 			</c:if>
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-			</div>
 		</div>
-	</div>
 </form:form>
 
 <script type="text/javascript"

@@ -49,7 +49,6 @@
 	<div class="new-page-header"><spring:message code="title.loa.create" /></div>
 	<input type="hidden" name="mode" id ="mode" value ="${mode}">
 	<input type="hidden" name="workOrder" value="${workOrder.id}"/>
-	<div class="main-content">
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active">
@@ -91,15 +90,10 @@
 				</div>
 		    </c:when>
 			<c:otherwise>
-				<div class="row">
-					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-					<div class="buttonbottom" align="center">
-						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-					</div>
-				</div>
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 		    </c:otherwise>
 	  </c:choose>
-	</div>
 </form:form>
 
 <script src="<c:url value='/resources/js/letterofacceptance/letterofacceptance.js?rnd=${app_release_no}'/>"></script>

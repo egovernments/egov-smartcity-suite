@@ -190,6 +190,7 @@
 					<td></td>
 					<td colspan="2" class="text-right"><spring:message code="lbl.adminsanctionamount" /></td>
 					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
+					<td></td><td></td><td></td><td></td><td></td>
 				</tr>
 			</tfoot>
 		</table>

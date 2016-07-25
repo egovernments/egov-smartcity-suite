@@ -77,23 +77,18 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "","autoWidth": "false"
 				}, {
-					"data" : "estimateDate",
-					"sClass" : "text-center" ,"width": "6%"
+					"data" : "estimateDate","width": "6%"
 				}, {
 					"data" : "",
 					"sClass" : "text-right","autoWidth": "false"
 				}, {
-					"data" : "winCode",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "winCode","autoWidth": "false"
 				}, {
-					"data" : "",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "","autoWidth": "false"
 				} ]
 			});
 }

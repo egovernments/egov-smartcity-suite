@@ -37,6 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$('#btncreatemb').hide();
+
 jQuery('#btnsearch').click(function(e) {
 	var fromDate = '';
 	var toDate = '';
@@ -92,6 +95,7 @@ function callAjaxSearch() {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.workOrderEstimateId +'"/>');
 					$('td:eq(1)',row).html(index+1);
 					$('td:eq(4)',row).html(parseFloat(Math.round(data.agreementAmount * 100) / 100).toFixed(2));
+					$('#btncreatemb').show();
 					if(data.workOrderNumber != null)
 						$('td:eq(2)',row).html('<a href="javascript:void(0);" onclick="viewWorkOrder(\''+ data.workOrderId +'\')">' + data.workOrderNumber + '</a>');
 					if(data.workIdentificationNumber != null)
@@ -100,13 +104,13 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ { 
-					    "data" : "", "sClass" : "text-center"} ,{ 
-						"data" : "", "sClass" : "text-center"} , {
-						"data" : "workOrderNumber", "sClass" : "text-center"} ,{
-						"data" : "workOrderDate", "sClass" : "text-center"} ,{
+					    "data" : ""} ,{ 
+						"data" : ""} , {
+						"data" : "workOrderNumber"} ,{
+						"data" : "workOrderDate"} ,{
 						"data" : "agreementAmount", "sClass" : "text-right"} ,{
-						"data" : "contractorName", "sClass" : "text-center"},{
-						"data" : "workIdentificationNumber", "sClass" : "text-center"} ]
+						"data" : "contractorName"},{
+						"data" : "workIdentificationNumber"} ]
 			});
 }
 

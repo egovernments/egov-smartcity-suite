@@ -52,7 +52,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimatenumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="abstractEstimateNumber" id="abstractEstimateNumber" class="form-control" placeholder="Type first 3 letters of Abstract Estimate Number"/>
 									<form:errors path="abstractEstimateNumber" cssClass="add-margin error-msg" />
@@ -67,7 +67,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" placeholder="Admin Sanction Date" />
 									<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
@@ -79,7 +79,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
 							<div class="col-sm-3 add-margin">
 							<form:select path="egwStatus" data-first-option="false"
 								id="egwStatus" class="form-control">
@@ -101,6 +101,8 @@
 					<button type='button' class='btn btn-primary' id="btnsearch">
 						<spring:message code='lbl.search' />
 					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 				</div>
 			</div>
 		</form:form>  

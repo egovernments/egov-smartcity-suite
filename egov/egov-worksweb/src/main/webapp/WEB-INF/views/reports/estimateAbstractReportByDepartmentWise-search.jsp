@@ -40,7 +40,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
+<div class="display-hide report-section">
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
 	<div class="form-group report-table-container" >
@@ -78,8 +78,6 @@
 			<button style="display: none;" type='button' class='btn btn-primary' id="btndownloadexcel">
 				<spring:message code='lbl.download.excel' />
 			</button> 
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </div>

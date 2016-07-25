@@ -44,9 +44,10 @@
 <div class="panel display-hide panel-primary report-section" data-collapsed="0" >
 	<form:form name="cancelForm" role="form" action="" id="cancelForm" class="form-horizontal form-groups-bordered">
 		<input type="hidden" name="id" id="id" />
+		<div class="panel-heading"></div>
 		<div class="panel-body">
 			<div class="row">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.cancellation.reason"/><span class="mandatory"></span></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.cancellation.reason"/><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<select data-first-option="false" name="cancellationReason" id="cancellationReason" class="form-control" required="required">
 						<option value="Data entry mistake">Data entry mistake</option>
@@ -66,8 +67,6 @@
 				<button type='button' class='btn btn-primary' id="btncancel">
 					<spring:message code='lbl.cancel' />
 				</button>
-				<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
 		</div>
 	</form:form>

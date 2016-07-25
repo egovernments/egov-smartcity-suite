@@ -60,7 +60,6 @@
 		<c:out value="${message}" /><br />
 	</div>
 
-	<div class="main-content">
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${abstractEstimate.workValue}" default="0.0" />'/>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
@@ -120,17 +119,14 @@
 						<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 					</div>
 				</c:if>
-				<div class="row">
-					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-					<div class="buttonbottom" align="center">
-						<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-                      
-					</div>
+				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				<div class="buttonbottom" align="center">
+					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+                     
 				</div>
 		    </c:otherwise>
 	  </c:choose>
 		</div>
-	</div>
   
 
 </form:form> 

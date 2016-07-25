@@ -72,8 +72,6 @@
 			<button type='button' class='btn btn-primary' id="btncreateloa">
 				<spring:message code='lbl.createcontractorbill' />
 			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </div>

@@ -144,8 +144,8 @@
 				</c:if>
 				<tr>
 					<td colspan="2" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
-					<td></td>
+					<td class="text-right view-content"> <span id="estimateTotal"><c:out value="${total}"/></span> </td>
+					<td></td><td></td><td></td><td></td>
 				</tr>
 			</tfoot>
 		</table>

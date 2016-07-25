@@ -37,6 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$('#btncreateloa').hide();
+
 jQuery('#btnsearch').click(function(e) {
 	var adminSanctionFromDate = '';
 	var adminSanctionToDate = '';
@@ -106,18 +109,19 @@ function callAjaxSearch() {
 					if(data.adminSanctionNumber != null)
 						$('td:eq(7)',row).html('<a href="javascript:void(0);" onclick="openLineEstimate(\''+ data.leId +'\')">' + data.adminSanctionNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.estimateAmount * 100) / 100).toFixed(2));
+					$('#btncreateloa').show();
 					return row;
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "", "sClass" : "text-center"} , {
-					"data" : "estimateNumber", "sClass" : "text-center"} ,{
-					"data" : "nameOfWork", "sClass" : "text-center"} ,{
-					"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{
-					"data" : "createdBy", "sClass" : "text-center"} ,{
-					"data" : "adminSanctionBy", "sClass" : "text-center"}, {
-					"data" : "adminSanctionNumber", "sClass" : "text-center"} ,{
+					"data" : ""} ,{ 
+					"data" : ""} , {
+					"data" : "estimateNumber"} ,{
+					"data" : "nameOfWork"} ,{
+					"data" : "workIdentificationNumber"} ,{
+					"data" : "createdBy"} ,{
+					"data" : "adminSanctionBy"}, {
+					"data" : "adminSanctionNumber"} ,{
 					"data" : "", "sClass" : "text-right", "sType" : "decimal"
 					}]				
 				});

@@ -131,12 +131,12 @@ function callAjaxSearch() {
 									+ data + '">' + data + '</a>';
 							}
 						} ,
-					{"data" : "workIdentificationNumber", "sClass" : "text-center"} ,{ 
+					{"data" : "workIdentificationNumber"} ,{ 
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
-					"data" : "departmentName", "sClass" : "text-center"} ,{
-					"data" : "ward", "sClass" : "text-center"} ,{
-					"data" : "status", "sClass" : "text-center"} ,{
-					"data" : "currentowner", "sClass" : "text-center"}]				
+					"data" : "departmentName"} ,{
+					"data" : "ward"} ,{
+					"data" : "status"} ,{
+					"data" : "currentowner"}]				
 				});
 		
 		//show/hide department

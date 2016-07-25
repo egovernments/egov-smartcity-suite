@@ -50,7 +50,7 @@
 	<input id="latestMBError" type="hidden" value='<spring:message code="error.mb.not.latest" />' />
 	<div class="panel-body">
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.mb.referencenumber" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="mbReferenceNumber" id="mbReferenceNumber" class="form-control"/>
 				<form:errors path="mbReferenceNumber" cssClass="add-margin error-msg" />
@@ -62,7 +62,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workidentificationnumber" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber" placeholder="Type first 3 letters of Work Identification Number" />
 				<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="department" data-first-option="false" id="departments" class="form-control">
 					<form:option value=""><spring:message code="lbl.select" /></form:option>

@@ -39,6 +39,7 @@
  */
 
 $(document).ready(function(){
+	$('#btntrackmilestone').hide();
 	$('#typeofwork').blur(function(){
 		 if ($('#typeofwork').val() === '') {
 			   $('#subTypeOfWork').empty();
@@ -145,6 +146,7 @@ function callAjaxSearch() {
 					$('td:eq(10)', row).html(
 							'<a href="javascript:void(0);" onclick="openMilestone(\''
 									+ data.id + '\')">View Milestone</a>');
+					$('#btntrackmilestone').show();
 				},
 				"bPaginate": false,
 				"bDestroy" : true,
@@ -157,27 +159,21 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "nameOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "45%"
 				}, {
 					"data" : "department",
-					"sClass" : "text-center",
 					"sWidth" : "45%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
@@ -185,19 +181,15 @@ function callAjaxSearch() {
 					"sWidth" : "10%"
 				}, {
 					"data" : "typeOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "subTypeOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "status",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				} ]
 			});

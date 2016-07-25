@@ -112,15 +112,14 @@
 			</div>
 			</div>
 		</div>
-		<div align="center">
-			<button type='button' class='btn btn-primary' id="btnsearch">
-				<spring:message code='lbl.search' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a> 
-				<input type="button" class="btn btn-default" value="Reset"
-				id="button" name="Reset" onclick="this.form.reset();">
-		</div>
+		
+	</div>
+	<div align="center">
+	<button type='button' class='btn btn-primary' id="btnsearch">
+			<spring:message code='lbl.search' />
+		</button>
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a> 
 	</div>
 </form:form>
 <div class="row display-hide report-section">
@@ -151,8 +150,6 @@
 		<button type='button' class='btn btn-primary' id="createMilestone">
 			<spring:message code='lbl.createmilestone' />
 		</button>
-		<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a> 
 	</div>
 </div>
 

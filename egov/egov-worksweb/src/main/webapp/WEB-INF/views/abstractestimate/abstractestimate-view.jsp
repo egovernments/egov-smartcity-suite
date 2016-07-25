@@ -55,7 +55,6 @@
 
 	<div class="new-page-header"><spring:message code="lbl.viewae" /></div>
 
-	<div class="main-content">
 	<%@ include file="abstractestimate-vewheaderdetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -121,7 +120,6 @@
 				</c:choose>
             </div>
 		</div>
-	</div>
 </form:form>
 <jsp:include page="abstractestimate-viewlocation.jsp" />
 <script>

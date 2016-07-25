@@ -40,7 +40,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
+<div class="display-hide report-section">
 	<div id="balanceAvailable" class="text-center"></div>
 	<div id="errorMessage" style="display: none;">
 		<spring:message code="error.lineestimate.loa.search" />
@@ -85,8 +85,6 @@
 				id="btndownloadexcel">
 				<spring:message code='lbl.download.excel' />
 			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </div>

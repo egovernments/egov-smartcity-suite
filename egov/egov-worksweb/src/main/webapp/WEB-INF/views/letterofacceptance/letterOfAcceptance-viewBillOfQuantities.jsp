@@ -38,6 +38,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <div  class="panel panel-primary" data-collapsed="0">
+<div class="panel-heading"></div>
 	<div class="panel-body" >
 		<table class="table table-bordered" id="tblsor">
 			<thead>

@@ -37,6 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$('#btncreateloa').hide();
+
 jQuery('#btnsearch').click(function(e) {
 	
 	var fromDate = '';
@@ -128,26 +131,22 @@ function callAjaxSearch() {
 										+ data.id + '\')">'
 										+ data.workOrderNumber + ' -- ' + data.workOrderDate + '</a>');
 						$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+						$('#btncreateloa').show();
 					return row;
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "", "sClass" : "text-center","sWidth": "1%"} ,{ 
-					"data" : "","autoWidth": "false",
-					"sClass" : "text-center","sWidth": "2%"
+					"data" : "","sWidth": "1%"} ,{ 
+					"data" : "","autoWidth": "false","sWidth": "2%"
 				},{
-					"data" : "estimateNumber",
-					"sClass" : "text-left","width": "13.5%"
+					"data" : "estimateNumber","width": "13.5%"
 				}, {
-					"data" : "nameOfWork",
-					"sClass" : "text-left","sWidth": "15%"
+					"data" : "nameOfWork","sWidth": "15%"
 					
 				},{
-					"data" : "workOrderNumber",
-					"sClass" : "text-left","width": "13.5%"
+					"data" : "workOrderNumber","width": "13.5%"
 				}, {
-					"data" : "contractor",
-					"sClass" : "text-left","sWidth": "15%",
+					"data" : "contractor","sWidth": "15%",
 						 "render":function(data, type, full, meta){
 						       return  full.contractor + "/" + full.contractorcode;
 						    } 
@@ -155,11 +154,10 @@ function callAjaxSearch() {
 					"data" : "workOrderAmount","width": "6%",
 					"sClass" : "text-right"
 				} ,{
-					"data" : "mbRefNumbers",
-					"sClass" : "text-left","width": "12%"
+					"data" : "mbRefNumbers","width": "12%"
 				} ,{
-					"data" : "mbAmount",
-					"sClass" : "text-left","width": "12%"
+					"data" : "mbAmount","width": "12%",
+						"sClass" : "text-right"
 				}]
 			});
 }

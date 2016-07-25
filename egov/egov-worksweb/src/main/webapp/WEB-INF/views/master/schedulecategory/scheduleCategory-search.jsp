@@ -104,10 +104,6 @@
 			</thead>
 		</table>
 	</div>
-	<div align="center">
-		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a>
-	</div>
 </div>
 <c:choose>
 	<c:when test="${mode == 'view' }">

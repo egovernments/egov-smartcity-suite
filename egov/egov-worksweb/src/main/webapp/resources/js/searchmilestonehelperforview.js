@@ -157,23 +157,18 @@ function callAjaxSearch() {
 				aaSorting : [],
 				columns : [ {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "3%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "15%"
 				}, {
 					"data" : "nameOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "25%"
 				}, {
 					"data" : "department",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
@@ -181,19 +176,15 @@ function callAjaxSearch() {
 					"sWidth" : "10%"
 				}, {
 					"data" : "typeOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "15%"
 				}, {
 					"data" : "subTypeOfWork",
-					"sClass" : "text-center",
 					"sWidth" : "5%"
 				}, {
 					"data" : "status",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				}, {
 					"data" : "",
-					"sClass" : "text-center",
 					"sWidth" : "10%"
 				} ]
 			});

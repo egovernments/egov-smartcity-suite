@@ -233,32 +233,32 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "ward", "sClass" : "text-left"} ,{
-					"data" : "location", "sClass" : "text-left"} ,{
-					"data" : "typeOfSlum", "sClass" : "text-left"} ,{ 
-					"data" : "beneficiaries", "sClass" : "text-left"} ,{
-					"data" : "nameOfWork", "sClass" : "text-left"} ,{
-					"data" : "winCodeEstimateNumber", "sClass" : "text-left"} ,{
-					"data" : "fund", "sClass" : "text-left"} ,{
-					"data" : "function", "sClass" : "text-left"} ,{ 
-					"data" : "budgetHead", "sClass" : "text-left"} ,{
-					"data" : "typeOfWork", "sClass" : "text-left"} ,{
-					"data" : "subTypeOfWork", "sClass" : "text-left"} ,{
-					"data" : "adminSanctionAuthorityDate", "sClass" : "text-left"} ,{
-					"data" : "adminSanctionAmount", "sClass" : "text-right"}, {
-					"data" : "technicalSanctionAuthorityDate", "sClass" : "text-center"}, {
-					"data" : "estimateAmount", "sClass" : "text-right"}, {
+					"data" : ""} ,{ 
+					"data" : "ward"} ,{
+					"data" : "location"} ,{
+					"data" : "typeOfSlum"} ,{ 
+					"data" : "beneficiaries"} ,{
+					"data" : "nameOfWork"} ,{
+					"data" : "winCodeEstimateNumber"} ,{
+					"data" : "fund"} ,{
+					"data" : "function"} ,{ 
+					"data" : "budgetHead"} ,{
+					"data" : "typeOfWork"} ,{
+					"data" : "subTypeOfWork"} ,{
+					"data" : "adminSanctionAuthorityDate"} ,{
+					"data" : "adminSanctionAmount"}, {
+					"data" : "technicalSanctionAuthorityDate"}, {
+					"data" : "estimateAmount"}, {
 					"data" : "workValue", "sClass" : "text-right"}, {
 					"data" : "modeOfAllotment", "sClass" : "text-right"}, {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
 					"data" : "contractorCodeName", "sClass" : "text-right"}, {
 					"data" : "agreementAmount", "sClass" : "text-right"}, {
 					"data" : "workStatus", "sClass" : "text-right"}, {
-					"data" : "milestonePercentageCompleted", "sClass" : "text-center"}, {
-					"data" : "latestMbNumberDate", "sClass" : "text-right"}, {
-					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {
-					"data" : "billType", "sClass" : "text-right"}, {
+					"data" : "milestonePercentageCompleted"}, {
+					"data" : "latestMbNumberDate"}, {
+					"data" : "latestBillNumberDate"}, {
+					"data" : "billType"}, {
 					"data" : "billAmount", "sClass" : "text-right"}, {
 					"data" : "totalBillAmount", "sClass" : "text-right"}, {
 					"data" : "totalBillPaidSoFar", "sClass" : "text-right"}, {

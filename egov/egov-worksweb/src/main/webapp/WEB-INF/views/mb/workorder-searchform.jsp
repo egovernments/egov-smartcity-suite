@@ -52,7 +52,7 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="workOrderNumber"	id="workOrderNumber" class="form-control"	placeholder="Type first 3 letters of LOA Number" />
 							<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
@@ -64,7 +64,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="fromDate" class="form-control datepicker"	id="fromDate" data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="fromDate" cssClass="add-margin error-msg" />
@@ -76,7 +76,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contractor" /></label>
 							<div class="col-sm-3 add-margin">
 				              <form:input path="contractor" id="contractorSearch" class="form-control" placeholder="Type first 3 letters of Contractor Name Or Code"/>
 				              <form:errors path="contractor" cssClass="add-margin error-msg" />
@@ -93,7 +93,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.workidnumber" /></label>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workidnumber" /></label>
 						<div class="col-sm-3 add-margin">
 						<form:input path="workIdentificationNumber" class="form-control" id="workIdentificationNumber"	placeholder="Type first 3 letters of Work Identification Number" />
 						<form:errors path="workIdentificationNumber" cssClass="add-margin error-msg" />

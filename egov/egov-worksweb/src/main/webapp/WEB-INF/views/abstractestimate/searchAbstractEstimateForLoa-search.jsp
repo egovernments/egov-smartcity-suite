@@ -52,7 +52,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 									<form:errors path="estimateNumber" cssClass="add-margin error-msg" />
@@ -67,7 +67,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.adminsanctionfromdate" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="adminSanctionFromDate" class="form-control datepicker" id="adminSanctionFromDate" data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="adminSanctionFromDate" cssClass="add-margin error-msg" />
@@ -79,7 +79,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.abstractestimate.createdby" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.abstractestimate.createdby" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:select path="abstractEstimateCreatedBy" data-first-option="false" id="abstractEstimateCreatedBy" class="form-control">
 										<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -94,7 +94,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message code="lbl.status" /></label>
+								<label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /></label>
 								<div class="col-sm-3 control-label text-left">
 									<input class="form-control" value='L1 Tender finalised' disabled="disabled"/>
 								</div>
@@ -105,7 +105,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
 								<div class="col-sm-3 add-margin">
 								<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 								</div>
@@ -119,6 +119,7 @@
 					<button type='button' class='btn btn-primary' id="btnsearch">
 						<spring:message code='lbl.search' />
 					</button>
+					<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();">
 				</div>
 			</div>
 		</form:form>  

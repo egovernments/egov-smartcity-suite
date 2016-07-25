@@ -110,27 +110,20 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "department",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "department","autoWidth": "false"
 				}, {
-					"data" : "lineEstimateNumber",
-					"sClass" : "text-center" ,"width": "6%"
+					"data" : "lineEstimateNumber","autoWidth": "false","width": "6%"
 				}, {
-					"data" : "estimateNumber",
-					"sClass" : "text-right","autoWidth": "false"
+					"data" : "estimateNumber","autoWidth": "false"
 				}, {
-					"data" : "workIdentificationNumber",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "workIdentificationNumber","autoWidth": "false"
 				}, {
-					"data" : "amount",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "amount","sClass" : "text-right","autoWidth": "false"
 				}, {
-					"data" : "createdBy",
-					"sClass" : "text-center","autoWidth": "false"
-				}, ]
+					"data" : "createdBy","autoWidth": "false"
+				}]
 			});
 }
 

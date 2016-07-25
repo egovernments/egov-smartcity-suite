@@ -68,9 +68,7 @@
 		<div class="col-sm-12 text-center">
 			<button type='button' class='btn btn-primary' id="btncreateloa">
 				<spring:message code='lbl.createloa' />
-			</button> &nbsp;
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</button>
 		</div>
 	</div>
 </div>

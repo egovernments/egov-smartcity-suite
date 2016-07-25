@@ -48,7 +48,7 @@
 	</div>
 	<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.milestone.conform" />' />
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loanumber" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loanumber" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="workOrderNumber" id="workOrderNumber" class="form-control" placeholder="Type first 3 letters of LOA Number" />
 			<form:errors path="workOrderNumber" cssClass="add-margin error-msg" />
@@ -61,7 +61,7 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor.name" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contractor.name" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="contractor" class="form-control" id="contractor" placeholder="Type first 3 letters of Contractor code or name" />
 			<form:errors path="contractor" cssClass="add-margin error-msg" />

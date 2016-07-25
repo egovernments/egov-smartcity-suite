@@ -49,6 +49,8 @@
 			      	</div>
 	       		</spring:hasBindErrors>
 	    	</div>
+	    	<div class="panel-heading">
+	    	</div>
 			<div class="panel-body">
 				<jsp:include page="letterOfAcceptance-viewestimatedetails.jsp"/>
 				<jsp:include page="letterOfAcceptance-details.jsp"/>

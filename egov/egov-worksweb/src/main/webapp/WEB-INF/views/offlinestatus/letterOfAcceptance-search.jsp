@@ -58,7 +58,7 @@
 				<input type="hidden" id="workorderid" value="${workOrder.id }" />
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.loanumber" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="workOrderNumber" id="workOrderNumber"
@@ -76,7 +76,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.fromdate" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="fromDate" class="form-control datepicker"
@@ -92,7 +92,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.contractor" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="contractorName" id="contractorSearch"
@@ -116,7 +116,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.estimateno" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="estimateNumber" id="estimateNumber"

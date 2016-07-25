@@ -79,7 +79,7 @@ function callAjaxSearch() {
 	drillDowntableContainer = jQuery("#resultTable");		
 	jQuery('.report-section').removeClass('display-hide');
 		reportdatatable = drillDowntableContainer
-			.dataTable({
+			.DataTable({
 				ajax : {
 					url : "/egworks/lineestimate/ajaxsearch",      
 					type: "POST",
@@ -105,20 +105,27 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-					"data" : "", "sClass" : "text-center"} ,{ 
-					"data" : "executingDepartment", "sClass" : "text-left"} ,{
-					"data" : "lineEstimateNumber", "sClass" : "text-left"} ,{
-					"data" : "adminSanctionNumber", "sClass" : "text-left"} ,{ 
-					"data" : "fund", "sClass" : "text-left"} ,{ 
-					"data" : "function", "sClass" : "text-left"} ,{ 
-					"data" : "budgetHead", "sClass" : "text-left"} ,{
-					"data" : "createdBy", "sClass" : "text-left"} ,{
-					"data" : "owner", "sClass" : "text-left"} ,{
-					"data" : "status", "sClass" : "text-left"} ,{
+					"data" : ""} ,{ 
+					"data" : "executingDepartment"} ,{
+					"data" : "lineEstimateNumber"} ,{
+					"data" : "adminSanctionNumber"} ,{ 
+					"data" : "fund"} ,{ 
+					"data" : "function"} ,{ 
+					"data" : "budgetHead"} ,{
+					"data" : "createdBy"} ,{
+					"data" : "owner"} ,{
+					"data" : "status"} ,{
 					"data" : "totalAmount", "sClass" : "text-right"}, {
-					"data" : "", "target":-1, "sClass" : "text-left"
+					"data" : "", "target":-1
 					}]				
 				});
+		
+				reportdatatable.on( 'order.dt search.dt', function () {
+					reportdatatable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+				            cell.innerHTML = i+1;
+				        } );
+				    } ).draw();
+				 
 			}
 
 $(document).ready(function(){

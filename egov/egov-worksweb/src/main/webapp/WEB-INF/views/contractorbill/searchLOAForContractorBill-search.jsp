@@ -57,7 +57,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.loanumber" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="workOrderNumber" id="workOrderNumber"
@@ -73,7 +73,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.fromdate" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="fromDate" class="form-control datepicker" placeholder="LOA from date"
@@ -89,7 +89,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.contractor" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="name" id="contractorSearch" class="form-control"
@@ -108,7 +108,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label text-right"><spring:message
+								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.estimateno" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="estimateNumber" id="estimateNumber"
