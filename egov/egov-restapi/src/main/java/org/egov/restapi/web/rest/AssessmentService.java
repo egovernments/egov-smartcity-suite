@@ -122,7 +122,7 @@ public class AssessmentService {
      * @throws JsonMappingException
      * @throws IOException
      */
-    @RequestMapping(value = "/property/assessmentDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String getAssessmentDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
