@@ -85,7 +85,12 @@
 		<div class="col-xs-3 add-margin view-content">
 			<c:choose>
 				<c:when test="${abstractEstimate.location != null}">
-					<c:out value="${abstractEstimate.location}"></c:out>
+				<c:if test="${abstractEstimate.latitude != null && abstractEstimate.longitude != null}">
+				<span class="map-tool-class btn-secondary" data-toggle="tooltip"
+							data-placement="top" title="" data-original-title="Locate on map"
+							onclick="jQuery('#view-location').modal('show', {backdrop: 'static'});">
+							<i class="fa fa-map-marker"></i></span> </c:if>
+					<span id="address_locate"><c:out value="${abstractEstimate.location}"></c:out></span>
 				</c:when>
 				<c:otherwise>
 					<c:out default="N/A" value="N/A"></c:out>
@@ -136,4 +141,9 @@
 				<div class="col-xs-3 add-margin view-content">
 					<c:out value="${abstractEstimate.description}"></c:out>
 				</div>
-	</div>	
+	</div>
+<script src="<c:url value='/resources/js/viewlocationmap.js?rnd=${app_release_no}'/>"></script>
+<script>
+var lat = '${abstractEstimate.latitude}';
+var lng = '${abstractEstimate.longitude}';
+</script>

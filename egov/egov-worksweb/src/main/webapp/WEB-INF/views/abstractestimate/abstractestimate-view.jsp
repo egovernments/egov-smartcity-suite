@@ -123,6 +123,7 @@
 		</div>
 	</div>
 </form:form>
+<jsp:include page="abstractestimate-viewlocation.jsp" />
 <script>
 var msg = '<spring:message code="lbl.header" />';
 </script>
