@@ -1221,6 +1221,9 @@ public interface PropertyTaxConstants {
     public static final String THIRD_PARTY_ERR_CODE_WRONG_CATEGORY = "PTIS-REST-45";
     public static final String THIRD_PARTY_ERR_MSG_WRONG_CATEGORY = "Invalid Category";
 
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_CODE = "PTIS-REST-46";
+    public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
 
@@ -1451,4 +1454,6 @@ public interface PropertyTaxConstants {
     public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
     public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
     public static final String PROPERTY_TYPE_CODE_VACANT = "VAC_LAND";
+    
+	public static final String MOBILE_PAYMENT_INCORRECT_BILL_DATA = "Bill data is incorrect";
 }

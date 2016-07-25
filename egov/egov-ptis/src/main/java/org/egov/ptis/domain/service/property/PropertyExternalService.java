@@ -152,7 +152,6 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.LocalityDetails;
 import org.egov.ptis.domain.model.MasterCodeNamePairDetails;
-import org.egov.ptis.domain.model.MobilePaymentDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -1978,30 +1977,6 @@ public class PropertyExternalService {
     public PropertyMutation getLatestPropertyMutationByAssesmentNo(String assessmentNo){
         PropertyMutation propertyMutation = propertyMutationDAO.getPropertyLatestMutationForAssessmentNo(assessmentNo);
         return propertyMutation;
-    }
-    
-    /**
-     * API to return BillInfoImpl, used in tax payment through Mobile App
-     * @param mobilePropertyTaxDetails
-     * @return
-     */
-    public BillInfoImpl getBillInfo(final MobilePaymentDetails mobilePaymentDetails) {
-    	BillInfoImpl billInfoImpl = null;
-        final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(mobilePaymentDetails
-                .getAssessmentNo());
-        propertyTaxBillable.setBasicProperty(basicProperty);
-        propertyTaxBillable.setUserId(2L);
-        ApplicationThreadLocals.setUserId(2L);
-        propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
-                .getPropertyID().getWard().getBoundaryNum().toString()));
-        propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
-        propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
-
-        final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
-        final CollectionHelper collectionHelper = new CollectionHelper(egBill);
-        
-        billInfoImpl = collectionHelper.prepareBillInfo(mobilePaymentDetails.getAmountToBePaid(), COLLECTIONTYPE.O, null);
-        return billInfoImpl;
     }
     
 }
