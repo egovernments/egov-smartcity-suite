@@ -448,7 +448,7 @@ public class PropertyExternalService {
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
             final String mobileNumber, final String category) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo, ownerName,
-                mobileNumber);
+                mobileNumber, category);
         List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
         if (null != basicProperties && !basicProperties.isEmpty()) {
             for (final BasicProperty basicProperty : basicProperties) {
@@ -503,8 +503,8 @@ public class PropertyExternalService {
     private PropertyTaxDetails getPropertyTaxDetails(final BasicProperty basicProperty, String category) {
         final PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
         final ErrorDetails errorDetails = new ErrorDetails();
-        final String assessmentNo = basicProperty.getUpicNo();
         if (null != basicProperty) {
+            final String assessmentNo = basicProperty.getUpicNo();
             if (!basicProperty.isActive()) {
                 errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_CODE);
                 errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_DEACTIVATE_ERR_MSG);
@@ -619,9 +619,6 @@ public class PropertyExternalService {
                         total = total.add(demand.subtract(collection));
 
                 }
-
-                System.out.println(data.toString());
-
             }
             if (arrearDetails != null) {
                 arrearDetails.setTaxAmount(total);
