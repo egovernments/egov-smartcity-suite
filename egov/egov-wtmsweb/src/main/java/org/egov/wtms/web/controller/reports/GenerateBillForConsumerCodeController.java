@@ -100,7 +100,6 @@ public class GenerateBillForConsumerCodeController {
         }
         if (waterConnectionBillService != null)
             waterConnectionBillService.generateBillForConsumercode(consumerCode);
-        generatePDF(consumerCode, request, response);
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
