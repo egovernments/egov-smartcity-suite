@@ -447,13 +447,13 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
     public String viewContractorBillRegister(final Model model, @PathVariable final String contractorBillRegisterId,
             final HttpServletRequest request) throws ApplicationException {
         final ContractorBillRegister contractorBillRegister = getContractorBillRegister(contractorBillRegisterId);
-        final String responsePage = loadViewData(model, request, contractorBillRegister);
+        loadViewData(model, request, contractorBillRegister);
         model.addAttribute("createdbybydesignation",
                 worksUtils.getUserDesignation(contractorBillRegister.getCreatedBy()));
         model.addAttribute("mode", "readOnly");
         model.addAttribute("workflowHistory", lineEstimateService.getHistory(contractorBillRegister.getState(),
                 contractorBillRegister.getStateHistory()));
-        return responsePage;
+        return "contractorBill-view";
     }
 
     public List<Map<String, Object>> getBillDetailsMap(final ContractorBillRegister contractorBillRegister,

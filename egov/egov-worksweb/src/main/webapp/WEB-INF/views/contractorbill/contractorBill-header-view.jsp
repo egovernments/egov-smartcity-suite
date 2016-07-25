@@ -118,7 +118,8 @@
 						<spring:message code="lbl.agreement.amount" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.workOrder.workOrderAmount}" />
+						<fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+								minFractionDigits="2" value="${workOrderEstimate.workOrder.workOrderAmount}" />
 					</div>
 				</div>
 				<div class="row add-border">
