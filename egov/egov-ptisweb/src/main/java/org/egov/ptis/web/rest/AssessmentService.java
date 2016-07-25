@@ -136,7 +136,7 @@ public class AssessmentService {
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, null);
 		} else {
 			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
 			propertyTaxDetails.setErrorDetails(errorDetails);

@@ -1211,6 +1211,15 @@ public interface PropertyTaxConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY = "PTIS-REST-42";
     public static final String THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY = "Property is Exempted";
+    
+    public static final String THIRD_PARTY_ERR_CODE_PROPERTY_TAX_ASSESSMENT_NOT_FOUND = "PTIS-REST-43";
+    public static final String THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND = "There is no Property Tax record found for this assessment";
+
+    public static final String THIRD_PARTY_ERR_CODE_VACANTLAND_ASSESSMENT_NOT_FOUND = "PTIS-REST-44";
+    public static final String THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND = "There is no Vacant Land record found for this assessment";
+    
+    public static final String THIRD_PARTY_ERR_CODE_WRONG_CATEGORY = "PTIS-REST-45";
+    public static final String THIRD_PARTY_ERR_MSG_WRONG_CATEGORY = "Invalid Category";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1438,4 +1447,8 @@ public interface PropertyTaxConstants {
     
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
+    
+    public static final String CATEGORY_TYPE_PROPERTY_TAX = "PT";
+    public static final String CATEGORY_TYPE_VACANTLAND_TAX = "VLT";
+    public static final String PROPERTY_TYPE_CODE_VACANT = "VAC_LAND";
 }

@@ -124,6 +124,7 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
@@ -274,6 +275,8 @@ public class PropertyService {
     private PenaltyCalculationService penaltyCalculationService;
     @Autowired
     private PTBillServiceImpl ptBillServiceImpl;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
@@ -2519,7 +2522,6 @@ public class PropertyService {
     public List<Hashtable<String, Object>> populateHistory(final StateAware stateAware) {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>();
-        Assignment assignment = null;
         User user = null;
         Position ownerPosition = null;
         if (stateAware.hasState()) {
@@ -2531,9 +2533,9 @@ public class PropertyService {
             user = state.getOwnerUser();
             ownerPosition = state.getOwnerPosition();
             if (null != ownerPosition) {
-                assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
-                map.put("user", null != assignment && null != assignment.getEmployee() ? assignment.getEmployee()
-                        .getUsername() + "::" + assignment.getEmployee().getName() : "");
+                final User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != approverUser ? approverUser
+                        .getUsername() + "::" + approverUser.getName() : "");
             } else if (null != user)
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
@@ -2550,9 +2552,8 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                        assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
-                        HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment
-                                .getEmployee().getUsername() + "::" + assignment.getEmployee().getName() : "");
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                        HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());
                     historyTable.add(HistoryMap);

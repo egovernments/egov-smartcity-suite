@@ -39,6 +39,10 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -464,6 +468,47 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             params.put("MobileNumber", mobileNumber);
         }
         final Query query = getCurrentSession().createSQLQuery(sb.toString());
+        for (String param : params.keySet()) {
+            query.setParameter(param, params.get(param));
+        }
+        List<String> list = query.list();
+        List<BasicProperty> basicProperties = new ArrayList<BasicProperty>();
+        if (null != list && !list.isEmpty()) {
+            for (String propertyid : list) {
+                basicProperties.add(getBasicPropertyByPropertyID(propertyid));
+            }
+        }
+        return basicProperties;
+    }
+
+    @Override
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber,
+            String propertyType) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("select propertyId from PropertyMaterlizeView where propertyId is not null");
+        Map<String, String> params = new HashMap<String, String>();
+        if (assessmentNo != null && !assessmentNo.trim().isEmpty()) {
+            sb.append(" and propertyId=:assessmentNo ");
+            params.put("assessmentNo", assessmentNo);
+        }
+        if (ownerName != null && !ownerName.trim().isEmpty()) {
+            sb.append(" and upper(trim(ownerName)) like :OwnerName ");
+            params.put("OwnerName", "%" + ownerName.toUpperCase() + "%");
+        }
+        if (mobileNumber != null && !mobileNumber.trim().isEmpty()) {
+            sb.append(" and mobileNumber like :MobileNumber ");
+            params.put("MobileNumber", mobileNumber);
+        }
+        if (propertyType != null && !propertyType.trim().isEmpty()) {
+            if (propertyType.equals(CATEGORY_TYPE_VACANTLAND_TAX)) {
+                sb.append(" and propTypeMstrID.code = :propertyType ");
+            } else if (propertyType.equals(CATEGORY_TYPE_PROPERTY_TAX)) {
+                sb.append(" and propTypeMstrID.code <> :propertyType ");
+            }
+            params.put("propertyType", PROPERTY_TYPE_CODE_VACANT);
+        }
+
+        final Query query = getCurrentSession().createQuery(sb.toString());
         for (String param : params.keySet()) {
             query.setParameter(param, params.get(param));
         }

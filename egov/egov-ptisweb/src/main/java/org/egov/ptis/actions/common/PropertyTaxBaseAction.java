@@ -39,6 +39,58 @@
  */
 package org.egov.ptis.actions.common;
 
+import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -87,22 +139,6 @@ import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
@@ -160,6 +196,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
+    protected String userDesignationList = new String();
 
     public List<File> getUpload() {
         return uploads;
@@ -513,6 +550,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             setUserDesgn(designation.getName());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from setUserInfo");
+    }
+    
+    /**
+     * Get a String for All the Designations for logged in user
+     */
+    public void setUserDesignations() {
+        final Long userId = securityUtils.getCurrentUser().getId();
+        String designations=propertyTaxCommonUtils.getAllDesignationsForUser(userId);
+        setUserDesignationList(designations);
     }
 
     /**
@@ -905,5 +951,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
-
+    public String getUserDesignationList(){
+        return userDesignationList;
+    }
+    public void setUserDesignationList(String userDesignationList) {
+        this.userDesignationList = userDesignationList;
+    }
+    
+    
 }
