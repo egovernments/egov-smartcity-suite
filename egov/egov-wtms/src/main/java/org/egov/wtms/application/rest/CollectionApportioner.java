@@ -139,11 +139,11 @@ public class CollectionApportioner {
             receiptDetail.setCramountToBePaid(balance.amount);
             receiptDetail.setDramount(BigDecimal.ZERO);
 
-            if (balance.isZero()) {
+           /* if (balance.isZero()) {
                 // nothing left to apportion
                 receiptDetail.zeroDrAndCrAmounts();
                 continue;
-            }
+            }*/
             crAmountToBePaid = billDetail.getCrAmount();
 
             if (balance.isLessThanOrEqualTo(crAmountToBePaid)) {
