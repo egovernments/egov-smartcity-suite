@@ -64,7 +64,7 @@
 			<div class="panel-title">
 				<c:choose>
 					<c:when test="${offlineStatusSize != 6 }">
-						<spring:message code="lbl.setstatus" />
+						<spring:message code="lbl.setofflinestatusforloa" />
 					</c:when>
 					<c:otherwise>
 						<spring:message code="lbl.viewstatus" />
@@ -76,7 +76,12 @@
 		<div class="form-group">
 			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.loanumber"/></div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${workOrder.workOrderNumber}"></c:out>
+				
+				<a style="cursor: pointer;" onclick="openLOA();">
+				<c:out
+						default="N/A"
+						value="${workOrder.workOrderNumber}"></c:out></a> <input type="hidden" value="${workOrder.id}"
+					name="workOrderId" id="workOrderId" />
 			</div>
 			<div class="col-sm-3 add-margin text-right"><spring:message code="lbl.loadate"/></div>
 			<div class="col-sm-3 add-margin view-content">

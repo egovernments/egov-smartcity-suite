@@ -48,5 +48,11 @@
 			</div>
 		</div>
 	</div>					
-</div>					
+</div>	
+</div>
+<div class="row">
+	<div class="col-sm-12 text-center">
+	<input type="button" class="btn btn-default" value="Close"
+				id="closeButton" name="closeButton" onclick="window.close();" />
+	</div>
 </div>

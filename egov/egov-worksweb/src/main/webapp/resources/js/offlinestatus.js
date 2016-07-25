@@ -173,3 +173,8 @@ function initializeDatePicker(){
 	try { $(".statusdate").inputmask(); }catch(e){}	
 
 }
+
+function openLOA() {
+	var workOrderId = $('#workOrderId').val();
+	window.open("/egworks/letterofacceptance/view/" + workOrderId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

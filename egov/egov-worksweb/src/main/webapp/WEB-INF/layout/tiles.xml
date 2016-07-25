@@ -377,7 +377,7 @@
     </definition>
     
     <definition name="setstatus-aesuccess" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.setstatus" cascade="true"/>
+		<put-attribute name="page-title" value="lbl.setofflinestatusforae" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setStatus-success.jsp"/>
 	</definition>
 

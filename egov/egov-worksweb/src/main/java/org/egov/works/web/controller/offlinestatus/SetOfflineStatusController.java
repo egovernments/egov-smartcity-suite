@@ -176,8 +176,8 @@ public class SetOfflineStatusController {
         }
         final List<OfflineStatus> offlineStatuses = workOrder.getOfflineStatuses();
         offlineStatusService.create(offlineStatuses, workOrder.getId(), WorksConstants.WORKORDER);
-        model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
-                new String[] { "" }, null));
+        model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.loasuccess",
+                new String[] { workOrder.getWorkOrderNumber() }, null));
         return "setstatus-success";
     }
     
@@ -250,9 +250,9 @@ public class SetOfflineStatusController {
         }
         final List<OfflineStatus> offlineStatuses = abstractEstimate.getOfflineStatuses();
         offlineStatusService.create(offlineStatuses, abstractEstimate.getId(), WorksConstants.ABSTRACTESTIMATE);
-        model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.success",
-                new String[] { "" }, null));
-        return "setstatus-success";
+        model.addAttribute("success", messageSource.getMessage("msg.offlinestatus.aesuccess",
+                new String[] { abstractEstimate.getEstimateNumber() }, null));
+        return "setstatus-aesuccess";
     }
 
 }
