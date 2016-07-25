@@ -58,7 +58,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.remarks" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
@@ -87,21 +87,21 @@
 
                     </td>
                     <td>
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}" maxlength="4" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>                                                                     
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" value="${ms.length}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
+                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" maxlength="15" onkeyup="limitCharatersBy10_4(this);" value="${ms.length}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width"  value="${ms.width}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
+                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width" maxlength="15" onkeyup="limitCharatersBy10_4(this);"  value="${ms.width}"  id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue"  data-idx="0" />
 
                     </td><td>
-                    <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+                    <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
                            data-pattern="decimalvalue"  value="${ms.depthOrHeight}" data-idx="0" />
 
                 </td><td>
@@ -136,7 +136,7 @@
         </tr><!--only for validity -->
     </table> <!--only for validity tail end -->  
  
-</span>
+</span>  
 </td>
 </c:when>
 <c:otherwise>
@@ -146,7 +146,7 @@
 <span  class="nonSorActivities[${item.index }].mstd" id="nonSorActivities[${item.index }].mstd" data-idx="0"></span>
 </td>
 </c:otherwise>
-</c:choose>
+</c:choose>     
 
 
 

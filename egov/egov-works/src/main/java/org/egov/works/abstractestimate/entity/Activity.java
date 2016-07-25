@@ -136,6 +136,7 @@ public class Activity extends AbstractAuditable {
     private String signValue;
     
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="activity",targetEntity=MeasurementSheet.class )
+    @OrderBy("slNo ASC")     
     private List<MeasurementSheet> measurementSheetList = new LinkedList<MeasurementSheet>();
 
 

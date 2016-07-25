@@ -60,7 +60,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.remarks" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>

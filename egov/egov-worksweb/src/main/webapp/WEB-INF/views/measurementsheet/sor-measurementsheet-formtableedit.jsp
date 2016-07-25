@@ -61,7 +61,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.remarks" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
@@ -90,21 +90,21 @@
 
                     </td>
                     <td>
-                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}"  maxlength="4" id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>                                                                     
-                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].length" value="${ms.length}"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
+                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].length"   maxlength="15" onkeyup="limitCharatersBy10_4(this);" value="${ms.length}"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>
-                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].width"  value="${ms.width}"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
+                        <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].width"  maxlength="15" onkeyup="limitCharatersBy10_4(this);"   value="${ms.width}"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue"  data-idx="0" />
 
                     </td><td>
-                    <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+                    <input name="sorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);"  id="sorActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
                            data-pattern="decimalvalue"  value="${ms.depthOrHeight}" data-idx="0" />
 
                 </td><td>

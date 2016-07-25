@@ -48,7 +48,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.remarks" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
@@ -73,21 +73,21 @@
 
                     </td>
                     <td>
-                        <input name="templatesorActivities[0].measurementSheetList[0].no" value=""  id="templatesorActivities[0].measurementSheetList[0].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="templatesorActivities[0].measurementSheetList[0].no" value="" maxlength="4" id="templatesorActivities[0].measurementSheetList[0].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>                                                                     
-                        <input name="templatesorActivities[0].measurementSheetList[0].length" id="templatesorActivities[0].measurementSheetList[0].length" class="form-control text-right patternvalidation runtime-update"
+                        <input name="templatesorActivities[0].measurementSheetList[0].length"   maxlength="15" onkeyup="limitCharatersBy10_4(this);" id="templatesorActivities[0].measurementSheetList[0].length" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
                     <td>
-                        <input name="templatesorActivities[0].measurementSheetList[0].width" id="templatesorActivities[0].measurementSheetList[0].width" class="form-control text-right patternvalidation runtime-update"
+                        <input name="templatesorActivities[0].measurementSheetList[0].width"   maxlength="15" onkeyup="limitCharatersBy10_4(this);" onkeyup="limitCharatersBy8_4();" id="templatesorActivities[0].measurementSheetList[0].width" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue"  data-idx="0" />
 
                     </td><td>
-                    <input name="templatesorActivities[0].measurementSheetList[0].depthOrHeight" id="templatesorActivities[0].measurementSheetList[0].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+                    <input name="templatesorActivities[0].measurementSheetList[0].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);"  id="templatesorActivities[0].measurementSheetList[0].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
                            data-pattern="decimalvalue"  data-idx="0" />
 
                 </td><td>
@@ -95,7 +95,7 @@
                            data-pattern="decimalvalue" required="required" onblur="findNet(this)" />
 
                 </td>
-                    <td><span class="glyphicon glyphicon-trash" onclick="deleteThisRow(this)" data-idx="${vs.index}"/></td>
+                    <td><span class="glyphicon glyphicon-trash" onclick="deleteThisRow(this)" data-idx="0"/></td>
                 </tr>
                 <tr>
                     <td colspan="6" class="text-right">

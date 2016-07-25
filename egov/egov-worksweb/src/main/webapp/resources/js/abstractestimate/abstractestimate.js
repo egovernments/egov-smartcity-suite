@@ -984,6 +984,20 @@ function validateQuantityInput(object) {
 }
 
 
+function limitCharatersBy10_4(object)
+{
+	var valid = /^[0-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+	val = $(object).val();
+
+	if(!valid){
+		//console.log("Invalid input!");
+		$(object).val(val.substring(0, val.length - 1));
+	}	
+
+}
+
+ 
+
 function validateOverheads(){
 	var resultLength = jQuery('#overheadTable tr').length-1;
 	var index;
@@ -1246,8 +1260,8 @@ function getActivitiesForTemplate(id){
 							$('#nonSorServiceTaxPerc_' + key).val('');
 							$('.nonSorVatAmt_' + key).html('');
 							$('.nonSorTotal_' + key).html('');
-							document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
-							document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
+							document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
+							document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
 							generateSlno();
 						}
 						nonSorCheck = true;
@@ -2213,6 +2227,11 @@ $(document).on('change','.runtime-update',function (e) {
 	if($(this).is("input"))
 	{
 		//console.log('input value change triggered!');
+		if($(this).val()==0)
+			{
+			alert("Zero is not allowed");
+			$(this).val('');
+			}
 		$(this).attr('value', $(this).val());
 		//console.log('OnChange', $(this).attr('value'));
 		
@@ -2259,7 +2278,7 @@ $(document).on('click','.ms-submit',function () {
 	var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
 	if(net==NaN ||net<=0)
 	{
-		alert("Net amount should be greater than 0");
+		alert("Net Quantity should be greater than 0");
 		return false;
 	}
 	var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
@@ -2697,24 +2716,26 @@ function validateMsheet(obj)
 		var lent=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].length').value);
 		var width=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].width').value);
 		var depthorheight=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].depthOrHeight').value);
+		var qunatity=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].quantity').value);
 
-		if((no===undefined ||no==NaN) && (width===undefined ||width==NaN) && (lent===undefined ||lent==NaN) &&(depthorheight===undefined ||depthorheight==NaN) )
+		if((no===undefined ||no==NaN) && (width===undefined ||width==NaN) && (lent===undefined ||lent==NaN) 
+				&&(depthorheight===undefined ||depthorheight==NaN) &&  (qunatity===undefined ||qunatity==NaN))
 		{
-			alert("Empty row is not allowed. Please delete the empty row");
+			alert("Empty row is not allowed. Please delete the empty row or Enter Quantity");
 			return false;
 		}
 		var desc=document.getElementById(name[0]+'.measurementSheetList['+i+'].remarks').value;
 
 		if(desc===undefined )
 		{
-			alert("Remarks is Mandatory in Measurement Sheet.");
+			alert("Description is Mandatory in Measurement Sheet.");
 			return false;
 		}else
 		{
 			desc=desc.trim();
 			if(desc=='')
 			{
-				alert("Remarks is Mandatory in Measurement Sheet.");
+				alert("Description is Mandatory in Measurement Sheet.");
 				return false;
 			}
 		}
