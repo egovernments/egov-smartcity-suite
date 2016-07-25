@@ -111,6 +111,7 @@
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<input type="hidden" id="rowId" name="rowId" value="${rowId}" />
+						<input type="hidden" id="assetStatus" name="assetStatus" value="${assetstatus}" />
 						<div class="form-group">
 							<div class="form-group">
 								<div class="text-center">

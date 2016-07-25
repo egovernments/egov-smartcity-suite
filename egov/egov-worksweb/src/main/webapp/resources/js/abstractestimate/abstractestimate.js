@@ -331,14 +331,16 @@ $(document).ready(function(){
 	var $rowId = 0;
 	var index = 0;
 	$(document).on('click', '#tblassetdetails tbody tr', function() {
+		$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
 		$rowId = $(this).find('span[id$="sno"]');
 		index = $rowId.text() - 1;
 		var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
-		if(status != '') {
-			window.open("/egassets/assetmaster/asset-showSearchPage.action?rowId="+index+"&assetStatus="+status,"",
+		if((status != '' && $inputHiddenAssetId.val() === '') || (e.target.textContent === " Search" && $inputHiddenAssetId.val() !== '')) {
+			window.open("/egassets/asset/showsearchpage?mode=view&rowId="+index+"&assetStatus="+status,"",
 			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 		} else {
-			bootbox.alert("No Asset can be link for selected nature of work");
+			if($inputHiddenAssetId.val() === '')
+				bootbox.alert("No Asset can be link for selected nature of work");
 		}
 	});
 
@@ -1464,10 +1466,10 @@ function updateUom(obj) {
 
 $(document).on('click', '#tblassetdetails tbody tr', function() {
 	$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
-	if($inputHiddenAssetId.val())
+	if($inputHiddenAssetId.val() && e.target.textContent !== " Search")
 	{
 		assetId = $inputHiddenAssetId.val();
-		var url = "/egassets/assetmaster/asset-showform.action?id="+assetId+"&userMode=view";
+		var url = "/egassets/asset/view/"+assetId;
 		window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
 	}
 });

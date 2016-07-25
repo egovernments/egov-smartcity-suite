@@ -191,16 +191,18 @@ public class AssetController {
 	
 	
 	//This is the new service included and intended for future use to show search screen for Works module.
-	@RequestMapping(value = "/resultsearch/{mode}", method = RequestMethod.GET)
-	public String searchAsset(@PathVariable("mode") final String mode,
-			      @RequestParam("rowId") final int rowId,
-			      @RequestParam("assetStatus") final String[] assetStatus, Model model) {
-		Asset asset = new Asset();
-		prepareNewForm(model);
-		model.addAttribute("rowId", rowId);
-		model.addAttribute("asset", asset);
-		return ASSET_SEARCH;
-	}
+		@RequestMapping(value = "/showsearchpage", method = RequestMethod.GET)
+		public String searchAsset(@RequestParam("mode") final String mode,
+				      @RequestParam("rowId") final int rowId,
+				      @RequestParam("assetStatus") final String assetStatus, Model model) {
+			Asset asset = new Asset();
+			prepareNewForm(model);
+			model.addAttribute("mode", mode);
+			model.addAttribute("rowId", rowId);
+			model.addAttribute("assetstatus", assetStatus);
+			model.addAttribute("asset", asset);
+			return ASSET_SEARCH;
+		}
 
 	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String ajaxsearch(

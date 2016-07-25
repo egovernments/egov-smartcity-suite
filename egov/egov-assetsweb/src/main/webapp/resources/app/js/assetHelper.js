@@ -112,23 +112,25 @@ function callAjaxSearch() {
 			$(row).on(
 					'click',
 					function() {
-						console.log(data);
 						var rowId = $('#rowId').val();
 						console.log(rowId);
 						if(rowId !== "")
 						{
-							var resultData = new Array();
-							var row_id = window.opener.$('rowid').value;
-							console.log(row_id);
 							var parentWindow=window.dialogArguments;
-							console.log(parentWindow);
 							if(parentWindow == undefined){
 								parentWindow = window.opener;
 								if(window.opener != null && !window.opener.closed)
 								{
-									resultData = row_id + '`~`' + data.id + '`~`' + data.code + '`~`' + data.name + '`~`' + data.assetCategory;
-									console.log(resultData);
-									window.opener.update(resultData);
+									var result = {
+										"rowidx" : parseInt(rowId),
+										"id" : data.id,
+										"code" : data.code,
+										"name" : data.name,
+										"category" : data.assetCategory
+									};
+									window.opener.update(result);
+									window.close();
+									return;
 								}
 							}
 						}
