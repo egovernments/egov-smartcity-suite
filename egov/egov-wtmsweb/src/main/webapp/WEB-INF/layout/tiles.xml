@@ -354,4 +354,8 @@
         <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editCollection-Ack.jsp"/> 
     </definition>
+    <definition name="generatebill-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill_forconsumercode.jsp"/> 
+    </definition>
 </tiles-definitions>
