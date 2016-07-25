@@ -850,7 +850,7 @@ public class LetterOfAcceptanceService {
     public List<WorkOrder> searchLOAsToCancel(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         List<WorkOrder> workOrderList = new ArrayList<WorkOrder>();
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select distinct(wo) from WorkOrder wo where wo.id != null and wo.egwStatus.code =:workOrderStatus");
+        queryStr.append("select distinct(wo) from WorkOrder wo where wo.egwStatus.code =:workOrderStatus");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
                 queryStr.append(" and wo.workOrderNumber =:workOrderNumber");
