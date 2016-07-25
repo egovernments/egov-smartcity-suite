@@ -1233,13 +1233,13 @@ public class EstimateService {
                 for (MeasurementSheet ms : activity.getMeasurementSheetList()) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
                     measurementSheetMap.put("sNo", "");
-                    measurementSheetMap.put("no", ms.getNo());
+                    measurementSheetMap.put("no", ms.getNo() != null ? ms.getNo() : "");
                     measurementSheetMap.put("scheduleCategory", "");
                     measurementSheetMap.put("scheduleCode", "");
                     measurementSheetMap.put("description", "");
-                    measurementSheetMap.put("length", ms.getLength());
-                    measurementSheetMap.put("width", ms.getWidth());
-                    measurementSheetMap.put("depthHeigth", ms.getDepthOrHeight());
+                    measurementSheetMap.put("length", ms.getLength() != null ? ms.getLength() : "");
+                    measurementSheetMap.put("width", ms.getWidth() != null ? ms.getWidth() : "");
+                    measurementSheetMap.put("depthHeigth", ms.getDepthOrHeight() != null ? ms.getDepthOrHeight() : "");
                     if (ms.getIdentifier() == 'D')
                         measurementSheetMap.put("quantity", BigDecimal.ZERO.subtract(ms.getQuantity()));
                     else
@@ -1247,12 +1247,9 @@ public class EstimateService {
                     measurementSheetMap.put("rate", "");
                     measurementSheetMap.put("uom", "");
                     measurementSheetMap.put("amount", "");
-                    if (ms.getIdentifier() == 'D')
-                        measurementSheetMap.put("identifier", ms.getIdentifier());
-
                     measurementSheetList.add(measurementSheetMap);
                 }
-                if (activity.getMeasurementSheetList().size() > 1) {
+                if (activity.getMeasurementSheetList().size() != 0) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
                     measurementSheetMap.put("sNo", "");
                     measurementSheetMap.put("no", "");
