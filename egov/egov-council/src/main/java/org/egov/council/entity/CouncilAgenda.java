@@ -26,8 +26,8 @@ import org.egov.search.domain.Searchable;
 @Unique(id = "id", tableName = "egcncl_agenda", fields = "agendaNumber", columnName = "agendaNumber", enableDfltMsg = true)
 @Table(name = "egcncl_agenda")
 @Searchable
-@SequenceGenerator(name = Agenda.SEQ_AGENDA, sequenceName = Agenda.SEQ_AGENDA, allocationSize = 1)
-public class Agenda extends StateAware {
+@SequenceGenerator(name = CouncilAgenda.SEQ_AGENDA, sequenceName = CouncilAgenda.SEQ_AGENDA, allocationSize = 1)
+public class CouncilAgenda extends StateAware {
 
     private static final long serialVersionUID = 6941145759682765506L;
 
@@ -52,7 +52,7 @@ public class Agenda extends StateAware {
     private EgwStatus status;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<AgendaDetails> agendaDetails = new HashSet<AgendaDetails>(0);
+    private Set<CouncilAgendaDetails> agendaDetails = new HashSet<CouncilAgendaDetails>(0);
 
     
     public Long getId() {
@@ -87,11 +87,11 @@ public class Agenda extends StateAware {
         this.status = status;
     }
 
-    public Set<AgendaDetails> getAgendaDetails() {
+    public Set<CouncilAgendaDetails> getAgendaDetails() {
         return agendaDetails;
     }
 
-    public void setAgendaDetails(Set<AgendaDetails> agendaDetails) {
+    public void setAgendaDetails(Set<CouncilAgendaDetails> agendaDetails) {
         this.agendaDetails = agendaDetails;
     }
 

@@ -16,8 +16,8 @@ import org.egov.search.domain.Searchable;
 @Entity
 @Table(name = "egcncl_agenda_details")
 @Searchable
-@SequenceGenerator(name = AgendaDetails.SEQ_AGENDADETAILS, sequenceName = AgendaDetails.SEQ_AGENDADETAILS)
-public class AgendaDetails  {
+@SequenceGenerator(name = CouncilAgendaDetails.SEQ_AGENDADETAILS, sequenceName = CouncilAgendaDetails.SEQ_AGENDADETAILS)
+public class CouncilAgendaDetails  {
 
     public static final String SEQ_AGENDADETAILS = "seq_egcncl_agenda_details";
 
@@ -27,7 +27,7 @@ public class AgendaDetails  {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "agenda", nullable = false)
-    private Agenda agenda;
+    private CouncilAgenda agenda;
 
     @Column(name = "itemnumber")
     private String itemNumber;
@@ -47,11 +47,11 @@ public class AgendaDetails  {
         this.id = id;
     }
 
-    public Agenda getAgenda() {
+    public CouncilAgenda getAgenda() {
         return agenda;
     }
 
-    public void setAgenda(Agenda agenda) {
+    public void setAgenda(CouncilAgenda agenda) {
         this.agenda = agenda;
     }
 

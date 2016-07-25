@@ -31,7 +31,7 @@ public class MeetingAttendence extends AbstractAuditable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "meeting", nullable = false)
-    private Meeting meeting;
+    private CouncilMeeting meeting;
 
     @NotNull
     @JoinColumn(name = "councilMember", nullable = false)
@@ -49,11 +49,11 @@ public class MeetingAttendence extends AbstractAuditable {
         this.id = id;
     }
 
-    public Meeting getMeeting() {
+    public CouncilMeeting getMeeting() {
         return meeting;
     }
 
-    public void setMeeting(Meeting meeting) {
+    public void setMeeting(CouncilMeeting meeting) {
         this.meeting = meeting;
     }
 

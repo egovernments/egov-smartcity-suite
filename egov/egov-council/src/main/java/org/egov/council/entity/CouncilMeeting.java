@@ -1,14 +1,19 @@
 package org.egov.council.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,8 +29,8 @@ import org.egov.search.domain.Searchable;
 @Unique(id = "id", tableName = "egcncl_meeting", fields = "meetingNumber", columnName = "meetingNumber", enableDfltMsg = true)
 @Table(name = "egcncl_meeting")
 @Searchable
-@SequenceGenerator(name = Meeting.SEQ_MEETING, sequenceName = Meeting.SEQ_MEETING, allocationSize = 1)
-public class Meeting  extends StateAware {
+@SequenceGenerator(name = CouncilMeeting.SEQ_MEETING, sequenceName = CouncilMeeting.SEQ_MEETING, allocationSize = 1)
+public class CouncilMeeting  extends StateAware {
 
     private static final long serialVersionUID = 5607959287745538396L;
 
@@ -58,7 +63,14 @@ public class Meeting  extends StateAware {
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
+    
+    
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<MeetingMOM> meetingMOMs = new HashSet<MeetingMOM>(0);
 
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<MeetingAttendence> meetingAttendence = new HashSet<MeetingAttendence>(0);
+    
     public Long getId() {
         return id;
     }
@@ -118,6 +130,22 @@ public class Meeting  extends StateAware {
     @Override
     public String getStateDetails() {
         return String.format("Meeting Number %s ", meetingNumber);
+    }
+
+    public Set<MeetingMOM> getMeetingMOMs() {
+        return meetingMOMs;
+    }
+
+    public void setMeetingMOMs(Set<MeetingMOM> meetingMOMs) {
+        this.meetingMOMs = meetingMOMs;
+    }
+
+    public Set<MeetingAttendence> getMeetingAttendence() {
+        return meetingAttendence;
+    }
+
+    public void setMeetingAttendence(Set<MeetingAttendence> meetingAttendence) {
+        this.meetingAttendence = meetingAttendence;
     }
 
 }

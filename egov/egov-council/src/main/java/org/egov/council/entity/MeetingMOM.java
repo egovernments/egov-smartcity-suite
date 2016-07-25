@@ -1,5 +1,6 @@
 package org.egov.council.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,8 +29,12 @@ public class MeetingMOM {
     @GeneratedValue(generator = SEQ_MEETINGMOM, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "meeting", nullable = false)
+    private CouncilMeeting meeting;
+    
     @Column(name = "agenda")
-    private Agenda agenda;
+    private CouncilAgenda agenda;
 
     @NotNull
     @Column(name = "preamble")
@@ -44,6 +49,14 @@ public class MeetingMOM {
     private EgwStatus resolutionStatus;
     
 
+    public CouncilMeeting getMeeting() {
+        return meeting;
+    }
+
+    public void setMeeting(CouncilMeeting meeting) {
+        this.meeting = meeting;
+    }
+
     @Column(name = "resolutionNumber")
     private String resolutionNumber;
 
@@ -55,11 +68,11 @@ public class MeetingMOM {
         this.id = id;
     }
 
-    public Agenda getAgenda() {
+    public CouncilAgenda getAgenda() {
         return agenda;
     }
 
-    public void setAgenda(Agenda agenda) {
+    public void setAgenda(CouncilAgenda agenda) {
         this.agenda = agenda;
     }
 
