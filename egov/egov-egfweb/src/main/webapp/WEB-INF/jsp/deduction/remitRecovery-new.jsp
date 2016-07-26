@@ -125,7 +125,7 @@ function loadBank(obj)
 					id="search" name="search" method="search"
 					onclick="return validateSearch();" />
 				<s:submit type="submit" cssClass="buttonsubmit" value="Cancel"
-					method="newform" />
+					method="newform" onclick="resetSubmit();" />
 				<input type="button" id="Close" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>

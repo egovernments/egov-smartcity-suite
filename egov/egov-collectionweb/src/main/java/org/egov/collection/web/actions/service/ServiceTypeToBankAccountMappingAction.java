@@ -83,7 +83,8 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     Long serviceAccountId;
     String sourcePage;
     private String target;
-
+    Integer fundId;
+    
     public ServiceTypeToBankAccountMappingAction() {
         addRelatedEntity("serviceDetails", ServiceDetails.class);
         addRelatedEntity("bankAccountId", Bankaccount.class);
@@ -124,10 +125,15 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
     private void populateListsForView() {
         addDropdownData("serviceCategoryList",
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
-        addDropdownData("serviceDetailsList", Collections.EMPTY_LIST);
+        addDropdownData("serviceDetailsList",
+                serviceCategory != null && serviceCategory!=-1
+                        ? getPersistenceService().findAllByNamedQuery(
+                                CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY, Long.valueOf(serviceCategory),
+                                 Boolean.TRUE)
+                        : Collections.EMPTY_LIST);
         addDropdownData("bankNameList", getBankMappedToService());
-        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
-        addDropdownData("bankAccountIdList", Collections.EMPTY_LIST);
+        addDropdownData("bankBranchList", bankId!=null && bankId!=-1? bankBrankHibernateDAO.getAllBankBranchsByBankForReceiptPayments(bankId): Collections.EMPTY_LIST);
+        addDropdownData("bankAccountIdList",branchId!=null && branchId!=-1 ? bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId, fundId): Collections.EMPTY_LIST);
     }
 
     private List<Bank> getBankMappedToService() {

@@ -44,8 +44,8 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.courttype" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="" data-first-option="false"
-			cssClass="form-control" required="required" name="courtType" id="courtType">
+		<form:select path="courtMaster.courtType" data-first-option="false" cssClass="form-control"
+			required="required" name="courtType" id="courtType">
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
@@ -53,7 +53,7 @@
 			<form:options items="${courtTypeList}" itemValue="id"
 				id="courtTypeDropdown" itemLabel="courtType" />
 		</form:select>
-		<form:errors path="" cssClass="add-margin error-msg" />
+		<form:errors path="courtMaster.courtType" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.petitiontype" /><span class="mandatory"></span>:</label>
@@ -104,9 +104,8 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
-		<form:input class="form-control"
-			data-pattern="" maxlength="50" id="caseNumber"
-			required="required" path="caseNumber" />
+		<form:input class="form-control" data-pattern="" maxlength="50"
+			id="caseNumber" required="required" path="caseNumber" />
 	</div>
 	<div class="col-sm-2 add-margin text-center">
 		<form:select path="wpYear" data-first-option="false" id="wpYear"
@@ -118,17 +117,16 @@
 		</form:select>
 		<form:errors path="caseNumber" cssClass="add-margin error-msg" />
 	</div>
-	
+
 </div>
 
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">LC Number<span
-		class="mandatory"></span>:
-	</label>
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.lcnumber" /><span class="mandatory"></span>: </label>
 	<div class="col-sm-2 add-margin text-center">
 		<form:select path="lcNumberType" data-first-option="false"
 			id="lcNumberType" name="lcNumberType" cssClass="form-control"
-			required="required" onChange="checkLCType();" >
+			required="required" onChange="checkLCType();">
 			<form:option value="">
 				<spring:message code="lbls.select" />
 			</form:option>
@@ -141,8 +139,8 @@
 				data-pattern="string" maxlength="50" id="lcNumber" />
 		</div>
 		<div class="col-sm-2 add-margin text-center">
-			<form:select path="finwpYear" data-first-option="false" id="finwpYear"
-				cssClass="form-control" >
+			<form:select path="finwpYear" data-first-option="false"
+				id="finwpYear" cssClass="form-control">
 				<form:option value="">
 					<spring:message code="lbls.select" />
 				</form:option>
@@ -167,10 +165,12 @@
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.previouscaseNumber" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
-		<form:input class="form-control patternvalidation" placeholder="InCase of appeal,review petition"
-			data-pattern="string" maxlength="50" id="appealNum" path="appealNum" />
+		<form:input class="form-control patternvalidation"
+			placeholder="InCase of appeal,review petition" data-pattern="string"
+			maxlength="50" id="appealNum" path="appealNum" />
 		<%-- <div class="add-margin error-msg text-left"><font size="2"><spring:message code="lbl.textmessage.previouscaseno" /></font></div>
-		 --%><form:errors path="appealNum" cssClass="add-margin error-msg" />
+		 --%>
+		<form:errors path="appealNum" cssClass="add-margin error-msg" />
 	</div>
 </div>
 

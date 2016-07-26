@@ -45,6 +45,7 @@ $(document).ready(function(){
 		loadDateFields();
 	});
 	
+	
 function loadDateFields(){
 	if ($('#judgmentType :selected').text().localeCompare("Enquiry") == 0 ) { 
 		$("#enquirydetails").show();
@@ -65,4 +66,27 @@ function loadDateFields(){
 	
 }
 
+
+});
+
+$('#btnclose').click(function(){
+	bootbox.confirm({
+	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+	    buttons: {
+	        'cancel': {
+	            label: 'No',
+	            className: 'btn-default pull-right'
+	        },
+	        'confirm': {
+	            label: 'Yes',
+	            className: 'btn-danger pull-right'
+	        }
+	    },
+	    callback: function(result) {
+	        if (result) {
+	             window.close();
+	        }
+	    }
+	});
+	
 });

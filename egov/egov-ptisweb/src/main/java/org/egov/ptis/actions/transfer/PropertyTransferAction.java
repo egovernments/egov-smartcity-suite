@@ -198,6 +198,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
 
     // Model and View data
     private Long mutationId;
@@ -224,7 +227,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private String assessmentNoMessage;
     private String taxDueErrorMsg;
     private Boolean propertyByEmployee = Boolean.TRUE;
-    private String userDesignation;
+    private String userDesignationList;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String meesevaApplicationNumber;
     private String meesevaServiceCode;
@@ -439,9 +442,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         approverName = "";
         Assignment assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
         mutationInitiatedBy = assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
+        propertyTaxCommonUtils.makeExistingDemandBillInactive(basicproperty.getUpicNo());
+        mutationInitiatedBy=propertyTaxUtil.getApproverUserName(approverPositionId);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
+        setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : "+ mutationInitiatedBy);
         setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
     }
@@ -525,9 +530,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Override
     public void prepare() {
         super.prepare();
-        final Designation designation = transferOwnerService.getUserDesigantion();
-        if (null != designation)
-            userDesignation = designation.getName();
+        final Long userId = securityUtils.getCurrentUser().getId();
+        userDesignationList=propertyTaxCommonUtils.getAllDesignationsForUser(userId);
         propertyByEmployee = propertyService.isEmployee(transferOwnerService.getLoggedInUser());
         final String actionInvoked = ActionContext.getContext().getActionInvocation().getProxy().getMethod();
         if (!(actionInvoked.equals("search") || actionInvoked.equals("collectFee"))) {
@@ -593,7 +597,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         // To set proxy list at approval stage
         if (propertyMutation.getState() != null && propertyMutation.getState().getValue() != null
                 && (propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REVENUE_OFFICER_APPROVED)
-                || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)))
+                || propertyMutation.getState().getValue().equalsIgnoreCase(WF_STATE_REGISTRATION_COMPLETED)
+                || propertyMutation.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING)))
             propertyMutation.getTransfereeInfosProxy().addAll(propertyMutation.getTransfereeInfos());
 
         if (propertyMutation.getTransfereeInfosProxy().isEmpty())
@@ -985,12 +990,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.propertyByEmployee = propertyByEmployee;
     }
 
-    public String getUserDesignation() {
-        return userDesignation;
+    public String getUserDesignationList() {
+        return userDesignationList;
     }
 
-    public void setUserDesignation(final String userDesignation) {
-        this.userDesignation = userDesignation;
+    public void setUserDesignationList(final String userDesignationList) {
+        this.userDesignationList = userDesignationList;
     }
 
     public String getActionType() {

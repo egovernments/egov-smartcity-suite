@@ -116,16 +116,15 @@
 </div>
 </head>
 <script>
-  function doAfterSubmit(){
-		document.getElementById('loading').style.display ='block';
+	function doAfterSubmit() {
+		document.getElementById('loading').style.display = 'block';
 	}
-	
 </script>
 <body>
 	<s:form name="dayBookForm" id="dayBookForm" action="dayBookReport"
 		theme="css_xhtml" validate="true">
-		
-			<div class="formmainbox">
+
+		<div class="formmainbox">
 			<s:push value="dayBookReport">
 				<div class="subheadnew">
 					<s:text name="dayBook.search.title" />
@@ -142,19 +141,20 @@
 						<td style="width: 5%"></td>
 						<td class="bluebox"><s:text name="dayBook.startDate" /><span
 							class="mandatory"></span></td>
-						<td class="bluebox"><s:textfield name="startDate"
-								id="startDate" maxlength="20" value='%{startDate}'
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('dayBookForm.startDate');"
-							style="text-decoration: none">&nbsp;<img src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
+						<td class="bluebox"><s:textfield id="startDate"
+								name="startDate" value="%{currentDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 						<td class="bluebox"><s:text name="dayBook.endDate" /><span
 							class="mandatory"></span></td>
-						<td class="bluebox"><s:textfield name="endDate" id="endDate"
-								 value='%{endDate}' maxlength="20"
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('dayBookForm.endDate');"
-							style="text-decoration: none">&nbsp;<img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a> (dd/mm/yyyy)</td>
+						<td class="bluebox"><s:textfield id="endDate" name="endDate"
+								value="%{currentDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
 					</tr>
 					<tr>
 						<td style="width: 5%"></td>
@@ -176,20 +176,20 @@
 						<tr>
 							<td><input type="button" value="Search" class="buttonsubmit"
 								onclick="return validate()" /></td>
-							<td>&nbsp;&nbsp;<input type="button" id="Close" value="Close"
-								onclick="javascript:window.close()" class="button" /></td>
+							<td>&nbsp;&nbsp;<input type="button" id="Close"
+								value="Close" onclick="javascript:window.close()" class="button" /></td>
 						</tr>
 					</table>
 				</div>
-		</s:push>
-		
-		<span class="mandatory1">
-			<div id="resultDiv" style="display: none;">
-				<jsp:include page="dayBookReport-result.jsp" />
-			</div>
+			</s:push>
 
-		</span>
-		<div id="codescontainer" />
+			<span class="mandatory1">
+				<div id="resultDiv" style="display: none;">
+					<jsp:include page="dayBookReport-result.jsp" />
+				</div>
+
+			</span>
+			<div id="codescontainer" />
 		</div>
 	</s:form>
 </body>

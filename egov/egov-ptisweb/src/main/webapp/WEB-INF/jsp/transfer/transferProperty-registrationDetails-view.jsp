@@ -116,7 +116,7 @@
 		<td class="greybox2">&nbsp;</td>
 		<td class="greybox"><s:text name="docNum" />:</td>
 		<td class="greybox"><span class="bold"><s:property
-					value="%{mutationRegistrationDetails.documnerNo}" default="N/A" /></span></td>
+					value="%{mutationRegistrationDetails.documentNo}" default="N/A" /></span></td>
 		<td class="greybox"><s:text name="docDate" />:</td>
 		<td class="greybox"><s:date name="mutationRegistrationDetails.documentDate" var="docDate"
 				format="dd/MM/yyyy" /> <span class="bold"><s:property

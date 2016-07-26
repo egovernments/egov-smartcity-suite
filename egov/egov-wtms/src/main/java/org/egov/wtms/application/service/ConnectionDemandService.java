@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.application.service;
 
+
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -587,6 +590,8 @@ public class ConnectionDemandService {
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
         EgDemand demandObj = null;
+       Installment currenticnstallment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
+
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
             demandObj = new EgDemand();
         else
@@ -606,11 +611,7 @@ public class ConnectionDemandService {
             }
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        final int listlength = demandObj.getEgDemandDetails().size() - 1;
-        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
-                WaterTaxConstants.PROPERTY_MODULE_NAME,
-                waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
-        demandObj.setEgInstallmentMaster(installObj);
+        demandObj.setEgInstallmentMaster(currenticnstallment);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
@@ -874,6 +875,17 @@ public class ConnectionDemandService {
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currFinStartDate", financialyear.getStartingDate());
         return query.list();
+    }
+    
+    public Map<String, Installment> getInstallmentsForPreviousYear(Date currDate) {
+        Map<String, Installment> currYearInstMap = new HashMap<String, Installment>();
+        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module.name = '"
+                + PTMODULENAME
+                + "'  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc";
+        final Query qry = getCurrentSession().createQuery(query.toString());
+        List<Installment> installments = qry.list();
+        currYearInstMap.put(WaterTaxConstants.PREVIOUS_SECOND_HALF, installments.get(0));
+        return currYearInstMap;
     }
 
 }

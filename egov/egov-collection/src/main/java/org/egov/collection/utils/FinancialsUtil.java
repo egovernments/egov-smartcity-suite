@@ -149,7 +149,7 @@ public class FinancialsUtil {
 
     public CVoucherHeader createPreApprovalVoucher(final Map<String, Object> headerdetails,
             final List<HashMap<String, Object>> accountcodedetails, final List<HashMap<String, Object>> subledgerdetails)
-                    throws ApplicationRuntimeException {
+            throws ApplicationRuntimeException {
         CVoucherHeader voucherHeaders = null;
         try {
             if (headerdetails instanceof HashMap)
@@ -231,45 +231,34 @@ public class FinancialsUtil {
      * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
      * Contra)
      *
-     * @param payInId
-     * @param toBankaccountGlcode
-     * @param instrumentHeader
+     * @param Map containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
-    public void updateCheque_DD_Card_Deposit(final Long payInId, final String toBankaccountGlcode,
-            final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
-        contraService.updateCheque_DD_Card_Deposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
+    public void updateCheque_DD_Card_Deposit(Map<String, Object> instrumentMap) {
+        contraService.updateCheque_DD_Card_Deposit(instrumentMap);
     }
 
     /**
      * Update Cheque/DD/Card Instrument Status after creating Bank Remittance Voucher(if the Bank Remittance voucher type is
      * Receipt)
      *
-     * @param receiptId
-     * @param toBankaccountGlcode
-     * @param instrumentHeader
+     * @param Map containing Instrument and PayInSlip voucher information
      */
 
     @Transactional
-    public void updateCheque_DD_Card_Deposit_Receipt(final Long receiptId, final String toBankaccountGlcode,
-            final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
-        contraService.updateCheque_DD_Card_Deposit_Receipt(receiptId, toBankaccountGlcode, instrumentHeader,
-                instrumentMap);
+    public void updateCheque_DD_Card_Deposit_Receipt(Map<String, Object> instrumentMap) {
+        contraService.updateCheque_DD_Card_Deposit_Receipt(instrumentMap);
     }
 
     /**
      * Update Cash Instrument Status after creating Pay in Slip Voucher
-     *
-     * @param payInId
-     * @param toBankaccountGlcode
-     * @param instrumentHeader
+     * 
+     * @param Map containing Instrument and PayInSlip voucher information
      */
-
     @Transactional
-    public void updateCashDeposit(final Long payInId, final String toBankaccountGlcode,
-            final InstrumentHeader instrumentHeader, final Map<String, Object> instrumentMap) {
-        contraService.updateCashDeposit(payInId, toBankaccountGlcode, instrumentHeader, instrumentMap);
+    public void updateCashDeposit(Map<String, Object> instrumentMap) {
+        contraService.updateCashDeposit(instrumentMap);
     }
 
     /**

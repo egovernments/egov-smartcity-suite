@@ -53,4 +53,6 @@ public interface DemandBillService {
     public void printDemandBill(String assessmentNo);
     
     public void bulkBillGeneration(Integer modulo, Integer billsCount);
+    
+    public void makeDemandBillInactive(String assessmentNo);
 }

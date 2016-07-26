@@ -41,9 +41,16 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
+			<c:if test="${mode == 'create'}">
 				<div class="panel-heading">
 					<div class="panel-title">Judgment</div>
 				</div>
+				</c:if>
+				<c:if test="${mode == 'edit'}">
+				<div class="panel-heading">
+					<div class="panel-title">Edit Judgment</div>
+				</div>
+				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -129,22 +136,26 @@
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
+					
+					
+	
+				
 					<div class="form-group" id="enquirydetails"  style="display:none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydetails" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="enquirydetails"
+							<form:textarea path="enquiryDetails"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
 								maxlength="1024" />
-							<form:errors path="enquirydetails" cssClass="error-msg" />
+							<form:errors path="enquiryDetails" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.enquirydate" />: </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="enquirydate" class="form-control datepicker"
+							<form:input path="enquiryDate" class="form-control datepicker"
 								data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
-							<form:errors path="enquirydate" cssClass="error-msg" />
+							<form:errors path="enquiryDate" cssClass="error-msg" />
 						</div>
 					</div>
 					<div class="form-group" id="exparteorder1"  style="display:none">
@@ -185,4 +196,4 @@
 					</div>
 
 					<input type="hidden" name="judgment" value="${judgment.id}" />
-					<input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
+			

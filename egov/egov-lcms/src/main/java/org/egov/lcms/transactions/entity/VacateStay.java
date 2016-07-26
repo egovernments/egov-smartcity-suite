@@ -67,9 +67,7 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_VACATESTAY_PETITION")
 @SequenceGenerator(name = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, sequenceName = VacateStay.SEQ_EGLC_VACATESTAY_PETITION, allocationSize = 1)
 public class VacateStay extends AbstractAuditable {
-    /**
-     * Serial version uid
-     */
+   
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_VACATESTAY_PETITION = "SEQ_EGLC_VACATESTAY_PETITION";
 
@@ -81,14 +79,18 @@ public class VacateStay extends AbstractAuditable {
     @Valid
     @JoinColumn(name = "LCINTERIMORDER", nullable = false)
     private LcInterimOrder lcInterimOrder;
+    
     @DateFormat(message = "invalid.fieldvalue.model.vsReceivedFromStandingCounsel")
     private Date vsReceivedFromStandingCounsel;
+    
     @DateFormat(message = "invalid.fieldvalue.model.vsSendToStandingCounsel")
     private Date vsSendToStandingCounsel;
+    
     @Required(message = "vcpetition.exists")
     @DateFormat(message = "invalid.fieldvalue.model.vsPetitionFiledOn")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
     private Date vsPetitionFiledOn;
+    
     @Length(max = 1024, message = "io.vcremarks.length")
     private String remarks;
 
@@ -135,13 +137,13 @@ public class VacateStay extends AbstractAuditable {
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
 
-        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcInterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getLcInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsReceivedFromStandingCounsel"));
 
-        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcInterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsPetitionFiledOn(), getLcInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.petitionFiledOn"));
 
-        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcInterimOrder().getIodate()))
+        if (!DateUtils.compareDates(getVsSendToStandingCounsel(), getLcInterimOrder().getIoDate()))
             errors.add(new ValidationError("iodate", "iodate.greaterThan.vsSendToStandingCounsel"));
 
         if (!DateUtils.compareDates(getVsReceivedFromStandingCounsel(), getVsSendToStandingCounsel()))

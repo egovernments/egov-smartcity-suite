@@ -95,20 +95,17 @@ public class Judgment extends AbstractAuditable {
     private JudgmentType judgmentType;
 
     @NotNull
-    /* @DateFormat(message = "invalid.fieldvalue.model.orderDate") */
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
     @Column(name = "orderdate")
     private Date orderDate;
 
     @NotNull
-    /* @DateFormat(message = "invalid.fieldvalue.model.sentToDeptOn") */
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
     @Column(name = "senttodepton")
     private Date sentToDeptOn;
 
-    /* @DateFormat(message = "invalid.fieldvalue.model.implementByDate") */
     @Column(name = "implementbydate")
     @Temporal(TemporalType.DATE)
     private Date implementByDate;
@@ -130,16 +127,14 @@ public class Judgment extends AbstractAuditable {
     @Column(name = "arbitratorfee")
     private Double arbitratorFee;
 
-    @Length(max = 1024, message = "enquirydetails.length")
+    @Length(max = 1024)
     @Column(name = "enquirydetails")
     private String enquiryDetails;
 
-    /* @DateFormat(message = "invalid.fieldvalue.model.enquirydate") */
     @Temporal(TemporalType.DATE)
     @Column(name = "enquirydate")
     private Date enquiryDate;
 
-    /* @DateFormat(message = "invalid.fieldvalue.model.setasidePetitionDate") */
     @Temporal(TemporalType.DATE)
     @Column(name = "setasidepetitiondate")
     private Date setasidePetitionDate;
@@ -148,7 +143,6 @@ public class Judgment extends AbstractAuditable {
     @Column(name = "setasidepetitiondetails")
     private String setasidePetitionDetails;
 
-    /* @DateFormat(message = "invalid.fieldvalue.model.sapHearingDate") */
     @Temporal(TemporalType.DATE)
     @Column(name = "saphearingdate")
     private Date sapHearingDate;

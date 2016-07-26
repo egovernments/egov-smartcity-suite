@@ -322,4 +322,6 @@ public interface FinancialConstants {
     
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
+    
+    public static final String CREATEANDAPPROVE="Create And Approve";
 }

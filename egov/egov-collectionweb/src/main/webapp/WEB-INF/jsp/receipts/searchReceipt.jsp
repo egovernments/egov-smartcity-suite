@@ -384,7 +384,7 @@ function onChangeServiceClass(obj)
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.status"/></td>
-	      <td width="24%" class="bluebox"><s:select id="searchStatus" name="searchStatus" headerKey="-1" headerValue="%{getText('searchreceipts.status.select')}" cssClass="selectwk" list="%{receiptStatuses}" value="%{id}" listKey="id" listValue="description" /> </td>
+	      <td width="24%" class="bluebox"><s:select id="searchStatus" name="searchStatus" headerKey="-1" headerValue="%{getText('searchreceipts.status.select')}" cssClass="selectwk" list="%{receiptStatuses}" value="%{searchStatus}" listKey="id" listValue="description" /> </td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.paymenttype"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="" headerValue="%{getText('searchreceipts.paymenttype.select')}" name="instrumentType" id="instrumentType" cssClass="selectwk" list="dropdownData.instrumentTypeList" listKey="type" listValue="type" value="%{instrumentType}" /> </td>	
 	    </tr>

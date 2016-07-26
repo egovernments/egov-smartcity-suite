@@ -62,7 +62,7 @@
 					<%@ include file="legalcase-petitiondetails.jsp"%>
 					<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%>
 					<%@ include file="legalcase-standingCouncil.jsp"%> --%>
-					
+
 				</div>
 			</div>
 
@@ -72,9 +72,9 @@
 						id="buttonid">
 						<spring:message code="lbl.save.button" />
 					</button>
-					<a onclick="self.close()" class="btn btn-default"
-						href="javascript:void(0)"><spring:message
-							code="lbl.close.button" /></a>
+					<button type="button" class="btn btn-default" id="btnclose">
+						<spring:message code="lbl.close" />
+					</button>
 				</div>
 			</div>
 		</form:form>
@@ -90,7 +90,7 @@
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-	<script
+<script
 	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>

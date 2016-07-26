@@ -63,7 +63,7 @@
 		}
 	}
 </script>
-<title><s:text name="searchProp.title"></s:text></title>
+<title><s:text name="citizen.search.welcome"></s:text></title>
 </head>
 <body>
 	<div class="formmainbox">

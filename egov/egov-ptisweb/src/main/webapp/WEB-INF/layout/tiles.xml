@@ -306,4 +306,14 @@
     	<put-attribute name="page-title" value="lbl.editCollection.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/editCollection/editCollection-error.jsp"/>
     </definition>
+	
+	<definition name="baseRegisterVLT-form" extends="base_layout">
+	   	<put-attribute name="page-title" value="lbl.baseRegisterVLT.report" cascade="true"/>
+	   	<put-attribute name="body" value="/WEB-INF/views/reports/baseRegisterVLT-form.jsp"/>
+	</definition>
+	
+	<definition name="mobilePayment-form" extends="base_layout">
+	   	<put-attribute name="page-title" value="mobilePayment.title" cascade="true"/>
+	   	<put-attribute name="body" value="/WEB-INF/views/mobile/mobilePayment-form.jsp"/>
+	</definition>    
 </tiles-definitions> 

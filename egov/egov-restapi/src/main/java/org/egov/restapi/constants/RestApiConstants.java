@@ -194,6 +194,12 @@ public class RestApiConstants {
 	public static final String APPLICATION_NO_REQ_CODE = "58";
 	public static final String APPLICATION_NO_REQ_MSG = "Application Number is required.";
 	
+	public static final String INVALID_PAYMENT_AMOUNT_CODE = "59";
+	public static final String INVALID_PAYMENT_AMOUNT_MSG = "Please enter valid payment amount";
+	
+	public static final String PTIS_DEMAND_AMOUNT_GREATER_CODE = "60";
+    public static final String PTIS_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+	
 	//Water TAx
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID_CODE="42";
 	public static final String PROPERTY_USAGETYPE_COMBINATION_VALID = "PropertyType and UsageType Combination is not valid";

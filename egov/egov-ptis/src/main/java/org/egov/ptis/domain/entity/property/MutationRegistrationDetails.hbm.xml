@@ -55,7 +55,7 @@
 		<property name="seller" column="SELLER" />
 		<property name="buyer" column="BUYER" />
 		<property name="typeOfTransfer" column="TYPEOFTRANSFER" />
-		<property name="documnerNo" column="DOCUMENTNO" />
+		<property name="documentNo" column="DOCUMENTNO" />
 		<property name="documentDate" column="DOCUMENTDATE" />
 		<property name="partyValue" column="PARTYVALUE" />
 		<property name="departmentValue" column="DEPARTMENTVALUE" />
@@ -69,5 +69,6 @@
 		<property name="plotArea" column="PLOTAREA" />
 		<property name="sroName" column="SRONAME"></property>
 		<property name="documentValue" column="DOCUMENTVALUE"></property>
+		<property name="documentLink" column="DOCUMENTLINK"></property>
 	</class>
 </hibernate-mapping>

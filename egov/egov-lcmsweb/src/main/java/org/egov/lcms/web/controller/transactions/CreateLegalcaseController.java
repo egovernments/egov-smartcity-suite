@@ -75,20 +75,21 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@ModelAttribute final LegalCase legalCase, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model,final HttpServletRequest request) {
-    	if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-    		legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        else
-        	legalCase.setLcnumber(legalCase.getLcNumber()
-                    + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
+    public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
         if (errors.hasErrors())
             return "legalCase-newForm";
-        legalCaseService.createLegalCase(legalCase);
+        if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
+            legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
+        else
+            legalCase.setLcnumber(
+                    legalCase.getLcNumber() + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
+       
+        legalCaseService.persist(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
         model.addAttribute("mode", "create");
-        return "legalcasedetails-view";
+        return "legalcase-success";
     }
 
 }

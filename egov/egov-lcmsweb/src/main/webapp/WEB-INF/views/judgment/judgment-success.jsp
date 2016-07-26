@@ -114,14 +114,14 @@
 							<spring:message code="lbl.enquirydetails" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${judgment.enquirydetails}</div>
+							${judgment.enquiryDetails}</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.enquirydate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<fmt:formatDate pattern="MM/dd/yyyyy"
-								value="${judgment.enquirydate}" var="enuirydate" />
-							<c:out value="${enuirydate}" />
+								value="${judgment.enquiryDate}" var="enuiryDate" />
+							<c:out value="${enuiryDate}" />
 						</div>
 					</div>
 					<div class="row add-border">
@@ -154,6 +154,13 @@
 						<div class="col-sm-3 add-margin view-content">
 							${judgment.setasidePetitionDetails}</div>
 					</div>
+					<%--  <div class="row add-border">
+					<div class="col-xs-3 add-margin"><spring:message code="lbl.judgmentdocuments" /></div>
+						<div class="col-sm-3 add-margin view-content">
+							${judgment.judgmentDocuments[0].files}
+						</div>
+						</div>  --%>
+						<%-- <jsp:include page="uploadDocuments.jsp"/> --%>
 
 				</div>
 			</div>

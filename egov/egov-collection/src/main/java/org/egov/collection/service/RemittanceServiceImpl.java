@@ -102,8 +102,8 @@ public class RemittanceServiceImpl extends RemittanceService {
     private PersistenceService<Remittance, Long> remittancePersistService;
 
     /**
-     * Create Contra Vouchers for String array passed of serviceName,
-     * totalCashAmount, totalChequeAmount, totalCardAmount and totalOnlineAcount
+     * Create Contra Vouchers for String array passed of serviceName, totalCashAmount, totalChequeAmount, totalCardAmount and
+     * totalOnlineAcount
      *
      * @param serviceName
      * @param totalCashAmount
@@ -182,7 +182,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         List<InstrumentHeader> instrumentHeaderListCheque = new ArrayList<InstrumentHeader>();
         if (collectionsUtil.getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE).equals(
-                        CollectionConstants.YES))
+                CollectionConstants.YES))
             showRemitDate = true;
         final EgwStatus instrumentStatusDeposited = collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_INSTRUMENTHEADER, CollectionConstants.INSTRUMENT_DEPOSITED_STATUS);
@@ -215,7 +215,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     cashQueryBuilder.append(receiptFundCondition);
                     cashQueryBuilder.append(receiptDepartmentCondition);
                     cashQueryBuilder
-                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     cashQueryBuilder.append(receiptSourceCondition);
                     final Object arguments[] = new Object[9];
                     arguments[0] = serviceName;
@@ -250,7 +250,7 @@ public class RemittanceServiceImpl extends RemittanceService {
                     chequeQueryBuilder.append(instrumentStatusCondition);
                     chequeQueryBuilder.append("and instruments.instrumentType.type in ( ?, ?)");
                     chequeQueryBuilder
-                    .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
+                            .append("and receipt.status.id=(select id from org.egov.commons.EgwStatus where moduletype=? and code=?) ");
                     chequeQueryBuilder.append(receiptFundCondition);
                     chequeQueryBuilder.append(receiptDepartmentCondition);
                     chequeQueryBuilder.append(receiptSourceCondition);
@@ -392,18 +392,15 @@ public class RemittanceServiceImpl extends RemittanceService {
                     final Map<String, Object> chequeMap = constructInstrumentMap(instrumentDepositMap,
                             depositedBankAccount, instrumentHeaderCheque, voucherHeader, voucherDate);
                     if (voucherTypeForChequeDDCard)
-                        financialsUtil.updateCheque_DD_Card_Deposit_Receipt(voucherHeader.getId(), serviceGLCode,
-                                instrumentHeaderCheque, chequeMap);
+                        financialsUtil.updateCheque_DD_Card_Deposit_Receipt(chequeMap);
                     else
-                        financialsUtil.updateCheque_DD_Card_Deposit(voucherHeader.getId(), serviceGLCode,
-                                instrumentHeaderCheque, instrumentDepositMap);
+                        financialsUtil.updateCheque_DD_Card_Deposit(chequeMap);
                 }
             for (final InstrumentHeader instrumentHeaderCash : instrumentHeaderListCash)
                 if (voucherHeader.getId() != null && serviceGLCode != null) {
                     final Map<String, Object> cashMap = constructInstrumentMap(instrumentDepositMap,
                             depositedBankAccount, instrumentHeaderCash, voucherHeader, voucherDate);
-                    financialsUtil.updateCashDeposit(voucherHeader.getId(), serviceGLCode, instrumentHeaderCash,
-                            cashMap);
+                    financialsUtil.updateCashDeposit(cashMap);
                 }
             remittancePersistService.update(remittance);
         }
@@ -458,13 +455,13 @@ public class RemittanceServiceImpl extends RemittanceService {
     private void startWorkflow(final Remittance remittance) {
         final Position position = collectionsUtil.getPositionOfUser(collectionsUtil.getLoggedInUser());
         remittance
-        .transition()
-        .start()
-        .withSenderName(
-                collectionsUtil.getLoggedInUser().getUsername() + "::"
-                        + collectionsUtil.getLoggedInUser().getName())
-                        .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
-                        .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
+                .transition()
+                .start()
+                .withSenderName(
+                        collectionsUtil.getLoggedInUser().getUsername() + "::"
+                                + collectionsUtil.getLoggedInUser().getName())
+                .withComments(CollectionConstants.WF_STATE_NEW).withStateValue(CollectionConstants.WF_STATE_NEW)
+                .withOwner(position).withDateInfo(new Date()).withNextAction(CollectionConstants.WF_STATE_END).end();
     }
 
     public List<RemittanceDetail> getRemittanceDetailsList(final BigDecimal creditAmount, final BigDecimal debitAmount,
@@ -480,8 +477,7 @@ public class RemittanceServiceImpl extends RemittanceService {
     }
 
     /**
-     * Method to find all the Cash,Cheque and DD type instruments with status as
-     * :new and
+     * Method to find all the Cash,Cheque and DD type instruments with status as :new and
      *
      * @return List of HashMap
      */
@@ -518,8 +514,7 @@ public class RemittanceServiceImpl extends RemittanceService {
         final String orderBy = " order by RECEIPTDATE";
 
         /**
-         * Query to get the collection of the instrument types Cash,Cheque,DD &
-         * Card for bank remittance
+         * Query to get the collection of the instrument types Cash,Cheque,DD & Card for bank remittance
          */
         final StringBuilder queryStringForCashChequeDDCard = new StringBuilder(queryBuilder + ",egeis_jurisdiction ujl"
                 + whereClauseBeforInstumentType + whereClauseForServiceAndFund + "it.TYPE in ('"

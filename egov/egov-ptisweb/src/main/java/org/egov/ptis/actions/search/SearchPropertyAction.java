@@ -331,12 +331,16 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-        	if(!basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        	if(!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())
+        	        || basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_MIGRATION.toString()))){
         		addActionError(getText("edit.dataEntry.source.error"));
                 return COMMON_FORM;
-        	} else {
-        		return APPLICATION_TYPE_EDIT_DEMAND;
+        	} else if(basicProperty.getProperty().getIsExemptedFromTax()){
+        	    addActionError(getText("action.error.msg.for.taxExempted"));
+                    return COMMON_FORM; 
+        		
         	}
+        	return APPLICATION_TYPE_EDIT_DEMAND;
         }
 
         if (basicProperty.getProperty().getIsExemptedFromTax()

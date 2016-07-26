@@ -358,7 +358,7 @@ public class WaterTaxExternalService {
      * @param amountPaid
      * @return
      */
-    private BillInfoImpl prepareBillInfo(final BigDecimal amountPaid, final COLLECTIONTYPE collType, final EgBill bill,
+    public BillInfoImpl prepareBillInfo(final BigDecimal amountPaid, final COLLECTIONTYPE collType, final EgBill bill,
             final String source) {
         final BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType, bill);
 
@@ -459,7 +459,7 @@ public class WaterTaxExternalService {
         return paymentInfoCard;
     }
 
-    private boolean isCollectionPermitted(final EgBill bill) {
+    public boolean isCollectionPermitted(final EgBill bill) {
         final boolean allowed = thereIsCurrentBalanceToBePaid(bill);
 
         return allowed;
@@ -517,9 +517,13 @@ public class WaterTaxExternalService {
         return collectionService.getReceiptInfo(WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE, transantion);
     }
 
-    // TODO:EgBillDao is not intialising Request is comes from RestController so
-    // using BillCreation method here only
     public final EgBill generateBill(final Billable billObj) {
+        final EgBill bill = generateBillForConnection(billObj,financialYearDAO);
+        egBillDAO.create(bill);
+        return bill;
+    }
+
+    public EgBill generateBillForConnection(final Billable billObj,FinancialYearDAO financialYearDAO) {
         final EgBill bill = new EgBill();
         bill.setBillNo(billObj.getReferenceNumber());
         bill.setBoundaryNum(billObj.getBoundaryNum().intValue());
@@ -577,7 +581,6 @@ public class WaterTaxExternalService {
 
         bill.setConsumerId(billObj.getConsumerId());
         bill.setCallBackForApportion(Boolean.TRUE);
-        egBillDAO.create(bill);
         return bill;
     };
 }

@@ -64,28 +64,59 @@
 				return false;
 	    	}
 		}
+
+	    if ((name=="Cancel" || name=="cancel")) {
+	    	var approverComments = document.getElementById("approverComments").value;
+	    	if (approverComments == null || approverComments == "") {
+	    		bootbox.alert("Please Enter Approver Remarks ");
+				return false;
+	    	}
+		}
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
 	    	bootbox.alert("Please Select the Approver ");
 			return false;
+	    }
+	    if((name=="Approve" || name=="approve" ||name=="Create And Approve")) {
+		    var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+		    var billDatePart=document.getElementById("billDate").value.split("/");
+		    var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+					+ cutOffDatePart[2]);
+		    var billDate = new Date(billDatePart[1] + "/" + billDatePart[0] + "/"
+					+ billDatePart[2]);
+	    	if(billDate<=cutOffDate)
+		    	{
+	    		return approveSubmit();
+		    	}
+	    	else
+		    	{
+	    		var msg1='<s:text name="wf.cutoffdate.message"/>';
+	    		var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	    		bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+	    		return false;
+		    	}
 	    }
 	   
 	    </s:if>
 	    return  onSubmit();
 	}
 </script>
-<div class="buttonbottom" >
+<div class="buttonbottom">
 	<s:hidden id="workFlowAction" name="workFlowAction" />
-	<table style="width: 100%;" >
-		<tr>
-			<td align="right"><s:iterator value="%{getValidActions()}" var="validAction">
-					<s:if test="%{validAction!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{validAction}"
-							id="%{validAction}" name="%{validAction}"
-							onclick="return validateWorkFlowApprover('%{validAction}','jsValidationErrors');" />
-					</s:if>
-				</s:iterator></td><td> <input type="button" name="button2" id="button2" value="Close"
-				class="button" onclick="window.close();" /></td>
-		</tr>
-	</table>
+	<div class="row text-center">
+		<div class="col-md-4 col-sm-2"></div>
+		<s:iterator value="%{getValidActions()}" var="validAction">
+			<div class="col-md-1 col-sm-2">
+				<s:if test="%{validAction!=''}">
+					<s:submit type="submit" cssClass="buttonsubmit"
+						value="%{validAction}" id="%{validAction}" name="%{validAction}"
+						onclick="return validateWorkFlowApprover('%{validAction}','jsValidationErrors');" />
+				</s:if>
+			</div>
+		</s:iterator>
+		<div class="col-md-2 col-sm-2">
+			<input type="button" name="button2" id="button2" value="Close"
+				class="button" onclick="window.close();" />
+		</div>
+	</div>
 </div>

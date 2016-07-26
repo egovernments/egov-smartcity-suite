@@ -596,7 +596,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                 .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
                 .setDate("ihStatusDate", (Date) instrumentDetailsMap.get("depositdate"))
                 .setDate("modifiedDate", new Date())
-                .setInteger("modifiedBy", (Integer) instrumentDetailsMap.get("createdby"));
+                .setLong("modifiedBy", (Long) instrumentDetailsMap.get("createdby"));
         ioSQLQuery.executeUpdate();
 
         final String ihSql = "update EGF_instrumentheader  set ID_STATUS=:statusId,BANKACCOUNTID=:bankAccId,LASTMODIFIEDBY=:modifiedBy,"
@@ -605,9 +605,9 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         final SQLQuery ihSQLQuery = getSession().createSQLQuery(ihSql);
         ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentDepositedStatus"))
                 .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
-                .setInteger("bankAccId", (Integer) instrumentDetailsMap.get("bankaccountid"))
+                .setLong("bankAccId", (Long) instrumentDetailsMap.get("bankaccountid"))
                 .setDate("modifiedDate", new Date())
-                .setInteger("modifiedBy", (Integer) instrumentDetailsMap.get("createdby"));
+                .setLong("modifiedBy", (Long) instrumentDetailsMap.get("createdby"));
         ihSQLQuery.executeUpdate();
 
     }
@@ -623,10 +623,10 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
             throws ApplicationRuntimeException {
         final String brsSql = "Insert into bankreconciliation (ID,BANKACCOUNTID,AMOUNT,TRANSACTIONTYPE,INSTRUMENTHEADERID) values "
                 +
-                " (seq_bankreconciliation.nextVal,:bankAccId,:amount,:trType,:ihId)";
+                " (nextVal('seq_bankreconciliation'),:bankAccId,:amount,:trType,:ihId)";
         final SQLQuery brsSQLQuery = getSession().createSQLQuery(brsSql);
 
-        brsSQLQuery.setInteger("bankAccId", (Integer) instrumentDetailsMap.get("bankaccountid"))
+        brsSQLQuery.setLong("bankAccId", (Long) instrumentDetailsMap.get("bankaccountid"))
                 .setBigDecimal("amount", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
                 .setString("trType", "1".equalsIgnoreCase((String) instrumentDetailsMap.get("ispaycheque")) ? "Cr" : "Dr")
                 .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"));
@@ -649,7 +649,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
                     .setBigDecimal("reconciledAmt", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
                     .setDate("ihStatusDate", (Date) instrumentDetailsMap.get("depositdate"))
                     .setDate("modifiedDate", new Date())
-                    .setInteger("modifiedBy", (Integer) instrumentDetailsMap.get("createdby"));
+                    .setLong("modifiedBy", (Long) instrumentDetailsMap.get("createdby"));
             ioSQLQuery.executeUpdate();
 
             final String ihSql = "update EGF_instrumentheader  set ID_STATUS=:statusId,LASTMODIFIEDBY=:modifiedBy," +
@@ -658,7 +658,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
             ihSQLQuery.setLong("statusId", (Long) instrumentDetailsMap.get("instrumentReconciledStatus"))
                     .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
                     .setDate("modifiedDate", new Date())
-                    .setInteger("modifiedBy", (Integer) instrumentDetailsMap.get("createdby"));
+                    .setLong("modifiedBy", (Long) instrumentDetailsMap.get("createdby"));
             ihSQLQuery.executeUpdate();
 
         }
@@ -670,12 +670,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         final String ioSql = "Insert into contrajournalvoucher (ID,VOUCHERHEADERID,FROMBANKACCOUNTID,TOBANKACCOUNTID,INSTRUMENTHEADERID"
                 +
                 " ,STATE_ID,CREATEDBY,LASTMODIFIEDBY) values " +
-                " (seq_contrajournalvoucher.nextVal,:vhId,null,:depositedBankId,:ihId,null,:createdBy,:createdBy)";
+                " (nextVal('seq_contrajournalvoucher'),:vhId,null,:depositedBankId,:ihId,null,:createdBy,:createdBy)";
         final SQLQuery ioSQLQuery = getSession().createSQLQuery(ioSql);
         ioSQLQuery.setLong("vhId", (Long) instrumentDetailsMap.get("payinid"))
                 .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
-                .setLong("depositedBankId", (Integer) instrumentDetailsMap.get("bankaccountid"))
-                .setInteger("createdBy", (Integer) instrumentDetailsMap.get("createdby"));
+                .setLong("depositedBankId", (Long) instrumentDetailsMap.get("bankaccountid"))
+                .setLong("createdBy", (Long) instrumentDetailsMap.get("createdby"));
         ioSQLQuery.executeUpdate();
 
     }

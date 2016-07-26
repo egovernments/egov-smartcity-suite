@@ -165,7 +165,7 @@ function populateBlock() {
 	    <td class="bluebox"><s:text name="elec.wardno"></s:text><span class="mandatory1">*</span> : </td>
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
 			listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
-	    <td class="bluebox"><s:text name="doorno"></s:text><s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.equalsIgnoreCase(userDesgn)}"><span class="mandatory1" id="houseNoSpan">*</span></s:if> :</td>
+	    <td class="bluebox"><s:text name="doorno"></s:text><s:if test="%{userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.toUpperCase())}"><span class="mandatory1" id="houseNoSpan">*</span></s:if> :</td>
 	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="32" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>
  

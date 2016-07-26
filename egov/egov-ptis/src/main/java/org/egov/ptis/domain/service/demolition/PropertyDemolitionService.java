@@ -142,33 +142,19 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
             String workFlowAction, Long approverPosition, String additionalRule) throws TaxCalculatorExeption {
-        Date propCompletionDate = null;
         PropertyImpl propertyModel;
         BasicProperty basicProperty = oldProperty.getBasicProperty();
         PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
         propertyModel = (PropertyImpl) newProperty;
         newProperty.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
         newProperty.getBasicProperty().setPropOccupationDate(newProperty.getPropertyDetail().getDateOfCompletion());
-        propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
                 null, null, null, null, null, null);
-        propertyModel.setBasicProperty(basicProperty);
-        propertyModel.setEffectiveDate(propCompletionDate);
-        if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-            propService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
-        }
-        propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
-        basicProperty.setUnderWorkflow(Boolean.TRUE);
-        propertyModel.setBasicProperty(basicProperty);
-        basicProperty.addProperty(propertyModel);
-        getSession().setFlushMode(FlushMode.MANUAL);
-        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
         Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-        Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
         Date effectiveDate = null;
         boolean calculateForNextFinYear = false;
         
@@ -182,6 +168,19 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         	effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
         	calculateForNextFinYear = true;
         }
+        propertyModel.setBasicProperty(basicProperty);
+        propertyModel.setEffectiveDate(effectiveDate);
+        if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
+            propService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
+        }
+        propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
+        basicProperty.setUnderWorkflow(Boolean.TRUE);
+        propertyModel.setBasicProperty(basicProperty);
+        basicProperty.addProperty(propertyModel);
+        getSession().setFlushMode(FlushMode.MANUAL);
+        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
+        Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
+        
         
         Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
@@ -287,8 +286,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
                     }
-                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
                 		buildSMS(property, workFlowAction);
+                		propertyTaxCommonUtils.makeExistingDemandBillInactive(property.getBasicProperty().getUpicNo());
+                    }
                 }
             }
         }

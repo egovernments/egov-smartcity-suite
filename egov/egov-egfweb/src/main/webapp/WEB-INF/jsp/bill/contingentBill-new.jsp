@@ -552,6 +552,8 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 						<%-- <s:if test='%{! "END".equalsIgnoreCase(nextLevel)}'>
 	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
 </s:if> --%>
+						<s:hidden name="billDate" id="billDate" />
+						<s:hidden id="cutOffDate" name="cutOffDate" />
 						<s:hidden name="nextLevel" id="nextLevel" />
 						<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
 						<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
@@ -640,6 +642,15 @@ function onSubmit()
 {
 	if(validate()){
 		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
+}
+function approveSubmit()
+{
+	if(validate()){
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-approveOnCreate.action';
     	return true;
 	}else{
 		return false;

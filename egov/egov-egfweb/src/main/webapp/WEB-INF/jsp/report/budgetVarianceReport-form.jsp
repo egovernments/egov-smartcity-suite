@@ -119,20 +119,26 @@ function getMiscData(){
 
 function exportXls(){
 	var asOnDate =  document.getElementById('asOnDate').value;
-	//var departmentid =  document.getElementById('executingDepartment').value;
+	var departmentid =  document.getElementById('executingDepartment').value;
 	var accountType =  document.getElementById('accountType').value;
 	var budgetGroup =  document.getElementById('budgetGroup').value;
-	//var functionId =  document.getElementById('function').value;
-	window.open('/EGF/report/budgetVarianceReport-exportXls.action?asOnDate='+asOnDate,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	var functionId =  document.getElementById('function').value;
+	var fund = document.getElementById('fund').value;
+	window.open('/EGF/report/budgetVarianceReport-exportXls.action?asOnDate='+asOnDate+'&accountType='+accountType+
+			'&budgetDetail.budgetGroup.id='+budgetGroup+'&budgetDetail.fund.id='+fund+'&budgetDetail.executingDepartment.id='
+			+departmentid+'&budgetDetail.function.id='+functionId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function exportPdf(){
 	var asOnDate =  document.getElementById('asOnDate').value;
-	//var departmentid =  document.getElementById('executingDepartment').value;
+	var departmentid =  document.getElementById('executingDepartment').value;
 	var accountType =  document.getElementById('accountType').value;
 	var budgetGroup =  document.getElementById('budgetGroup').value;
-	//var functionId =  document.getElementById('function').value;
-	window.open('/EGF/report/budgetVarianceReport-exportPdf.action?asOnDate='+asOnDate,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+	var functionId =  document.getElementById('function').value;
+	var fund = document.getElementById('fund').value;
+	window.open('/EGF/report/budgetVarianceReport-exportPdf.action?asOnDate='+asOnDate+'&accountType='+accountType+
+			'&budgetDetail.budgetGroup.id='+budgetGroup+'&budgetDetail.fund.id='+fund+'&budgetDetail.executingDepartment.id='
+			+departmentid+'&budgetDetail.function.id='+functionId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 }
 
 function validateData(){
@@ -180,6 +186,15 @@ function checkMandatoryField(fieldName){
 	}
 	return true;
 }
+function resetSubmit()
+{
+	document.getElementById('asOnDate').value="";
+	document.getElementById('executingDepartment').value="";
+	document.getElementById('accountType').value="";
+	document.getElementById('budgetGroup').value="";
+	document.getElementById('function').value="";
+	document.getElementById('fund').value="";
+	}
 </script>
 <body>
 	<div class="formmainbox">
@@ -198,12 +213,14 @@ function checkMandatoryField(fieldName){
 						<td class="bluebox"><s:select name="executingDepartment"
 								id="executingDepartment" list="dropdownData.departmentList"
 								listKey="id" listValue="name" headerKey="-1"
+								value="%{budgetDetail.executingDepartment.id}"
 								headerValue="----Choose----" /></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('function')}">
 						<td class="bluebox" width="10%">Function:<span
 							class="mandatory1">*</span></td>
 						<td class="bluebox"><s:select name="function" id="function"
+								value="%{budgetDetail.function.id}"
 								list="dropdownData.functionList" listKey="id" listValue="name"
 								headerKey="-1" headerValue="----Choose----" /></td>
 					</s:if>
@@ -212,8 +229,9 @@ function checkMandatoryField(fieldName){
 					<s:if test="%{isFieldMandatory('fund')}">
 						<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
 						<td class="greybox"><s:select name="fund" id="fund"
-								list="dropdownData.fundList" listKey="id" listValue="name"
-								headerKey="-1" headerValue="----Choose----" /></td>
+								value="%{budgetDetail.fund.id}" list="dropdownData.fundList"
+								listKey="id" listValue="name" headerKey="-1"
+								headerValue="----Choose----" /></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('functionary')}">
 						<td class="greybox" width="10%">Functionary:<span
@@ -271,8 +289,9 @@ function checkMandatoryField(fieldName){
 							headerKey="-1" headerValue="----Choose----" /></td>
 					<td class="bluebox" width="10%">Budget Head:</td>
 					<td class="bluebox"><s:select name="budgetGroup"
-							id="budgetGroup" list="dropdownData.budgetGroupList" listKey="id"
-							listValue="name" headerKey="-1" headerValue="----Choose----" /></td>
+							value="%{budgetGroup.id}" id="budgetGroup"
+							list="dropdownData.budgetGroupList" listKey="id" listValue="name"
+							headerKey="-1" headerValue="----Choose----" /></td>
 				</tr>
 				<tr>
 					<td class="greybox" width="10%">As On Date:<span
@@ -294,10 +313,9 @@ function checkMandatoryField(fieldName){
 			<br />
 			<div class="buttonbottom">
 				<input type="submit" value="Search" class="buttonsubmit"
-					onclick="return getData();" /> &nbsp
-				<s:reset name="button" type="submit" cssClass="button" id="button"
-					value="Cancel" />
-				<input type="button" value="Close"
+					onclick="return getData();" /> &nbsp <input name="button"
+					type="submit" class="button" id="button" value="Cancel"
+					onclick="resetSubmit();" /> <input type="button" value="Close"
 					onclick="javascript:window.close()" class="button" />
 			</div>
 	</div>

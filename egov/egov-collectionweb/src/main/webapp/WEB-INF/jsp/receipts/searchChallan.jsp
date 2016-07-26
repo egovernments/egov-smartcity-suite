@@ -158,7 +158,7 @@
 	     <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>  <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /></td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategoryId" id="serviceCategoryId" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategoryId}" onChange="populateService(this);" />
-       	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+       	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForChallan.action" /></td>
 	      <td width="21%" class="bluebox2"><s:text name="miscreceipt.service"/></td>
 	      <td width="24%" class="bluebox2"><s:select headerKey="-1" headerValue="%{getText('challan.select')}" name="serviceId" id="serviceId" cssClass="selectwk" list="dropdownData.serviceList" listKey="id" listValue="name"  /></td>
 	    </tr>	

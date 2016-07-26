@@ -132,6 +132,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private String roleName;
     private String serviceCode;
     private Map<String, Object> viewMap;
+    private String searchUrl;
+    
+    
 
     @Autowired
     private UserService userService;
@@ -184,9 +187,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
             ApplicationThreadLocals.setUserId(userId);
             session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
             if (user != null)
-                setCitizen(Boolean.TRUE);
+                setIsCitizen(Boolean.TRUE);
         } else {
-            setCitizen(Boolean.FALSE);
+            setIsCitizen(Boolean.FALSE);
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null) {
                 setRoleName(propertyTaxUtil.getRolesForUserId(userId));
@@ -271,9 +274,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
              */
             // EGOVThreadLocals.setUserId("27613");
             session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
-            setCitizen(Boolean.TRUE);
+            setIsCitizen(Boolean.TRUE);
         } else {
-            setCitizen(Boolean.FALSE);
+            setIsCitizen(Boolean.FALSE);
         }
 
         try {
@@ -456,13 +459,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         this.propertyArrearsMap = propertyArrearsMap;
     }
 
-    public Boolean getIsCitizen() {
-        return isCitizen;
-    }
-
-    public void setCitizen(Boolean isCitizen) {
-        this.isCitizen = isCitizen;
-    }
+    
 
     public List<PropertyArrearBean> getPropertyArrearsList() {
         return propertyArrearsList;
@@ -551,5 +548,23 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     public void setServiceCode(String serviceCode) {
         this.serviceCode = serviceCode;
     }
+
+    public Boolean getIsCitizen() {
+        return isCitizen;
+    }
+
+    public void setIsCitizen(Boolean isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+
+    public String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public void setSearchUrl(String searchUrl) {
+        this.searchUrl = searchUrl;
+    }
+
+    
 
 }

@@ -287,7 +287,7 @@
 					</tr>
 					<tr>
 						<s:if
-							test="%{!@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.equalsIgnoreCase(userDesignation)}">
+							test="%{!userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase())}">
 							<tr>
 								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="docValue" /> :</td>

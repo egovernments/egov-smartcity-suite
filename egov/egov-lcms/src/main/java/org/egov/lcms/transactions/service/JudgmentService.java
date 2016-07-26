@@ -48,12 +48,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentDocuments;
 import org.egov.lcms.transactions.repository.JudgmentRepository;
+import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,6 +75,12 @@ public class JudgmentService {
     private EntityManager entityManager;
 
     @Autowired
+    private LegalCaseRepository legalCaseRepository;
+
+    @Autowired
+    private LegalCaseUtil legalCaseUtil;
+
+    @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
@@ -83,14 +92,19 @@ public class JudgmentService {
     @Transactional
     public Judgment persist(final Judgment judgment) {
         processAndStoreApplicationDocuments(judgment);
+        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
+                LcmsConstants.LEGALCASE_STATUS_JUDGMENT);
+        judgment.getLegalCase().setStatus(statusObj);
+        legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
+
     }
 
     public List<Judgment> findAll() {
         return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, "orderDate"));
     }
 
-    public Judgment findBy(final Long id) {
+    public Judgment findById(final Long id) {
         return judgmentRepository.findOne(id);
     }
 

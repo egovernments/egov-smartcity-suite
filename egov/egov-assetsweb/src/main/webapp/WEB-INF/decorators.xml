@@ -45,8 +45,8 @@
         <pattern>/*Ajax.action</pattern>
         <pattern>/*Ajax.do</pattern>
     </excludes>
-    <decorator name="default" page="default.jsp">
-    <pattern>/*</pattern>
+    <decorator name="default" page="default.jsp">   
+    <pattern>*.action</pattern>
      <!-- <pattern>/index.jsp</pattern> 
       <pattern>/*.action</pattern>
       <pattern>/*.do</pattern> -->

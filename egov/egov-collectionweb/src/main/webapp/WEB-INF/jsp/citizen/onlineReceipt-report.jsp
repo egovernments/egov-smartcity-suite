@@ -54,7 +54,7 @@
 	<s:if test="%{hasActionMessages()}">
 		<div class="messagestyle"><s:actionmessage theme="simple" /></div>
 	</s:if>
-	<iframe src="../reportViewer?reportId=<s:property value='reportId'/>" width="98%"
+	<iframe src="" width="98%"
 		height="70%">
 	<p>Your browser does not support iframes.</p>
 	</iframe>
@@ -65,5 +65,16 @@
 		id="buttonBack" value="Back" onclick="history.back()" /> -->
 	</div>
 </s:form>
+<script>
+var url="../reportViewer?reportId=<s:property value='reportId'/>"
+var mobileurl='https://docs.google.com/viewer?url='+document.location.origin+'/collection'+url.replace("..","");
+if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	 window.location=mobileurl;
+}
+else
+{
+	jQuery('iframe').attr('src', url);
+}
+</script>
 </body>
 </html>

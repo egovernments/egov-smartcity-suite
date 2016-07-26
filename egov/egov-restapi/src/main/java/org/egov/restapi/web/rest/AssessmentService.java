@@ -151,8 +151,9 @@ public class AssessmentService {
                 AssessmentRequest.class);
         try {
             String assessmentNo = assessmentReq.getAssessmentNo();
+            String category = assessmentReq.getCategory();
             if (null != assessmentNo) {
-                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);
@@ -207,8 +208,20 @@ public class AssessmentService {
             String assessmentNo = assessmentReq.getAssessmentNo();
             String ownerName = assessmentReq.getOwnerName();
             String mobileNumber = assessmentReq.getMobileNumber();
+            String category = assessmentReq.getCategory();
+            if (!StringUtils.isBlank(category)) {
+                if (!(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX.equals(category)
+                        || PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX.equals(category))) {
+                    List<ErrorDetails> errors = new ArrayList<ErrorDetails>(0);
+                    ErrorDetails er = new ErrorDetails();
+                    er.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_WRONG_CATEGORY);
+                    er.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+                    errors.add(er);
+                    return JsonConvertor.convert(errors);
+                }
+            }
             if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber);
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
