@@ -608,7 +608,7 @@ public class OnlineReceiptAction extends BaseFormAction implements ServletReques
 
             receiptHeader.setOnlinePayment(onlinePayment);
         }
-        receiptHeaderService.persistReceiptsObject(receiptHeader);
+        receiptHeaderService.persistReceiptObject(receiptHeader);
 
         /**
          * Construct Request Object For The Payment Gateway
