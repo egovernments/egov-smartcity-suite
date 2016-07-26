@@ -295,11 +295,11 @@ public class MBDetails extends AbstractAuditable {
         this.id = id;
     }
 
-    public final List<MBMeasurementSheet> getMeasurementSheets() {
+    public List<MBMeasurementSheet> getMeasurementSheets() {
         return measurementSheets;
     }
 
-    public final void setMeasurementSheets(final List<MBMeasurementSheet> measurementSheets) {
+    public void setMeasurementSheets(final List<MBMeasurementSheet> measurementSheets) {
         this.measurementSheets = measurementSheets;
     }
 }

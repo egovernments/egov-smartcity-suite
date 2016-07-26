@@ -39,11 +39,18 @@
  */
 package org.egov.works.mb.repository;
 
+import java.util.List;
+
+import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.mb.entity.MBMeasurementSheet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MBMeasurementSheetRepository extends JpaRepository<MBMeasurementSheet, Long> {
 
+    @Query("select ms from MBMeasurementSheet ms where ms.mbDetails.mbHeader.id = :mbHeaderId")
+    List<MBMeasurementSheet> getMeasurementsForMB(@Param("mbHeaderId") final Long mbHeaderId);
 }

@@ -41,8 +41,10 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +56,9 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.MBMeasurementSheet;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.mb.service.MBMeasurementSheetService;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -72,7 +76,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MeasurementBookPDFController {
 
     @Autowired
-    private MBHeaderService MBHeaderService;
+    private MBHeaderService mBHeaderService;
 
     @Autowired
     private ReportService reportService;
@@ -81,7 +85,7 @@ public class MeasurementBookPDFController {
     private WorksUtils worksUtils;
 
     @Autowired
-    private MBHeaderService mBHeaderService;
+    private MBMeasurementSheetService mBMeasurementSheetService;
 
     public static final String MEASUREMENTBOOKPDF = "MeasurementBookPDF";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -91,7 +95,7 @@ public class MeasurementBookPDFController {
     @RequestMapping(value = "/measurementbookPDF/{mbheaderId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("mbheaderId") final Long mbheaderId, final HttpSession session) throws IOException {
-        final MBHeader mBHeader = MBHeaderService.getMBHeaderById(mbheaderId);
+        final MBHeader mBHeader = mBHeaderService.getMBHeaderById(mbheaderId);
         return generateReport(mBHeader, request, session);
     }
 
@@ -108,11 +112,15 @@ public class MeasurementBookPDFController {
             else
                 reportParams.put("tenderFinalizedPerc",String.valueOf(mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage()));
                 
-            
-        }
-
+          List<MBMeasurementSheet> measurements = mBMeasurementSheetService.findMeasurementsForMB(mBHeader.getId());
+          reportParams.put("measurementSize", measurements.size());
+          if(measurements != null && !measurements.isEmpty()) {
+              reportParams.put("measurementDetails", mBHeaderService.getMeasurementsForMB(mBHeader));
+          }  
+        } 
         reportParams.put("currDate", sdf.format(new Date()));
-        reportInput = new ReportRequest(MEASUREMENTBOOKPDF, calculateCumulaticeQuantiy(mBHeader), reportParams);
+        reportParams.put("tenderItems", calculateCumulaticeQuantiy(mBHeader));
+        reportInput = new ReportRequest(MEASUREMENTBOOKPDF, mBHeader, reportParams);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=MeasurementBook_" + mBHeader.getMbRefNo() + ".pdf");

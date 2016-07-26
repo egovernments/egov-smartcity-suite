@@ -85,4 +85,9 @@ public class MBMeasurementSheetService {
     public List<MBMeasurementSheet> search(final MBMeasurementSheet mBMeasurementSheet) {
         return mBMeasurementSheetRepository.findAll();
     }
+    
+    public List<MBMeasurementSheet> findMeasurementsForMB(final Long mbHeaderId) {
+        return mBMeasurementSheetRepository.getMeasurementsForMB(mbHeaderId);
+    }
+    
 }

@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-07-26T15:58:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementBook_tenderitems" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="20" topMargin="0" bottomMargin="20" uuid="9dd7c10b-bcf6-4a20-8208-9cc6d9a4aed0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="mBHeader" class="org.egov.works.mb.entity.MBHeader"/>
+	<parameter name="tenderFinalizedPerc" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="workOrderActivity" class="org.egov.works.workorder.entity.WorkOrderActivity"/>
+	<field name="quantity" class="java.lang.Double"/>
+	<field name="prevCumlvQuantity" class="java.lang.Double"/>
+	<variable name="pageTotal" class="java.math.BigDecimal" incrementType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$V{pageTotal}.add(BigDecimal.valueOf($F{workOrderActivity}.getActivity().getRate()).multiply(BigDecimal.valueOf($F{quantity})))]]></variableExpression>
+		<initialValueExpression><![CDATA[BigDecimal.ZERO]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="35">
+			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#0.00#">
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="7" width="121" height="28" uuid="c583b0f9-3d04-4771-a640-1a841c885ef6">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Total (Rs): </style>"+$V{pageTotal}.setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
+				<reportElement stretchType="RelativeToTallestObject" x="471" y="7" width="179" height="28" uuid="ea5440fc-47ca-4a9f-8ebc-a59940aa4fec">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Finalized tender percentage : </style>"+$P{tenderFinalizedPerc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
+				<reportElement x="650" y="7" width="133" height="28" uuid="39a6305a-f606-41bf-ab8c-553e80f1a9fc">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> MB Amount(Rs) : </style>"+$P{mBHeader}.getMbAmount().setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="0" width="40" height="34" uuid="5c103ee3-57ff-4032-905d-d7b998bb5b82"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sl No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="41" y="0" width="60" height="34" uuid="cad4f59b-60eb-4654-b33d-671c64a1d58d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Schedule No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="0" width="60" height="34" uuid="81452fe0-7e21-451a-a953-f252c92b4bd5">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Schedule Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="161" y="0" width="150" height="34" uuid="69c5c286-d203-45b6-8132-a6383d37d86e"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="311" y="0" width="65" height="34" uuid="b89b5883-e809-4a89-97a8-fc04efb86abb">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Approved Quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="0" width="87" height="34" uuid="2f858b59-920e-47b4-a2bb-93281f8d7a4c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Completed Measurement]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="0" width="39" height="34" uuid="16c608a4-22f7-49c1-a9ff-6db1ab3d94f0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="544" y="0" width="67" height="34" uuid="be263f58-a5ab-408a-be6e-ff0b823f3969">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Completed Cost]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="611" y="0" width="86" height="34" uuid="b988be77-8e1a-4283-b00b-ba769d1bc571">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Current Measurement]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="697" y="0" width="86" height="34" uuid="e2903352-a6d8-47c7-9287-1c4fe830be4a"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Current Cost]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="42" height="34" uuid="f6a88dee-5fd5-4bc9-a143-23e71f5f491b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UOM]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="161" y="0" width="150" height="30" uuid="8f48a3b1-09e5-49ed-a095-10f57151f232"/>
+				<box topPadding="3" leftPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getDescription() : $F{workOrderActivity}.getActivity().getNonSor().getDescription()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
+				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="86" height="30" uuid="b038591d-759e-40a2-b3bb-19f555c56934"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
+				<reportElement stretchType="RelativeToTallestObject" x="544" y="0" width="67" height="30" uuid="326ef034-0f8f-47d8-a305-a529cd649f02"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{workOrderActivity}.getActivity().getRate()).multiply(BigDecimal.valueOf($F{quantity}).add(BigDecimal.valueOf($F{prevCumlvQuantity})))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="41" y="0" width="60" height="30" uuid="d677dfbc-c4a7-49e8-a205-6f757b81a8fb"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getCode() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="40" height="30" uuid="3ba74c93-8d2f-48b3-9fae-ebe028332eef"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
+				<reportElement stretchType="RelativeToTallestObject" x="311" y="0" width="65" height="30" uuid="143a6a9b-1ed9-489a-8bde-99f950255fc3"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getApprovedQuantity()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="101" y="0" width="60" height="30" uuid="2af57734-77b2-48dc-9110-0de5d0b8d3b6"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getScheduleCategory().getCode() : "N/A"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
+				<reportElement stretchType="RelativeToTallestObject" x="463" y="0" width="39" height="30" uuid="dd7a7d03-7138-4d30-840d-574895752ddc"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getEstimateRate()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
+				<reportElement stretchType="RelativeToTallestObject" x="697" y="0" width="86" height="30" uuid="37e153f7-cea5-4ecf-8fa7-ac3bf06d731f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{workOrderActivity}.getActivity().getRate()).multiply(BigDecimal.valueOf($F{quantity}))]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="502" y="0" width="42" height="30" uuid="c50d03eb-9f98-4369-a212-ec7bc0fa0ae4"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getUom().getUom()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
+				<reportElement stretchType="RelativeToTallestObject" x="376" y="0" width="87" height="30" uuid="ac27b680-7202-482c-b072-533050f6018f"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{quantity}).add(BigDecimal.valueOf($F{prevCumlvQuantity}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="544" y="0" width="67" height="30" uuid="850c1f1d-1c97-4bfa-b3b9-2e984e37bf7d"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="0" width="40" height="30" uuid="ab7c04d4-7324-446b-96b3-9f1c04e4088d"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="611" y="0" width="86" height="30" uuid="9a640a6e-72e4-4348-93de-ce9333007eec"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total (Rs)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="0" width="60" height="30" uuid="6c7b2976-bd2c-4591-9dd6-0a596f9f5ba7"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="502" y="0" width="42" height="30" uuid="5ff0efb7-2500-4256-aa1d-00efa36c9972"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="0" width="87" height="30" uuid="25ec6ba2-e260-45e4-9c5b-d0e733701994"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="41" y="0" width="60" height="30" uuid="c735ec8e-7bf5-4d15-bebc-49e931ce6b8f"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#0.00#">
+				<reportElement x="697" y="0" width="86" height="30" uuid="85c3e17e-97c6-45a9-ac64-829e0c0526f7"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{pageTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="161" y="0" width="150" height="30" uuid="4dcea4bf-54d2-48f6-a944-a94b66512aa7"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="463" y="0" width="39" height="30" uuid="44df72db-e071-4520-bba6-b65022af1d58"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="311" y="0" width="65" height="30" uuid="c8aa23d6-0d50-488e-8beb-8ab62f560572"/>
+				<box>
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

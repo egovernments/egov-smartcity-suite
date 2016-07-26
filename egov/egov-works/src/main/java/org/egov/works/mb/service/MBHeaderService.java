@@ -40,9 +40,11 @@
 package org.egov.works.mb.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -67,6 +69,7 @@ import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.entity.MBMeasurementSheet;
 import org.egov.works.mb.entity.SearchRequestCancelMB;
 import org.egov.works.mb.entity.SearchRequestMBHeader;
 import org.egov.works.mb.repository.MBHeaderRepository;
@@ -76,6 +79,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -716,14 +720,14 @@ public class MBHeaderService {
     public List<String> findContractorsToCancelMB(final String code) {
         final List<String> loaNumbers = mbHeaderRepository
                 .findContractorsToSearchMBToCancel("%" + code + "%",
-                        MBHeader.MeasurementBookStatus.APPROVED.toString());
+                MBHeader.MeasurementBookStatus.APPROVED.toString());
         return loaNumbers;
     }
 
     public List<String> findWorkIdentificationNumbersToCancelMB(final String code) {
         final List<String> workIdNumbers = mbHeaderRepository
                 .findWorkIdentificationNumbersToCancelMB("%" + code + "%",
-                        MBHeader.MeasurementBookStatus.APPROVED.toString());
+                MBHeader.MeasurementBookStatus.APPROVED.toString());
         return workIdNumbers;
     }
 
@@ -737,13 +741,127 @@ public class MBHeaderService {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 
-    public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId,final Date billDate) {
+    public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId, final Date billDate) {
         return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId,billDate,MBHeader.MeasurementBookStatus.APPROVED.toString(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
-    
-    public List<MBHeader> getMBHeaderBasedOnBillDate(final Long workOrderEstimateId,final Date billDate) {
-        return mbHeaderRepository.findMBHeaderBasedOnbillDate(workOrderEstimateId,billDate,MBHeader.MeasurementBookStatus.APPROVED.toString(),MBHeader.MeasurementBookStatus.CANCELLED.toString());
+
+    public List<MBHeader> getMBHeaderBasedOnBillDate(final Long workOrderEstimateId, final Date billDate) {
+        return mbHeaderRepository.findMBHeaderBasedOnbillDate(workOrderEstimateId, billDate,
+                MBHeader.MeasurementBookStatus.APPROVED.toString(),
+                MBHeader.MeasurementBookStatus.CANCELLED.toString());
+    }
+
+    public List<Hashtable<String, Object>> getMeasurementsForMB(final MBHeader mBHeader) {
+        final List<Hashtable<String, Object>> measurementSheetList = new ArrayList<Hashtable<String, Object>>();
+        Hashtable<String, Object> measurementSheetMap = null;
+        int slno = 1;
+        List<String> characters = new ArrayList<String>(26);
+        for (char c = 'a'; c <= 'z'; c++) {
+            characters.add(String.valueOf(c));
+        }
+        for (MBDetails mbDetail : mBHeader.getMbDetails()) {
+            final WorkOrderActivity workOrderActivity = mbDetail.getWorkOrderActivity();
+            if (mbDetail != null && !mbDetail.getMeasurementSheets().isEmpty()) {
+                measurementSheetList.add(addMBDetails(mbDetail, slno));
+                int measurementSNo = 1;
+                for (MBMeasurementSheet mBMeasurement : mbDetail.getMeasurementSheets()) {
+                    measurementSheetMap = new Hashtable<String, Object>(0);
+                    measurementSheetMap.put("sNo", String.valueOf(slno) + characters.get((measurementSNo - 1) % 26));
+                    measurementSheetMap.put("scheduleCode", "");
+                    measurementSheetMap.put("scheduleCategory", "");
+                    measurementSheetMap.put("description",
+                            mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks());
+                    measurementSheetMap.put("woNo", mBMeasurement.getWoMeasurementSheet().getNo() != null
+                            ? mBMeasurement.getWoMeasurementSheet().getNo() : "");
+                    measurementSheetMap.put("woLength", mBMeasurement.getWoMeasurementSheet().getLength() != null
+                            ? mBMeasurement.getWoMeasurementSheet().getLength() : "");
+                    measurementSheetMap.put("woWidth", mBMeasurement.getWoMeasurementSheet().getWidth() != null
+                            ? mBMeasurement.getWoMeasurementSheet().getWidth() : "");
+                    measurementSheetMap.put("woDepthHeight",
+                            mBMeasurement.getWoMeasurementSheet().getDepthOrHeight() != null
+                                    ? mBMeasurement.getWoMeasurementSheet().getDepthOrHeight() : "");
+                    measurementSheetMap.put("woQuantity", mBMeasurement.getWoMeasurementSheet().getQuantity());
+                    measurementSheetMap.put("mbNo", mBMeasurement.getNo() != null ? mBMeasurement.getNo() : "");
+                    measurementSheetMap.put("mbLength",
+                            mBMeasurement.getLength() != null ? mBMeasurement.getLength() : "");
+                    measurementSheetMap.put("mbwidth",
+                            mBMeasurement.getWidth() != null ? mBMeasurement.getWidth() : "");
+                    measurementSheetMap.put("mbDepthHeight",
+                            mBMeasurement.getDepthOrHeight() != null ? mBMeasurement.getDepthOrHeight() : "");
+                    measurementSheetMap.put("mbQuantity", mBMeasurement.getQuantity());
+
+                    measurementSheetMap.put("rate", "");
+                    measurementSheetMap.put("uom", "");
+                    measurementSheetMap.put("amount", "");
+                    measurementSheetMap.put("completedMeasurement", "");
+                    measurementSNo++;
+                    measurementSheetList.add(measurementSheetMap);
+                }
+                
+
+                if (mbDetail.getMeasurementSheets().size() != 0) {
+                    measurementSheetMap = new Hashtable<String, Object>(0);
+                    measurementSheetMap.put("sNo", "");
+                    measurementSheetMap.put("scheduleCode", "");
+                    measurementSheetMap.put("scheduleCategory", "");
+                    measurementSheetMap.put("description", "");
+                    measurementSheetMap.put("woNo", "");
+                    measurementSheetMap.put("woLength", "");
+                    measurementSheetMap.put("woWidth", "");
+                    measurementSheetMap.put("woDepthHeight", "");
+                    measurementSheetMap.put("woQuantity", workOrderActivity.getApprovedQuantity());
+                    Double prevCumulaticeqty = getPreviousCumulativeQuantity(mBHeader.getId(),
+                            mbDetail.getWorkOrderActivity().getId());
+                    measurementSheetMap.put("completedMeasurement", BigDecimal.valueOf(mbDetail.getQuantity())
+                            .add(prevCumulaticeqty != null ? BigDecimal.valueOf(prevCumulaticeqty) : BigDecimal.ZERO));
+                    measurementSheetMap.put("mbNo", "");
+                    measurementSheetMap.put("mbLength", "");
+                    measurementSheetMap.put("mbwidth", "");
+                    measurementSheetMap.put("mbDepthHeight", "");
+                    measurementSheetMap.put("mbQuantity", mbDetail.getQuantity());
+                    measurementSheetMap.put("rate", workOrderActivity.getActivity().getEstimateRate());
+                    measurementSheetMap.put("uom", workOrderActivity.getActivity().getUom().getUom());
+                    measurementSheetMap.put("amount", BigDecimal.valueOf(workOrderActivity.getActivity().getRate())
+                            .multiply(BigDecimal.valueOf(mbDetail.getQuantity())));
+                    measurementSheetList.add(measurementSheetMap);
+                }
+            }
+            slno++;
+        }
+        return measurementSheetList;
+    }
+
+    private Hashtable<String, Object> addMBDetails(final MBDetails mbDetail, int slNo) {
+        final Hashtable<String, Object> measurementSheetMap = new Hashtable<String, Object>(0);
+        final WorkOrderActivity workOrderActivity = mbDetail.getWorkOrderActivity();
+        measurementSheetMap.put("sNo", slNo);
+        if (workOrderActivity.getActivity().getSchedule() != null) {
+            measurementSheetMap.put("scheduleCode", workOrderActivity.getActivity().getSchedule().getCode());
+            measurementSheetMap.put("scheduleCategory",
+                    workOrderActivity.getActivity().getSchedule().getScheduleCategory().getCode());
+            measurementSheetMap.put("description", workOrderActivity.getActivity().getSchedule().getDescription());
+        } else {
+            measurementSheetMap.put("scheduleCode", "N/A");
+            measurementSheetMap.put("scheduleCategory", "N/A");
+            measurementSheetMap.put("description", workOrderActivity.getActivity().getNonSor().getDescription());
+        }
+        measurementSheetMap.put("woNo", "");
+        measurementSheetMap.put("woLength", "");
+        measurementSheetMap.put("woWidth", "");
+        measurementSheetMap.put("woDepthHeight", "");
+        measurementSheetMap.put("woQuantity", "");
+        measurementSheetMap.put("mbNo", "");
+        measurementSheetMap.put("mbLength", "");
+        measurementSheetMap.put("mbwidth", "");
+        measurementSheetMap.put("mbDepthHeight", "");
+        measurementSheetMap.put("mbQuantity", "");
+        measurementSheetMap.put("completedMeasurement", "");
+        measurementSheetMap.put("rate", "");
+        measurementSheetMap.put("uom", "");
+        measurementSheetMap.put("completedMeasurement", "");
+        measurementSheetMap.put("amount", "");
+        return measurementSheetMap;
     }
 
 }
