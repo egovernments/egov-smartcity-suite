@@ -358,13 +358,7 @@
         <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/generatebill_forconsumercode.jsp"/> 
     </definition>
-    
-    <definition name="generatebill-consumercode" extends="base_layout">
-        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill_forconsumercode.jsp"/> 
-    </definition>
-    
-    <definition name="mobilePayment-form" extends="base_layout">
+     <definition name="mobilePayment-form" extends="base_layout">
         <put-attribute name="page-title" value="title.mobilepayment" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mobile/mobilepayment-form.jsp"/> 
     </definition>
