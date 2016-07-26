@@ -334,10 +334,22 @@ $(document).ready(function() {
 		});
 	});
 
-	makeAutoCompleteFields();
-
 	assetCategoryValue = $('#assetCategory').val();
 	customFieldsTitle = $('#customFieldsTitle').text();
+	
+	//This code is to remove egwstatus which are not sent from works module abstract estimate screen
+	var rowId = $('#rowId').val();
+	if(rowId !== '')
+	{
+		var assetStatus = $('#assetStatus').val();
+		$("#searchStatus option").each(function(i){
+	        if(assetStatus.indexOf($(this).text()) < 0)
+	        {
+	        	$("#searchStatus option[value="+$(this).val()+"]").remove();
+	        }
+	    });
+	}
+	makeAutoCompleteFields();
 
 });
 

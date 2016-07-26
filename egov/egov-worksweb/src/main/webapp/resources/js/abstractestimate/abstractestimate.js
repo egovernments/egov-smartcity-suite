@@ -330,7 +330,7 @@ $(document).ready(function(){
 
 	var $rowId = 0;
 	var index = 0;
-	$(document).on('click', '#tblassetdetails tbody tr', function() {
+	$(document).on('click', '#tblassetdetails tbody tr', function(e) {
 		$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
 		$rowId = $(this).find('span[id$="sno"]');
 		index = $rowId.text() - 1;
@@ -1464,7 +1464,7 @@ function updateUom(obj) {
 	calculateNonSorEstimateAmount($('#nonSorQuantity_' + rowId));
 }
 
-$(document).on('click', '#tblassetdetails tbody tr', function() {
+$(document).on('click', '#tblassetdetails tbody tr', function(e) {
 	$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
 	if($inputHiddenAssetId.val() && e.target.textContent !== " Search")
 	{
