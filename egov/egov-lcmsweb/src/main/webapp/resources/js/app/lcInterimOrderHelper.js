@@ -37,44 +37,55 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.service;
 
-import java.util.List;
+$(document).ready(function(){
 
-import org.egov.commons.EgwStatus;
-import org.egov.lcms.transactions.entity.Hearings;
-import org.egov.lcms.transactions.repository.HearingsRepository;
-import org.egov.lcms.utils.LegalCaseUtil;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-public class HearingsService {
-
-    @Autowired
-    private HearingsRepository hearingsRepository;
-    
-    @Autowired
-    private LegalCaseUtil legalCaseUtil;
-
-    @Transactional
-    public Hearings persist(final Hearings hearings) {
-        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        hearings.setStatus(statusObj);
-        hearings.getLegalCase().setStatus(statusObj);
-        return hearingsRepository.save(hearings);
-    }
-
-    public List<Hearings> findAll() {
-        return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
-    }
-
-    public Hearings findBy(final Long hearings) {
-        return hearingsRepository.findOne(hearings);
-    }
-
+	loadDateFields();
+	$('#interimOrder').change(function(){
+		loadDateFields();
+	});
+	
+	
+function loadDateFields(){
+	if ($('#interimOrder :selected').text().localeCompare("Stay") == 0 || 
+			$('#interimOrder :selected').text().localeCompare("Stay on Condition") ==0) { 
+		$("#staydetails").show();
+		}
+	else{
+		$("#staydetails").hide();
+	}
+	
+	if($('#interimOrder :selected').text().localeCompare("Report file") == 0) {  
+		$("#reportdetails1").show();
+    	$("#reportdetails2").show();
+	}else{
+		$("#reportdetails1").hide();
+    	$("#reportdetails2").hide();
+	}
+	
 }
+
+
+});
+
+$('#btnclose').click(function(){
+	bootbox.confirm({
+	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
+	    buttons: {
+	        'cancel': {
+	            label: 'No',
+	            className: 'btn-default pull-right'
+	        },
+	        'confirm': {
+	            label: 'Yes',
+	            className: 'btn-danger pull-right'
+	        }
+	    },
+	    callback: function(result) {
+	        if (result) {
+	             window.close();
+	        }
+	    }
+	});
+	
+});

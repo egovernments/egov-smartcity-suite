@@ -37,44 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.service;
+package org.egov.lcms.transactions.repository;
 
-import java.util.List;
+import org.egov.lcms.transactions.entity.LcInterimOrder;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.egov.commons.EgwStatus;
-import org.egov.lcms.transactions.entity.Hearings;
-import org.egov.lcms.transactions.repository.HearingsRepository;
-import org.egov.lcms.utils.LegalCaseUtil;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-public class HearingsService {
-
-    @Autowired
-    private HearingsRepository hearingsRepository;
-    
-    @Autowired
-    private LegalCaseUtil legalCaseUtil;
-
-    @Transactional
-    public Hearings persist(final Hearings hearings) {
-        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        hearings.setStatus(statusObj);
-        hearings.getLegalCase().setStatus(statusObj);
-        return hearingsRepository.save(hearings);
-    }
-
-    public List<Hearings> findAll() {
-        return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
-    }
-
-    public Hearings findBy(final Long hearings) {
-        return hearingsRepository.findOne(hearings);
-    }
+@Repository
+public interface LcInterimOrderRepository extends JpaRepository<LcInterimOrder, java.lang.Long> {
 
 }

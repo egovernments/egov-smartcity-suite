@@ -37,59 +37,77 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.lcms.web.controller.transactions;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
-import org.egov.lcms.masters.entity.enums.LCNumberType;
+import org.egov.lcms.masters.service.InterimOrderService;
+import org.egov.lcms.transactions.entity.LcInterimOrder;
 import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.service.LcInterimOrderService;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application/")
-public class CreateLegalcaseController extends GenericLegalCaseController {
+@RequestMapping("/lcinterimorder")
+public class LcInterimOrderController {
 
     @Autowired
-    private LegalCaseService legalCaseService;
+    private LcInterimOrderService lcInterimOrderService;
 
     @Autowired
-    private LegalCaseNumberGenerator legalCaseNumberGenerator;
+    private LegalCaseService legalcaseService;
 
-    @RequestMapping(value = "create/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final LegalCase legalcase, final Model model,
-            final HttpServletRequest request) {
-        model.addAttribute("legalcase", legalcase);
-        model.addAttribute("mode", "create");
-        return "legalCase-newForm";
+    @Autowired
+    private InterimOrderService interimOrderService;
+
+    private void prepareNewForm(final Model model) {
+        model.addAttribute("interimOrders", interimOrderService.findAll());
+
     }
 
-    @RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
-        if (errors.hasErrors())
-            return "legalCase-newForm";
-        if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
-            legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
-        else
-            legalCase.setLcnumber(
-                    legalCase.getLcNumber() + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
-       
-        legalCaseService.persist(legalCase);
-        redirectAttrs.addFlashAttribute("legalCase", legalCase);
-        model.addAttribute("message", "Legal Case created successfully.");
+    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.GET)
+    public String viewForm(@ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+            @PathVariable final String lcNumber, final Model model, final HttpServletRequest request) {
+        prepareNewForm(model);
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        model.addAttribute("legalCase", legalCase);
+        model.addAttribute("lcInterimOrder", lcInterimOrder);
         model.addAttribute("mode", "create");
-        return "legalcase-success";
+        return "lcinterimorder-new";
     }
 
+    @ModelAttribute
+    private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+        final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
+        return legalCase;
+    }
+
+    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
+            final HttpServletRequest request, final Model model) {
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            model.addAttribute("legalCase", legalCase);
+            return "lcinterimorder-new";
+        } else
+            lcInterimOrder.setLegalCase(legalCase);
+        lcInterimOrderService.persist(lcInterimOrder);
+        model.addAttribute("mode", "create");
+        redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
+        model.addAttribute("message", "LcInterim Order Created successfully.");
+        return "lcinterimorder-success";
+
+    }
 }

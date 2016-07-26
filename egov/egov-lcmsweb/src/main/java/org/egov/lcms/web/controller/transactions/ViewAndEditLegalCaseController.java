@@ -87,7 +87,7 @@ public class ViewAndEditLegalCaseController {
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "legalcase-edit";
-        legalCaseService.createLegalCase(legalCase);
+        legalCaseService.persist(legalCase);
         setDropDownValues(model);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");

@@ -303,6 +303,7 @@
 			</tbody>
 		</table>
 	</div>
+	</form:form>
 	<link rel="stylesheet"
 		href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 	<link rel="stylesheet"
