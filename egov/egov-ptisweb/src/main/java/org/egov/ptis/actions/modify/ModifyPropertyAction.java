@@ -819,10 +819,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         super.prepare();
         setUserInfo();
         setUserDesignations();
-        if(StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN)){
-            
-            System.out.println("List--------------------------------->"+userDesignationList);
-        }
         propertyByEmployee = propService.isEmployee(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().isEmpty()) {
             setBasicProp((BasicProperty) getPersistenceService().find(
