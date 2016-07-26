@@ -98,7 +98,7 @@ $(document).ready(function() {
 		});
 					
    });
-	$(document).on('click',"#res_delete_row",function (){
+	$(document).on('click',"#emp_delete_row",function (){
 		var table = document.getElementById('employeeDetails');
 	    var rowCount = table.rows.length;
 	    var counts = rowCount;
@@ -130,7 +130,7 @@ $(document).ready(function() {
 		addResRow();
 	});
 	
-	var  rowobj = '<tr class=""> <td class="text-right"><input type="text" class="form-control table-input text-left" data-pattern="alphanumerichyphenbackslash" name="positionTemplList[0].name" id="positionTemplList[0].name" maxlength="50"></td> <td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row" ><i class="fa fa-trash"></i></a></td> </tr>';
+	var  rowobj = '<tr class=""> <td class="text-right"><input type="text" class="form-control table-input text-left" data-pattern="alphanumerichyphenbackslash" name="positionTemplList[0].name" id="positionTemplList[0].name" maxlength="50"></td> <td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" id="emp_delete_row" ><i class="fa fa-trash"></i></a></td> </tr>';
 	var i = 1;
 	
 	function addResRow()
