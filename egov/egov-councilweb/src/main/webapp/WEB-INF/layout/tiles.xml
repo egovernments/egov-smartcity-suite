@@ -62,9 +62,12 @@
 	<definition name="error/*" extends="error">
 		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
-  
 
 
+<definition name="councilMeeting-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilMeeting-new.jsp"/>
+</definition>
 <definition name="councilmember-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.councilmember.new" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmember/councilmember-new.jsp"/>
