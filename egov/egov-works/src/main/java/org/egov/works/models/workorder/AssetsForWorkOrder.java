@@ -39,7 +39,7 @@
  */
 package org.egov.works.models.workorder;
 
-import org.egov.asset.model.Asset;
+import org.egov.assets.model.Asset;
 import org.egov.infstr.models.BaseModel;
 
 public class AssetsForWorkOrder extends BaseModel {

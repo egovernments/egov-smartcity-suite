@@ -302,4 +302,22 @@
 	<put-attribute name="body" value="/WEB-INF/views/judgment/judgment-success.jsp"/>
 </definition>
 
+<definition name="legalcase-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.editcase" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/legalcase-edit.jsp"/>
+</definition>
+
+<definition name="legalcase-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.createcase" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/legalcase-success.jsp"/>
+</definition>
+<definition name="hearings-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/hearings-success.jsp"/>
+</definition>
+<definition name="hearings-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/hearings-new.jsp"/>
+</definition>
+
 </tiles-definitions>

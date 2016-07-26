@@ -252,8 +252,9 @@ public class GenerateConnectionBillController {
         final List<InputStream> pdfs = new ArrayList<InputStream>();
 
         for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+        	if(connectionbill!=null){
             try {
-
+            	
                 final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
                         connectionbill.getHscNo(), connectionbill.getApplicationType());
                 if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null) {
@@ -267,6 +268,7 @@ public class GenerateConnectionBillController {
                 LOGGER.debug("Entered into executeJob" + e);
                 continue;
             }
+        	}
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {

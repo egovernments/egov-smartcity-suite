@@ -274,41 +274,9 @@
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
 	</bean>
 
-	 <bean class="org.egov.asset.service.AppService" id="appService"
-		scope="prototype">
-	</bean>
-	<bean class="org.egov.asset.service.CommonAssetsService" id="commonAssetsService"
-		scope="prototype">
-		<property name="genericService" ref="persistenceService" />
-		<property name="assetCategoryService" ref="assetCategoryService" />
-		<property name="assetService" ref="assetService" />
-	</bean>
-	<bean class="org.egov.asset.model.AssetCategoryNumberGenrator" id="assetCategoryNumberGenrator">
-	</bean>
-	<bean class="org.egov.asset.service.impl.AssetCategoryServiceImpl"
-		id="assetCategoryService" scope="prototype">
-		<constructor-arg>
-			<bean parent="persistenceService">
-				<property name="type" value="org.egov.asset.model.AssetCategory" />
-			</bean>
-		</constructor-arg>
-		<!-- <property name="genericService" ref="persistenceService" /> -->
-		<property name="appService" ref="appService" />
-		<property name="assetCategoryNumberGenrator" ref="assetCategoryNumberGenrator" />
-	</bean>
-	<bean class="org.egov.asset.model.AssetNumberGenrator" id="assetNumberGenrator">
-	</bean>
-	<bean class="org.egov.asset.service.impl.AssetServiceImpl" id="assetService"
-		scope="prototype">
-		<constructor-arg>
-			<bean parent="persistenceService">
-				<property name="type" value="org.egov.asset.model.Asset" />
-			</bean>
-		</constructor-arg>
-		<!-- <property name="genericService" ref="persistenceService" /> -->
-		<property name="appService" ref="appService" />
-		<property name="assetNumberGenrator" ref="assetNumberGenrator" />
-	</bean>
+	 
+	
+	
 	<bean class="org.egov.works.services.WorkOrderWFService" id="workOrderWFService"
 		parent="persistenceService" scope="prototype">
 		<!-- 	<property name="employeeServiceOld" ref="employeeServiceOld" /> -->

@@ -259,7 +259,7 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
     </definition>
      <definition name="generateBill-Report" extends="base_layout">	 
-        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="page-title" value="title.searchbill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
     </definition>
     <definition name="water-source-master" extends="base_layout">
@@ -353,5 +353,9 @@
     <definition name="editCollection-Ack" extends="base_layout">
         <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editCollection-Ack.jsp"/> 
+    </definition>
+    <definition name="generatebill-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill_forconsumercode.jsp"/> 
     </definition>
 </tiles-definitions>

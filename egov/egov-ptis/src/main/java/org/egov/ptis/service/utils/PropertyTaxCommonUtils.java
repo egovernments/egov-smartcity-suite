@@ -73,9 +73,12 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -102,6 +105,9 @@ public class PropertyTaxCommonUtils {
     
     @Autowired
     private ApplicationContext beanProvider;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
 
     /**
      * Gives the first half of the current financial year
@@ -242,4 +248,29 @@ public class PropertyTaxCommonUtils {
     	DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
     	demandBillService.makeDemandBillInactive(assessmentNo);
     }
+
+    /**
+     * Fetches a list of all the designations for the given userId
+     * 
+     * @param userId
+     * @return designations for the given userId
+     */
+    public String getAllDesignationsForUser(final Long userId) {
+        List<Position> positions = null;
+        List<String> designationList = new ArrayList<String>();
+        StringBuilder listString = new StringBuilder();
+        if (userId != null && userId.intValue() != 0) {
+            positions = positionMasterService.getPositionsForEmployee(userId);
+            if (positions != null){
+                for (Position position : positions)
+                    designationList.add(position.getDeptDesig().getDesignation().getName());
+
+                for (String s : designationList)
+                listString.append(s + ", ");
+            }
+        }
+
+        return listString.toString();
+    }
+
 }

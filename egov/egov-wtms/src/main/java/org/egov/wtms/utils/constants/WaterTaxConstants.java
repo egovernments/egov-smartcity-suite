@@ -240,6 +240,8 @@ public class WaterTaxConstants {
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
+    public static final String  GENERATEBILL ="GENERATEBILL";
+    public static final String  PREVIOUS_SECOND_HALF ="Previous 2nd Half";
 
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {

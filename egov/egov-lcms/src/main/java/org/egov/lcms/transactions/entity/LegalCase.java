@@ -82,7 +82,7 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "EGLC_LEGALCASE")
 // @CompareDates(fromDate = "caseReceivingDate", toDate = "caseDate", dateFormat
 // = "dd/MM/yyyy", message = "fgfgf ggffg date")
-@Unique(fields = { "casenumber", "lcNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
+@Unique(fields = { "caseNumber", "lcNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
         "LCNUMBER" }, message = "casenumber.name.isunique")
 @SequenceGenerator(name = LegalCase.SEQ_LEGALCASE_TYPE, sequenceName = LegalCase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
 public class LegalCase extends AbstractAuditable {

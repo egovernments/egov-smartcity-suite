@@ -67,8 +67,8 @@
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:hidden name="modelId" id="modelId" value="%{id}" />
 					<tr>
-						<s:if test="mode == 'create' && (@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) ||
-						@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn))">
+						<s:if test="mode == 'create' && (userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT) ||
+						userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT))">
 							<s:if test="%{applicationNo != null && !applicationNo.isEmpty()}">
 								<td colspan="5" style="font-size: 15px;" align="center"><s:property value="%{ackMessage}" /> <span
 									class="bold"><s:property value="%{approverName}"/></span><s:property value="%{applicationNoMessage}"/><span

@@ -87,6 +87,7 @@ public class EditJudgmentController {
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
         model.addAttribute("judgment", judgmentObj);
+        model.addAttribute("mode", "edit");
         return "judgment-edit";
     }
 
@@ -101,6 +102,7 @@ public class EditJudgmentController {
         judgmentService.persist(judgment);
         redirectAttrs.addFlashAttribute("judgment", judgment);
         model.addAttribute("message", "Judgment updated successfully.");
+        model.addAttribute("mode", "edit");
         return "judgment-success";
     }
 

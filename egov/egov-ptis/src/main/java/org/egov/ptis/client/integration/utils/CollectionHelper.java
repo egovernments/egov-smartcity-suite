@@ -175,7 +175,7 @@ public class CollectionHelper {
      * @param amountPaid
      * @return
      */
-    private BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType, String source) {
+    public BillInfoImpl prepareBillInfo(BigDecimal amountPaid, COLLECTIONTYPE collType, String source) {
         BillInfoImpl billInfoImpl = initialiseFromBill(amountPaid, collType);
 
         ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>();

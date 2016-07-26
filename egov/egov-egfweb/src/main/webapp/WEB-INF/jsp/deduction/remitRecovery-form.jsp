@@ -313,6 +313,13 @@ function validateRemit(){
 String.prototype.trim = function () {
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
 }
+
+function resetSubmit()
+{
+	document.remitRecoveryForm.action='/EGF/deduction/remitRecovery-newform.action';
+	document.remitRecoveryForm.submit();
+	
+	}
 </script>
 <style type="text/css">
 #codescontainer {

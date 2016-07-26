@@ -50,7 +50,7 @@
 			</generator>
 		</id>
 		<many-to-one name="egbill" column="BILLREGISTER_ID" insert="false" update="false"/>
-		<many-to-one name="asset" class="org.egov.asset.model.Asset" column="ASSET_ID" fetch="select" />
+		<many-to-one name="asset" class="org.egov.assets.model.Asset" column="ASSET_ID" fetch="select" />
 		<many-to-one name="coa" class="org.egov.commons.CChartOfAccounts" column="COA_ID" fetch="select" />
 		<property name="amount">
 			<column name="AMOUNT" not-null="true"/>

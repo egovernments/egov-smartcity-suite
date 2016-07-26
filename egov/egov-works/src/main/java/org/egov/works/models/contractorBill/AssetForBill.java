@@ -39,7 +39,7 @@
  */
 package org.egov.works.models.contractorBill;
 
-import org.egov.asset.model.Asset;
+import org.egov.assets.model.Asset;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;

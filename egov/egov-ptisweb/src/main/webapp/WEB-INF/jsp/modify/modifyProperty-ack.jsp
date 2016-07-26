@@ -99,8 +99,8 @@
 			</div>
 			<s:hidden name="modifyRsn" value="%{modifyRsn}"/>
 			<div class="buttonbottom" align="center">
-				<s:if test="%{(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.equalsIgnoreCase(userDesgn) || 
-							@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.equalsIgnoreCase(userDesgn)) && !wfInitiatorRejected}">
+				<s:if test="%{(userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT) || 
+							userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT)) && !wfInitiatorRejected}">
 					<s:submit value="Print" name="PrintAck" id="PrintAck"  method="printAck" cssClass="buttonsubmit" onclick="return onSubmit();" />
 				</s:if>
 				&nbsp;

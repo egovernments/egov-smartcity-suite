@@ -43,250 +43,277 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <form:form method="post" action="create"
-	class="form-horizontal form-groups-bordered" modelAttribute="judgment"
-	id="judgmentForm">
+	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
+	id="legalCaseForm">
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-body custom-form ">
-				<c:if test="${not empty message}">
-					<div class=role="alert">${message}</div>
-				</c:if>
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="title.legalCase.view" />
+				<div class="panel-body custom-form ">
+					<c:if test="${not empty message}">
+						<div class=role="alert">${message}</div>
+					</c:if>
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="title.legalCase.view" />
+						</div>
 					</div>
+					<div class="panel-body">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.courttype" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.courtMaster.courtType.courtType}" />
+							</div>
+
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.petitiontype" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.petitionTypeMaster.code}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.court" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.courtMaster.name}" />
+							</div>
+							<div class="col-xs-3 add-margin">Case Type</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.caseTypeMaster.code}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.caseNumber" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.caseNumber}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.lcnumber" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.lcNumber}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.casedate" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.caseDate}" var="casedate" />
+								<c:out value="${casedate}" />
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.previouscaseNumber" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.appealNum}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.title" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.caseTitle}" />
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.prayer" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.prayer}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.case.receivingdate" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.caseReceivingDate}" var="casercdate" />
+								<c:out value="${casercdate}" />
+							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.caDue.date" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.caDueDate}" var="caduedate" />
+								<c:out value="${caduedate}" />
+							</div>
+						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.fieldbycarp" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${legalCase.isfiledbycorporation}</div>
+						</div>
+
+
+					</div>
+
 				</div>
-				<div class="panel-body">
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.courttype" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.courtMaster.courtType.courtType}" />
-						</div>
-
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.petitiontype" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.petitionTypeMaster.code}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.court" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.courtMaster.name}" />
-						</div>
-						<div class="col-xs-3 add-margin">Case Type</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.caseTypeMaster.code}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.caseNumber" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.caseNumber}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.lcnumber" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.lcNumber}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.casedate" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${legalCase.caseDate}" var="casedate" />
-							<c:out value="${casedate}" />
-						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.previouscaseNumber" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.appealNum}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.title" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.caseTitle}" />
-						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.prayer" />
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<c:out value="${legalCase.prayer}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.case.receivingdate" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${legalCase.caseReceivingDate}" var="casercdate" />
-							<c:out value="${casercdate}" />
-						</div>
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.caDue.date" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate pattern="dd/MM/yyyy"
-								value="${legalCase.caDueDate}" var="caduedate" />
-							<c:out value="${caduedate}" />
-						</div>
-					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.fieldbycarp" />
-						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${legalCase.isfiledbycorporation}</div>
-					</div>
-
-
-				</div>
-
 			</div>
 		</div>
-	</div>
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message code="lbl.bipartisanDetails.details" />
+		<div class="row form-group">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.bipartisanDetails.details" />
+				</div>
+			</div>
+			<table class="table table-striped table-bordered"
+				id="petitionDetails">
+				<thead>
+					<tr>
+						<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+						<th class="text-center"><spring:message code="lbl.name" /><span
+							class="mandatory"></span></th>
+						<th class="text-center"><spring:message
+								code="lbl.discription" /></th>
+						<th class="text-center"><spring:message
+								code="lbl.contactnumber" /></th>
+						<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach var="bipartisanDetails"
+						items="${legalCase.getPetitioners()}" varStatus="status">
+
+						<tr>
+							<td><form:input type="hidden"
+									id="bipartisanDetails[${status.index}].isRespondentGovernment"
+									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
+
+								<input type="text"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.isRespondentGovernment}" /></td>
+							<td><form:input type="hidden"
+									id="bipartisanDetails[${status.index}].name"
+									path="bipartisanDetails[${status.index}].name" /> <input
+								type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${bipartisanDetails.name}" /></td>
+							<td><form:input type="hidden"
+									id="bipartisanDetails[${status.index}].address"
+									path="bipartisanDetails[${status.index}].address" /> <input
+								type="text" id="table_address${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center" value="${bipartisanDetails.address}" />
+							</td>
+
+							<td><form:input type="hidden"
+									id="bipartisanDetails[${status.index}].contactNumber"
+									path="bipartisanDetails[${status.index}].contactNumber" /> <input
+								type="text" id="table_contactNumber${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.contactNumber}" /></td>
+
+							<td><form:input type="hidden"
+									id="bipartisanDetails[${status.index}].governmentDepartment"
+									path="bipartisanDetails[${status.index}].governmentDepartment" />
+								<input type="text"
+								id="table_governmentDepartment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.governmentDepartment}" /></td>
+
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
 		</div>
-	</div>
-	<table class="table table-striped table-bordered" id="petitionDetails">
-		<thead>
-			<tr>
-				<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
-				<th class="text-center"><spring:message code="lbl.name" /><span
-					class="mandatory"></span></th>
-				<th class="text-center"><spring:message code="lbl.discription" /></th>
-				<th class="text-center"><spring:message
-						code="lbl.contactnumber" /></th>
-				<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-				<th class="text-center"><spring:message
-						code="lbl.add/delete_pet" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="">
-				<td class="text-center"><input type="checkbox" id="activeid"
-					name="bipartisanDetails[0].isRespondentGovernment"
-					id="bipartisanDetails[0].isRespondentGovernment"
-					readonly="readonly" onblur="onChangeofPetitioncheck()" /></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input text-right"
-					data-pattern="alphanumerichyphenbackslash"
-					name="bipartisanDetails[0].name" id="bipartisanDetails[0].name"
-					readonly="readonly" maxlength="50" required="required"></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input"
-					name="bipartisanDetails[0].address" readonly="readonly"
-					id="bipartisanDetails[0].address" maxlength="256"></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input text-right patternvalidation"
-					data-pattern="number" name="bipartisanDetails[0].contactNumber"
-					readonly="readonly" id="bipartisanDetails[0].contactNumber"
-					maxlength="10"></td>
-				<td class="text-right"><form:select path=""
-						data-first-option="false"
-						name="bipartisanDetails[0].governmentDepartment"
-						readonly="readonly" id="bipartisanDetails[0].governmentDepartment"
-						cssClass="form-control" onfocus="callAlertForDepartment();"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${govtDeptList}" itemValue="id"
-							itemLabel="code" />
-					</form:select></td>
-				<td class="text-center" readonly="readonly"><a
-					href="javascript:void(0);" class="btn-sm btn-default"
-					onclick="addPetRow();"><i class="fa fa-plus"></i></a> <a
-					href="javascript:void(0);" class="btn-sm btn-default"
-					id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
-			</tr>
-		</tbody>
-	</table>
-
-	<div class="panel-heading">
-		<div class="panel-title">
-			<spring:message code="lbl.bipartisanDetails.respondant" />
+		<div class="panel-heading">
+			<div class="panel-title">
+				<spring:message code="lbl.bipartisanDetails.respondant" />
+			</div>
 		</div>
+		<table class="table table-striped table-bordered"
+			id="respodantDetails">
+			<thead>
+				<tr>
+					<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+					<th class="text-center"><spring:message code="lbl.name" /><span
+						class="mandatory"></span></th>
+					<th class="text-center"><spring:message code="lbl.discription" /></th>
+					<th class="text-center"><spring:message
+							code="lbl.contactnumber" /></th>
+					<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<c:forEach var="bipartisanDetailsBeanList"
+					items="${legalCase.getRespondents()}" varStatus="status">
+					<tr>
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
+								path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
+
+							<input type="text"
+							id="table_isRespondentGovernment${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.isRespondentGovernment}" /></td>
+
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].name"
+								path="bipartisanDetailsBeanList[${status.index}].name" /> <input
+							type="text" id="table_name${status.index}" class="form-control"
+							readonly="readonly" style="text-align: center"
+							value="${bipartisanDetailsBeanList.name}" /></td>
+
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].address"
+								path="bipartisanDetailsBeanList[${status.index}].address" /> <input
+							type="text" id="table_address${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.address}" /></td>
+
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].contactNumber"
+								path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
+							<input type="text" id="table_contactNumber${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
+
+						<td><form:input type="hidden"
+								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
+								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
+							<input type="text" id="table_governmentDepartment${status.index}"
+							class="form-control" readonly="readonly"
+							style="text-align: center"
+							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
 	</div>
-	<table class="table table-striped table-bordered" id="respodantDetails">
-		<thead>
-			<tr>
-				<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
-				<th class="text-center"><spring:message code="lbl.name" /><span
-					class="mandatory"></span></th>
-				<th class="text-center"><spring:message code="lbl.discription" /></th>
-				<th class="text-center"><spring:message
-						code="lbl.contactnumber" /></th>
-				<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-				<th class="text-center"><spring:message
-						code="lbl.add/delete_pet" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="">
-				<td class="text-center"><input type="checkbox" id="activeid"
-					name="bipartisanDetailsBeanList[0].isRespondentGovernment"
-					readonly="readonly"
-					id="bipartisanDetailsBeanList[0].isRespondentGovernment"
-					onblur="onChangeofRespodantcheck()" /></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input text-right"
-					data-pattern="alphanumerichyphenbackslash"
-					name="bipartisanDetailsBeanList[0].name" readonly="readonly"
-					id="bipartisanDetailsBeanList[0].name" maxlength="50"
-					required="required"></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input"
-					name="bipartisanDetailsBeanList[0].address" readonly="readonly"
-					id="bipartisanDetailsBeanList[0].address" maxlength="256"></td>
-				<td class="text-right"><input type="text"
-					class="form-control table-input text-right patternvalidation"
-					data-pattern="number"
-					name="bipartisanDetailsBeanList[0].contactNumber"
-					readonly="readonly" id="bipartisanDetailsBeanList[0].contactNumber"
-					maxlength="10"></td>
-				<td class="text-right"><form:select path=""
-						data-first-option="false"
-						name="bipartisanDetailsBeanList[0].governmentDepartment"
-						readonly="readonly"
-						id="bipartisanDetailsBeanList[0].governmentDepartment"
-						cssClass="form-control" onfocus="callAlertForDepartment();"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${govtDeptList}" itemValue="id"
-							itemLabel="code" />
-					</form:select></td>
-
-				<td class="text-center" readonly="readonly"><a
-					href="javascript:void(0);" class="btn-sm btn-default"
-					onclick="addResRow();"><i class="fa fa-plus"></i></a> <a
-					href="javascript:void(0);" class="btn-sm btn-default"
-					id="res_delete_row"><i class="fa fa-trash"></i></a></td>
-			</tr>
-		</tbody>
-	</table>
-
-</form:form>
+	<link rel="stylesheet"
+		href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	<link rel="stylesheet"
+		href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	<script
+		src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script
+		src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	<script
+		src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>

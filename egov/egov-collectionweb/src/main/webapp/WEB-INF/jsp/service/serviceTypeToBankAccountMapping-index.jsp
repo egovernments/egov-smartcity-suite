@@ -117,9 +117,9 @@
 								name="service.master.accountnumber" /> </td>
 						<td class="bluebox"><s:select headerKey="-1"
 								headerValue="----Choose----" name="bankAccountId"
-								id="bankAccountId" cssClass="selectwk" value="%{bankAccountId.id}"
+								id="bankAccountId" cssClass="selectwk" 
 								list="dropdownData.bankAccountIdList" listKey="id"
-								listValue="accountnumber"  /></td>
+								listValue="accountnumber" value="%{bankAccountId.id}" /></td>
 					</tr>
 					<tr>
 						<td class="bluebox">&nbsp;</td>

@@ -2213,11 +2213,15 @@ public class PropertyTaxUtil {
     }
 
     public String getApproverUserName(final Long approvalPosition) {
-        Assignment assignment = null;
-        if (approvalPosition != null)
-            assignment = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-        return assignment != null ? assignment.getEmployee().getName().concat("~")
-                .concat(assignment.getPosition().getName()) : "";
+        Position approverPosition=null;
+        User approverUser=null;
+        if (approvalPosition != null){
+            
+            approverPosition=positionMasterService.getPositionById(approvalPosition);
+            approverUser = eisCommonService.getUserForPosition(approvalPosition, new Date());
+        }
+        return approverUser != null ? approverUser.getName().concat("~")
+                .concat(approverPosition.getName()) : "";
     }
 
     public boolean enableVacancyRemission(String upicNo) {

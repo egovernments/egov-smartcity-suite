@@ -47,11 +47,14 @@ import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -76,6 +79,10 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
     private EgBillDao egBillDAO;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Override
     @Transactional
@@ -85,11 +92,9 @@ public class MutationFeeCollection extends TaxCollection {
         propertyMutation.setReceiptDate(bri.getReceiptDate());
         propertyMutation.setReceiptNum(bri.getReceiptNum());
         String nextAction = null;
-        if (ADDTIONAL_RULE_FULL_TRANSFER.equals(propertyMutation.getType())) {
-            nextAction = WF_STATE_REGISTRATION_PENDING;
-        } else {
-            nextAction = WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
-        }
+        final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+        nextAction=wFMatrix.getNextAction();
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
                 .withOwner(propertyMutation.getState().getOwnerPosition())
                 .withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)

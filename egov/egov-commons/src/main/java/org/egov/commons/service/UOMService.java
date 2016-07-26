@@ -89,4 +89,10 @@ public class UOMService {
         else
             return uomRepository.findAll();
     }
+
+    public List<UOM> findAllOrderByCategory() {
+        return uomRepository.findAllByOrderByUomCategoryIdAsc();
+    }
+    
+        
 }

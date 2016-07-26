@@ -41,6 +41,7 @@ package org.egov.collection.integration.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,11 +49,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillInfo;
+import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.PaymentInfo;
@@ -62,6 +66,7 @@ import org.egov.collection.integration.models.PaymentInfoChequeDD;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
+import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
@@ -70,20 +75,25 @@ import org.egov.commons.Fund;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Collections integration service implementation - exposes APIs that can be used by other applications (typically billing
  * systems) to interact with the collections module.
  */
+@Transactional(readOnly = true)
 public class CollectionIntegrationServiceImpl extends PersistenceService<ReceiptHeader, Long> implements
         CollectionIntegrationService {
 
@@ -114,14 +124,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-
-    public void setCollectionCommon(final CollectionCommon collectionCommon) {
-        this.collectionCommon = collectionCommon;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
+    @Autowired
+    private CollectionApplicationProperties collectionApplicationProperties;
+    @Autowired
+    private FundHibernateDAO fundDAO;
 
     /*
      * (non-Javadoc)
@@ -211,8 +217,7 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     }
 
     @Override
-    public RestReceiptInfo getDetailsByTransactionId(final PaymentInfoSearchRequest paymentInfoSearchRequest)
-    {
+    public RestReceiptInfo getDetailsByTransactionId(final PaymentInfoSearchRequest paymentInfoSearchRequest) {
         LOGGER.info(paymentInfoSearchRequest.getSource());
         final ReceiptHeader header = find("from ReceiptHeader r where r.manualreceiptnumber=? and r.source=? ",
                 paymentInfoSearchRequest.getTransactionId(), paymentInfoSearchRequest.getSource());
@@ -273,10 +278,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             receiptHeader.setCreatedBy(user);
             receiptHeader.setLastModifiedBy(user);
             receiptHeader.setLastModifiedDate(new Date());
-            // TODO: Uncomment following lines once LocationId is added to ThreadLocals
+            // TODO: Uncomment following lines once LocationId is added to
+            // ThreadLocals
             /*
              * if (ApplicationThreadLocals.getLocationId() != null) { final Location location =
-             * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId()); if (location != null)
+             * collectionsUtil.getLocationById(ApplicationThreadLocals .getLocationId()); if (location != null)
              * receiptHeader.setLocation(location); }
              */
         }
@@ -357,7 +363,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             return null;
         else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
-                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
+                receipts.add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService,
+                        null));
             return receipts;
         }
 
@@ -396,10 +403,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
         if (ApplicationThreadLocals.getUserId() != null)
             receiptHeader.setCreatedBy(collectionsUtil.getUserById(ApplicationThreadLocals.getUserId()));
-        // TODO: Uncomment following lines once LocationId is added to ThreadLocals
+        // TODO: Uncomment following lines once LocationId is added to
+        // ThreadLocals
         /*
          * if (ApplicationThreadLocals.getLocationId() != null) { final Location location =
-         * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId()); if (location != null)
+         * collectionsUtil.getLocationById(ApplicationThreadLocals.getLocationId ()); if (location != null)
          * receiptHeader.setLocation(location); }
          */
 
@@ -512,12 +520,10 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
         final List<ReceiptHeader> receiptHeaders = findAllByNamedQuery(
                 CollectionConstants.QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE, aggrReq.getFromdate(), aggrReq.getTodate(),
                 aggrReq.getServicecode(), aggrReq.getSource());
-        if (receiptHeaders == null || receiptHeaders.isEmpty())
-        {
+        if (receiptHeaders == null || receiptHeaders.isEmpty()) {
             receipts.add(new RestReceiptInfo());
             return receipts;
-        }
-        else {
+        } else {
             for (final ReceiptHeader receiptHeader : receiptHeaders)
                 receipts.add(new RestReceiptInfo(receiptHeader));
             return receipts;
@@ -535,8 +541,8 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             throw new RuntimeException("Invalid receiptNumber:" + cancelReq.getReceiptNo());
         else if (!cancelReq.getTransactionId().equals(receiptHeaderToBeCancelled.getManualreceiptnumber()))
             throw new RuntimeException("transactionId doesnot match with receiptNo  " + cancelReq.getReceiptNo());
-        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled.getStatus()
-                .getCode()))
+        else if (CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED.equalsIgnoreCase(receiptHeaderToBeCancelled
+                .getStatus().getCode()))
             throw new RuntimeException("Receipt is already Cancelled  " + cancelReq.getReceiptNo());
 
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
@@ -599,6 +605,92 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                 CollectionConstants.QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER, receiptNumber);
 
         return receiptDetList;
+    }
+
+    @Override
+    @Transactional
+    public PaymentRequest processMobilePayments(final BillInfoImpl billInfo) throws ValidationException {
+        ReceiptHeader receiptHeader = new ReceiptHeader();
+        BigDecimal totalAmountToBeCollected = BigDecimal.ZERO;
+
+        final Fund fund = fundDAO.fundByCode(billInfo.getFundCode());
+
+        if (fund == null)
+            throw new ValidationException(Arrays.asList(new ValidationError("billreceipt.improperbilldata.missingfund",
+                    "billreceipt.improperbilldata.missingfund")));
+
+        final Department dept = (Department) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_DEPARTMENT_BY_CODE, billInfo.getDepartmentCode());
+
+        if (dept == null)
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("billreceipt.improperbilldata.missingdepartment",
+                            "billreceipt.improperbilldata.missingdepartment")));
+
+        receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(billInfo, fund, dept);
+        totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
+        for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
+            rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
+
+        if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
+            LOGGER.info("Amount to be collected is less than zero, hence cannot proceed.");
+            throw new ValidationException(Arrays.asList(new ValidationError(
+                    "billreceipt.totalamountlessthanzero.error", "billreceipt.totalamountlessthanzero.error")));
+        } else
+            receiptHeader.setTotalAmount(totalAmountToBeCollected.setScale(
+                    CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
+
+        final ServiceDetails paymentService = (ServiceDetails) persistenceService.findByNamedQuery(
+                CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
+
+        if (receiptHeader.getStatus() == null) {
+            receiptHeader.setReceiptdate(new Date());
+            // receiptHeader.setReferencenumber(billInfo.getTransactionReferenceNumber());
+            receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
+            receiptHeader.setIsModifiable(Boolean.FALSE);
+            // recon flag should be set as false when the receipt is
+            // actually
+            // created on successful online transaction
+            receiptHeader.setIsReconciled(Boolean.TRUE);
+            receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION);
+            receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
+            receiptHeader.setSource(Source.MOBILE.toString());
+            BigDecimal debitAmount = BigDecimal.ZERO;
+            // TODO: Clarification
+            // calculate sum of creditamounts as a debit value to
+            // create a
+            // debit account head and add to receipt details
+            for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+                receiptDetail.setCramount(receiptDetail.getCramount());
+                debitAmount = debitAmount.add(receiptDetail.getCramount());
+                debitAmount = debitAmount.subtract(receiptDetail.getDramount());
+            }
+            // end of outer for loop
+            receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount, receiptHeader,
+                    BigDecimal.ZERO, receiptHeader.getTotalAmount(), CollectionConstants.INSTRUMENTTYPE_ONLINE));
+
+            // Add Online Payment Details
+            final OnlinePayment onlinePayment = new OnlinePayment();
+
+            onlinePayment.setStatus(collectionsUtil.getStatusForModuleAndCode(
+                    CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
+                    CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING));
+            onlinePayment.setReceiptHeader(receiptHeader);
+            onlinePayment.setService(paymentService);
+
+            receiptHeader.setOnlinePayment(onlinePayment);
+        }
+        receiptHeaderService.persistReceiptObject(receiptHeader);
+
+        return collectionCommon.createPaymentRequest(paymentService, receiptHeader);
+    }// end of method
+
+    public void setCollectionCommon(final CollectionCommon collectionCommon) {
+        this.collectionCommon = collectionCommon;
+    }
+
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
     }
 
 }

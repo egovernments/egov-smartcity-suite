@@ -1387,12 +1387,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                         .withStateValue(PropertyTaxConstants.WF_STATE_REJECTED).withOwner(position)
                         .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
                         .withDateInfo(new DateTime().toDate()).withComments(approverComments);
-
-                final Assignment assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(
-                        position.getId(), new Date());
-                if (assignment != null)
-                    addActionMessage(getText("objection.forward",
-                            new String[] { assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) }));
+                String actionMessage = propertyTaxUtil.getApproverUserName(position.getId());
+                if (actionMessage != null)
+                    addActionMessage(getText("objection.forward", new String[] { actionMessage }));
             }
 
         } else if (workFlowAction.equalsIgnoreCase("Reject") || workFlowAction.equalsIgnoreCase("reject")) {

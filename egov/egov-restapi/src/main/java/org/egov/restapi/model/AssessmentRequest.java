@@ -47,6 +47,7 @@ public class AssessmentRequest {
     private String mobileNumber;
     private String ulbCode;
     private String applicationNo;
+    private String category;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -59,6 +60,7 @@ public class AssessmentRequest {
     @Override
     public String toString() {
         return "AssessmentRequest [assessmentNo=" + assessmentNo + "ownerName=" + ownerName + "mobileNumber=" + mobileNumber
+                + "category=" + category
                 + "]";
     }
 
@@ -86,12 +88,20 @@ public class AssessmentRequest {
         this.mobileNumber = mobileNumber;
     }
 
-	public String getApplicationNo() {
-		return applicationNo;
-	}
+    public String getApplicationNo() {
+        return applicationNo;
+    }
 
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
 }

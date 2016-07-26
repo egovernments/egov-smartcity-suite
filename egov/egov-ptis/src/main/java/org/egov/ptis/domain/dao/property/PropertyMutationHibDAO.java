@@ -112,10 +112,14 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	
 	@Override
 	public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo) {
-	    String query = "from PropertyMutation where basicProperty.upicNo = :assessmentNo order by mutationDate desc";
+		PropertyMutation propertyMutation = null;
+		String query = "from PropertyMutation where basicProperty.upicNo = :assessmentNo order by mutationDate desc";
 	    Query qry = getCurrentSession().createQuery(query);
 	    qry.setParameter("assessmentNo", assessmentNo);
-	    PropertyMutation propertyMutation = (PropertyMutation) qry.list().get(0);
+	    List<PropertyMutation> mutationList = qry.list();
+	    if(!mutationList.isEmpty()){
+	    	propertyMutation = mutationList.get(0);
+	    }
 	    return propertyMutation;
 	}
 }
