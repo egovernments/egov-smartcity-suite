@@ -965,7 +965,10 @@ public class EstimateService {
                 && abstractEstimate.getEstimateValue().compareTo(lineEstimateDetails.getEstimateAmount()) == 1) {
             final BigDecimal diffValue = abstractEstimate.getEstimateValue()
                     .subtract(lineEstimateDetails.getEstimateAmount());
-            bindErrors.reject("error.estimatevalue.greater", new String[] { diffValue.toString() },
+            bindErrors.reject("error.estimatevalue.greater",
+                    new String[] { diffValue.toString(), abstractEstimate.getEstimateValue().toString(),
+                            lineEstimateDetails.getEstimateAmount().setScale(2, BigDecimal.ROUND_UP)
+                                    .toString() },
                     "error.estimatevalue.greater");
         }
     }
