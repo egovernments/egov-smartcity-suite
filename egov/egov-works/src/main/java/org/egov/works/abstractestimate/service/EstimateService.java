@@ -289,7 +289,13 @@ public class EstimateService {
                 for (final Activity oldActivity : abstractEstimate.getNonSORActivities())
                     if (oldActivity.getId().equals(activity.getId()))
                         updateActivity(oldActivity, activity);
-
+        if (LOG.isDebugEnabled())
+        {
+        for(Activity ac:abstractEstimate.getActivities())
+        {
+        	LOG.debug(ac.getMeasurementSheetList().size()+"    "+ac.getQuantity());
+        }
+        }
         
         for(Activity ac:abstractEstimate.getSorActivities())
         {
@@ -362,6 +368,7 @@ public class EstimateService {
 
     	for(MeasurementSheet msremove:toRemove)
     	{
+    		LOG.debug("...........Removing rows....................Of MeasurementSheet"+msremove.getId());
             oldActivity.getMeasurementSheetList().remove(msremove);
         }
 
