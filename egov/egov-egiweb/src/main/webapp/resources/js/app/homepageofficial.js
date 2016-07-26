@@ -113,7 +113,7 @@ $(document).ready(function()
 	
 	worklist();
 	
-	$("#official_inbox").on('click','tbody tr td i',function(e) {
+	$("#official_inbox").on('click','tbody tr td i.inbox-history',function(e) {
 		$('.history-inbox').modal('show');
 		historyTableContainer = $("#historyTable"); 
 		historyTableContainer.dataTable({
@@ -144,10 +144,10 @@ $(document).ready(function()
 	});
 	
 	$('.workspace').click(function(){
-		$('.main-space, .cleartext').hide();
+		$('.main-space').hide();
 		$('.workspace').removeClass('active');
 		clearnow();
-		$('.inline-elem input').val('');
+		$('#'+$(this).attr('data-work')).find('input').val('');
 		$(this).addClass('active');
 		if($(this).attr('data-work') == 'worklist' ){
 			focussedmenu = "worklist";
@@ -165,20 +165,6 @@ $(document).ready(function()
 	$('.search-table').keyup(function(){
 		//console.log($(this).attr('id')+ ' triggered by class');
 		tableContainer1.fnFilter(this.value);
-	});
-	
-	$('.search-table').on('input', function() {
-		if(!$.trim($(this).val())) {
-			$(this).parent().find('.cleartext').hide();
-		}else{
-			$(this).parent().find('.cleartext').show();
-		}
-	});
-	
-	$('.cleartext').on('click', function(){
-		$(this).parent().find('.search-table').val('');
-		$(this).hide();
-		$('#'+$(this).parent().find('.search-table').attr('id')).trigger('keyup');
 	});
 	
 	$("#official_inbox").on('click','tbody tr',function(event) {
@@ -368,8 +354,7 @@ $(document).ready(function()
 	            //console.log(prop + ': ' + theObject[prop]);
 	            if(prop == 'name') {
 	                if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0){
-	                	//console.log(theObject);
-	                	if(theObject.link != 'javascript:void(0);'){
+	                	if(theObject.link != 'javascript:void(0);' && theObject.icon != 'fa fa-times-circle remove-favourite'){
 	                		var obj = {};
 	                		obj['id'] = theObject.id;
 	                		obj['name'] = theObject.name;
@@ -397,6 +382,21 @@ $(document).ready(function()
 		offsetht = 0;
 		offsetbottomht = 0;
 	}
+	
+	
+	$("#official_inbox, #official_drafts").on('click','tbody tr td span.details',function(e) {
+		$(this).parent().html($(this).data('text'));
+		e.stopPropagation();
+		e.preventDefault();
+	});
+	
+	$('#inboxsearch, #draftsearch').keyup(function(e) {
+	     if (e.keyCode == 27) { // escape key maps to keycode `27`
+	        console.log('came here');
+	        $(this).val('');
+	        $('#'+$(this).attr('id')).trigger('keyup');
+	    }
+	});
 
 });
 
@@ -430,10 +430,18 @@ function worklist(){
 			{ "data": "task","width": "20%" },
 			{ "data": "status","width": "24%" },
 			{ "data": "details","width": "20%" },
-			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
+			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
 			{ "data": "id","visible": false, "searchable": false },
 			{ "data": "link","visible": false, "searchable": false }
-		] ,
+		],
+		"columnDefs": [
+               {
+                   "render": function ( data, type, row ) {
+                       return type === 'display' && data.length > 75 ? data.substr( 0, 75 )+' <span class="details" data-text="'+data+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+                   },
+                   "targets": 4
+               }
+           ] ,
 		"fnInitComplete": function (oSettings, json) {
 	          response_json = JSON.stringify(json.data);
 	          //console.log('response--->'+response_json);
@@ -490,7 +498,15 @@ function drafts(){
 		{ "data": "details","width": "20%" },
 		{ "data": "id","visible": false, "searchable": false },
 		{ "data": "link","visible": false, "searchable": false }
-	] 
+	],
+	"columnDefs": [
+       {
+           "render": function ( data, type, row ) {
+               return type === 'display' && data.length > 75 ? data.substr( 0, 75 )+' <span class="details" data-text="'+data+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+           },
+           "targets": 4
+       }
+   ]
 });
 }
 
@@ -526,10 +542,18 @@ function worklistwrtnow(json){
 			{ "data": "task","width": "20%" },
 			{ "data": "status","width": "24%" },
 			{ "data": "details","width": "20%" },
-			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
+			{ "data" : null, "target":-1,"defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'},
 			{ "data": "id","visible": false, "searchable": false },
 			{ "data": "link","visible": false, "searchable": false }
-		]
+		],
+		"columnDefs": [
+            {
+                "render": function ( data, type, row ) {
+                    return type === 'display' && data.length > 75 ? data.substr( 0, 75 )+' <span class="details" data-text="'+data+'"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+                },
+                "targets": 4
+            }
+        ] 
 	});
 }
 

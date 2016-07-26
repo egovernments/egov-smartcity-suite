@@ -42,6 +42,16 @@
  */
 package org.egov.ptis.actions.recovery;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -77,18 +87,9 @@ import org.egov.ptis.domain.entity.property.PropertyStatus;
 import org.egov.ptis.domain.entity.recovery.Recovery;
 import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.domain.service.notice.NoticeService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 @Transactional(readOnly = true)
 public class BaseRecoveryAction extends PropertyTaxBaseAction {
@@ -102,7 +103,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	protected String propertyAddress;
 	protected EisCommonService eisCommonService;
 	protected ReportService reportService;
-	protected Integer reportId = -1;
+	protected String reportId;
 	protected ModuleService moduleService;
 	protected PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	protected PersistenceService<BasicProperty, Long> basicPropertyService;
@@ -112,6 +113,11 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	private ModuleService moduleDao;
 	@Autowired
 	private EgBillDao egBillDAO;
+	@Autowired
+	private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public StateAware getModel() {
@@ -207,7 +213,7 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 	public Long getDemandReason(String demandMaster) {
 		StringBuffer query = new StringBuffer();
 		query.append(" from EgDemandReason where egDemandReasonMaster.reasonMaster='" + demandMaster + "'").append(
-				" and egInstallmentMaster.id='" + propertyTaxUtil.getCurrentInstallment().getId() + "'");
+				" and egInstallmentMaster.id='" + propertyTaxCommonUtils.getCurrentInstallment().getId() + "'");
 		EgDemandReason demandReason = (EgDemandReason) persistenceService.find(query.toString());
 
 		return demandReason.getId();
@@ -313,15 +319,15 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		// User authorisedUser =
 		// (User)eisCommonService.getUserforPosition(state.getOwnerUser());
 		// User loggedInUser =(User) new
-		// UserDAO().getUserByID(Integer.valueOf(EgovThreadLocals.getUserId()));
+		// UserDAO().getUserByID(Integer.valueOf(ApplicationThreadLocals.getUserId()));
 		User authorisedUser = null;
 		User loggedInUser = null;
 		return authorisedUser.equals(loggedInUser);
 
 	}
 
-	protected Integer addingReportToSession(ReportOutput reportOutput) {
-		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	protected String addingReportToSession(ReportOutput reportOutput) {
+		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
 	public Map<String, Object> getViewMap() {
@@ -340,12 +346,8 @@ public class BaseRecoveryAction extends PropertyTaxBaseAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public void setModuleService(ModuleService moduleService) {

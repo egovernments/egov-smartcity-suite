@@ -56,7 +56,6 @@
 		<s:text name='licenseSubCategory.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){
@@ -122,12 +121,13 @@
 		var screenType="subcategoryMaster"; 
 		var name="";
 		var code="";
+		var subcategoryid= document.getElementById("licenseSubCategory_id").value;
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},subcategorySuccessHandler,subcategoryFailureHandler);
+		    	{name:name, code:code, subcategoryId:subcategoryid, screenType:screenType},subcategorySuccessHandler,subcategoryFailureHandler);
 	}
 
 	subcategoryFailureHandler=function(){
@@ -195,27 +195,43 @@
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.category.lbl" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<s:select headerKey="-1"
-										headerValue="%{getText('default.select')}" name="categoryId"
-										id="categoryId" listKey="key" listValue="value"
-										list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" 
-										/>
-							</div>
+							<s:if test="%{userMode=='edit'}">
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1"
+											headerValue="%{getText('default.select')}" name="categoryId"
+											id="categoryId" listKey="key" listValue="value"
+											list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" disabled="true"/>
+								</div>
+							</s:if>
+							<s:else>
+								<div class="col-sm-3 add-margin">
+									<s:select headerKey="-1"
+											headerValue="%{getText('default.select')}" name="categoryId"
+											id="categoryId" listKey="key" listValue="value"
+											list="licenseCategoryMap" cssClass="form-control" value="%{categoryId}" 
+											/>
+								</div>
+							</s:else>
 						</div>
 					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="64" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="64" onchange="return validateData(this,'name')"/>
 							</div>
-							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')"/>
-							</div>
+							<s:if test="%{userMode=='edit'}">
+								<div class="col-sm-3 add-margin">
+									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="32" onchange="return validateData(this,'code')" readonly="true"/>
+								</div>
+							</s:if>
+							<s:else>
+								<div class="col-sm-3 add-margin">
+									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="32" onchange="return validateData(this,'code')"/>
+								</div>
+							</s:else>
 						</div>
 						
 						<div>

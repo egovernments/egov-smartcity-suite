@@ -49,6 +49,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +75,7 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Autowired
-        private PropertyTaxUtil propertyTaxUtil;
+	private PropertyTaxCommonUtils propertyTaxCommonUtils;
 	
 	@SkipValidation
 	public String newForm() {
@@ -117,7 +118,7 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 				.createQuery(
 						"from InstDmdCollMaterializeView instDmdColl left join fetch instDmdColl.installment where instDmdColl.createdDate between ? and ? and instDmdColl.bigBldgTaxColl != 0 ")
 				.setDate(0, fromDate).setDate(1, toDate).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-		Installment currInstallment = propertyTaxUtil.getCurrentInstallment();		
+		Installment currInstallment = propertyTaxCommonUtils.getCurrentInstallment();		
 		for (InstDmdCollMaterializeView instDmdColl : instDmdCollList) {
 		    // TODO : commented as part of DCB report story. 	
 		    /*if (instDmdColl.getInstallment().compareTo(currInstallment) < 0) {

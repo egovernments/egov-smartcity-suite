@@ -39,6 +39,11 @@
  */
 package org.egov.collection.integration.models;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ChallanInfo;
@@ -53,11 +58,6 @@ import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.
@@ -91,30 +91,35 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
     private final String additionalInfo;
 
     /**
-     * Creates bill receipt information object for given receipt header
+     * Creates bill receipt information object for given receipt header and bounced instrument(if any)
      *
      * @param receiptHeader the receipt header object
      * @param chartOfAccountsHibernateDAO TODO
      */
-    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader, final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
-            final PersistenceService persistenceService) {
+    public BillReceiptInfoImpl(final ReceiptHeader receiptHeader,
+            final ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO,
+            final PersistenceService persistenceService, final InstrumentHeader bouncedInstrumentInfo) {
         this.receiptHeader = receiptHeader;
         receiptURL = CollectionConstants.RECEIPT_VIEW_SOURCEPATH + receiptHeader.getId();
         additionalInfo = null;
+        final String receiptStatus = receiptHeader.getStatus().getCode();
 
         // Populate set of account info objects using receipt details
         for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
             accountDetails.add(new ReceiptAccountInfoImpl(receiptDetail, chartOfAccountsHibernateDAO, persistenceService));
 
         // Populate set of instrument headers that belong to this receipt
-        for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
-            instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
-        final String receiptStatus = receiptHeader.getStatus().getCode();
+        if (!CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus))
+            for (final InstrumentHeader instrumentHeader : receiptHeader.getReceiptInstrument())
+                instrumentDetails.add(new ReceiptInstrumentInfoImpl(instrumentHeader));
+        else if (bouncedInstrumentInfo != null)
+            instrumentDetails.add(new ReceiptInstrumentInfoImpl(bouncedInstrumentInfo));
 
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
-            // find all bounced instruments of this receipt
-            findBouncedInstruments();
+            // find bounced instruments of this receipt
+            if (bouncedInstrumentInfo != null)
+                findBouncedInstrument();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
@@ -148,7 +153,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         if (CollectionConstants.RECEIPT_STATUS_CODE_INSTRUMENT_BOUNCED.equals(receiptStatus)) {
             event = BillingIntegrationService.EVENT_INSTRUMENT_BOUNCED;
             // find all bounced instruments of this receipt
-            findBouncedInstruments();
+            findBouncedInstrument();
         } else if (CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_APPROVED.equals(receiptStatus)
                 || CollectionConstants.RECEIPT_STATUS_CODE_SUBMITTED.equals(receiptStatus))
@@ -343,7 +348,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
      * Finds all instruments of this receipt that are in bounced (dishonored) status and adds them to the set of bounced
      * instruments.
      */
-    private void findBouncedInstruments() {
+    private void findBouncedInstrument() {
         for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
             if (instrumentInfo.isBounced())
                 bouncedInstruments.add(instrumentInfo);
@@ -422,7 +427,7 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         Boolean legacy = Boolean.FALSE;
         for (final ReceiptAccountInfo receiptAccountInfo : getAccountDetails())
             if (receiptAccountInfo.getDescription() != null && !"".equals(receiptAccountInfo.getDescription())
-                    && (!receiptAccountInfo.getDescription().contains("#") ||
+            && (!receiptAccountInfo.getDescription().contains("#") ||
                     receiptAccountInfo.getDescription().contains(CollectionConstants.ESTIMATION_CHARGES_WATERTAX_MODULE))) {
                 legacy = Boolean.TRUE;
                 break;
@@ -439,9 +444,29 @@ public class BillReceiptInfoImpl implements BillReceiptInfo {
         return additionalInfo;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getSource()
+     */
     @Override
     public String getSource() {
         return receiptHeader.getSource() == null ? "" : receiptHeader.getSource();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infstr.collections.integration.models.IBillReceiptInfo#getReceiptInstrumentType()
+     */
+    @Override
+    public String getReceiptInstrumentType() {
+        String instrumentType = "";
+        for (final ReceiptInstrumentInfo instrumentInfo : instrumentDetails)
+            if (instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_CHEQUE) ||
+                    instrumentInfo.getInstrumentType().equals(CollectionConstants.INSTRUMENTTYPE_DD)) {
+                instrumentType = CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD;
+                break;
+            } else
+                instrumentType = instrumentInfo.getInstrumentType();
+        return instrumentType;
+    }
 }

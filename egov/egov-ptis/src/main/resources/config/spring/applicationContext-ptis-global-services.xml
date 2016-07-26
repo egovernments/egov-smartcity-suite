@@ -125,6 +125,8 @@
 	
 	<bean id="propertyTaxUtil" class="org.egov.ptis.client.util.PropertyTaxUtil"/>
 	
+	<bean id="propertyTaxCommonUtils" class="org.egov.ptis.service.utils.PropertyTaxCommonUtils"/>
+	
 	<bean id="propertyTaxCollection" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
     </bean>
@@ -142,5 +144,8 @@
 	</bean>  
 	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" scope="prototype" />
 	<bean id="vacancyRemissionService" class="org.egov.ptis.domain.service.property.VacancyRemissionService" scope="prototype" autowire-candidate="true" />
-	
+	<bean id="financialUtil" class="org.egov.ptis.client.util.FinancialUtil" scope="prototype" autowire-candidate="true" />
+	<bean id="mutationRegistrationService" parent="persistenceService" scope="prototype">
+		<property name="type" value="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" />
+	</bean>
 </beans>

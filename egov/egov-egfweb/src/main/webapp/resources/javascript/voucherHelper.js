@@ -481,7 +481,7 @@ function resetonChangeofSubledger()
 {
 
 	if(mode=='new'){
-		document.getElementById("commonBean.payto").value="";
+		//document.getElementById("commonBean.payto").value="";
 		document.getElementById("detailName").value="";
 		document.getElementById("detailKey").value="";
 		document.getElementById("detailCode").value="";
@@ -556,6 +556,9 @@ function loadDropDownCodesForAccountDetailType(obj)
 		  if (req2.status == 200)
 		  {
 			var codes2=req2.responseText;
+			
+			codes2=	codes2.trim();
+			
 			
 			var a = codes2.split("^");
 			var codes = a[0];
@@ -791,8 +794,8 @@ function autocompletecodeCommon(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]-452/3+27+"px"; 
-	target.style.width="650px";	
+	target.style.top=(posSrc[1]-((452/3)+20))+"px"; 
+	target.style.width="450px";	
 	var coaCodeObj=obj;
 //if multiple tables are there this wont support
 	//var  currRow=getRowIndex(obj);
@@ -902,7 +905,10 @@ function autocompletecodeFunctionHeader(obj,myEvent)
 	var target = document.getElementById('codescontainer');	
 	var posSrc=findPos(src); 
 	target.style.left=posSrc[0]+"px";	
-	target.style.top=posSrc[1]-(452/3)+27+"px";  
+	target.style.top=(posSrc[1]-((452/3)+10))+"px";  
+	console.log(posSrc[1]);
+	console.log(target.style.top);
+	
 	target.style.width=650;	
 		
 	var coaCodeObj=obj;
@@ -1022,8 +1028,6 @@ function fillNeibrAfterSplitGlcode(obj)
 }
 function fillNeibrAfterSplitFunction(obj)
 {
-	if(obj!=null)
-	{
 	var temp = obj.value;
 	var currRow=getRowIndex(obj);
 	var funId = document.getElementById('billDetailslist['+currRow+'].functionIdDetail').value;
@@ -1050,12 +1054,11 @@ function fillNeibrAfterSplitFunction(obj)
 			document.getElementById("billDetailslist['+currRow+'].functionIdDetail").value="";
 		}*/
 		
-		bootbox.alert("Invalid function selected .Please select code from auto complete.");
+		//bootbox.alert("Invalid function selected .Please select code from auto complete.");
 		
 	}
 		
 	loadSlFunction();
-	}
 }
 function loadSlFunction(){
 	
@@ -1168,7 +1171,7 @@ function createDropdownFormatterPJV(prefix){
 			
         }
 
-        selectEl = collection[0];fillNeibrAfterSplitFunction(obj)
+        selectEl = collection[0];
 
         if(selectEl) {
             selectEl.innerHTML = "";

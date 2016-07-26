@@ -95,7 +95,6 @@
 					<th><spring:message code="lbl.finyearrange" /></th>
 					<th><spring:message code="lbl.startingdate" /></th>
 					<th><spring:message code="lbl.endingdate" /></th>
-					<th><spring:message code="lbl.isactive" /></th>
 					<th><spring:message code="lbl.isactiveforposting" /></th>
 					<th><spring:message code="lbl.isclosed" /></th>
 					<th><spring:message code="lbl.transferclosingbalance" /></th>
@@ -112,8 +111,6 @@
 		}
 	});
 </script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>" />
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"

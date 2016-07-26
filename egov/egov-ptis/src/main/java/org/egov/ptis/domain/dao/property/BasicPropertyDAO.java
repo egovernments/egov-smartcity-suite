@@ -39,11 +39,12 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import java.util.List;
+
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyID;
-
-import java.util.List;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 
 public interface BasicPropertyDAO {
 
@@ -95,4 +96,8 @@ public interface BasicPropertyDAO {
     public Boolean isAssessmentNoExist(String assessmentNo);
 
     public BasicProperty getParentBasicPropertyByBasicPropertyId(Long basicPropertyId);
+
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber);
+    
+    public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber, String propertyType);
 }

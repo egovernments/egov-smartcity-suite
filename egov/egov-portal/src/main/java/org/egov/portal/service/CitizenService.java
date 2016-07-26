@@ -48,7 +48,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.egov.portal.utils.constants.CommonConstants;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -76,7 +75,7 @@ public class CitizenService {
     @Transactional
     public void create(final Citizen citizen) {
         citizen.addRole(roleService.getRoleByName(CommonConstants.CITIZEN_ROLE));
-        citizen.setPwdExpiryDate(new DateTime().plusDays(applicationProperties.userPasswordExpiryInDays()).toDate());
+        citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
         citizenRepository.save(citizen);
@@ -86,10 +85,6 @@ public class CitizenService {
     @Transactional
     public void update(final Citizen citizen) {
         citizenRepository.save(citizen);
-    }
-
-    public Citizen getCitizenById(final Long citizenID) {
-        return citizenRepository.findOne(citizenID);
     }
 
     public Citizen getCitizenByEmailId(final String emailId) {
@@ -115,14 +110,20 @@ public class CitizenService {
         return citizen;
     }
 
-    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
-        messagingService
-        .sendEmail(
-                citizen.getEmailId(),
-                "Portal Activation",
-                String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
-                        citizen.getActivationCode()));
-        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+    @Transactional
+    public void resendActivationCode(Citizen citizen) {
+        citizen.setActivationCode(RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase());
+        sendActivationMessage(citizen);
+        citizenRepository.save(citizen);
     }
 
+    public void sendActivationMessage(final Citizen citizen) throws ApplicationRuntimeException {
+        messagingService
+                .sendEmail(
+                        citizen.getEmailId(),
+                        "Portal Activation",
+                        String.format("Dear %s,\r\n Your Portal Activation Code is : %s", citizen.getName(),
+                                citizen.getActivationCode()));
+        messagingService.sendSMS(citizen.getMobileNumber(), "Your Portal Activation Code is : " + citizen.getActivationCode());
+    }
 }

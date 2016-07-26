@@ -180,7 +180,8 @@
    <div class="mandatory1">
   Note:
   <ol>
-  <li><s:text name="autoreconciliation.upload.footnote"/>
+  <li><s:text name="autoreconciliation.upload.footnote"/></li>
+  <li><s:text name="autoreconciliation.upload.footnote.nextline"/></li>
   </ol>
   </div>
 </body>

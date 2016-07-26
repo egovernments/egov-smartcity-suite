@@ -107,4 +107,8 @@ public class ModuleService {
         return menuLinks;
     }
 
+    public List<Module> getAllTopModules() {
+        return moduleRepository.findByParentModuleIsNullAndEnabledTrueOrderByNameAsc();
+    }
+
 }

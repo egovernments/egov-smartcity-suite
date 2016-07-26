@@ -45,8 +45,6 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.enums.ProcessStatus;
 import org.egov.tl.repository.DemandGenerationLogDetailRepository;
 import org.egov.tl.repository.DemandGenerationLogRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -57,7 +55,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class DemandGenerationLogService {
     private final DemandGenerationLogRepository demandGenerationLogRepository;
     private final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemandGenerationLogService.class);
 
     @Autowired
     public DemandGenerationLogService(final DemandGenerationLogRepository demandGenerationLogRepository,

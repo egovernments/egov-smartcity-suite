@@ -39,9 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,11 +49,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+
 @Entity
 @Table(name = "egwtr_property_category")
 @CompositeUnique(fields = { "connectionCategory",
         "propertyType" }, enableDfltMsg = true, message = "{propertycategory.validity.exist}")
 @SequenceGenerator(name = PropertyCategory.SEQ_PROPERTY_CATEGORY, sequenceName = PropertyCategory.SEQ_PROPERTY_CATEGORY, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class PropertyCategory extends AbstractAuditable {
 
     private static final long serialVersionUID = 8604331107634946265L;
@@ -69,13 +74,16 @@ public class PropertyCategory extends AbstractAuditable {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "categorytype")
+    @Audited
     private ConnectionCategory connectionCategory;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "propertytype")
+    @Audited
     private PropertyType propertyType;
 
+    @Audited
     private boolean active;
 
     @Override

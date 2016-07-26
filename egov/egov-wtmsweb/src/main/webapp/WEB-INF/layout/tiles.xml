@@ -80,27 +80,22 @@
         <put-attribute name="page-title" value="title.watertaxSearch" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/search/waterTaxSearch-commonForm.jsp"/>
     </definition>
-	 
      <definition name="application-view" extends="base_layout">	 
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/application-view.jsp"/>
     </definition>
-    
 	<definition name="newconnection-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-edit.jsp"/> 
     </definition>
-    
-		<definition name="connection-closeForm" extends="base_layout">
+	<definition name="connection-closeForm" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/connection-closeForm.jsp"/> 
     </definition>
-    
-		<definition name="reconnection-newForm" extends="base_layout">
+	<definition name="reconnection-newForm" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/reconnection-newForm.jsp"/> 
     </definition>
-    
 	<definition name="newconnection-meterEntry" extends="base_layout">
         <put-attribute name="page-title" value="title.viewMeterapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newconnection-meterEntry.jsp"/> 
@@ -115,6 +110,7 @@
         <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editDemandDateEntry-newForm.jsp"/> 
     </definition>
+    
     <definition name="editDemand-dataEntryAck" extends="base_layout">
         <put-attribute name="page-title" value="title.editDemndNonMetered" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/editDemand-dataEntryAck.jsp"/> 
@@ -178,14 +174,6 @@
         <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master.jsp"/>
     </definition>
-      <definition name="waterRates-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-success.jsp"/>
-    </definition>
-    <definition name="donation-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
-    </definition>   
      <definition name="digitalSignature-success" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/digitalSignature/digitalSignature-success.jsp"/>
@@ -206,10 +194,6 @@
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/category-master.jsp"/>
     </definition>
-     <definition name="category-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
-    </definition>
     <definition name="category-master-list" extends="base_layout">
         <put-attribute name="page-title" value="title.category.master" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/category-master-list.jsp"/>
@@ -218,25 +202,13 @@
         <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master.jsp"/>
     </definition>
-    <definition name="application-process-time-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-success.jsp"/>
-    </definition>
      <definition name="document-name-master" extends="base_layout">
         <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master.jsp"/>
     </definition>
-    <definition name="document-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/document-master-success.jsp"/>
-    </definition>
     <definition name="usage-type-master" extends="base_layout">
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-master.jsp"/>
-    </definition>
-     <definition name="usage-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/usage-master-success.jsp"/>
     </definition>
     <definition name="usage-type-master-list" extends="base_layout">
         <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
@@ -245,10 +217,6 @@
     <definition name="pipesize-master" extends="base_layout">
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master.jsp"/>
-    </definition>
-    <definition name="pipesize-master-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
     </definition>
     <definition name="defaultersWTReport-search" extends="base_layout">	 
         <put-attribute name="page-title" value="title.defaultersReport" cascade="true"/>
@@ -291,7 +259,7 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
     </definition>
      <definition name="generateBill-Report" extends="base_layout">	 
-        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="page-title" value="title.searchbill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
     </definition>
     <definition name="water-source-master" extends="base_layout">
@@ -326,4 +294,73 @@
         <put-attribute name="page-title" value="title.dataentry.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dataentry-report.jsp"/>
     </definition>
+    <definition name="baseRegister-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.baseregister.report" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/baseRegister-form.jsp" />
+	</definition>
+	 <definition name="usage-type-sucess" extends="base_layout">
+        <put-attribute name="page-title" value="title.usage.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage-type-sucess.jsp"/>
+    </definition>
+    <definition name="category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category-master-success.jsp"/>
+    </definition>
+    <definition name="pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-success.jsp"/>
+    </definition>
+      <definition name="donation-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/donation-master-success.jsp"/>
+    </definition>
+     <definition name="property-usage-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyUsage.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-usage-master-success.jsp"/>
+    </definition>
+    <definition name="property-category-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyCategory.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-category-master-success.jsp"/>
+    </definition>
+     <definition name="water-source-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/water-source-master-success.jsp"/>
+    </definition>
+    <definition name="meter-cost-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.meterCost.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/meter-cost-master-success.jsp"/>
+    </definition>
+    <definition name="application-process-time-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.application.process.time.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/application-process-time-master-success.jsp"/>
+    </definition>
+    <definition name="waterRates-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.waterRate.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/waterRates-master-success.jsp"/>
+    </definition>
+    <definition name="document-name-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.master.details" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/document-name-master-success.jsp"/>
+    </definition>
+      <definition name="property-pipesize-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.propertyPipeSize.master" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/property-pipesize-master-success.jsp"/>
+    </definition>
+        <definition name="editCollection-newForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editCollection-newForm.jsp"/> 
+    </definition>
+    <definition name="editCollection-Ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.editCollection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/editCollection-Ack.jsp"/> 
+    </definition>
+    <definition name="generatebill-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.generatebill" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill_forconsumercode.jsp"/> 
+    </definition>
+     <definition name="mobilePayment-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.mobilepayment" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mobile/mobilepayment-form.jsp"/> 
+    </definition>
+    
 </tiles-definitions>

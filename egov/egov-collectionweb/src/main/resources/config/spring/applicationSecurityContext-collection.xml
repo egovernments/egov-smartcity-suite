@@ -63,6 +63,9 @@
 				<security:filter-chain pattern="/image/**" filters="none" />
 				<security:filter-chain pattern="/citizen/**" filters="none" />
 				<security:filter-chain pattern="/reportViewer/**" filters="none" />
+				<security:filter-chain pattern="/reports/collectionSummary-criteria.action" filters="none" />
+				<security:filter-chain pattern="/reports/collectionSummary-report.action" filters="none" />
+				<security:filter-chain pattern="/receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action" filters="none" />
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>

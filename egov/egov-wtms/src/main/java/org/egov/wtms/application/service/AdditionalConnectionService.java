@@ -106,7 +106,7 @@ public class AdditionalConnectionService {
                             assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                             parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
-                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
                         validationMessage = messageSource

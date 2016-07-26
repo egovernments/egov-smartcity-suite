@@ -51,12 +51,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository 
-public interface FeeMatrixRepository extends JpaRepository<FeeMatrix,Long>,FeeMatrixRepositoryCustom {
+public interface FeeMatrixRepository extends JpaRepository<FeeMatrix,Long> {
 
 	FeeMatrix findByUniqueNo(String uniqueNo);
 
-	FeeMatrix findByUniqueNoLike(String uniqueNo);
-	
 	@Query("select f from FeeMatrix f where f.subCategory=:subCategory")
 	List<FeeMatrix> findBySubCategory(@Param("subCategory") LicenseSubCategory subCategory);
 }

@@ -133,7 +133,7 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 									class="mandatory1">*</span></td>
 								<td class="greybox" width="25%">
 									<div name="daterow">
-										<s:date name="voucherDate" id="voucherDateId"
+										<s:date name="voucherDate" var="voucherDateId"
 											format="dd/MM/yyyy" />
 										<s:textfield id="voucherDate" name="voucherDate"
 											data-date-end-date="0d" value="%{voucherDateId}"

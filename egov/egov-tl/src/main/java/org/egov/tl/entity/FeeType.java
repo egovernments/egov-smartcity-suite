@@ -55,42 +55,31 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = FeeType.SEQ, sequenceName = FeeType.SEQ, allocationSize = 1)
 @Table(name = "egtl_mstr_fee_type")
 public class FeeType extends AbstractAuditable {
-    
-    private static final long serialVersionUID = -766315755023031686L;
 
     public static final String SEQ = "seq_egtl_mstr_fee_type";
-
-    /**
-     * 
-     * Will be RANGE, FLAT, PERCENTAGE actually but as of now code is not written and no usecases fixing to RANGE only
-     */
-    public static enum FeeProcessType {
+    private static final long serialVersionUID = -766315755023031686L;
+    public enum FeeProcessType {
         RANGE
     }
 
     @Id
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
     @NotNull
     @Length(max = 32)
     private String name;
-    
     @Length(max = 12)
     private String code;
-
     private FeeProcessType feeProcessType;
-
-    @Override
-    public void setId(final Long id) {
-
-        this.id = id;
-    }
 
     @Override
     public Long getId() {
         return id;
+    }
 
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -100,7 +89,7 @@ public class FeeType extends AbstractAuditable {
     public void setName(final String name) {
         this.name = name;
     }
-    
+
     public String getCode() {
         return code;
     }
@@ -116,14 +105,23 @@ public class FeeType extends AbstractAuditable {
     public void setFeeProcessType(final FeeProcessType feeProcessType) {
         this.feeProcessType = feeProcessType;
     }
-    
+
     @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("FeeType={");
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("}");
-        return str.toString();
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final FeeType feeType = (FeeType) o;
+
+        if (getName() != null ? !getName().equals(feeType.getName()) : feeType.getName() != null) return false;
+        return getCode() != null ? getCode().equals(feeType.getCode()) : feeType.getCode() == null;
+
     }
 
+    @Override
+    public int hashCode() {
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + (getCode() != null ? getCode().hashCode() : 0);
+        return result;
+    }
 }

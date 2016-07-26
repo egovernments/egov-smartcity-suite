@@ -40,6 +40,17 @@
 
 package org.egov.payment.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -54,9 +65,9 @@ import org.egov.deduction.model.EgRemittanceGldtl;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -75,23 +86,12 @@ import org.egov.pims.commons.Position;
 import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.HibernateException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 @Transactional(readOnly = true)
 @Service
@@ -119,6 +119,7 @@ public class PaymentActionHelper {
     protected AssignmentService assignmentService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<Paymentheader> paymentHeaderWorkflowService;
 
     @Autowired
@@ -310,8 +311,8 @@ public class PaymentActionHelper {
         final CFinancialYear financialYearByDate = financialYearDAO.getFinancialYearByDate(vh.getVoucherDate());
         remit.setFinancialyear(financialYearByDate);
         remit.setCreateddate(new Date());
-        remit.setCreatedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
-        remit.setLastmodifiedby(BigDecimal.valueOf(EgovThreadLocals.getUserId()));
+        remit.setCreatedby(BigDecimal.valueOf(ApplicationThreadLocals.getUserId()));
+        remit.setLastmodifiedby(BigDecimal.valueOf(ApplicationThreadLocals.getUserId()));
         remit.setLastmodifieddate(new Date());
         remit.setMonth(BigDecimal.valueOf(new Date().getMonth()));
         remit.setVoucherheader(vh);

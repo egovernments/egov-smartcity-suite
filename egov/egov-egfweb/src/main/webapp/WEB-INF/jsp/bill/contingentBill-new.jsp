@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title><s:text name="contingent.bill" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -316,7 +315,7 @@ var makeVoucherDetailTableSubledger = function() {
 {key:"subledgerCode",label:'Subledger Code',  formatter:subledgerFormatter("billDetailsTableSubledger",".subledgerCode","text")},
 {key:"detailCode",label:'Entity Code', formatter:detailcodeFormatter("billDetailsTableSubledger",".detailCode","text")},
 {key:"detailName",label:'Entity Name', formatter:detailnameFormatter("billDetailsTableSubledger",".detailName","text")},
-{key:"accounthead", label:'Account Head', width:600,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
+{key:"accounthead", label:'Account Head', width:400,formatter:accountheadFormatter1("billDetailsTableSubledger",".accounthead","text")},				
 {key:"amount",label:'Amount',formatter:amountFormatter("billDetailsTableSubledger",".debitAmountDetail","text")},
 {key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}","addYUIRow('billDetailsTableSubledger',this)")},
 {key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}","deleteYUIRow('billDetailsTableSubledger',this)")}
@@ -517,7 +516,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 								</s:if>
 								<td class="bluebox"><s:text name="bill.Date" /><span
 									class="mandatory1">*</span></td>
-								<s:date name='commonBean.billDate' id="commonBean.billDateId"
+								<s:date name='commonBean.billDate' var="commonBean.billDateId"
 									format='dd/MM/yyyy' />
 								<td class="bluebox"><s:textfield id="billDate"
 										name="commonBean.billDate" value="%{commonBean.billDateId}"
@@ -553,6 +552,8 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 						<%-- <s:if test='%{! "END".equalsIgnoreCase(nextLevel)}'>
 	<%@include file="../voucher/workflowApproval-contingent.jsp"%>
 </s:if> --%>
+						<s:hidden name="billDate" id="billDate" />
+						<s:hidden id="cutOffDate" name="cutOffDate" />
 						<s:hidden name="nextLevel" id="nextLevel" />
 						<%@ include file='../bill/commonWorkflowMatrix.jsp'%>
 						<%@ include file='../payment/commonWorkflowMatrix-button.jsp'%>
@@ -568,7 +569,7 @@ autocompleteEntitiesBy20();
 document.getElementById("budgetReappRow").style.display="none";
 document.getElementById("billDetailsTableNet[0].detailTypes").value='<s:property value="%{detailTypeIdandName}"/>';
 var net=document.getElementById('billDetailsTableNet[0].glcodeDetail');
-//bootbox.alert("hii"+net.value+"text"+net.text);                         
+//bootbox.alert("hii"+net.value+"text"+net.text);   
 net.options[0] =new Option("----Choose----","-1");
 var i=1;           
 <s:iterator value="netPayList" status="stat">
@@ -641,6 +642,15 @@ function onSubmit()
 {
 	if(validate()){
 		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-create.action';
+    	return true;
+	}else{
+		return false;
+	}
+}
+function approveSubmit()
+{
+	if(validate()){
+		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-approveOnCreate.action';
     	return true;
 	}else{
 		return false;

@@ -39,6 +39,22 @@
  */
 $(document).ready(function(){
 	
+	$('#meterCostTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 4,
+			"orderable": false
+		} ]
+	});
+	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
 	if (activeDiv =='false')
@@ -91,24 +107,14 @@ $('#buttonid').click(function() {
 			  $('.loader-class').modal('hide');
 		  }
 });
-$('#listid').click(function() {
-	window.open("/wtms/masters/meterCostMaster/list", "_self");
- });
-
-
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/meterCostMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/meterCostMaster/", "_self");
-}
 
 function edit(meterCost)
 {
-	window.open("/wtms/masters/meterCostMaster/"+meterCost, "_self");
+	window.open("/wtms/masters/meterCostMaster/edit/"+meterCost, "_self");
 	
 }
-

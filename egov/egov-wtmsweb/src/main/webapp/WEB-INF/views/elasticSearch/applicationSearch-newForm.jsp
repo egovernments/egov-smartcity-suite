@@ -137,7 +137,22 @@
 						</div>
 
 						</div>
+						<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"> <spring:message
+										code="lbl.channel" /></label>
+						<div class="col-sm-3 add-margin">
+						<form:select name="source" path="" data-first-option="false" id="source"
+							cssClass="form-control" >
+							<form:option value="">
+								<spring:message code="lbl.select"/>
+							</form:option>
+							<form:options items="${sourceList}"  />  
+						</form:select>
+						</div>
+						</div>
+						
 						</c:if>
+						
 					
 					<div class="form-group">
 						<div class="text-center">
@@ -145,8 +160,10 @@
 								><spring:message code='lbl.search' /></button>
 								
 							<button class="btn btn-danger" type="reset" ><spring:message code="lbl.reset"/></button>
+								<c:if test="${ !citizenRole }">
 							<a href="javascript:void(0);" id="closeComplaints"
-								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
+								class="btn btn-default" onclick="window.close()"><spring:message code='lbl.close' /></a>
+								</c:if>
 						</div>
 				</div>
 

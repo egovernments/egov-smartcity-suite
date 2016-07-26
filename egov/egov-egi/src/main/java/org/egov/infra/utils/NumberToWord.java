@@ -48,31 +48,24 @@ import org.slf4j.LoggerFactory;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 
-interface DefinePlace {
-	long ZEROS = 0;
-	long UNITS = 1;
-	long TENS = 10 * UNITS;
-	long HUNDREDS = 10 * TENS;
-	long THOUSANDS = 10 * HUNDREDS;
-	long TENTHOUSANDS = 10 * THOUSANDS;
-	long LAKHS = 10 * TENTHOUSANDS;
-	long TENLAKHS = 10 * LAKHS;
-	long CRORES = 10 * TENLAKHS;
-	long TENCRORES = 10 * CRORES;
-	long HUNDREDCRORES = 10 * TENCRORES;
-	long THOUSANDCRORES = 10 * HUNDREDCRORES;
-	long TENTHOUSANDCRORES = 10 * THOUSANDCRORES;
-}
-
-/**
- * The Class NumberToWord.
- */
 public class NumberToWord {
 
-	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(NumberToWord.class);
 
-	/** The Constant CARDINAL. */
+	private static final long ZEROS = 0;
+	private static final long UNITS = 1;
+	private static final long TENS = 10 * UNITS;
+	private static final long HUNDREDS = 10 * TENS;
+	private static final long THOUSANDS = 10 * HUNDREDS;
+	private static final long TENTHOUSANDS = 10 * THOUSANDS;
+	private static final long LAKHS = 10 * TENTHOUSANDS;
+	private static final long TENLAKHS = 10 * LAKHS;
+	private static final long CRORES = 10 * TENLAKHS;
+	private static final long TENCRORES = 10 * CRORES;
+	private static final long HUNDREDCRORES = 10 * TENCRORES;
+	private static final long THOUSANDCRORES = 10 * HUNDREDCRORES;
+	private static final long TENTHOUSANDCRORES = 10 * THOUSANDCRORES;
+
 	private static final String[] CARDINAL = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty", "Thirty",
 			"Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety", "Hundred" };
 
@@ -153,7 +146,7 @@ public class NumberToWord {
 		Long subNum = 0L;
 		String returnValue = "";
 
-		if (Long.parseLong(number) == DefinePlace.ZEROS || number.length() > 12) {
+		if (Long.parseLong(number) == ZEROS || number.length() > 12) {
 			returnValue += getWord(Long.parseLong(number));
 		}
 
@@ -161,18 +154,18 @@ public class NumberToWord {
 			number = "" + num;
 			final long place = getPlace(number);
 
-			if (place == DefinePlace.HUNDREDCRORES || place == DefinePlace.THOUSANDCRORES || place == DefinePlace.TENTHOUSANDCRORES) {
+			if (place == HUNDREDCRORES || place == THOUSANDCRORES || place == TENTHOUSANDCRORES) {
 				subNum = Long.parseLong("" + number.charAt(0));
 				returnValue += getWord(subNum);
-				if (place == DefinePlace.HUNDREDCRORES) {
-					num -= subNum * DefinePlace.HUNDREDCRORES;
+				if (place == HUNDREDCRORES) {
+					num -= subNum * HUNDREDCRORES;
 					if (num == 0) {
 						returnValue += " Hundred Crores ";
 					} else {
 						returnValue += " Hundred ";
 					}
-				} else if (place == DefinePlace.THOUSANDCRORES) {
-					num -= subNum * DefinePlace.THOUSANDCRORES;
+				} else if (place == THOUSANDCRORES) {
+					num -= subNum * THOUSANDCRORES;
 					if (num == 0) {
 						returnValue += " Thousand Crores ";
 					} else {
@@ -181,7 +174,7 @@ public class NumberToWord {
 				} else {
 					returnValue = "";
 					subNum = Long.parseLong(number.charAt(0) + "" + number.charAt(1));
-					num -= subNum * DefinePlace.THOUSANDCRORES;
+					num -= subNum * THOUSANDCRORES;
 					if (subNum >= 21 && (subNum % 10) != 0 && num == 0) {
 						returnValue += getWord(Long.parseLong(String.valueOf(number.charAt(0))) * 10) + " " + getWord(subNum % 10) + " Thousand Crores ";
 					} else if (num == 0) {
@@ -191,7 +184,7 @@ public class NumberToWord {
 					}
 				}
 
-			} else if (place == DefinePlace.TENS || place == DefinePlace.TENTHOUSANDS || place == DefinePlace.TENLAKHS || place == DefinePlace.TENCRORES) {
+			} else if (place == TENS || place == TENTHOUSANDS || place == TENLAKHS || place == TENCRORES) {
 
 				subNum = Long.parseLong(String.valueOf(number.charAt(0)) + String.valueOf(number.charAt(1)));
 
@@ -201,35 +194,35 @@ public class NumberToWord {
 					returnValue += getWord(subNum);
 				}
 
-				if (place == DefinePlace.TENS) {
+				if (place == TENS) {
 					num = 0;
-				} else if (place == DefinePlace.TENTHOUSANDS) {
-					num -= subNum * DefinePlace.THOUSANDS;
+				} else if (place == TENTHOUSANDS) {
+					num -= subNum * THOUSANDS;
 					returnValue += " Thousands ";
-				} else if (place == DefinePlace.TENLAKHS) {
-					num -= subNum * DefinePlace.LAKHS;
+				} else if (place == TENLAKHS) {
+					num -= subNum * LAKHS;
 					returnValue += " Lakhs ";
-				} else if (place == DefinePlace.TENCRORES) {
-					num -= subNum * DefinePlace.CRORES;
+				} else if (place == TENCRORES) {
+					num -= subNum * CRORES;
 					returnValue += " Crores ";
 				}
 
 			} else {
 				subNum = Long.parseLong(String.valueOf(number.charAt(0)));
 				returnValue += getWord(subNum);
-				if (place == DefinePlace.UNITS) {
+				if (place == UNITS) {
 					num = 0;
-				} else if (place == DefinePlace.HUNDREDS) {
-					num -= subNum * DefinePlace.HUNDREDS;
+				} else if (place == HUNDREDS) {
+					num -= subNum * HUNDREDS;
 					returnValue += " Hundred ";
-				} else if (place == DefinePlace.THOUSANDS) {
-					num -= subNum * DefinePlace.THOUSANDS;
+				} else if (place == THOUSANDS) {
+					num -= subNum * THOUSANDS;
 					returnValue += " Thousand ";
-				} else if (place == DefinePlace.LAKHS) {
-					num -= subNum * DefinePlace.LAKHS;
+				} else if (place == LAKHS) {
+					num -= subNum * LAKHS;
 					returnValue += " Lakh ";
-				} else if (place == DefinePlace.CRORES) {
-					num -= subNum * DefinePlace.CRORES;
+				} else if (place == CRORES) {
+					num -= subNum * CRORES;
 					returnValue += " Crore ";
 				}
 			}
@@ -259,29 +252,29 @@ public class NumberToWord {
 		switch (number.length()) {
 
 		case 1:
-			return DefinePlace.UNITS;
+			return UNITS;
 		case 2:
-			return DefinePlace.TENS;
+			return TENS;
 		case 3:
-			return DefinePlace.HUNDREDS;
+			return HUNDREDS;
 		case 4:
-			return DefinePlace.THOUSANDS;
+			return THOUSANDS;
 		case 5:
-			return DefinePlace.TENTHOUSANDS;
+			return TENTHOUSANDS;
 		case 6:
-			return DefinePlace.LAKHS;
+			return LAKHS;
 		case 7:
-			return DefinePlace.TENLAKHS;
+			return TENLAKHS;
 		case 8:
-			return DefinePlace.CRORES;
+			return CRORES;
 		case 9:
-			return DefinePlace.TENCRORES;
+			return TENCRORES;
 		case 10:
-			return DefinePlace.HUNDREDCRORES;
+			return HUNDREDCRORES;
 		case 11:
-			return DefinePlace.THOUSANDCRORES;
+			return THOUSANDCRORES;
 		case 12:
-			return DefinePlace.TENTHOUSANDCRORES;
+			return TENTHOUSANDCRORES;
 		}
 		return 0;
 	}

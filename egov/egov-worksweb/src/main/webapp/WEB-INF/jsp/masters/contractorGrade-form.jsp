@@ -37,13 +37,18 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<div class="errorstyle" id="contractorgrade_error" class="alert alert-danger" style="display: none;"></div>
 <div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title"><s:text name="contractor.grade.header" /></div>
 			</div>
-			
+			<input type="hidden" value="<s:text name='contractor.grade.maxamount.invalid' />" id='gradeError'>
+			<input type="hidden" value="<s:text name='contractorGrade.maxAmount.valid' />" id='gradeValidError'>
+			<input type="hidden" value="<s:text name='contractorGrade.grade.null' />" id='contractorGradeError'>
+			<input type="hidden" value="<s:text name='contractorGrade.description.null' />" id='contractorDescriptionError'>
+			<input type="hidden" value="<s:text name='contractorGrade.minAmount.numeric' />" id='contractorMinamtError'>
+			<input type="hidden" value="<s:text name='contractorGrade.maxAmount.numeric' />" id='contractorMaxamtError'>
 			<div class="panel-body">
 			
 				<div class="form-group">
@@ -66,16 +71,15 @@
 					   <s:text name="contractor.grade.master.minamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" placeholder="0" />
+					  <s:textfield name="minAmount" id="minAmount"  cssClass="form-control text-right" value="%{minAmount}" maxlength="16" placeholder="0" />
 					</div>
 					<label class="col-sm-2 control-label text-right"> 
 						<s:text name="contractor.grade.master.maxamount" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" placeholder="0" />
+						<s:textfield name="maxAmount" id="maxAmount"  cssClass="form-control text-right" value="%{maxAmount}" maxlength="16" placeholder="0" />
 					</div>
 				</div>
-				
 			</div>
 </div>
 

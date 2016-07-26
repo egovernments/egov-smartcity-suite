@@ -66,6 +66,7 @@ import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
     @Autowired
     private EisCommonService eisCommonService;

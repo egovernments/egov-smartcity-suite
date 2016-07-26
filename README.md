@@ -13,7 +13,7 @@ Report issues via the [eGov Opensource JIRA][].
 #### License
 The eGov suit is released under version 3.0 of the [GPL][].
 #### Powered By
-<a href="https://www.atlassian.com/" target="_blank"><img src="http://downloads.egovernments.org/atlassian.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/" target="_blank"><img src="http://downloads.egovernments.org/Octocat.png" width="48"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.jetbrains.com/" target="_blank"><img src="http://downloads.egovernments.org/icon_IntelliJIDEA.png" width="48"></a>
+<a href="https://www.atlassian.com/" target="_blank"><img src="http://downloads.egovernments.org/atlassian.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/" target="_blank"><img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png" width="48"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.jetbrains.com/" target="_blank"><img src="http://downloads.egovernments.org/icon_IntelliJIDEA.png" width="48"></a>
 
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
@@ -21,11 +21,12 @@ FAQ related to various deployment and development issues are discussed [here][FA
 
 #### Prerequisites
 
-* Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.7.1][Elastic Search]
-* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 66 or later][JDK8 build]
+* Install [maven v3.2.x][Maven]
+* Install [PostgreSQL v9.4][PostgreSQL]
+* Install [Elastic Search v2.1.2][Elastic Search]
+* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Git 2.8.3][Git]
+* Install [JDK 8 update 92 or later][JDK8 build]
 
 #### Database Setup
 Create a database and user in postgres
@@ -39,11 +40,12 @@ transport.tcp.port: 9300 ## This is the default port
 ```
 
 #### Building Source
-1. Clone the eGov repository
+1. Clone the eGov repository (development is done on the `develop` branch.
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
 $ git clone https://github.com/egovernments/eGov.git
+$ git checkout develop
 ```
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
@@ -86,7 +88,7 @@ $ git clone https://github.com/egovernments/eGov.git
  ```
 One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
 
-  Database properties are defined in the `persistence-config.properties`.
+  Database properties are defined in the `persistence-config.properties`. **Do not update this at all.**
 
   ```properties
   db.url=jdbc:postgresql://localhost:5432/postgres
@@ -98,7 +100,7 @@ One can override any default settings available in `/egov/egov-egi/src/main/reso
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
- mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=<driver_class_fqn> -Ddb.url=<jdbc_url>
+ mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=org.postgresql.Driver -Ddb.url=<jdbc_url>
  ```
 
 #### Redis Server Setup
@@ -209,10 +211,11 @@ This section gives more details regarding developing and contributing to eGov su
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.3 ][PostgreSQL]
-* Install [Elastic Search >= v1.7.1][Elastic Search]
-* Install [Jboss Wildfly v9.0.x][Wildfly Customized]
-* [Git][] and [JDK 8 update 66 or later][JDK8 build]
+* Install [PostgreSQL >= v9.4 ][PostgreSQL]
+* Install [Elastic Search >= v2.1.2][Elastic Search]
+* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Git 2.8.3][Git]
+* Install [JDK 8 update 92 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -229,7 +232,12 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 ##### 2. Intellij Deployment
 
-* TODO - Contribution welcome
+* Install Intellij
+* Open project
+* In project settings set JDK to 1.8
+* Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
+* Open the Jboss run configuration and edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
+* Run
 
 ##### 3. Database Migration Procedure
 
@@ -245,26 +253,27 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 V20150918161507__egi_initial_data.sql
 
 ```
-For More details refer [Flyway]
+For more details refer [Flyway]
 
 #  
 Note: This system is supported
 
 OS:-
-* Linux
+* Linux (Recommended)
 * Mac
 * Windows (If Redis server standalone installed). 
 
 Browser:-
 * Chrome (Recommended)
 * Firefox
+* Internet Explorer
 
-[Git]: http://help.github.com/set-up-git-redirect
+[Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-9.0.2.Final.zip
+[Wildfly Customized]: http://downloads.egovernments.org/wildfly-10.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
-[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.1.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.1.2.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: http://downloads.egovernments.org/

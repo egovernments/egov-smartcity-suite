@@ -261,7 +261,10 @@ public class AssignmentService {
         return new ArrayList<Assignment>();
 
     }
-
+    public List<Assignment> getAllPositionsByDepartmentAndPositionNameForGivenRange(final Long departmentId,final String positionName)
+    {
+    	return assignmentRepository.getAllAssignmentForDepartmentAndPositionNameLike(departmentId,new Date(),positionName);
+    }
     /**
      * Get list of primary assignments for deparment,designation,fromdate and
      * todate

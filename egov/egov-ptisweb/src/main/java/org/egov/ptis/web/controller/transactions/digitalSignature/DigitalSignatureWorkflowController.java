@@ -61,8 +61,8 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -73,6 +73,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -101,6 +102,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 @RequestMapping(value = "/digitalSignature")
 public class DigitalSignatureWorkflowController {
 
+    private static final String DIGISIGN_SUCCESS_MESSAGE = "Digitally Signed Successfully";
+
+    private static final String NOTICE_SUCCESS_MESSAGE = "Notice Generated Successfully";
+
     private static final String STR_DEMOLITION = "Demolition";
 
     private static final String BIFURCATE = "Bifurcate";
@@ -126,6 +131,7 @@ public class DigitalSignatureWorkflowController {
     private PropertyService propertyService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
 
     @Autowired
@@ -135,9 +141,11 @@ public class DigitalSignatureWorkflowController {
     private RevisionPetitionService revisionPetitionService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
 
     @Autowired
@@ -153,6 +161,7 @@ public class DigitalSignatureWorkflowController {
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
         final String fileStoreIds = request.getParameter("fileStoreId");
+        final String isDigiEnabled = request.getParameter("isDigiEnabled");
         final String[] fileStoreId = fileStoreIds.split(",");
         for (final String id : fileStoreId) {
             final String applicationNumber = (String) getCurrentSession()
@@ -189,7 +198,11 @@ public class DigitalSignatureWorkflowController {
                 }
             }
         }
-        model.addAttribute("successMessage", "Digitally Signed Successfully");
+        if (isDigiEnabled != null && isDigiEnabled.equals("false")) {
+            model.addAttribute("successMessage", NOTICE_SUCCESS_MESSAGE);
+        } else {
+            model.addAttribute("successMessage", DIGISIGN_SUCCESS_MESSAGE);
+        }
         model.addAttribute("fileStoreId", fileStoreId.length == 1 ? fileStoreId[0] : "");
         return DIGITAL_SIGNATURE_SUCCESS;
     }
@@ -253,7 +266,7 @@ public class DigitalSignatureWorkflowController {
             final Assignment wfInitiator = getWorkflowInitiator(propertyMutation);
             final Position pos = wfInitiator.getPosition();
             final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null,
-                    null, ADDTIONAL_RULE_PROPERTY_TRANSFER, propertyMutation.getCurrentState().getValue(), null);
+                    null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction());

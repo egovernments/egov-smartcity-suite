@@ -40,17 +40,17 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import java.lang.reflect.Type;
+
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkOrder> {
@@ -77,15 +77,18 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                 jsonObject.addProperty("status", workOrder.getEgwStatus().getCode());
             else
                 jsonObject.addProperty("status", "");
-            if (workOrder.getEstimateNumber() != null) {
-                jsonObject.addProperty("estimateNumber", workOrder.getEstimateNumber());
-                final LineEstimateDetails led = lineEstimateService.findByEstimateNumber(workOrder.getEstimateNumber());
-                final String nameOfWork = led.getNameOfWork();
-                jsonObject.addProperty("nameOfWork", nameOfWork);
-                jsonObject.addProperty("lineEstimateId", led.getLineEstimate().getId());
-            } else
-                jsonObject.addProperty("estimateNumber", "");
-
+            if(workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+                jsonObject.addProperty("estimateNumber", workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
+            else
+                jsonObject.addProperty("estimateNumber", workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getEstimateNumber());
+            
+            if(workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+                jsonObject.addProperty("nameOfWork", workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
+            else
+                jsonObject.addProperty("nameOfWork", workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getNameOfWork());
+            
+            
+            jsonObject.addProperty("lineEstimateId", workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate().getId());
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());

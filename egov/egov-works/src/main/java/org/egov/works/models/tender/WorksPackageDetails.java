@@ -40,7 +40,7 @@
 package org.egov.works.models.tender;
 
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
 public class WorksPackageDetails extends BaseModel {
 

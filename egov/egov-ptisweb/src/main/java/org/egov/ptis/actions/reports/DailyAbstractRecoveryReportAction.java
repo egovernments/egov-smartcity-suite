@@ -46,6 +46,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.RecoveryInfo;
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -68,7 +69,10 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 	private static final String REPORT = "report";
 	private static final long serialVersionUID = 1L;
 	private ReportService reportService;
-	private Integer reportId = -1;
+	private String reportId;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public Object getModel() {
@@ -137,7 +141,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 		Map<String, Object> reportParams = prepareReportParams();
 		ReportRequest reportRequest = new ReportRequest(REPORT_TEMPLATENAME_DAILY_ABSTRACT_RECOVERY_REPORT, resultList,
 				reportParams);
-		reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportRequest), getSession());
+		reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(reportRequest));
 		return REPORT;
 	}
 
@@ -287,12 +291,7 @@ public class DailyAbstractRecoveryReportAction extends BaseFormAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
 	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
-	}
-
 }

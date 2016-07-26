@@ -42,10 +42,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tags/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tags/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tags/struts-nested.tld" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/tags/c.tld" prefix="c"%>
 
 <html>
@@ -70,13 +66,17 @@ function validate()
 				return false;
 		    }
 		 }
-		return true;
+		
 	}
 	else
 	{
 		bootbox.alert("Please select a fund");
 		return false;
 	}
+	
+	document.billForm.action='/EGF/voucher/cancelBill-search.action';
+	document.billForm.submit();
+	return true;
 }
 function update(obj)
 {
@@ -97,64 +97,71 @@ function validateCancel()
 		bootbox.alert("Please select atleast one bill");
 		return false;
 	}
-	
+	document.billForm.action='/EGF/voucher/cancelBill-cancelBill.action';
+	document.billForm.submit();
 	return true;
 }
 </script>
 <body onload="resetSelectedRows()">
-	<s:form action="cancelBill" theme="simple">
+	<s:form name="billForm" action="cancelBill" theme="simple">
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Bill Cancellation" />
 		</jsp:include>
-		<span id="errorSpan"> <s:actionerror /> <s:fielderror /> <s:actionmessage />
+		<span id="errorSpan"> 
+		<div style="color: red;"><s:actionerror /> <s:fielderror /></div>
+		 <div style="color: green;"><s:actionmessage /></div>
 		</span>
 		<div class="formmainbox">
 			<div class="subheadnew">Cancel Bills - Search</div>
 			<table width="100%" cellpadding="0" cellspacing="0">
 				<tr>
+				<td class="bluebox" width="10%" ></td>
 					<td class="bluebox"><s:text name="bill.Number" /></td>
 					<td class="bluebox"><s:textfield name="billNumber"
 							id="billNumber" maxlength="25" value="%{billNumber}" /></td>
 					<td class="bluebox"><s:text name="voucher.fund" /><span
-						class="mandatory">*</span></td>
+						class="mandatory1">*</span></td>
 					<td class="bluebox"><s:select name="fund.id" id="fund.id"
 							list="dropdownData.fundList" listKey="id" listValue="name"
 							headerKey="-1" headerValue="----Choose----" value="%{fund.id}" /></td>
 				</tr>
+				</br>
 				<tr>
+				<td class="bluebox" ></td>
+					<td class="bluebox"><s:text name="from.date" /></td>
+
+					<td class="bluebox"><s:date name="fromDate" var="fromDate"
+							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
+							name="fromDate" value="%{fromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+					<td class="bluebox"><s:text name="to.date" /></td>
+
+
+					<td class="bluebox"><s:date name="toDate" var="toDate"
+							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
+							value="%{toDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
+				</tr>
+				<tr>
+				<td class="bluebox" ></td>
 					<td class="greybox"><s:text name="voucher.department" /></td>
 					<td class="greybox"><s:select name="deptImpl.id"
 							id="deptImpl.id" list="dropdownData.DepartmentList" listKey="id"
 							listValue="name" headerKey="-1" headerValue="----Choose----"
 							value="%{deptImpl.id}" /></td>
-					<td class="greybox"></td>
-					<td class="greybox"></td>
-				</tr>
-				<tr>
-					<td class="bluebox"><s:text name="from.date" /></td>
-					<td class="bluebox"><s:textfield name="fromDate" id="fromDate"
-							maxlength="20" value="%{fromDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].fromDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
-					<td class="bluebox"><s:text name="to.date" /></td>
-					<td class="bluebox"><s:textfield name="toDate" id="toDate"
-							maxlength="20" value="%{toDate}"
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('forms[0].toDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
-				</tr>
-				<tr>
+					
+				
 					<td class="greybox"><s:text name="payment.expendituretype" />
 					</td>
-					<!--	Remove the disabled attribute to make screen generic				-->
+					
 					<td class="greybox"><s:select name="expType" id="expType"
-							list="dropdownData.expenditureList" disabled="true"
-							value="%{expType}" /></td>
-					<td class="greybox"></td>
-					<td class="greybox"></td>
+							list="dropdownData.expenditureList"
+							value="%{expType}" headerKey="" headerValue="--- Select ---" /></td>
+					
 				</tr>
 			</table>
 			<div class="buttonbottom">

@@ -50,6 +50,7 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
@@ -116,13 +117,28 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     @SkipValidation
-    @ValidationErrorPage("viewlicense")
     @Action(value = "/entertradelicense/update-form")
     public String showLegacyUpdateForm() {
         if (!license().isNew())
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         if (tradeLicense != null && tradeLicense.isLegacy() && tradeLicense.isPaid())
             throw new ValidationException("legacy.license.modify.excp", "You can't modify this license");
+        prepareFeeDetails();
+        return "update";
+    }
+
+    @Action(value = "/entertradelicense/update")
+    @ValidationErrorPageExt(action = "update", makeCall = true, toMethod = "prepareFeeDetails")
+    public String update() {
+        tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees, legacyFeePayStatus);
+        return "viewlicense";
+    }
+
+    public void prepareUpdate() {
+        commonFormPrepare();
+    }
+
+    public void prepareFeeDetails() {
         prepareUpdate();
         for (final Installment installment : tradeLicenseService.getLastFiveYearInstallmentsForLicense()) {
             legacyInstallmentwiseFees.put(installment.getInstallmentNumber(), 0);
@@ -135,18 +151,6 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     demandDetail.getAmtCollected().compareTo(BigDecimal.ZERO) != 0 &&
                             demandDetail.getAmtCollected().compareTo(demandDetail.getAmount()) == 0);
         }
-        return "update";
-    }
-
-    @Action(value = "/entertradelicense/update")
-    public String update() {
-        super.setCheckList();
-        tradeLicenseService.updateLegacyLicense(tradeLicense, legacyInstallmentwiseFees, legacyFeePayStatus);
-        return "viewlicense";
-    }
-
-    public void prepareUpdate() {
-        commonFormPrepare();
     }
 
     @Override

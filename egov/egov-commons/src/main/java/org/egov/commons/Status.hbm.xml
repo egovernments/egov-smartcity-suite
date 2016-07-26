@@ -44,8 +44,8 @@
 <hibernate-mapping>
 	<class name="org.egov.commons.Status" table="eg_invstatus">
 		<id name="id" column="ID" type="integer" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">seq_eg_invstatus</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">seq_eg_invstatus</param>
 			</generator>
 		</id>
 		<property name="status" column="STATUS" />

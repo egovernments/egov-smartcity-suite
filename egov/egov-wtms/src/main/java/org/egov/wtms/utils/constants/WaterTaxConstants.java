@@ -40,6 +40,7 @@
 package org.egov.wtms.utils.constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,6 +81,10 @@ public class WaterTaxConstants {
     public static final String DONATIONMASTER = "DONATIONMASTER";
     public static final String REVENUE_WARD = "WARD";
     public static final String SYSTEM = "SYSTEM";
+    public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String  EDITCOLLECTION ="EDITCOLLECTION";
+   
+    
     
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
@@ -186,11 +191,21 @@ public class WaterTaxConstants {
     public static final String WATERTAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
     public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";
     public static final String SENDEMAILFORWATERTAX = "SENDEMAILFORWATERTAX";
+    public static final String 	DEPTCODEGENBILL = "DEPTCODEFORGENERATEBILL";
+    public static final String SERVEICECODEGENBILL = "SERVICECODEFORGENERATEBILL";
+    public static final String ESTSERVICECODEGENBILL = "ESTSERVICECODEFORGENERATEBILL";
+    public static final String FUNCTIONARYCODEGENBILL = "FUNCTIONARYCODEFORGENERATEBILL";
+    public static final String FUNDSOURCEGENBILL = "FUNDSOURCECODEFORGENERATEBILL";
+    public static final String FUNDCODEGENBILL = "FUNDCODEFORGENERATEBILL";
+    
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
     public static final String MULTIPLENEWCONNECTIONFORPID = "MULTIPLENEWCONNECTIONFORPID";
     public static final String DOCUMENTREQUIREDFORBPL = "DOCUMENTREQUIREDFORBPL";
     public static final String ROLEFORNONEMPLOYEEINWATERTAX = "ROLEFORNONEMPLOYEEINWATERTAX";
     public static final String ROLESFORLOGGEDINUSER = "RolesForSearchWAterTaxConnection";
+    public static final String ENABLEDIGITALSIGNATURE = "ENABLEDIGITALSIGNATURE";
+    public static final String ENABLEDEMANEDBILLSCHEDULAR = "ENABLEBILLSCHEDULAR";
+    public static final String APPCONFIGVALUEOFENABLED="YES";
 
     // this is just another name to new connection
     public static final String PRIMARYCONNECTION = "Primary Connection";
@@ -221,10 +236,12 @@ public class WaterTaxConstants {
 
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED = "Created";
-    public static final String NONMETEREDDEMANDREASON = "Water tax charges";
+    public static final String NONMETEREDDEMANDREASON = "Water Charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
+    public static final String  GENERATEBILL ="GENERATEBILL";
+    public static final String  PREVIOUS_SECOND_HALF ="Previous 2nd Half";
 
     // HashMap map b/n Demand reason string and code
     public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
@@ -235,7 +252,6 @@ public class WaterTaxConstants {
 
         {
             put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
-
         }
     };
     public static final String TOTAL_AMOUNT = "amount";
@@ -252,10 +268,30 @@ public class WaterTaxConstants {
             put(WATERTAX_SECURITY_CHARGE, "1100201");
             put(WATERTAX_FIELDINSPECTION_CHARGE, "1407011");
             put(WATERTAXREASONCODE, "1405016");
+            put(DEMANDRSN_CODE_ADVANCE, "3504106");
 
         }
     };
+    public static final String DEMANDRSN_CODE_ADVANCE = "WTADVANCE";
+    public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
+    public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
+    public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
+    public static final String GLCODE_FOR_ADVANCE = "3504106";
+
+
+    public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE, DEMANDRSN_CODE_ADVANCE);
+
     // List for GLCodes for Current Taxes
+     
+    public static final HashMap<String, Integer> DEMAND_REASON_ORDER_MAP = new HashMap<String, Integer>() {
+    private static final long serialVersionUID = -376251525790947906L;
+
+        {
+            put(WATERTAXREASONCODE, 0);
+            put(DEMANDRSN_CODE_ADVANCE, 1);
+        }
+    };
+    public static final Integer MAX_ADVANCES_ALLOWED = 10;
     public static final List<String> GLCODES_FOR_CURRENTTAX = new ArrayList<String>() {
         /**
          *

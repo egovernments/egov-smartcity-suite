@@ -50,23 +50,24 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 
-@Repository 
-public interface LicenseSubCategoryRepository extends JpaRepository<LicenseSubCategory,Long> {
-    
-//LicenseSubCateogry classpath is used to solve mapping exception as subcategory exists in other module 
-@Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where upper(sc.name) = upper(:subCategoryName)")
-LicenseSubCategory findByName(@Param("subCategoryName") String name);
+@Repository
+public interface LicenseSubCategoryRepository extends JpaRepository<LicenseSubCategory, Long> {
 
-@Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where upper(sc.code) = upper(:subCategoryCode)")
-LicenseSubCategory findByCode(@Param("subCategoryCode") String code);
+    @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where upper(sc.name) = upper(:subCategoryName)")
+    LicenseSubCategory findByName(@Param("subCategoryName") String name);
 
-@Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where sc.id = :subCategoryId")
-LicenseSubCategory findOne(@Param("subCategoryId") Long id);
+    @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where upper(sc.code) = upper(:subCategoryCode)")
+    LicenseSubCategory findByCode(@Param("subCategoryCode") String code);
 
-@Query("select sc from org.egov.tl.entity.LicenseSubCategory sc order by sc.id")
-List<LicenseSubCategory> findAll();
+    @Override
+    @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where sc.id = :subCategoryId")
+    LicenseSubCategory findOne(@Param("subCategoryId") Long id);
 
-@Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where sc.category.id = :categoryId")
-List<LicenseSubCategory> findAllByCategoryId(@Param("categoryId") Long id);
+    @Override
+    @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc order by sc.id")
+    List<LicenseSubCategory> findAll();
+
+    @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where sc.category.id = :categoryId")
+    List<LicenseSubCategory> findAllByCategoryId(@Param("categoryId") Long id);
 
 }

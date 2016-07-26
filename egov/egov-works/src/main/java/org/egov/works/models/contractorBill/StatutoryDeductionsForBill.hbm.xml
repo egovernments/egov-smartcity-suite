@@ -44,8 +44,8 @@
 	<class name="org.egov.works.models.contractorBill.StatutoryDeductionsForBill" table="EGW_STATUTORY_DEDUCTIONS_BILL">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_STATUTORY_DEDUCTIONS_BILL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_STATUTORY_DEDUCTIONS_BILL</param>
 			</generator>
 		</id>
 	<many-to-one name="subPartyType" class="org.egov.commons.EgPartytype" column="SUBPARTYTYPE_ID" fetch="select" />

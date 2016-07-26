@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.ApplicationProcessTime;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -52,9 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -81,13 +83,14 @@ public class ApplicationProcessTimeController {
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "application-process-time-master";
     }
 
     @RequestMapping(value = "/applicationProcessTime", method = RequestMethod.POST)
-    public String addApplicationProcessTimeMasterData(
+    public String createApplicationProcessTimeMasterData(
             @Valid @ModelAttribute final ApplicationProcessTime applicationProcessTime, final BindingResult errors,
-            final Model model) {
+            final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
             model.addAttribute("applicationTypes", applicationTypeService.findAll());
@@ -95,7 +98,10 @@ public class ApplicationProcessTimeController {
         } else
 
             applicationProcessTimeService.createApplicationProcessTime(applicationProcessTime);
-        return getApplicationProcessTimeList(model);
+        redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
+        model.addAttribute("message", "Application ProcessTime created successfully.");
+        model.addAttribute("mode", "create");
+        return "application-process-time-master-success";
     }
 
     @RequestMapping(value = "/applicationProcessTime/list", method = RequestMethod.GET)
@@ -105,7 +111,13 @@ public class ApplicationProcessTimeController {
         return "application-process-master-list";
     }
 
-    @RequestMapping(value = "/applicationProcessTime/{applicationProcessId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/applicationProcessTime/edit", method = RequestMethod.GET)
+    public String getApplicationProcessTimeMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getApplicationProcessTimeList(model);
+    }
+
+    @RequestMapping(value = "/applicationProcessTime/edit/{applicationProcessId}", method = RequestMethod.GET)
     public String getApplicationProcessTimeMasterDetails(final Model model,
             @PathVariable final String applicationProcessId) {
         final ApplicationProcessTime applicationProcessTime = applicationProcessTimeService
@@ -117,16 +129,18 @@ public class ApplicationProcessTimeController {
         return "application-process-time-master";
     }
 
-    @RequestMapping(value = "/applicationProcessTime/{applicationProcessId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/applicationProcessTime/edit/{applicationProcessId}", method = RequestMethod.POST)
     public String editApplicationProcessTimeData(
             @Valid @ModelAttribute final ApplicationProcessTime applicationProcessTime, final BindingResult errors,
-            final Model model, @PathVariable final long applicationProcessId) {
+            final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long applicationProcessId) {
         if (errors.hasErrors()) {
             model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
             model.addAttribute("applicationTypes", applicationTypeService.findAll());
             return "application-process-time-master";
         } else
             applicationProcessTimeService.updateApplicationProcessTime(applicationProcessTime);
-        return getApplicationProcessTimeList(model);
+        redirectAttrs.addFlashAttribute("applicationProcessTime", applicationProcessTime);
+        model.addAttribute("message", "Application ProcessTime updated successfully.");
+        return "application-process-time-master-success";
     }
 }

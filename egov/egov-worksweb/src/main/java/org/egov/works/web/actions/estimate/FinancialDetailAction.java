@@ -78,12 +78,12 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
+import org.egov.works.abstractestimate.entity.FinancingSource;
+import org.egov.works.abstractestimate.entity.MultiYearEstimate;
 import org.egov.works.models.estimate.BudgetFolioDetail;
-import org.egov.works.models.estimate.FinancialDetail;
-import org.egov.works.models.estimate.FinancingSource;
-import org.egov.works.models.estimate.MultiYearEstimate;
 import org.egov.works.models.masters.DepositCode;
 import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.DepositWorksUsageService;
@@ -357,9 +357,9 @@ public class FinancialDetailAction extends BaseFormAction {
             abstractEstimate.setDepositCode(depositCodeService.findById(depositCodeId, false));
 
         if (getMaxFinancingSource(financingSourceList).getFundSource() != null
-                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId()) != null)
+                && fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList).getFundSource().getId().intValue()) != null)
             abstractEstimate.setFundSource(fundSourceDAO.fundsourceById(getMaxFinancingSource(financingSourceList)
-                    .getFundSource().getId()));
+                    .getFundSource().getId().intValue()));
 
         abstractEstimate = abstractEstimateService.persistFinancialDetail(financialDetail, abstractEstimate);
         // to lazy load the financial detail id.

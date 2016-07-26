@@ -103,7 +103,7 @@
 				</div>
 				
 			</div> <!-- end of main-content -->
-			<c:if test="${userDesgn == 'Commissioner'}">
+			<c:if test="${fn:containsIgnoreCase(userDesignationList, designation)}">
 		     <div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
@@ -111,7 +111,7 @@
 					</div>
 				</div>
 		   </c:if>	
-		   <c:if test="${userDesgn != 'Commissioner' && userDesgn != 'Revenue Clerk' }">
+		   <c:if test="${!fn:containsIgnoreCase(userDesignationList, commissionerDesignation) && !fn:contains(userDesignationList, revenueClerkDesignation)}">
 		   <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 		  </c:if>
 				<div class="buttonbottom" align="center">

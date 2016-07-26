@@ -47,8 +47,8 @@
 			name="id" 
 			column="ID"
 			type="int">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_FLOORDEMANDCALC</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_FLOORDEMANDCALC</param>
 			</generator>
 		</id>
 		<timestamp

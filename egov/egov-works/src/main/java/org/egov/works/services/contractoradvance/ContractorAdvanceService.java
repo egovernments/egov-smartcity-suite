@@ -43,8 +43,8 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.estimate.AbstractEstimate;
 
 import java.math.BigDecimal;
 import java.util.Date;

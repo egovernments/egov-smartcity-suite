@@ -54,8 +54,7 @@ import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
-import org.egov.tl.entity.LicenseType;
-import org.egov.tl.entity.RateTypeEnum;
+import org.egov.tl.entity.enums.RateTypeEnum;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.masters.LicenseCategoryService;
@@ -78,9 +77,6 @@ import java.util.TreeMap;
 	@Result(name = LicenseSubCategoryAction.EDIT, location = "licenseSubCategory-edit.jsp") })
 public class LicenseSubCategoryAction extends BaseFormAction {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 6242612156153747913L;
 	private LicenseSubCategory subCategory = new LicenseSubCategory();
 	private Long id;
@@ -89,9 +85,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	public static final String VIEW = "view";
 	private Map<Long, String> licenseCategoryMap;
 	private Map<Long, String> licenseSubCategoryMap;
-	@Autowired
-	@Qualifier("persistenceService")
-	private PersistenceService persistenceService;
 	@Autowired
 	@Qualifier("licenseSubCategoryService")
 	private LicenseSubCategoryService licenseSubCategoryService;
@@ -108,19 +101,13 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 	@Qualifier("feeMatrixService")
 	private FeeMatrixService feeMatrixService;
 	private boolean feeExists;
-
 	private static final Logger LOGGER = Logger.getLogger(LicenseSubCategoryAction.class);
-	
 	private List<LicenseSubCategoryDetails> subCategoryMappingDetails = new ArrayList<LicenseSubCategoryDetails>();
-	
-
-	// UI field
 	private String userMode;
 	private String licenseFee;
 
 	@Override
 	public Object getModel() {
-		// TODO Auto-generated method stub
 		return subCategory;
 	}
 
@@ -131,13 +118,11 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		addDropdownData("feeTypeList", feeTypeService.findAll());
 		addDropdownData("rateTypeList", Arrays.asList(RateTypeEnum.values()));
 		addDropdownData("uomList", unitOfMeasurementService.findAllActiveUOM());
-		// In Modify and View Mode Load category dropdown.
 		if (userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT) || userMode.equalsIgnoreCase(VIEW)))
 			setLicenseSubCategoryMap(Collections.EMPTY_MAP);
 		if (getId() != null){
 			subCategory = licenseSubCategoryService.findById(getId());
 			setCategoryId(subCategory.getCategory().getId());
-			// To check whether fee is defined for the subcategory
 			if(userMode != null && !userMode.isEmpty() && (userMode.equalsIgnoreCase(EDIT))){
 	                    List<FeeMatrix> feeMatrixList = feeMatrixService.findBySubCategory(subCategory);
 	                    if(feeMatrixList!=null && !feeMatrixList.isEmpty() && feeMatrixList.size()>0){
@@ -149,10 +134,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		}
 	}      
 
-	/**
-	 * @param licenseCategoryList
-	 * @return
-	 */
 	public static Map<Long, String> getFormattedCategoryMap(final List<LicenseCategory> licenseCategoryList) {
 		final Map<Long, String> categoryMap = new TreeMap<Long, String>();
 		for (final LicenseCategory licenseCategory : licenseCategoryList)
@@ -161,10 +142,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		return categoryMap;
 	}
 
-	/**
-	 * @param licenseSubCategoryList
-	 * @return
-	 */
 	public static Map<Long, String> getFormattedSubCategoryMap(final List<LicenseSubCategory> licenseSubCategoryList) {
 		final Map<Long, String> subCategoryMap = new TreeMap<Long, String>();
 		for (final LicenseSubCategory licenseSubCategory : licenseSubCategoryList)
@@ -173,11 +150,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		return subCategoryMap;
 	}
 
-	/**
-	 * This method is invoked to create a new form.
-	 *
-	 * @return a <code>String</code> representing the value 'NEW'
-	 */
 	@Action(value = "/masters/licenseSubCategory-newform")
 	public String newform() {
 		if (userMode != null && !userMode.isEmpty()) {
@@ -191,11 +163,6 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		return NEW;
 	}
 
-	/**
-	 * This method is invoked to Edit a form.
-	 *
-	 * @return a <code>String</code> representing the value 'SEARCH'
-	 */
 	@Action(value = "/masters/licenseSubCategory-edit")
 	public String edit() {
 		if (userMode.equalsIgnoreCase(EDIT))
@@ -205,47 +172,23 @@ public class LicenseSubCategoryAction extends BaseFormAction {
 		return SEARCH;
 	}
 
-	/**
-	 * @return
-	 * @throws NumberFormatException
-	 * @throws ApplicationException
-	 */
 	@ValidationErrorPage(value = EDIT)
 	@Action(value = "/masters/licenseSubCategory-save")
 	public String save() throws NumberFormatException, ApplicationException {
 		try {
-			if(categoryId!=null){
-				subCategory.setCategory(licenseCategoryService.findById(categoryId));
-			}
-			LicenseType licenseType=(LicenseType)persistenceService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
-			subCategory.setLicenseType(licenseType);
-			subCategory.getLicenseSubCategoryDetails().clear();
-			populateSubCategoryDetails();
-			subCategory = licenseSubCategoryService.create(subCategory);
+			subCategory = licenseSubCategoryService.create(subCategory, subCategoryMappingDetails, categoryId);
 		} catch (final ValidationException valEx) {
 			LOGGER.error("Exception found while persisting License category: " + valEx.getErrors());
 			throw new ValidationException(valEx.getErrors());
 		}
 		if (userMode.equalsIgnoreCase(NEW))
-			addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.save.success"));
+			addActionMessage(subCategory.getName()+" "+getText("license.subcategory.save.success"));
 		else if (userMode.equalsIgnoreCase(EDIT))
-			addActionMessage("\'" + subCategory.getCode() + "\' " + getText("license.subcategory.edit.success"));
+			addActionMessage(subCategory.getName()+" "+getText("license.subcategory.edit.success"));
 		userMode = SUCCESS;
 		return NEW;
 	}
 	
-	protected void populateSubCategoryDetails() {
-	        for (LicenseSubCategoryDetails scDetails : subCategoryMappingDetails) {
-	            if(scDetails!=null){
-	                scDetails.setSubCategory(subCategory);
-	                scDetails.setFeeType(feeTypeService.findById(scDetails.getFeeType().getId()));
-	                scDetails.setRateType(scDetails.getRateType());
-	                scDetails.setUom(unitOfMeasurementService.findById(scDetails.getUom().getId())); 
-        	        subCategory.addLicenseSubCategoryDetails(scDetails);
-	            }
-	        } 
-	    }
-
 	public String getUserMode() {
 		return userMode;
 	}

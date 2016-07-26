@@ -45,8 +45,8 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyDetail"
 		table="EGPT_PROPERTY_DETAIL">
 		<id name="propertyDetailsID" column="ID" type="integer">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_PROPERTY_DETAIL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_PROPERTY_DETAIL</param>
 			</generator>
 		</id>
 

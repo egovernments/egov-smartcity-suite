@@ -72,6 +72,7 @@ jQuery(document).click(function() {
 		if(name.indexOf("EXCEL")!=-1 || name.indexOf("PDF")!=-1 || name.indexOf("XLS")!=-1 ){
 			setTimeout(function() {
 				undoLoadingMask();
+				jQuery('input[type=submit], input[type=button]').removeAttr("disabled");
 			}, maskingTimeForDownloads)
 		}
 	}
@@ -123,4 +124,33 @@ function initiateRequest() {
 			return new ActiveXObject("Microsoft.XMLHTTP");
 		}
 	}
+}
+
+function DateValidation(start , end){
+    if (start != "" && end != "") {
+		var stsplit = start.split("/");
+		var ensplit = end.split("/");
+		
+		start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+		end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+		
+		return ValidRange(start, end);
+	}else{
+		return true;
+	}
+}
+
+function ValidRange(start, end) {
+	var retvalue = false;
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+		bootbox.alert("Start date must come before the end date.");
+		} else {
+		retvalue = true;
+	}
+    return retvalue;
 }

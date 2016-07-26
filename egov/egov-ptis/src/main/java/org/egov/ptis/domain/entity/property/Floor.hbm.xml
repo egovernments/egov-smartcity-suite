@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.Floor" table="EGPT_FLOOR_DETAIL">
 		<id
 			name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
-					<param name="sequence">SEQ_EGPT_FLOOR_DETAIL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+					<param name="sequence_name">SEQ_EGPT_FLOOR_DETAIL</param>
 			</generator>
 		</id>
 		<property
@@ -131,5 +131,6 @@
 			class="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" property-ref="floor"
 			cascade="none" />
 		<property name="floorUid" column="FLOOR_UID" type="java.lang.Integer"/>
+		<property name="constructionDate" column="constructiondate" type="java.util.Date"/>
 	</class>
 </hibernate-mapping>

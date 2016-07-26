@@ -136,7 +136,7 @@ public class AssessmentService {
 		PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+			propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, null);
 		} else {
 			ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
 			propertyTaxDetails.setErrorDetails(errorDetails);
@@ -1115,7 +1115,7 @@ public class AssessmentService {
 		String responseJson = null;
 		Boolean isAuthenticatedUser = propertyExternalService.authenticateUser(username, password);
 		if (isAuthenticatedUser) {
-			EgovThreadLocals.setUserId(Long.valueOf("38"));
+			ApplicationThreadLocals.setUserId(Long.valueOf("38"));
 			List<FloorDetails> floorDetailsList = new ObjectMapper().readValue(floorDetails.toString(),
 					new TypeReference<Collection<FloorDetails>>() {
 					});

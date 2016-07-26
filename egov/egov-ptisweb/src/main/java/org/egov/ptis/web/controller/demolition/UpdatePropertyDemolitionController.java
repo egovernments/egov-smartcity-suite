@@ -45,13 +45,12 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.Designation;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,15 +91,15 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     }
 
     @Autowired
-    private PtDemandDao ptDemandDAO;
-
-    @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
     @Autowired
     private SecurityUtils securityUtils;
 
     private PropertyImpl property;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @ModelAttribute
     public Property propertyModel(@PathVariable String id) {
@@ -114,19 +113,17 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     @RequestMapping(method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
 
-        String userDesgn = "";
+        String userDesignationList = "";
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
-        final Designation designation = propertyTaxUtil.getDesignationForUser(securityUtils.getCurrentUser().getId());
-        if (null != designation)
-            userDesgn = designation.getName();
+        
+        userDesignationList=propertyTaxCommonUtils.getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("currentState", property.getCurrentState().getValue());
-        model.addAttribute("userDesgn", userDesgn);
         prepareWorkflow(model, property, new WorkflowContainer());
         propertyDemolitionService.addModelAttributes(model, property.getBasicProperty());
 
-        model.addAttribute("userDesgn", userDesgn);
+        model.addAttribute("userDesignationList", userDesignationList);
         model.addAttribute("designation", COMMISSIONER_DESGN);
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                 || currState.endsWith(WFLOW_ACTION_NEW)) {
@@ -195,9 +192,8 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                 }
                 Assignment assignment = new Assignment();
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
-                    assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
                     model.addAttribute("successMessage", "Property Demolition approved successfully and forwarded to  "
-                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
+                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with assessment number "
                             + property.getBasicProperty().getUpicNo());
                 } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
                     assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());

@@ -43,9 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>     
 <div class="row">
@@ -98,12 +96,12 @@
 									</td>	
 								</tr>
 							</c:forEach>
-							<script>
-								$( "#penaltyRatesTable tr:last .delete-button").show();
-								$( "#penaltyRatesTable tr:last .range-to").prop("readonly", false);
-							</script>
 						</tbody>
 					</table>
+					<script>
+								$( "#penaltyRatesTable tr:last .delete-button").show();
+								$( "#penaltyRatesTable tr:last .range-to").prop("readonly", false);
+					</script>
 					<div class="form-group">
 						<div class="text-center">
 							<button type="button" id="btn-addRow" class="btn btn-primary btn-addRow"><spring:message code="lbl.adtax.addRow"></spring:message></button>

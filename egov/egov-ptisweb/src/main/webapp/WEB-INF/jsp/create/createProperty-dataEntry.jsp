@@ -46,7 +46,6 @@
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='dataentry.title' />
 	</s:if></title>
-<sx:head />
 <!-- <script type="text/javascript" src="/ptis/resources/javascript/unitRentAgreement.js"></script> -->
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
@@ -96,7 +95,7 @@
 			<div class="buttonbottom" align="center">
 				<table style="width: 100%; text-align: center;">
 					<tr>
-						<td><input  type="submit" id="Create" class="buttonsubmit" value="Create" onclick="onSubmit();"/> 
+						<td><input  type="submit" id="Create" class="buttonsubmit" value="Create" /> 
 							<input type="button" name="button2" id="button2" value="Close"	class="button" onclick="window.close();" /></td>
 					</tr>
 				</table>
@@ -122,9 +121,49 @@ jQuery(function ($) {
 		$('.datepicker').on('changeDate', function(ev){
 		    $(this).datepicker('hide');
 		});
+
+
+		$('#Create').click(function(e){
+			console.log('called :)!');
+			return validateProperty();
+		}); 
 		
     	
 });
+
+var isSubmit=false;
+
+function validateProperty() {
+	
+	if(isSubmit)
+	{
+		return onSubmit();
+	}
+	
+	jQuery.ajax({
+		url: "/ptis/common/ajaxCommon-checkIfPropertyExists.action",
+		type: "GET",
+		data: {
+			assessmentNo : jQuery('#upicNo').val()
+		},
+		cache: false,
+		dataType: "json",
+		success: function (response) {
+			console.log("success"+response);
+			if(response.exists) {
+				bootbox.alert("Entered old assessment number is not unique and is already present in the system. Please enter unique old assessment number")
+				isSubmit = false;
+			} else {
+				isSubmit=true;
+		    	jQuery('#Create').trigger('click');
+			}
+		}
+	});
+
+	return false;
+	
+} 
+
 function loadOnStartUp() {
 	enableCorresAddr();
 	enableAppartnaumtLandDetails();
@@ -138,63 +177,7 @@ function loadOnStartUp() {
 	}
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
-	/* document.getElementById("plotArea").style.display = ""; */
-	/* document.getElementById("ownerShipRow").style.display = "none";
-	document.getElementById("vacantAreaRow").style.display = "none"; */
-	/* document.getElementById("undivArea").style.display = "none";		
-	document.getElementById("rentBox").className="hiddentext";
-	document.getElementById("bldngCostId").className="hiddentext";
-	document.getElementById("parentIndex").className="hiddentext";
-	document.getElementById("opAlvId").className="hiddentext";
-	document.getElementById("occId").className="hiddentext";
-	document.getElementById("rentBox").readOnly=true;
-	document.getElementById("bldngCostId").readOnly=true;
-	document.getElementById("amenitiesId").disabled=true;
-	document.getElementById("opAlvId").readOnly=true;
-	document.getElementById("occId").readOnly=true;
-	document.getElementById("parentIndex").readOnly=true;
-	document.getElementById("dateOfCompletion").readOnly=true;
-	document.getElementById("dateOfCompletion").className="hiddentext";
-	document.getElementById("floorDetailsConfirm").style.display = "none";
-	document.getElementById("waterRate").style.display = "none"; */
-	
-	//enableFieldsForPropType();
-	//hideAddRmvBtnForResidFlats();
-	//enableCorresAddr();
-	//enableTaxExemptReason();
-	//enableRentBox();
-			
-	/* var complDateStr = document.getElementById("dateOfCompletion").value;
-	if(complDateStr == "" || complDateStr == "DD/MM/YYYY" || complDateStr == undefined)
-	{		
-		waterMarkInitialize('dateOfCompletion','DD/MM/YYYY');
-	}
-	var tbl = document.getElementById('floorDetails');	
-	if(tbl!=null) {
-		resetDetailsForTenantOnload();
-	} */
-	
-	//populateLocationFactors();	
-	//populateFloorConstTypeDropDowns();
-	//toggleForResNonRes();	
-	 toggleFloorDetails();
-	//toggleUnitTypeAndCategory();
-	//prepareUnitTypeCategories();
-	//prepareUsagesForUnitTypes();
-	
-	/* var intervalId = -1;
-	var propTypeMstr = document.getElementById("propTypeMaster");
-	
-	if (propTypeMstr.options[propTypeMstr.selectedIndex].text == 'Mixed') {
-		intervalId = setInterval(doOnValidationErrors, 1000);
-	} 
-	 
-	if (areUnitTypeCatsAndUsagePopulated) {
-		clearInterval(intervalId);
-	} 	
-	
-	document.getElementById("taxExemptRow").style.display = "none";		 */
-	//enableSubmitButton();  
+	toggleFloorDetails();
      var aadhartextboxes = jQuery('.txtaadhar');
      console.log(aadhartextboxes);
      aadhartextboxes.each(function() {
@@ -204,19 +187,17 @@ function loadOnStartUp() {
 	   	}
 	 });
      populateBoundaries();
+	 
 }
 
 function onSubmit() { 
-
 	jQuery('#gender, #guardianRelation').removeAttr('disabled');
-    
 	document.forms[0].action = 'createProperty-createDataEntry.action';
 	<s:if test="mode=='edit'">
 	document.forms[0].action = 'createProperty-updateDataEntry.action';
 	</s:if>
-	document.forms[0].submit;
 	
-   return true;
+   return true; 
 }
 
 </script>

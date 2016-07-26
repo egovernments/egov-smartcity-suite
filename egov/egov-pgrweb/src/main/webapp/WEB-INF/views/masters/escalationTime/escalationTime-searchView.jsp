@@ -44,14 +44,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
-<script type="text/javascript" src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
-
 		var curRow = getRow(obj).rowIndex;
 		if (lastRow == 1) {
 			bootbox.alert('you cannot delete this row ');
@@ -61,8 +59,20 @@
 			resetSrNo();
 			return true;
 		}
-
 	}
+	
+	function getRow(obj)    
+	{
+	 if(!obj)return null;
+	 tag = obj.nodeName.toUpperCase();
+	 while(tag != 'BODY'){
+	  if (tag == 'TR') return obj;
+	  obj=obj.parentNode ;
+	  tag = obj.nodeName.toUpperCase();
+	 }
+	 return null;
+	}
+	
 	function resetSrNo() {
 		var tb1 = document.getElementById("escalationTable");
 		var lastRow = (tb1.rows.length) - 1;
@@ -88,7 +98,7 @@
 		description.setAttribute("required", "required");
 
 		description.name = "escalationList[" + counts
-				+ "].designation.description";
+				+ "].designation.name";
 		cell1.appendChild(description);
 
 		var newCol = document.createElement("td");
@@ -191,6 +201,7 @@
 								<th><spring:message code="lbl.escalationTime.button.srNo" /></th>
 								<th><spring:message code="lbl.escalationTime.designation" /></th>
 								<th><spring:message code="lbl.escalationTime.noOfHours" /></th>
+								<th><spring:message code="lbl.escalation.action" /></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -200,8 +211,8 @@
 									<td><input type="text"
 										id="escalationDescription${status.index}"
 										class="form-control is_valid_alphanumeric escalationDescription${status.index}"
-										value="${contact.designation.description}"
-										name="escalationList[${status.index}].designation.description"
+										value="${contact.designation.name}"
+										name="escalationList[${status.index}].designation.name"
 										required="required"></td>
 
 									<td><input type=hidden

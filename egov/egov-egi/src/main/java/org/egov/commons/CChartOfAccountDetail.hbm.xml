@@ -45,8 +45,8 @@
 	<class name="org.egov.commons.CChartOfAccountDetail" table="CHARTOFACCOUNTDETAIL"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">seq_chartofaccountdetail</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">seq_chartofaccountdetail</param>
 			</generator>
 		</id>	
 		<many-to-one name="glCodeId" class="org.egov.commons.CChartOfAccounts" column="GLCODEID" unique="true" />

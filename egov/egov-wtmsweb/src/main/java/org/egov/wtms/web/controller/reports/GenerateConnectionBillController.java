@@ -47,6 +47,7 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -58,7 +59,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.wtms.application.service.GenerateConnectionBill;
+import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.application.service.GenerateConnectionBillService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationType;
@@ -82,6 +83,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -190,13 +192,8 @@ public class GenerateConnectionBillController {
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->"+Long.valueOf(count));
         List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)<1000){
-            generateconnectionBillList = generateConnectionBillService
-                .getBillData(generateConnectionBillList);
-        }
-        else
-        {
-             generateconnectionBillList = new ArrayList<>();
+        if (Long.valueOf(count)>1000){
+            generateconnectionBillList = new ArrayList<>();
         }
         result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -209,7 +206,7 @@ public class GenerateConnectionBillController {
             @PathVariable final String consumerCode) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getCode());
+                        .getName());
         response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
@@ -255,8 +252,9 @@ public class GenerateConnectionBillController {
         final List<InputStream> pdfs = new ArrayList<InputStream>();
 
         for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+        	if(connectionbill!=null){
             try {
-
+            	
                 final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
                         connectionbill.getHscNo(), connectionbill.getApplicationType());
                 if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null) {
@@ -270,6 +268,7 @@ public class GenerateConnectionBillController {
                 LOGGER.debug("Entered into executeJob" + e);
                 continue;
             }
+        	}
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {
@@ -384,7 +383,7 @@ public class GenerateConnectionBillController {
                 try {
                     final List<Long> filestoreList = generateConnectionBillService.getDocuments(
                             connectionbill.getHscNo(), connectionbill.getApplicationType());
-                    if (filestoreList != null && filestoreList.get(0) != null) {
+                    if (!filestoreList.isEmpty() && filestoreList.get(0) != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
                                 + "");
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);

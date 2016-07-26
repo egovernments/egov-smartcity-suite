@@ -41,7 +41,7 @@ package org.egov.works.models.tender;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.estimate.Activity;
+import org.egov.works.abstractestimate.entity.Activity;
 
 import javax.validation.Valid;
 import java.util.Collection;

@@ -42,9 +42,11 @@ package org.egov.works.web.controller.reports;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -67,6 +69,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -167,7 +170,7 @@ public class WorkProgressRegisterPDFController {
             for (final WorkProgressRegister wpr : workProgressRegisters) {
                 final WorkProgressRegisterPdf pdf = new WorkProgressRegisterPdf();
                 if (wpr.getWard() != null)
-                    pdf.setWard(wpr.getWard().getName());
+                    pdf.setWard(wpr.getWard().getBoundaryNum().toString());
                 else
                     pdf.setWard("");
                 if (wpr.getLocation() != null)
@@ -204,11 +207,11 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setBudgetHead("");
                 if (wpr.getTypeOfWork() != null)
-                    pdf.setTypeOfWork(wpr.getTypeOfWork().getCode());
+                    pdf.setTypeOfWork(wpr.getTypeOfWork().getDescription());
                 else
                     pdf.setTypeOfWork("");
                 if (wpr.getSubTypeOfWork() != null)
-                    pdf.setSubTypeOfWork(wpr.getSubTypeOfWork().getCode());
+                    pdf.setSubTypeOfWork(wpr.getSubTypeOfWork().getDescription());
                 else
                     pdf.setSubTypeOfWork("");
                 if (wpr.getAdminSanctionBy() != null)
@@ -232,7 +235,7 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setEstimateAmount("NA");
                 if (wpr.getModeOfAllotment() != null)
-                    pdf.setModeOfAllotment(wpr.getModeOfAllotment().toString());
+                    pdf.setModeOfAllotment(wpr.getModeOfAllotment());
                 else
                     pdf.setModeOfAllotment("");
                 if (wpr.getAgreementNumber() != null)
@@ -259,7 +262,7 @@ public class WorkProgressRegisterPDFController {
                 if (wpr.getBilltype() != null)
                     pdf.setBilltype(wpr.getBilltype());
                 else
-                    pdf.setBilltype("");
+                    pdf.setBilltype("NA");
                 if (wpr.getBillamount() != null)
                     pdf.setBillamount(wpr.getBillamount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
@@ -268,14 +271,21 @@ public class WorkProgressRegisterPDFController {
                     pdf.setTotalBillAmount(wpr.getTotalBillAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillAmount("NA");
+                if (wpr.getMilestonePercentageCompleted() != null)
+                    pdf.setMilestonePercentageCompleted(wpr.getMilestonePercentageCompleted().toString());
+                else
+                    pdf.setMilestonePercentageCompleted("NA");
                 if (wpr.getTotalBillPaidSoFar() != null)
                     pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillPaidSoFar("NA");
-                if (wpr.getBalanceValueOfWorkToBill() != null)
-                    pdf.setBalanceValueOfWorkToBill(
-                            wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-                else
+                if (wpr.getBalanceValueOfWorkToBill() != null) {
+                    if (wpr.getBilltype() != null && wpr.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
+                        pdf.setBalanceValueOfWorkToBill("NA");
+                    else
+                        pdf.setBalanceValueOfWorkToBill(
+                                wpr.getBalanceValueOfWorkToBill().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                } else
                     pdf.setBalanceValueOfWorkToBill("NA");
 
                 dataRunDate = formatter.format(wpr.getCreatedDate());
@@ -291,9 +301,11 @@ public class WorkProgressRegisterPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
+            reportInput.setReportFormat(FileFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.pdf");
         } else {
+            reportInput.setReportFormat(FileFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.xls");
         }

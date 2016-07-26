@@ -126,20 +126,17 @@
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.receiptDate}" />
-									
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.receiptDate}"/>
 								</div>
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.fromDate}" />
-								
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.fromDate}"/>
 								</div>
 							</td>
 							<td  colspan="1" >
 								<div align="center">
-								<c:out value="${receipt.toDate}" />
-								
+								<fmt:formatDate pattern="dd-MM-yyyy" value="${receipt.toDate}"/>
 								</div>
 							</td>
 							<td  colspan="1">
@@ -163,7 +160,6 @@
        
 					
 		</form:form>	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

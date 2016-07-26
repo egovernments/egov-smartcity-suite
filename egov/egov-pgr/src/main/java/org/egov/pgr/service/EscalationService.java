@@ -40,6 +40,12 @@
 
 package org.egov.pgr.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
@@ -55,6 +61,7 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
@@ -71,11 +78,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -202,7 +204,8 @@ public class EscalationService {
                             final StringBuffer smsBody = new StringBuffer().append("Dear ").append(superiorUser.getName())
                                     .append(", ").append(complaint.getCrn() + " by ")
                                     .append(complaint.getComplainant().getName() != null ? complaint.getComplainant().getName()
-                                            : "Anonymous User").append(", "+complaint.getComplainant().getMobile())
+                                            : "Anonymous User")
+                                    .append(", " + complaint.getComplainant().getMobile())
                                     .append(" for " + complaint.getComplaintType().getName() + " from ")
                                     .append(complaint.getLocation().getName()).append(" handled by ")
                                     .append(previoususer.getName() + " has been escalated to you. ");
@@ -257,5 +260,26 @@ public class EscalationService {
         else
             return escalationRepository.findEscalationByAll(pageable);
 
+    }
+
+    public List<PositionHierarchy> getEscalationObjByComplaintTypeFromPosition(final List<ComplaintType> complaintTypes,
+            final Position fromPosition) {
+        final List<String> compTypeCodes = new ArrayList<String>();
+        for (final ComplaintType complaintType : complaintTypes)
+            compTypeCodes.add(complaintType.getCode());
+        final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+        return positionHierarchyService.getListOfPositionHeirarchyByPositionObjectTypeSubType(objectType.getId(), compTypeCodes,
+                fromPosition);
+    }
+
+    public PositionHierarchy getExistingEscalation(final PositionHierarchy positionHierarchy) {
+        PositionHierarchy existingPosHierarchy = null;
+        if (null != positionHierarchy.getObjectSubType() && null != positionHierarchy.getFromPosition()
+                && null != positionHierarchy.getToPosition())
+            existingPosHierarchy = positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(
+                    positionHierarchy.getFromPosition().getId(), positionHierarchy.getObjectType().getId(),
+                    positionHierarchy.getObjectSubType());
+
+        return existingPosHierarchy != null ? existingPosHierarchy : null;
     }
 }

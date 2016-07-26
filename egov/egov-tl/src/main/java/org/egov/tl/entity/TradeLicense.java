@@ -40,208 +40,26 @@
 
 package org.egov.tl.entity;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.utils.DateUtils;
-import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
+@Entity
+@Table(name = "egtl_trade_license")
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class TradeLicense extends License {
-    private static final Logger LOGGER = Logger.getLogger(TradeLicense.class);
-    private static final long serialVersionUID = 1L;
-    private List<MotorMaster> motorMasterList;
-    private List<String> hotelGradeList;
-    
-    private String hotelGrade;
-    private List hotelSubCatList;
-    public static final String[] HOTELGRADE = { "Grade A", "Grade B", "Grade C" };
-    private List licenseZoneList;
-    
-    private BigDecimal sandBuckets;
-    private BigDecimal waterBuckets;
-    private BigDecimal dcpExtinguisher;
-    private String nocNumber;
-    private Boolean isCertificateGenerated;
-    
-    private Long id;
-    
-    private List<LicenseDocument> documents = new ArrayList<>();
-
-
-    @Override
-    public String generateApplicationNumber(final String runningNumber) {
-        setApplicationNumber("TL-APPL" + runningNumber);
-        return getApplicationNumber();
-    }
-
-    @Override
-    public String generateLicenseNumber(final Serializable runningNumber) {
-        this.licenseNumber = String.format("TL/%05d/%s", runningNumber, DateUtils.currentDateToYearFormat());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Generated License Number : "+this.licenseNumber);
-        return this.licenseNumber;
-    }
-
-    public String generateNocNumber(final String runningNumber) {
-        LOGGER.debug("Generating NOC Number...");
-        final StringBuilder nocNumber = new StringBuilder(32);
-        nocNumber.append("W.O.").append(Constants.BACKSLASH).append("PRO-NOC").append(Constants.BACKSLASH).append(runningNumber)
-                .append(Constants.BACKSLASH).append("LC.");
-        setNocNumber(nocNumber.toString());
-        LOGGER.debug("Generated NOC Number =" + nocNumber.toString());
-        LOGGER.debug("Generating NOC Number completed.");
-        return nocNumber.toString();
-    }
 
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         final StringBuffer details = new StringBuffer();
         if (getLicenseNumber() != null && !getLicenseNumber().isEmpty())
-            details.append("TradeLicense Number " +getLicenseNumber() +" and ");
-       details.append(String.format(" Application Number %s with application date %s.", applicationNumber ,
-                (applicationDate!=null ?formatter.format(applicationDate):(formatter.format(new Date())))));
+            details.append("Trade License Number ").append(getLicenseNumber()).append(" and ");
+        details.append("App No. ").append(applicationNumber).append(" dated ").append(formatter.format(applicationDate));
+        details.append("<br/> Remarks : ").append(this.getState().getComments());
         return details.toString();
     }
-    
-    public List<String> populateHotelGradeList() {
-        hotelGradeList = new ArrayList<String>();
-        for (final String element : HOTELGRADE)
-            hotelGradeList.add(element);
-        return hotelGradeList;
-    }
-    
-    public Boolean disablePrintCertificate() {
-        Boolean disablePrintCert = false;
-        if (getTradeName().isNocApplicable() != null && getTradeName().isNocApplicable()) {
-            final Calendar instance = Calendar.getInstance();
-            final Date newDate = new Date();
-            if (getCommencementDate() != null) {
-                instance.setTime(getCommencementDate());
-                instance.add(Calendar.MONTH, 10);
-                if (newDate.before(instance.getTime()))
-                    disablePrintCert = true;
-            }
-        }
-        return disablePrintCert;
-    }
-
-    public List<MotorMaster> getMotorMasterList() {
-        return motorMasterList;
-    }
-
-    public List<String> getHotelGradeList() {
-        return hotelGradeList;
-    }
-
-    public void setMotorMasterList(final List<MotorMaster> motorMasterList) {
-        this.motorMasterList = motorMasterList;
-    }
-
-
-    public void setHotelGradeList(final List<String> hotelGradeList) {
-        this.hotelGradeList = hotelGradeList;
-    }
-
-    @NotAudited
-    public String getHotelGrade() {
-        return hotelGrade;
-    }
-
-    public void setHotelGrade(final String hotelGrade) {
-        this.hotelGrade = hotelGrade;
-    }
-
-    public List getHotelSubCatList() {
-        return hotelSubCatList;
-    }
-
-    public void setHotelSubCatList(final List hotelSubCatList) {
-        this.hotelSubCatList = hotelSubCatList;
-    }
-
-    public List getLicenseZoneList() {
-        return licenseZoneList;
-    }
-
-    public void setLicenseZoneList(final List licenseZoneList) {
-        this.licenseZoneList = licenseZoneList;
-    }
-
-    @NotAudited
-    public BigDecimal getSandBuckets() {
-        return sandBuckets;
-    }
-
-    public void setSandBuckets(final BigDecimal sandBuckets) {
-        this.sandBuckets = sandBuckets;
-    }
-
-    @NotAudited
-    public BigDecimal getWaterBuckets() {
-        return waterBuckets;
-    }
-
-    public void setWaterBuckets(final BigDecimal waterBuckets) {
-        this.waterBuckets = waterBuckets;
-    }
-
-    @NotAudited
-    public BigDecimal getDcpExtinguisher() {
-        return dcpExtinguisher;
-    }
-
-    public void setDcpExtinguisher(final BigDecimal dcpExtinguisher) {
-        this.dcpExtinguisher = dcpExtinguisher;
-    }
-
-    @NotAudited
-    public String getNocNumber() {
-        return nocNumber;
-    }
-
-    public void setNocNumber(final String nocNumber) {
-        this.nocNumber = nocNumber;
-    }
-
-    @NotAudited
-    public Boolean getIsCertificateGenerated() {
-        return isCertificateGenerated;
-    }
-
-    public void setIsCertificateGenerated(final Boolean isCertificateGenerated) {
-        this.isCertificateGenerated = isCertificateGenerated;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    @NotAudited
-    public List<LicenseDocument> getDocuments() {
-        return documents;
-    }
-
-    @Override
-    public void setDocuments(final List<LicenseDocument> documents) {
-        this.documents = documents;
-    }
-
 }

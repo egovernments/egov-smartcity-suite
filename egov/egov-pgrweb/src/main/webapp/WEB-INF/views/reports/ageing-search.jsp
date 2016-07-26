@@ -65,7 +65,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when"/> </label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.period"/> </label>
 						<div class="col-sm-7 add-margin">
 							<input type="hidden" id="mode" name="mode" value="${mode}"/> 
 							<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" onchange="showChangeDropdown(this);">
@@ -131,11 +131,11 @@
 							<th><spring:message code="lbl.header.45to90"/></th>
 							<th><spring:message code="lbl.header.15to45"/></th>
 							<th><spring:message code="lbl.header.0to15"/></th>
-							<th><b>Total</b></th>
+							<th><b><spring:message code="lbl.header.totaldays" /></b></th>
 						</thead>
 						<tfoot id="report-footer">
 							<tr>
-							    <td><b><spring:message code="lbl.total"/></b></td>
+							    <td><b><spring:message code="lbl.pagetotal"/></b></td>
 							    <td></td>
 							    <td></td>
 							    <td></td>
@@ -150,14 +150,11 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="<c:url value='/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>

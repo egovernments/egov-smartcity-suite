@@ -64,6 +64,7 @@ body
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
+					<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
 						<spring:message code="lbl.dailyCollection.report" />
 					</div>
 				</div>
@@ -156,6 +157,7 @@ body
 				</div>
 			</div>
 		<br>
+		<spring:message code="reports.note.text" />
 		<div id="dailyCollectionReport-header" class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currDate}" var="currDate"
 				pattern="dd-MM-yyyy" />

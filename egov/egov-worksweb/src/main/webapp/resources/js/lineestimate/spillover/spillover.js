@@ -40,16 +40,19 @@
 $deletedAmt = 0;
 $locationId = 0;
 $subTypeOfWorkId = 0;
+$subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
-
+$budgetHeadId=0;
+$functionId = 0;
 $(document).ready(function(){
 	
 	$locationId = $('#locationValue').val();
-	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
-	$('#typeofwork').trigger('blur');
-	$('#subTypeOfWork').trigger('blur');
-	
+	$budgetHeadId = $('#budgetHeadValue').val();
+	$subSchemeId = $('#subSchemeValue').val();
+	$functionId = $('#functionId').val();
+	getFunctionsByFundAndDepartment();
+	getBudgetHeads();
 	if($("#isBillsCreatedInput").val() == 'true') {
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
@@ -68,7 +71,22 @@ $(document).ready(function(){
 		if(value == authorityValue)
 			$(this).attr('selected', 'selected');
 	});
-
+	
+	var functionId = $('#functionId').val();
+	if (functionId != "") {
+		$('#function option').each(function() {
+			if ($(this).val() == functionId)
+				$(this).attr('selected', 'selected');
+		});
+	}
+	
+	//TODO : Need to remove trigger
+	$('#typeofwork').trigger('blur');
+	$('#scheme').trigger('change');
+	$('#function').trigger('change');
+	
+	if(!$('#slum').is(':checked'))
+		$('#nonslum').attr('checked', 'checked');
 
 	return showSlumFieldsValue();
 });
@@ -207,19 +225,19 @@ $('#designation').change(function(){
 	$.ajax({
 		url: "../lineestimate/ajax-assignmentByDepartmentAndDesignation",     
 		type: "GET",
+		dataType: "json",
 		data: {
 			approvalDesignation : $('#designation').val(),
 			approvalDepartment : $('#executingDepartments').val()    
 		},
-		dataType: "json",
 		success: function (response) {
 			$('#authority').empty();
 			$('#authority').append($("<option value=''>Select from below</option>"));
-			$.each(response, function(index, value) {
-				$('#authority').append($('<option>').text(value.name).attr('value', value.id));  
+			var responseObj = JSON.parse(response);
+			$.each(responseObj, function(index, value) {
+				$('#authority').append($('<option>').text(value.name).attr('value', value.id));
+				$('#authority').val($('#authorityValue').val());
 			});
-			var authorityValue = $('#authorityValue').val();
-			$('#authority').val(authorityValue);
 		}, 
 		error: function (response) {
 			console.log("failed");
@@ -227,14 +245,14 @@ $('#designation').change(function(){
 	});
 });
 
-function getSubSchemsBySchemeId(schemeId) {
+$('#scheme').change(function() {
 	if ($('#scheme').val() === '') {
 		   $('#subScheme').empty();
 		   $('#subScheme').append($('<option>').text('Select from below').attr('value', ''));
 			return;
 			} else {
 				$.ajax({
-					url: "../lineestimate/getsubschemesbyschemeid/"+schemeId,     
+					url: "../lineestimate/getsubschemesbyschemeid/"+$('#scheme').val(),     
 					type: "GET",
 					dataType: "json",
 					success: function (response) {
@@ -242,7 +260,15 @@ function getSubSchemsBySchemeId(schemeId) {
 						$('#subScheme').append($("<option value=''>Select from below</option>"));
 						var responseObj = JSON.parse(response);
 						$.each(responseObj, function(index, value) {
-							$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));
+							var selected="";
+							if($subSchemeId)
+							{
+								if($subSchemeId==value.id)
+								{
+									selected="selected";
+								}
+							}
+							$('#subScheme').append($('<option '+ selected +'>').text(value.name).attr('value', value.id));
 						});
 					}, 
 					error: function (response) {
@@ -250,7 +276,7 @@ function getSubSchemsBySchemeId(schemeId) {
 					}
 				});
 			}
-}
+});
 
 function addLineEstimate() {
 	var rowcount = $("#tblestimate tbody tr").length;
@@ -286,7 +312,7 @@ function addLineEstimate() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			$("#estimateRow").clone().find("input, errors, textarea").each(
+			$("#estimateRow").clone().find("input, errors, textarea, select").each(
 					function() {
 
 						if ($(this).data('server')) {
@@ -372,35 +398,45 @@ function deleteLineEstimate(obj) {
 		return false;
 	} else {
 		tbl.deleteRow(rIndex);
-		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
 		
-		generateSno();
-		
+		var idx= 0;
+		var sno = 1;
 		//regenerate index existing inputs in table row
-		$("#tblestimate tbody tr").each(function() {
+		jQuery("#tblestimate tbody tr").each(function() {
 		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors, textarea").each(function() {
-					   $(this).attr({
+				jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
 						  'data-idx' : function(_,dataIdx)
 						  {
 							  return idx;
 						  }
 					   });
+					}
 			    });
+				
 				idx++;
-			}
 		});
 		calculateEstimatedAmountTotal();
 		return true;
-	}	
+	}
+		
 }
 
 function calculateEstimatedAmountTotal(){
@@ -432,37 +468,6 @@ function validateEstimateAmount() {
 	    }
 	});
 }
-
-$('#wardInput').blur(function(){
-	   if ($('#ward').val() === '') {
-		   $('#locationBoundary').empty();
-		   $('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-		} else {
-			$.ajax({
-				type: "GET",
-				url: "/egworks/lineestimate/ajax-getlocation",
-				cache: true,
-				dataType: "json",
-				data:{'id' : $('#ward').val()}
-			}).done(function(value) {
-				console.log(value);
-				$('#locationBoundary').empty();
-				$('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($locationId)
-					{
-						if($locationId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				    $('#locationBoundary').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
-				});
-			});
-		}
-	});
 
 function disableSlumFields() {
 	var slum = document.getElementById("slum");
@@ -546,7 +551,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: ct.name,
+                        name: '' + ct.boundaryNum + '',
                         value: ct.id
                     };
                 });
@@ -558,7 +563,7 @@ $(document).ready(function(){
 	var ward_typeahead = $('#wardInput').typeahead({
 		hint : false,
 		highlight : false,
-		minLength : 3
+		minLength : 1
 	}, {
 		displayKey : 'name',
 		source : ward.ttAdapter(),
@@ -662,4 +667,75 @@ function validateWorkFlowApprover(name) {
 
 	document.forms[0].submit;
 	return true;
+}
+
+function getBudgetHeads() {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
+		   $('#budgetHead').empty();
+		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getbudgethead",
+				cache: true,
+				dataType: "json",
+				data:{
+					'fundId' : $('#fund').val(),
+					'functionId' : $('#function').val(),
+					'departmentId' : $('#executingDepartments').val(),
+					'natureOfWorkId' : $('#natureOfWork').val()
+					
+					}	
+			}).done(function(value) {
+				console.log(value);
+				$('#budgetHead').empty();
+				$('#budgetHead').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($budgetHeadId)
+					{
+						if($budgetHeadId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
+				});
+			});
+		}
+}
+function getFunctionsByFundAndDepartment() {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '') {
+		   $('#function').empty();
+		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
+					data : {
+						fundId : $('#fund').val(),
+						departmentId : $('#executingDepartments').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#function').empty();
+							$('#function').append($("<option value=''>Select from below</option>"));
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								var selected="";
+								if($functionId)
+								{
+									if($functionId==value.id)
+									{
+										selected="selected";
+									}
+								}
+								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
+							
+							});
+				});
+			}
 }

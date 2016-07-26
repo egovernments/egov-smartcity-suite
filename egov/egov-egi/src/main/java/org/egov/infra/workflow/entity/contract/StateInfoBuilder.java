@@ -41,36 +41,41 @@
 package org.egov.infra.workflow.entity.contract;
 
 import com.google.gson.GsonBuilder;
+
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Date;
 
 public class StateInfoBuilder {
-    private String refNo;
-    private String refDate;
-    private String type;
-    private String citizenName;
-    private String citizenPhoneNo;
-    private String citizenAddress;
-    private String status;
-    private String resolutionDate;
-    private String locationWard;
-    private String senderName;
-    private String senderPhoneNo;
-    private String itemDetails;
+    String refNum;
+    String refDate;
+    String task;
+    String citizenName;
+    String citizenPhoneno;
+    String citizenAddress;
+    String status;
+    String resolutionDate;
+    String location;
+    String sender;
+    String senderPhoneno;
+    String itemDetails;
 
-    public StateInfoBuilder refNo(String refNo) {
-        this.refNo = refNo;
+    public StateInfoBuilder refNum(String refNum) {
+        this.refNum = refNum;
         return this;
     }
 
     public StateInfoBuilder refDate(Date refDate) {
-        this.refDate = new LocalDate(refDate).toString("dd-MM-yyyy");
+    	DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+        this.refDate = formatter.print(new DateTime(refDate));
         return this;
     }
 
-    public StateInfoBuilder type(String type) {
-        this.type = type;
+    public StateInfoBuilder task(String task) {
+        this.task = task;
         return this;
     }
 
@@ -79,8 +84,8 @@ public class StateInfoBuilder {
         return this;
     }
 
-    public StateInfoBuilder citizenPhoneNo(String citizenPhoneNo) {
-        this.citizenPhoneNo = citizenPhoneNo;
+    public StateInfoBuilder citizenPhoneno(String citizenPhoneno) {
+        this.citizenPhoneno = citizenPhoneno;
         return this;
     }
 
@@ -99,18 +104,18 @@ public class StateInfoBuilder {
         return this;
     }
 
-    public StateInfoBuilder locationWard(String locationWard) {
-        this.locationWard = locationWard;
+    public StateInfoBuilder location(String location) {
+        this.location = location;
         return this;
     }
 
-    public StateInfoBuilder senderName(String senderName) {
-        this.senderName = senderName;
+    public StateInfoBuilder sender(String sender) {
+        this.sender = sender;
         return this;
     }
 
-    public StateInfoBuilder senderPhoneNo(String senderPhoneNo) {
-        this.senderPhoneNo = senderPhoneNo;
+    public StateInfoBuilder senderPhoneno(String senderPhoneno) {
+        this.senderPhoneno = senderPhoneno;
         return this;
     }
 

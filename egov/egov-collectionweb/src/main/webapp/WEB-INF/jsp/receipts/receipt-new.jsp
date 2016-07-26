@@ -111,7 +111,8 @@ function showInstrumentDetails(obj){
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
-		clearCardDetails();
+ 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
 	}
@@ -590,7 +591,7 @@ function populateapportioningamount()
 	if(document.getElementById("callbackForApportioning").value=="true")
 	{
 		document.getElementById("amountoverrideerror").style.display="none";
-		if(collectiontotal > billingtotal && zeroAccHeads==false)
+		if(collectiontotal > billingtotal &&  zeroAccHeads==false)
 		{
 			document.getElementById("amountoverrideerror").style.display="block";
 			return false;
@@ -760,7 +761,6 @@ function validate()
 				zeroAccHeads=true;
 			}
 		}
-
 		if(document.getElementById("callbackForApportioning").value=="false")	
 		{	
  			billingtotal=document.forms[0].totalAmountToBeCollected.value;
@@ -927,8 +927,9 @@ function validate()
 	    advancePaymentAllowed=true;
 	}
 	if(collectiontotal!=0){
+		var billingTotalNumberFormat=Number(billingtotal);
 	    //display error if actual payment amt > original billed amt, and there is no 'zero' account head.
-		if(collectiontotal>billingtotal  && advancePaymentAllowed!=true)
+	    if(billingTotalNumberFormat < collectiontotal && advancePaymentAllowed==false)
 		{
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.greatercollectionamounterror.errormessage" />' + '<br>';
 			validation=false;
@@ -940,8 +941,7 @@ function validate()
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.incorrectaccountheadamt.errormessage" />' + '<br>';
 			validation=false;
 		}
-	    // display error if actual payt amt < original billed amt and system has not done apportioning(part payt is false)
-		if(collectiontotal < billingtotal && checkpartpaymentvalue==false){
+		if(collectiontotal < billingTotalNumberFormat && checkpartpaymentvalue==='false'){
 			document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.total.errormessage" />' + '<br>';
 			validation=false;
 		}
@@ -1295,15 +1295,6 @@ function displayPaytModes(){
        }
 }
 
-function refreshInbox() {
-        var x=opener.top.opener;
-        if(x==null){
-            x=opener.top;
-        }
-        x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
-	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-}
-
 function onBodyLoad()
 {
 	var headertable=document.getElementById('billsheaderinfotable');
@@ -1572,11 +1563,8 @@ function validateManualReceiptDate(obj)
 function checkForCurrentDate(obj)
 {
 	var receiptDate;
-	/* if(validateDateFormat(obj))
-	   { */
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
-	   //trim(obj,obj.value);
 	   <s:if test="%{!isBillSourcemisc()}">
 		   if (  document.getElementById('manualreceiptinfo').checked==true){
 			   if(document.getElementById("manualReceiptDate").value != null  && document.getElementById("manualReceiptDate").value != ''){
@@ -1591,7 +1579,7 @@ function checkForCurrentDate(obj)
 		</s:if>
 		<s:else>
 		{
-		receiptDate = "${currDate}"; 
+		receiptDate = document.getElementById("voucherDate").value; 
 		}
 		</s:else>
 	   var finDate = new Date('2012-04-01');
@@ -1600,8 +1588,8 @@ function checkForCurrentDate(obj)
 	   var day = receiptDate.substr(0,2);
 	   var receiptDateFormat = new Date(year +'-' + month+ '-' +day);
 
-	   if(obj.value != null && obj.value != '') {
-	   if(!validateChequeDate(obj.value,receiptDate)){
+	   if(obj.value != null && obj.value != "") {
+	   if(!validatedays(obj.value,receiptDate)){
 		   <s:if test="%{!isBillSourcemisc()}">
 		   if (document.getElementById("manualReceiptDate").value != null && document.getElementById("manualReceiptDate").value != '') {
 			if(receiptDateFormat<finDate) {
@@ -1617,19 +1605,18 @@ function checkForCurrentDate(obj)
 		   } else{
 			   document.getElementById("receipt_dateerror_area").style.display="block";
 				  document.getElementById("receipt_dateerror_area").innerHTML+=
-						'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+						'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 			  	 }
 		   </s:if>
 		   <s:else>
 		   document.getElementById("receipt_dateerror_area").style.display="block";
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 		   </s:else>
 		   jQuery(obj).val('');
 		   scrolltop();
 	       return false;
 		   }
-	   /* } */
 	   }
 }
 
@@ -1782,9 +1769,10 @@ function onChangeBankAccount(branchId)
 {
     var serviceName=document.getElementById("serviceName").value;
     var fundName="",fundId=-1;
-    if(document.getElementById('fundId')!=null){
+    if(document.getElementById('fundId')!=null && document.getElementById('fundId')!=null){
+    	var serviceId=document.getElementById("serviceId").value;
     	fundId=document.getElementById('fundId').value;
-    	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundId:fundId});
+    	populateaccountNumberMaster({branchId:branchId,serviceId:serviceId,fundId:fundId});
     }
     else if(document.getElementById("fundName")!=null){
     	fundName=document.getElementById("fundName").value;
@@ -1822,7 +1810,7 @@ function showHideMandataryMark(obj){
 	<title><s:text name="billreceipt.pagetitle"/></title>
 </head>
 <!-- Area for error display -->
-<body onLoad="refreshInbox();"><br>
+<body><br>
 
 
 <div class="errorstyle" id="receipt_error_area" style="display:none;"></div>
@@ -1931,7 +1919,7 @@ function showHideMandataryMark(obj){
 	   				<input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamounttobepaid" id="totalamounttobepaid" readonly="readonly" value='<s:property value="%{totalAmountToBeCollected}" />' >
 	   				</span>
 	   			</s:if>
-	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly"></span>
+	   			<s:text name="billreceipt.payment.totalamt.received"/><span><input style="border:0px;background-color:#FFFFCC;font-weight:bold;" type="text" name="totalamountdisplay" id="totalamountdisplay" readonly="readonly" tabindex='-1'></span>
    			</div>
    			<s:hidden label="totalAmountToBeCollected" name="totalAmountToBeCollected" value="%{totalAmountToBeCollected}"/>
     	</td></tr>
@@ -1994,7 +1982,7 @@ function showHideMandataryMark(obj){
 					    <td class="bluebox" width="22%"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox" ><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate"   onfocus = "waterMarkTextIn('instrumentDate','DD/MM/YYYY');" onblur="checkForCurrentDate(this);"  data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="bluebox"><input type ="text" id="instrumentDate" name="instrumentProxyList[0].instrumentDate" data-date-end-date="0d"  data-inputmask="'mask': 'd/m/y'" /></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -2021,12 +2009,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/resources/erp2/images/delete.png" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2071,12 +2059,12 @@ function showHideMandataryMark(obj){
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="<egov:url path='../../../../egi/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="<egov:url path='../../../../egi/resources/erp2/images/add.png' />" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="<egov:url id="deletechequeimg" path='../../egi/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="<egov:url id="deletechequeimg" path='../../egi/resources/erp2/images/delete.png' />" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -2125,7 +2113,7 @@ function showHideMandataryMark(obj){
 							    <td class="bluebox">
 							    	<s:textfield id="bankChallanDate" name="instrHeaderBank.transactionDate"  value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3');waterMarkTextOut('bankChallanDate','DD/MM/YYYY');" onblur="validateChallanDate(this);"/>
 							    	<a  id="calendarLink" href="javascript:show_calendar('forms[0].bankChallanDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  >
-			      						<img src="/../../egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
+			      						<img src="/../../egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="middle" />
 			      					</a>
 							    </td>
 						    </tr>
@@ -2162,11 +2150,13 @@ function showHideMandataryMark(obj){
 		</td></tr>
 		
 		<!-- Paid by details -->
+		<s:if test="%{!isBillSourcemisc()}">
 		<tr >
 		   <td class="bluebox" width="3%" ></td>
 		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
+	    </s:if>
 		<table id="manualreceipt" style="display:none">
 		<s:if test="%{!isBillSourcemisc()}">
 					<tr>
@@ -2198,7 +2188,7 @@ function showHideMandataryMark(obj){
 			     	</tr>				
 			</table>
 			 
-			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+			 <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 			<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 			<div class="buttonbottom" align="center">
 			      <label><input align="center" type="submit" class="buttonsubmit" id="button2" value="Pay" onclick="return validate();"/></label>

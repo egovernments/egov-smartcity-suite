@@ -39,6 +39,25 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -46,8 +65,8 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.asset.model.Asset;
-import org.egov.asset.service.CommonAssetsService;
+import org.egov.assets.model.Asset;
+import org.egov.assets.service.AssetService;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
@@ -94,16 +113,16 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
-import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.milestone.TrackMilestone;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -114,24 +133,6 @@ import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.script.ScriptContext;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ContractorBillAction.PRINT, type = "stream", location = "CompletionCertificatePDF", params = {
@@ -155,7 +156,8 @@ public class ContractorBillAction extends BaseFormAction {
     private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private CommonAssetsService commonAssetsService;
+    @Autowired
+    private AssetService assetService;
     private MeasurementBookServiceImpl measurementBookService;
     private EgovCommon egovCommon;
     @Autowired
@@ -1205,7 +1207,7 @@ public class ContractorBillAction extends BaseFormAction {
         if (advaceAdjustmentCreditAmount.intValue() > 0)
             contractorBillRegister.setAdvanceadjusted(advaceAdjustmentCreditAmount);
         final List<FinancialDetail> fdList = financialDetailService.findAllByNamedQuery(
-                "getFinancialDetailByEstimateId", workOrderEstimate.getEstimate().getId());
+                "FINANCIALDETAILS_BY_ESTIMATEID", workOrderEstimate.getEstimate().getId());
         contractorBillRegister.setEgBillregistermis(setEgBillregistermis(fdList));
         if (shouldAddAccountDetails)
             addAccountDetails(fdList);
@@ -1446,7 +1448,7 @@ public class ContractorBillAction extends BaseFormAction {
     private void addAssetForBill(final AssetForBill adb) {
         if (!workOrderEstimate.getAssetValues().isEmpty() && adb.getAsset() != null) {
             final AssetForBill assetForBill = new AssetForBill();
-            final Asset assetNew = commonAssetsService.getAssetById(adb.getAsset().getId());
+            final Asset assetNew = assetService.findOne(adb.getAsset().getId());
             final String value = worksService.getWorksConfigValue("WORKS_ASSET_STATUS");
             if (StringUtils.isBlank(value)) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1743,8 +1745,8 @@ public class ContractorBillAction extends BaseFormAction {
         this.completionDate = completionDate;
     }
 
-    public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
-        this.commonAssetsService = commonAssetsService;
+    public void setCommonAssetsService(final AssetService assetService) {
+        this.assetService = assetService;
     }
 
     public ContractorBillRegister getContractorBillRegister() {

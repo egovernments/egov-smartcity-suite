@@ -47,8 +47,8 @@
     <class name="org.egov.ptis.domain.entity.recovery.Warrant" table="EGPT_RECOVERY_WARRANT">
         <id name="id" type="java.lang.Long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">SEQ_EGPT_RECOVERY_WARRANT</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            	<param name="sequence_name">SEQ_EGPT_RECOVERY_WARRANT</param>
             </generator>
         </id>
         <many-to-one name="recovery" class="org.egov.ptis.domain.entity.recovery.Recovery" unique="true" cascade="none">

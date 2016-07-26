@@ -40,23 +40,31 @@
 
 package org.egov.restapi.util;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerDetails;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.constants.RestApiConstants;
+import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
+import org.egov.restapi.model.OwnerInformation;
+import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 @Service
 public class ValidationUtil {
     @Autowired
@@ -65,6 +73,121 @@ public class ValidationUtil {
     @Autowired
     private PropertyExternalService propertyExternalService;
     
+    @Autowired
+    private PtDemandDao ptDemandDAO;
+    
+    /**
+     * Validates Property Transfer request
+     * @param propertyTransferDetails
+     * @return
+     */
+    public static ErrorDetails validatePropertyTransferRequest(PropertyTransferDetails propertyTransferDetails){
+    	ErrorDetails errorDetails = null;
+    	
+    	String assessmentNumber = propertyTransferDetails.getAssessmentNo();
+    	if(StringUtils.isBlank(assessmentNumber)){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.ASSESSMENT_NO_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.ASSESSMENT_NO_REQ_MSG);
+            return errorDetails;
+    	}
+    	
+    	String mutationReasonCode = propertyTransferDetails.getMutationReasonCode();
+    	if(StringUtils.isBlank(mutationReasonCode)){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.MUTATION_REASON_CODE_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.MUTATION_REASON_CODE_REQ_MSG);
+            return errorDetails;
+    	}
+    	
+    	if(StringUtils.isNotBlank(mutationReasonCode) 
+    			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_GIFT)
+    			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_WILL)
+    			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
+    			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_RELINQUISH)
+    			&& !mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_PARTITION)){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.MUTATION_REASON_INVALID_CODE_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.MUTATION_REASON_INVALID_CODE_REQ_MSG);
+            return errorDetails;
+    	}
+    	
+    	if(mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
+    		if(StringUtils.isBlank(propertyTransferDetails.getSaleDetails())){
+    			errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.SALE_DETAILS_REQ_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.SALE_DETAILS_REQ_MSG);
+                return errorDetails;
+    		}
+    	}
+    	
+    	if(!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)){
+    		if(StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())){
+    			errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
+                return errorDetails;
+    		}
+    	}
+    	
+    	String deedNo = propertyTransferDetails.getDeedNo();
+    	if(StringUtils.isBlank(deedNo)){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.DEED_NO_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.DEED_NO_REQ_MSG);
+            return errorDetails;
+    	}
+    	
+    	String deedDate = propertyTransferDetails.getDeedDate();
+    	if(StringUtils.isBlank(deedDate)){
+    		errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.DEED_DATE_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.DEED_DATE_REQ_MSG);
+            return errorDetails;
+    	}
+    	
+    	List<OwnerInformation> ownerDetailsList = propertyTransferDetails.getOwnerDetails();
+        if (ownerDetailsList.isEmpty()) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(RestApiConstants.OWNER_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(RestApiConstants.OWNER_DETAILS_REQ_MSG);
+            return errorDetails;
+        } else
+            for (final OwnerInformation ownerInfo : ownerDetailsList) {
+                if (ownerInfo.getMobileNumber() == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.MOBILE_NO_REQ_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.MOBILE_NO_REQ_MSG);
+                    return errorDetails;
+                }
+                if (ownerInfo.getName() == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.OWNER_NAME_REQ_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.OWNER_NAME_REQ_MSG);
+                    return errorDetails;
+                }
+                if (ownerInfo.getGender() == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.GENDER_REQ_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.GENDER_REQ_MSG);
+                    return errorDetails;
+                }
+                if (ownerInfo.getGuardianRelation() == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_RELATION_REQ_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_RELATION_REQ_MSG);
+                    return errorDetails;
+                }
+                if (ownerInfo.getGuardian() == null) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(RestApiConstants.GUARDIAN_REQ_CODE);
+                    errorDetails.setErrorMessage(RestApiConstants.GUARDIAN_REQ_MSG);
+                    return errorDetails;
+                }
+            }
+    	
+    	return errorDetails;
+    }
     
     public static ErrorDetails validateCreateRequest(final CreatePropertyDetails createPropDetails) {
         ErrorDetails errorDetails = null;
@@ -303,7 +426,7 @@ public class ValidationUtil {
             }
         return errorDetails;
     }
-    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails) {
+    public  ErrorDetails validatePaymentDetails(final PayPropertyTaxDetails payPropTaxDetails, boolean isMutationFeePayment) {
         ErrorDetails errorDetails = null;
         if (payPropTaxDetails.getAssessmentNo() == null || payPropTaxDetails.getAssessmentNo().trim().length() == 0) {
             errorDetails = new ErrorDetails();
@@ -320,6 +443,29 @@ public class ValidationUtil {
                 errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
                 errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
             }
+            BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(payPropTaxDetails.getAssessmentNo());
+            if(basicProperty != null){
+            	Property property = basicProperty.getProperty();
+            	if(property != null && property.getIsExemptedFromTax()){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXEMPTED_PROPERTY);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
+            	}
+            }
+        }
+        
+        if(isMutationFeePayment){
+        	if(!propertyExternalService.validateMutationFee(payPropTaxDetails.getAssessmentNo(), payPropTaxDetails.getPaymentAmount())){
+        		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_EXCESS_MUTATION_FEE);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXCESS_MUTATION_FEE);
+        	}
+        	PropertyMutation propertyMutation = propertyExternalService.getLatestPropertyMutationByAssesmentNo(payPropTaxDetails.getAssessmentNo());
+        	if(propertyMutation == null){
+        		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_MUTATION_INVALID);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_MUTATION_INVALID);
+        	}
         }
         
         if (payPropTaxDetails.getTransactionId() == null || "".equals(payPropTaxDetails.getTransactionId()) ){
@@ -382,6 +528,20 @@ public class ValidationUtil {
         return errorDetails;
     }
 
-
-
+    /**
+     * Validates Assessment Details request
+     * @param assessmentReq
+     * @return ErrorDetails
+     */
+    public ErrorDetails validateAssessmentDetailsRequest(AssessmentRequest assessmentRequest){
+    	ErrorDetails errorDetails = null;
+    	
+    	if (!basicPropertyDAO.isAssessmentNoExist(assessmentRequest.getAssessmentNo())) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+        }
+    	return errorDetails;
+    }
+    
 }

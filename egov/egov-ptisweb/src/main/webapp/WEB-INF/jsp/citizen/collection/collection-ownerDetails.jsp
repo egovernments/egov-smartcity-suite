@@ -70,11 +70,7 @@
 			    return true;
 			} 
 
-			 function searchForm() {
-					document.userDetailsForm.action='${pageContext.request.contextPath}/citizen/search/search-searchForm.action';
-					document.userDetailsForm.submit(); 
-					}
-		
+				
 	</script>
 	<title><s:text name="update.mobileNo.title"></s:text></title>
 	</head>
@@ -145,7 +141,7 @@
 						<td class="bluebox" colspan="2">
 							<div class="bluebox" style="text-align:center">
 								<s:submit name="updatePaytax" value="Update & Pay tax" id="updatePaytax" cssClass="buttonsubmit" onclick="return onSubmit('collection-updateMobileNo.action', 'userDetailsForm');"></s:submit>
-								<input type="button" value="Close" class="button" onClick="return searchForm();" />
+								<input type="button" value="Close" class="button" onclick="window.close();" />
 							</div>
 						</td>
 						<td class="bluebox">&nbsp;</td>

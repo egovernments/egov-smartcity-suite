@@ -53,7 +53,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="nonSor" class="org.egov.works.models.estimate.NonSor">
+	<field name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor">
 		<fieldDescription><![CDATA[nonSor]]></fieldDescription>
 	</field>
 	<field name="uom" class="org.egov.common.entity.UOM">

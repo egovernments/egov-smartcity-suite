@@ -191,21 +191,25 @@ function callAjaxSearch() {
 					else
 						$('td:eq(19)',row).html('NA');
 					if(data.billAmount != "")
-						$('td:eq(23)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
-					else
-						$('td:eq(23)',row).html('NA');
-					if(data.totalBillAmount != "")
-						$('td:eq(24)',row).html(parseFloat(Math.round(data.totalBillAmount * 100) / 100).toFixed(2));
+						$('td:eq(24)',row).html(parseFloat(Math.round(data.billAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(24)',row).html('NA');
-					if(data.totalBillPaidSoFar != "")
-						$('td:eq(25)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
+					if(data.totalBillAmount != "")
+						$('td:eq(25)',row).html(parseFloat(Math.round(data.totalBillAmount * 100) / 100).toFixed(2));
 					else
 						$('td:eq(25)',row).html('NA');
-					if(data.balanceValueOfWorkToBill != "")
-						$('td:eq(26)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					if(data.totalBillPaidSoFar != "")
+						$('td:eq(26)',row).html(parseFloat(Math.round(data.totalBillPaidSoFar * 100) / 100).toFixed(2));
 					else
 						$('td:eq(26)',row).html('NA');
+					if(data.balanceValueOfWorkToBill != ""){
+						if(data.billType == "Final Bill" )
+							$('td:eq(27)',row).html(data.balanceValueOfWorkToBill);
+						else
+							$('td:eq(27)',row).html(parseFloat(Math.round(data.balanceValueOfWorkToBill * 100) / 100).toFixed(2));
+					}
+					else
+						$('td:eq(27)',row).html('NA');
 					if(index == 0) {
 						$createdDate = data.createdDate;
 						var dataRunmTime = "The information in this report is not real time, it provides information of the transactions that happened till " + $createdDate;
@@ -236,6 +240,7 @@ function callAjaxSearch() {
 					"data" : "agreementNumberDate", "sClass" : "text-right"}, {
 					"data" : "contractorCodeName", "sClass" : "text-right"}, {
 					"data" : "agreementAmount", "sClass" : "text-right"}, {
+					"data" : "milestonePercentageCompleted", "sClass" : "text-center"}, {
 					"data" : "latestMbNumberDate", "sClass" : "text-right"}, {
 					"data" : "latestBillNumberDate", "sClass" : "text-right"}, {
 					"data" : "billType", "sClass" : "text-right"}, {

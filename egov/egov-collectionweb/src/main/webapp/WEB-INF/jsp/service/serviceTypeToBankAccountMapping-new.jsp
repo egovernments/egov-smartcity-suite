@@ -39,104 +39,164 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <html>
 <head>
-<title><s:text name="service.master.search.header"></s:text></title>
+<title><s:text name="service.master.search.header" /></title>
 
-<script>
-	/* function validate(obj){
-	 document.getElementById('error_area').innerHTML = '';
-	 document.getElementById("error_area").style.display="none"
-	 if(document.getElementById('serviceCategoryid').value == -1 || document.getElementById('serviceDetails').value == -1 ||
-	 document.getElementById('branchname').value == -1 ||document.getElementById('accountNumber').value == -1 
-	 document.getElementById('bankNameid').value == -1 ){
-	 document.getElementById("error_area").innerHTML = '<s:text name="error.select.service.category" />';
-	 document.getElementById("error_area").style.display="block";
-	 return false;
-	 }
-	 document.forms[0].action=obj;
-	 document.forms[0].submit;
-	 return true;
-	 }  */
+<script type="text/javascript">
+	function validate() {
+		var valid = true;
+		document.getElementById('error_area').innerHTML = '';
+		document.getElementById("error_area").style.display = "none";
+		if (document.getElementById('serviceCategory').value == "-1") {
+			document.getElementById("error_area").innerHTML = '<s:text name="error.select.service.category" />';
+			valid = false;
+		}
+		else if (document.getElementById('serviceDetailsId').value == "-1") {
+			document.getElementById("error_area").innerHTML = '<s:text name="error.select.service.type" />';
+			valid = false;
+		}
+		else if (document.getElementById('bankName').value == "-1") {
+			document.getElementById("error_area").innerHTML = '<s:text name="error.select.bank" />';
+			valid = false;
+		}
+		else if (document.getElementById('branchName').value == "-1") {
+			document.getElementById("error_area").innerHTML = '<s:text name="error.select.bankbranch" />';
+			valid = false;
+		}
+		else if (document.getElementById('bankAccountId').value == "-1") {
+			document.getElementById("error_area").innerHTML = '<s:text name="error.select.bankaccount" />';
+			valid = false;
+		}
+		if (valid == false) {
+			document.getElementById("error_area").style.display = "block";
+			window.scroll(0, 0);
+		}
 
-	function onSubmit(obj) {
-		document.forms[0].action = obj;
-		document.forms[0].submit;
-		return true;
+		if (jQuery('#serviceAccountId').val())
+			jQuery('#serviceCategory, #serviceDetailsId')
+					.prop('disabled', false);
+		
+		return valid;
+	}
+
+	function onChangeBankBranch(bankId) {
+		dom.get("bankAccountId").value = "-1";
+		populatebranchName({
+			bankId : bankId,
+		});
+	}
+
+	function onChangeBankAccount(branchId,serviceId) {
+		populatebankAccountId({
+			branchId : branchId,
+			serviceId : serviceId,
+		});
+	}
+	function populateService(serviceId) {
+		document.getElementById('serviceDetailsId').value = "-1"
+		populateserviceDetailsId({
+			serviceId : serviceId,
+		});
 	}
 </script>
 </head>
 
 <body>
-	<s:form action="serviceTypeToBankAccountMapping.action" theme="simple">
+	<s:form name="serviceBankMappingForm" method="post" theme="simple">
+		<s:push value="model">
+			<div class="errorstyle" id="error_area" style="display: none;"></div>
 
-		<div class="errorstyle" id="error_area" style="display: none;"></div>
+			<div class="formmainbox">
+				<div class="subheadnew">
+					<s:if test="%{serviceAccountId}">
+						<s:text name="service.master.bankmapppingmodify.header" />
+					</s:if>
+					<s:else>
+						<s:text name="service.master.bankmappping.header" />
+					</s:else>
+				</div>
 
-		<div class="formmainbox">
-			<div class="subheadnew">
-				<s:text name="service.master.bankmappping.header"></s:text>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0"
+					style="max-width: 960px; margin: 0 auto;">
+					<tr>
+						<s:hidden id="serviceAccountId" name="serviceAccountId" />
+						<s:hidden id="id" name="id" />
+						<s:hidden id="sourcePage" name="sourcePage" />
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="service.master.search.category" /> <span
+							class="mandatory" /></td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="serviceCategory"
+								id="serviceCategory" cssClass="selectwk"
+								list="dropdownData.serviceCategoryList" listKey="id"
+								listValue="name" value="%{serviceCategory}"
+								onChange="populateService(this.value);" /> <egov:ajaxdropdown
+								id="service" fields="['Text','Value']"
+								dropdownId="serviceDetailsId"
+								url="receipts/ajaxBankRemittance-serviceListNotMappedToAccount.action" /></td>
+						<td class="bluebox"><s:text name="service.master.servicetype" />
+							<span class="mandatory" /></td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="serviceDetails"
+								id="serviceDetailsId" cssClass="selectwk"
+								list="dropdownData.serviceDetailsList" listKey="id"
+								listValue="name" value="%{serviceDetails.id}" /></td>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text name="service.master.bankname" />
+							<span class="mandatory" /></td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="bankId" id="bankName"
+								cssClass="selectwk" list="dropdownData.bankNameList"
+								listKey="id" listValue="name" value="%{bankId}"
+								onchange="onChangeBankBranch(this.value)" /> <egov:ajaxdropdown
+								id="accountNumberIdDropdown" fields="['Text','Value']"
+								dropdownId='branchName'
+								url='receipts/ajaxBankRemittance-bankBranchsByBankForReceiptPayments.action' /></td>
+						<td class="bluebox"><s:text name="service.master.branchName" />
+							<span class="mandatory" /></td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="branchId" id="branchName"
+								cssClass="selectwk" list="dropdownData.bankBranchList"
+								listKey="id" listValue="branchname"
+								onChange="onChangeBankAccount(this.value,document.getElementById('serviceDetailsId').value)" value="%{branchId}" />
+							<egov:ajaxdropdown id="bankAccountIdDropDown"
+								fields="['Text','Value']" dropdownId='bankAccountId'
+								url='receipts/ajaxBankRemittance-bankAccountByBankBranch.action' /></td>
+					</tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="service.master.accountnumber" /> <span class="mandatory" /></td>
+					<td class="bluebox"><s:select headerKey="-1"
+							headerValue="----Choose----" name="bankAccountId"
+							id="bankAccountId" cssClass="selectwk"
+							list="dropdownData.bankAccountIdList" listKey="id"
+							listValue="accountnumber" value="%{bankAccountId.id}" /></td>
+					<tr>
+					</tr>
+				</table>
+				<div align="left" class="mandatorycoll">
+					&nbsp;&nbsp;&nbsp;
+					<s:text name="common.mandatoryfields" />
+				</div>
+				<br />
 			</div>
 
-			<table width="100%" border="0" cellspacing="0" cellpadding="0"
-				style="max-width: 960px; margin: 0 auto;">
-				<tr>
-					<td width="4%" class="bluebox">&nbsp;</td>
-					<td width="24%" class="bluebox"><s:text
-							name="service.master.search.category" /> <span
-						class="mandatory1">*</td>
-					<td width="24%" class="bluebox"><s:select headerKey="-1"
-							headerValue="----Choose----" name="serviceCategory"
-							id="serviceCategory" cssClass="selectwk"
-							list="dropdownData.serviceCategoryList" listKey="id"
-							listValue="name" value="%{serviceCategory.id}" /></td>
-					<td width="21%" class="bluebox"><s:text
-							name="service.master.servicetype" /> <span class="mandatory1">*</td>
-					<td width="30%" class="bluebox"><s:select headerKey="-1"
-							headerValue="----Choose----" name="serviceDetails"
-							id="serviceDetails" cssClass="selectwk"
-							list="dropdownData.serviceTypeList" listKey="id" listValue="name"
-							value="%{serviceDetails}" /></td>
-				</tr>
-				<tr>
-					<td width="4%" class="bluebox">&nbsp;</td>
-					<td width="21%" class="bluebox"><s:text
-							name="service.master.bankname" /> <span class="mandatory1">*</td>
-					<td width="24%" class="bluebox"><s:select headerKey="-1"
-							headerValue="----Choose----" name="bankName" id="bankNameid"
-							cssClass="selectwk" list="dropdownData.bankNameList" listKey="id"
-							listValue="name" value="%{bankName}"
-							onchange="populateNumber(this)" /></td>
-					<td width="21%" class="bluebox"><s:text
-							name="service.master.branchName" /> <span class="mandatory1">*</td>
-					<td width="30%" class="bluebox"><s:select headerKey="-1"
-							headerValue="----Choose----" name="branchName" id="branchName"
-							cssClass="selectwk" list="dropdownData.bankBranchList"
-							listKey="id" listValue="branchname" value="%{branchName}" /></td>
-				</tr>
-				<td width="4%" class="bluebox">&nbsp;</td>
-				<td width="21%" class="bluebox"><s:text
-						name="service.master.accountnumber" /> <span class="mandatory1">*</td>
-				<td width="24%" class="bluebox"><s:select headerKey="-1"
-						headerValue="----Choose----" name="accountNumber"
-						id="accountNumber" cssClass="selectwk"
-						list="dropdownData.bankAcctNoList" listKey="id"
-						listValue="accountnumber" value="%{accountNumber}" /></td>
-				<tr>
-			</table>
-			<div align="left" class="mandatorycoll">
-				&nbsp;&nbsp;&nbsp;
-				<s:text name="common.mandatoryfields" />
+			<div class="buttonbottom">
+				<s:submit name="sumbit" cssClass="buttonsubmit" id="button32"
+					onclick="document.serviceBankMappingForm.action='serviceTypeToBankAccountMapping-create.action'; return validate();"
+					value="Create Mapping" />
+				<s:reset name="reset" cssClass="button" id="button" value="Reset" />
+				<input name="close" type="button" class="button" id="button"
+					onclick="window.close()" value="Close" />
 			</div>
-			<br />
-		</div>
-
-		<div class="buttonbottom">
-			<s:submit name="button1" cssClass="buttonsubmit" id="button32"
-				onclick="return onSubmit('serviceTypeToBankAccountMapping-save.action');"
-				value="Create Mapping" />
-			<s:reset name="button3" cssClass="button" id="button" value="Reset" />
-			<input name="button4" type="button" class="button" id="button"
-				onclick="window.close()" value="Close" />
-		</div>
-
+		</s:push>
 	</s:form>
+	<script>
+		if (jQuery('#serviceAccountId').val())
+			jQuery('#serviceCategory, #serviceDetailsId')
+					.prop('disabled', true);
+	</script>
 </body>
 </html>

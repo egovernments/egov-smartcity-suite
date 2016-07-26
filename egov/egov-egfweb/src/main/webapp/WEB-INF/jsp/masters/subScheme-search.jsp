@@ -48,7 +48,7 @@
 <title><s:if test="showMode == 'edit'">
 		<s:text name="subscheme.modify.title" />
 	</s:if> <s:else>
-		<s:text name="masters.subscheme.search.title" />
+		<s:text name="masters.subscheme.searchview.title" />
 	</s:else></title>
 </head>
 <body>
@@ -62,7 +62,7 @@
 				<s:text name="subscheme.modify.title" />
 			</s:if>
 			<s:else>
-				<s:text name="masters.subscheme.search.title" />
+				<s:text name="masters.subscheme.searchview.title" />
 			</s:else>
 		</div>
 

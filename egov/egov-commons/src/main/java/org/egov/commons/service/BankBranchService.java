@@ -39,13 +39,48 @@
  */
 package org.egov.commons.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Bankbranch;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
-public class BankBranchService extends PersistenceService<Bankbranch, Long>
-{
+public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
     public BankBranchService(final Class<Bankbranch> bankBranch) {
         this.type = bankBranch;
+    }
+
+    public List<Bankbranch> getAllBankBranchsByBank(Integer bankId) {
+        Set<Bankbranch> ss = new LinkedHashSet<Bankbranch>();
+        List<Bankbranch> bankBranchList = new ArrayList<Bankbranch>();
+
+        Query createQuery = getCurrentSession()
+                .createQuery(
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
+                .setInteger("bankId", bankId);
+        if (bankId != null) {
+            List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
+            if (list != null && !list.isEmpty()) {
+                ss.addAll(list);
+                bankBranchList.addAll(ss);
+            }
+        }
+        return bankBranchList;
     }
 
 }

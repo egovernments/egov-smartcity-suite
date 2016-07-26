@@ -40,181 +40,100 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-public class LicenseStatus implements java.io.Serializable {
+@Entity
+@Table(name = "EGTL_MSTR_STATUS")
+@SequenceGenerator(name = LicenseStatus.SEQUENCE, sequenceName = LicenseStatus.SEQUENCE, allocationSize = 1)
+public class LicenseStatus extends AbstractPersistable<Long> {
 
-    /**
-     *
-     */
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_STATUS";
     private static final long serialVersionUID = 22395010799520683L;
 
-    private Integer ID = null;
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
 
-    private String name = null;
+    @NotBlank
+    @Length(min = 1, max = 256)
+    @Column(name = "STATUS_NAME")
+    private String name;
 
-    private Date lastUpdatedTimeStamp = null;
+    @Length(max = 32)
+    @Column(name = "CODE")
+    private String statusCode;
 
-    private String statusCode = null;
+    @Column(name = "IS_ACTIVE")
     private boolean active;
+
+    @Column(name = "ORDER_ID")
     private Integer orderId;
 
-    /**
-     * @return Returns the iD.
-     */
-    public Integer getID() {
-        return ID;
+    public Long getId() {
+        return this.id;
     }
 
-    /**
-     * @param id The iD to set.
-     */
-    public void setID(final Integer id) {
-        ID = id;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    /**
-     * @return Returns the name.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name The name to set.
-     */
     public void setName(final String name) {
         this.name = name;
     }
 
-    /**
-     * @return Returns the lastUpdatedTimeStamp.
-     */
-    public Date getLastUpdatedTimeStamp() {
-        return lastUpdatedTimeStamp;
-    }
-
-    /**
-     * @param lastUpdatedTimeStamp The lastUpdatedTimeStamp to set.
-     */
-    public void setLastUpdatedTimeStamp(final Date lastUpdatedTimeStamp) {
-        this.lastUpdatedTimeStamp = lastUpdatedTimeStamp;
-    }
-
-    /**
-     * @return the statusCode
-     */
     public String getStatusCode() {
         return statusCode;
     }
 
-    /**
-     * @param statusCode the statusCode to set
-     */
     public void setStatusCode(final String statusCode) {
         this.statusCode = statusCode;
     }
 
-    /**
-     * @return the active
-     */
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * @param active the active to set
-     */
     public void setActive(final boolean active) {
         this.active = active;
     }
 
-    /**
-     * @return the orderId
-     */
     public Integer getOrderId() {
         return orderId;
     }
 
-    /**
-     * @param orderId the orderId to set
-     */
     public void setOrderId(final Integer orderId) {
         this.orderId = orderId;
     }
 
-    /**
-     * @return Returns if the given Object is equal to PropertyStatus
-     */
     @Override
-    public boolean equals(final Object that)
-    {
-        if (that == null)
-            return false;
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (this == that)
-            return true;
+        final LicenseStatus that = (LicenseStatus) o;
 
-        if (that.getClass() != this.getClass())
-            return false;
-        final LicenseStatus thatPropStatus = (LicenseStatus) that;
+        return getName().equals(that.getName());
 
-        if (getID() != null && thatPropStatus.getID() != null)
-        {
-            if (getID().equals(thatPropStatus.getID()))
-                return true;
-            else
-                return false;
-        }
-        else if (getName() != null && thatPropStatus.getName() != null)
-        {
-            if (getName().equals(thatPropStatus.getName()))
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
-    }
-
-    /**
-     * @return Returns the hashCode
-     */
-    @Override
-    public int hashCode()
-    {
-        int hashCode = 0;
-        if (getID() != null)
-            hashCode += getID().hashCode();
-        if (getName() != null)
-            hashCode += getName().hashCode();
-        return hashCode;
-    }
-
-    /**
-     * @return Returns the boolean after validating the current object
-     */
-    public boolean validate()
-    {
-        if (getName() == null)
-            throw new ApplicationRuntimeException("In LicenseStatus Validate : 'Status Name' Attribute is Not Set, Please Check !!");
-        return true;
     }
 
     @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseStatus={");
-        str.append("ID=").append(ID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("lastUpdatedTimeStamp=").append(lastUpdatedTimeStamp == null ? "null" : lastUpdatedTimeStamp.toString());
-        str.append("statusCode=").append(statusCode == null ? "null" : statusCode.toString());
-        str.append("active=").append(active);
-        str.append("orderId=").append(orderId == null ? "null" : orderId.toString());
-        str.append("}");
-        return str.toString();
+    public int hashCode() {
+        return getName().hashCode();
     }
-
 }

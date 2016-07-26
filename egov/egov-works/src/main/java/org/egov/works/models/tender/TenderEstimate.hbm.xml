@@ -46,11 +46,11 @@
 		table="EGW_TENDER_ESTIMATE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_TENDER_ESTIMATE</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_TENDER_ESTIMATE</param>
 			</generator>
 		</id>
-		<many-to-one name="abstractEstimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" fetch="select"/>	
+		<many-to-one name="abstractEstimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate" column="ABSTRACTESTIMATE_ID" fetch="select"/>	
 		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" column="WORKSPACKAGE_ID" fetch="select"/>
 		<many-to-one name="tenderHeader" column="TENDER_HEADER_ID" not-null="true" insert="false" update="false" fetch="select"/>
 		<property name="tenderType" type="string">

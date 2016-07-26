@@ -47,7 +47,7 @@ import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.pims.commons.Designation;
 

@@ -45,8 +45,6 @@
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 
-<script type="text/javascript"
-	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/app/escalationview.js?rnd=${app_release_no}'/>"></script>
 <script>
 	function deleteRow(obj) {
@@ -89,6 +87,18 @@
 			//resetSrNo();
 			return true;
 		}
+	}
+	
+	function getRow(obj)    
+	{
+	 if(!obj)return null;
+	 tag = obj.nodeName.toUpperCase();
+	 while(tag != 'BODY'){
+	  if (tag == 'TR') return obj;
+	  obj=obj.parentNode ;
+	  tag = obj.nodeName.toUpperCase();
+	 }
+	 return null;
 	}
 </script>		
 <div class="row">
@@ -183,23 +193,8 @@
 									value="${contact.fromPosition.name}" 
 									name="positionHierarchyList[${status.index}].fromPosition.name"
 									 autocomplete="off" required="required"  readonly="readonly">
-									<%-- 
-									<input type=hidden
-									id="positionHierarchyId${status.index}"
-									name="positionHierarchyList[${status.index}].id"
-									value="${contact.id}">
-									 --%>
 								</td>
 								<td> 	
-								<%-- <form:select path="" data-first-option="false"  value="${contact.objectSubType}"
-										id="positionHierarchySubType${status.index}" cssClass="form-control positionHierarchySubType${status.index}"
-										cssErrorClass="form-control error">
-										<form:option value="">Select </form:option>		
-										   <c:forEach items="${complaintTypes}" var="comType">
-								            <option <c:if test="${comType.code eq contact.objectSubType}">selected="selected"</c:if>    value="${comType.code}">${comType.name} </option>
-								         </c:forEach>
-								       
-								       </form:select>   --%>
 									<select name="positionHierarchyList[${status.index}].objectSubType" 
 									 data-optvalue="${contact.objectSubType}" id="positionHierarchySubType${status.index}"  
 										class="form-control positionHierarchySubType${status.index}" >
@@ -210,13 +205,7 @@
 									</select>      
 								</td>
 							<td>
-								<%-- <input type="hidden"
-									id="positionHierarchySubType${status.index}"
-									class="form-control is_valid_alphanumeric positionHierarchySubType${status.index}"
-									value="${contact.objectSubType}" 
-									name="positionHierarchyList[${status.index}].objectSubType"
-									>
-							 --%>		<input type="hidden"
+								<input type="hidden"
 									id="positionHierarchyobjectType${status.index}"
 									class="form-control is_valid_alphanumeric positionHierarchyobjectType${status.index}"
 									value="${contact.objectType.id}" 
@@ -234,49 +223,35 @@
 								         </c:forEach>
 								       
 								       </form:select>  
-									<%-- <select  value="${contact.toPosition.deptDesig.department.id}"
-									name="positionHierarchyList[${status.index}].toPosition.deptDesig.department.id"
-										id="approvalDepartment${status.index}" class="form-control approvalDepartment${status.index}"
-										cssErrorClass="form-control error">
-										<option value="">Select </option>		
-										<c:forEach items="${approvalDepartmentList}" var="dept">
-                     								<option value="${dept.id}"> ${dept.name}</option>
-                     								</c:forEach>
-										</select>
-										
-								 --%>		
 									</td>
-								<td>	
-									<form:select path="" data-first-option="false"  data-optvalue="${contact.toPosition.deptDesig.designation.id}"
-										id="approvalDesignation${status.index}" cssClass="form-control approvalDesignation${status.index}"
-										cssErrorClass="form-control error">  
-										<form:option value=""><spring:message code="lbl.select" /></form:option>
-										<%-- <form:option value="${contact.toPosition.deptDesig.designation.id}">
-											<c:out value="${contact.toPosition.deptDesig.designation.name}"/> 
-										</form:option> --%>
-										<%-- <form:options items="${approvalDesignationList}" itemValue="id"
-											itemLabel="name" /> --%> 
-										   <c:forEach items="${approvalDesignationList}" var="desig">
-								            <option <c:if test="${desig.id eq contact.toPosition.deptDesig.designation.id}">selected="selected"</c:if>    value="${desig.id}">${desig.name} </option>
-								         </c:forEach>
-									</form:select>	
-								</td>
-								<td>	
-									<select name="positionHierarchyList[${status.index}].toPosition.id" 
-										id="positionHierarchyToPositionid${status.index}" data-optvalue="${contact.toPosition.id}" 
-										class="form-control positionHierarchyToPositionid${status.index}" required="required">
-										<option value=""><spring:message code="lbl.select" /></option>
-									</select>
-									<script>calltypeahead('${status.count}'-1); 
-									 $(function () {
-											$('#approvalDepartment'+('${status.count}'-1)).trigger('change');
-											$('#approvalDesignation'+('${status.count}'-1)).trigger('change');
-										}); 
-									</script>
-							<%-- 	<input type=hidden
-									id="positionHierarchyToPositionId${status.index}"
-									name="positionHierarchyList[${status.index}].toPosition.id"
-									value="${contact.toPosition.id}">  --%>
+									<td>	
+										<form:select path="" data-first-option="false"  data-optvalue="${contact.toPosition.deptDesig.designation.id}"
+											id="approvalDesignation${status.index}" cssClass="form-control approvalDesignation${status.index}"
+											cssErrorClass="form-control error">  
+											<form:option value=""><spring:message code="lbl.select" /></form:option>
+											   <c:forEach items="${approvalDesignationList}" var="desig">
+									            <option <c:if test="${desig.id eq contact.toPosition.deptDesig.designation.id}">selected="selected"</c:if>    value="${desig.id}">${desig.name} </option>
+									         </c:forEach>
+										</form:select>	
+									</td>
+									<td>	
+										<select name="positionHierarchyList[${status.index}].toPosition.id" 
+											id="positionHierarchyToPositionid${status.index}" data-optvalue="${contact.toPosition.id}" 
+											class="form-control positionHierarchyToPositionid${status.index}" required="required">
+											<option value=""><spring:message code="lbl.select" /></option>
+										</select>
+										<script>
+										calltypeahead('${status.count}'-1); 
+										 $(function () {
+											 setTimeout(function(){
+												 $('#approvalDepartment'+('${status.count}'-1)).trigger('change');
+												}, 1000);
+											 setTimeout(function(){
+												 $('#approvalDesignation'+('${status.count}'-1)).trigger('change');
+												}, 1000);
+												
+											}); 
+										</script>
 									</td>
 									<td>
 										<button type="button" onclick="deleteRow(this)" id="Add"

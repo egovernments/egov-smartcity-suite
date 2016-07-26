@@ -49,8 +49,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			name="id"
 			column="ID"
 			type="int">
-			<generator class="native">
-				<param name="sequence">SEQ_EGDM_DEPRECIATIONMASTER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGDM_DEPRECIATIONMASTER</param>
 			</generator>
 		</id>
 		<timestamp

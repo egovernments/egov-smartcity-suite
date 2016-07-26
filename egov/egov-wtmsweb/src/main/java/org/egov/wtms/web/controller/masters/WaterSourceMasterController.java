@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.WaterSource;
 import org.egov.wtms.masters.service.WaterSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +56,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/masters")
 public class WaterSourceMasterController {
@@ -64,11 +63,12 @@ public class WaterSourceMasterController {
     @Autowired
     private WaterSourceService waterSourceService;
 
-    @RequestMapping(value = "/waterSourceTypeMaster", method = GET)
+    @RequestMapping(value = "/waterSourceTypeMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final WaterSource waterSource = new WaterSource();
         model.addAttribute("waterSource", waterSource);
         model.addAttribute("reqAttr", false);
+        model.addAttribute("mode", "create");
         return "water-source-master";
     }
 
@@ -79,10 +79,12 @@ public class WaterSourceMasterController {
             return "water-source-master";
         waterSourceService.createWaterSource(waterSource);
         redirectAttrs.addFlashAttribute("waterSource", waterSource);
-        return getWaterSourceTypeList(model);
+        model.addAttribute("message", "Water Source created successfully.");
+        model.addAttribute("mode", "create");
+        return "water-source-master-success";
     }
 
-    @RequestMapping(value = "/waterSourceTypeMaster/list", method = GET)
+    @RequestMapping(value = "/waterSourceTypeMaster/list", method = RequestMethod.GET)
     public String getWaterSourceTypeList(final Model model) {
         final List<WaterSource> waterSourceList = waterSourceService.findAll();
         model.addAttribute("waterSourceList", waterSourceList);
@@ -90,7 +92,13 @@ public class WaterSourceMasterController {
 
     }
 
-    @RequestMapping(value = "/waterSourceTypeMaster/{waterSourceId}", method = GET)
+    @RequestMapping(value = "/waterSourceTypeMaster/edit", method = RequestMethod.GET)
+    public String getWaterSourceType(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getWaterSourceTypeList(model);
+    }
+
+    @RequestMapping(value = "/waterSourceTypeMaster/edit/{waterSourceId}", method = RequestMethod.GET)
     public String getWaterSourceTypeDetails(final Model model, @PathVariable final String waterSourceId) {
         final WaterSource waterSource = waterSourceService.findOne(Long.parseLong(waterSourceId));
         model.addAttribute("waterSource", waterSource);
@@ -98,7 +106,7 @@ public class WaterSourceMasterController {
         return "water-source-master";
     }
 
-    @RequestMapping(value = "/waterSourceTypeMaster/{waterSourceId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/waterSourceTypeMaster/edit/{waterSourceId}", method = RequestMethod.POST)
     public String editWaterSourceTypeData(@Valid @ModelAttribute final WaterSource waterSource,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             @PathVariable final long waterSourceId) {
@@ -106,7 +114,8 @@ public class WaterSourceMasterController {
             return "water-source-master";
         waterSourceService.updateWaterSource(waterSource);
         redirectAttrs.addFlashAttribute("WaterSource", waterSource);
-        return getWaterSourceTypeList(model);
+        model.addAttribute("message", "Water Source updated successfully.");
+        return "water-source-master-success";
 
     }
 

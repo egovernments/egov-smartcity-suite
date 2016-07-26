@@ -45,8 +45,8 @@
 	<class name="org.egov.commons.CChartOfAccounts" table="CHARTOFACCOUNTS"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">seq_chartofaccounts</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">seq_chartofaccounts</param>
 			</generator>
 		</id>	
 		<property column="LASTMODIFIED"	name="modifiedDate"/>

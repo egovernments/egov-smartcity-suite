@@ -40,8 +40,8 @@
 package org.egov.wtms.application.service;
 
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -126,7 +126,7 @@ public class ChangeOfUseService {
                             parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "changeOfUsage" }, null);
 
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentWaterConnectionDetail);
+                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
                         validationMessage = messageSource
@@ -171,8 +171,8 @@ public class ChangeOfUseService {
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
         if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals("anonymous")) {
-            EgovThreadLocals.setUserId(Long.valueOf("40"));
-            savedChangeOfUse.setCreatedBy(userService.getUserById(EgovThreadLocals.getUserId()));
+            ApplicationThreadLocals.setUserId(Long.valueOf("40"));
+            savedChangeOfUse.setCreatedBy(userService.getUserById(ApplicationThreadLocals.getUserId()));
         }
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();

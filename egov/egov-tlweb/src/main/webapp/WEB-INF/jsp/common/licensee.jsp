@@ -46,14 +46,16 @@
 	<div class="row" >
 	    <label class="col-sm-3 control-label text-right"><s:text name='licensee.aadhaarNo' /></label>
 	    <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
-	           <s:textfield name="licensee.uid" onBlur="return checkMinLength(this,12);"  onKeyPress="return numbersonly(this, event)"  maxlength="12" cssClass="form-control patternvalidation"  data-pattern="number" />
+	           <s:textfield name="licensee.uid"  maxlength="12"  cssClass="form-control"  id="adhaarId"/>
+	           <div class="error-msg hide" id="adhaarError">Should be 12 digits</div>
 	    </div>
 	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.mobileNo' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
 	    	<div class="input-group">
 			  <span class="input-group-addon" id="basic-addon1">+91</span>
-			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber" onKeyPress="return numbersonly(this, event)" onBlur="checkMinLength(this,10)" maxlength="10" cssClass="form-control patternvalidation" data-pattern="number" />
-			</div>
+			  <s:textfield name="licensee.mobilePhoneNumber" id="mobilePhoneNumber"  maxlength="10" cssClass="form-control"/>
+			 </div>
+			 <div class="error-msg hide" id="mobileError">Should be 10 digits</div>
 	    </div>
 	    
 	</div>
@@ -62,7 +64,7 @@
 	    <div class="col-sm-3 add-margin">
 	       <s:textfield name="licensee.applicantName" id="applicantName" maxlength="250" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" />
 	    </div>
-	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.father/spouse' /><span class="mandatory"></span></label>
+	    <label class="col-sm-2 control-label text-right"><s:text name='licensee.fatherorspousename' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
 	      	<s:textfield name="licensee.fatherOrSpouseName" maxlength="250" id="fatherOrSpouseName" cssClass="form-control patternvalidation" data-pattern="alphabetwithspace" />
 	    </div>
@@ -77,3 +79,7 @@
 	        <s:textarea name="licensee.address"  id="licenseeAddress" maxlength="250" cssClass="form-control" />
 	    </div>
 	</div>
+	
+	<script>
+	try { $(":input").inputmask(); }catch(e){}
+	</script>

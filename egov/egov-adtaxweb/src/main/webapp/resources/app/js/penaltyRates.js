@@ -66,7 +66,7 @@ function validateRangeToValue(obj)
 	
 	if(rangeTo && rangeFrom >= rangeTo)
 	{
-		alert('Range To value should be greater than range from value ->'+ rangeFrom );
+		bootbox.alert('Range To value should be greater than range from value ->'+ rangeFrom );
 		$(obj).val("");
 		return false;
 	}
@@ -96,7 +96,20 @@ $(".btn-addRow").click(function(){
 	addNewRowToTable(currentIndex);
 });
 
-
+function getRow(obj) {
+	if (!obj) {
+		return null;
+	}
+	tag = obj.nodeName.toUpperCase();
+	while (tag != "BODY") {
+		if (tag == "TR") {
+			return obj;
+		}
+		obj = obj.parentNode;
+		tag = obj.nodeName.toUpperCase();
+	}
+	return null;
+}
 function deleteRow(obj){
 
 	var tbl=document.getElementById("penaltyRatesTable");
@@ -140,16 +153,16 @@ function addNewRowToTable(currentIndex)
 	 
 	  if (firstcolumnval=="" || firstcolumnval==null || firstcolumnval=="undefined")
 	    {
-	    	alert('Range From is mandatory in the last row');
+		  	bootbox.alert('Range From is mandatory in the last row');
 	    }else  if (secondcolumnval=="" || secondcolumnval==null || secondcolumnval=="undefined")
 	    {
-	    	alert('Range To is mandatory in the last row');
+	    	bootbox.alert('Range To is mandatory in the last row');
 	    }else  if (Thirdcolumnval=="" || Thirdcolumnval==null || Thirdcolumnval=="undefined")
 	    {
-	    	alert('Percentage is mandatory in the last row');
+	    	bootbox.alert('Percentage is mandatory in the last row');
 	    }else  if (parseFloat(firstcolumnval)>=parseFloat(secondcolumnval))
 	    {
-	    	alert('Range To value should be greater than Range from value in the last row');
+	    	bootbox.alert('Range To value should be greater than Range from value in the last row');
 	    	$(tr).find("td").find('input.range-to').val("");
 	    }else
 	    	{

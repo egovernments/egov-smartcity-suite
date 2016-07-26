@@ -46,6 +46,7 @@
 package org.egov.ptis.actions.bills;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -56,15 +57,14 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -72,7 +72,6 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.ReportInfo;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.dao.property.PropertyDAO;
@@ -83,6 +82,7 @@ import org.egov.ptis.domain.service.bill.BillService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -134,7 +134,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     private String indexNumber;
     private String ackMessage;
-    private Integer reportId = -1;
+    private String reportId;
     private String billNo;
     private BasicProperty basicProperty;
     private PropertyImpl property;
@@ -161,6 +161,12 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ApplicationContext beanProvider;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     @Override
     public StateAware getModel() {
@@ -194,7 +200,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
             ReportOutput reportOutput = null;
 
             if (egBill == null)
-                reportOutput = getBillService().generateBill(basicProperty, EgovThreadLocals.getUserId().intValue());
+                reportOutput = getBillService().generateBill(basicProperty, ApplicationThreadLocals.getUserId().intValue());
             else {
                 final String query = "SELECT notice FROM EgBill bill, PtNotice notice left join notice.basicProperty bp "
                         + "WHERE bill.is_History = 'N' "
@@ -213,8 +219,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                     reportOutput.setReportFormat(FileFormat.PDF);
                 }
             }
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("generateBill: ReportId: " + reportId);
                 LOGGER.debug("Exit from generateBill");
@@ -233,8 +239,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
     public String generateDemandBill() {
         DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
         ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return BILL;
     }
 
@@ -302,7 +307,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         ReportInfo reportInfo;
         Integer totalProps = 0;
         Integer totalBillsGen = 0;
-        final Installment currInst = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currInst = propertyTaxCommonUtils.getCurrentInstallment();
 
         final StringBuilder billQueryString = new StringBuilder();
         final StringBuilder propQueryString = new StringBuilder();
@@ -389,12 +394,8 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
         return ACK;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     @Override

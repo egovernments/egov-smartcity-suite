@@ -49,7 +49,7 @@ import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
@@ -105,10 +105,6 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         this.moduleName = moduleName;
     }
 
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
-    }
-
     @Override
     public Module getModule() {
         return licenseUtils.getModule(moduleName);
@@ -121,8 +117,8 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getPhoneNumber())
-                ? "\nPh : " + license.getLicensee().getPhoneNumber() : "");
+        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getMobilePhoneNumber())
+                ? "\nPh : " + license.getLicensee().getMobilePhoneNumber() : "");
     }
 
     @Override
@@ -221,7 +217,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public Long getUserId() {
-        return EgovThreadLocals.getUserId();
+        return ApplicationThreadLocals.getUserId();
     }
 
     @Override
@@ -327,7 +323,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
                             calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));
                 else
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
-                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getToDate(),
+                            calculatePenalty(demandDetails.getEgDemandReason().getEgInstallmentMaster().getFromDate(),
                                     collectionDate, demandDetails.getAmount()));
         return installmentPenalty;
     }

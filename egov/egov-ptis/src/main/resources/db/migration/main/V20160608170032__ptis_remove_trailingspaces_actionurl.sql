@@ -1,0 +1,1 @@
+update eg_action set url=trim(url) where contextroot='ptis';

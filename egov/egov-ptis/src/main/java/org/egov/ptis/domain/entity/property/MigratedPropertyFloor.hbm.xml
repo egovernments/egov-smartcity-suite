@@ -46,8 +46,8 @@
     <class name="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" table="EGPT_MGRTDPROP_FLOORALV">
          <id name="id" type="java.lang.Long">
             <column name="ID" />
-            <generator class="sequence">
-				<param name="sequence">SEG_EGPT_MGRTDPROP_FLOORALV</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEG_EGPT_MGRTDPROP_FLOORALV</param>
 			</generator>
         </id>
         <property name="propertyId" type="java.lang.String">

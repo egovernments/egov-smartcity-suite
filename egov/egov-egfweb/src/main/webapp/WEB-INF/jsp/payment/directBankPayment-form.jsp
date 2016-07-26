@@ -116,7 +116,7 @@
 			id="commonBean.documentNumber" size="25" /></td>
 	<td class="greybox"><s:text name="document.date" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
-	<s:date name='commonBean.documentDate' id="commonBean.documentDateId"
+	<s:date name='commonBean.documentDate' var="commonBean.documentDateId"
 		format='dd/MM/yyyy' />
 	<td class="greybox"><s:textfield id="documentDate"
 			name="commonBean.documentDate" value="%{commonBean.documentDateId}"

@@ -232,7 +232,6 @@ public interface FinancialConstants {
     public static final String MODULE_NAME_APPCONFIG = "EGF";
     public static final String WORKFLOWENDSTATE = "END";
     public static final String KEY_BILLNUMBER_APPCONFIG = "Bill_Number_Geneartion_Auto";
-    public static final String BILLNUMBER_GENERATION_SCRIPT = "egf.bill.number.generator";
 
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";
@@ -252,7 +251,7 @@ public interface FinancialConstants {
     public static final String PAYMENTS = "Payments";
     public static final String OPERATING_PAYMENTS = "Operating Payments";
 
-    public static final String SUPERUSER = "superuser";
+    public static final String SUPERUSER = "super user";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_FAILURE = "failure";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_SUCCESS = "success";
     public static final String REMITTANCE_SCHEDULER_LOG_STATUS_PARTIAL = "partial";
@@ -323,4 +322,6 @@ public interface FinancialConstants {
     
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
+    
+    public static final String CREATEANDAPPROVE="Create And Approve";
 }

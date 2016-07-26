@@ -64,7 +64,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -156,7 +156,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         final Script script = (Script) persistenceService.findAllByNamedQuery(Script.BY_NAME, "budget.report.view.access").get(0);
         final ScriptContext context = ScriptService.createContext("wfItem", budget, "eisCommonServiceBean", eisCommonService,
                 "userId",
-                EgovThreadLocals.getUserId().intValue());
+                ApplicationThreadLocals.getUserId().intValue());
         final Integer result = (Integer) scriptExecutionService.executeScript(script, context);
         if (result == 1)
             return true;
@@ -413,7 +413,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     protected User getUser() {
-        return (User) ((PersistenceService) this).find(" from User where id=?", EgovThreadLocals.getUserId());
+        return (User) ((PersistenceService) this).find(" from User where id=?", ApplicationThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException {
@@ -2357,7 +2357,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     public PersonalInformation getEmpForCurrentUser()
     {
-        return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public void setBudgetDetailWorkflowService(final WorkflowService<BudgetDetail> budgetDetailWorkflowService) {
@@ -2375,7 +2375,7 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public boolean toBeConsolidated()
     {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(EgovThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
                 new Date());
         final Functionary empfunctionary = empAssignment.getFunctionary();
         final Designation designation = empAssignment.getDesignation();

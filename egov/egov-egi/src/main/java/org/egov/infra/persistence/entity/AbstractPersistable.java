@@ -41,7 +41,7 @@
 package org.egov.infra.persistence.entity;
 
 import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
@@ -73,30 +73,7 @@ public abstract class AbstractPersistable<PK extends Serializable> implements Se
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (null == obj)
-            return false;
-
-        if (this == obj)
-            return true;
-
-        if (!getClass().equals(obj.getClass()))
-            return false;
-
-        final AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
-
-        return null == this.getId() ? false : this.getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        int hashCode = 17;
-        hashCode += null == getId() ? 0 : getId().hashCode() * 31;
-        return hashCode;
-    }
-
-    @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode()+"-"+getId().toString();
+        return ApplicationThreadLocals.getCityCode()+"-"+getId().toString();
     }
 }

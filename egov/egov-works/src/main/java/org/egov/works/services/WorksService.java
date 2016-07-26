@@ -58,8 +58,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DeptDesig;
@@ -256,11 +256,11 @@ public class WorksService {
     }
 
     public Long getCurrentLoggedInUserId() {
-        return EgovThreadLocals.getUserId();
+        return ApplicationThreadLocals.getUserId();
     }
 
     public User getCurrentLoggedInUser() {
-        return (User) persistenceService.getSession().load(User.class, EgovThreadLocals.getUserId());
+        return (User) persistenceService.getSession().load(User.class, ApplicationThreadLocals.getUserId());
     }
 
     public Map<String, Integer> getExceptionSOR() {

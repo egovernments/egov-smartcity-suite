@@ -152,7 +152,7 @@
 					value="%{propertyDetail.extentAppartenauntLand}" />
 			</div>
 		</div>
-		<div class="row add-border">
+		<%-- <div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="superstructure"></s:text>
 			</div>
@@ -170,7 +170,7 @@
 			<div class="col-xs-3 add-margin view-content">
 				<s:property default="N/A" value="%{propertyDetail.siteOwner}" />
 			</div>
-		</div>
+		</div> --%>
 		<div class="row add-border">
 			<div class="col-xs-3 add-margin">
 				<s:text name="reg.docno"></s:text>
@@ -417,11 +417,10 @@
 	</div>
 </div>
 
-<table style="width: 100%;">
+<table class="table-fixed">
 	<tr class="floordetails">
 		<td colspan="5" width="5%">
-			<div class="headingsmallbg"
-				style="font-size: 19px; font-family: regular;">
+		    <div class="headingsmallbg" style="font-size: 19px; font-family: regular;">
 				<span><s:text name="FloorDetailsHeader" /> </span>
 			</div>
 		</td>
@@ -429,7 +428,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div class="overflow-x-scroll">
 				<%@ include file="../common/FloorView.jsp"%>
 			</div>
 		</td>
@@ -458,115 +457,7 @@
 	<div class="panel-heading">
 		<div class="panel-title">Tax Details</div>
 	</div>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="nameTable" >
-	<tr>
-	<th class="bluebgheadtd"></th>
-	<th class="bluebgheadtd">Property Tax</th>
-    <th class="bluebgheadtd">Education Cess</th>
-    <th class="bluebgheadtd">Library Cess</th>
-    <th class="bluebgheadtd">Unauthorized Penalty</th>
-	<th class="bluebgheadtd">Total Tax</th>
-	<th class="bluebgheadtd">Total Tax Due</th>
-	</tr>
-	<tr>
-	  <td class="blueborderfortd" align="center">
-		<span class="bold"><s:property value="viewMap.firstHalf" /></span>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfGT" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfEC" />
-				</s:text>
-	  </td>
-	  
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfLC" />
-				</s:text>
-	  </td>
-	  
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfUAP" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfTotal" /> 
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.firstHalfTaxDue" />  
-				</s:text>
-	  </td>
-	  <tr>
-	  
-	  <td class="blueborderfortd" align="center">
-		<span class="bold"><s:property value="viewMap.secondHalf" /></span>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfGT" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfEC" />
-				</s:text>
-	  </td>
-	  
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfLC" />
-				</s:text>
-	  </td>
-	   <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfUAP" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfTotal" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.secondHalfTaxDue" />
-				</s:text>
-	  </td>
-	</tr>
-	 <tr>
-	 
-	  <td class="blueborderfortd" align="center">
-		<span class="bold"><s:property value="viewMap.arrears" /></span>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.arrearTax" />
-				</s:text>
-	  </td>
-	  <td class="blueborderfortd" align="center">
-	  Rs.<s:text name="format.money">
-					<s:param value="viewMap.totalArrDue" />
-				</s:text>
-	  </td>
-	  
-	 </tr>
-	</table>
+	<%@ include file="../common/taxDetails.jsp"%>
 	
 </div>
 

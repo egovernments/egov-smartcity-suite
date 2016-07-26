@@ -39,6 +39,21 @@
  */
 $(document).ready(function(){
 	
+	$('#categoryTypeTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 3,
+			"orderable": false
+		} ]
+	});
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
 	if (activeDiv =='false'){
@@ -67,22 +82,11 @@ $(document).ready(function(){
 	
  });
 
-
-	
-$('#listid').click(function() {
-	window.open("/wtms/masters/categoryMaster/list", "_self");
- });
-
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/categoryMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/categoryMaster/", "_self");
-}
-
 function edit(connectionCategory)
 {
-	window.open("/wtms/masters/categoryMaster/"+connectionCategory, "_self");
+	window.open("/wtms/masters/categoryMaster/edit/"+connectionCategory, "_self");
 }

@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr id="assessmentRow" >
 						<td class="greybox" width="5%">&nbsp;</td>
 						<td class="greybox" width="25%"><s:text name="assessmentno"></s:text>
@@ -49,7 +49,7 @@
 								id="upicNo" size="10" maxlength="10" onblur="validNumber(this);checkZero(this,'Assessment Number');"></s:textfield></td>
 						<td class="greybox" width="25%">&nbsp;</td>
 						<td class="greybox" width="20%"></td>
-					</tr>
+	</tr>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
@@ -171,7 +171,7 @@
 				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
 	</tr>
 	
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -183,7 +183,7 @@
 		</td>
 		<td class="greybox siteowner"><s:textfield maxlength="32" value="%{propertyDetail.siteOwner}"
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="greybox">&nbsp;</td>
@@ -240,7 +240,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
 				<%@ include file="../common/FloorForm.jsp"%>
 			</div>
 		</td>

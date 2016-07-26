@@ -234,4 +234,18 @@
         <put-attribute name="page-title" value="lbl.update.comptype.category" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-update.jsp"/>
     </definition>
+    
+    <definition name="bulkRouter-new" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.bulkrouter.generation" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/bulkrouter/bulkRouter-new.jsp"/>
+    </definition>
+    
+    <definition name="bulkEscalation-new" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.bulkescalation.generation" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkEscalation-new.jsp"/>
+    </definition>
+    <definition name="functionaryWise-search" extends="base_layout"> 
+    	<put-attribute name="page-title" value="lbl.functionaryWiseReport.heading.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/functionaryWise-search.jsp"/>
+    </definition>
 </tiles-definitions>

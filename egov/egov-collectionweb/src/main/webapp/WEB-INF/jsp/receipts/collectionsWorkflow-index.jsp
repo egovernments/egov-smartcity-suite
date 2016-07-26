@@ -260,7 +260,7 @@ function readOnlyCheckBox() {
 <body onload="javascript:refreshSummary()">
 <div class="formmainbox">
 
-<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
 
 <s:form theme="simple" name="collectionsWorkflowForm">
 	<div class="subheadnew"><s:if test="%{isSubmitAction == true}">
@@ -280,14 +280,14 @@ function readOnlyCheckBox() {
 	    	<s:actionmessage theme="simple"/>
 	    </div>
 	</s:if>
-	<logic:notEmpty name="receiptHeaders">
+	<s:if test="%{!receiptHeaders.isEmpty()}">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
-			<s:hidden name="receiptDate" id="receiptDate" value="%{receiptDate}"/>	
+			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	
 			<display:table name="receiptHeaders"
 				uid="currentRow" pagesize="30" style="border:1px;empty-cells:show;border-collapse:collapse;" cellpadding="0"
 				cellspacing="0" export="false" requestURI="">
-
+				<s:hidden name="receiptDate" id="receiptDate" value="%{receiptdate}"/>	
 				<s:if test="%{allowPartialSelection == true}">
 					<!--  Partial selection allowed. Enable the checkboxes -->
 					<display:column headerClass="bluebgheadtd" class="blueborderfortd"
@@ -314,7 +314,7 @@ function readOnlyCheckBox() {
 					style="width:10%; text-align: center" />
 
 				<display:column headerClass="bluebgheadtd" class="blueborderfortd"
-					property="receiptDate" title="Receipt Date"
+					property="receiptdate" title="Receipt Date"
 					format="{0,date,dd/MM/yyyy}" style="width:10%; text-align: center" />
 				
 
@@ -419,18 +419,30 @@ function readOnlyCheckBox() {
 			<s:if test="%{isSubmitAction == true}">
 				<s:submit type="submit" cssClass="buttonsubmit"
 					id="submitCollections" name="submitCollections"
-					value="Submit Collections" method="submitCollections"
+					value="Submit Page Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-submitCollections.action'" />
+					<s:submit type="submit" cssClass="buttonsubmit"
+					id="submitCollections" name="submitCollections"
+					value="Submit All Collections" 
+					disabled="false"
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-submitAllCollections.action'" />
 			</s:if> <!-- else show only approve and reject buttons --> <s:else>
 				<s:submit type="submit" cssClass="buttonsubmit"
 					id="approveCollections" name="approveCollections"
-					value="Approve Collections" method="approveCollections"
+					value="Approve Page Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-approveCollections.action'" />
-				&nbsp;<s:submit type="submit" cssClass="buttonsubmit"
+				&nbsp;
+				<s:submit type="submit" cssClass="buttonsubmit"
+					id="approveCollections" name="approveCollections"
+					value="Approve All Collections" 
+					disabled="false"
+					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-approveAllCollections.action'" />
+				&nbsp;
+				<s:submit type="submit" cssClass="buttonsubmit"
 					id="rejectCollections" name="rejectCollections"
-					value="Reject Collections" method="rejectCollections"
+					value="Reject Collections" 
 					disabled="false"
 					onclick="doLoadingMask('#loadingMask');document.collectionsWorkflowForm.action='collectionsWorkflow-rejectCollections.action'" />
 			</s:else>
@@ -438,24 +450,8 @@ function readOnlyCheckBox() {
 				value="<s:text name='common.buttons.close'/>"
 				onclick="window.close()" />
 			</div>		
-
-			<logic:empty name="receiptHeaders">
-				<table width="90%" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
-					<tr>
-						<div>&nbsp;</div>
-						<div class="subheadnew"><s:text
-							name="collectionsWorkflow.noReceipts" /></div>
-					</tr>
-				</table>
-				<br />
-					<input type="button" class="button" id="buttonClose"
-						value="<s:text name='common.buttons.close'/>"
-						onclick="window.close()" />
-				</logic:empty>
-				
 			</table>
-			</logic:notEmpty>
+			</s:if>
 			</s:form>
 			</div>
 			<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

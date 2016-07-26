@@ -48,8 +48,8 @@
     <class name="org.egov.demand.model.EgBillExtrafield" table="EG_BILL_EXTRAFIELD" >
         <id name="id" type="java.lang.Long">
             <column name="ID"  />
-            <generator class="native">
-			<param name="sequence">SEQ_EG_BILL_EXTRAFIELD</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+			<param name="sequence_name">SEQ_EG_BILL_EXTRAFIELD</param>
 			</generator>
         </id>
         <many-to-one name="egBill" class="org.egov.demand.model.EgBill" >

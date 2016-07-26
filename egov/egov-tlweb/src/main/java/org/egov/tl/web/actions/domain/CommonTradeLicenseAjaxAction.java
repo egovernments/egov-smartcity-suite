@@ -52,7 +52,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;

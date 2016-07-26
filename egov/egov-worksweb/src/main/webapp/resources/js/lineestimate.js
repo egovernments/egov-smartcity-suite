@@ -41,7 +41,9 @@ $deletedAmt = 0;
 $locationId = 0;
 $subTypeOfWorkId = 0;
 $subSchemeId = 0;
+$functionId = 0;
 $detailsRowCount = $('#detailsSize').val();
+$budgetHeadId=0;
 $(document).ready(function(){
 	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
@@ -51,14 +53,12 @@ $(document).ready(function(){
 	
 	getLineEstimateDate();
 	$locationId = $('#locationValue').val();
-	$('#wardInput').trigger('blur');
 	$subTypeOfWorkId = $('#subTypeOfWorkValue').val();
 	$subSchemeId = $('#subSchemeValue').val();
-	$('#scheme').trigger('change');
-	
-	$('#typeofwork').trigger('blur');
-	$('#subTypeOfWork').trigger('blur');
-	
+	$functionId = $('#functionId').val();
+	$budgetHeadId = $('#budgetHeadValue').val();
+	getFunctionsByFundAndDepartment();
+	getBudgetHeads();
 	$( "input[name$='estimateAmount']" ).each(function(){
 		var value = parseFloat(roundTo($(this).val()));
 		if(value != 0)
@@ -77,10 +77,17 @@ $(document).ready(function(){
 	if (functionId != "") {
 		$('#function option').each(function() {
 			if ($(this).val() == functionId)
-				$(this).prop('selected', true);
+				$(this).attr('selected', 'selected');
 		});
 	}
 	
+	//TODO : Need to remove trigger
+	$('#typeofwork').trigger('blur');
+	$('#scheme').trigger('change');
+	$('#function').trigger('change');
+	
+	if(!$('#slum').is(':checked'))
+		$('#nonslum').attr('checked', 'checked');
 	return showSlumFieldsValue();
 });
 
@@ -202,7 +209,7 @@ function addLineEstimate() {
 			}
 			
 			// Generate all textboxes Id and name with new index
-			$("#estimateRow").clone().find("input, errors, textarea").each(
+			$("#estimateRow").clone().find("input, errors, textarea, select").each(
 					function() {
 
 						if ($(this).data('server')) {
@@ -375,37 +382,6 @@ function validateActualEstimateAmount() {
 	});
 }
 
-$('#wardInput').blur(function(){
-	   if ($('#ward').val() === '') {
-		   $('#locationBoundary').empty();
-		   $('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-			return;
-		} else {
-			$.ajax({
-				type: "GET",
-				url: "/egworks/lineestimate/ajax-getlocation",
-				cache: true,
-				dataType: "json",
-				data:{'id' : $('#ward').val()}
-			}).done(function(value) {
-				console.log(value);
-				$('#locationBoundary').empty();
-				$('#locationBoundary').append($('<option>').text('Select from below').attr('value', ''));
-				$.each(value, function(index, val) {
-					var selected="";
-					if($locationId)
-					{
-						if($locationId==val.id)
-						{
-							selected="selected";
-						}
-					}
-				    $('#locationBoundary').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
-				});
-			});
-		}
-	});
-
 function disableSlumFields() {
 	var slum = document.getElementById("slum");
 	var slumfields = document.getElementById("slumfields");
@@ -484,7 +460,7 @@ $(document).ready(function(){
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
-                        name: ct.name,
+                        name: '' + ct.boundaryNum + '',
                         value: ct.id
                     };
                 });
@@ -496,7 +472,7 @@ $(document).ready(function(){
 	var ward_typeahead = $('#wardInput').typeahead({
 		hint : false,
 		highlight : false,
-		minLength : 3
+		minLength : 1
 	}, {
 		displayKey : 'name',
 		source : ward.ttAdapter(),
@@ -634,3 +610,73 @@ function validateWorkFlowApprover(name) {
 	document.forms[0].submit;
 	return true;
 }
+function getBudgetHeads() {
+	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
+		   $('#budgetHead').empty();
+		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+			$.ajax({
+				type: "GET",
+				url: "/egworks/lineestimate/getbudgethead",
+				cache: true,
+				dataType: "json",
+				data:{
+					'fundId' : $('#fund').val(),
+					'functionId' : $('#function').val(),
+					'departmentId' : $('#executingDepartments').val(),
+					'natureOfWorkId' : $('#natureOfWork').val()
+					
+					}	
+			}).done(function(value) {
+				console.log(value);
+				$('#budgetHead').empty();
+				$('#budgetHead').append($("<option value=''>Select from below</option>"));
+				$.each(value, function(index, val) {
+					var selected="";
+					if($budgetHeadId)
+					{
+						if($budgetHeadId==val.id)
+						{
+							selected="selected";
+						}
+					}
+				     $('#budgetHead').append($('<option '+ selected +'>').text(val.name).attr('value', val.id));
+				});
+			});
+		}
+}
+function getFunctionsByFundAndDepartment() {
+	if ($('#fund').val() === '' || $('#executingDepartments').val() === '') {
+		   $('#function').empty();
+		   $('#function').append($('<option>').text('Select from below').attr('value', ''));
+			return;
+			} else {
+				$.ajax({
+					method : "GET",
+					url : "/egworks/lineestimate/getfunctionsbyfundidanddepartmentid",
+					data : {
+						fundId : $('#fund').val(),
+						departmentId : $('#executingDepartments').val()
+					},
+					async : true
+				}).done(
+						function(response) {
+							$('#function').empty();
+							$('#function').append($("<option value=''>Select from below</option>"));
+							var output = '<option value="">Select from below</option>';
+							$.each(response, function(index, value) {
+								var selected="";
+								if($functionId)
+								{
+									if($functionId==value.id)
+									{
+										selected="selected";
+									}
+								}
+								$('#function').append($('<option '+ selected +'>').text(value.code + ' - ' + value.name).attr('value', value.id));
+							});
+				});
+			}
+}
+

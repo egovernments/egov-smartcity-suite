@@ -39,8 +39,19 @@
  */
 package org.egov.ptis.actions.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -59,21 +70,13 @@ import org.egov.ptis.bean.DefaultersInfo;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -91,6 +94,8 @@ public class DefaultersReportAction extends BaseFormAction {
     private BoundaryService boundaryService;
     @Autowired
     public PropertyTaxUtil propertyTaxUtil;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     private Map<String, String> ownerShipMap;
     private String ownerShipType;
 
@@ -136,8 +141,9 @@ public class DefaultersReportAction extends BaseFormAction {
     public void getDefaultersList() {
         List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
         String result = null;
-        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,ownerShipType);
-        resultList = prepareOutput( (List<PropertyMaterlizeView>)query.list());
+        final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,
+                ownerShipType);
+        resultList = prepareOutput((List<PropertyMaterlizeView>) query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
         result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
@@ -174,7 +180,7 @@ public class DefaultersReportAction extends BaseFormAction {
         BigDecimal currPenalty = BigDecimal.ZERO;
         BigDecimal currPenaltyColl = BigDecimal.ZERO;
         int count = 0;
-        Installment curInstallment = propertyTaxUtil.getCurrentInstallment();
+        Installment curInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         for (final PropertyMaterlizeView propView : propertyViewList) {
             defaultersInfo = new DefaultersInfo();
             totalDue = BigDecimal.ZERO;
@@ -187,35 +193,42 @@ public class DefaultersReportAction extends BaseFormAction {
                     " & ") : propView.getOwnerName());
             defaultersInfo.setWardName(propView.getWard().getName());
             defaultersInfo.setHouseNo(propView.getHouseNo());
-            defaultersInfo.setLocality(propView.getLocality().getName());
+            defaultersInfo.setLocality((propView.getLocality()) != null ? propView.getLocality().getName()
+                    : "NA");
             defaultersInfo.setMobileNumber((StringUtils.isNotBlank(propView.getMobileNumber()) ? propView
                     .getMobileNumber() : "NA"));
             defaultersInfo.setArrearsDue(propView.getAggrArrDmd().subtract(propView.getAggrArrColl()));
-            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd())).subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
-            defaultersInfo
-                    .setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView.getAggrArrearPenaly() : ZERO)
-                            .subtract(propView.getAggrArrearPenalyColl() != null ? propView.getAggrArrearPenalyColl() : ZERO));
-            currPenalty = (propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO).add(propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO);
-            currPenaltyColl = (propView.getAggrCurrFirstHalfPenalyColl() != null ? propView.getAggrCurrFirstHalfPenalyColl() : ZERO).add(propView.getAggrCurrSecondHalfPenalyColl() != null ? propView.getAggrCurrSecondHalfPenalyColl() : ZERO); 
+            defaultersInfo.setCurrentDue((propView.getAggrCurrFirstHalfDmd().add(propView.getAggrCurrSecondHalfDmd()))
+                    .subtract((propView.getAggrCurrFirstHalfColl().add(propView.getAggrCurrSecondHalfColl()))));
+            defaultersInfo.setAggrArrearPenalyDue((propView.getAggrArrearPenaly() != null ? propView
+                    .getAggrArrearPenaly() : ZERO).subtract(propView.getAggrArrearPenalyColl() != null ? propView
+                    .getAggrArrearPenalyColl() : ZERO));
+            currPenalty = (propView.getAggrCurrFirstHalfPenaly() != null ? propView.getAggrCurrFirstHalfPenaly() : ZERO)
+                    .add(propView.getAggrCurrSecondHalfPenaly() != null ? propView.getAggrCurrSecondHalfPenaly() : ZERO);
+            currPenaltyColl = (propView.getAggrCurrFirstHalfPenalyColl() != null ? propView
+                    .getAggrCurrFirstHalfPenalyColl() : ZERO)
+                    .add(propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
+                            .getAggrCurrSecondHalfPenalyColl() : ZERO);
             defaultersInfo.setAggrCurrPenalyDue(currPenalty.subtract(currPenaltyColl));
             totalDue = defaultersInfo.getArrearsDue().add(defaultersInfo.getCurrentDue())
                     .add(defaultersInfo.getAggrArrearPenalyDue()).add(defaultersInfo.getAggrCurrPenalyDue());
             defaultersInfo.setTotalDue(totalDue);
-            if(propView.getInstDmdColl().size()!=0 && !propView.getInstDmdColl().isEmpty()){
-                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment().getDescription());
+            if (propView.getInstDmdColl().size() != 0 && !propView.getInstDmdColl().isEmpty()) {
+                defaultersInfo.setArrearsFrmInstallment(propView.getInstDmdColl().iterator().next().getInstallment()
+                        .getDescription());
                 final Iterator itr = propView.getInstDmdColl().iterator();
                 InstDmdCollMaterializeView idc = new InstDmdCollMaterializeView();
-                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView(); 
-                while(itr.hasNext()) {
-                    idc =(InstDmdCollMaterializeView) itr.next();
-                    if(!idc.getInstallment().equals(curInstallment))
+                InstDmdCollMaterializeView lastElement = new InstDmdCollMaterializeView();
+                while (itr.hasNext()) {
+                    idc = (InstDmdCollMaterializeView) itr.next();
+                    if (!idc.getInstallment().equals(curInstallment))
                         lastElement = idc;
                 }
-                if(lastElement!=null && lastElement.getInstallment()!=null)  
+                if (lastElement != null && lastElement.getInstallment() != null)
                     defaultersInfo.setArrearsToInstallment(lastElement.getInstallment().getDescription());
             }
-           defaultersList.add(defaultersInfo);   
-        } 
+            defaultersList.add(defaultersInfo);
+        }
 
         return defaultersList;
 

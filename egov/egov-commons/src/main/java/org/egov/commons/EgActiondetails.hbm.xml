@@ -46,8 +46,8 @@
 	<class name="org.egov.commons.EgActiondetails" table="EG_ACTIONDETAILS">
 		<id name="id" type="integer">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="native">
-				<param name="sequence">SEQ_EG_ACTIONDETAILS</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EG_ACTIONDETAILS</param>
 			</generator>
 		</id>
 		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />

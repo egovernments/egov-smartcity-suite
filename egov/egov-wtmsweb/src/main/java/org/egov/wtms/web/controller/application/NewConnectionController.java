@@ -492,9 +492,12 @@ public class NewConnectionController extends GenericConnectionController {
 
         if (waterConnectionDetails.getExistingConnection().getDonationCharges() == null)
             errors.rejectValue("existingConnection.donationCharges", "err.required");
+        if (waterConnectionDetails.getConnection()!=null)
+        {
         WaterConnection validateWaterConnDet=waterConnectionService.findByConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
         if (validateWaterConnDet !=null &&  !waterConnectionDetails.getConnection().getId().equals(validateWaterConnDet.getId()))
             errors.rejectValue("connection.consumerCode", "err.exist.consumerCode");
+        }
          if (waterConnectionDetails.getConnectionType() != null
                  && waterConnectionDetails.getConnectionType() == ConnectionType.METERED) {
              if (waterConnectionDetails.getExistingConnection().getMeterCost() == null)

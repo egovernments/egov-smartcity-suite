@@ -40,29 +40,6 @@
 package org.egov.services.report;
 
 
-import org.apache.log4j.Logger;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Fund;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.utils.Constants;
-import org.egov.web.actions.report.IEStatementEntry;
-import org.egov.web.actions.report.Statement;
-import org.egov.web.actions.report.StatementEntry;
-import org.egov.web.actions.report.StatementResultObject;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,6 +52,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Fund;
+import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.egf.model.IEStatementEntry;
+import org.egov.egf.model.Statement;
+import org.egov.egf.model.StatementEntry;
+import org.egov.egf.model.StatementResultObject;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.utils.Constants;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 public abstract class ReportService {
    

@@ -48,6 +48,7 @@
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<input type="hidden" name="waterPropertyUsageList" id="waterPropertyUsageList" value="${waterPropertyUsageList}">
 	<input type="hidden" id="waterPropertyUsageid" name="waterPropertyUsageid" value="${waterPropertyUsage.id}" />
+	<input type="hidden" value="${mode}" id="mode" />
 	<div class="panel panel-primary" data-collapsed="0">
 	<c:if test="${not empty message}">
                 <div role="alert">${message}</div>
@@ -58,23 +59,23 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="propertyUsageTbl">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center">
+							<th colspan="1" class="text-center">
 									<spring:message code="lbl.propertytype" />
-								</div>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.usagetype" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.usagetype" />
 							</th>
-							<th align="center" colspan="1">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							 <c:if test="${mode == 'edit'}"> 
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
+							</c:if>
 						</tr>
 					</thead>
 					<c:forEach var="waterPropertyUsage" items="${waterPropertyUsageList}">
@@ -101,18 +102,19 @@
 								</c:choose>
 								</div>
 							</td>
+							 <c:if test="${mode == 'edit'}"> 
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${waterPropertyUsage.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:otherwise>
 			</c:choose>
 			<div class="form-group text-center">
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>

@@ -128,7 +128,7 @@
 		</td>
 	</tr>
 
-		<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="bluebox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox">
@@ -138,7 +138,7 @@
 		<td class="bluebox siteowner">
 			<span class="bold"><s:property value="%{property.propertyDetail.siteOwner}" default="N/A"/></span>
 		</td>
-	</tr>
+	</tr> --%>
 	
 	<tr>
 		<td class="bluebox">&nbsp;</td>
@@ -264,6 +264,35 @@
 		<tr>
 			<td colspan="5">
 				<%@ include file="../common/DocumentUploadView.jsp"%>
+			</td>
+		</tr>
+	</s:if>
+	<!-- Displaying existing and revised tax details -->
+	<tr>
+		<td colspan="5">
+			<div class="headingsmallbg">
+				<span class="bold"><s:text name="taxdetailsheader"/></span>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
+			<%@ include file="../common/taxDetails.jsp"%>
+		</td>
+	</tr>
+	<s:if test="%{egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
+					&& (egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED) || 
+						egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY))}">
+		<tr>
+			<td colspan="5">
+				<div class="headingsmallbg">
+					<span class="bold"><s:text name="revised.taxdetailsheader"/></span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="5">
+				<%@ include file="../common/wfPropertyTaxDetails.jsp"%>
 			</td>
 		</tr>
 	</s:if>

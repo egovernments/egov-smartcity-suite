@@ -47,12 +47,12 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -68,10 +68,12 @@ import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApprovalRepository;
 import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionRepository;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -116,6 +118,7 @@ public class VacancyRemissionService {
     private SecurityUtils securityUtils;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<VacancyRemission> vacancyRemissionWorkflowService;
 
     @Autowired
@@ -135,6 +138,9 @@ public class VacancyRemissionService {
 
     @Autowired
     private MessagingService messagingService;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
     
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
@@ -239,14 +245,6 @@ public class VacancyRemissionService {
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
 	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
-	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
-	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-	                    /*
-	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
-	                     */
-	                    if(DateUtils.between(vacancyRemission.getVacancyToDate(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
-	                    	updateDemandDetailsWithRebate(vacancyRemission, installmentFirstHalf, installmentSecondHalf);
 	            		buildSMS(vacancyRemission, workFlowAction);
 	                }
             }
@@ -293,7 +291,7 @@ public class VacancyRemissionService {
         	try {
         		//Based on the current installment, fetch tax details for the respective installment
 				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-				        PropertyTaxUtil.getCurrentInstallment());
+				        propertyTaxCommonUtils.getCurrentInstallment());
 				Map<String, BigDecimal> currentTaxDetails = propertyService.getCurrentTaxDetails(demandCollMap, new Date());
 				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
 	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
@@ -370,14 +368,14 @@ public class VacancyRemissionService {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-        final Designation designation = propertyTaxUtil.getDesignationForUser(user.getId());
+        final String designationList = propertyTaxCommonUtils.getAllDesignationsForUser(user.getId());
         Position pos = null;
         Assignment wfInitiator = null;
 
         if (vacancyRemissionApproval.getId() != null
                 && (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT) || workFlowAction
                         .equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)))
-            if (designation.getName().equalsIgnoreCase(REVENUE_INSPECTOR_DESGN))
+            if (StringUtils.containsIgnoreCase(designationList, REVENUE_INSPECTOR_DESGN))
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(vacancyRemissionApproval
                         .getVacancyRemission().getCreatedBy().getId());
             else
@@ -393,8 +391,8 @@ public class VacancyRemissionService {
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             String stateValue = "";
             String nextAction = "";
-            if (designation.getName().equalsIgnoreCase(REVENUE_OFFICER_DESGN)
-                    || designation.getName().equalsIgnoreCase(COMMISSIONER_DESGN)) {
+            if (StringUtils.containsIgnoreCase(designationList, REVENUE_OFFICER_DESGN)
+                    || StringUtils.containsIgnoreCase(designationList, COMMISSIONER_DESGN)) {
                 stateValue = WF_STATE_REJECTED;
                 nextAction = WF_STATE_REVENUE_INSPECTOR_APPROVAL_PENDING;
             } else {
@@ -426,7 +424,7 @@ public class VacancyRemissionService {
             } else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                         null, additionalRule, vacancyRemissionApproval.getCurrentState().getValue(), null);
-                if (wfmatrix != null)
+                if (wfmatrix != null){
                     if (wfmatrix.getNextAction().equalsIgnoreCase("END"))
                         vacancyRemissionApproval.transition().end().withSenderName(user.getName())
                                 .withComments(approvalComent).withDateInfo(currentDate.toDate());
@@ -435,6 +433,17 @@ public class VacancyRemissionService {
                                 .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
+	                if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
+	                	Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+	                    Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+	                    Installment installmentSecondHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+	                    /*
+	                     * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
+	                     */
+	                    if(DateUtils.between(vacancyRemissionApproval.getVacancyRemission().getVacancyToDate(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
+	                    	updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf, installmentSecondHalf);
+	                }
+                }
             }
         }
         if (LOG.isDebugEnabled())
@@ -466,10 +475,10 @@ public class VacancyRemissionService {
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
             smsMsg = messageSource.getMessage("vacancyremission.rejection.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() }, null);
+                    ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
             smsMsg = messageSource.getMessage("vacancyremission.approval.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() },null);
+                    ApplicationThreadLocals.getMunicipalityName() },null);
         }
 
         if (StringUtils.isNotBlank(mobileNumber)) {

@@ -39,80 +39,63 @@
  */
 package org.egov.ptis.domain.service.property;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.egov.commons.Area;
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
-import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.rest.client.SimpleRestClient;
-import org.egov.infra.search.elastic.entity.ApplicationIndex;
-import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
-import org.egov.infra.search.elastic.service.ApplicationIndexService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.pims.commons.Position;
-import org.egov.pims.commons.service.EisCommonsService;
-import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
-import org.egov.ptis.client.service.calculator.APTaxCalculator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.demand.PtDemandDao;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
-import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
-import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
-import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.enums.TransactionType;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.property.*;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.BoundaryDetails;
-import org.egov.ptis.domain.model.OwnerName;
-import org.egov.ptis.domain.model.PropertyDetails;
-import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
-import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
-import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.egov.ptis.service.collection.PropertyTaxCollection;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.annotation.Transactional;
+import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,9 +108,104 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static java.lang.Boolean.FALSE;
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+import org.egov.commons.Area;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
+import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.rest.client.SimpleRestClient;
+import org.egov.infra.search.elastic.entity.ApplicationIndex;
+import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
+import org.egov.infra.search.elastic.service.ApplicationIndexService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.MoneyUtils;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Position;
+import org.egov.pims.commons.service.EisCommonsService;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
+import org.egov.ptis.client.model.calculator.APTaxCalculationInfo;
+import org.egov.ptis.client.service.PenaltyCalculationService;
+import org.egov.ptis.client.service.calculator.APTaxCalculator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
+import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
+import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.enums.TransactionType;
+import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.Apartment;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
+import org.egov.ptis.domain.entity.property.Floor;
+import org.egov.ptis.domain.entity.property.FloorType;
+import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyDetail;
+import org.egov.ptis.domain.entity.property.PropertyID;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyOccupation;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+import org.egov.ptis.domain.entity.property.PropertySource;
+import org.egov.ptis.domain.entity.property.PropertyStatus;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.entity.property.RoofType;
+import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.TaxExeptionReason;
+import org.egov.ptis.domain.entity.property.WallType;
+import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.BoundaryDetails;
+import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.PropertyDetails;
+import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
+import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
+import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.exceptions.TaxCalculatorExeption;
+import org.egov.ptis.service.collection.PropertyTaxCollection;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.hibernate.Query;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class to perform services related to an Assessment
@@ -191,6 +269,14 @@ public class PropertyService {
     protected AssignmentService assignmentService;
     @Autowired
     private PropertyTaxCollection propertyTaxCollection;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    @Autowired
+    private PenaltyCalculationService penaltyCalculationService;
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     private BigDecimal totalAlv = BigDecimal.ZERO;
 
@@ -357,9 +443,10 @@ public class PropertyService {
                                 "from StructureClassification sc where sc.id = ?",
                                 floor.getStructureClassification().getId());
 
-                    if (floor.getOccupancyDate() != null)
-                        floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getOccupancyDate()));
-
+                    if (floor.getOccupancyDate() != null && floor.getConstructionDate() != null){
+                    	floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getConstructionDate(), floor.getOccupancyDate()));
+                    }
+                    
                     LOGGER.debug("createFloors: PropertyUsage: " + usage + ", PropertyOccupation: " + occupancy
                             + ", StructureClass: " + structureClass);
 
@@ -375,7 +462,7 @@ public class PropertyService {
                     floor.setCreatedDate(new Date());
                     floor.setModifiedDate(new Date());
                     floor.setFloorUid(floorUid++);
-                    final User user = userService.getUserById(EgovThreadLocals.getUserId());
+                    final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
                     floor.setCreatedBy(user);
                     floor.setModifiedBy(user);
                     property.getPropertyDetail().getFloorDetails().add(floor);
@@ -419,13 +506,9 @@ public class PropertyService {
         final PropertyStatusValues propStatVal = new PropertyStatusValues();
         final PropertyStatus propertyStatus = (PropertyStatus) getPropPerServ().find(
                 "from PropertyStatus where statusCode=?", statusCode);
-        if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(statusCode) || PROPERTY_MODIFY_REASON_AMALG.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_BIFURCATE.equals(statusCode) || PROP_CREATE_RSN.equals(statusCode)
-                || PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(statusCode) || REVISIONPETITION_STATUS_CODE.equals(statusCode))
-            propStatVal.setIsActive("W");
-        else
-            propStatVal.setIsActive("Y");
-        final User user = userService.getUserById(EgovThreadLocals.getUserId());
+        
+        propStatVal.setIsActive("Y");
+        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         propStatVal.setCreatedDate(new Date());
         propStatVal.setModifiedDate(new Date());
         propStatVal.setCreatedBy(user);
@@ -477,7 +560,7 @@ public class PropertyService {
         List<Installment> instList = new ArrayList<Installment>();
         instList = new ArrayList<Installment>(instTaxMap.keySet());
         LOGGER.debug("createDemand: instList: " + instList);
-        currentInstall = PropertyTaxUtil.getCurrentInstallment();
+        currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
         // Clear existing EgDemandDetails and recreate them below 
         property.getPtDemandSet().clear(); 
        
@@ -560,24 +643,21 @@ public class PropertyService {
         LOGGER.debug("createDemandForModify: instList: " + instList);
         Ptdemand ptDemandOld = new Ptdemand();
         Ptdemand ptDemandNew = new Ptdemand();
-        final Installment currentInstall = PropertyTaxUtil.getCurrentInstallment();
-        final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
-        ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
-        final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
-        final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
-        
         Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-
+        final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
+        ptDemandOld = oldPtdemandMap.get(installmentFirstHalf.getDescription());
+        final PropertyTypeMaster oldPropTypeMaster = oldProperty.getPropertyDetail().getPropertyTypeMaster();
+        final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail().getPropertyTypeMaster();
+        
         if (!oldProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
                 .equalsIgnoreCase(newProperty.getPropertyDetail().getPropertyTypeMaster().getCode())
                 || !oldProperty.getIsExemptedFromTax() ^ !newProperty.getIsExemptedFromTax())
-            for (final Installment installment : instList)
-                createAllDmdDetails(oldProperty, newProperty, installment, instList, instTaxMap);
+                createAllDmdDetails(oldProperty, newProperty, installmentFirstHalf, instList, instTaxMap);
 
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
-        ptDemandNew = newPtdemandMap.get(currentInstall.getDescription());
+        ptDemandNew = newPtdemandMap.get(installmentFirstHalf.getDescription());
 
         final Map<Installment, Set<EgDemandDetails>> newDemandDtlsMap = getEgDemandDetailsSetAsMap(new ArrayList(
                 ptDemandNew.getEgDemandDetails()), instList);
@@ -586,15 +666,17 @@ public class PropertyService {
             carryForwardCollection(newProperty, inst, newDemandDtlsMap.get(inst), ptDemandOld, oldPropTypeMaster,
                     newPropTypeMaster);
 
-            /* If current year second half is the only installment in the list, 
-        	then create the arrear demand details from the Ptdemand of current year first installment */
-            if(instList.size()==1 && instList.get(0).equals(installmentSecondHalf)){
-				carryForwardPenalty(ptDemandOld, ptDemandNew, installmentFirstHalf);
-			}else{
-				if (inst.equals(currentInstall)) {
-	                carryForwardPenalty(ptDemandOld, ptDemandNew, inst);
-	            }
-			}
+            /*
+             * If current year second half is the only installment in the list, then create the arrear demand details from the
+             * Ptdemand of current year first installment
+             */
+            if (instList.size() == 1 && instList.get(0).equals(installmentSecondHalf)) {
+                carryForwardPenalty(ptDemandOld, ptDemandNew, installmentFirstHalf);
+            } else {
+                if (inst.equals(currentInstall)) {
+                    carryForwardPenalty(ptDemandOld, ptDemandNew, inst);
+                }
+            }
         }
 
         // sort the installment list in ascending order to start the excessCollection adjustment from 1st inst
@@ -756,7 +838,7 @@ public class PropertyService {
         Ptdemand currentDemand = null;
 
         for (final Ptdemand ptdemand : property.getPtDemandSet())
-            if (ptdemand.getEgInstallmentMaster().equals(PropertyTaxUtil.getCurrentInstallment())) {
+            if (ptdemand.getEgInstallmentMaster().equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 currentDemand = ptdemand;
                 break;
             }
@@ -829,8 +911,6 @@ public class PropertyService {
         LOGGER.debug("createAllDmdDeatails: oldProperty: " + oldProperty + ", newProperty: " + newProperty
                 + ",installment: " + installment + ", instList: " + instList);
         final Set<EgDemandDetails> adjustedDmdDetailsSet = new HashSet<EgDemandDetails>();
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final Installment currentInstall = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
 
         final Map<String, Ptdemand> oldPtdemandMap = getPtdemandsAsInstMap(oldProperty.getPtDemandSet());
         final Map<String, Ptdemand> newPtdemandMap = getPtdemandsAsInstMap(newProperty.getPtDemandSet());
@@ -886,7 +966,7 @@ public class PropertyService {
             }
         };
 
-        ptDemandOld = oldPtdemandMap.get(currentInstall.getDescription());
+        ptDemandOld = oldPtdemandMap.get(installment.getDescription());
         ptDemandNew = newPtdemandMap.get(installment.getDescription());
 
         LOGGER.info("instList==========" + instList);
@@ -900,87 +980,84 @@ public class PropertyService {
 
             oldEgDemandDetailsSet = oldDemandDtlsMap.get(inst);
 
-            if (inst.getFromDate().before(installment.getFromDate())
-                    || inst.getFromDate().equals(installment.getFromDate())) {
-                LOGGER.info("inst==========" + inst);
-                final Set<EgDemandDetails> demandDtls = demandDetails.get(inst);
-                if (demandDtls != null)
-                    for (final EgDemandDetails dd : demandDtls) {
-                        final EgDemandDetails ddClone = (EgDemandDetails) dd.clone();
-                        ddClone.setEgDemand(ptDemandNew);
-                        adjustedDmdDetailsSet.add(ddClone);
-                    }
-                else {
-
-                    EgDemandDetails oldEgdmndDetails = null;
-                    EgDemandDetails newEgDmndDetails = null;
-
-                    newEgDemandDetailsSet = new HashSet<EgDemandDetails>();
-
-                    // Getting EgDemandDetails for inst installment
-
-                    for (final EgDemandDetails edd : ptDemandNew.getEgDemandDetails())
-                        if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
-                            newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
-
-                    final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
-                            .getPropertyTypeMaster();
-
-                    LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
-                    LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
-
-                    if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
-                        for (int i = 0; i < adjstmntReasons.size(); i++) {
-                            final String oldPropRsn = adjstmntReasons.get(i);
-                            String newPropRsn = null;
-
-                            /*
-                             * Gives EgDemandDetails from newEgDemandDetailsSet for demand reason oldPropRsn, if we dont have
-                             * EgDemandDetails then doing collection adjustments
-                             */
-                            newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
-
-                            if (newEgDmndDetails == null) {
-                                /*
-                                 * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
-                                 */
-                                newPropRsn = rsnsForNewResProp.get(i);
-                                /*
-                                 * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
-                                 * rsnsForNewNonResProp.get(i);
-                                 */
-
-                                oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
-                                newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
-
-                                if (newEgDmndDetails != null && oldEgdmndDetails != null)
-                                    newEgDmndDetails.setAmtCollected(newEgDmndDetails.getAmtCollected().add(
-                                            oldEgdmndDetails.getAmtCollected()));
-                                else
-                                    continue;
-                            }
-                        }
-                    else if (!oldProperty.getIsExemptedFromTax())
-                        newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
-                                newEgDemandDetailsSet, inst);
-
-                    // Collection carry forward logic (This logic is moved out
-                    // of this method, bcoz it has to be invoked in all usecases
-                    // and not only when there is property type change
-
-                    newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
-                            ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
-                    LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);
-                    adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
-                    demandDetails.put(inst, newEgDemandDetailsSet);
+            LOGGER.info("inst==========" + inst);
+            final Set<EgDemandDetails> demandDtls = demandDetails.get(inst);
+            if (demandDtls != null)
+                for (final EgDemandDetails dd : demandDtls) {
+                    final EgDemandDetails ddClone = (EgDemandDetails) dd.clone();
+                    ddClone.setEgDemand(ptDemandNew);
+                    adjustedDmdDetailsSet.add(ddClone);
                 }
+            else {
+
+                EgDemandDetails oldEgdmndDetails = null;
+                EgDemandDetails newEgDmndDetails = null;
+
+                newEgDemandDetailsSet = new HashSet<EgDemandDetails>();
+
+                // Getting EgDemandDetails for inst installment
+
+                for (final EgDemandDetails edd : ptDemandNew.getEgDemandDetails())
+                    if (edd.getEgDemandReason().getEgInstallmentMaster().equals(inst))
+                        newEgDemandDetailsSet.add((EgDemandDetails) edd.clone());
+
+                final PropertyTypeMaster newPropTypeMaster = newProperty.getPropertyDetail()
+                        .getPropertyTypeMaster();
+
+                LOGGER.info("Old Demand Set:" + inst + "=" + oldEgDemandDetailsSet);
+                LOGGER.info("New Demand set:" + inst + "=" + newEgDemandDetailsSet);
+
+                if (!oldProperty.getIsExemptedFromTax() && !newProperty.getIsExemptedFromTax())
+                    for (int i = 0; i < adjstmntReasons.size(); i++) {
+                        final String oldPropRsn = adjstmntReasons.get(i);
+                        String newPropRsn = null;
+
+                        /*
+                         * Gives EgDemandDetails from newEgDemandDetailsSet for demand reason oldPropRsn, if we dont have
+                         * EgDemandDetails then doing collection adjustments
+                         */
+                        newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, oldPropRsn);
+
+                        if (newEgDmndDetails == null) {
+                            /*
+                             * if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_RESD))
+                             */
+                            newPropRsn = rsnsForNewResProp.get(i);
+                            /*
+                             * else if (newPropTypeMaster.getCode().equalsIgnoreCase (PROPTYPE_NON_RESD)) newPropRsn =
+                             * rsnsForNewNonResProp.get(i);
+                             */
+
+                            oldEgdmndDetails = getEgDemandDetailsForReason(oldEgDemandDetailsSet, oldPropRsn);
+                            newEgDmndDetails = getEgDemandDetailsForReason(newEgDemandDetailsSet, newPropRsn);
+
+                            if (newEgDmndDetails != null && oldEgdmndDetails != null)
+                                newEgDmndDetails.setAmtCollected(newEgDmndDetails.getAmtCollected().add(
+                                        oldEgdmndDetails.getAmtCollected()));
+                            else
+                                continue;
+                        }
+                    }
+                else if (!oldProperty.getIsExemptedFromTax())
+                    newEgDemandDetailsSet = adjustmentsForTaxExempted(ptDemandOld.getEgDemandDetails(),
+                            newEgDemandDetailsSet, inst);
+
+                // Collection carry forward logic (This logic is moved out
+                // of this method, bcoz it has to be invoked in all usecases
+                // and not only when there is property type change
+
+                /*newEgDemandDetailsSet = carryForwardCollection(newProperty, inst, newEgDemandDetailsSet,
+                        ptDemandOld, oldProperty.getPropertyDetail().getPropertyTypeMaster(), newPropTypeMaster);
+                LOGGER.info("Adjusted set:" + inst + ":" + newEgDemandDetailsSet);*/
+                adjustedDmdDetailsSet.addAll(newEgDemandDetailsSet);
+                demandDetails.put(inst, newEgDemandDetailsSet);
             }
         }
 
         // forwards the base collection for current installment Ptdemand
-        if (installment.equals(currentInstall)) {
-            final Ptdemand ptdOld = oldPtdemandMap.get(currentInstall.getDescription());
-            final Ptdemand ptdNew = newPtdemandMap.get(currentInstall.getDescription());
+        if (installment.equals(installment)) {
+            final Ptdemand ptdOld = oldPtdemandMap.get(installment.getDescription());
+            final Ptdemand ptdNew = newPtdemandMap.get(installment.getDescription());
             ptdNew.setAmtCollected(ptdOld.getAmtCollected());
         }
 
@@ -1473,7 +1550,7 @@ public class PropertyService {
         final Module module = moduleDao.getModuleByName(PTMODULENAME);
         final Installment effectiveInstall = installmentDao
                 .getInsatllmentByModuleForGivenDate(module, dateOfCompletion);
-        final Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
+        final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
         for (final Ptdemand demand : property.getPtDemandSet())
             if (demand.getIsHistory().equalsIgnoreCase("N"))
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
@@ -1742,261 +1819,103 @@ public class PropertyService {
      * @param newDemandDetailsByInstallment
      */
     public void adjustExcessCollectionAmount(final List<Installment> installments,
-            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, final Ptdemand ptDemand) {
+            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment, Ptdemand ptDemand) {
         LOGGER.info("Entered into adjustExcessCollectionAmount");
         LOGGER.info("adjustExcessCollectionAmount: installments - " + installments
                 + ", newDemandDetailsByInstallment.size - " + newDemandDetailsByInstallment.size());
 
-        /**
-         * Demand reason groups to adjust the excess collection amount if a demand reason is collected fully. Ex: if GEN_TAX is
-         * collected for the installment fully then remaining excess collection will be adjusted to the group to which GEN_TAX
-         * belongs i.e., demandReasons1[GROUP1]
-         */
-        final Set<String> demandReasons1 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
+        final Set<String> demandReasons = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                DEMANDRSN_CODE_GENERAL_TAX,
                 DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
                 DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-        final Set<String> demandReasons2 = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX,
-                DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
-                DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
-
-        final Installment currerntInstallment = PropertyTaxUtil.getCurrentInstallment();
-
-        for (final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment : excessCollAmtMap
-                .entrySet()) {
-            LOGGER.debug("adjustExcessCollectionAmount : excessAmountByDemandReasonForInstallment - "
-                    + excessAmountByDemandReasonForInstallment);
-
-            for (final String demandReason : excessAmountByDemandReasonForInstallment.getValue().keySet()) {
-
-                adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
-                        excessAmountByDemandReasonForInstallment, demandReason, false, null);
-
-                // when the demand details is absent in all the installments /
-                // fully collected(in case of current installment demand
-                // details) , adjusting to its group
-                // and remaining to one of group for current installment
-                // if (!isDemandDetailExists) {
-                final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                        demandReasons1) : new LinkedHashSet<String>(demandReasons2);
-                reasons.remove(demandReason);
-                for (final String reason : reasons) {
-                    adjustExcessCollection(installments, newDemandDetailsByInstallment, demandReasons1, demandReasons2,
-                            excessAmountByDemandReasonForInstallment, reason, true, demandReason);
-                    if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason)
-                            .compareTo(BigDecimal.ZERO) == 0)
-                        break;
-                }
-                // }
-
-                if (excessAmountByDemandReasonForInstallment.getValue().get(demandReason).compareTo(BigDecimal.ZERO) > 0) {
-
-                    EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-                            newDemandDetailsByInstallment.get(currerntInstallment),
-                            PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE);
-
-                    if (currentDemandDetail == null) {
-                        LOGGER.info("adjustExcessCollectionAmount - Advance demand details is not present, creating.. ");
-
-                        currentDemandDetail = propertyTaxCollection.insertAdvanceCollection(
-                                PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE, excessAmountByDemandReasonForInstallment
-                                        .getValue().get(demandReason), currerntInstallment);
-                        ptDemand.addEgDemandDetails(currentDemandDetail);
-                        newDemandDetailsByInstallment.get(currerntInstallment).add(currentDemandDetail);
-                    } else {
-                        currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
-                                excessAmountByDemandReasonForInstallment.getValue().get(demandReason)));
-                        currentDemandDetail.setModifiedDate(new Date());
-
-                    }
-                }
-
-                excessAmountByDemandReasonForInstallment.getValue().put(demandReason, BigDecimal.ZERO);
-            }
+        if (!excessCollAmtMap.isEmpty()) {
+            adjustCollection(installments, newDemandDetailsByInstallment, demandReasons, ptDemand);
         }
+
         LOGGER.info("Excess collection adjustment is successfully completed..");
         LOGGER.debug("Exiting from adjustExcessCollectionAmount");
     }
 
     /**
-     * Adjusts Excess Collection amount to installment wise demand details
-     *
+     * Adjusts Collection amount to installment wise demand details
+     * 
      * @param installments
      * @param newDemandDetailsByInstallment
-     * @param demandReasons1
-     * @param demandReasons2
-     * @param excessAmountByDemandReasonForInstallment
-     * @param demandReason
-     * @param isGroupAdjustment
-     * @param reasonNotExists
+     * @param demandReasons
+     * @param ptDemand
      * @return
      */
-    private Boolean adjustExcessCollection(final List<Installment> installments,
+    private Ptdemand adjustCollection(final List<Installment> installments,
             final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
-            final Set<String> demandReasons1, final Set<String> demandReasons2,
-            final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
-            final String demandReason, final Boolean isGroupAdjustment, final String reasonNotExists) {
+            final Set<String> demandReasons, Ptdemand ptDemand) {
 
-        LOGGER.info("Entered into adjustExcessCollection");
-
-        Boolean isDemandDetailExists = Boolean.FALSE;
+        LOGGER.info("Entered into adjustCollection");
+        EgDemandDetails advanceDemandDetails = null;
         BigDecimal balanceDemand = BigDecimal.ZERO;
-
-        for (final Installment installment : installments) {
-            final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
-                    newDemandDetailsByInstallment.get(installment), demandReason);
-
-            if (newDemandDetail == null)
-                isDemandDetailExists = Boolean.FALSE;
-            else {
-                isDemandDetailExists = Boolean.TRUE;
-                balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
-
-                if (balanceDemand.compareTo(BigDecimal.ZERO) > 0) {
-
-                    BigDecimal excessCollection = isGroupAdjustment ? excessAmountByDemandReasonForInstallment
-                            .getValue().get(reasonNotExists) : excessAmountByDemandReasonForInstallment.getValue().get(
-                            demandReason);
-
-                    if (excessCollection.compareTo(BigDecimal.ZERO) > 0) {
-
-                        if (excessCollection.compareTo(balanceDemand) <= 0) {
-                            newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(excessCollection));
-                            newDemandDetail.setModifiedDate(new Date());
-                            excessCollection = BigDecimal.ZERO;
-                        } else {
-                            newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(balanceDemand));
-                            newDemandDetail.setModifiedDate(new Date());
-                            BigDecimal remainingExcessCollection = excessCollection.subtract(balanceDemand);
-
-                            while (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-
-                                /**
-                                 * adjust to next installments in asc order for the reason demandReason
-                                 */
-
-                                final Set<String> oneReason = new LinkedHashSet<String>();
-                                oneReason.add(demandReason);
-                                remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
-                                        newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
-                                        remainingExcessCollection, oneReason);
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
-                                    excessCollection = BigDecimal.ZERO;
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-                                    final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                            demandReasons1)
-                                                    : new LinkedHashSet<String>(demandReasons2);
-                                    reasons.remove(demandReason);
-
-                                    remainingExcessCollection = adjustToInstallmentDemandDetails(installments,
-                                            newDemandDetailsByInstallment, excessAmountByDemandReasonForInstallment,
-                                            remainingExcessCollection, reasons);
-                                }
-
-                                /**
-                                 * There is still remainingExcessCollection after adjusting to demandReason[Installment1]
-                                         * demandReason[Installment2] . . . . . . . . . . . . . . demandReason[CurrentInstallment] So,
-                                         * adjusting the remaining excess collection to demandReason[currentInstallment]
-                                 */
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) > 0) {
-                                    EgDemandDetails currentDemandDetail = getEgDemandDetailsForReason(
-                                            newDemandDetailsByInstallment.get(PropertyTaxUtil.getCurrentInstallment()),
-                                            demandReason);
-                                    /**
-                                     * if the demand reason does not exist in the current installment then adjusting the remaining
-                                             * excess collection to its group
-                                     */
-                                    if (currentDemandDetail == null) {
-                                        final Set<String> reasons = demandReasons1.contains(demandReason) ? new LinkedHashSet<String>(
-                                                demandReasons1)
-                                                        : new LinkedHashSet<String>(demandReasons2);
-                                        reasons.remove(demandReason);
-                                        for (final String rsn : reasons) {
-                                            currentDemandDetail = getEgDemandDetailsForReason(
-                                                    newDemandDetailsByInstallment.get(PropertyTaxUtil
-                                                            .getCurrentInstallment()), rsn);
-                                            if (currentDemandDetail != null)
-                                                break;
-                                        }
-                                    }
-
-                                    currentDemandDetail.setAmtCollected(currentDemandDetail.getAmtCollected().add(
-                                            remainingExcessCollection));
-                                    currentDemandDetail.setModifiedDate(new Date());
-                                    remainingExcessCollection = BigDecimal.ZERO;
-                                    excessCollection = BigDecimal.ZERO;
-
-                                }
-
-                                if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
-                                    excessCollection = BigDecimal.ZERO;
-                            }
-                        }
-
-                        if (excessCollection.compareTo(BigDecimal.ZERO) == 0) {
-                            final String rsn = isGroupAdjustment ? reasonNotExists : demandReason;
-                            excessAmountByDemandReasonForInstallment.getValue().put(rsn, ZERO);
-                        }
-                    }
-                }
-                final String rsn = isGroupAdjustment ? reasonNotExists : demandReason;
-                if (excessAmountByDemandReasonForInstallment.getValue().get(rsn).compareTo(BigDecimal.ZERO) == 0)
-                    break;
+        BigDecimal excessCollection = BigDecimal.ZERO;
+        for (Map<String, BigDecimal> map : excessCollAmtMap.values()) {
+            for (BigDecimal amount : map.values()) {
+                excessCollection = excessCollection.add(amount);
             }
         }
+        Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        if (excessCollection.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal collection = BigDecimal.ZERO;
+            for (EgDemandDetails demandDetials : ptDemand.getEgDemandDetails()) {
+                if (advanceDemandDetails == null && DEMANDRSN_CODE_ADVANCE.equals(demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode())
+                        && currSecondHalf.equals(demandDetials.getEgDemandReason().getEgInstallmentMaster())) {
+                    advanceDemandDetails = demandDetials;
+                }
+                collection = collection.add(demandDetials.getAmtCollected());
+                demandDetials.setAmtCollected(BigDecimal.ZERO);
+            }
+            collection = collection.add(excessCollection);
+            for (final Installment installment : installments) {
+                for (String demandReason : demandReasons) {
+                    final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
+                            newDemandDetailsByInstallment.get(installment), demandReason);
 
-        LOGGER.info("Exiting from adjustExcessCollection");
+                    if (newDemandDetail != null) {
+                        balanceDemand = newDemandDetail.getAmount().subtract(newDemandDetail.getAmtCollected());
 
-        return isDemandDetailExists;
-    }
-
-    /**
-     * Adjusts excess amount installment wise demand details
-     *
-     * @param installments
-     * @param newDemandDetailsByInstallment
-     * @param excessAmountByDemandReasonForInstallment
-     * @param remainingExcessCollection
-     * @param reasons
-     * @return
-     */
-    private BigDecimal adjustToInstallmentDemandDetails(final List<Installment> installments,
-            final Map<Installment, Set<EgDemandDetails>> newDemandDetailsByInstallment,
-            final Map.Entry<Installment, Map<String, BigDecimal>> excessAmountByDemandReasonForInstallment,
-            BigDecimal remainingExcessCollection, final Set<String> reasons) {
-        LOGGER.debug("Entered into adjustToInstallmentDemandDetails");
-        LOGGER.debug("adjustToInstallmentDemandDetails : reasons=" + reasons + ", remainingExcessCollection="
-                + remainingExcessCollection);
-        for (final String reason : reasons)
-            for (final Installment nextInstallment : installments) {
-                final EgDemandDetails nextNewDemandDetail = getEgDemandDetailsForReason(
-                        newDemandDetailsByInstallment.get(nextInstallment), reason);
-
-                if (nextNewDemandDetail != null) {
-                    final BigDecimal balance = nextNewDemandDetail.getAmount().subtract(
-                            nextNewDemandDetail.getAmtCollected());
-
-                    if (balance.compareTo(BigDecimal.ZERO) > 0)
-                        if (remainingExcessCollection.compareTo(balance) <= 0) {
-                            nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(
-                                    remainingExcessCollection));
-                            nextNewDemandDetail.setModifiedDate(new Date());
-                            remainingExcessCollection = BigDecimal.ZERO;
-                        } else {
-                            nextNewDemandDetail.setAmtCollected(nextNewDemandDetail.getAmtCollected().add(balance));
-                            nextNewDemandDetail.setModifiedDate(new Date());
-                            remainingExcessCollection = remainingExcessCollection.subtract(balance);
+                        if (balanceDemand.compareTo(BigDecimal.ZERO) > 0) {
+                            if (collection.compareTo(BigDecimal.ZERO) > 0) {
+                                if (collection.compareTo(balanceDemand) <= 0) {
+                                    newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(collection));
+                                    newDemandDetail.setModifiedDate(new Date());
+                                    collection = BigDecimal.ZERO;
+                                } else {
+                                    newDemandDetail.setAmtCollected(newDemandDetail.getAmtCollected().add(balanceDemand));
+                                    newDemandDetail.setModifiedDate(new Date());
+                                    collection = collection.subtract(balanceDemand);
+                                }
+                            }
                         }
-
-                    if (remainingExcessCollection.compareTo(BigDecimal.ZERO) == 0)
+                    }
+                    if (collection.compareTo(BigDecimal.ZERO) == 0) {
                         break;
+                    }
+                }
+                if (collection.compareTo(BigDecimal.ZERO) == 0) {
+                    break;
                 }
             }
-        LOGGER.debug("adjustToInstallmentDemandDetails : remainingExcessCollection=" + remainingExcessCollection);
-        LOGGER.debug("Exiting from adjustToInstallmentDemandDetails");
-        return remainingExcessCollection;
+
+            if (collection.compareTo(BigDecimal.ZERO) > 0) {
+                if (advanceDemandDetails == null) {
+                    EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+                            collection,
+                            currSecondHalf);
+                    ptDemand.getEgDemandDetails().add(demandDetails);
+                } else {
+                    advanceDemandDetails.getAmtCollected().add(collection);
+                }
+            }
+            LOGGER.info("Exiting from adjustCollection");
+
+        }
+        return ptDemand;
     }
 
     /**
@@ -2603,7 +2522,6 @@ public class PropertyService {
     public List<Hashtable<String, Object>> populateHistory(final StateAware stateAware) {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>();
-        Assignment assignment = null;
         User user = null;
         Position ownerPosition = null;
         if (stateAware.hasState()) {
@@ -2615,9 +2533,9 @@ public class PropertyService {
             user = state.getOwnerUser();
             ownerPosition = state.getOwnerPosition();
             if (null != ownerPosition) {
-                assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
-                map.put("user", null != assignment && null != assignment.getEmployee() ? assignment.getEmployee()
-                        .getUsername() + "::" + assignment.getEmployee().getName() : "");
+                final User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put("user", null != approverUser ? approverUser
+                        .getUsername() + "::" + approverUser.getName() : "");
             } else if (null != user)
                 map.put("user", user.getUsername() + "::" + user.getName());
             historyTable.add(map);
@@ -2634,9 +2552,8 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                        assignment = assignmentService.getPrimaryAssignmentForPositon(ownerPosition.getId());
-                        HistoryMap.put("user", null != assignment && null != assignment.getEmployee() ? assignment
-                                .getEmployee().getUsername() + "::" + assignment.getEmployee().getName() : "");
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                        HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());
                     historyTable.add(HistoryMap);
@@ -2749,14 +2666,6 @@ public class PropertyService {
         }
     }
     
-    public void updateAssessmentSeq() {
-        String maxAssessmentno = (String) propPerServ.getSession().createSQLQuery("select right(max(propertyid),6) from egpt_basic_property ").uniqueResult();
-        Integer nextVal = Integer.parseInt(maxAssessmentno);
-        nextVal++;
-        SQLQuery query = (SQLQuery) propPerServ.getSession().createSQLQuery("ALTER SEQUENCE seq_egpt_assessment_number start with " + nextVal + " ");
-        query.executeUpdate();
-    }
-
     public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
         return ptDemandDAO.getDemandCollMap(propertyImpl);
     }
@@ -2830,6 +2739,357 @@ public class PropertyService {
 		taxValues.put(PropertyTaxConstants.ARR_BAL_STR,((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_DMD_STR))
 				.subtract((propertyTaxDetails.get(PropertyTaxConstants.ARREARS)).get(PropertyTaxConstants.ARR_COLL_STR)));
 	}
+    
+    /**
+     * Calculates penalty for General Revision Petition
+     * 
+     * @param modProperty
+     * @param propCompletionDate 
+     */
+    public void calculateGrpPenalty(Property modProperty, Date propCompletionDate) {
+        currentInstall = propertyTaxCommonUtils.getCurrentInstallment();
+        Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+        EgDemand currentDemand = null;
+        for (EgDemand egDemand : modProperty.getPtDemandSet()) {
+            if (egDemand.getEgInstallmentMaster().equals(currentInstall)) {
+                currentDemand = egDemand;
+                break;
+            }
+        }
+
+        Map<Installment, BigDecimal> installmentWiseDemand = getInstallmentWiseDemand(currentDemand);
+        Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = penaltyCalculationService
+                .getInstallmentWisePenaltyDemandDetails(
+                        null, currentDemand);
+        List<EgDemandDetails> penaltyList = new ArrayList<>();
+        DateTime nagarPanchayatPenDate = DateTime.now().withDate(2016, 1, 1);
+        final Installment nagarPanchayatPenEndInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
+                module, nagarPanchayatPenDate.toDate());
+        BigDecimal tax = BigDecimal.ZERO;
+        Installment installment = null;
+        BigDecimal excessPenalty = BigDecimal.ZERO;
+        for (final Map.Entry<Installment, BigDecimal> mapEntry : installmentWiseDemand.entrySet()) {
+            installment = mapEntry.getKey();
+            if (installment.getToDate().compareTo(propCompletionDate) >= 0) {
+                tax = mapEntry.getValue();
+                EgDemandDetails existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
+                Date penaltyEffectiveDate = null;
+                if (propertyTaxUtil.checkIsNagarPanchayat() && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
+                    penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
+                } else {
+                    penaltyEffectiveDate = getPenaltyEffectiveDate(installment);
+                }
+                if (penaltyEffectiveDate.before(new Date())) {
+                    BigDecimal penaltyAmount = calculatePenalty(null, penaltyEffectiveDate, tax);
+                    if (existingPenaltyDemandDetail == null) {
+                        EgDemandDetails penaltyDemandDetails = ptBillServiceImpl.insertDemandDetails(
+                                DEMANDRSN_CODE_PENALTY_FINES,
+                                penaltyAmount,
+                                installment);
+                        penaltyList.add(penaltyDemandDetails);
+                    } else {
+                        if (existingPenaltyDemandDetail.getAmtCollected().compareTo(penaltyAmount) > 0) {
+                            excessPenalty = existingPenaltyDemandDetail.getAmtCollected().subtract(penaltyAmount);
+                            existingPenaltyDemandDetail.setAmtCollected(penaltyAmount);
+                        }
+                        existingPenaltyDemandDetail.setAmount(penaltyAmount);
+                    }
+                }
+            }
+        }
+        currentDemand.getEgDemandDetails().addAll(penaltyList);
+        List<Installment> installments = new ArrayList<Installment>(installmentWiseDemand.keySet());
+        Collections.sort(installments);
+        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+            adjustExcessPenalty(currentDemand, installments, excessPenalty);
+        }
+    }
+
+    /**
+     * Adjusts excess penalty collection amount 
+     * 
+     * @param currentDemand
+     * @param installments
+     * @param excessPenalty
+     */
+    private void adjustExcessPenalty(EgDemand currentDemand, List<Installment> installments, BigDecimal excessPenalty) {
+        final Set<String> demandReasons = new LinkedHashSet<String>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+                DEMANDRSN_CODE_GENERAL_TAX,
+                DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS, DEMANDRSN_CODE_LIBRARY_CESS,
+                DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+        List<EgDemandDetails> demandDetailsList = new ArrayList<EgDemandDetails>(currentDemand.getEgDemandDetails());
+        final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetAsMap(
+                demandDetailsList, installments);
+        for (Installment installment : installments) {
+            Set<EgDemandDetails> demandDetailsSet = installmentWiseDemandDetails.get(installment);
+            for (String demandReason : demandReasons) {
+                EgDemandDetails demandDetails = getEgDemandDetailsForReason(demandDetailsSet, demandReason);
+                if (demandDetails != null) {
+                    BigDecimal balance = demandDetails.getAmount().subtract(demandDetails.getAmtCollected());
+                    if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+                            if (excessPenalty.compareTo(balance) <= 0) {
+                                demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(excessPenalty));
+                                demandDetails.setModifiedDate(new Date());
+                                excessPenalty = BigDecimal.ZERO;
+                            } else {
+                                demandDetails.setAmtCollected(demandDetails.getAmtCollected().add(balance));
+                                demandDetails.setModifiedDate(new Date());
+                                excessPenalty = excessPenalty.subtract(balance);
+                            }
+                        }
+                    }
+                }
+                if (excessPenalty.compareTo(BigDecimal.ZERO) == 0) {
+                    break;
+                }
+            }
+            if (excessPenalty.compareTo(BigDecimal.ZERO) == 0) {
+                break;
+            }
+        }
+        if (excessPenalty.compareTo(BigDecimal.ZERO) > 0) {
+            EgDemandDetails advanceDemandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE, excessPenalty,
+                    currentInstall);
+            currentDemand.getEgDemandDetails().add(advanceDemandDetails);
+        }
+    }
+
+    /**
+     * Returns installment wise demand amount
+     * 
+     * @param currentDemand
+     * @return
+     */
+    private Map<Installment, BigDecimal> getInstallmentWiseDemand(EgDemand currentDemand) {
+        final Map<Installment, BigDecimal> installmentWiseDemand = new TreeMap<Installment, BigDecimal>();
+        String demandReason = "";
+        Installment installment = null;
+        final List<String> demandReasonExcludeList = Arrays
+                .asList(DEMANDRSN_CODE_PENALTY_FINES, DEMANDRSN_CODE_ADVANCE);
+        for (final EgDemandDetails dmdDet : currentDemand.getEgDemandDetails()) {
+            demandReason = dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode();
+            if (!demandReasonExcludeList.contains(demandReason)) {
+                installment = dmdDet.getEgDemandReason().getEgInstallmentMaster();
+                if (installmentWiseDemand.get(installment) == null)
+                    installmentWiseDemand.put(installment, dmdDet.getAmount());
+                else
+                    installmentWiseDemand.put(installment,
+                            installmentWiseDemand.get(installment).add(dmdDet.getAmount()));
+
+            }
+        }
+        return installmentWiseDemand;
+    }
+    
+    /**
+     * Calculates penalty on tax amount
+     * 
+     * @param latestCollReceiptDate
+     * @param fromDate
+     * @param amount
+     * @return
+     */
+    public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {
+        BigDecimal penalty = BigDecimal.ZERO;
+        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(fromDate, new Date());
+        penalty = amount.multiply(PropertyTaxConstants.PENALTY_PERCENTAGE.multiply(new BigDecimal(noOfMonths))).divide(
+                BIGDECIMAL_100);
+        return MoneyUtils.roundOff(penalty);
+    }
+    
+    /**
+     * Returns penalty effective date for an installment
+     * 
+     * @param installment
+     * @return
+     */
+    private Date getPenaltyEffectiveDate(final Installment installment) {
+        return penalyDateWithThreeMonths(installment.getFromDate());
+    }
+
+    /**
+     * Returns date by adding three months
+     * 
+     * @param date
+     * @return
+     */
+    private Date penalyDateWithThreeMonths(final Date date) {
+        final Calendar penalyDate = Calendar.getInstance();
+        penalyDate.setTime(date);
+        penalyDate.add(Calendar.MONTH, 3);
+        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
+        return penalyDate.getTime();
+    }
+    
+    /**
+     * Updates the PropertyDetail for a Property
+     * @param property
+     * @param floorTypeId
+     * @param roofTypeId
+     * @param wallTypeId
+     * @param woodTypeId
+     * @param areaOfPlot
+     * @param propertyCategory
+     * @param nonResPlotArea
+     * @param propUsageId
+     * @param propOccId
+     * @param propTypeId
+     */
+    public void updatePropertyDetail(Property property, Long floorTypeId, Long roofTypeId, Long wallTypeId, Long woodTypeId,
+    		String areaOfPlot, String propertyCategory, String nonResPlotArea, String propUsageId, String propOccId, String propTypeId) {
+    	PropertyDetail propertyDetail = property.getPropertyDetail();
+		if (floorTypeId != null && floorTypeId != -1) {
+            final FloorType floorType = (FloorType) getPropPerServ().find("From FloorType where id = ?", floorTypeId);
+            propertyDetail.setFloorType(floorType);
+        }
+    	if (roofTypeId != null && roofTypeId != -1) {
+            final RoofType roofType = (RoofType) getPropPerServ().find("From RoofType where id = ?", roofTypeId);
+            propertyDetail.setRoofType(roofType);
+        }
+    	if (wallTypeId != null && wallTypeId != -1) {
+            final WallType wallType = (WallType) getPropPerServ().find("From WallType where id = ?", wallTypeId);
+            propertyDetail.setWallType(wallType);
+        } 
+        if (woodTypeId != null && woodTypeId != -1) {
+            final WoodType woodType = (WoodType) getPropPerServ().find("From WoodType where id = ?", woodTypeId);
+            propertyDetail.setWoodType(woodType);
+        }
+        if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+            propertyDetail.getSitalArea().setArea(new Float(areaOfPlot));
+        }
+        propertyDetail.setCategoryType(propertyDetail.getCategoryType());
+        
+        if (propertyDetail.getApartment() != null 
+                && propertyDetail.getApartment().getId() != null) {
+            final Apartment apartment = (Apartment) getPropPerServ().find("From Apartment where id = ?",
+                    property.getPropertyDetail().getApartment().getId());
+            propertyDetail.setApartment(apartment);
+        }
+            
+        if (nonResPlotArea != null && !nonResPlotArea.isEmpty()) {
+        	propertyDetail.getNonResPlotArea().setArea(new Float(nonResPlotArea));
+        }
+
+        propertyDetail.setFieldVerified('Y');
+        propertyDetail.setProperty(property);
+        final PropertyMutationMaster propMutMstr = (PropertyMutationMaster) getPropPerServ().find(
+                "from PropertyMutationMaster PM where upper(PM.code) = ?", property.getBasicProperty().getPropertyMutationMaster().getCode());
+        final PropertyTypeMaster propTypeMstr = (PropertyTypeMaster) getPropPerServ().find(
+                "from PropertyTypeMaster PTM where PTM.id = ?", Long.valueOf(propTypeId));
+        if (propUsageId != null) {
+            final PropertyUsage usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+                    Long.valueOf(propUsageId));
+            propertyDetail.setPropertyUsage(usage);
+        } 
+        if (propOccId != null) {
+            final PropertyOccupation occupancy = (PropertyOccupation) getPropPerServ().find(
+                    "from PropertyOccupation po where po.id = ?", Long.valueOf(propOccId));
+            propertyDetail.setPropertyOccupation(occupancy);
+        } 
+        if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+        	propertyDetail.setPropertyType(VACANT_PROPERTY);
+        else
+        	propertyDetail.setPropertyType(BUILT_UP_PROPERTY);
+
+        propertyDetail.setPropertyTypeMaster(propTypeMstr);
+        propertyDetail.setPropertyMutationMaster(propMutMstr);
+        propertyDetail.setUpdatedTime(new Date());
+        
+        if (propertyDetail.getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+        	propertyDetail.setNoofFloors(0);
+        	if(!property.getPropertyDetail().getFloorDetails().isEmpty())
+        		property.getPropertyDetail().getFloorDetails().clear();
+            property.getPropertyDetail().getTotalBuiltupArea().setArea(new Float(0));
+        }
+	}
+    
+    /**
+     * Update the Floor details for a property
+     * @param property
+     * @param savedFloorDetails
+     */
+    public void updateFloorDetails(Property property, List<Floor> savedFloorDetails){
+    	PropertyTypeMaster unitType = null;
+        PropertyUsage usage = null;
+        PropertyOccupation occupancy = null;
+        StructureClassification structureClass = null;
+        final Area totBltUpArea = new Area();
+        Float totBltUpAreaVal = new Float(0);
+    	for(Floor floorProxy : property.getPropertyDetail().getFloorDetailsProxy()){
+    		for(Floor savedFloor : savedFloorDetails){
+    			if(floorProxy != null && savedFloor != null){
+	        		if(floorProxy.getFloorUid().equals(savedFloor.getFloorUid())){
+	        			totBltUpAreaVal = totBltUpAreaVal + floorProxy.getBuiltUpArea().getArea();
+	        			//set all fields for each floor, if UID matches
+	        			if (floorProxy.getUnitType() != null)
+	                        unitType = (PropertyTypeMaster) getPropPerServ().find(
+	                                "from PropertyTypeMaster utype where utype.id = ?", floorProxy.getUnitType().getId());
+	                    if (floorProxy.getPropertyUsage() != null)
+	                        usage = (PropertyUsage) getPropPerServ().find("from PropertyUsage pu where pu.id = ?",
+	                        		floorProxy.getPropertyUsage().getId());
+	                    if (floorProxy.getPropertyOccupation() != null)
+	                        occupancy = (PropertyOccupation) getPropPerServ().find(
+	                                "from PropertyOccupation po where po.id = ?", floorProxy.getPropertyOccupation().getId());
+
+	                    if (floorProxy.getStructureClassification() != null)
+	                        structureClass = (StructureClassification) getPropPerServ().find(
+	                                "from StructureClassification sc where sc.id = ?",
+	                                floorProxy.getStructureClassification().getId());
+	                    if (floorProxy.getOccupancyDate() != null && floorProxy.getConstructionDate() != null)
+	                    	savedFloor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floorProxy.getConstructionDate(),floorProxy.getOccupancyDate()));
+	                    
+	                    if (unitType != null
+	                            && unitType.getCode().equalsIgnoreCase(PropertyTaxConstants.UNITTYPE_OPEN_PLOT))
+	                    	savedFloor.setFloorNo(OPEN_PLOT_UNIT_FLOORNUMBER);
+
+	                    savedFloor.setUnitType(unitType);
+	                    savedFloor.setPropertyUsage(usage);
+	                    savedFloor.setPropertyOccupation(occupancy);
+	                    savedFloor.setStructureClassification(structureClass);
+	                    savedFloor.setPropertyDetail(property.getPropertyDetail());
+	                    savedFloor.setModifiedDate(new Date());
+	                    final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
+	                    savedFloor.setModifiedBy(user);
+	                    savedFloor.getBuiltUpArea().setArea(floorProxy.getBuiltUpArea().getArea());
+	                    savedFloor.getBuiltUpArea().setLength(floorProxy.getBuiltUpArea().getLength());
+	                    savedFloor.getBuiltUpArea().setBreadth(floorProxy.getBuiltUpArea().getLength());
+	                    savedFloor.setFirmName(floorProxy.getFirmName());
+	                    // setting total builtup area.
+	                    totBltUpArea.setArea(totBltUpAreaVal);
+	                    totBltUpArea.setLength(floorProxy.getBuiltUpArea().getLength());
+	                    totBltUpArea.setBreadth(floorProxy.getBuiltUpArea().getBreadth());
+	                    property.getPropertyDetail().setTotalBuiltupArea(totBltUpArea);
+	                    
+	        		}
+    			}
+    			property.getPropertyDetail().setNoofFloors(property.getPropertyDetail().getFloorDetailsProxy().size());
+        	}
+    	}
+    }
+    
+    /**
+     * Convert string to date
+     * @param dateInString
+     * @return
+     * @throws ParseException
+     */
+    public Date convertStringToDate(final String dateInString) throws ParseException {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        final Date stringToDate = sdf.parse(dateInString);
+        return stringToDate;
+    }
+    
+    /**
+     * Fetch the assignments for the designation
+     * @param designationName
+     * @return
+     */
+    public List<Assignment> getAssignmentsForDesignation(String designationName){
+    	List<Assignment> assignmentsList = new ArrayList<Assignment>();
+    	assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
+    	return assignmentsList;
+    }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
         return excessCollAmtMap;

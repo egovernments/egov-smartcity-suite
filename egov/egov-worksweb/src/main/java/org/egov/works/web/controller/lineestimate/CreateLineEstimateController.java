@@ -39,14 +39,25 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -57,12 +68,13 @@ import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.services.NatureOfWorkService;
+import org.egov.works.master.service.LineEstimateUOMService;
+import org.egov.works.master.service.ModeOfAllotmentService;
+import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,16 +91,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class CreateLineEstimateController extends GenericWorkFlowController {
@@ -100,12 +102,6 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
     private SchemeService schemeService;
@@ -133,6 +129,15 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private LineEstimateAppropriationService lineEstimateAppropriationService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    private ModeOfAllotmentService modeOfAllotmentService;
+    
+    @Autowired
+    private LineEstimateUOMService lineEstimateUOMService;
 
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -155,21 +160,23 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
-            final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request,
-            @RequestParam String workFlowAction, final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors,
+            @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request,
+            @RequestParam String workFlowAction)
+            throws ApplicationException, IOException {
         setDropDownValues(model);
-
+        validateBudgetHead(lineEstimate, errors);
         if (errors.hasErrors()) {
             model.addAttribute("stateType", lineEstimate.getClass().getSimpleName());
 
             prepareWorkflow(model, lineEstimate, new WorkflowContainer());
 
             model.addAttribute("mode", null);
-
+            model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
+            model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             return "newLineEstimate-form";
         } else {
+
             if (lineEstimate.getState() == null)
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CREATED.toString()));
@@ -194,19 +201,36 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
         }
     }
 
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate","error.budgethead.validate");
+            }
+
+        }
+
+    }
+
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
+        model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
+        model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-
+        model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
     }
 
     @RequestMapping(value = "/downloadLineEstimateDoc", method = RequestMethod.GET)
@@ -303,9 +327,11 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
             for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
                 final LineEstimateAppropriation lea = lineEstimateAppropriationService
                         .findLatestByLineEstimateDetails_EstimateNumber(led.getEstimateNumber());
-                final String tempMessage = messageSource.getMessage("msg.lineestimatedetails.budgetsanction.success",
-                        new String[] { count.toString(), led.getEstimateNumber(), lea.getBudgetUsage().getAppropriationnumber() },
-                        null);
+                final String tempMessage = messageSource
+                        .getMessage("msg.lineestimatedetails.budgetsanction.success",
+                                new String[] { count.toString(), led.getEstimateNumber(),
+                                        lea.getBudgetUsage().getAppropriationnumber() },
+                                null);
                 basMessages.add(tempMessage);
                 count++;
             }

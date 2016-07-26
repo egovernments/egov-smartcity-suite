@@ -234,4 +234,24 @@
         <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/user/reset-password.jsp"/>
     </definition>
+    <definition name="crossHierarchy-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.crosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-list.jsp"/>
+    </definition>
+    <definition name="crossHierarchy-editform" extends="base_layout">
+        <put-attribute name="page-title" value="title.updateCrosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-editform.jsp"/>
+    </definition>
+     <definition name="crossHierarchy-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.successCrosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-success.jsp"/>
+    </definition>
+    <definition name="accesscontrol-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.accesscontrol.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/feature/feature-access-control-search.jsp"/>
+    </definition>
+    <definition name="accesscontrol" extends="base_layout">
+        <put-attribute name="page-title" value="title.accesscontrol.grantrevoke" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/feature/feature-access-control.jsp"/>
+    </definition>
 </tiles-definitions>

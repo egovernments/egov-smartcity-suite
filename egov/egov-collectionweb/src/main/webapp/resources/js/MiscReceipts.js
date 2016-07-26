@@ -233,12 +233,12 @@ function createAmountFieldFormatterRebate(prefix,suffix,onblurfunction,table){
 
 function createSLTextFieldFormatter(prefix,suffix,onblurfunction){
     return function(el, oRecord, oColumn, oData) {
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onblur='"+onblurfunction+"'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' tabindex='-1' onblur='"+onblurfunction+"'/>";
 	}
 }
 function createSLHiddenFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1'/>";
 	}
 }
 
@@ -251,13 +251,13 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' maxlength='13' style='text-align:right;width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;'/>";
 	}
 }
 function createTextFieldReadOnly(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' name='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' readOnly style='width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' name='"+prefix+"["+billDetailsTable.getRecordIndex(oRecord)+"]"+suffix+"' tabindex='-1' readOnly style='width:90px;'/>";
 	}
 }
 function createcheckbox(prefix,suffix,onclickfunction){
@@ -269,7 +269,7 @@ function createcheckbox(prefix,suffix,onclickfunction){
 
 function createSLDetailCodeTextFieldFormatter(prefix,suffix,onblurfunction){
 	 return function(el, oRecord, oColumn, oData) {
-				el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onkeyup='autocompleteForEntity(this,event)' autocomplete='off' onblur = 'waterMarkTextOut(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");"+onblurfunction+"' onfocus='onFocusDetailCode(this);waterMarkTextIn(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");' />";
+				el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' style='width:90px;' onkeyup='autocompleteForEntity(this,event)' autocomplete='off' tabindex='-1' onblur = 'waterMarkTextOut(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");"+onblurfunction+"' onfocus='onFocusDetailCode(this);waterMarkTextIn(\""+prefix+"["+slDetailTableIndex+"]"+suffix+"\",\""+codeTextMessage+"\");' />";
 				
 			}
 	}
@@ -611,8 +611,8 @@ function createDropdownFormatterPJV(prefix){
             selectEl.className = YAHOO.widget.DataTable.CLASS_DROPDOWN;
             selectEl.name = prefix+'['+subLedgersTable.getRecordIndex(oRecord)+'].'+oColumn.getKey();
 			selectEl.id = prefix+'['+subLedgersTable.getRecordIndex(oRecord)+'].'+oColumn.getKey();
+			selectEl.tabIndex='-1';
             selectEl = el.appendChild(selectEl);
-			
             YAHOO.util.Event.addListener(selectEl,"change",this._onDropdownChange,this);
 			
         }
@@ -659,14 +659,13 @@ function createDropdownFormatterDetailCode(prefix){
 	            selectEl.className = YAHOO.widget.DataTable.CLASS_DROPDOWN;
 	            selectEl.name = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 				selectEl.id = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
+				selectEl.tabIndex='-1';
 	            selectEl = el.appendChild(selectEl);
 	            var selectedIndex = {value: slDetailTableIndex }; 
 	            YAHOO.util.Event.addListener(selectEl,"change",onDropdownDetailCodeChange,selectedIndex,this);
 				
 	        }
-
 	        selectEl = collection[0];
-
 	        if(selectEl) {
 	            selectEl.innerHTML = "";
 	            if(options) {
@@ -814,6 +813,7 @@ function createDropdownFormatterCode(prefix){
             selectEl.name = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 			selectEl.id = prefix+'['+slDetailTableIndex+'].'+oColumn.getKey();
 			//selectEl.onfocus=check;
+			selectEl.tabIndex='-1';
             selectEl = el.appendChild(selectEl);
 			var selectedIndex = {value: slDetailTableIndex }; 
             YAHOO.util.Event.addListener(selectEl,"change",onDropdownChange,selectedIndex,this);
@@ -1094,6 +1094,7 @@ function updatetotalAmount(){
 	}
 	document.getElementById('misctotalAmount').value=totalamount.toFixed(2);
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
+	document.getElementById('instrHeaderCash.instrumentAmount').value=totalamount.toFixed(2);
 }
 
 function validateDetailCode(obj)

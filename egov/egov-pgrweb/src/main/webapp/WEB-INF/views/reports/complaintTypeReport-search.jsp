@@ -60,7 +60,7 @@
 						</div>
 						<div class="panel-body custom-form">
 							<div class="form-group">
-								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.when"/></label>
+								<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.period"/></label>
 								<div class="col-sm-6 add-margin">
 									<select name="complaintDateType" id="when_date" class="form-control" data-first-option="false" 
 									onchange="showChangeDropdown(this);">
@@ -121,7 +121,7 @@
 						<thead></thead> 
 						<tfoot id="report-footer">
 							<tr>
-								<td><b><spring:message code="lbl.total"/></b></td>
+								<td><b><spring:message code="lbl.pagetotal"/></b></td>
 						    	<td></td>
 						    	<td></td>
 						    	<td></td>
@@ -152,7 +152,6 @@
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>

@@ -46,12 +46,12 @@
 		table="EGW_TENDER_RESPONSE_ACTIVITY">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_TENDER_RESPONSE_ACTIVITY</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_TENDER_RESPONSE_ACTIVITY</param>
 			</generator>
 		</id>
 		<many-to-one name="tenderResponse" column="TENDER_RESPONSE_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="select"/>
+		<many-to-one name="activity" class="org.egov.works.abstractestimate.entity.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="select"/>
 		
 		<property name="negotiatedRate" type="double">
             <column name="NEGOTIATED_RATE" precision="20" not-null="true" />

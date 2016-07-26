@@ -40,7 +40,7 @@
 package org.egov.works.services;
 
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.milestone.TrackMilestone;
+import org.egov.works.milestone.entity.TrackMilestone;
 
 /**
  * @author vikas

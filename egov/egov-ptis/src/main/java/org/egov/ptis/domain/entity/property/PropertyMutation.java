@@ -55,6 +55,10 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOT
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
+/**
+ * @author subhash
+ *
+ */
 public class PropertyMutation extends StateAware {
 
     private static final long serialVersionUID = -3387659460257524470L;
@@ -81,6 +85,12 @@ public class PropertyMutation extends StateAware {
     private List<Document> documents = new ArrayList<>();
     private String meesevaApplicationNumber;//Temporary number for meeseva integration.
     private Character source = 'A';
+    private BigDecimal partyValue;
+    private BigDecimal departmentValue;
+    private boolean partialMutation;
+    private boolean registrationDone;
+    private String type;
+    private MutationRegistrationDetails mutationRegistrationDetails = new MutationRegistrationDetails();
 
     
     @Override
@@ -392,5 +402,52 @@ public class PropertyMutation extends StateAware {
         this.transfereeInfosProxy = transfereeInfosProxy;
     }
 
+    public BigDecimal getPartyValue() {
+        return partyValue;
+    }
+
+    public void setPartyValue(BigDecimal partyValue) {
+        this.partyValue = partyValue;
+    }
+
+    public BigDecimal getDepartmentValue() {
+        return departmentValue;
+    }
+
+    public void setDepartmentValue(BigDecimal departmentValue) {
+        this.departmentValue = departmentValue;
+    }
+
+    public boolean isPartialMutation() {
+        return partialMutation;
+    }
+
+    public void setPartialMutation(boolean partialMutation) {
+        this.partialMutation = partialMutation;
+    }
+
+    public boolean isRegistrationDone() {
+        return registrationDone;
+    }
+
+    public void setRegistrationDone(boolean registrationDone) {
+        this.registrationDone = registrationDone;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public MutationRegistrationDetails getMutationRegistrationDetails() {
+        return mutationRegistrationDetails;
+    }
+
+    public void setMutationRegistrationDetails(MutationRegistrationDetails mutationRegistrationDetails) {
+        this.mutationRegistrationDetails = mutationRegistrationDetails;
+    }
    
 }

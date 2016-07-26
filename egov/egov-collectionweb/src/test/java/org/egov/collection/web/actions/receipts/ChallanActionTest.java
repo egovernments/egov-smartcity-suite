@@ -117,14 +117,13 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		egovCommon = createMock(EgovCommon.class);
 		eisCommonsManagerMock = createMock(EisCommonsManager.class);
 		auditEventService =  new AuditEventService();
-		EgovThreadLocals.setUserId("1");
+		ApplicationThreadLocals.setUserId("1");
 		genericService.setType(AuditEvent.class);
 		auditEventService.setAuditEventPersistenceService(genericService);
 		
 				
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		position = objectFactory.createPosition();
 		
 		collectionsUtil=new CollectionsUtil(){
@@ -150,7 +149,6 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);		
 		
@@ -178,7 +176,6 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		receiptService = new ReceiptService();		
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setCollectionsUtil(collectionsUtil);
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -188,7 +185,6 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		receiptService.setEisService(eisUtilService);
 		challanService = new ChallanService();
 		challanService.setType(Challan.class);
-		challanService.setSessionFactory(egovSessionFactory);
 		challanService.setCollectionsUtil(collectionsUtil);
 		
 		challanWorkflowService = new SimpleWorkflowService<Challan>(
@@ -198,7 +194,6 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		receiptHeaderService = new ReceiptHeaderService();
 		receiptHeaderService.setType(ReceiptHeader.class);
 		receiptHeaderService.setPersistenceService(genericService);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setCollectionsNumberGenerator(collectionsNumberGenerator);
 		

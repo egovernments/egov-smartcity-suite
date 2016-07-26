@@ -54,6 +54,7 @@
 			<form:hidden path="id" id="id" value="${waterConnectionDetails.id}"/>
 			<form:hidden path="legacy" id="legacy" value="true"/>
 			<form:hidden path="connectionStatus" id="connectionStatus" value="${waterConnectionDetails.connectionStatus}"/> 
+			
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="true"> 
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
@@ -81,7 +82,7 @@
 								code="lbl.connectiondate" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="executionDate"  
-								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="0d"
+								class="form-control datepicker" title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
 								id="executionDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 								<form:errors path="executionDate" cssClass="add-margin error-msg" />
 						</div>
@@ -121,10 +122,10 @@
 						$('#previousReading').val('');
 						$('#currentcurrentReading').val('');
 						$('#existreadingDate').val('');
-						
+						$('#monthlyFee').attr('required', 'required');
 					}
 				else {
-					
+					$('#monthlyFee').removeAttr('required');
 					$('#existmeterCost').attr('required', 'required');
 					$('#existmeterName').attr('required', 'required');
 					$('#existmeterNo').attr('required', 'required');

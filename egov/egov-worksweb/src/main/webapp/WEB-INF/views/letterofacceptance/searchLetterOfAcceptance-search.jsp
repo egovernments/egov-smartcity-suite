@@ -43,13 +43,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
-<!-- Need to change title for search criteria and result, add auto populate for the fields -->
+<input type="hidden" value="<spring:message code='error.letterofacceptance.select' />" id='selectLOA'>
 <form:form name="SearchRequest" role="form" action="" modelAttribute="searchRequestLetterOfAcceptance" id="searchRequestLetterOfAcceptance" class="form-horizontal form-groups-bordered">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title" style="text-align: center;">
-				<spring:message code="hdr.estimate" />
+				<spring:message code="title.search.letterofacceptance" />
 			</div>
 		</div>
  		<div class="panel-body">
@@ -72,7 +71,7 @@
 			</div>
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimateno" /></label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.estimatenumber" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="estimateNumber" id="estimateNumber" class="form-control" placeholder="Type first 3 letters of Estimate Number"/>
 				</div>
@@ -118,25 +117,27 @@
 				<spring:message code='lbl.search' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+				onclick='self.close()'><spring:message code='lbl.close' /></a> 
+				<input type="button" class="btn btn-default" value="Reset"
+				id="button" name="Reset" onclick="this.form.reset();">
 		</div>
 	</div>
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">
-		<spring:message code='milestone.search.result' />
+		<spring:message code='title.searchresult' />
 	</div>
 	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
+		<table class="table table-bordered table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.estimateno" /></th>
+					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.typeofwork" /></th>
 					<th><spring:message code="lbl.subtypeofwork" /></th>
-					<th><spring:message code="lbl.lineestimatedate" /></th>
+					<th><spring:message code="lbl.estimate.date" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
@@ -150,13 +151,8 @@
 		<button type='button' class='btn btn-primary' id="createMilestone">
 			<spring:message code='lbl.createmilestone' />
 		</button>
-		<button type='button' class='btn btn-primary' id="trackMilestone">
-			<spring:message code='lbl.trackmilestone' />
-		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a> <input
-			type="button" class="btn btn-default" value="Reset" id="button"
-			name="Reset" onclick="this.form.reset();">
+				onclick='self.close()'><spring:message code='lbl.close' /></a> 
 	</div>
 </div>
 

@@ -58,21 +58,23 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="pipeSizeTbl">
 					<thead>
 						<tr>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.code" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.code" />
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.hscpipesize.mm" /></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.hscpipesize.mm" />
 							</th>
-							<th align="center" colspan="1">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th colspan="1">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<c:if test="${mode == 'edit'}"> 
+							<th colspan="1" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
+							</c:if>
 						</tr>
 					</thead>
 					<c:forEach var="pipeSize" items="${pipeSizeList}">
@@ -99,18 +101,20 @@
 								</c:choose>
 								</div>
 							</td>
+							<c:if test="${mode == 'edit'}"> 
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${pipeSize.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:otherwise>
 			</c:choose>
+			<input type="hidden" value="${mode}" id="mode" />
 			<div class="form-group text-center">
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>

@@ -62,6 +62,19 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     @Query("select complaint from Complaint complaint where createdBy =:createdBy and status.name in (:statuses) order by createddate DESC")
     Page<Complaint> findMyComplaintyByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses, Pageable pageable);
     
+    @Query("select count(*) from Complaint complaint where status.name in (:statuses)")
+    Long getComplaintsTotalCountByStatus(@Param("statuses") String[] statuses);
+    
+    @Query("select count(*) from Complaint")
+    Long getTotalComplaintsCount();
+    
+    @Query("select count(*) from Complaint complaint where createdBy =:createdBy and status.name in (:statuses)")
+    Long getMyComplaintCountByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses);
+    
+    @Query("select count(*) from Complaint complaint where createdBy =:createdBy")
+    Long getMyComplaintsTotalCount(@Param("createdBy") User createdBy);
+    
+    
     @Query("select complaint from Complaint complaint where createdBy <>:createdBy order by createddate DESC")
     Page<Complaint> findByLatestComplaint(@Param("createdBy") User createdBy, Pageable pageable);
     

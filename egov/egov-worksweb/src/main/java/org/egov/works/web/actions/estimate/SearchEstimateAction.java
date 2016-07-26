@@ -39,6 +39,20 @@
  */
 package org.egov.works.web.actions.estimate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -65,12 +79,12 @@ import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.milestone.entity.Milestone;
+import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.milestone.Milestone;
-import org.egov.works.models.milestone.TrackMilestone;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.services.AbstractEstimateService;
@@ -78,20 +92,6 @@ import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.workorder.AjaxWorkOrderAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = SearchEstimateAction.SUCCESS, location = "searchEstimate.jsp") })
@@ -218,8 +218,8 @@ public class SearchEstimateAction extends SearchFormAction {
             final WorkOrderEstimate woe = (WorkOrderEstimate) row;
             final Milestone lastestMilestoneObj = woe.getLatestMilestone();
             if (lastestMilestoneObj != null)
-                if (!lastestMilestoneObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
-                        && !lastestMilestoneObj.getEgwStatus().getCode()
+                if (!lastestMilestoneObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
+                        && !lastestMilestoneObj.getStatus().getCode()
                                 .equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                     final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(lastestMilestoneObj
                             .getState().getOwnerPosition().getId());
@@ -243,16 +243,16 @@ public class SearchEstimateAction extends SearchFormAction {
             final Milestone msObj = (Milestone) obj[1];
             final TrackMilestone tmObj = (TrackMilestone) obj[2];
             if (msObj != null)
-                if (!msObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
-                        && !msObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
+                if (!msObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
+                        && !msObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                     final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(msObj
                             .getState().getOwnerPosition().getId());
                     if (assignment != null && assignment.getEmployee() != null)
                         msObj.setOwnerName(assignment.getEmployee().getName());
                 }
             if (tmObj != null)
-                if (!tmObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
-                        && !tmObj.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
+                if (!tmObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
+                        && !tmObj.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS)) {
                     final Assignment assignment = assignmentService.getPrimaryAssignmentForPositon(tmObj
                             .getState().getOwnerPosition().getId());
                     if (assignment != null && assignment.getEmployee() != null)
@@ -863,8 +863,8 @@ public class SearchEstimateAction extends SearchFormAction {
                     "from WorkOrderEstimate woe where woe.id=?", Long.valueOf(workOrderIdStr));
 
             for (final Milestone milestone : woe.getMilestone())
-                if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getEgwStatus().getCode())) {
-                    milestone.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
+                if (WorksConstants.APPROVED.equalsIgnoreCase(milestone.getStatus().getCode())) {
+                    milestone.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MILESTONE_MODULE_KEY,
                             WorksConstants.CANCELLED_STATUS));
                             // TODO - The setter methods of variables in State.java are
                             // protected. Need to alternative way to solve this issue.
@@ -877,8 +877,8 @@ public class SearchEstimateAction extends SearchFormAction {
                              *******/
 
                     for (final TrackMilestone tms : milestone.getTrackMilestone())
-                        if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getEgwStatus().getCode())) {
-                            tms.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                        if (!WorksConstants.CANCELLED_STATUS.equalsIgnoreCase(tms.getStatus().getCode())) {
+                            tms.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                                     WorksConstants.TRACK_MILESTONE_MODULE_KEY, WorksConstants.CANCELLED_STATUS));
 
                             tms.getCurrentState();

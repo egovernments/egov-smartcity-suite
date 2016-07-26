@@ -39,23 +39,23 @@
  */
 package org.egov.works.services.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.Activity;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.models.tender.EstimateLineItemsForWP;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.models.tender.WorksPackageDetails;
 import org.egov.works.models.tender.WorksPackageNumberGenerator;
 import org.egov.works.services.WorksPackageService;
 import org.egov.works.utils.WorksConstants;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long> implements WorksPackageService {
     private WorksPackageNumberGenerator workspackageGenerator;
@@ -96,7 +96,7 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
                     if (DateUtils.compareDates(act.getAbstractEstimate().getEstimateDate(),
                             preEstlineItem.getEstimateDate())) {
                         preEstlineItem.setRate(act.getSORCurrentRate().getValue());
-                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate().getValue());
+                        preEstlineItem.setAmt(preEstlineItem.getQuantity() * act.getRate());
                     }
                     resultMap.put(act.getSchedule().getId(), preEstlineItem);
                 } else {
@@ -115,13 +115,13 @@ public class WorksPackageServiceImpl extends BaseServiceImpl<WorksPackage, Long>
         if (act.getSchedule() == null) {
             estlineItem.setCode("");
             estlineItem.setDescription(act.getNonSor().getDescription());
-            estlineItem.setRate(act.getRate().getValue());
+            estlineItem.setRate(act.getRate());
         } else {
             estlineItem.setCode(act.getSchedule().getCode());
             estlineItem.setDescription(act.getSchedule().getDescription());
             estlineItem.setRate(act.getSORCurrentRate().getValue());
         }
-        estlineItem.setAmt(act.getQuantity() * act.getRate().getValue());
+        estlineItem.setAmt(act.getQuantity() * act.getRate());
         estlineItem.setEstimateDate(act.getAbstractEstimate().getEstimateDate());
         estlineItem.setQuantity(act.getQuantity());
         estlineItem.setUom(act.getUom().getUom());

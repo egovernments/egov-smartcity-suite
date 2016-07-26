@@ -91,6 +91,13 @@
 
 		return valSuccess;
 	}
+	
+	function onChangeServiceClass(obj)
+	{
+	    if(obj!=null && obj.value!=null && obj.value!='-1'){
+	    	populateservice({serviceClass:obj.value});
+	    }
+	}
 </script>
 </head>
 <body>
@@ -118,7 +125,7 @@
 						href="javascript:show_calendar('forms[0].fromDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 					<td class="bluebox"><s:text
@@ -131,7 +138,7 @@
 						href="javascript:show_calendar('forms[0].toDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 						<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 				</tr>
@@ -169,6 +176,13 @@
 				</tr>
 				<tr>
 					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="service.master.classification" /></td>
+					<td class="bluebox"><s:select list="serviceTypeMap"
+							headerKey="All" headerValue="%{getText('miscreceipt.select')}"
+							name="classificationType" id="classificationType" onchange="onChangeServiceClass(this);"/></td>
+							 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='service'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 					<td class="bluebox"><s:text
 							name="collectionReport.criteria.service" /></td>
 					<td class="bluebox"><s:select headerKey="-1"

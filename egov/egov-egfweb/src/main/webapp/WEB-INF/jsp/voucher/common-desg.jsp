@@ -36,6 +36,4 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  --%>
-
-{ "ResultSet": { "Result":[<s:iterator var="s" value="designationList" status="status">{"Text":"<s:property value="%{designationName}" />","Value":"<s:property value="%{designationId}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="designationList" status="status">{"Text":"<s:property value="%{designationName}" />","Value":"<s:property value="%{designationId}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

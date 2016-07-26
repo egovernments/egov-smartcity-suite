@@ -39,6 +39,22 @@
  */
 $(document).ready(function(){
 	
+	$('#waterSourceTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 3,
+			"orderable": false
+		} ]
+	});
+	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
 	if (activeDiv =='false')
@@ -75,9 +91,6 @@ $(document).ready(function(){
 	});
 	
  });
-$('#listid').click(function() {
-	window.open("/wtms/masters/waterSourceTypeMaster/list", "_self");
- });
 
 $("#resetid").click(function(){
 	$("#waterSourceMasterform")[0].reset();
@@ -89,13 +102,9 @@ $('#addnewid').click(function() {
 	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/waterSourceTypeMaster/", "_self");
-}
 
 function edit(waterSource)
 {
-	window.open("/wtms/masters/waterSourceTypeMaster/"+waterSource, "_self");
+	window.open("/wtms/masters/waterSourceTypeMaster/edit/"+waterSource, "_self");
 	
 }

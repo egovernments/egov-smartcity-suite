@@ -45,8 +45,8 @@
 <hibernate-mapping>
  <class name="org.egov.pims.model.PersonalInformation" table="EG_EMPLOYEE">
   <id column="ID" name="idPersonalInformation" type="int">
-   <generator class="sequence">
-    <param name="sequence">EGPIMS_PERSONAL_INFO_SEQ</param>
+   <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+    <param name="sequence_name">EGPIMS_PERSONAL_INFO_SEQ</param>
    </generator>
   </id>
   <timestamp column="LASTMODIFIED_DATE" generated="never"

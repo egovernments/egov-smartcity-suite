@@ -43,7 +43,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="waterPropertyUsage" id="waterPropertyUsageform"
 	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
@@ -82,13 +81,11 @@
 						</div>
 					</div>	
 				</div>
-				
 				<input type="hidden" name="waterPropertyUsage" value="${waterPropertyUsage.id}" />
 				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>	
+				<input type="hidden" value="${mode}" id="mode" />
  			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
-				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
-				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
 				<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>

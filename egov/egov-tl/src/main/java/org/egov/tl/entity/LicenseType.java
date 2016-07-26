@@ -41,15 +41,43 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
-/**
- * will hold the each license module types eg: 1.TradeLicense 2.Hospital License 3.Hawker
- */
-public class LicenseType extends BaseModel {
-    private static final long serialVersionUID = 1L;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_MSTR_LICENSE_TYPE")
+@SequenceGenerator(name = LicenseType.SEQUENCE, sequenceName = LicenseType.SEQUENCE, allocationSize = 1)
+public class LicenseType extends AbstractPersistable<Long> {
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_LICENSE_TYPE";
+    private static final long serialVersionUID = -5318002628004263760L;
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "id_module")
     private Module module;
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public Module getModule() {
         return module;
@@ -67,18 +95,4 @@ public class LicenseType extends BaseModel {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.egov.infstr.models.BaseModel#toString()
-     */
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseType= { ");
-        str.append("serialVersionUID=").append(serialVersionUID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("module=").append(module == null ? "null" : module.toString());
-        str.append("}");
-        return str.toString();
-    }
 }

@@ -39,44 +39,12 @@
  */
 package org.egov.ptis.actions.reports;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.EgovPaginatedList;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.ptis.actions.common.CommonServices;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.notice.PtNotice;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -96,11 +64,42 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.actions.SearchFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQueryHQL;
+import org.egov.ptis.actions.common.CommonServices;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.notice.PtNotice;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @ParentPackage("egov")
 @Namespace("/reports")
@@ -115,8 +114,8 @@ public class SearchNoticesAction extends SearchFormAction {
     private static final long serialVersionUID = 1L;
     protected static final String SUCCESS = "success";
     private static final String ERROR = "error";
-    private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp";
-    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp";
+    private static final String FROM_CLAUSE = " from PtNotice notice left join notice.basicProperty bp,PropertyMaterlizeView pmv";
+    private static final String BILL_FROM_CLAUSE = " from DemandBill bill, PtNotice notice left join notice.basicProperty bp, PropertyMaterlizeView pmv";
     private static final String ORDER_BY = " order by notice.noticeDate desc";
     private static final String BILL_ORDER_BY = " order by notice.basicProperty.address.houseNoBldgApt asc";
     private String ownerName;
@@ -144,7 +143,10 @@ public class SearchNoticesAction extends SearchFormAction {
     protected FileStoreService fileStoreService;
     @Autowired
     private BoundaryService boundaryService;
-
+    private String municipal;
+    private String district;
+    private String reportHeader;
+  
     public SearchNoticesAction() {
         super();
     }
@@ -173,16 +175,43 @@ public class SearchNoticesAction extends SearchFormAction {
                     + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
                     + "House Number : " + houseNumber);
         }
-
+          
+        if (noticeType!="-1") {
+        	reportHeader=reportHeader+", NoticeType: " + noticeType;
+        }
+		if (!ownerName.isEmpty()){
+				reportHeader=reportHeader+ ", OwnerName: "+ownerName ;
+	    }
+		if(zoneId!=-1){
+			reportHeader=reportHeader+", Zone: " +getBoundary(zoneId);
+		}
+		if (wardId!=-1){
+			reportHeader=reportHeader+", Ward: "+ getBoundary(wardId);
+		}
+		if(!propertyType.equalsIgnoreCase("-1")){
+			reportHeader=reportHeader+", PropertyType: " +getPropType(propertyType);
+		}
+		if(!noticeNumber.isEmpty()){
+			reportHeader=reportHeader+", noticeNum: "+noticeNumber;
+		}
+		if(noticeFromDate!=null) {
+			reportHeader=reportHeader+", noticeDateFrom: "+ noticeFromDate;
+	    }
+		if(noticeToDate!=null) {
+			reportHeader=reportHeader+", noticeDateTo: "+ noticeToDate;
+	    }
+		if(!indexNumber.isEmpty()){
+			reportHeader=reportHeader+", propertyId: "+indexNumber;
+	    }
+		if (!houseNumber.isEmpty()){
+			reportHeader=reportHeader+", HouseNo: " +houseNumber;
+		}
         target = "searchresult";
         super.search();
         noticeList = searchResult.getList();
-        if (noticeList != null && !noticeList.isEmpty()) {
-            LOGGER.debug("Number of notices before owner name (if input given) filter : " + noticeList.size());
-            searchOwnerNamePropType();
-        }
+       
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Number of notices after owner name (if input given) filter : " + noticeList.size());
+            LOGGER.debug("Number of notices : " + noticeList.size());
             LOGGER.debug("Exit from search method");
         }
 
@@ -206,7 +235,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
         if (null == noticeList || noticeList.size() <= 0) {
             addActionError(getText("notice.file.merge.unavailable"));
-            return ERROR;
+            return INDEX;
         }
 
         final List<InputStream> pdfs = new ArrayList<InputStream>();
@@ -267,7 +296,7 @@ public class SearchNoticesAction extends SearchFormAction {
             ZipOutputStream zipOutputStream;
             if (null == noticeList || noticeList.size() <= 0) {
                 addActionError(getText("notice.file.zip.unavailable"));
-                return ERROR;
+                return INDEX;
             } else {
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
                 response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".zip");
@@ -318,7 +347,7 @@ public class SearchNoticesAction extends SearchFormAction {
                 noticeNumber);
         if (ptNotice == null) {
             addActionError(getText("DocMngr.file.unavailable"));
-            return ERROR;
+            return INDEX;
         }
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
@@ -368,6 +397,10 @@ public class SearchNoticesAction extends SearchFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
         super.prepare();
+        municipal=getSession().get("citymunicipalityname").toString();
+        district=getSession().get("districtName").toString();
+        district=district.substring(0,1)+district.substring(1, district.length()).toLowerCase()+ " District";
+        reportHeader=municipal+", "+district;
         final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 ZONE.toUpperCase(), REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
@@ -441,54 +474,7 @@ public class SearchNoticesAction extends SearchFormAction {
         return propTypeMstr.getType();
     }
 
-    /**
-     * @param noticeList
-     *            This method removes the notices from the list which do not
-     *            match the selected Owner Name and Property Type
-     */
-    private void searchOwnerNamePropType() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Entered into searchOwnerNamePropType method");
-            LOGGER.debug("searchOwnerNamePropType : Owner Name : " + ownerName + ", " + "Property Type : "
-                    + propertyType);
-            LOGGER.debug("searchOwnerNamePropType : Number of notices before removal: "
-                    + (noticeList != null ? noticeList.size() : ZERO));
-        }
-        if (ownerName != null && !ownerName.equals("") || propertyType != null && !propertyType.equals("-1")) {
-            final List<PtNotice> noticeRmvList = new ArrayList<PtNotice>();
-            for (final PtNotice notice : noticeList) {
-                final Property prop = notice.getBasicProperty().getProperty();
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Property : " + prop);
-                if (ownerName != null && !ownerName.equals("")) {
-                    boolean isOwnerExist = true;
-                    // TODO PHOENIX If all owner other than current owner is
-                    // required then iterate over Mutation
-                    for (final PropertyOwnerInfo propOwner : notice.getBasicProperty().getPropertyOwnerInfo())
-                        if (!getOwnerName().equalsIgnoreCase(propOwner.getOwner().getName())) {
-                            noticeRmvList.add(notice);
-                            isOwnerExist = false;
-                            break;
-                        }
-                    if (!isOwnerExist)
-                        continue;
-                }
-                if (propertyType != null && !propertyType.equals("-1"))
-                    if (!getPropType(getPropertyType()).equals(
-                            prop.getPropertyDetail().getPropertyTypeMaster().getType()))
-                        noticeRmvList.add(notice);
-            }
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("searchOwnerNamePropType : Number of notices to be removed : "
-                        + (noticeRmvList != null ? noticeRmvList.size() : ZERO));
-            noticeList.removeAll(noticeRmvList);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("searchOwnerNamePropType : Number of notices after removal: "
-                        + (noticeList != null ? noticeList.size() : ZERO));
-            ((EgovPaginatedList) searchResult).setFullListSize(noticeList.size());
-        }
-    }
-
+    
     /**
      * @param basicProperty
      * @return
@@ -517,7 +503,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into prepareQuery method");
             LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
         }
-
+        
         final Map<String, Object> map = getCriteriaString();
 
         return new SearchQueryHQL(prepareSearchQuery(map.get("criteriaString")),
@@ -541,11 +527,17 @@ public class SearchNoticesAction extends SearchFormAction {
         StringBuilder criteriaString = new StringBuilder();
         criteriaString = new StringBuilder(" where notice.noticeType = ?");
         params.add(noticeType);
-
+        
+      
         // To show only the active Demand Bill
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
-            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo ");
-
+            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
+        else
+            criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
+        if (ownerName != null && !ownerName.equals("")) {
+            criteriaString.append(" and pmv.ownerName like ?");
+            params.add("%"+ownerName+"%");
+        }
         if (zoneId != null && !zoneId.equals(-1l)) {
             criteriaString.append(" and bp.propertyID.zone.id = ?");
             params.add(zoneId);
@@ -554,7 +546,10 @@ public class SearchNoticesAction extends SearchFormAction {
             criteriaString.append(" and bp.propertyID.ward.id = ?");
             params.add(wardId);
         }
-
+        if (propertyType != null && !propertyType.equals("-1")) {
+            criteriaString.append(" and pmv.propTypeMstrID.id = ?");
+            params.add(Long.parseLong(propertyType));
+        }
         if (noticeNumber != null && !noticeNumber.equals("")) {
             criteriaString.append(" and notice.noticeNo = ?");
             params.add(noticeNumber);
@@ -571,7 +566,7 @@ public class SearchNoticesAction extends SearchFormAction {
             params.add(nextDate.getTime());
         }
         if (indexNumber != null && !indexNumber.equals("")) {
-            criteriaString.append(" and bp.upicNo = ?");
+            criteriaString.append(" and pmv.propertyId = ?");
             params.add(indexNumber);
         }
         if (houseNumber != null && !houseNumber.equals("")) {
@@ -938,4 +933,29 @@ public class SearchNoticesAction extends SearchFormAction {
     public void setPartNo(final String partNo) {
         this.partNo = partNo;
     }
+
+	public String getMunicipal() {
+		return municipal;
+	}
+
+	public void setMunicipal(String municipal) {
+		this.municipal = municipal;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+
+	public String getReportHeader() {
+		return reportHeader;
+	}
+
+	public void setReportHeader(String reportHeader) {
+		this.reportHeader = reportHeader;
+	}
+
 }

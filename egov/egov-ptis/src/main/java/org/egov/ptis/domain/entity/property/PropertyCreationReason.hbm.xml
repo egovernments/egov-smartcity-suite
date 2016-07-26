@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyCreationReason" table="EGPT_PROP_CREATE_REASON">
 		<id
 			name="idReason" column="ID_REASON" type="int">
-			<generator class="sequence">
-					<param name="sequence">SEQ_PROP_CREATE_REASON</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+					<param name="sequence_name">SEQ_PROP_CREATE_REASON</param>
 			</generator>
 		</id>
 		<timestamp

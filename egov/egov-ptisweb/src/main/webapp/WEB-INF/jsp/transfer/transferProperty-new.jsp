@@ -94,7 +94,20 @@
 				<div class="headingbg">
 					<s:text name="transferortitle" />
 				</div>
+				<s:if
+					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+							value="%{@org.egov.ptis.constants.PropertyTaxConstants@ALL_READY_REGISTER}" /></span>
+				</s:if>
+				<s:else>
+					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+							value="%{@org.egov.ptis.constants.PropertyTaxConstants@FULLTT}" /></span>
+				</s:else>
+				<s:hidden name="type" value="%{type}" />
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
 					<tr>
 						<td class="bluebox2" style="width: 5%;">&nbsp;</td>
 						<td class="bluebox" style="width: 20%"><s:text name="prop.Id"></s:text>
@@ -200,44 +213,70 @@
 							</table>
 						</td>
 					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
 					<%@ include file="transfereeDetailsForm.jsp"%>
+					<s:if
+						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+						<tr>
+							<%@ include file="transferProperty-registrationDetails-edit.jsp"%>
+						</tr>
+					</s:if>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+					<s:if
+						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
+						<tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="transferreason"></s:text>
+								<span class="mandatory1">*</span> :</td>
+							<td class="bluebox"><s:select name="mutationReason"
+									id="transRsnId" list="dropdownData.MutationReason" listKey="id"
+									listValue="mutationName" headerKey="-1"
+									headerValue="%{getText('default.select')}"
+									value="%{mutationReason.id}" onchange="enableBlock();" /></td>
+							<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
+								class="mandatory1">*</span> :</td>
+							<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
+									name="saleDetail" id="saleDetail"
+									onchange="return validateMaxLength(this);"
+									onblur="trim(this,this.value);"></s:textarea></td>
+						</tr>
+						<tr class="documentDetRow">
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docNum" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="bluebox"><s:textfield name="deedNo" id="docNum"
+									maxlength="64"
+									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
+							<td class="bluebox"><s:text name="docDate" /><span
+								class="mandatory1">*</span> :</td>
+							<td class="bluebox"><s:date name="deedDate" var="docDate"
+									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
+									id="deedDate" maxlength="10" value="%{docDate}"
+									autocomplete="off"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
+						</tr>
+					</s:if>
 					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="transferreason"></s:text> <span
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="label.parties.value" /><span
 							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:select name="mutationReason"
-								id="transRsnId" list="dropdownData.MutationReason" listKey="id"
-								listValue="mutationName" headerKey="-1"
-								headerValue="%{getText('default.select')}"
-								value="%{mutationReason.id}" onchange="enableBlock();" /></td>
-						<td class="greybox reasonRow"><s:text name="saleDetls" /> <span
+						<td class="bluebox"><s:textfield name="partyValue"
+								value="%{partyValue}" id="partyValue" maxlength="16"
+								onblur="validNumber(this);checkZero(this);" /></td>
+						<td class="bluebox"><s:text name="label.department.value" /><span
 							class="mandatory1">*</span> :</td>
-						<td class="greybox reasonRow"><s:textarea cols="30" rows="2"
-								name="saleDetail" id="saleDetail"
-								onchange="return validateMaxLength(this);"
-								onblur="trim(this,this.value);"></s:textarea></td>
+						<td class="bluebox"><s:textfield name="departmentValue"
+								value="%{departmentValue}" id="departmentValue" maxlength="16"
+								onblur="validNumber(this);checkZero(this);" /></td>
 					</tr>
-
-					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="docNum" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:textfield name="deedNo" id="docNum"
-								maxlength="64"
-								onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-						<td class="greybox"><s:text name="docDate" /><span
-							class="mandatory1">*</span> :</td>
-						<td class="greybox"><s:date name="deedDate" var="docDate"
-								format="dd/MM/yyyy" /> <s:textfield name="deedDate"
-								id="deedDate" maxlength="10" value="%{docDate}"
-								autocomplete="off"
-								onkeyup="DateFormat(this,this.value,event,false,'3')"
-								onblur="validateDateFormat(this);" cssClass="datepicker" /></td>
-					</tr>
+					</table>
+					</table>
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				</table>
 				<s:if test="%{propertyByEmployee == true}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>

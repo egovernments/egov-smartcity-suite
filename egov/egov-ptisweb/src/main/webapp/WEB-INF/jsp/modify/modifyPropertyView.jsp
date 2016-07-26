@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<s:if test="modifyRsn=='AMALG'">
 		<tr>
 			<td class="bluebox2">
@@ -178,7 +178,7 @@
 		<td class="greybox">
 		</td>
 	</tr>
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="superstructure"></s:text> :</td>
 		<td class="greybox">
@@ -188,7 +188,7 @@
 		<td class="greybox siteowner">
 			<span class="bold"><s:property value="%{propertyDetail.siteOwner}" default="N/A"/></span>
 		</td>
-	</tr>
+	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text> :</td>
@@ -282,9 +282,8 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div class="overflow-x-scroll">
 				<%@ include file="../common/FloorView.jsp"%>
-				<br/>
 			</div>
 		</td>
 	</tr>

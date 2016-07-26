@@ -121,7 +121,7 @@
 						href="javascript:show_calendar('forms[0].fromDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 					<td class="bluebox"><s:text
@@ -135,7 +135,7 @@
 						href="javascript:show_calendar('forms[0].toDate');"
 						onmouseover="window.status='Date Picker';return true;"
 						onmouseout="window.status='';return true;"><img
-							src="/egi/resources/erp2/images/calendaricon.gif" alt="Date"
+							src="/collection/resources/images/calendaricon.gif" alt="Date"
 							width="18" height="18" border="0" align="absmiddle" /></a>
 					<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 				</tr>
@@ -189,11 +189,7 @@
 				onclick="window.close()" />
 			</label>
 		</div>
-
-
-		<logic:notEmpty name="results">
-		</logic:notEmpty>
-		<logic:empty name="results">
+      <s:if test="%{results.isEmpty()}">
 			<s:if test="target=='searchresult'">
 				<table width="90%" border="0" align="center" cellpadding="0"
 					cellspacing="0" class="tablebottom">
@@ -205,9 +201,7 @@
 					</tr>
 				</table>
 			</s:if>
-		</logic:empty>
-
-
+		</s:if>
 	</s:form>
 </body>
 </html>

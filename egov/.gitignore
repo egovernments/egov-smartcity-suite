@@ -1,7 +1,3 @@
-egov-egi/fileNa.txt
-egov-egi/fileName.txt
-egov-egi/fileName2.txt
-egov-egi/fileName3.exe
-derby.log
-egov-erp.properties
-
+/.idea
+*.iml
+*/**/egov-erp-*.properties

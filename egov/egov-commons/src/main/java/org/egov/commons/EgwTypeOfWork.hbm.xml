@@ -46,8 +46,8 @@
 	<class name="org.egov.commons.EgwTypeOfWork" table="EGW_TYPEOFWORK">
 		<id name="id">
 			<column name="ID" not-null="true" />
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_TYPEOFWORK</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_TYPEOFWORK</param>
 			</generator>
 		</id>
 		<property name="code" column="CODE" not-null="true" />

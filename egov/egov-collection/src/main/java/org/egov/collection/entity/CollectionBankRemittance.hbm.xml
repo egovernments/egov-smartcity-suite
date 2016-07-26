@@ -45,8 +45,8 @@
 	<class name="org.egov.collection.entity.CollectionBankRemittance" table="EGCL_BANK_REMITTANCE">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGCL_BANK_REMITTANCE</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGCL_BANK_REMITTANCE</param>
 			</generator>
 		</id>
 

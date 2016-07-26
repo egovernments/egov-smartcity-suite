@@ -44,7 +44,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Online Payment</title>
-<script src="/egi/javascript/common/watermark.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/resources/common/watermark.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
@@ -80,6 +80,7 @@ function populateapportioningamountnew(){
 	var noofaccounts=dom.get("totalNoOfAccounts").value;
 	var credittotal=0;
 	collectiontotal=dom.get("paymentAmount").value;
+	var totalCreditAmountToBePaid = 0;
 	var zeroAccHeads=false;
 	if(isNaN(collectiontotal)){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.invalidamount" />' + '<br>';
@@ -92,23 +93,27 @@ function populateapportioningamountnew(){
 	for(var j=0;j<noofaccounts; j++)
 	{
 		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
+		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
+		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
 		if(advanceRebatePresent==0){
 			zeroAccHeads=true;
 		}
 	}
-	if(dom.get("callbackForApportioning").value=="true")
-	{
-		if(collectiontotal > billingtotal && zeroAccHeads==false)
-		{
-			document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
-			dom.get("receipt_error_area").style.display="block";
-			return false;
-		}
-		else
-		{																														    			//makeJSONCall(["OrderNumber","CreditAmount","DebitAmount","CrAmountToBePaid"],'${pageContext.request.contextPath}/citizen/onlineReceipt!apportionBillAmount.action',{onlineInstrumenttotal:collectiontotal},apportionLoadHandler,apportionLoadFailureHandler);
-		}
+	if(document.getElementById("callbackForApportioning").value=="false")	
+	{	
+			billingtotal=document.forms[0].totalAmountToBeCollected.value;
 	}
-	else if(dom.get("callbackForApportioning").value=="false")
+	else
+	{	
+			billingtotal=totalCreditAmountToBePaid;
+	}
+	if(collectiontotal > billingtotal && zeroAccHeads==false)
+	{
+		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
+		dom.get("receipt_error_area").style.display="block";
+		return false;
+	}
+	if(dom.get("callbackForApportioning").value=="false")
 	{
 		if(initialSetting=="true"){
 			initialiseCreditAmount();
@@ -242,9 +247,12 @@ function validateOnlineReceipt(){
 	var validation=true;
 	var zeroAccHeads=false;
 	var noofaccounts=dom.get("totalNoOfAccounts").value;
+	var totalCreditAmountToBePaid = 0;
 	for(var j=0;j<noofaccounts; j++)
 	{
-		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;
+		var advanceRebatePresent=document.getElementById('receiptDetailList['+j+'].isActualDemand').value;			
+		var amounttobecollected=document.getElementById('receiptDetailList['+j+'].cramountToBePaid').value;
+		totalCreditAmountToBePaid = eval(totalCreditAmountToBePaid)+eval(amounttobecollected);
 		if(advanceRebatePresent==0){
 			zeroAccHeads=true;
 		}
@@ -257,7 +265,16 @@ function validateOnlineReceipt(){
 		return false;
 	}
 	amount=eval(amount);
-	billingtotal=eval(billingtotal);
+
+	if(document.getElementById("callbackForApportioning").value=="false")	
+	{	
+			billingtotal=document.forms[0].totalAmountToBeCollected.value;
+	}
+	else
+	{	
+			billingtotal=totalCreditAmountToBePaid;
+	}
+
 
 	if(checkpartpaymentvalue=="false" && amount < billingtotal){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.partpaymenterror" />' + '<br>';
@@ -293,8 +310,6 @@ function validateOnlineReceipt(){
 	}
 	else {
 			doLoadingMask('#loadingMask');
-			document.collDetails.action="onlineReceipt-saveNew.action";
-
 			return true;
   		}
 }
@@ -379,8 +394,7 @@ function onLoad(){
 
 <body onload="onLoad();">
 	<div class="maincontainer">
-		<s:form theme="simple" name="collDetails"
-			action="OnlineReceiptAction.action">
+		<s:form theme="simple" name="collDetails" action="onlineReceipt-saveNew.action">
 			<div class="errorstyle" id="receipt_error_area"
 				style="display: none;"></div>
 			<div class="formmainbox">
@@ -637,8 +651,7 @@ function onLoad(){
 													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 													name="radioButton1" /><span class="complaintmsg"> <s:property
 															value="name" />
-												</span> <br>
-												<s:text name="%{code}.transactionmessage" /></td>
+												</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 											</s:if>
 											<s:else>
@@ -648,8 +661,7 @@ function onLoad(){
 													onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 													name="radioButton1" /><span class="complaintmsg"> <s:property
 															value="name" />
-												</span> <br>
-												<s:text name="%{code}.transactionmessage" /></td>
+												</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 											</s:else>
 
@@ -662,8 +674,7 @@ function onLoad(){
 												onclick='dom.get("paymentServiceId").value = <s:property value="id"/>'
 												name="radioButton1" /><span class="complaintmsg"> <s:property
 														value="name" />
-											</span> <br>
-											<s:text name="%{code}.transactionmessage" /></td>
+											</span> <br> <s:text name="%{code}.transactionmessage" /></td>
 
 										</s:else>
 
@@ -738,14 +749,12 @@ function onLoad(){
 							<div id="transactiondiv" style="display: none"></div>
 							<div id="loadingMask"
 								style="display: none; overflow: hidden; text-align: center">
-								<img
-									src="/egi/resources/erp2/images/bar_loader.gif" />
-								<span style="color: red">Please wait....</span>
+								<img src="/collection/resources/images/bar_loader.gif" /> <span
+									style="color: red">Please wait....</span>
 							</div>
-							<div class="bottombuttonholder"  align="middle">
-								<input type="submit" class="buttonsubmit"
-									id="button2" value="Pay Online"
-									onclick="return validateOnlineReceipt();" />
+							<div class="bottombuttonholder" align="middle">
+								<s:submit type="submit" cssClass="buttonsubmit"
+									id="button2" value="Pay Online" onclick="return validateOnlineReceipt();" />
 							</div>
 						</div>
 						<br />

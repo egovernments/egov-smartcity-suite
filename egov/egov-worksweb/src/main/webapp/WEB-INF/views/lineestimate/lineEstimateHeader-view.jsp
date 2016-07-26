@@ -107,7 +107,7 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.reference" />
+						<spring:message code="lbl.letter.reference" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<c:out default="N/A" value="${lineEstimate.reference}"></c:out>
@@ -121,10 +121,10 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.ward" />
+						<spring:message code="lbl.election.ward" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.ward.name}" />
+						<c:out default="N/A" value="${lineEstimate.ward.boundaryNum}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.location" />
@@ -177,7 +177,7 @@
 						<spring:message code="lbl.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.typeOfWork.code}" />
+						<c:out default="N/A" value="${lineEstimate.typeOfWork.description}" />
 					</div>
 				</div>
 				<div class="row add-border">
@@ -185,7 +185,7 @@
 						<spring:message code="lbl.subtypeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.code}" />
+						<c:out default="N/A" value="${lineEstimate.subTypeOfWork.description}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.modeofallotment" />

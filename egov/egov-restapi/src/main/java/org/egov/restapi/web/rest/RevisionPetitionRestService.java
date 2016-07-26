@@ -47,7 +47,7 @@ import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -126,7 +126,7 @@ public class RevisionPetitionRestService {
 	public String createRevisionPetitionFromRest(@RequestBody String createRevionPetitionDetails)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String responseJson = new String();
-		EgovThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
+		ApplicationThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
 		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);

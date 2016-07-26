@@ -215,7 +215,16 @@ function loadingReport()
 							  { "data" : "ownerName", "title": "Owner Name"},
 							  { "data" : "propertyId", "title": "Property Id"},
 							  { "data" : "billNo", "title": "Bill No"},
-							  { "data" : "billDate", "title": "Bill Date"},
+							  { "data" : "billDate",
+								  render: function (data, type, full) {
+	        						if(data != undefined) {
+	        							var regDateSplit = data.split("-");		
+	        							return regDateSplit[2].substring(0,2) + "/" + regDateSplit[1] + "/" + regDateSplit[0];
+	        						}
+	        						else return "";
+							     }, "title": "Bill Date"
+							  },
+							     
 							  { "data" : "houseNo", "title": "House No"},
 							  { "data" : "locality", "title": "Locality"},
 							  { "data" : "connectionType", "title": "Connection Type"}

@@ -50,8 +50,8 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -69,12 +69,16 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_AUTO;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
 
 @Namespace("/citizen/collection")
@@ -123,7 +127,7 @@ public class CollectionAction extends BaseFormAction {
         LOGGER.debug("Entered into prepare method");
         final User usr = userService.getUserByUsername(PropertyTaxConstants.CITIZENUSER);
         setUserId(usr.getId().longValue());
-        EgovThreadLocals.setUserId(usr.getId());
+        ApplicationThreadLocals.setUserId(usr.getId());
         basicProperty = basicPropertyService.findByNamedQuery(QUERY_BASICPROPERTY_BY_UPICNO, assessmentNumber);
         LOGGER.debug("Exit from prepare method");
     }
@@ -142,10 +146,21 @@ public class CollectionAction extends BaseFormAction {
                 .getProperty());
         final BigDecimal currDue = demandCollMap.get(CURR_DMD_STR).subtract(demandCollMap.get(CURR_COLL_STR));
         final BigDecimal arrDue = demandCollMap.get(ARR_DMD_STR).subtract(demandCollMap.get(ARR_COLL_STR));
+        /*
+         * Advance collection should also be considered for full payment validation. 
+         * Current year second installment demand will be the demand for all the advance installments
+         */
+        BigDecimal advanceCollected = demandCollMap.get(ADVANCE_COLLECTION_STR);
+        BigDecimal secondHalfTax = demandCollMap.get(CURR_SECONDHALF_DMD_STR);
+        BigDecimal actualAdvanceToBeCollected = secondHalfTax.multiply(new BigDecimal(MAX_ADVANCES_ALLOWED));
+        BigDecimal advanceBalance = actualAdvanceToBeCollected.subtract(advanceCollected);
 
-        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0)
+        if (currDue.compareTo(BigDecimal.ZERO) <= 0 && arrDue.compareTo(BigDecimal.ZERO) <= 0 && advanceBalance.compareTo(BigDecimal.ZERO) <= 0)
             return RESULT_TAXPAID;
 
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            propertyTaxBillable.setVacantLandTaxPayment(Boolean.TRUE);
+        }
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable.setUserId(userId);

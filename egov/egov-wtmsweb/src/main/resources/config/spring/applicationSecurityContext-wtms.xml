@@ -61,9 +61,15 @@
 				<security:filter-chain pattern="/application/generatebill/**" filters="none" />
 				<security:filter-chain pattern="/application/generatebillOnline/**" filters="none" />
 				
+				<security:filter-chain pattern="/reports/dCBReport/localityWise" filters="none" /> 
+				<security:filter-chain pattern="/reports/dCBReportList" filters="none" /> 
+				<security:filter-chain pattern="/report/dailyWTCollectionReport/search/" filters="none" /> 
+				<security:filter-chain pattern="/reports/coonectionReport/wardWise" filters="none" /> 
+				<security:filter-chain pattern="/reports/connectionReportList" filters="none" /> 
+				
 				<security:filter-chain pattern="/application/view/**" filters="none" /> 
 				<security:filter-chain pattern="/viewDcb/consumerCodeWis/**" filters="none" /> 
-				
+				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/collection/citizen/**" filters="none" />
 				<security:filter-chain pattern="/rest/**" filters="anonymousAuthenticationFilter"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />

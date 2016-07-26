@@ -24,163 +24,256 @@
     In addition to the terms of the GPL license to be adhered to in using this
     program, the following additional terms are to be complied with:
 
-	1) All versions of this program, verbatim or modified must carry this
-	   Legal Notice.
+        1) All versions of this program, verbatim or modified must carry this
+           Legal Notice.
 
-	2) Any misrepresentation of the origin of the material is prohibited. It
-	   is required that all modified versions of this material be marked in
-	   reasonable ways as different from the original version.
+        2) Any misrepresentation of the origin of the material is prohibited. It
+           is required that all modified versions of this material be marked in
+           reasonable ways as different from the original version.
 
-	3) This license does not grant any rights to any user of the program
-	   with regards to rights under trademark law for use of the trade names
-	   or trademarks of eGovernments Foundation.
+        3) This license does not grant any rights to any user of the program
+           with regards to rights under trademark law for use of the trade names
+           or trademarks of eGovernments Foundation.
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.collection.web.actions.service;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.commons.Bank;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.dao.BankBranchHibernateDAO;
+import org.egov.commons.dao.BankHibernateDAO;
+import org.egov.commons.dao.BankaccountHibernateDAO;
+import org.egov.commons.entity.BankAccountServiceMap;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.models.BankAccountServiceMap;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
-
+import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
-@Results({ @Result(name = ServiceTypeToBankAccountMappingAction.NEW, location = "serviceTypeToBankAccountMapping-new.jsp"),
-        @Result(name = ServiceTypeToBankAccountMappingAction.EDIT, location = "serviceTypeToBankAccountMapping-edit.jsp"),
-        @Result(name = ServiceTypeToBankAccountMappingAction.INDEX, location = "serviceTypeToBankAccountMapping-index.jsp") })
-public class ServiceTypeToBankAccountMappingAction extends BaseFormAction{
-	  private static final long serialVersionUID = 1L;
-	    private PersistenceService<BankAccountServiceMap, Long> bankAccountServiceMap;
-	    private Collection<BankAccountServiceMap> serviceTypeToBankAccountMappingList = null;
-	    private BankAccountServiceMap bankAccountServiceInstance = new BankAccountServiceMap();
-	    private Integer id;
-	    private String bankName;
-	    private String serviceDetails;
-		private String branchName;
-	    private String accountNumber;
-	    private String serviceCategory;
+@Results({
+    @Result(name = ServiceTypeToBankAccountMappingAction.NEW, location = "serviceTypeToBankAccountMapping-new.jsp"),
+    @Result(name = ServiceTypeToBankAccountMappingAction.SUCCESS, location = "serviceTypeToBankAccountMapping-success.jsp"),
+    @Result(name = ServiceTypeToBankAccountMappingAction.INDEX, location = "serviceTypeToBankAccountMapping-index.jsp") })
+public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
+    private static final long serialVersionUID = 1L;
+    private PersistenceService<BankAccountServiceMap, Long> bankAccountMappingService;
+    private BankAccountServiceMap bankAccountServiceMap = new BankAccountServiceMap();
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private BankBranchHibernateDAO bankBrankHibernateDAO;
+    @Autowired
+    private BankaccountHibernateDAO bankAccountHibernateDAO;
+    List<BankAccountServiceMap> bankAccountServices = new ArrayList<BankAccountServiceMap>();
+    Integer bankId;
+    Integer branchId;
+    Long serviceCategory;
+    Long serviceAccountId;
+    String sourcePage;
+    private String target;
+    Integer fundId;
+    
+    public ServiceTypeToBankAccountMappingAction() {
+        addRelatedEntity("serviceDetails", ServiceDetails.class);
+        addRelatedEntity("bankAccountId", Bankaccount.class);
+    }
 
-		@Action(value = "/service/serviceTypeToBankAccountMapping-newform")
-	    public String newform() {
-			
-	        addDropdownData("serviceCategoryList", bankAccountServiceMap.findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
-	        addDropdownData("serviceTypeList", bankAccountServiceMap.findAllByNamedQuery("GETSERVICETYPENOTMAPPED"));
-	        addDropdownData("bankNameList", bankAccountServiceMap.findAllByNamedQuery("BANK_NAME_ATLEAST_ONE_BRANCH"));
-	        addDropdownData("bankBranchList", bankAccountServiceMap.findAllByNamedQuery("BANKBRANCH_NAME_ATLEAST_ONE_BRANCH"));
-	        addDropdownData("bankAcctNoList", bankAccountServiceMap.findAllByNamedQuery("BANKACCOUNT"));
+    @Action(value = "/service/serviceTypeToBankAccountMapping-newform")
+    public String newform() {
+        if (getServiceAccountId() != null) {
+            populateListsForView();
+            setupDropdownDataExcluding();
+            bankAccountServiceMap = bankAccountMappingService.findById(getServiceAccountId(), false);
+            addDropdownData(
+                    "bankBranchList",
+                    bankBrankHibernateDAO.getAllBankBranchsByBank(bankAccountServiceMap.getBankAccountId()
+                            .getBankbranch().getBank().getId()));
+            addDropdownData(
+                    "bankAccountIdList",
+                    bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(bankAccountServiceMap
+                            .getBankAccountId().getBankbranch().getId(), bankAccountServiceMap.getServiceDetails().getFund()
+                            .getId()));
+            setServiceCategory(bankAccountServiceMap.getServiceDetails().getServiceCategory().getId());
+            setBankId(bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getId());
+            setBranchId(bankAccountServiceMap.getBankAccountId().getBankbranch().getId());
+        } else
+            populateLists();
+        return NEW;
+    }
 
-	        return NEW;
-	    }
+    private void populateLists() {
+        addDropdownData("serviceCategoryList",
+                persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
+        addDropdownData("serviceDetailsList", Collections.EMPTY_LIST);
+        addDropdownData("bankNameList", bankHibernateDAO.getAllBankHavingBranchAndAccounts());
+        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
+        addDropdownData("bankAccountIdList", Collections.EMPTY_LIST);
+    }
 
-	    @Action(value = "/service/serviceTypeToBankAccountMapping-list")
-	    public String list() {
-	    	serviceTypeToBankAccountMappingList = bankAccountServiceMap.findAll(CollectionConstants.SERVICETYPETOBANK_ID);
-	        return INDEX;
-	    }
+    private void populateListsForView() {
+        addDropdownData("serviceCategoryList",
+                persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
+        addDropdownData("serviceDetailsList",
+                serviceCategory != null && serviceCategory!=-1
+                        ? getPersistenceService().findAllByNamedQuery(
+                                CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY, Long.valueOf(serviceCategory),
+                                 Boolean.TRUE)
+                        : Collections.EMPTY_LIST);
+        addDropdownData("bankNameList", getBankMappedToService());
+        addDropdownData("bankBranchList", bankId!=null && bankId!=-1? bankBrankHibernateDAO.getAllBankBranchsByBankForReceiptPayments(bankId): Collections.EMPTY_LIST);
+        addDropdownData("bankAccountIdList",branchId!=null && branchId!=-1 ? bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId, fundId): Collections.EMPTY_LIST);
+    }
 
-	    @Action(value = "/service/serviceTypeToBankAccountMapping-edit")
-	    public String edit() {
-	    	bankAccountServiceInstance = bankAccountServiceMap.findByNamedQuery("SERVICETYPETOBANK_ID", id);
-	        return EDIT;
-	    }
+    private List<Bank> getBankMappedToService() {
+        List<Bank> bankList = new ArrayList<Bank>();
+        final String serviceBankQueryString = "select distinct asm.bankAccountId.bankbranch.bank from BankAccountServiceMap asm)";
+        final Query bankListQuery = persistenceService.getSession().createQuery(serviceBankQueryString);
+        bankList = bankListQuery.list();
+        return bankList;
+    }
 
-	    @Action(value = "/service/serviceTypeToBankAccountMapping-save")
-	    public String save() {
-	    	bankAccountServiceMap.update(bankAccountServiceInstance);
-	        return NEW;
-	    }
+    @Action(value = "/service/serviceTypeToBankAccountMapping-list")
+    public String list() {
+        populateListsForView();
+        return INDEX;
+    }
 
-	    @Action(value = "/service/serviceTypeToBankAccountMapping-create")
-	    public String create() {
-	    	System.out.print(bankName+serviceDetails+branchName+accountNumber+serviceCategory);
-	    	
-	    	bankAccountServiceMap.create(bankAccountServiceInstance);
-	    	  return list();
-	    }
+    @Action(value = "/service/serviceTypeToBankAccountMapping-search")
+    public String search() {
+        populateListsForView();
+        final StringBuilder searchkQueryString = new StringBuilder();
+        searchkQueryString.append("select distinct asm from BankAccountServiceMap asm where 1=1");
+        if (bankId != null && bankId != -1)
+            searchkQueryString.append(" and asm.bankAccountId.bankbranch.bank.id=:bankId");
+        if (branchId != null && branchId != -1)
+            searchkQueryString.append(" and asm.bankAccountId.bankbranch.id=:branchId");
+        if (bankAccountServiceMap.getBankAccountId() != null && bankAccountServiceMap.getBankAccountId().getId() != -1)
+            searchkQueryString.append(" and asm.bankAccountId.id=:accountId");
+        if (serviceCategory != null && serviceCategory != -1)
+            searchkQueryString.append(" and asm.serviceDetails.serviceCategory.id=:serviceCatId");
+        if (bankAccountServiceMap.getServiceDetails() != null
+                && bankAccountServiceMap.getServiceDetails().getId() != -1)
+            searchkQueryString.append(" and asm.serviceDetails.id=:serviceId");
+        final Query searchBankAccountListQuery = persistenceService.getSession().createQuery(
+                searchkQueryString.toString());
+        if (bankId != null && bankId != -1)
+            searchBankAccountListQuery.setParameter("bankId", bankId);
+        if (branchId != null && branchId != -1)
+            searchBankAccountListQuery.setParameter("branchId", branchId);
+        if (bankAccountServiceMap.getBankAccountId() != null && bankAccountServiceMap.getBankAccountId().getId() != -1)
+            searchBankAccountListQuery.setParameter("accountId", bankAccountServiceMap.getBankAccountId().getId());
+        if (serviceCategory != null && serviceCategory != -1)
+            searchBankAccountListQuery.setParameter("serviceCatId", serviceCategory);
+        if (bankAccountServiceMap.getServiceDetails() != null
+                && bankAccountServiceMap.getServiceDetails().getId() != -1)
+            searchBankAccountListQuery.setParameter("serviceId", bankAccountServiceMap.getServiceDetails().getId());
+        bankAccountServices = searchBankAccountListQuery.list();
+        target = "searchresult";
+        return INDEX;
+    }
 
-	    @Override
-	    public Object getModel() {
-	        return bankAccountServiceInstance;
-	    }
+    @Action(value = "/service/serviceTypeToBankAccountMapping-create")
+    public String create() {
+        if (bankAccountServiceMap.getId() != null) {
+            final BankAccountServiceMap bankAccountServiceMapObj = bankAccountMappingService.findById(
+                    bankAccountServiceMap.getId(), false);
+            bankAccountServiceMapObj.setBankAccountId(bankAccountServiceMap.getBankAccountId());
+            bankAccountServiceMapObj.setServiceDetails(bankAccountServiceMap.getServiceDetails());
+            bankAccountMappingService.persist(bankAccountServiceMapObj);
 
-	    public PersistenceService<BankAccountServiceMap, Long> getBankAccountServiceMap() {
-			return bankAccountServiceMap;
-		}
+        } else
+            bankAccountMappingService.persist(bankAccountServiceMap);
+        if (sourcePage != null && sourcePage.equals("modify"))
+            addActionMessage(getText("service.master.successmessage.modify", new String[] { bankAccountServiceMap
+                    .getServiceDetails().getName() }));
+        else
+            addActionMessage(getText("service.master.successmessage.create", new String[] {
+                    bankAccountServiceMap.getServiceDetails().getName(),
+                    bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getName(),
+                    bankAccountServiceMap.getBankAccountId().getAccountnumber() }));
+        return SUCCESS;
+    }
 
-		public void setBankAccountServiceMap(
-				PersistenceService<BankAccountServiceMap, Long> bankAccountServiceMap) {
-			this.bankAccountServiceMap = bankAccountServiceMap;
-		}
+    @Override
+    public Object getModel() {
+        return bankAccountServiceMap;
+    }
 
-		/**
-	     * @return the ServiceTypeToBankAccountMappingList
-	     */
-	    public Collection<BankAccountServiceMap> getserviceTypeToBankAccountMappingList() {
-	        return serviceTypeToBankAccountMappingList;
-	    }
+    public List<BankAccountServiceMap> getBankAccountServices() {
+        return bankAccountServices;
+    }
 
-	    public void setserviceTypeToBankAccountMapping(final PersistenceService<BankAccountServiceMap, Long> BankAccountServiceMap) {
-	        this.bankAccountServiceMap = bankAccountServiceMap;
-	    }
+    public void setBankAccountServices(final List<BankAccountServiceMap> bankAccountServices) {
+        this.bankAccountServices = bankAccountServices;
+    }
 
-		public Integer getId() {
-			return id;
-		}
+    public PersistenceService<BankAccountServiceMap, Long> getBankAccountMappingService() {
+        return bankAccountMappingService;
+    }
 
-		public void setId(Integer id) {
-			this.id = id;
-		}
+    public void setBankAccountMappingService(
+            final PersistenceService<BankAccountServiceMap, Long> bankAccountMappingService) {
+        this.bankAccountMappingService = bankAccountMappingService;
+    }
 
-		public String getBankName() {
-			return bankName;
-		}
+    public Integer getBankId() {
+        return bankId;
+    }
 
-		public void setBankName(String bankName) {
-			this.bankName = bankName;
-		}
+    public void setBankId(final Integer bankId) {
+        this.bankId = bankId;
+    }
 
-		public String getServiceDetails() {
-			return serviceDetails;
-		}
+    public Integer getBranchId() {
+        return branchId;
+    }
 
-		public void setServiceDetails(String serviceDetails) {
-			this.serviceDetails = serviceDetails;
-		}
+    public void setBranchId(final Integer branchId) {
+        this.branchId = branchId;
+    }
 
-		public String getBranchName() {
-			return branchName;
-		}
+    public Long getServiceCategory() {
+        return serviceCategory;
+    }
 
-		public void setBranchName(String branchName) {
-			this.branchName = branchName;
-		}
+    public void setServiceCategory(final Long serviceCategory) {
+        this.serviceCategory = serviceCategory;
+    }
 
-		public String getAccountNumber() {
-			return accountNumber;
-		}
+    public Long getServiceAccountId() {
+        return serviceAccountId;
+    }
 
-		public void setAccountNumber(String accountNumber) {
-			this.accountNumber = accountNumber;
-		}
+    public void setServiceAccountId(final Long serviceAccountId) {
+        this.serviceAccountId = serviceAccountId;
+    }
 
-		public String getServiceCategory() {
-			return serviceCategory;
-		}
+    public String getSourcePage() {
+        return sourcePage;
+    }
 
-		public void setServiceCategory(String serviceCategory) {
-			this.serviceCategory = serviceCategory;
-		}
+    public void setSourcePage(final String sourcePage) {
+        this.sourcePage = sourcePage;
+    }
 
-	
+    public String getTarget() {
+        return target;
+    }
 
-	
-		
+    public void setTarget(final String target) {
+        this.target = target;
+    }
+
 }

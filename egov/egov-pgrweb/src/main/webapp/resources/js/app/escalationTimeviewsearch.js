@@ -67,7 +67,7 @@ jQuery(document).ready(function($)
 																+ (currentIndex - 1)
 																+ '"  name="escalationList['
 																+ (currentIndex - 1)
-																+ '].designation.description" required="required" ></td> <td > <input type=hidden id="escalationFormId'
+																+ '].designation.name" required="required" ></td> <td > <input type=hidden id="escalationFormId'
 																+ (currentIndex - 1)
 																+ '" name="escalationList['
 																+ (currentIndex - 1)

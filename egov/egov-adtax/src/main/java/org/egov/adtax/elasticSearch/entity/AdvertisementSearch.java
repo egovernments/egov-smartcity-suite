@@ -40,8 +40,8 @@
 
 package org.egov.adtax.elasticSearch.entity;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
 
@@ -52,7 +52,7 @@ public class AdvertisementSearch implements Indexable {
 
 	@Override
 	public String getIndexId() {
-		return EgovThreadLocals.getCityCode() + "-" + applicationNumber;
+		return ApplicationThreadLocals.getCityCode() + "-" + applicationNumber;
 	}
 
 	@Searchable(name = "revwardname", group = Searchable.Group.CLAUSES)

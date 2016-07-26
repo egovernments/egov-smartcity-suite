@@ -46,8 +46,8 @@
 		<!-- A squence pk generator -->
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGF_BUDGETDETAIL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGF_BUDGETDETAIL</param>
 			</generator>
 		</id>
 		<property column="MODIFIEDDATE" name="lastModifiedDate" type="timestamp"/>

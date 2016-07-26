@@ -40,117 +40,85 @@
 
 package org.egov.common.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UOMCategory implements java.io.Serializable {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-	private static final long serialVersionUID = -5071889556823525112L;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
 
-	private Integer id;
+@Entity
+@Table(name = "eg_uomcategory")
+@Unique(id = "id", tableName = "eg_uomcategory", fields = { "category" }, columnName = {
+        "category" }, enableDfltMsg = true)
+@SequenceGenerator(name = UOMCategory.SEQ_UOMCATEGORY, sequenceName = UOMCategory.SEQ_UOMCATEGORY, allocationSize = 1)
+public class UOMCategory extends AbstractAuditable {
 
-	private String category;
+    private static final long serialVersionUID = -5071889556823525112L;
+    public static final String SEQ_UOMCATEGORY = "SEQ_EG_UOMCATEGORY";
 
-	private String narration;
+    @Id
+    @GeneratedValue(generator = SEQ_UOMCATEGORY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	private Date lastmodified;
+    @Length(min = 1, max = 25)
+    @NotNull
+    private String category;
 
-	private Date createddate;
+    @Length(min = 1, max = 25)
+    private String narration;
 
-	private BigDecimal createdby;
+    @OneToMany(mappedBy = "uomCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id DESC ")
+    @NotAudited
+    private final List<UOM> uom = new ArrayList<UOM>(0);
 
-	private BigDecimal lastmodifiedby;
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	private Set<UOM> uoms = new HashSet<>();
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public UOMCategory() {
-	}
+    public String getCategory() {
+        return category;
+    }
 
-	public UOMCategory(final Integer id, final String category, final Date lastmodified, final Date createddate,
-			final BigDecimal createdby) {
-		this.id = id;
-		this.category = category;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-	}
+    public void setCategory(final String category) {
+        this.category = category;
+    }
 
-	public UOMCategory(final Integer id, final String category, final String narration, final Date lastmodified,
-			final Date createddate, final BigDecimal createdby, final BigDecimal lastmodifiedby, final Set<UOM> uoms) {
-		this.id = id;
-		this.category = category;
-		this.narration = narration;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-		this.lastmodifiedby = lastmodifiedby;
-		this.uoms = uoms;
-	}
+    public String getNarration() {
+        return narration;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public void setNarration(final String narration) {
+        this.narration = narration;
+    }
 
-	public void setId(final Integer id) {
-		this.id = id;
-	}
+    public List<UOM> getUOM() {
+        return uom;
+    }
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(final String category) {
-		this.category = category;
-	}
-
-	public String getNarration() {
-		return narration;
-	}
-
-	public void setNarration(final String narration) {
-		this.narration = narration;
-	}
-
-	public Date getLastmodified() {
-		return lastmodified;
-	}
-
-	public void setLastmodified(final Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-
-	public Date getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(final Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public BigDecimal getCreatedby() {
-		return createdby;
-	}
-
-	public void setCreatedby(final BigDecimal createdby) {
-		this.createdby = createdby;
-	}
-
-	public BigDecimal getLastmodifiedby() {
-		return lastmodifiedby;
-	}
-
-	public void setLastmodifiedby(final BigDecimal lastmodifiedby) {
-		this.lastmodifiedby = lastmodifiedby;
-	}
-
-	public Set<UOM> getUoms() {
-		return uoms;
-	}
-
-	public void setUoms(final Set<UOM> uoms) {
-		this.uoms = uoms;
-	}
-
+    public void setUOM(final List<UOM> uom) {
+        this.uom.clear();
+        if (uom != null)
+            this.uom.addAll(uom);
+    }
 }

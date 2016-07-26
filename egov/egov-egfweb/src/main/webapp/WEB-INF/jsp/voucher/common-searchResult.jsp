@@ -107,10 +107,5 @@ function goToParent(code, name, id) {
 				onclick="javascript:window.close()" class="button" />
 		</div>
 	</s:form>
-
-
-
-
 </body>
 </html>
-

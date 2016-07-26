@@ -43,7 +43,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.wtms.application.service.GenerateConnectionBill;
+
+import org.egov.wtms.application.entity.GenerateConnectionBill;
 
 import java.lang.reflect.Type;
 
@@ -60,7 +61,7 @@ public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateCon
         jsonObject.addProperty("houseNo", generateConnectionBill.getHouseNumber());
         jsonObject.addProperty("locality", generateConnectionBill.getLocality());
         jsonObject.addProperty("billNo", generateConnectionBill.getBillNo());
-        jsonObject.addProperty("billDate", generateConnectionBill.getBillDate());
+        jsonObject.addProperty("billDate", generateConnectionBill.getBillDate().toString());
         return jsonObject;
     }
 

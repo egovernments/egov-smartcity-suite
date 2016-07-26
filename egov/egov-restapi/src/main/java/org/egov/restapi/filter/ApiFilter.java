@@ -45,8 +45,8 @@ import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.restapi.config.properties.RestAPIApplicationProperties;
 import org.egov.restapi.constants.RestRedirectConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,13 +116,13 @@ public class ApiFilter implements Filter {
         }
 
         if (StringUtils.isNotBlank(ulbCode)) {
-            if (!ulbCode.equals(EgovThreadLocals.getCityCode())) {
+            if (!ulbCode.equals(ApplicationThreadLocals.getCityCode())) {
                 LOG.info("Request Reached Different city. Need to change domain details");
                 final String cityName = RestRedirectConstants.getCode_ulbNames().get(ulbCode).toLowerCase();
-                EgovThreadLocals.setTenantID(cityName);
+                ApplicationThreadLocals.setTenantID(cityName);
                 final City city = cityService.getCityByCode(ulbCode);
-                EgovThreadLocals.setDomainName(city.getDomainURL());
-                EgovThreadLocals.setCityCode(ulbCode);
+                ApplicationThreadLocals.setDomainName(city.getDomainURL());
+                ApplicationThreadLocals.setCityCode(ulbCode);
             } else
                 LOG.info("ULB code resolved to be same, continueing normal request flow");
         } else {
@@ -150,6 +150,7 @@ public class ApiFilter implements Filter {
         final List<String> apOnlineIpAddress = restAPIApplicationProperties.aponlineIPAddress();
         final List<String> esevaIpAddress = restAPIApplicationProperties.esevaIPAddress();
         final List<String> softtechIpAddress = restAPIApplicationProperties.softtechIPAddress();
+        final List<String> cardIpAddress = restAPIApplicationProperties.cardIPAddress();
         if (apOnlineIpAddress != null && referer != null)
             for (final String aponlineIp : apOnlineIpAddress)
                 if (!aponlineIp.equals("") && referer.contains(aponlineIp)) {
@@ -166,6 +167,12 @@ public class ApiFilter implements Filter {
             for (final String Ip : softtechIpAddress)
                 if (!Ip.equals("") && referer.contains(Ip)) {
                     httpServletRequest.getSession().setAttribute(SOURCE, Source.SOFTTECH);
+                    return true;
+                }
+        if (cardIpAddress != null && referer != null)
+            for (final String cardIp : cardIpAddress)
+                if (!cardIp.equals("") && referer.contains(cardIp)) {
+                    httpServletRequest.getSession().setAttribute(SOURCE, Source.CARD);
                     return true;
                 }
         return false;

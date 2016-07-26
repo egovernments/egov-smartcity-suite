@@ -72,4 +72,12 @@
     
     <definition name="kibana-dashboard" template="/WEB-INF/views/dashboard/kibana-dashboard.jsp"/>
     
+    <definition name="erpReports" extends="base_layout">
+		<put-attribute name="page-title" value="title.erpReports" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dashboard/report.jsp"/>
+    </definition>
+      <definition name="erpPublicReports" extends="base_layout">
+		<put-attribute name="page-title" value="title.erpPublicReports" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/dashboard/public-report.jsp"/>
+    </definition>
 </tiles-definitions>

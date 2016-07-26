@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyOccupation"
 		table="EGPT_OCCUPATION_TYPE_MASTER">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_OCCUPATION_TYPE_MASTER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_OCCUPATION_TYPE_MASTER</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

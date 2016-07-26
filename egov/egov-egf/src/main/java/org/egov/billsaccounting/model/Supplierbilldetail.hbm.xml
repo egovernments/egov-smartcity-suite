@@ -47,8 +47,8 @@
 		table="SUPPLIERBILLDETAIL" >
 		<id name="id" type="integer">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence" >
-           <param name="sequence">SEQ_SUPPLIERBILLDETAIL</param>            </generator>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator" >
+           <param name="sequence_name">SEQ_SUPPLIERBILLDETAIL</param>            </generator>
 		</id>
 		
 		<many-to-one name="voucherheader"

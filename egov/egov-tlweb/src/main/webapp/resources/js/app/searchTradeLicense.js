@@ -289,6 +289,7 @@ jQuery(document).ready(function() {
 	
 	drillDowntableContainer = jQuery("#tblSearchTrade");
 	jQuery('#btnsearch').click(function(e) {
+		jQuery('.report-section').show();
 		document.getElementById("tradeSearchError").style.display='none';
         document.getElementById("tradeSearchError").innerHTML='';
         var applicationNumber = jQuery('#applicationNumber').val();
@@ -300,18 +301,21 @@ jQuery(document).ready(function() {
     	var tradeOwnerName=jQuery('#tradeOwnerName').val();
     	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
     	var mobileNo=jQuery('#mobileNo').val();
-    	
+    	var isCancelled	=jQuery('#isCancelled').is(":checked");
 		if ((applicationNumber == null || applicationNumber == "")  &&
 				(licenseNumber == null || licenseNumber == "") && (oldLicenseNumber == null || oldLicenseNumber == "") &&
 				(category == '-1') && (subCategory == '-1') &&
 				(tradeTitle == null || tradeTitle == "") && (tradeOwnerName == null || tradeOwnerName == "") &&
-				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "")) {
+				(propertyAssessmentNo == null || propertyAssessmentNo == "") && (mobileNo == null || mobileNo == "") && 
+				(isCancelled == null || isCancelled == '' || isCancelled == false)) {
 			document.getElementById("tradeSearchError").style.display='';
 	        document.getElementById("tradeSearchError").innerHTML='Cannot Search. Atleast One Search Criteria is Mandatory.';
-			return false;
+	        jQuery('.report-section').hide();
+	        return false;
+	            
 		}
+			callAjaxForSearchTrade();
 		
-		callAjaxForSearchTrade();
 	});
 	
 });
@@ -323,20 +327,20 @@ function goToView(obj) {
 } 
 
 function goToAction(obj){
-	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']')
-	.val(jQuery(obj).data('eleval')); 
+	jQuery('input[name=' + jQuery(obj).data('hiddenele') + ']').val(jQuery(obj).data('eleval')); 
+	
 	if(obj.options[obj.selectedIndex].innerHTML=='View Trade')
-		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../viewtradelicense/viewTradeLicense-view.action?id="+jQuery('#licenseId').val(),  'vt'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Modify Legacy License')
-		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../entertradelicense/update-form.action?model.id="+jQuery('#licenseId').val(), 'mll'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Collect Fees')
-		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/tl/integration/licenseBillCollect.action?licenseId="+jQuery('#licenseId').val(), 'cf'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Print Certificate')
-		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id="+jQuery('#licenseId').val(),  'gc'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renewal Notice')
-		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../renew/tradeRenewalNotice-renewalNotice.action?model.id="+jQuery('#licenseId').val(),  'rn'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 	else if(obj.options[obj.selectedIndex].innerHTML=='Renew License')
-		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(), '', 'scrollbars=yes,width=1000,height=700,status=yes');
+		window.open("../newtradelicense/newTradeLicense-beforeRenew.action?model.id="+jQuery('#licenseId').val(),  'rl'+jQuery('#licenseId').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
 }
 
   
@@ -350,7 +354,7 @@ function callAjaxForSearchTrade() {
 	var tradeOwnerName=jQuery('#tradeOwnerName').val();
 	var propertyAssessmentNo=jQuery('#propertyAssessmentNo').val();
 	var mobileNo=jQuery('#mobileNo').val();
-		
+	var isCancelled	= jQuery('#isCancelled').is(":checked");
 	jQuery('.report-section').removeClass('display-hide');
 	reportdatatable = drillDowntableContainer
 			.dataTable({
@@ -365,7 +369,8 @@ function callAjaxForSearchTrade() {
 						tradeTitle : tradeTitle,
 						tradeOwnerName : tradeOwnerName ,
 						propertyAssessmentNo : propertyAssessmentNo ,
-						mobileNo : mobileNo 
+						mobileNo : mobileNo ,
+						isCancelled : isCancelled
 					}
 				},
 				"sPaginationType" : "bootstrap",
@@ -375,50 +380,50 @@ function callAjaxForSearchTrade() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				aaSorting: [],				
 				columns : [ {
-							"data" : function(row, type, set, meta){
-									return { name:row.applicationNumber, id:row.licenseId };
-							},
-							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="licenseId" data-eleval="'
-										+ data.id + '">' + data.name + '</a>';
-							},
-							"sTitle" : "Application Number"
-						}, {
-							"data" : "tlNumber",
-							"sTitle" : "TL Number"
-						}, {
-							"data" : "oldTLNumber",
-							"sTitle" : "Old TL Number"
-						}, {
-							"data" : "category",
-							"sTitle" : "Category"
-						}, {
-							"data" : "subCategory",
-							"sTitle" : "Sub Category"
-						}, {
-							"data" : "tradeTittle",
-							"sTitle" : "Tittle of Trade"
-						}, {
-							"data" : "tradeOwner",
-							"sTitle" : "Trade Owner"
-						}, {
-							"data" : "mobileNumber",
-							"sTitle" : "Mobile Number"
-						}, {
-							"data" : "propertyAssmntNo",
-							"sTitle" : "Property Assessment Number"
-						}, {
-							"sTitle" : "Actions",
-				        	  "render" : function(data,type,row) {
-				        		  var showActions = row.actions; 
-				        		  var option = "<option>Select from Below</option>";
-				        		  jQuery.each(JSON.parse(row.actions),function(key,value){
-	        			             option+= "<option>"+value.key+"</option>";
-	        			         });
-				        		  console.log("Option Text"+option); 
-				        		  return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
-											+ row.licenseId + '" onChange="goToAction(this);" >'+option+'</select>');
-				        	   }
+					"data" : function(row, type, set, meta){
+							return { name:row.applicationNumber, id:row.licenseId };
+					},
+					"render" : function(data, type, row) {
+						return '<a href="javascript:void(0);" onclick="goToView(this);" data-hiddenele="licenseId" data-eleval="'
+								+ data.id + '">' + data.name + '</a>';
+					},
+					"sTitle" : "Application Number"
+				}, {
+					"data" : "tlNumber",
+					"sTitle" : "TL Number"
+				}, {
+					"data" : "oldTLNumber",
+					"sTitle" : "Old TL Number"
+				}, {
+					"data" : "category",
+					"sTitle" : "Category"
+				}, {
+					"data" : "subCategory",
+					"sTitle" : "Sub Category"
+				}, {
+					"data" : "tradeTittle",
+					"sTitle" : "Tittle of Trade"
+				}, {
+					"data" : "tradeOwner",
+					"sTitle" : "Trade Owner"
+				}, {
+					"data" : "mobileNumber",
+					"sTitle" : "Mobile Number"
+				}, {
+					"data" : "propertyAssmntNo",
+					"sTitle" : "Property Assessment Number"
+				}, {
+					"sTitle" : "Actions",
+		        	  "render" : function(data,type,row) {
+		        		  var showActions = row.actions; 
+		        		  var option = "<option>Select from Below</option>";
+		        		  jQuery.each(JSON.parse(row.actions),function(key,value){
+    			             option+= "<option>"+value.key+"</option>";
+    			         });
+		        		  console.log("Option Text"+option); 
+		        		  return ('<select class="dropchange" id="recordActions" data-hiddenele="licenseId" data-eleval="'
+									+ row.licenseId + '" onChange="goToAction(this);" >'+option+'</select>');
+		        	   }
 						}]				
 			});
 }

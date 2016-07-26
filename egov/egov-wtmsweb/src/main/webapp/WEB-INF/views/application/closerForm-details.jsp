@@ -50,13 +50,23 @@
 									</div>
 									
 								</div>
+								
 					<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group" id="radioValue">
 										<label class="col-sm-3 col-xs-12 control-label text-right"><spring:message  code="lbl.connectiontype"/>
                                         </label>
-						<div class="col-sm-6 add-margin dynamic-span capitalize">
+						<%-- <div class="col-sm-6 add-margin dynamic-span capitalize">
 							<form:radiobuttons path="closeConnectionType" items="${radioButtonMap}"   name="closeConnectionType" element="span" /> 
-						</div>
+						</div> --%>
+						<label class="col-sm-2 col-xs-4 control-label text-right"><spring:message code="lbl.temporary" /></label>
+			<div class="col-sm-2 col-xs-4 add-margin">
+				<form:radiobutton path="closeConnectionType" id="temporary" value="T" />
+			</div>
+			<label class="col-sm-2 col-xs-4 control-label "><spring:message code="lbl.permanent" />
+			</label>
+			<div class="col-sm-2 col-xs-4 add-margin">
+				<form:radiobutton path="closeConnectionType" id="permanent" value="P" />
+			</div>
 					</div>
 					</div>
                     <div class="form-group">
@@ -70,11 +80,10 @@
                                     
 </div>
 <script>
-
 var mode =$('#mode').val();
 if(mode !='closeredit'){
-$(':radio:not(:checked)').attr('disabled', true);
-$('#closeconnectionreason').attr('disabled', true);
+$(':radio:not(:checked)').attr('disabled', false);
+$('#closeconnectionreason').attr('disabled', false);
 }
 if(mode =='closereditForAE')
 	{
@@ -89,6 +98,7 @@ else
 if(mode == "" ){
 	$(':radio:not(:checked)').attr('disabled', true);
 	$('#closeconnectionreason').attr('disabled', true);
-	}
+	} 
+	
 </script>
 

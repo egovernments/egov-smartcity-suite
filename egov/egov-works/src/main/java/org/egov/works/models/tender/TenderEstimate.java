@@ -41,7 +41,7 @@ package org.egov.works.models.tender;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infstr.models.BaseModel;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 
 import javax.validation.Valid;
 import java.util.HashSet;

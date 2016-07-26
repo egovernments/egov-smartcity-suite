@@ -39,12 +39,17 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
@@ -53,18 +58,13 @@ import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Action class for the receipt register report
  */
 @ParentPackage("egov")
 @Results({
-    @Result(name = ReceiptRegisterReportAction.INDEX, location = "receiptRegisterReport-index.jsp"),
-    @Result(name = ReceiptRegisterReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
+        @Result(name = ReceiptRegisterReportAction.INDEX, location = "receiptRegisterReport-index.jsp"),
+        @Result(name = ReceiptRegisterReportAction.REPORT, location = "receiptRegisterReport-report.jsp") })
 public class ReceiptRegisterReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -76,10 +76,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private static final String EGOV_STATUS_ID = "EGOV_STATUS_ID";
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
+    private static final String EGOV_CLASSIFICATION="EGOV_CLASSIFICATION";
 
     private final Map<String, String> paymentModes = createPaymentModeList();
     private final Map<String, String> sources = createSourceList();
     private CollectionsUtil collectionsUtil;
+    private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -88,12 +90,12 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         final Map<String, String> paymentModesMap = new HashMap<String, String>(0);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-        /*paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);*/
-        /*paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);*/
+        /* paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD); */
+        /* paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK); */
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
         return paymentModesMap;
     }
-    
+
     private Map<String, String> createSourceList() {
         final Map<String, String> sourcesMap = new HashMap<String, String>(0);
         sourcesMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
@@ -147,7 +149,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setSource(final String source) {
         setReportParam(EGOV_SOURCE, source);
     }
-    
+
     /**
      * @return the do date
      */
@@ -203,7 +205,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setStatusId(final Integer statusId) {
         setReportParam(EGOV_STATUS_ID, statusId);
     }
-
+  
     /**
      * @return the payment modes
      */
@@ -222,12 +224,15 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
         // Setup drop down data for department list
         addRelatedEntity("department", Department.class, "name");
         addRelatedEntity("status", EgwStatus.class, "description");
-        addDropdownData("servicetypeList",getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS));
+        addDropdownData("servicetypeList",
+                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_COLLECTION_SERVICS));
         setupDropdownDataExcluding();
 
         // Set default values of criteria fields
         setReportParam(EGOV_FROM_DATE, new Date());
         setReportParam(EGOV_TO_DATE, new Date());
+        serviceTypeMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceTypeMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
         return INDEX;
     }
 
@@ -243,15 +248,13 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     }
 
     public List getReceiptStatuses() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? order by description",
-                ReceiptHeader.class.getSimpleName());
+        return collectionsUtil.getAllReceiptHeaderStatus();
     }
 
     public Map<String, String> getSources() {
         return sources;
     }
-    
+
     public Long getServiceId() {
         return (Long) getReportParam(EGOV_SERVICE_ID);
     }
@@ -259,5 +262,22 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     public void setServiceId(final Long serviceId) {
         setReportParam(EGOV_SERVICE_ID, serviceId);
     }
+    
+    public String getClassificationType() {
+        return (String) getReportParam(EGOV_CLASSIFICATION);
+    }
+
+    public void setClassificationType(final String classification) {
+        setReportParam(EGOV_CLASSIFICATION, classification);
+    }
+    
+    
+    public TreeMap<String, String> getServiceTypeMap() {
+        return serviceTypeMap;
+    }
+
+    public void setServiceTypeMap(final TreeMap<String, String> serviceTypeMap) {
+        this.serviceTypeMap = serviceTypeMap;
+    }   
     
 }

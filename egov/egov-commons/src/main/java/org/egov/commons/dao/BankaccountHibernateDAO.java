@@ -127,5 +127,22 @@ public class BankaccountHibernateDAO  {
         }
         return bankAccount;
     }
-
+    
+    public List<Bankaccount> getBankAccountByBankBranchForReceiptsPayments(final Integer bankBranchId, Integer fundId) {
+        final StringBuilder query = new StringBuilder(
+                "from Bankaccount bankacc where bankacc.isactive=true and bankacc.type in ('RECEIPTS_PAYMENTS','RECEIPTS') and bankacc.bankbranch.id=:bankBranchId");
+        if (fundId != null) {
+            query.append(" and bankacc.fund.id=:fundId");
+        }
+        final Query qry = getCurrentSession().createQuery(query.toString());
+        qry.setInteger("bankBranchId", bankBranchId);
+        if (fundId != null) {
+            qry.setInteger("fundId", fundId);
+        }
+        List<Bankaccount> bankAccount = null;
+        if (qry.list().size() != 0) {
+            bankAccount = qry.list();
+        }
+        return bankAccount;
+    }
 }

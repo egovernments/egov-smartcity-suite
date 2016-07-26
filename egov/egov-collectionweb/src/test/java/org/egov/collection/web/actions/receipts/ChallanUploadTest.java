@@ -122,8 +122,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		objectFactory = new CollectionObjectFactory(session);
 		setupEJB();
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		position = (Position) genericService.find("from Position  where name=?","MEDICAL OFFICER_1");
 		
 		collectionsUtil=new CollectionsUtil(){
@@ -151,7 +150,6 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);		
 		
@@ -163,12 +161,10 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		};
 		PersistenceService<InstrumentHeader, Long> iHeaderService= new PersistenceService<InstrumentHeader, Long>();
 		iHeaderService.setType(InstrumentHeader.class);
-		iHeaderService.setSessionFactory(egovSessionFactory);
 		instrumentService.setInstrumentHeaderService(iHeaderService);
 		
 		PersistenceService<InstrumentOtherDetails, Long> iOtherDetailsService= new PersistenceService<InstrumentOtherDetails, Long>();
 		iOtherDetailsService.setType(InstrumentOtherDetails.class);
-		iOtherDetailsService.setSessionFactory(new SessionFactory());
 		instrumentService.setInstrumentOtherDetailsService(iOtherDetailsService);
 		instrumentService.setPersistenceService(genericService);
 		
@@ -184,7 +180,6 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		financialsUtil.setInstrumentService(instrumentService);
 		receiptService = new ReceiptService();		
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		receiptService.setCollectionsUtil(collectionsUtil);
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -194,7 +189,6 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		receiptService.setEisService(eisUtilService);
 		challanService = new ChallanService();
 		challanService.setType(Challan.class);
-		challanService.setSessionFactory(egovSessionFactory);
 		challanService.setCollectionsUtil(collectionsUtil);
 		
 		challanWorkflowService = new SimpleWorkflowService<Challan>(
@@ -209,7 +203,6 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 		};
 		receiptHeaderService.setType(ReceiptHeader.class);
 		receiptHeaderService.setPersistenceService(genericService);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
 		receiptHeaderService.setCollectionsUtil(collectionsUtil);
 		receiptHeaderService.setCommonsManager(commonsManager);
 		receiptHeaderService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -602,7 +595,7 @@ String[] inputArrayCheque = new String[21];
 		
 		egovEJBTest=new EGovEJBTest();
 		egovEJBTest.setUp();
-		EgovThreadLocals.setUserId(user.getId().toString());
+		ApplicationThreadLocals.setUserId(user.getId().toString());
 		egovEJBTest.registerEJB("CommonsManagerHome", CommonsManagerHome.class, CommonsManager.class, CommonsManagerBean.class);
 		egovEJBTest.registerEJB("EmpLeaveManagerHome", EmpLeaveManagerHome.class, EmpLeaveManager.class, EmpLeaveManagerBean.class);
 		egovEJBTest.registerEJB("UserManagerHome", UserManagerHome.class, UserManager.class, UserManagerBean.class);

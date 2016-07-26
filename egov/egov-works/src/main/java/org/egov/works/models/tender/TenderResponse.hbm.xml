@@ -46,8 +46,8 @@
 		table="EGW_TENDER_RESPONSE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_TENDER_RESPONSE</param> 
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_TENDER_RESPONSE</param> 
 			</generator>
 		</id>				
 		<many-to-one name="tenderEstimate" column="TENDER_ESTIMATE_ID" not-null="true" fetch="select"/>	

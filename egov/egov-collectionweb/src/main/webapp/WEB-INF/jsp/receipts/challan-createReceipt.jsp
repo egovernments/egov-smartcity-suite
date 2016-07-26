@@ -51,10 +51,8 @@
 	#bankcodescontainer li.yui-ac-prehighlight {background:#FFFFCC;}
 </style>
 <script type="text/javascript">
-
 jQuery.noConflict();
 jQuery(document).ready(function() {
-  	 
      jQuery(" form ").submit(function( event ) {
     	 doLoadingMask();
     });
@@ -75,7 +73,37 @@ jQuery(document).ready(function() {
      	  }
      	  
       }).data('datepicker');
+     
+     var nowTemp = new Date();
+     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+      jQuery( "#challanDate").datepicker({ 
+     	 format: 'dd/mm/yyyy',
+     	 endDate: nowTemp, 
+     	 autoclose:true,
+         onRender: function(date) {
+      	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+      	  }
+       }).on('changeDate', function(ev) {
+     	  var string=jQuery(this).val();
+     	  if(!(string.indexOf("_") > -1)){
+     		  isDatepickerOpened=false; 
+     	  }
+       }).data('datepicker');
       
+      jQuery( "#receiptdate").datepicker({ 
+      	 format: 'dd/mm/yyyy',
+      	 endDate: nowTemp, 
+      	 autoclose:true,
+          onRender: function(date) {
+       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+       	  }
+        }).on('changeDate', function(ev) {
+      	  var string=jQuery(this).val();
+      	  if(!(string.indexOf("_") > -1)){
+      		  isDatepickerOpened=false; 
+      	  }
+        }).data('datepicker');
  });
 
 
@@ -482,13 +510,12 @@ function checkForCurrentDate(obj)
 	   //trim(obj,obj.value);
 	   dom.get("challan_dateerror_area").style.display="none";
 	   document.getElementById("challan_dateerror_area").innerHTML="";
-	   var currDate = "${currDate}";
 	   if(obj.value!="")
-	   if(!validateChequeDate(obj.value,currDate))
+	   if(!validatedays(obj.value,document.getElementById('receiptdate').value))
 	   {
 	       dom.get("challan_dateerror_area").style.display="block";
 	       document.getElementById("challan_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 	       return false;
 	   }
    }
@@ -496,7 +523,7 @@ function checkForCurrentDate(obj)
 
 function onBodyLoad()
 {
-	<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
+	<s:if test='%{model.id!=null && model.status.code=="PENDING" && model.challan.status.code=="VALIDATED"}'>
 		loadDropDownCodesBank();
 	
 		// To hide delete button in cheque grid on page load
@@ -515,14 +542,13 @@ function onBodyLoad()
 		if(document.getElementById('instrumentChequeAmount').value==""){
 			document.getElementById('instrumentChequeAmount').value="";
 		}
-		
+		if(document.getElementById('challanDate').value!=""){
+			document.getElementById("challanDate").disabled=true;
+		}
 		displayPaytModes();
 		displayPaymentDetails();
 		loadchequedetails();
-		
 	</s:if>
-
-	
 }
 
 function displayPaymentDetails(){
@@ -920,6 +946,10 @@ function validate()
 			validation=false;
 		}
 	}
+	if(document.getElementById("receiptdate")!=null && document.getElementById("receiptdate").value==""){
+		document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.error.receiptdate" />' + '<br>';
+		validation=false;
+	}
     
 	if(validation==false){
 		dom.get("challan_error_area").style.display="block";
@@ -1008,21 +1038,31 @@ function validate()
 	</div>
 
 </s:if>
-<s:if test="%{model.id!=null && model.status.code='PENDING' && model.challan.status.code=='VALIDATED'}">
-	
+<s:if test='%{model.id!=null && model.status.code=="PENDING" && model.challan.status.code=="VALIDATED"}'>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">   <!-- main table -->
 		<tr>
 		<td>
 		<%@ include file='challandetails.jsp'%>
 		</td>
 		</tr>
-		<s:if test="%{!hasErrors()}" >
 		<div>
  		<tr>
     	<td>
     		<div class="subheadnew">
     		<span class="subheadsmallnew"><s:text name="challan.receipt.title.createReceipt"/></span>
     		</div>
+    		</td>
+    	</tr>
+    	<tr>
+    		<div class="billhead2" align="center">
+         	<td  class="bluebox"><s:text name="viewReceipt.receiptdate" /><span class="mandatory"/>
+                  <s:date name="receiptdate" var="cdFormat" format="dd/MM/yyyy"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <s:textfield id="receiptdate" name="receiptdate" value="%{cdFormat}" data-inputmask="'mask': 'd/m/y'"/></td>
+                </div>            
+            </td>
+          </tr>
+    	<tr>
+    	<td>
       		<div class="subheadsmallnew"><s:text name="challan.receipt.payment.details"/>  
       		</div>
       	</td>
@@ -1104,7 +1144,7 @@ function validate()
 					    <td class="bluebox2new"><s:text name="billreceipt.payment.chequeddno"/><span class="mandatory1">*</span></td>
 					    <td class="bluebox2" width="20%"><s:textfield label="instrumentNumber" id="instrumentChequeNumber" maxlength="6" name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 					    <td class="bluebox2" width="23%"><s:text name="billreceipt.payment.chequedddate"/><span class="mandatory1">*</span></td>
-					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);"/><div>(DD/MM/YYYY)</div></td>
+					    <td class="bluebox2"><input type ="text" id="instrumentDate" data-inputmask="'mask': 'd/m/y'" name="instrumentProxyList[0].instrumentDate"  onblur="checkForCurrentDate(this);"  onfocus = "checkForCurrentDate(this);" data-date-end-date="0d"/><div>(DD/MM/YYYY)</div></td>
 				    </tr>
 				    <!-- This row captures the cheque/DD Bank and Branch names -->
 		     		<tr id="chequebankrow">
@@ -1129,12 +1169,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png" id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-								<img src="../../egi/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+								<img src="../../egi/resources/erp2/images/delete.png" id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1179,12 +1219,12 @@ function validate()
 							<div id="addchequerow" style="display:none">
 								<a href="#" id="addchequelink" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')">
 									<s:text name="billreceipt.payment.add"/></a>
-								<img src="../../egi/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
+								<img src="../../egi/resources/erp2/images/add.png"  id="addchequeimg" alt="Add" width="16" height="16" border="0" align="absmiddle" onclick="addChequeGrid('chequegrid','chequetyperow','chequedetailsrow','chequebankrow','chequeamountrow',this,'chequeaddrow')"/>
 							</div>
 							<div id="deletechequerow" style="display:none">
 								<a href="#" id="deletechequelink" onclick="deleteChequeObj(this,'chequegrid','delerror')">
 									<s:text name="billreceipt.payment.delete"/></a>
-									<img src="../../egi/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
+									<img src="../../egi/resources/erp2/images/delete.png"  id="deletechequeimg" alt="Delete" width="16" height="16" border="0" align="absmiddle"  onclick="deleteChequeObj(this,'chequegrid','delerror')"/>
 							</div>
 						</td>
 					</tr>
@@ -1217,13 +1257,11 @@ function validate()
 			</table> <!-- End of mode of payments table -->
      </td></tr>
      </div>
-     </s:if>
 </table> <!--  main table ends -->
-<s:if test="%{!hasErrors()}" >
 <div align="left" class="mandatorycoll">* Mandatory Fields</div>
 <!-- </div> --> <!--  supposed to end of div tag for formmainbox -->
 
- <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+ <div id="loadingMask" style="display:none;overflow:hidden;text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
   	 
 <div class="buttonbottom" align="center">
       <label><input align="center" type="button"  class="buttonsubmit" id="button2" value="Pay"  onclick="return validate();"/></label>
@@ -1234,12 +1272,6 @@ function validate()
       <input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
 </div>
 </s:if>
-</s:if>
-<s:if test="%{model.id==null || hasErrors()}" >
-		<div class="buttonbottom" >
-			<input name="button" type="button" class="button" id="button" value="Close" onclick="window.close();"/>
-		</div>
-	</s:if>
 </div>
 
 

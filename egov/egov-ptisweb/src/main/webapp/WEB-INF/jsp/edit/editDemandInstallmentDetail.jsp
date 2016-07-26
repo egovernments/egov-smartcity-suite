@@ -94,11 +94,11 @@
 					N/A
 				</s:if>
 				<s:else>
-					<s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
+					<%-- <s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
 						id="revisedTax" size="10" maxlength="10"
 						onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Tax');"
 						value="%{demandDetailBeanList[#demandInfoStatus.index].revisedAmount}"
-						style="text-align: right" />
+						style="text-align: right" readonly="true" /> --%>
 				</s:else>
 			</div>
 		</td>		
@@ -127,12 +127,12 @@
 				N/A
 			</s:if>
 			<s:else>
-				<s:textfield
+				<%-- <s:textfield
 					name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedCollection"
 					id="revisedCollection" size="10" maxlength="10"
 					onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Collection');"
 					style="text-align: right" 
-					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}"/>
+					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}"/> --%> 
 				<s:hidden
 						value="%{demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable}"
 						name="demandDetailBeanList[%{#demandInfoStatus.index}].isCollectionEditable" />

@@ -39,6 +39,22 @@
  */
 $(document).ready(function(){
 	
+	$('#documentNameTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 3,
+			"orderable": false
+		} ]
+	});
+	
 	var mandatoryDiv = $('#reqAttr').val();
 	if (mandatoryDiv =='false'){
 			$('#addnewid').hide();
@@ -58,22 +74,14 @@ $(document).ready(function(){
 	
  });
 
-$('#listid').click(function() {
-	window.open("/wtms/masters/documentNamesMaster/list", "_self");
- });
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/documentNamesMaster/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/documentNamesMaster/", "_self");
-}
-
 function edit(documentNames)
 {
 	
-	window.open("/wtms/masters/documentNamesMaster/"+documentNames, "_self");
+	window.open("/wtms/masters/documentNamesMaster/edit/"+documentNames, "_self");
 	
 }

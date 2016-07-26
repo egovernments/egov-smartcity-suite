@@ -107,7 +107,6 @@ function callAjaxForTitleTransfer() {
 	var areaId=jQuery('#areaId').val();
 	var fromDate=jQuery('#fromDate').val();
 	var toDate=jQuery('#toDate').val();
-		
 	jQuery('.report-section').removeClass('display-hide');
 	
 	reportdatatable = drillDowntableContainer
@@ -133,7 +132,12 @@ function callAjaxForTitleTransfer() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ "xls", "pdf", "print" ]
+					"aButtons" : [ 
+					               { "sExtends": "pdf","sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() },
+					               { "sExtends": "xls", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html()  },
+					               { "sExtends": "print", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() }
+					             ]
+					/*"aButtons" : [ "xls", "pdf", "print" ]*/
 				},
 				aaSorting: [],				
 				columns : [ {

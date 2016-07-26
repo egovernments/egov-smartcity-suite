@@ -92,6 +92,13 @@ function validate()
 
 		return valSuccess;
 	}
+	
+function onChangeServiceClass(obj)
+{
+    if(obj!=null && obj.value!=null && obj.value!='-1'){
+    	populateservice({serviceClass:obj.value});
+    }
+}
 </script>
 </head>
 <body>
@@ -115,7 +122,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].fromDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
+				src="/collection/resources/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
@@ -129,7 +136,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].toDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
+				src="/collection/resources/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
@@ -149,8 +156,16 @@ function validate()
 						name="source" id="source" cssClass="selectwk" list="sources"
 						value="%{source}" /></td>
 		</tr>
-		<tr>
+				<tr>
 					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="service.master.classification" /></td>
+					<td class="bluebox"><s:select list="serviceTypeMap"
+							headerKey="ALL" headerValue="%{getText('miscreceipt.select')}"
+							name="serviceType" id="serviceType"
+							onchange="onChangeServiceClass(this);"></s:select></td>
+							 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='service'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 					<td class="bluebox"><s:text
 							name="collectionReport.criteria.service" /></td>
 					<td class="bluebox"><s:select headerKey="-1"
@@ -158,8 +173,23 @@ function validate()
 							name="serviceId" id="service" cssClass="selectwk"
 							list="dropdownData.servicetypeList" listKey="id" listValue="name"
 							value="%{serviceId}" /></td>
-		</tr>
-	</table>
+					<%-- <td width="24%" class="bluebox"><s:select headerKey="-1"
+							headerValue="%{getText('searchreceipts.servicetype.select')}"
+							name="serviceType" id="serviceType" cssClass="selectwk"
+							list="dropdownData.serviceTypeList" listKey="id" listValue="name"
+							value="%{serviceTypeId}" /></td> --%>
+				</tr>
+				<tr>
+					<td class="bluebox">&nbsp;</td>
+					<td class="bluebox"><s:text
+							name="searchreceipts.criteria.status" /></td>
+					<td class="bluebox"><s:select id="searchStatus"
+							name="statusId" headerKey="-1"
+							headerValue="%{getText('searchreceipts.status.select')}"
+							cssClass="selectwk" list="dropdownData.receiptStatuses"
+							value="%{statusId}" listKey="id" listValue="description" /></td>
+				</tr>
+			</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
     <br/>
 	</div>

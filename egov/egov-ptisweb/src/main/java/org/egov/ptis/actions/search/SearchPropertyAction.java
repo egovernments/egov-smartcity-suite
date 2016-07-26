@@ -40,6 +40,7 @@
 package org.egov.ptis.actions.search;
 
 import com.opensymphony.xwork2.validator.annotations.Validations;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -70,10 +71,10 @@ import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,9 +101,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "GRP" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE" }),
-        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
+        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}" }),
-        @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "new", params = {
+        @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}" }),
@@ -119,7 +120,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "meesevaApplicationNumber", "${meesevaApplicationNumber}" }),
         @Result(name = APPLICATION_TYPE_EDIT_DEMAND, type = "redirectAction", location = "editDemand-newEditForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
-        @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp") })
+                @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}"),
+        @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
+        @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
+        @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
+                "namespace", "/create", "indexNumber", "${assessmentNum}", "modifyRsn", "EDIT_DATA_ENTRY", "modelId", "${activePropertyId}" })})
 public class SearchPropertyAction extends BaseFormAction {
     /**
      *
@@ -169,6 +175,7 @@ public class SearchPropertyAction extends BaseFormAction {
 
     private boolean isDemandActive;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
+    private String activePropertyId;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -184,9 +191,6 @@ public class SearchPropertyAction extends BaseFormAction {
 
     @Autowired
     private PropertyService propertyService;
-
-    @Autowired
-    private VacancyRemissionService vacancyRemissionService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -263,6 +267,38 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
         }
+        if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_MODIFY_DATA_ENTRY)){
+        	Property activeProperty = basicProperty.getProperty();
+        	//Allow modification only for properties where source is Data Entry
+        	if(!basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        		addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+        	}
+        	
+        	if(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())){
+        		//Validate if any other type of transactions are performed on the property
+        		if(basicProperty.getPropertySet().size()>1){
+        			addActionError(getText("edit.dataEntry.transaction.error"));
+                    return COMMON_FORM;
+        		}
+        		//Validate if collection is done for the property. If done, then do not allow modification
+        		if(!activeProperty.getPtDemandSet().isEmpty()){
+            		BigDecimal arrearCollection = BigDecimal.ZERO;
+            		BigDecimal currentCollection = BigDecimal.ZERO;
+            		Map<String, BigDecimal> demandCollectionMap = propertyTaxUtil.getDemandAndCollection(activeProperty);
+            		if(!demandCollectionMap.isEmpty()){
+            			arrearCollection = demandCollectionMap.get(ARR_COLL_STR);
+            			currentCollection = demandCollectionMap.get(CURR_COLL_STR);
+            			if(arrearCollection.compareTo(BigDecimal.ZERO) > 0 || currentCollection.compareTo(BigDecimal.ZERO) > 0){
+            				addActionError(getText("edit.dataEntry.collection.done.error"));
+                            return COMMON_FORM;
+            			}
+            		}
+            	}
+        	}
+        	activePropertyId = basicProperty.getActiveProperty().getId().toString();
+        }
+        
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(assessmentNum);
         if (hasChildPropertyUnderWorkflow) {
             addActionError(getText("error.msg.child.underworkflow"));
@@ -277,7 +313,7 @@ public class SearchPropertyAction extends BaseFormAction {
         } else if (APPLICATION_TYPE_ALTER_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_BIFURCATE_ASSESSENT.equals(applicationType)
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
-                || APPLICATION_TYPE_GRP.equals(applicationType)) {
+                || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
             if (!isDemandActive) {
                 addActionError(getText("error.msg.demandInactive"));
                 return COMMON_FORM;
@@ -295,9 +331,27 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             }
         if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-            return APPLICATION_TYPE_EDIT_DEMAND;
+        	if(!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())
+        	        || basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_MIGRATION.toString()))){
+        		addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+        	} else if(basicProperty.getProperty().getIsExemptedFromTax()){
+        	    addActionError(getText("action.error.msg.for.taxExempted"));
+                    return COMMON_FORM; 
+        		
+        	}
+        	return APPLICATION_TYPE_EDIT_DEMAND;
         }
 
+        if (basicProperty.getProperty().getIsExemptedFromTax()
+                && !(applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION))) {
+            addActionError(getText("action.error.msg.for.taxExempted"));
+            return COMMON_FORM;
+        }
+
+        if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType)) {
+            return APPLICATION_TYPE_EDIT_OWNER;
+        }
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION)) {
             if (!isDemandActive) {
@@ -305,6 +359,14 @@ public class SearchPropertyAction extends BaseFormAction {
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
+        }
+        if (APPLICATION_TYPE_EDIT_COLLECTION.equals(applicationType)) {
+            if (!basicProperty.isEligible()) {
+                addActionError(getText("error.msg.editCollection.noteligible"));
+                return COMMON_FORM;
+            } else {
+                return APPLICATION_TYPE_EDIT_COLLECTION;
+            }
         }
         return applicationType;
 
@@ -1050,4 +1112,12 @@ public class SearchPropertyAction extends BaseFormAction {
     public void setBasicProperty(BasicProperty basicProperty) {
         this.basicProperty = basicProperty;
     }
+
+	public String getActivePropertyId() {
+		return activePropertyId;
+	}
+
+	public void setActivePropertyId(String activePropertyId) {
+		this.activePropertyId = activePropertyId;
+	}
 }

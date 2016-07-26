@@ -47,8 +47,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><s:text name="bankreconciliation" /></title>
 <script type="text/javascript">
-
-
 	function validate() {
 		if (document.getElementById("bankId").value == "") {
 			bootbox.alert("Select Bank");
@@ -62,9 +60,9 @@
 			bootbox.alert("Select Account");
 			return false;
 		}
-		var toDateStr=document.getElementById("toDate").value;
-		
-		var reconDateStr =document.getElementById("reconciliationDate").value;
+		var toDateStr = document.getElementById("toDate").value;
+
+		var reconDateStr = document.getElementById("reconciliationDate").value;
 		if (reconDateStr == "") {
 			bootbox.alert("Select <s:text name='reconciliationdate'/>");
 			return false;
@@ -77,47 +75,46 @@
 			bootbox.alert("Select <s:text name='todate'/>");
 			return false;
 		}
-		
-		if(toDateStr!=null && reconDateStr!=null)
-		{
-		
-		var toDateParts=	toDateStr.split("/");
-		if(toDateParts.length!=3)
-		{
-		bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-		return false;
+
+		if (toDateStr != null && reconDateStr != null) {
+
+			var toDateParts = toDateStr.split("/");
+			if (toDateParts.length != 3) {
+				bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
+				return false;
+			}
+			var toDate = new Date(toDateParts[1] + "/" + toDateParts[0] + "/"
+					+ toDateParts[2]);
+			var reconDateParts = reconDateStr.split("/");
+
+			if (reconDateParts.length != 3) {
+				bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
+				return false;
+			}
+			var reconDate = new Date(reconDateParts[1] + "/"
+					+ reconDateParts[0] + "/" + reconDateParts[2]);
+			//bootbox.alert(reconDate.toString('MM-dd-yyyy'));
+			if (reconDate < toDate) {
+				bootbox
+						.alert("<s:text name='reconciliationdate'/> must be higher or equal to <s:text name='todate'/>");
+				return false;
+			}
 		}
-		var toDate=new Date(toDateParts[1]+"/"+toDateParts[0]+"/"+toDateParts[2]);
-		var reconDateParts=	reconDateStr.split("/");
-		
-		if(reconDateParts.length!=3)
-		{
-		bootbox.alert("Enter date is 'DD/MM/YYYY' format only");
-		return false;
-		}
-		var reconDate=new Date(reconDateParts[1]+"/"+reconDateParts[0]+"/"+reconDateParts[2]);
-		//bootbox.alert(reconDate.toString('MM-dd-yyyy'));
-		if(reconDate<toDate)
-		{
-		bootbox.alert("<s:text name='reconciliationdate'/> must be higher or equal to <s:text name='todate'/>");
-		return false;
-		}
-		}
-		
-    document.forms[0].action="autoReconciliation-schedule.action"
-		
+
+		document.forms[0].action = "autoReconciliation-schedule.action"
+
 		return true;
 	}
 	function populatebranch(obj) {
 		var bid = document.getElementById("bankId").value;
-		populatebranchId( {
+		populatebranchId({
 			bankId : bid
 		})
 	}
 
 	function populateaccount(obj) {
 		var bid = document.getElementById("branchId").value;
-		populateaccountId( {
+		populateaccountId({
 			branchId : bid
 		})
 	}
@@ -133,106 +130,101 @@
 			<div class="subheadnew">
 				<s:text name="autobankreconciliation" />
 			</div>
-	
-		<div align="center">
-			<font style='color: red;'>
-				<p class="error-block" id="lblError"></p>
-			</font>
-		</div>
-		<span class="mandatory1">
-			<div id="Errors">
-				<s:actionerror />
-				<s:fielderror />
-			</div> <s:actionmessage />
-		</span>
-		<center>
-			<table border="0" width="100%" cellspacing="0" cellpadding="0">
-				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text name="bank" /> <span
-						class="greybox"><span class="mandatory1">*</span></span></td>
-					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
-						dropdownId="branchId"
-						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
-					<td class="greybox"><s:select name="bankId" id="bankId"
-							list="dropdownData.bankList" listKey="id" listValue="name"
-							headerKey="" headerValue="----Choose----"
-							onchange="populatebranch(this);" value="%{bankId}" /></td>
-					<td class="greybox"><s:text name="bankbranch" /> <span
-						class="greybox"><span class="mandatory1">*</span></span></td>
-					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
-						dropdownId="accountId"
-						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
-					<td class="greybox"><s:select name="branchId" id="branchId"
-							list="dropdownData.branchList" listKey="id" listValue="name"
-							headerKey="" headerValue="----Choose----"
-							onchange="populateaccount(this);" /></td>
-				</tr>
-				<tr>
-					<td class="bluebox"></td>
-					<td class="bluebox"><s:text name="bankaccount" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:select name="accountId" id="accountId"
-							list="dropdownData.accountList" listKey="id"
-							listValue="accountnumber" headerKey=""
-							headerValue="----Choose----" /></td>
-					<td class="bluebox"><s:text name="reconciliationdate" /> <span
-						class="bluebox"><span class="mandatory1">*</span></span></td>
-					<td class="bluebox"><s:textfield name="reconciliationDate"
-							id="reconciliationDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{asOnDate}" /> <a
-						href="javascript:show_calendar('arform.reconciliationDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
 
-					</td>
-				</tr>
-				<tr>
-					<td class="greybox"></td>
-					<td class="greybox"><s:text name="fromdate" /> <span
-						class="greybox"><span class="mandatory1">*</span></span></td>
-					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{fromDate}" /> <a
-						href="javascript:show_calendar('arform.fromDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
-
-					</td>
-					<td class="greybox"><s:text name="todate" /> <span
-						class="greybox"><span class="mandatory1">*</span></span></td>
-					<td class="greybox"><s:textfield name="toDate" id="toDate"
-							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{toDate}" /> <a
-						href="javascript:show_calendar('arform.toDate');"
-						style="text-decoration: none">&nbsp;<img tabIndex="-1"
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></A>
-
-					</td>
-				</tr>
-
-			</table>
-
-			<div class="buttonbottom" id="buttondiv">
-				<table>
+			<div align="center">
+				<font style='color: red;'>
+					<p class="error-block" id="lblError"></p>
+				</font>
+			</div>
+			<span class="mandatory1">
+				<div id="Errors">
+					<s:actionerror />
+					<s:fielderror />
+				</div> <s:actionmessage />
+			</span>
+			<center>
+				<table border="0" width="100%" cellspacing="0" cellpadding="0">
 					<tr>
-						<td><input  type="submit" class="buttonsubmit"
+						<td class="greybox"></td>
+						<td class="greybox"><s:text name="bank" /> <span
+							class="greybox"><span class="mandatory1">*</span></span></td>
+						<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
+							dropdownId="branchId"
+							url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
+						<td class="greybox"><s:select name="bankId" id="bankId"
+								list="dropdownData.bankList" listKey="id" listValue="name"
+								headerKey="" headerValue="----Choose----"
+								onchange="populatebranch(this);" value="%{bankId}" /></td>
+						<td class="greybox"><s:text name="bankbranch" /> <span
+							class="greybox"><span class="mandatory1">*</span></span></td>
+						<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
+							dropdownId="accountId"
+							url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
+						<td class="greybox"><s:select name="branchId" id="branchId"
+								list="dropdownData.branchList" listKey="id" listValue="name"
+								headerKey="" headerValue="----Choose----"
+								onchange="populateaccount(this);" /></td>
+					</tr>
+					<tr>
+						<td class="bluebox"></td>
+						<td class="bluebox"><s:text name="bankaccount" /> <span
+							class="bluebox"><span class="mandatory1">*</span></span></td>
+						<td class="bluebox"><s:select name="accountId" id="accountId"
+								list="dropdownData.accountList" listKey="id"
+								listValue="accountnumber" headerKey=""
+								headerValue="----Choose----" /></td>
+						<td class="bluebox"><s:text name="reconciliationdate" /> <span
+							class="bluebox"><span class="mandatory1">*</span></span></td>
+						<td class="greybox"><s:date name="reconciliationDate"
+								var="reconciliationDate" format="dd/MM/yyyy" /> <s:textfield
+								id="reconciliationDate" name="reconciliationDate"
+								value="%{reconciliationDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+					</tr>
+					<tr>
+						<td class="greybox"></td>
+						<td class="greybox"><s:text name="fromdate" /> <span
+							class="greybox"><span class="mandatory1">*</span></span></td>
+						<td class="greybox"><s:date name="fromDate" var="fromDate"
+								format="dd/MM/yyyy" /> <s:textfield id="fromDate"
+								name="fromDate" value="%{fromDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+						<td class="greybox"><s:text name="todate" /> <span
+							class="greybox"><span class="mandatory1">*</span></span></td>
+
+						<td class="greybox"><s:date name="toDate" var="toDate"
+								format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
+								value="%{toDate}"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+					</tr>
+
+				</table>
+
+				<div class="buttonbottom" id="buttondiv">
+					<table>
+						<tr>
+							<td><input type="submit" class="buttonsubmit"
 								value="Process" name="Schedule" method="schedule"
 								onclick="return validate();" /></td>
-						<td><input type="button" value="Close"
-							onclick="javascript:window.close()" class="buttonsubmit" /></td>
-					</tr>
-				</table>
-			</div>
-		</center>
-      </div>
+							<td><input type="button" value="Close"
+								onclick="javascript:window.close()" class="buttonsubmit" /></td>
+						</tr>
+					</table>
+				</div>
+			</center>
+		</div>
 	</s:form>
-  <div class="mandatory1">
-  Note:
-  <ol>
-  <li><s:text name="autoreconciliation.process.footnote"/>
-  </ol>
-  </div>
+	<div class="mandatory1">
+		Note:
+		<ol>
+			<li><s:text name="autoreconciliation.process.footnote" />
+		</ol>
+	</div>
 </body>
 </html>

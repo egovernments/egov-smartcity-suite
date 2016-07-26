@@ -39,7 +39,7 @@
  */
 package org.egov.works.services;
 
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.tender.EstimateLineItemsForWP;

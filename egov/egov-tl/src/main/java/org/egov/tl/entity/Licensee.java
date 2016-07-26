@@ -40,47 +40,80 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-public class Licensee extends BaseModel {
-    /**
-     *
-     */
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_LICENSEE")
+@SequenceGenerator(name = Licensee.SEQUENCE, sequenceName = Licensee.SEQUENCE, allocationSize = 1)
+public class Licensee extends AbstractAuditable {
     private static final long serialVersionUID = 6723590685484215531L;
-    @Required(message = "licensee.name.err.required")
+
+    public static final String SEQUENCE = "SEQ_EGTL_LICENSEE";
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
+
+    @NotBlank(message = "licensee.name.err.required")
     @Length(min = 1, max = 256, message = "licensee.name.err.maxlength")
+    @SafeHtml
+    @Column(name = "APPLICANT_NAME")
     private String applicantName;
-    private String nationality;
+
+    @SafeHtml
+    @Length(max = 256)
+    @Column(name = "FATHER_SPOUSE_NAME")
     private String fatherOrSpouseName;
-    // private String spouseName;
-    private String qualification;
-    private Integer age;
-    private String gender;
-    private String panNumber;
-    private String phoneNumber;
+
+    @SafeHtml
+    @Length(max = 16)
+    @Column(name = "MOBILE_PHONENUMBER")
     private String mobilePhoneNumber;
+
+    @SafeHtml
+    @Length(max = 16)
+    @Column(name = "UNIQUEID")
     private String uid;
+
+    @SafeHtml
+    @Length(max = 64)
+    @Column(name = "EMAIL_ID")
     private String emailId;
-    private Boundary boundary;
+
+    @NotBlank
+    @Length(min = 1, max = 250)
+    @SafeHtml
+    @Column(name = "ADDRESS")
     private String address;
 
-    public Boundary getBoundary() {
-        return boundary;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_LICENSE")
+    private License license;
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(final String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    @Override
+    public Long getId() {
+        return this.id;
     }
 
     public String getMobilePhoneNumber() {
@@ -107,8 +140,6 @@ public class Licensee extends BaseModel {
         this.emailId = emailId;
     }
 
-    private License license;
-
     public License getLicense() {
         return license;
     }
@@ -125,70 +156,12 @@ public class Licensee extends BaseModel {
         this.applicantName = applicantName;
     }
 
-    public String getNationality() {
-        return nationality;
-    }
-
-    public void setNationality(final String nationality) {
-        this.nationality = nationality;
-    }
-
     public String getFatherOrSpouseName() {
         return fatherOrSpouseName;
     }
 
     public void setFatherOrSpouseName(final String fatherOrSpouseName) {
         this.fatherOrSpouseName = fatherOrSpouseName;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(final String qualification) {
-        this.qualification = qualification;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(final Integer age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(final String gender) {
-        this.gender = gender;
-    }
-
-    public String getPanNumber() {
-        return panNumber;
-    }
-
-    public void setPanNumber(final String panNumber) {
-        this.panNumber = panNumber;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("Licensee={");
-        str.append("  applicantName=").append(applicantName == null ? "null" : applicantName.toString());
-        str.append("  address=").append(address == null ? "null" : address.toString());
-        str.append("  nationality=").append(nationality == null ? "null" : nationality.toString());
-        str.append("  fatherOrSpouseName=").append(fatherOrSpouseName == null ? "null" : fatherOrSpouseName.toString());
-        str.append("  qualification=").append(qualification == null ? "null" : qualification.toString());
-        str.append("  age=").append(age == null ? "null" : age.toString());
-        str.append("  gender=").append(gender == null ? "null" : gender.toString());
-        str.append("  panNumber=").append(panNumber == null ? "null" : panNumber.toString());
-        str.append("  phoneNumber=").append(phoneNumber == null ? "null" : phoneNumber.toString());
-        str.append("  boundary=").append(boundary == null ? "null" : boundary.toString());
-        str.append("}");
-        return str.toString();
     }
 
     public String getAddress() {

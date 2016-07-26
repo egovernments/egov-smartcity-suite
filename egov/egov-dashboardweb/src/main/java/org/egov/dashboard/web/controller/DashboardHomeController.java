@@ -41,7 +41,7 @@ package org.egov.dashboard.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.dashboard.config.DashboardProperties;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,11 +59,20 @@ public class DashboardHomeController {
         return "home";
     }
 
+    @RequestMapping("/erpReports")
+    public String erpReports() {
+        return "erpReports";
+    }
+    @RequestMapping("/erpPublicReports")
+    public String erpPublicReports() {
+        return "erpPublicReports";
+    }
+
     @RequestMapping("/{moduleName}")
-    public String kebanaDashboard(@PathVariable final String moduleName, final Model model) {
+    public String kibanaDashboard(@PathVariable final String moduleName, final Model model) {
         final String kibanaURL = dashboardProperties.getProperty("kibana.url." + moduleName);
         if (StringUtils.isNotBlank(kibanaURL)) {
-            model.addAttribute("kibanaurl",kibanaURL.replaceAll("<city_name>", EgovThreadLocals.getCityName()));
+            model.addAttribute("kibanaurl",kibanaURL.replaceAll("<city_name>", ApplicationThreadLocals.getCityName()));
             return "kibana-dashboard";
         } else
             return "redirect:error/404";

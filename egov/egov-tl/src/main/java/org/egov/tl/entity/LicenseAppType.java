@@ -40,43 +40,55 @@
 
 package org.egov.tl.entity;
 
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infstr.models.BaseModel;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
-/**
- * The Class LicenseAppType.
- */
-@Unique(fields = { "licenseApplicationType" }, id = "id", tableName = "EGTL_MSTR_APP_TYPE", columnName = { "name" }, message = "masters.licenseApplicationType.isunique")
-public class LicenseAppType extends BaseModel {
-	private static final long serialVersionUID = 1L;
-	public static final String BY_NAME = "LICENSE_APPTYPE_BY_NAME"; 
-	
-	@Required(message = "masters.licenseApplicationType.name.null")
-	@Length(max = 256, message = "masters.licenseApplicationType.name.length")
-	//@OptionalPattern(regex = ValidatorConstants.alphaNumericwithSpace, message = "tradelicense.error.licenseapptype.text")
-	private String name;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-	public LicenseAppType() {
-		super();
-	}
+@Entity
+@Table(name = "EGTL_MSTR_APP_TYPE")
+@Unique(fields = "licenseApplicationType", message = "masters.licenseApplicationType.isunique")
+@SequenceGenerator(name = LicenseAppType.SEQUENCE, sequenceName = LicenseAppType.SEQUENCE, allocationSize = 1)
+@NamedQuery(name = "APPTYPE_BY_NAME", query = "select la FROM LicenseAppType la where name =:name")
+public class LicenseAppType extends AbstractAuditable {
+    private static final long serialVersionUID = 6937736396204496999L;
 
-	public String getName() {
-		return name;
-	}
+    public static final String BY_NAME = "APPTYPE_BY_NAME";
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_APP_TYPE";
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
+    private Long id;
 
-	@Override
-	public String toString() {
-		StringBuilder str = new StringBuilder();
-		str.append("LicenseAppType={");
-		str.append("serialVersionUID=").append(serialVersionUID);
-		str.append("name=").append(name == null ? "null" : name.toString());
-		str.append("}");
-		return str.toString();
-	}
+    @NotBlank(message = "masters.licenseApplicationType.name.null")
+    @Length(max = 256, message = "masters.licenseApplicationType.name.length")
+    private String name;
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -39,17 +39,20 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import javax.validation.ValidationException;
+
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
 
 public class DailyCollectionReportSearch {
 
@@ -74,18 +77,21 @@ public class DailyCollectionReportSearch {
                     logger.debug("Date Range From start.. :" + ft.format(dtft.parse(fromDate)));
                 this.fromDate = ft.format(dtft.parse(fromDate));
             } catch (final ParseException e) {
-                e.printStackTrace();
+                throw new ValidationException(e.getMessage());
             }
     }
 
     public void setToDate(final String toDate) {
+        final Calendar cal = Calendar.getInstance();
         if (null != toDate)
             try {
+                cal.setTime(dtft.parse(toDate));
+                cal.add(Calendar.DAY_OF_YEAR, 1);
                 if (logger.isDebugEnabled())
-                    logger.debug("Date Range Till .. :" + ft.format(dtft.parse(toDate)));
-                this.toDate = ft.format(dtft.parse(toDate));
+                    logger.debug("Date Range Till .. :" + ft.format(cal.getTime()));
+                this.toDate = ft.format(cal.getTime());
             } catch (final ParseException e) {
-                e.printStackTrace();
+                throw new ValidationException(e.getMessage());
             }
     }
 
@@ -158,7 +164,7 @@ public class DailyCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.cityname", ulbName));
         andFilters.add(termsStringFilter("clauses.channel", collectionMode));
         andFilters.add(termsStringFilter("clauses.status", status));
-        andFilters.add(termsStringFilter("clauses.receiptCreator", collectionOperator));
+        andFilters.add(termsStringFilter("clauses.receiptcreator", collectionOperator));
         andFilters.add(termsStringFilter("clauses.billingservice", "Property Tax"));
         if (!consumerCode.isEmpty()) {
             String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
@@ -167,7 +173,6 @@ public class DailyCollectionReportSearch {
         andFilters.add(rangeFilter("searchable.receiptdate", fromDate, toDate));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
 
@@ -177,7 +182,6 @@ public class DailyCollectionReportSearch {
         andFilters.add(termsStringFilter("clauses.revwardname", revenueWard));
         if (logger.isDebugEnabled())
             logger.debug("finished property tax filters");
-        logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
 

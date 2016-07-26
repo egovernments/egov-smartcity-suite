@@ -39,28 +39,26 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.EgDemand;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.repository.WaterDemandConnectionRepository;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class WaterDemandConnectionService {
 
     protected WaterDemandConnectionRepository waterDemandConnectionRepository;
-    private static final Logger LOG = LoggerFactory.getLogger(WaterDemandConnectionService.class);
 
     @PersistenceContext
     private EntityManager entityManager;

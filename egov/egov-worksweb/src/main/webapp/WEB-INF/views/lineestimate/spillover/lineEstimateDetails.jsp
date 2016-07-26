@@ -72,7 +72,7 @@
 					<th class="thGrossAmount" style="display: none;"><spring:message code="lbl.grossamount"/><span class="mandatory"></th>
 					<th><spring:message code="lbl.quantity"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.uom"/><span class="mandatory"></span></th>
-					<th><spring:message code="lbl.beneficiary"/><span class="mandatory"></span></th>
+					<th><spring:message code="lbl.expected.outcome"/><span class="mandatory"></span></th>
 					<th><spring:message code="lbl.action"/></th>
 				</tr>
 			</thead>
@@ -113,7 +113,12 @@
 								<form:errors path="lineEstimateDetails[0].quantity" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="15"  required="required"/>
+								<form:select path="lineEstimateDetails[0].uom" name="lineEstimateDetails[0].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
+								</form:select>
 								<form:errors path="lineEstimateDetails[0].uom" cssClass="add-margin error-msg" />
 							</td>
 							<td>
@@ -159,7 +164,12 @@
 									<form:errors path="lineEstimateDetails[${item.index}].quantity" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" data-errormsg="UOM is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input" maxlength="15"  required="required"/>
+									<form:select path="lineEstimateDetails[${item.index}].uom" name="lineEstimateDetails[${item.index}].uom" data-errormsg="UOM is mandatory!" data-idx="0" data-optional="0" class="form-control table-input"  required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${lineEstimateUOMs}" itemValue="name" itemLabel="name" />
+									</form:select>
 									<form:errors path="lineEstimateDetails[${item.index}].uom" cssClass="add-margin error-msg" />
 								</td>
 								<td>

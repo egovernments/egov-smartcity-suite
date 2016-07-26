@@ -45,8 +45,8 @@
 	<class name="org.egov.collection.entity.ReceiptHeader" table="EGCL_COLLECTIONHEADER">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGCL_COLLECTIONHEADER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGCL_COLLECTIONHEADER</param>
 			</generator>
 		</id>
 		<!-- version name="version" column="VERSION" type="long" /-->
@@ -250,4 +250,14 @@
 	<query name="RECEIPTS_BY_INSTRUMENTHEADER_AND_SERVICECODE">
     <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh left join rh.receiptInstrument as ri where ri.id=?  and rh.service.code=?]]>
     </query>
+	
+	<query name="STATUS_OF_RECEIPTS">
+    <![CDATA[select distinct rh.status from org.egov.collection.entity.ReceiptHeader rh where rh.status.code<>'CANCELLED']]>
+    </query>
+	
+	<query name="RECEIPT_BY_ID_AND_STATUSNOTCANCELLED">
+	<![CDATA[
+	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.id = ? and rh.status.code<>'CANCELLED']]>
+	</query>
+  	
 </hibernate-mapping>

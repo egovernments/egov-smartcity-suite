@@ -64,7 +64,7 @@
 			<tbody >
 				<tr>
 					<td>
-						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input text-right" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
+						<form:input path="councilResolutionNumber" id="councilResolutionNumber" name="councilResolutionNumber" value="${councilResolutionNumber}" data-errormsg="Council Resolution Number of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" onclick="validatecouncilResolutionNumber();" maxlength="32"/>
 						<form:errors path="councilResolutionNumber" cssClass="add-margin error-msg" />
 					</td>
 					<td>

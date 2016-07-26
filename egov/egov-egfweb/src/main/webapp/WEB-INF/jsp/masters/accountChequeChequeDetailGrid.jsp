@@ -129,7 +129,7 @@
 function createLabelSamll(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<label id='"+prefix+"["+chqDetailsIndex+"]"+suffix+"'  size='1'/>";
+		el.innerHTML = "<label id='"+prefix+"["+chqDetailsIndex+"]"+suffix+"'  size='1' style='font-size:0.9em;'/>";
 	}
 }
 function createTextField(prefix,suffix){

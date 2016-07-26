@@ -72,13 +72,12 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(id = "id", tableName = "eg_user", columnName = { "username", "pan", "aadhaarNumber",
-        "emailId" }, fields = { "username", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true, isSuperclass = true)
+@Unique(id = "id", tableName = "eg_user", columnName = {"username", "pan", "aadhaarNumber",
+        "emailId"}, fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 public class User extends AbstractAuditable {
-    private static final long serialVersionUID = -2415368058955783970L;
     public static final String SEQ_USER = "SEQ_EG_USER";
-
+    private static final long serialVersionUID = -2415368058955783970L;
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_USER, strategy = GenerationType.SEQUENCE)
@@ -141,7 +140,7 @@ public class User extends AbstractAuditable {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid") , inverseJoinColumns = @JoinColumn(name = "roleid") )
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     private Set<Role> roles = new HashSet<>();
 
     @Temporal(TemporalType.DATE)
@@ -157,8 +156,10 @@ public class User extends AbstractAuditable {
     @Column(name = "type")
     private UserType type;
 
-    private byte [] signature;
-    
+    private byte[] signature;
+
+    private boolean accountLocked;
+
     @Override
     public Long getId() {
         return id;
@@ -312,12 +313,12 @@ public class User extends AbstractAuditable {
         return locale;
     }
 
-    public Locale locale() {
-        return LocaleUtils.toLocale(locale);
-    }
-
     public void setLocale(final String locale) {
         this.locale = locale;
+    }
+
+    public Locale locale() {
+        return LocaleUtils.toLocale(locale);
     }
 
     public UserType getType() {
@@ -353,4 +354,15 @@ public class User extends AbstractAuditable {
         this.signature = signature;
     }
 
+    public boolean isAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(final boolean accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public void updateNextPwdExpiryDate(Integer passwordExpireInDays) {
+        this.setPwdExpiryDate(new DateTime().plusDays(passwordExpireInDays).toDate());
+    }
 }

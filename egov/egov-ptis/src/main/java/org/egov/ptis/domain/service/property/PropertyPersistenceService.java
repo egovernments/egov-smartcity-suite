@@ -44,13 +44,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -151,7 +151,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         ackBean.setNoticeDueDate(tempNoticeDate);
         reportParams.put("logoPath", cityLogo);
         reportParams.put("cityName", cityName);
-        reportParams.put("loggedInUsername", userService.getUserById(EgovThreadLocals.getUserId()).getName());
+        reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(FileFormat.PDF);
         return reportService.createReport(reportInput);
@@ -187,4 +187,60 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         LOGGER.debug("Exit from updateOwners");
         return errorMesg.toString();
     }
+    
+    /**
+     * Update the owners for a property
+     * @param property
+     * @param basicProp
+     * @param ownerAddress
+     */
+    public void updateOwners(Property property, BasicProperty basicProp, Address ownerAddress) {
+		int orderNo = 0;
+		basicProp.getPropertyOwnerInfo().clear();
+        for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
+            
+            if (ownerInfo != null) {
+                User user = null;
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                else
+                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
+                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
+                            .getGender());
+                if (user == null) {
+                	orderNo++;
+                    final Citizen newOwner = new Citizen();
+                    newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                    newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                    newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
+                    newOwner.setGender(ownerInfo.getOwner().getGender());
+                    newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
+                    newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    newOwner.setName(ownerInfo.getOwner().getName());
+                    newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
+                    newOwner.setPassword("NOT SET");
+                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
+                    userService.createUser(newOwner);
+                    ownerInfo.setBasicProperty(basicProp);
+                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOrderNo(orderNo);
+                    LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
+                    ownerInfo.getOwner().addAddress(ownerAddress);
+                    basicProp.addPropertyOwners(ownerInfo);
+                } else {
+                    // If existing user, then update the address
+                	user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                	user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                	user.setName(ownerInfo.getOwner().getName());
+                	user.setGender(ownerInfo.getOwner().getGender());
+                    user.setEmailId(ownerInfo.getOwner().getEmailId());
+                    user.setGuardian(ownerInfo.getOwner().getGuardian());
+                    user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    ownerInfo.setOwner(user);
+                    ownerInfo.setBasicProperty(basicProp);
+                }
+            }
+            
+        }
+	}
 }

@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<script src='https://www.google.com/recaptcha/api.js'></script>
+<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12" style="position:relative;">
 	<div class="tour-section" data-toggle="tooltip" title="Click for demo!"><i class="fa fa-question" aria-hidden="true"></i></div>
@@ -190,7 +190,8 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-offset-3 col-md-6 text-center" id="captcha-section">
-						<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
+						<spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+						<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
 						<form:errors cssClass="add-margin error-msg"/>
 					</div>
 				</div>
@@ -221,9 +222,10 @@
 						
 							<!-- panel body -->
 							<div class="panel-body no-padding">
-								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
 								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
+								<input id="pac-input" class="controls" type="text" placeholder="Enter a location">
 							</div>
 						</div>
 					</div>

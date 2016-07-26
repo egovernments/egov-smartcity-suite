@@ -40,19 +40,21 @@
 
 package org.egov.pgr.elasticSearch.service;
 
+import java.util.Date;
+
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
 import org.egov.pgr.entity.enums.ComplaintStatus;
+import org.egov.pgr.entity.enums.ReceivingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,8 +65,17 @@ public class ComplaintIndexService {
 
     @Indexing(name = Index.PGR, type = IndexType.COMPLAINT)
     public ComplaintIndex createComplaintIndex(final ComplaintIndex complaintIndex) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         complaintIndex.setCitydetails(cityWebsite);
+        if (complaintIndex.getReceivingMode().equals(ReceivingMode.MOBILE))
+            complaintIndex.setSource("PuraSeva");
+        else if (complaintIndex.getReceivingMode().equals(ReceivingMode.WEBSITE)
+                && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
+                        || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
+            complaintIndex.setSource("By citizens:ULB Portal");
+        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+            complaintIndex.setSource("ULB counter");
+
         if (complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
                 || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())
                 || complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())) {

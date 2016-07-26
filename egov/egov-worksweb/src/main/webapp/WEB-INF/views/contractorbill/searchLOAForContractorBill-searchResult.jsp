@@ -48,11 +48,11 @@
 		<spring:message code="error.loa.contractorbill.search" />
 	</div>
 	<div class="form-group report-table-container">
-		<table class="table table-bordered table-hover multiheadertbl"
+		<table class="table table-bordered table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.select" /></th>
+					<th><spring:message code="lbl.selectonly" /></th>
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.loadate" /></th>

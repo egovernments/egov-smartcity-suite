@@ -40,8 +40,8 @@
 
 package org.egov.infra.search.elastic.entity;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
@@ -388,7 +388,7 @@ public class CollectionIndex extends AbstractAuditable {
 
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode() + "-" + getReceiptNumber();
+        return ApplicationThreadLocals.getCityCode() + "-" + getReceiptNumber();
     }
 
     /**

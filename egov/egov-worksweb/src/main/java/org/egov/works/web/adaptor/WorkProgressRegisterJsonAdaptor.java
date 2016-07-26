@@ -40,10 +40,10 @@
 
 package org.egov.works.web.adaptor;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.reports.entity.WorkProgressRegister;
@@ -51,8 +51,10 @@ import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 @Component
 public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgressRegister> {
@@ -67,7 +69,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
         final JsonObject jsonObject = new JsonObject();
         if (workProgressRegister != null) {
             if (workProgressRegister.getWard() != null)
-                jsonObject.addProperty("ward", workProgressRegister.getWard().getName());
+                jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
             else
                 jsonObject.addProperty("ward", "");
             if (workProgressRegister.getLocation() != null)
@@ -110,11 +112,11 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("budgetHead", "");
             if (workProgressRegister.getTypeOfWork() != null)
-                jsonObject.addProperty("typeOfWork", workProgressRegister.getTypeOfWork().getCode());
+                jsonObject.addProperty("typeOfWork", workProgressRegister.getTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("typeOfWork", "");
             if (workProgressRegister.getSubTypeOfWork() != null)
-                jsonObject.addProperty("subTypeOfWork", workProgressRegister.getSubTypeOfWork().getCode());
+                jsonObject.addProperty("subTypeOfWork", workProgressRegister.getSubTypeOfWork().getDescription());
             else
                 jsonObject.addProperty("subTypeOfWork", "");
             if (workProgressRegister.getAdminSanctionBy() != null)
@@ -141,7 +143,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("estimateAmount", "");
             if (workProgressRegister.getModeOfAllotment() != null)
-                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment().toString());
+                jsonObject.addProperty("modeOfAllotment", workProgressRegister.getModeOfAllotment());
             else
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)
@@ -185,10 +187,18 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("totalBillPaidSoFar", workProgressRegister.getTotalBillPaidSoFar());
             else
                 jsonObject.addProperty("totalBillPaidSoFar", "");
-            if (workProgressRegister.getBalanceValueOfWorkToBill() != null)
-                jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
-            else
+            if (workProgressRegister.getBalanceValueOfWorkToBill() != null) {
+                if (workProgressRegister.getBilltype() != null
+                        && workProgressRegister.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
+                    jsonObject.addProperty("balanceValueOfWorkToBill", "NA");
+                else
+                    jsonObject.addProperty("balanceValueOfWorkToBill", workProgressRegister.getBalanceValueOfWorkToBill());
+            } else
                 jsonObject.addProperty("balanceValueOfWorkToBill", "");
+            if (workProgressRegister.getMilestonePercentageCompleted() != null)
+                jsonObject.addProperty("milestonePercentageCompleted", workProgressRegister.getMilestonePercentageCompleted());
+            else
+                jsonObject.addProperty("milestonePercentageCompleted", "NA");
 
             jsonObject.addProperty("createdDate", formatter.format(workProgressRegister.getCreatedDate()));
         }

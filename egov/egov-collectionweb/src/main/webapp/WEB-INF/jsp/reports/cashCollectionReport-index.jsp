@@ -117,7 +117,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].fromDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
+				src="/collection/resources/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>
@@ -131,7 +131,7 @@ function validate()
 				href="javascript:show_calendar('forms[0].toDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
+				src="/collection/resources/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
 			</td>

@@ -39,12 +39,13 @@
  */
 package org.egov.ptis.client.integration.impl;
 
+import static org.egov.demand.utils.DemandConstants.COLLECTIONTYPE_FIELD;
+
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infstr.utils.HibernateUtil;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.bean.Property;
 import org.egov.ptis.client.integration.utils.SpringBeanUtil;
@@ -54,69 +55,62 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
 
-import static org.egov.demand.utils.DemandConstants.COLLECTIONTYPE_FIELD;
-
 public class PropertyImpl extends Property {
 
-	private PropertyTaxBillable billable;
+    private PropertyTaxBillable billable;
 
-	@Override
-	protected Billable getBillable() {
-		if (billable == null) {
-			billable = new PropertyTaxBillable();
-			billable.setBasicProperty(basicProperty);
-			billable.setCollectionType(COLLECTIONTYPE_FIELD);
-		}
-		return billable;
-	}
+    @Override
+    protected Billable getBillable() {
+        if (billable == null) {
+            billable = new PropertyTaxBillable();
+            billable.setBasicProperty(basicProperty);
+            billable.setCollectionType(COLLECTIONTYPE_FIELD);
+        }
+        return billable;
+    }
 
-	@Override
-	public void setBillable(PropertyTaxBillable billable) {
-		this.billable = billable;
-	}
+    @Override
+    public void setBillable(PropertyTaxBillable billable) {
+        this.billable = billable;
+    }
 
-	@Override
-	protected DCBDisplayInfo getDCBDisplayInfo() {
-		DCBUtils dcbUtils = new DCBUtils();
-		return dcbUtils.prepareDisplayInfo();
-	}
+    @Override
+    protected DCBDisplayInfo getDCBDisplayInfo() {
+        DCBUtils dcbUtils = new DCBUtils();
+        return dcbUtils.prepareDisplayInfo();
+    }
 
-	@Override
-	public EgBill createBill() {
-		PropertyTaxCollection propertyTaxCollection = SpringBeanUtil.getPropertyTaxCollection();
-		PropertyTaxUtil propTaxUtil = SpringBeanUtil.getPropertyTaxUtil();
-		PropertyTaxNumberGenerator propNumberGenerator = SpringBeanUtil.getPropertyTaxNumberGenerator();
-		/*
-		 * because unlike counter collections, do NOT want collections to call
-		 * the apportioning logic - we are apportioning ourselves.
-		 */
-		
-		PTBillServiceImpl billServiceInterface = new PTBillServiceImpl();
-		billServiceInterface.setPropertyTaxUtil(propTaxUtil);
-		EgBill bill = billServiceInterface.generateBill(billable);
+    @Override
+    public EgBill createBill() {
+        PropertyTaxCollection propertyTaxCollection = SpringBeanUtil.getPropertyTaxCollection();
+        PropertyTaxUtil propTaxUtil = SpringBeanUtil.getPropertyTaxUtil();
+        PropertyTaxNumberGenerator propNumberGenerator = SpringBeanUtil.getPropertyTaxNumberGenerator();
+        /*
+         * because unlike counter collections, do NOT want collections to call
+         * the apportioning logic - we are apportioning ourselves.
+         */
 
-		// because the bill must be persisted before calling the collections API
-		flushToGetBillID();
-		return bill;
-	}
+        PTBillServiceImpl billServiceInterface = new PTBillServiceImpl();
+        billServiceInterface.setPropertyTaxUtil(propTaxUtil);
+        EgBill bill = billServiceInterface.generateBill(billable);
 
-	@Override
-	protected void checkAuthorization() {
-		Long userId = EgovThreadLocals.getUserId();
-		if (userId == null) {
-			throw new ApplicationRuntimeException(" User is null.Please check ");
-		}
-	}
+        // because the bill must be persisted before calling the collections API
+        return bill;
+    }
 
-	@Override
-	protected void checkIsActive() {
-		if (!basicProperty.isActive()) {
-			throw new ApplicationRuntimeException("Property is Deactivated. Provided propertid : " + getPropertyID());
-		}
-	}
+    @Override
+    protected void checkAuthorization() {
+        Long userId = ApplicationThreadLocals.getUserId();
+        if (userId == null) {
+            throw new ApplicationRuntimeException(" User is null.Please check ");
+        }
+    }
 
-	private void flushToGetBillID() {
-		HibernateUtil.getCurrentSession().flush();
-	}
+    @Override
+    protected void checkIsActive() {
+        if (!basicProperty.isActive()) {
+            throw new ApplicationRuntimeException("Property is Deactivated. Provided propertid : " + getPropertyID());
+        }
+    }
 
 }

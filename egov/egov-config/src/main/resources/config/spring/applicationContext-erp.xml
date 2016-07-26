@@ -48,8 +48,7 @@
             <list>
                 <value>classpath*:config/spring/applicationContext-egi.xml</value>
                 <value>classpath*:config/spring/applicationContext-eis.xml</value>
-                <value>classpath*:config/spring/applicationContext-search-queues.xml</value>
-                <value>classpath*:config/spring/applicationContext-search.xml</value>
+                <value>classpath*:config/spring/applicationContext-search-all.xml</value>
                 <value>classpath*:config/spring/applicationContext-security.xml</value>
                 <value>classpath*:config/spring/applicationContext-quartz.xml</value>
                 <value>classpath*:config/spring/applicationContext-*-global-services.xml</value>

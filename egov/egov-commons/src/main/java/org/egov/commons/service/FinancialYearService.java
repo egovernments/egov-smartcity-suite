@@ -39,13 +39,44 @@
  */
 package org.egov.commons.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.CFinancialYear;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 
 public class FinancialYearService extends PersistenceService<CFinancialYear, Long>
 {
-    
+
     public FinancialYearService(final Class<CFinancialYear> financialYear) {
         this.type = financialYear;
+    }
+
+    public List<CFinancialYear> getAll() {
+
+        Query query = getSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear order by  cfinancialyear.finYearRange desc");
+        return query.list();
+    }
+
+    public CFinancialYear getCurrentFinancialYear() {
+
+        Date date = new Date();
+        CFinancialYear cFinancialYear = null;
+        Query query = getSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
+        query.setDate("sDate", date);
+        query.setDate("eDate", date);
+        ArrayList list = (ArrayList) query.list();
+        if (list.size() > 0)
+            cFinancialYear = (CFinancialYear) list.get(0);
+        if (null == cFinancialYear)
+            throw new ApplicationRuntimeException("Financial Year is not active For Posting.");
+        return cFinancialYear;
     }
 }

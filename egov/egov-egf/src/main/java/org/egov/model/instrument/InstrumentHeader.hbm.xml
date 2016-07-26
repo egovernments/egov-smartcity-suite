@@ -48,8 +48,8 @@
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGF_INSTRUMENTHEADER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGF_INSTRUMENTHEADER</param>
 			</generator>
 		</id>
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp"/>

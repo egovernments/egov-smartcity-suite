@@ -44,10 +44,15 @@
 <div class="page-container" id="page-container">
 <input type="hidden" id="id" value="${contractorBillRegister.id }" />
 	<div class="main-content">
-		<div class="alert text-center" style="color:green;">
-			<c:if test="${contractorBillRegister.getId() != null}">
-				<c:out value="${message }" />
-			</c:if>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="alert text-center" style="color:green;">
+				<c:if test="${contractorBillRegister.getId() != null}">
+					<c:out value="${message }" />
+				</c:if>
+			</div>
+			<div class="alert text-center" style="color:red;">
+				<c:out value="${errorMessage }" />
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-12 text-center">

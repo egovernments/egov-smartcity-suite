@@ -53,6 +53,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -79,9 +80,11 @@ public class MemoGenerationAction extends BaseFormAction {
 	private PersistenceService<RevisionPetition, Long> objectionService;
 	protected ReportService reportService;
 	private Map<String, Map<String, BigDecimal>> reasonwiseDues;
-	private Integer reportId = -1;
+	private String reportId;
 	public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public Object getModel() {
@@ -154,8 +157,8 @@ public class MemoGenerationAction extends BaseFormAction {
 		return paramMap;
 	}
 
-	protected Integer addingReportToSession(ReportOutput reportOutput) {
-		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	protected String addingReportToSession(ReportOutput reportOutput) {
+		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
 	public RevisionPetition getObjection() {
@@ -166,12 +169,8 @@ public class MemoGenerationAction extends BaseFormAction {
 		this.objection = objection;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {

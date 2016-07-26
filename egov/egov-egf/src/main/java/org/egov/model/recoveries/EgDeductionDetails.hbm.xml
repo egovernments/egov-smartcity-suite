@@ -46,8 +46,8 @@
     <class name="org.egov.model.recoveries.EgDeductionDetails" table="EG_DEDUCTION_DETAILS">
          <id name="id" type="integer">
             <column name="ID" precision="10" scale="0" />
-            <generator class="native">
-            <param name="sequence">SEQ_EG_DEDUCTION_DETAILS</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">SEQ_EG_DEDUCTION_DETAILS</param>
             </generator>
         </id>
         <many-to-one name="recovery" class="org.egov.model.recoveries.Recovery" fetch="select">

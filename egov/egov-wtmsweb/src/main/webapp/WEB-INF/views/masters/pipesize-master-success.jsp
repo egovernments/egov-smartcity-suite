@@ -37,61 +37,68 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-		 
-			
-			<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="propertyPipeSize" id="propertyPipeSizesform" >
-				<div class="row">
-						<div class="col-md-12">
-							<c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert">${message}</div>
-                </c:if>
-							<div class="panel panel-primary" data-collapsed="0">
-								<div class="panel-heading">
-									<div class="panel-title">
-										<spring:message code="title.pipesize.master.details"/>
-									</div>
-									
-								</div>
-								<div class="panel-body">
-									<div class="row add-border">
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.propertytype"/> 
-										</div>
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${propertyPipeSize.propertyType.name}"/>
-										</div>
-										
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.code"/>
-										</div>
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${propertyPipeSize.pipeSize.code}"/>
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-md-3 col-xs-6 add-margin">
-											<spring:message code="lbl.hscpipesize.mm"/>
-										</div>
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<c:out value="${propertyPipeSize.pipeSize.sizeInMilimeter}"/>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+<form:form  method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="pipeSize" id="pipesizeform" >
+<div class="row">
+	<div class="col-md-12">
+       <c:if test="${not empty message}">
+            <div role="alert">${message}</div>
+        </c:if>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title"><spring:message code="title.pipesize.master.details"/></div>
+	</div>
+<div class="panel-body">
+	<div class="row add-border">
+		<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.code"/> </div>
+			<div class="col-md-3 col-xs-6 add-margin view-content">
+				<c:out value="${pipeSize.code}"/>
+			</div>
+		<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.hscpipesize.mm"/></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content">
+				<c:out value="${pipeSize.sizeInMilimeter}"/>
+			</div>
+		</div>
+			<div class="row add-border">
+				<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.hscpipesize.inches"/></div>
+					<div class="col-md-3 col-xs-6 add-margin view-content">
+						<c:out value="${pipeSize.sizeInInch}"/>
 					</div>
-									<div class="row text-center">
-										<div class="row">
-										<a href="javascript:void(0)" class="btn btn-default"
-											onclick="self.close()"><spring:message code="lbl.close" /></a>
+					<div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.status"/></div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:choose>
+								<c:when test="${pipeSize.active == 'true'}">
+									<c:out value="ACTIVE" />
+								</c:when> 
+								<c:otherwise>
+									<c:out value="INACTIVE" />
+								</c:otherwise>
+								</c:choose>
+							</div> 
 						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<input type="hidden" value="${mode}" id="mode" />
+				<div class="row text-center">
+					<div class="row">
+						<c:if test="${mode == 'create'}"> 
+							<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
+						</c:if>
+						<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
 					</div>
+				</div>
 					
-			</form:form>
+</form:form>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/js/app/pipe-size-master.js?rnd=${app_release_no}'/>"></script>

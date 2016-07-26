@@ -41,7 +41,7 @@
   -->
  <!DOCTYPE struts PUBLIC
 	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-	"http://struts.apache.org/dtds/struts-2.3.dtd">
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
 	<!-- Production Performance Environment Setting, Change to inverse value of the same in Development Environment -->
@@ -54,12 +54,12 @@
 	<constant name="struts.serve.static" value="true" />
 	<constant name="struts.i18n.reload" value="false" />
 	<constant name="struts.configuration.xml.reload" value="false" />
-	<constant name="struts.freemarker.beanwrapperCache" value="true" />
+	<constant name="struts.freemarker.beanwrapperCache" value="false" />
 	<!-- Performance Environment Setting Ends -->
 	<constant name="struts.convention.exclude.parentClassLoader" value="true" />
 	<constant name="struts.convention.action.fileProtocols" value="jar,vfsfile,vfszip,vfs,zip" />
 	<constant name="struts.convention.result.path" value="/WEB-INF/jsp/" />
-	<constant name="struts.custom.i18n.resources" value="InfraApplicationResources,custom" />
+	<constant name="struts.custom.i18n.resources" value="messages/common-errors,custom" />
 	<constant name="struts.locale" value="en_IN" />
 	<constant name="struts.multipart.maxSize" value="10485760" />
 	<constant name="struts.multipart.parser" value="jakarta" />

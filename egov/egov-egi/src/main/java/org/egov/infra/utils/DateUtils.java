@@ -41,11 +41,10 @@
 package org.egov.infra.utils;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.utils.FinancialYear;
-import org.egov.infstr.utils.FinancialYearImpl;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
+import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -71,6 +70,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static String toYearFormat(final LocalDate date) {
         return FORMAT_DATE_TO_YEAR.print(date);
+    }
+
+    public static String toYearFormat(final Date date) {
+        return FORMAT_DATE_TO_YEAR.print(new LocalDate(date));
     }
 
     public static String currentDateToDefaultDateFormat() {
@@ -119,6 +122,13 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static int noOfDays(final Date startDate, final Date endDate) {
         return (int)( (endDate.getTime() - startDate.getTime())
                 / (1000 * 60 * 60 * 24) );
+    }
+    
+    public static int noOfYears(final Date startDate, final Date endDate){
+    	final DateTime sDate = new DateTime(startDate);
+        final DateTime eDate = new DateTime(endDate);
+        Years years = Years.yearsBetween(sDate, eDate);
+        return years.getYears();
     }
 
     /**
@@ -306,33 +316,6 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static String getDefaultFormattedDate(final Date date) {
         return getDateFormatter(DFT_DATE_FORMAT).format(date);
-    }
-
-    /**
-     * Gets the financial year.
-     *
-     * @return the financial year
-     */
-    public static FinancialYear getFinancialYear() {
-        FinancialYear obj = null;
-        final java.sql.Date date = new java.sql.Date(new Date().getTime());
-        String end = "";
-        String firstd = " ";
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        final String firsty = Integer.toString(calendar.get(Calendar.YEAR));
-        final String endy = Integer.toString(getSecondYear(date));
-        if (calendar.get(Calendar.YEAR) > getSecondYear(date)) {
-            firstd = endy + "-04-01";// firstDate
-            end = firsty + "-03-31";// endDate
-        } else {
-            firstd = firsty + "-04-01";
-            end = endy + "-03-31";
-        }
-        final java.sql.Date first = java.sql.Date.valueOf(firstd);
-        final java.sql.Date second = java.sql.Date.valueOf(end);
-        obj = new FinancialYearImpl(first, second, Integer.valueOf(firsty));
-        return obj;
     }
 
     /**

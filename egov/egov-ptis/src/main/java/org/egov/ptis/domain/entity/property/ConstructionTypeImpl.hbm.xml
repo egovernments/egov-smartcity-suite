@@ -47,8 +47,8 @@
 		table="EGPT_CONSTR_TYPE">
 
 		<id name="id" column="ID_CONSTR_TYPE" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_CONSTR_TYPE</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_CONSTR_TYPE</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

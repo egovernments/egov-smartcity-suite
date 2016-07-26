@@ -239,10 +239,10 @@ function transitionStates(){
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchOnlineReceipts.criteria.fromdate"/></td>
 		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/collection/resources/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	      <td width="21%" class="bluebox"><s:text name="searchOnlineReceipts.criteria.todate"/></td>
 	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
+		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/collection/resources/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width:80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
 	      <td width="4%" class="bluebox2">&nbsp;</td>
@@ -257,9 +257,9 @@ function transitionStates(){
     <div class="buttonbottom">
       <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>&nbsp;
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchOnlineReceiptForm.action='searchOnlineReceipt-reset.action'"/></label>&nbsp;
-      <logic:empty name="results">
+      <s:if test="%{results.isEmpty()}">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
-      </logic:empty>
+      </s:if>
       
 </div>
 
@@ -271,7 +271,7 @@ function transitionStates(){
 	</b></font>
   </li>
 </span>
-<logic:notEmpty name="results">
+<s:if test="%{!results.isEmpty()}">
 <div style="overflow:auto; margin-left: 8px;margin-right: 8px;">
 <div align="center">		
 
@@ -320,8 +320,8 @@ function transitionStates(){
 </div>
 </div>	
 				
-</logic:notEmpty>
-<logic:empty name="results">
+</s:if>
+    <s:if test="%{results.isEmpty()}">
 	<s:if test="target=='searchresult'">
 	
 		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
@@ -332,7 +332,7 @@ function transitionStates(){
 		</table>
 	
 	</s:if>
-</logic:empty>
+</s:if>
 </s:form>
 <script type="text/javascript">
 onBodyLoad();

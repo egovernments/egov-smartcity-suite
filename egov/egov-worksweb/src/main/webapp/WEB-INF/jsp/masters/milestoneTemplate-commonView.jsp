@@ -53,7 +53,7 @@
 					<div class="col-xs-3 add-margin">
 						<s:text name="milestone.template.status" />
 					</div>
-					<div class="col-xs-3 add-margin view-content">
+					<div id="status" class="col-xs-3 add-margin view-content">
 						<s:property value="%{status}" />
 					</div>
 				</div>
@@ -76,13 +76,13 @@
 						<s:text name="milestone.template.type" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{workType.id}" />
+						<s:property value="%{typeOfWork.description}" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<s:text name="milestone.template.subtype" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<s:property value="%{subType.id}" />
+						<s:property value="%{subTypeOfWork.description}" />
 					</div>
 				</div>
 			</div>
@@ -106,11 +106,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator value="stages" status="row_status">
+				<s:iterator value="milestoneTemplateActivities" status="row_status">
 					<tr>
 						<td><s:property value="%{stageOrderNo}" /></td>
 						<td><s:property value="%{description}" /></td>
-						<td><s:property value="%{percentage}" /></td>
+						<td align="right"><s:property value="%{percentage}" /></td>
 					</tr>
 				</s:iterator>
 			</tbody>

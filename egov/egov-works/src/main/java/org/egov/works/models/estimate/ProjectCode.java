@@ -42,6 +42,7 @@ package org.egov.works.models.estimate;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;

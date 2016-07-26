@@ -46,8 +46,8 @@
     <class name="org.egov.deduction.model.EgRemittance" table="EG_REMITTANCE">
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
-            <param name="sequence">seq_eg_remittance</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">seq_eg_remittance</param>
             </generator>
         </id>
         <many-to-one name="financialyear" class="org.egov.commons.CFinancialYear" fetch="select">

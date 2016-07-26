@@ -39,6 +39,24 @@
  */
 package org.egov.ptis.domain.bill;
 
+import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_MUTATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -58,6 +76,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.service.PenaltyCalculationService;
+import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -65,31 +84,13 @@ import org.egov.ptis.domain.dao.property.PropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.egov.demand.interfaces.LatePayPenaltyCalculator.LPPenaltyCalcType.SIMPLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEFAULT_FUND_SRC_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 /**
  * @author satyam
@@ -100,8 +101,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         RebateCalculator {
 
     private static final String STRING_DEPARTMENT_CODE = "REV";
-    private static final String STRING_SERVICE_CODE = "PT";
-    private static final String STRING_MUTATION_SERVICE_CODE = "PTMF";
     private BasicProperty basicProperty;
     private Long userId;
     EgBillType egBillType;
@@ -126,6 +125,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private PenaltyCalculationService penaltyCalculationService;
     @Autowired
     private InstallmentDao installmentDao;
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtil;
+    @Autowired
+    private FinancialUtil financialUtil;
 
     private Boolean isCallbackForApportion = Boolean.TRUE;
     private LPPenaltyCalcType penaltyCalcType = SIMPLE;
@@ -138,6 +141,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     private String pgType;
     private Map<Installment, EgDemandDetails> installmentWisePenaltyDemandDetail = new TreeMap<Installment, EgDemandDetails>();
     private Boolean mutationFeePayment = Boolean.FALSE;
+    private Boolean vacantLandTaxPayment = Boolean.FALSE;
     private BigDecimal mutationFee;
     private String mutationApplicationNo;
     private String transanctionReferenceNumber;
@@ -262,9 +266,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     @Override
     public String getServiceCode() {
         if (isMutationFeePayment())
-            return STRING_MUTATION_SERVICE_CODE;
+            return SERVICE_CODE_MUTATION;
+        else if (isVacantLandTaxPayment())
+            return SERVICE_CODE_VACANTLANDTAX;
         else
-            return STRING_SERVICE_CODE;
+            return SERVICE_CODE_PROPERTYTAX;
     }
 
     @Override
@@ -292,7 +298,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public String getDescription() {
-        return "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
+    	String description = "";
+    	if (!isMutationFeePayment()) {
+    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo();
+    	} else{
+    		description = "Property Tax Assessment Number: " + getBasicProperty().getUpicNo() + " (" + mutationApplicationNo + ")";
+    	}
+    	return description;
     }
 
     /**
@@ -317,17 +329,17 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public BigDecimal getFunctionaryCode() {
-        return new BigDecimal(DEFAULT_FUNCTIONARY_CODE);
+        return financialUtil.getFunctionaryCode();
     }
 
     @Override
     public String getFundCode() {
-        return DEFAULT_FUND_CODE;
+        return financialUtil.getFundCode();
     }
 
     @Override
     public String getFundSourceCode() {
-        return DEFAULT_FUND_SRC_CODE;
+        return financialUtil.getFundSourceCode();
     }
 
     @Override
@@ -377,7 +389,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public BigDecimal getLPPPercentage() {
-        return new BigDecimal(ptUtils.getAppConfigValue("LATE_PAYPENALTY_PERC", PropertyTaxConstants.PTMODULENAME));
+        return new BigDecimal(propertyTaxCommonUtil.getAppConfigValue("LATE_PAYPENALTY_PERC",
+                PropertyTaxConstants.PTMODULENAME));
     }
 
     @Override
@@ -422,8 +435,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public Map<Installment, PenaltyAndRebate> getCalculatedPenalty() {
 
         final Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
-        final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(basicProperty.getAssessmentdate(), new Date()) - 1;
-        setIsNagarPanchayat(propertyTaxUtil.checkIsNagarPanchayat());
 
         final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
 
@@ -432,16 +443,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         final Map<Installment, BigDecimal> instWiseDmdMap = installmentDemandAndCollection.get("DEMAND");
         final Map<Installment, BigDecimal> instWiseAmtCollMap = installmentDemandAndCollection.get("COLLECTION");
-
-        /**
-         * Not calculating penalty if collection is happening within two months
-         * from the assessment date
-         */
-        // To be replaced with (noOfMonths <= 3) end of this financial year
-        if (!isNagarPanchayat && noOfMonths <= 3) {
-            calculateRebate(installmentPenaltyAndRebate, instWiseDmdMap, instWiseAmtCollMap);
-            return installmentPenaltyAndRebate;
-        }
 
         boolean thereIsBalance = false;
 
@@ -452,26 +453,13 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
         if (getLevyPenalty()) {
 
-            /*
-             * installmentWisePenaltyDemandDetail =
-             * penaltyCalculationService.getInstallmentWisePenaltyDemandDetails(
-             * getBasicProperty().getProperty(), currentDemand);
-             */
-            final Installment currentInstall = currentDemand.getEgInstallmentMaster();
             installmentWisePenaltyDemandDetail = penaltyCalculationService.getInstallmentWisePenaltyDemandDetails(
                     getBasicProperty().getProperty(), currentDemand);
 
             PenaltyAndRebate penaltyAndRebate = null;
             EgDemandDetails existingPenaltyDemandDetail = null;
-            // Returns the installment in which the assessment date falls
-            final Installment assessmentEffecInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
-                    getModule(), basicProperty.getAssessmentdate());
-            DateTime nagarPanchayatPenDate = DateTime.now().withDate(2016, 1, 1);
-            final Installment nagarPanchayatPenEndInstallment = installmentDao.getInsatllmentByModuleForGivenDate(
-                    getModule(), nagarPanchayatPenDate.toDate());
 
             for (final Map.Entry<Installment, BigDecimal> mapEntry : instWiseDmdMap.entrySet()) {
-
                 installment = mapEntry.getKey();
                 tax = mapEntry.getValue();
                 collection = instWiseAmtCollMap.get(installment);
@@ -480,22 +468,10 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 existingPenaltyDemandDetail = installmentWisePenaltyDemandDetail.get(installment);
                 thereIsBalance = balance.compareTo(BigDecimal.ZERO) == 1;
 
-                if (thereIsBalance) {
+                if (thereIsBalance && existingPenaltyDemandDetail != null) {
                     penaltyAndRebate = new PenaltyAndRebate();
-                    Date penaltyEffectiveDate = null;
-                    if (existingPenaltyDemandDetail == null) {
-                        if (isNagarPanchayat && installment.compareTo(nagarPanchayatPenEndInstallment) <= 0) {
-                            penaltyEffectiveDate = nagarPanchayatPenDate.toDate();
-                        } else {
-                            penaltyEffectiveDate = getPenaltyEffectiveDate(installment, assessmentEffecInstallment,
-                                    basicProperty.getAssessmentdate(), currentInstall);
-                        }
-                        if (penaltyEffectiveDate!=null && penaltyEffectiveDate.before(new Date())) {
-                            penaltyAndRebate.setPenalty(calculatePenalty(null, penaltyEffectiveDate, balance));
-                        }
-                    } else
-                        penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
-                                existingPenaltyDemandDetail.getAmtCollected()));
+                    penaltyAndRebate.setPenalty(existingPenaltyDemandDetail.getAmount().subtract(
+                            existingPenaltyDemandDetail.getAmtCollected()));
                     installmentPenaltyAndRebate.put(installment, penaltyAndRebate);
                 }
             }
@@ -527,43 +503,6 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
                 }
             }
         }
-    }
-
-    private Date getPenaltyEffectiveDate(final Installment installment, final Installment assessmentEffecInstallment,
-            final Date assmentDate, final Installment curInstallment) {
-        Date penaltyEffDate = null;
-        /**
-         * If assessment date falls in the current installment then penalty
-         * calculation will be effective from three months after the assessment
-         * date
-         */
-        if (null != assessmentEffecInstallment && assessmentEffecInstallment.equals(curInstallment)) {
-            penaltyEffDate = penalyDateWithThreeMonths(assmentDate);
-        } else {
-            /*
-             * For all the passed installment penalty starts from 4th month of
-             * the respective installment. If its a current installment, first 3
-             * months there is no peanlty from 4th month onwards penalty
-             * effective from 4th month of the installment
-             */
-            if (installment.equals(curInstallment) || installment.getFromDate().after(curInstallment.getToDate())) {
-                final int noOfMonths = PropertyTaxUtil.getMonthsBetweenDates(installment.getFromDate(), new Date());
-                if (noOfMonths > 3) {
-                    penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-                }
-            } else {
-                penaltyEffDate = penalyDateWithThreeMonths(installment.getFromDate());
-            }
-        }
-        return penaltyEffDate;
-    }
-
-    private Date penalyDateWithThreeMonths(final Date date) {
-        final Calendar penalyDate = Calendar.getInstance();
-        penalyDate.setTime(date);
-        penalyDate.add(Calendar.MONTH, 3);
-        penalyDate.set(Calendar.DAY_OF_MONTH, 1);
-        return penalyDate.getTime();
     }
 
     @Override
@@ -639,7 +578,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setMutationFeePayment(final boolean mutationFeePayment) {
         this.mutationFeePayment = mutationFeePayment;
     }
-
+    
     public void setMutationApplicationNo(final String mutationApplicationNo) {
         this.mutationApplicationNo = mutationApplicationNo;
     }
@@ -681,4 +620,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         this.propertyTaxUtil = propertyTaxUtil;
     }
 
+    public boolean isVacantLandTaxPayment() {
+        return vacantLandTaxPayment;
+    }
+
+    public void setVacantLandTaxPayment(final boolean vacantLandTaxPayment) {
+        this.vacantLandTaxPayment = vacantLandTaxPayment;
+    }
 }

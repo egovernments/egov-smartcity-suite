@@ -65,6 +65,11 @@ public class ActionService {
         return actionRepository.findOne(id);
     }
 
+    @Transactional
+    public Action saveAction(Action action) {
+        return actionRepository.save(action);
+    }
+
     public Action getActionByUrlAndContextRoot(final String url, final String contextRoot) {
         Action action = null;
         if (url.contains("?")) {

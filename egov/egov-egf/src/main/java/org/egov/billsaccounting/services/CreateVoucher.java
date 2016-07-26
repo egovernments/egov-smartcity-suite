@@ -39,17 +39,42 @@
  */
 package org.egov.billsaccounting.services;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.GLEngine.TransaxtionParameter;
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.eGov.src.transactions.CommonMethodsImpl;
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.exilant.exility.common.TaskFailedException;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.model.Worksdetail;
-import org.egov.commons.*;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankreconciliation;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFiscalPeriod;
+import org.egov.commons.CFunction;
+import org.egov.commons.CGeneralLedger;
+import org.egov.commons.CGeneralLedgerDetail;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
@@ -64,9 +89,12 @@ import org.egov.commons.dao.FundSourceHibernateDAO;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.dao.VoucherHeaderDAO;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.dao.budget.BudgetUsageHibernateDAO;
+import org.egov.egf.autonumber.VouchernumberGenerator;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -79,10 +107,10 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.exception.TooManyValuesException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -114,21 +142,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.GLEngine.TransaxtionParameter;
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.eGov.src.transactions.CommonMethodsImpl;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.exilant.exility.common.TaskFailedException;
 
 /**
  * This Class will create voucher from bill <br>
@@ -169,6 +189,8 @@ public class CreateVoucher {
 	private PersistenceService persistenceService;
 	@Autowired
 	private EGovernCommon eGovernCommon;
+	@Autowired
+	private AutonumberServiceBeanResolver beanResolver;
 
 	// add here for other bills
 
@@ -225,6 +247,9 @@ public class CreateVoucher {
  
 	@Autowired
 	private BoundaryService boundaryService;
+	
+	 @Autowired
+	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
 	private static final String ERR = "Exception in CreateVoucher";
 	private static final String DEPTMISSINGMSG = "Department is missing in the Bill cannot proceed creating vouvher";
@@ -279,13 +304,11 @@ public class CreateVoucher {
 			// generalLedgerService = new PersistenceService<CGeneralLedger,
 			// Long>();
 			// generalLedgerService.setType(CGeneralLedger.class);
-			// generalLedgerService.setSessionFactory(new SessionFactory());
 
 			// generalLedgerDetailService = new
 			// PersistenceService<CGeneralLedgerDetail, Long>();
 			// generalLedgerDetailService.setType(CGeneralLedgerDetail.class);
 			// generalLedgerDetailService.setSessionFactory(new
-			// SessionFactory());
 
 		} catch (final Exception e) {
 			LOGGER.error("Exception in CreateVoucher", e);
@@ -327,7 +350,7 @@ public class CreateVoucher {
 							"PREAPPROVEDVOUCHERSTATUS"
 									+ "is not defined in AppConfig values cannot proceed creating voucher");
 			}
-			usrId = EgovThreadLocals.getUserId().intValue();
+			usrId = ApplicationThreadLocals.getUserId().intValue();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" ---------------Generating Voucher for Bill-------");
 			EgBillregister egBillregister = null;
@@ -601,7 +624,7 @@ public class CreateVoucher {
 			TaskFailedException {
 		final CVoucherHeader vh = null;
 		try {
-			usrId = EgovThreadLocals.getUserId().intValue();
+			usrId = ApplicationThreadLocals.getUserId().intValue();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug(" ---------------Generating Voucher-------");
 			EgBillregister egBillregister = null;
@@ -817,8 +840,9 @@ public class CreateVoucher {
 		try {
 			vh = createVoucher(headerdetails, accountcodedetails,
 					subledgerdetails);
-			if (vh.getModuleId() != null)
-				startWorkflow(vh);
+			/*if (vh.getModuleId() != null)
+				startWorkflow(vh);*/ 
+			//if u need workflow enable above lines and fix workflow
 		} catch (final ValidationException ve) {
 			LOGGER.error(ERR, ve);
 			final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -865,7 +889,7 @@ public class CreateVoucher {
 					// voucherWorkflowService.transition("aa_approve",
 					// voucherheader, "Created"); // action name need to pass
 					// Position position =
-					// eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
+					// eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
 
 					final VoucherService vs = (VoucherService) applicationContext
 							.getBean("voucherService");
@@ -886,7 +910,6 @@ public class CreateVoucher {
 			 * )) { // ReceiptVoucher rv=new ReceiptVoucher();
 			 * PersistenceService<ReceiptVoucher, Long> persistenceService = new
 			 * PersistenceService<ReceiptVoucher, Long>();
-			 * persistenceService.setSessionFactory(new SessionFactory());
 			 * //persistenceService.setType(ReceiptVoucher.class);
 			 * rv.setId(voucherheader.getId());
 			 * rv.setVoucherHeader(voucherheader);
@@ -1005,7 +1028,7 @@ public class CreateVoucher {
 				// cjv.getVoucherHeaderId(), "Created"); // action name need to
 				// pass
 				final Position position = eisCommonService
-						.getPositionByUserId(EgovThreadLocals.getUserId());
+						.getPositionByUserId(ApplicationThreadLocals.getUserId());
 				cjv.transition(true).withStateValue("WORKFLOW INITIATED")
 						.withOwner(position).withComments("WORKFLOW STARTED");
 				final VoucherService vs = (VoucherService) applicationContext
@@ -1078,9 +1101,9 @@ public class CreateVoucher {
 	public Position getPosition() throws ApplicationRuntimeException {
 		Position pos;
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("getPosition====" + EgovThreadLocals.getUserId());
+			LOGGER.debug("getPosition====" + ApplicationThreadLocals.getUserId());
 		pos = eisCommonService
-				.getPositionByUserId(EgovThreadLocals.getUserId());
+				.getPositionByUserId(ApplicationThreadLocals.getUserId());
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("position===" + pos.getId());
 		return null;// pos;
@@ -1234,31 +1257,8 @@ public class CreateVoucher {
 						"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
 								+ fiscalPeriod);
 			vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-			final String fundIdentifier = vh.getFundId().getIdentifier()
-					.toString();
-			final String vType = fundIdentifier + "/"
-					+ getCgnType(vh.getType()) + "/CGVN";
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("vType" + vType);
-			String eg_voucher = null;
-			try {
-				eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
-			} catch (final TaskFailedException e) {
-				LOGGER.error(ERR, e);
-				throw new ApplicationRuntimeException(e.getMessage());
-			} catch (final SQLException e) {
-				LOGGER.error(ERR, e);
-				throw new ApplicationRuntimeException(e.getMessage());
-			} catch (final Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (int i = eg_voucher.length(); i < 10; i++)
-				eg_voucher = "0" + eg_voucher;
-			final String cgNum = vType + eg_voucher;
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("cgNum------" + cgNum);
-			vh.setCgvn(cgNum);
+			
+			vh.setCgvn(getCGVNNumber(vh));
 
 			try {
 				if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
@@ -1270,8 +1270,7 @@ public class CreateVoucher {
 				LOGGER.error(ERR, e);
 				throw new ApplicationRuntimeException(e.getMessage());
 			}
-			vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals
-					.getUserId())));
+			voucherService.applyAuditing(vh);
 			if (LOGGER.isInfoEnabled())
 				LOGGER.info("++++++++++++++++++" + vh.toString());
 			voucherService.persist(vh);
@@ -1288,6 +1287,7 @@ public class CreateVoucher {
 				sourcePath.append(vh.getVouchermis().getSourcePath()).append(
 						vh.getId().toString());
 				vh.getVouchermis().setSourcePath(sourcePath.toString());
+				voucherService.applyAuditing(vh);
 				voucherService.update(vh);
 			}
 
@@ -1502,30 +1502,8 @@ public class CreateVoucher {
 					"Voucher Date not within an open period or Financial year not open for posting, fiscalPeriod := "
 							+ fiscalPeriod);
 		vh.setFiscalPeriodId(Integer.valueOf(fiscalPeriod));
-		final String fundIdentifier = vh.getFundId().getIdentifier().toString();
-		final String vType = fundIdentifier + "/" + getCgnType(vh.getType())
-				+ "/CGVN";
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("vType" + vType);
-		String eg_voucher = null;
-		try {
-			eg_voucher = voucherHelper.getEg_Voucher(vType, fiscalPeriod);
-		} catch (final TaskFailedException e) {
-			LOGGER.error(ERR, e);
-			throw new ApplicationRuntimeException(e.getMessage());
-		} catch (final SQLException e) {
-			LOGGER.error(ERR, e);
-			throw new ApplicationRuntimeException(e.getMessage());
-		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for (int i = eg_voucher.length(); i < 10; i++)
-			eg_voucher = "0" + eg_voucher;
-		final String cgNum = vType + eg_voucher;
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("cgNum------" + cgNum);
-		vh.setCgvn(cgNum);
+		
+		vh.setCgvn(getCGVNNumber(vh));
 
 		try {
 			if (!eGovernCommon.isUniqueVN(vh.getVoucherNumber(), vdt))
@@ -1537,7 +1515,7 @@ public class CreateVoucher {
 			LOGGER.error(ERR, e);
 			throw new ApplicationRuntimeException(e.getMessage());
 		}
-		vh.setCreatedBy(userMngr.getUserById(Long.valueOf(EgovThreadLocals
+		vh.setCreatedBy(userMngr.getUserById(Long.valueOf(ApplicationThreadLocals
 				.getUserId())));
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("++++++++++++++++++" + vh.toString());
@@ -1777,13 +1755,17 @@ public class CreateVoucher {
 						.get(VoucherConstant.VOUCHERNUMBER).toString();
 			if (null != headerdetails.get(VoucherConstant.MODULEID))
 				vNumGenMode = "Auto";
+			
+			cVoucherHeader.setFundId(fundByCode); 
+			if (vNumGenMode.equals("Auto")) {
+				cVoucherHeader.setVoucherNumberPrefix(voucherNumberPrefix);
+				VouchernumberGenerator v = beanResolver.getAutoNumberServiceFor(VouchernumberGenerator.class);
 
-			final String strVoucherNumber = voucherHelper
-					.getGeneratedVoucherNumber(fundByCode.getId(),
-							voucherNumberPrefix, voucherDate, vNumGenMode,
-							voucherNumber);
-			cVoucherHeader.setVoucherNumber(strVoucherNumber);
+				final String strVoucherNumber = v.getNextNumber(cVoucherHeader);
 
+				System.out.println(v.getClass().getSimpleName());
+				cVoucherHeader.setVoucherNumber(strVoucherNumber);
+			}
 			/*
 			 * if("Auto".equalsIgnoreCase(vNumGenMode) || null !=
 			 * headerdetails.get(VoucherConstant.MODULEID)){
@@ -1805,7 +1787,7 @@ public class CreateVoucher {
 			 * }
 			 */
 
-			cVoucherHeader.setFundId(fundByCode);
+		 
 			if (headerdetails.containsKey(VoucherConstant.MODULEID)
 					&& null != headerdetails.get(VoucherConstant.MODULEID)) {
 				cVoucherHeader.setModuleId(Integer.valueOf(headerdetails.get(
@@ -2434,7 +2416,6 @@ public class CreateVoucher {
 	}
 
 	public Functionary getFunctionaryByCode(final BigDecimal code) {
-		// functionarySer.setSessionFactory(new SessionFactory());
 		// functionarySer.setType(Functionary.class);
 		final Functionary functionary = (Functionary) persistenceService.find(
 				"from Functionary where code=?", code);
@@ -2647,9 +2628,9 @@ public class CreateVoucher {
 		status = (EgwStatus) egwStatusDAO.getStatusByModuleAndCode("PURCHBILL",
 				"Pending");
 		billregister.setStatus(status);
-		if (null != EgovThreadLocals.getUserId())
+		if (null != ApplicationThreadLocals.getUserId())
 			billregister.setCreatedBy(userMngr.getUserById(Long
-					.valueOf(EgovThreadLocals.getUserId())));
+					.valueOf(ApplicationThreadLocals.getUserId())));
 		billregister.setCreatedDate(new Date());
 		final SimpleDateFormat df = new SimpleDateFormat(DD_MM_YYYY);
 		final String date = df.format((Date) supplierBillDetails
@@ -3163,6 +3144,25 @@ public class CreateVoucher {
 					.getVouchermis().getFunction().getCode());
 		return headerdetails;
 	}
+	
+	 public String getCGVNNumber(CVoucherHeader vh)
+	    {
+	        String cgvnNumber = "";
+
+	        String sequenceName = "";
+
+	        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(vh.getVoucherDate());
+	        if (fiscalPeriod == null)
+	            throw new ApplicationRuntimeException("Fiscal period is not defined for the voucher date");
+	        sequenceName = "sq_" + vh.getFundId().getIdentifier() + "_" + getCgnType(vh.getType()).toLowerCase() + "_cgvn_"
+	                + fiscalPeriod.getName();
+	        Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+
+	        cgvnNumber = String.format("%s/%s/%s%010d", vh.getFundId().getIdentifier(), getCgnType(vh.getType()), "CGVN",
+	                nextSequence);
+
+	        return cgvnNumber;
+	    }
 
 	public AppConfigService getAppConfigService() {
 		return appConfigService;

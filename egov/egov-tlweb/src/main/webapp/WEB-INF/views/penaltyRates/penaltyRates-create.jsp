@@ -117,13 +117,7 @@ function checkValue(obj){
 		getControlInBranch(tbl.rows[rowobj.rowIndex],'toRange').value="";
 		return false;
 	} 
-  	var lastRow = (tbl.rows.length)-1;
-    var curRow=rowobj.rowIndex; 
-    if(curRow!=lastRow){
-		var uomFromVal1=getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value;
-		if(uomToval!=uomFromVal1)
-			getControlInBranch(tbl.rows[rowobj.rowIndex+1],'fromRange').value=uomToval; 
-    }
+	$(obj).closest('tr').next('tr').find('td:eq(0) input').val(toRange);
 }
 
 function deleteThisRow(obj){
@@ -166,16 +160,34 @@ function deleteThisRow(obj){
 function validateDetailsBeforeSubmit(){
 	var tbl=document.getElementById("result");
     var tabLength = (tbl.rows.length)-1;
-    var uomFromval,uomToval;
+    var fromRange,toRange,rate;
     for(var i=1;i<=tabLength;i++){
     	fromRange=getControlInBranch(tbl.rows[i],'fromRange').value;
     	toRange=getControlInBranch(tbl.rows[i],'toRange').value;
-    	if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
-    		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
-    		getControlInBranch(tbl.rows[i],'toRange').value="";
-    		getControlInBranch(tbl.rows[i],'toRange').focus();
+    	rate=getControlInBranch(tbl.rows[i],'rate').value;
+    	if(jQuery.isNumeric( fromRange ) && jQuery.isNumeric( toRange )){
+    		if(fromRange!='' && toRange!='' && (eval(fromRange)>=eval(toRange))){
+        		bootbox.alert("\"To Range\" should be greater than \"From Range\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'toRange').value="";
+        		getControlInBranch(tbl.rows[i],'toRange').focus();
+        		return false;
+        	}
+        	if(!toRange){
+        		bootbox.alert("Please enter \"To(days)\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'toRange').value="";
+        		getControlInBranch(tbl.rows[i],'toRange').focus();
+        		return false;
+        	}
+        	if(!rate){
+        		bootbox.alert("Please enter \"Penalty Rate(In Perc)\" for row "+(i)+".");
+        		getControlInBranch(tbl.rows[i],'rate').value="";
+        		getControlInBranch(tbl.rows[i],'rate').focus();
+        		return false;
+        	}
+    	}else{
+    		bootbox.alert("Not a valid number for row "+(i)+".");
     		return false;
-    	}  
+    	}
     }
     return true;
 }
@@ -196,6 +208,9 @@ $( "#search" ).click(function( event ) {
 			//dataType: "json",
 			success: function (response) {
 				 $('#resultdiv').html(response);
+				 if(jQuery('#resultdiv #result tbody tr').length == 1){
+					 jQuery('input[name="penaltyRatesList[0].fromRange"]').attr("readonly", false);
+				 }
 			}, 
 			error: function (response) {
 				console.log("failed");

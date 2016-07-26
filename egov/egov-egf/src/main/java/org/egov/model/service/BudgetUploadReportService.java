@@ -129,13 +129,13 @@ public class BudgetUploadReportService {
             subQuery = subQuery + " and bd.function = " + functionId;
 
         return "SELECT budgetuploadreport.fundCode ,budgetuploadreport.functionCode,budgetuploadreport.glCode,budgetuploadreport.deptCode,sum(budgetuploadreport.approvedReAmount) as approvedReAmount,sum(budgetuploadreport.planningReAmount) as planningReAmount,sum(budgetuploadreport.approvedBeAmount) as approvedBeAmount,sum(budgetuploadreport.planningBeAmount) as planningBeAmount FROM "
-                + "(SELECT f.code AS fundCode,fn.code  AS functionCode,coa.glcode  AS glCode,dept.code  AS deptCode,bd.approvedamount AS approvedReAmount,bd.budgetavailable AS planningReAmount,0 AS approvedBeAmount,0 AS planningBeAmount  FROM egf_budgetdetail bd , egf_budgetgroup bg , fund f, "
+                + "(SELECT f.code AS fundCode,fn.code  AS functionCode,bg.name AS glCode,dept.code  AS deptCode,bd.approvedamount AS approvedReAmount,bd.budgetavailable AS planningReAmount,0 AS approvedBeAmount,0 AS planningBeAmount  FROM egf_budgetdetail bd , egf_budgetgroup bg , fund f, "
                 + "function fn,eg_department dept,chartofaccounts coa,egw_status st WHERE bd.status  = st.id  AND st.moduletype  = 'BUDGETDETAIL' AND st.code  = 'Created' AND bd.budgetgroup = bg.id  AND bg.mincode = coa.id "
                 + "AND bd.fund = f.id AND bd.function  = fn.id AND bd.executing_department = dept.id "
                 + subQuery
                 + " "
                 + reMaterializedPathQuery
-                + " UNION SELECT f.code  AS fundCode,fn.code AS functionCode,coa.glcode AS glCode, "
+                + " UNION SELECT f.code  AS fundCode,fn.code AS functionCode,bg.name AS glCode, "
                 + "dept.code  AS deptCode,0 AS approvedReAmount,0 AS planningReAmount,bd.approvedamount AS approvedBeAmount,bd.budgetavailable AS planningBeAmount FROM egf_budgetdetail bd ,egf_budgetgroup bg ,fund f,function fn, eg_department dept,chartofaccounts coa,egw_status st WHERE bd.status = st.id "
                 + "AND st.moduletype = 'BUDGETDETAIL' AND st.code   = 'Created' AND bd.budgetgroup  = bg.id AND bg.mincode  = coa.id AND bd.fund  = f.id AND bd.function = fn.id AND bd.executing_department = dept.id "
                 + subQuery

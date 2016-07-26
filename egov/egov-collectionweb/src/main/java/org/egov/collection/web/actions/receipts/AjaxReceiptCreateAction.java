@@ -39,6 +39,10 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -63,18 +67,14 @@ import org.hibernate.HibernateException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @ParentPackage("egov")
 @Results({ @Result(name = "schemeList", location = "ajaxReceiptCreate-schemeList.jsp"),
-        @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
-        @Result(name = "serviceList", location = "ajaxReceiptCreate-serviceList.jsp"),
-        @Result(name = "serviceAccDtls", location = "ajaxReceiptCreate-serviceAccDtls.jsp"),
-        @Result(name = "subledger", location = "ajaxReceiptCreate-subledger.jsp"),
-        @Result(name = "entities", location = "ajaxReceiptCreate-entities.jsp"),
-        @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp") })
+    @Result(name = "subSchemeList", location = "ajaxReceiptCreate-subSchemeList.jsp"),
+    @Result(name = "serviceList", location = "ajaxReceiptCreate-serviceList.jsp"),
+    @Result(name = "serviceAccDtls", location = "ajaxReceiptCreate-serviceAccDtls.jsp"),
+    @Result(name = "subledger", location = "ajaxReceiptCreate-subledger.jsp"),
+    @Result(name = "entities", location = "ajaxReceiptCreate-entities.jsp"),
+    @Result(name = AjaxReceiptCreateAction.RESULT, location = "ajaxReceiptCreate-result.jsp") })
 public class AjaxReceiptCreateAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String DETAILTYPEID = "detailtypeid";
@@ -87,6 +87,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     private List<ServiceDetails> serviceList;
     private List<ServiceAccountDetails> accountDetails;
     private List<ServiceSubledgerInfo> subledgerDetails;
+    private String serviceClass;
 
     public String getAccountForService() {
         setValue(CollectionConstants.BLANK);
@@ -98,18 +99,6 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         return RESULT;
     }
-
-    /*
-     * public String getMISdetailsForService() { value = ""; String serviceId =
-     * parameters.get("serviceId")[0]; String queryString =
-     * "select nvl(fund.id,'-1'),nvl(department.id,'-1') from ServiceDetails where id='"
-     * + serviceId + "'"; List<Object[]> list =
-     * getPersistenceService().findAllBy(queryString); if (list != null &&
-     * !list.isEmpty()) { for (int i = 0; i < list.size(); i++) { Object[]
-     * arrayObjectInitialIndex = list.get(i); value =
-     * arrayObjectInitialIndex[0].toString() + "~" +
-     * arrayObjectInitialIndex[1].toString() + "#"; } } return RESULT; }
-     */
 
     public String getMISdetailsForService() {
         value = "";
@@ -156,13 +145,13 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                 .findAllBy(
                         " from Accountdetailtype"
                                 + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
-                        accountCode);
+                                accountCode);
         if (list == null || list.isEmpty())
             value = index + "~" + ERROR + "#";
         else
             for (final Accountdetailtype accountdetailtype : list)
                 value = value + index + "~" + selectedDetailType + "~" + onload + "~" + accountdetailtype.getName()
-                + "~" + accountdetailtype.getId().toString() + "#";
+                        + "~" + accountdetailtype.getId().toString() + "#";
         if (StringUtils.isNotBlank(value))
             value = value.substring(0, value.length() - 1);
         return RESULT;
@@ -258,7 +247,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                     || e.getName().contains("%") || e.getName().contains("^") || e.getName().contains("&")
                     || e.getName().contains("*"))
                 e.getName().replace("@", " ").replace("#", " ").replace("$", " ").replace("%", " ").replace("^", " ")
-                .replace("&", " ").replace("*", " ");
+                        .replace("&", " ").replace("*", " ");
             entityList.add(e);
         }
         return "entities";
@@ -284,7 +273,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
             final List<EntityType> entityList = getPersistenceService().findAllBy(
                     " from " + adt.getFullQualifiedName() + ""
                             + " where id in (select detailkey from Accountdetailkey where accountdetailtype.id=?)  ",
-                            Integer.valueOf(parameters.get(DETAILTYPEID)[0]));
+                    Integer.valueOf(parameters.get(DETAILTYPEID)[0]));
 
             if (getEntityList() == null || getEntityList().isEmpty())
                 value = index + "~" + ERROR + "#";
@@ -325,7 +314,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         setEntityList(getPersistenceService().findAllBy(
                 "select entity from " + adt.getFullQualifiedName() + " entity,Accountdetailkey adk"
                         + " where entity.id =adk.detailkey and adk.accountdetailtype.id=? ",
-                        Integer.valueOf(detailTypeId)));
+                Integer.valueOf(detailTypeId)));
 
         return "entities";
     }
@@ -341,7 +330,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
                 .findAllBy(
                         " from Accountdetailtype"
                                 + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
-                        accountCode);
+                                accountCode);
 
         for (final Accountdetailtype accountdetailtype : list)
             value = value + index + "~" + accountdetailtype.getDescription() + "~"
@@ -386,9 +375,55 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
         if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
                 && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
-            serviceList = getPersistenceService().findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",
-                    Long.valueOf(parameters.get("serviceCatId")[0]), CollectionConstants.SERVICE_TYPE_COLLECTION,
+            serviceList = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY, Long.valueOf(parameters.get("serviceCatId")[0]),
                     Boolean.TRUE);
+        else
+            serviceList = Collections.EMPTY_LIST;
+
+        return "serviceList";
+
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForChallan")
+    public String ajaxLoadServiceByCategoryForChallan() {
+
+        if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
+                && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
+            serviceList = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
+                    Long.valueOf(parameters.get("serviceCatId")[0]),
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE);
+        else
+            serviceList = Collections.EMPTY_LIST;
+
+        return "serviceList";
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForMisc")
+    public String ajaxLoadServiceByCategoryForMisc() {
+
+        if (null != parameters.get("serviceCatId") && null != parameters.get("serviceCatId")[0]
+                && Integer.valueOf(parameters.get("serviceCatId")[0]) != -1)
+            serviceList = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,
+                    Long.valueOf(parameters.get("serviceCatId")[0]), CollectionConstants.SERVICE_TYPE_MISC_COLLECTION,
+                    Boolean.TRUE);
+        else
+            serviceList = Collections.EMPTY_LIST;
+
+        return "serviceList";
+
+    }
+
+    @SuppressWarnings("unchecked")
+    @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification")
+    public String ajaxLoadServiceByClassification() {
+        if (null != serviceClass && serviceClass != "-1")
+            serviceList = getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,serviceClass);
         else
             serviceList = Collections.EMPTY_LIST;
 
@@ -400,24 +435,24 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxFinMiscDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+        final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
 
         final StringBuffer miscDetails = new StringBuffer();
         if (null != service)
             miscDetails.append(null != service.getFund() ? service.getFund().getId() : "-1").append('~') // fund
-                    .append(null != service.getScheme() ? service.getScheme().getId() : "-1").append('~') // scheme
-                    .append(null != service.getSubscheme() ? service.getSubscheme().getId() : "-1").append('~') // subscheme
-                    .append(null != service.getFundSource() ? service.getFundSource().getId() : "-1").append('~') // fundsource
-                    .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1").append('~') // functionary
-                    .append(null != service.getFunction() ? service.getFunction().getId() : "-1"); // function
+            .append(null != service.getScheme() ? service.getScheme().getId() : "-1").append('~') // scheme
+            .append(null != service.getSubscheme() ? service.getSubscheme().getId() : "-1").append('~') // subscheme
+            .append(null != service.getFundSource() ? service.getFundSource().getId() : "-1").append('~') // fundsource
+            .append(null != service.getFunctionary() ? service.getFunctionary().getId() : "-1").append('~') // functionary
+            .append(null != service.getFunction() ? service.getFunction().getId() : "-1"); // function
         else
             miscDetails.append("-1").append('~') // fund
-                    .append("-1").append('~') // scheme
-                    .append("-1").append('~') // subscheme
-                    .append("-1").append('~') // fundsource
-                    .append("-1").append('~')  // functionary
-                    .append("-1"); // function
+            .append("-1").append('~') // scheme
+            .append("-1").append('~') // subscheme
+            .append("-1").append('~') // fundsource
+            .append("-1").append('~') // functionary
+            .append("-1"); // function
         value = miscDetails.toString();
         return "result";
 
@@ -427,7 +462,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxFinAccDtlsByService() {
 
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+        final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
         accountDetails = new ArrayList<ServiceAccountDetails>();
         if (null != service)
@@ -442,7 +477,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService")
     public String ajaxFinSubledgerByService() {
         final Long serviceId = Long.valueOf(parameters.get("serviceId")[0]);
-        final ServiceDetails service =(ServiceDetails) getPersistenceService().findByNamedQuery(
+        final ServiceDetails service = (ServiceDetails) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_SERVICE_BY_ID, serviceId);
         subledgerDetails = new ArrayList<ServiceSubledgerInfo>();
         ServiceSubledgerInfo servicInfo;
@@ -521,6 +556,14 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
 
     public void setSubledgerDetails(final List<ServiceSubledgerInfo> subledgerDetails) {
         this.subledgerDetails = subledgerDetails;
+    }
+
+    public String getServiceClass() {
+        return serviceClass;
+    }
+
+    public void setServiceClass(final String serviceClass) {
+        this.serviceClass = serviceClass;
     }
 
 }

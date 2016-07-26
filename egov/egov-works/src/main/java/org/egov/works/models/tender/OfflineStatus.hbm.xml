@@ -45,8 +45,8 @@
 	<class name="org.egov.works.models.tender.OfflineStatus" table="EGW_OFFLINE_STATUS">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">			
-				<param name="sequence">SEQ_EGW_OFFLINE_STATUS</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_OFFLINE_STATUS</param>
 			</generator>
 		</id>
 		<property name="objectType" type="string">

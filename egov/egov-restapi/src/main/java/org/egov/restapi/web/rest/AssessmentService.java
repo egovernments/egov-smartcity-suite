@@ -39,6 +39,16 @@
  */
 package org.egov.restapi.web.rest;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -47,7 +57,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -68,7 +79,7 @@ import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
-import org.egov.restapi.model.AssessmentNoRequest;
+import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.BuildingPlanDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
@@ -87,15 +98,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user request and response.
@@ -121,12 +123,13 @@ public class AssessmentService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/assessmentDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String getAssessmentDetails(@RequestBody String assessmentNoRequest)
+    public String getAssessmentDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
-        AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
-                AssessmentNoRequest.class);
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
         AssessmentDetails assessmentDetail = propertyExternalService
-                .loadAssessmentDetails(assessmentNoReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+                .loadAssessmentDetails(assessmentReq.getAssessmentNo(), PropertyExternalService.FLAG_FULL_DETAILS,
+                        BasicPropertyStatus.ACTIVE);
         return getJSONResponse(assessmentDetail);
     }
 
@@ -140,16 +143,17 @@ public class AssessmentService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/propertytaxdetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public String getPropertyTaxDetails(@RequestBody String assessmentNoRequest)
+    public String getPropertyTaxDetails(@RequestBody String assessmentRequest)
             throws JsonGenerationException, JsonMappingException, IOException {
 
         PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
-        AssessmentNoRequest assessmentNoReq = (AssessmentNoRequest) getObjectFromJSONRequest(assessmentNoRequest,
-                AssessmentNoRequest.class);
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
         try {
-            String assessmentNo = assessmentNoReq.getAssessmentNo();
+            String assessmentNo = assessmentReq.getAssessmentNo();
+            String category = assessmentReq.getCategory();
             if (null != assessmentNo) {
-                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo);
+                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);
@@ -178,6 +182,77 @@ public class AssessmentService {
             return JsonConvertor.convert(errorList);
         }
         return JsonConvertor.convert(propertyTaxDetails);
+    }
+
+    /**
+     * This method is used get the property tax details.
+     * 
+     * @param assessmentNo - assessment no
+     * @param ownerName - Owner Name
+     * @param mobileNumber - Mobile Number
+     * @return
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    /**
+     */
+    @RequestMapping(value = "/property/propertytaxdetailsByOwnerDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public String getPropertyTaxDetailsByOwnerDetails(@RequestBody String assessmentRequest)
+            throws JsonGenerationException, JsonMappingException, IOException {
+
+        List<PropertyTaxDetails> propertyTaxDetailsList = new ArrayList<PropertyTaxDetails>();
+        AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
+                AssessmentRequest.class);
+        try {
+            String assessmentNo = assessmentReq.getAssessmentNo();
+            String ownerName = assessmentReq.getOwnerName();
+            String mobileNumber = assessmentReq.getMobileNumber();
+            String category = assessmentReq.getCategory();
+            if (!StringUtils.isBlank(category)) {
+                if (!(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX.equals(category)
+                        || PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX.equals(category))) {
+                    List<ErrorDetails> errors = new ArrayList<ErrorDetails>(0);
+                    ErrorDetails er = new ErrorDetails();
+                    er.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_WRONG_CATEGORY);
+                    er.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+                    errors.add(er);
+                    return JsonConvertor.convert(errors);
+                }
+            }
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category);
+            } else {
+                ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
+                PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+                propertyTaxDetails.setErrorDetails(errorDetails);
+                propertyTaxDetailsList.add(propertyTaxDetails);
+            }
+
+            for (PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
+                if (propertyTaxDetails.getOwnerDetails() == null) {
+                    propertyTaxDetails.setOwnerDetails(new ArrayList<OwnerDetails>(0));
+                }
+                if (propertyTaxDetails.getLocalityName() == null)
+                    propertyTaxDetails.setLocalityName("");
+                if (propertyTaxDetails.getPropertyAddress() == null)
+                    propertyTaxDetails.setPropertyAddress("");
+                if (propertyTaxDetails.getTaxDetails() == null) {
+                    RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
+                    List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+                    taxDetails.add(ar);
+                    propertyTaxDetails.setTaxDetails(taxDetails);
+                }
+            }
+        } catch (Exception e) {
+            List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
+            ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            errorList.add(er);
+            return JsonConvertor.convert(errorList);
+        }
+        return JsonConvertor.convert(propertyTaxDetailsList);
     }
 
     /**
@@ -228,7 +303,7 @@ public class AssessmentService {
             PayPropertyTaxDetails payPropTaxDetails = (PayPropertyTaxDetails) getObjectFromJSONRequest(
                     payPropertyTaxDetails, PayPropertyTaxDetails.class);
 
-            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails);
+            ErrorDetails errorDetails = validationUtil.validatePaymentDetails(payPropTaxDetails,false);
             if (null != errorDetails) {
                 responseJson = JsonConvertor.convert(errorDetails);
             } else {
@@ -239,7 +314,7 @@ public class AssessmentService {
                 responseJson = JsonConvertor.convert(receiptDetails);
             }
         } catch (ValidationException e) {
-        	 e.printStackTrace();
+            e.printStackTrace();
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
 
             List<ValidationError> errors = e.getErrors();
@@ -617,7 +692,7 @@ public class AssessmentService {
     @RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public String createProperty(@RequestBody String createPropertyDetails)
             throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        EgovThreadLocals.setUserId(Long.valueOf("40"));
+        ApplicationThreadLocals.setUserId(Long.valueOf("40"));
         CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
                 createPropertyDetails, CreatePropertyDetails.class);
 

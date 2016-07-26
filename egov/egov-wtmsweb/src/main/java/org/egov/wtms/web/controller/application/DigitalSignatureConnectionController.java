@@ -39,40 +39,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.OwnerName;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
-import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.ReportGenerationService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.service.UsageTypeService;
-import org.egov.wtms.utils.PropertyExtnUtils;
-import org.egov.wtms.utils.WaterTaxNumberGenerator;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,6 +52,43 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.OwnerName;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
+import org.egov.wtms.masters.service.UsageTypeService;
+import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.WaterTaxNumberGenerator;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *
@@ -123,6 +126,9 @@ public class DigitalSignatureConnectionController {
     
     @Autowired
     private ReportGenerationService reportGenerationService;
+    
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
     
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
@@ -206,6 +212,8 @@ public class DigitalSignatureConnectionController {
         String applicationNoStatePair = request.getParameter("applicationNoStatePair");
         String currentState = request.getParameter("currentState");
         String signAll = request.getParameter("signAll");
+        WorkOrderNumberGenerator workOrderGen = beanResolver.getAutoNumberServiceFor(WorkOrderNumberGenerator.class);
+
         String fileName = "";
         if(pathVar != null) {
             applicationNumbers = request.getParameter("pathVar").split(",");
@@ -217,7 +225,7 @@ public class DigitalSignatureConnectionController {
                 String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
                 String districtName = (String) request.getSession().getAttribute("districtName");
                 waterConnectionDetails.setWorkOrderDate(new Date());
-                waterConnectionDetails.setWorkOrderNumber(waterTaxNumberGenerator.generateWorkOrderNumber());
+                waterConnectionDetails.setWorkOrderNumber(workOrderGen.generateWorkOrderNumber());
                 ReportOutput reportOutput = null;
                 if(signAll != null && signAll.equalsIgnoreCase(WaterTaxConstants.SIGN_ALL)) {
                     for(int j = 0; j < appNumberConTypePair.length; j++) {
@@ -256,7 +264,7 @@ public class DigitalSignatureConnectionController {
             }
             request.getSession().setAttribute(WaterTaxConstants.FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
             model.addAttribute("fileStoreIds", fileStoreIds.toString());
-            model.addAttribute("ulbCode", EgovThreadLocals.getCityCode());
+            model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
         }
         return "newConnection-digitalSignatureRedirection";
     }

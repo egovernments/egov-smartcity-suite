@@ -39,6 +39,35 @@
  */
 package org.egov.ptis.actions.notice;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -53,23 +82,21 @@ import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
@@ -87,36 +114,9 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 
 @ParentPackage("egov")
 @Results({
@@ -131,9 +131,6 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private static final String CREATE = "create";
     protected static final String DIGITAL_SIGNATURE_REDIRECTION = "digitalSignatureRedirection";
     private static final String PREVIEW = "Preview";
-    /**
-     *
-     */
     private static final long serialVersionUID = -396864022983903198L;
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxNoticeAction.class);
     public static final String NOTICE = "notice";
@@ -141,7 +138,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private ReportService reportService;
     private NoticeService noticeService;
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    private Integer reportId = -1;
+    private String reportId;
     private String noticeType;
     private InputStream NoticePDF;
     private Long basicPropId;
@@ -155,6 +152,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private String ulbCode;
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
+    private boolean digitalSignEnabled;
+    private static final String VACANT_LAND="Vacant Land";
 
     @Autowired
     private DesignationService designationService;
@@ -171,6 +170,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     public PropertyTaxNoticeAction() {
     }
@@ -180,12 +185,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return null;
     }
 
+    public void prepare() {
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
+    }
+
     /**
      * @return
      */
     @Action(value = "/notice/propertyTaxNotice-generateBulkNotice")
     public String generateBulkNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
         actionType = WFLOW_ACTION_STEP_SIGN;
         final String entries[] = basicPropertyIds.split(",");
@@ -288,7 +297,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Action(value = "/notice/propertyTaxNotice-generateNotice")
     public String generateNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService().findByNamedQuery(
                 QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
         property = (PropertyImpl) basicProperty.getProperty();
@@ -309,8 +318,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(FileFormat.PDF);
-            getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-            reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+            reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             endWorkFlow(basicProperty);
         } else {
             PropertyNoticeInfo propertyNotice = null;
@@ -334,8 +342,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 noticeService.getSession().flush();
                 return DIGITAL_SIGNATURE_REDIRECTION;
             } else {
-                getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-                reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+                reportId = reportViewerUtil.addReportToTempCache(reportOutput);
             }
         }
         if (!PREVIEW.equals(actionType)) {
@@ -362,8 +369,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         propertyNotice = new PropertyNoticeInfo(property, noticeNo);
         reportInput = generateNoticeReportRequest(basicProperty, propertyNotice);
         reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(), noticeNo, noticeType,
@@ -386,8 +392,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportOutput reportOutput = new ReportOutput();
         reportOutput.setReportOutputData(bFile);
         reportOutput.setReportFormat(FileFormat.PDF);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }
 
@@ -397,7 +402,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportRequest reportInput = null;
         final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                 .getDesignationByName(COMMISSIONER_DESGN).getId());
-        reportParams.put("userId", !users.isEmpty() ? users.get(0).getId() : 0);
+        reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -435,6 +440,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty,
             String noticeMode) {
+    	 String ownerType=null;
+         String owner="";
         final PropertyAckNoticeInfo infoBean = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
@@ -500,8 +507,13 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             infoBean.setMeesevaNo(property.getApplicationNo());
         }
         infoBean.setNoticeDate(new Date());
-
+        ownerType=property.getPropertyDetail().getPropertyTypeMaster().getType();
+        if(ownerType.equalsIgnoreCase(VACANT_LAND) || (noticeMode != null && noticeMode.equalsIgnoreCase(DEMOLITION))){
+        	owner="(On Land)";
+     	}
+        infoBean.setOwnerTypeForReport(owner);
         propertyNotice.setOwnerInfo(infoBean);
+       
     }
 
     /**
@@ -511,7 +523,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand, String noticeMode) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 totalTax = totalTax.add(demandDetail.getAmount());
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -558,7 +570,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             BigDecimal propertyTax, Ptdemand currDemand) {
         for (final EgDemandDetails demandDetail : currDemand.getEgDemandDetails()) {
             if (demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                    .equals(PropertyTaxUtil.getCurrentInstallment())) {
+                    .equals(propertyTaxCommonUtils.getCurrentInstallment())) {
                 totalTax = totalTax.add(demandDetail.getAmount());
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS)) {
@@ -619,12 +631,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         this.reportService = reportService;
     }
 
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
-    }
-
-    public void setReportId(final Integer reportId) {
-        this.reportId = reportId;
     }
 
     @Override
@@ -735,6 +743,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     public void setSignedFileStoreId(String signedFileStoreId) {
         this.signedFileStoreId = signedFileStoreId;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

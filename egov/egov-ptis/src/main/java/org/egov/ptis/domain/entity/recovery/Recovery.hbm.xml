@@ -47,8 +47,8 @@
     <class name="org.egov.ptis.domain.entity.recovery.Recovery" table="EGPT_RECOVERY" >
        <id name="id" type="java.lang.Long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="sequence">
-            	<param name="sequence">SEQ_EGPT_RECOVERY</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            	<param name="sequence_name">SEQ_EGPT_RECOVERY</param>
             </generator>
         </id>
          <many-to-one name="state" class="org.egov.infra.workflow.entity.State" cascade="save-update,persist" fetch="select">

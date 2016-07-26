@@ -61,8 +61,8 @@ import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.HibernateException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -88,6 +88,7 @@ public class JournalVoucherActionHelper {
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<CVoucherHeader> voucherHeaderWorkflowService;
     @Autowired
     @Qualifier("persistenceService")
@@ -206,6 +207,12 @@ public class JournalVoucherActionHelper {
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        	final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
+                    null, null, voucherHeader.getCurrentState().getValue(), null);
+            voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation()+" Approved").withDateInfo(currentDate.toDate()).withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+            
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
             voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());

@@ -41,10 +41,11 @@ package org.egov.works.web.controller.letterofacceptance;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.egov.works.letterofacceptance.entity.SearchRequestContractor;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
-import org.egov.works.master.services.ContractorService;
+import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.models.workorder.WorkOrder;
@@ -53,6 +54,7 @@ import org.egov.works.web.adaptor.SearchContractorJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLetterOfAcceptanceToCreateContractorBillJson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,6 +87,9 @@ public class AjaxLetterOfAcceptanceController {
     
     @Autowired
     private LetterOfAcceptanceForMilestoneJSONAdaptor letterOfAcceptanceForMilestoneJSONAdaptor;
+    
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @RequestMapping(value = "/ajaxcontractors-loa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Contractor> findContractorsByCodeOrName(@RequestParam final String name) {
@@ -221,5 +226,44 @@ public class AjaxLetterOfAcceptanceController {
         final String result = new StringBuilder("{ \"data\":").append(toSearchLetterOfAcceptanceJson(searchLoaList))
                 .append("}").toString();
         return result;
+    }
+    
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchLOAsToCancel(final Model model,
+            @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+        final List<WorkOrder> workOrders = letterOfAcceptanceService
+                .searchLOAsToCancel(searchRequestLetterOfAcceptance);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchLOAsToCancelJson(workOrders))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toSearchLOAsToCancelJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrder.class, searchLetterOfAcceptanceToCreateContractorBillJson)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+    
+    @RequestMapping(value = "/ajaxworkidentificationnumbers-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findWorkIdNumbersToCancelLOA(@RequestParam final String code) {
+        return letterOfAcceptanceService.findWorkIdentificationNumbersToSearchLOAToCancel(code);
+    }
+    
+    @RequestMapping(value = "/ajaxcontractors-loatocancel", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<String> findContractorsToCancelLOA(@RequestParam final String code) {
+        return letterOfAcceptanceService.findContractorsToSearchLOAToCancel(code);
+    }
+    
+    @RequestMapping(value = "/ajax-checkifbillscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
+        final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
+        String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+        if(billNumbers.equals(""))
+            return "";
+        
+        return message;
     }
 }

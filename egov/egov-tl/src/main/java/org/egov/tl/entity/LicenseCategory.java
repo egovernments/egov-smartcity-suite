@@ -41,20 +41,37 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
-/**
- * The Class TradeCategory.
- */
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "EGTL_MSTR_CATEGORY")
+@Unique(fields = {"name", "code"})
+@SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
 public class LicenseCategory extends AbstractAuditable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2997222319085575846L;
+
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    @DocumentId
     private Long id;
-    @Required(message = "tradelic.master.tradecategoryname.null")
+
+    @NotEmpty(message = "tradelic.master.tradecategoryname.null")
     @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
     private String name;
 
-    @Required(message = "tradelic.master.tradecategorycode.null")
+    @NotEmpty(message = "tradelic.master.tradecategorycode.null")
     @Length(max = 32, message = "tradelic.masters.tradecategorycode.length")
     private String code;
 
@@ -72,17 +89,6 @@ public class LicenseCategory extends AbstractAuditable {
 
     public void setCode(final String code) {
         this.code = code;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseCategory={");
-        str.append("serialVersionUID=").append(serialVersionUID);
-        str.append("name=").append(name == null ? "null" : name.toString());
-        str.append("code=").append(code == null ? "null" : code.toString());
-        str.append("}");
-        return str.toString();
     }
 
     public Long getId() {

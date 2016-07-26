@@ -48,6 +48,8 @@ public class ApiUrl {
 	 * Complaint
 	 */
 	public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
+	
+	public final static String COMPLAINT_TYPES_BY_CATEGORIES = "/complaint/getComplaintCategories";
 
 	public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/complaint/getFrequentlyFiledTypes";
 
@@ -74,6 +76,8 @@ public class ApiUrl {
 	public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
 	
 	public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
+	
+	public final static String COMPLAINT_RESOLVED_UNRESOLVED_COUNT = "/complaint/count";
         
 
 	/**
@@ -94,6 +98,8 @@ public class ApiUrl {
 	public final static String CITIZEN_LOGOUT = "/citizen/logout";
 
 	public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
+	
+	public final static String CITIZEN_COMPLAINT_COUNT = "/citizen/getMyComplaint/count";
 	
 	public final static String CITIZEN_SEND_OTP = "/sendOTP";
 	

@@ -47,18 +47,23 @@ import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REGISTRATION_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 
 public class MutationFeeCollection extends TaxCollection {
@@ -74,8 +79,11 @@ public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
     private EgBillDao egBillDAO;
+    
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
-    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public void updateDemandDetails(final BillReceiptInfo bri) {
@@ -83,10 +91,14 @@ public class MutationFeeCollection extends TaxCollection {
                 bri.getBillReferenceNum()).getConsumerId());
         propertyMutation.setReceiptDate(bri.getReceiptDate());
         propertyMutation.setReceiptNum(bri.getReceiptNum());
+        String nextAction = null;
+        final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+        nextAction=wFMatrix.getNextAction();
         propertyMutation.transition(true).withSenderName(propertyMutation.getState().getSenderName()).withDateInfo(new Date())
-        .withOwner(propertyMutation.getState().getOwnerPosition())
+                .withOwner(propertyMutation.getState().getOwnerPosition())
                 .withStateValue(PropertyTaxConstants.TRANSFER_FEE_COLLECTED)
-        .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
+                .withNextAction(nextAction);
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
     }

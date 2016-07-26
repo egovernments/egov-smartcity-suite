@@ -49,11 +49,11 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -71,11 +71,13 @@ import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.FlushMode;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -84,7 +86,6 @@ import org.springframework.validation.BindingResult;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -114,6 +115,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private PositionMasterService positionMasterService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
 
     @Autowired
@@ -133,37 +135,26 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     
     @Autowired
     private ModuleService moduleDao;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
             String workFlowAction, Long approverPosition, String additionalRule) throws TaxCalculatorExeption {
-        Date propCompletionDate = null;
         PropertyImpl propertyModel;
         BasicProperty basicProperty = oldProperty.getBasicProperty();
         PropertyTypeMaster propTypeMstr = propertyTypeMasterDAO.getPropertyTypeMasterByCode(OWNERSHIP_TYPE_VAC_LAND);
         propertyModel = (PropertyImpl) newProperty;
         newProperty.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
         newProperty.getBasicProperty().setPropOccupationDate(newProperty.getPropertyDetail().getDateOfCompletion());
-        propCompletionDate = newProperty.getPropertyDetail().getDateOfCompletion();
         String areaOfPlot = String.valueOf(propertyModel.getPropertyDetail().getSitalArea().getArea());
         propertyModel = propService.createProperty(propertyModel, areaOfPlot, PROPERTY_MODIFY_REASON_FULL_DEMOLITION,
                 propertyModel.getPropertyDetail().getPropertyTypeMaster().getId().toString(), null, null, status, null,
                 null, null, null, null, null, null);
-        propertyModel.setBasicProperty(basicProperty);
-        propertyModel.setEffectiveDate(propCompletionDate);
-        if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-            propService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
-        }
-        propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
-        basicProperty.setUnderWorkflow(Boolean.TRUE);
-        propertyModel.setBasicProperty(basicProperty);
-        basicProperty.addProperty(propertyModel);
-        getSession().setFlushMode(FlushMode.MANUAL);
-        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
         Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Installment installmentFirstHalf = yearwiseInstMap.get(CURRENTYEAR_FIRST_HALF);
         Installment installmentSecondHalf = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-        Installment currInstall = PropertyTaxUtil.getCurrentInstallment();
         Date effectiveDate = null;
         boolean calculateForNextFinYear = false;
         
@@ -177,21 +168,36 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         	effectiveDate = DateUtils.addYears(installmentFirstHalf.getFromDate(), 1);
         	calculateForNextFinYear = true;
         }
+        propertyModel.setBasicProperty(basicProperty);
+        propertyModel.setEffectiveDate(effectiveDate);
+        if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
+            propService.changePropertyDetail(propertyModel, new VacantProperty(), 0);
+        }
+        propertyModel.getPropertyDetail().setCategoryType(VACANTLAND_PROPERTY_CATEGORY);
+        basicProperty.setUnderWorkflow(Boolean.TRUE);
+        propertyModel.setBasicProperty(basicProperty);
+        basicProperty.addProperty(propertyModel);
+        getSession().setFlushMode(FlushMode.MANUAL);
+        transitionWorkFlow(propertyModel, comments, workFlowAction, approverPosition, additionalRule);
+        Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
+        
         
         Property modProperty = propService.createDemand(propertyModel, effectiveDate);
         Ptdemand currPtDmd = null;
         for (final Ptdemand demand : modProperty.getPtDemandSet())
-            if (demand.getIsHistory().equalsIgnoreCase("N"))
+            if (demand.getIsHistory().equalsIgnoreCase("N")){
                 if (demand.getEgInstallmentMaster().equals(currInstall)) {
                     currPtDmd = demand;
                     break;
                 }
+            }
         Ptdemand oldCurrPtDmd = null;
         for (final Ptdemand ptDmd : oldProperty.getPtDemandSet())
             if (ptDmd.getIsHistory().equalsIgnoreCase("N")) {
-                if (ptDmd.getEgInstallmentMaster().equals(currInstall))
+                if (ptDmd.getEgInstallmentMaster().equals(currInstall)){
                     oldCurrPtDmd = ptDmd;
                 	break;
+                }
             }
 
         Installment effectiveInstall = null;
@@ -280,8 +286,10 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                                 .withDateInfo(currentDate.toDate()).withOwner(pos)
                                 .withNextAction(wfmatrix.getNextAction());
                     }
-                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
+                    if(workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)){
                 		buildSMS(property, workFlowAction);
+                		propertyTaxCommonUtils.makeExistingDemandBillInactive(property.getBasicProperty().getUpicNo());
+                    }
                 }
             }
         }
@@ -329,7 +337,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         	try {
         		//Based on the current installment, fetch tax details for the respective installment
 				Map<String, Map<String,BigDecimal>> demandCollMap = propertyTaxUtil.prepareDemandDetForView(property,
-				        PropertyTaxUtil.getCurrentInstallment());
+				        propertyTaxCommonUtils.getCurrentInstallment());
 				Map<String, BigDecimal> currentTaxDetails = propService.getCurrentTaxDetails(demandCollMap, new Date());
 				model.addAttribute("propertyTax", currentTaxDetails.get(DEMANDRSN_STR_GENERAL_TAX));
 	            model.addAttribute("eduCess", (currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : currentTaxDetails.get(DEMANDRSN_STR_EDUCATIONAL_CESS)));
@@ -357,7 +365,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
             smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
-                    EgovThreadLocals.getMunicipalityName() }, null);
+                    ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
         	Installment effectiveInstallment = null;
         	Map<String,Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -383,7 +391,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
                     .add(demandMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                             : demandMap.get(DEMANDRSN_STR_LIBRARY_CESS));
             smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
-            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()),EgovThreadLocals.getMunicipalityName() },
+            		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }
 

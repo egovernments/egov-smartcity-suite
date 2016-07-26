@@ -51,7 +51,6 @@ import org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPost
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -112,17 +111,11 @@ public class JpaConfiguration {
         return vendorAdapter;
     }
 
-    @Bean(name = "sessionFactory")
-    public HibernateJpaSessionFactoryBean sessionFactory() {
-        final HibernateJpaSessionFactoryBean hibernateJpaSessionFactoryBean = new HibernateJpaSessionFactoryBean();
-        hibernateJpaSessionFactoryBean.setEntityManagerFactory(entityManagerFactory());
-        return hibernateJpaSessionFactoryBean;
-    }
-
     private Map<String, Object> additionalProperties() {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
+        properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
         properties.put(DIALECT, env.getProperty(DIALECT));
         properties.put(GENERATE_STATISTICS, applicationProperties.getProperty(GENERATE_STATISTICS));
         properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));
@@ -130,7 +123,6 @@ public class JpaConfiguration {
         properties.put(USE_QUERY_CACHE, applicationProperties.getProperty(USE_QUERY_CACHE));
         properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
-        properties.put("hibernate.search.lucene_version", env.getProperty("hibernate.search.lucene_version"));
         properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
         properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
         properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));

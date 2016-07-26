@@ -46,12 +46,12 @@
 		table="EGW_WORKORDER_ACTIVITY">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_WORKORDER_ACTIVITY</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_WORKORDER_ACTIVITY</param>
 			</generator>
 		</id>
 		<many-to-one name="workOrderEstimate" column="WORKORDER_ESTIMATE_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="activity" class="org.egov.works.models.estimate.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="join"/>
+		<many-to-one name="activity" class="org.egov.works.abstractestimate.entity.Activity" column="ESTIMATE_ACTIVITY_ID" not-null="true" fetch="join"/>
 		
 		<property name="approvedRate" type="double">
             <column name="APPROVED_RATE" precision="20" not-null="true" />

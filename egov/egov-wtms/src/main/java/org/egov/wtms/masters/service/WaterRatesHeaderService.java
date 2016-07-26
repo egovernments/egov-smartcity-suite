@@ -78,7 +78,8 @@ public class WaterRatesHeaderService {
     }
 
     public List<WaterRatesHeader> findAll() {
-        return waterRatesHeaderRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+        return waterRatesHeaderRepository.findAll(new Sort(Sort.Direction.DESC, "connectionType","usageType",
+                "waterSource","pipeSize"));
     }
 
     public List<WaterRatesHeader> findAllByConnectionType(final ConnectionType connectionType) {
@@ -97,10 +98,10 @@ public class WaterRatesHeaderService {
         return waterRatesHeaderRepository.getOne(id);
     }
 
-    public WaterRatesHeader findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(
+    public List<WaterRatesHeader> findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(
             final ConnectionType connectionType, final UsageType usageType, final WaterSource waterSource,
             final PipeSize pipeSize) {
-        return waterRatesHeaderRepository.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(connectionType,
+        return waterRatesHeaderRepository.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSizeOrderByIdDesc(connectionType,
                 usageType, waterSource, pipeSize);
     }
 

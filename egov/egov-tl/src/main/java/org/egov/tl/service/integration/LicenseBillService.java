@@ -42,6 +42,7 @@ package org.egov.tl.service.integration;
 
 import org.egov.InvalidAccountHeadException;
 import org.egov.collection.entity.ReceiptDetail;
+import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
@@ -51,7 +52,6 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
-import org.egov.demand.dao.DemandGenericHibDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.dao.EgBillDetailsDao;
 import org.egov.demand.dao.EgBillReceiptDao;
@@ -85,8 +85,8 @@ import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.TradeLicenseUpdateIndexService;
 import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.ObjectNotFoundException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +120,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     private EgBillDetailsDao egBillDetailsDao;
 
     @Autowired
-    private SimpleWorkflowService<License> transferWorkflowService;
+    @Qualifier("tradeLicenseWorkflowService")
+    private SimpleWorkflowService tradeLicenseWorkflowService;
 
     @Autowired
     private ModuleService moduleService;
@@ -134,8 +135,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Autowired
     private AssignmentService assignmentService;
 
+    @Autowired
     private TradeLicenseUpdateIndexService updateIndexService;
 
+    @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
 
     @Autowired
@@ -154,6 +157,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    @Autowired
     private LicenseUtils licenseUtils;
 
     public void setLicense(final License license) {
@@ -246,6 +250,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                             billdetailRebate.setDescription(reasonDed.getEgDemandReasonMaster().getReasonMaster()
                                     + " - " + installment.getDescription());
                             billdetailRebate.setFunctionCode(TL_FUNCTION_CODE);
+                            billdetailRebate.setPurpose(BillAccountDetails.PURPOSE.REBATE.toString());
                             billDetails.add(billdetailRebate);
                         }
                     }
@@ -269,6 +274,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 billdetail.setDescription(reason.getEgDemandReasonMaster().getReasonMaster() + " - "
                         + installment.getDescription());
                 billdetail.setFunctionCode(TL_FUNCTION_CODE);
+                billdetail.setPurpose(BillAccountDetails.PURPOSE.CURRENT_AMOUNT.toString());
                 billDetails.add(billdetail);
             }
 
@@ -424,14 +430,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             pos = licenseUtils.getCityLevelCommissioner();
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE)) {
-                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                wfmatrix = tradeLicenseWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
                         Constants.WF_STATE_DIGITAL_SIGN_RENEWAL, null);
                 licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(Constants.WORKFLOW_STATE_COLLECTED)
                         .withStateValue(Constants.WF_STATE_DIGITAL_SIGN_RENEWAL).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction());
             } else {
-                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+                wfmatrix = tradeLicenseWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_DIGITAL_SIGN_NEWTL, null);
                 licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(Constants.WORKFLOW_STATE_COLLECTED)
@@ -442,10 +448,10 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
             licenseObj = licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.getLicenseAppType() != null
                     && licenseObj.getLicenseAppType().getName().equals(Constants.RENEWAL_LIC_APPTYPE))
-                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
+                wfmatrix = tradeLicenseWorkflowService.getWfMatrix("TradeLicense", null, null, "RENEWALTRADE",
                         Constants.WF_STATE_RENEWAL_COMM_APPROVED, null);
             else
-                wfmatrix = transferWorkflowService.getWfMatrix("TradeLicense", null, null, null,
+                wfmatrix = tradeLicenseWorkflowService.getWfMatrix("TradeLicense", null, null, null,
                         Constants.WF_STATE_COLLECTION_PENDING, null);
             licenseObj.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(Constants.WORKFLOW_STATE_COLLECTED)
@@ -505,7 +511,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     }
 
     protected void updateReceiptStatusWhenCancelled(final String receiptNumber) {
-        final DemandGenericDao demandGenericDao = new DemandGenericHibDao();
         final List<EgdmCollectedReceipt> egdmCollectedReceipts = demandGenericDao
                 .getAllEgdmCollectedReceipts(receiptNumber);
         if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty())
@@ -815,7 +820,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     EgDemandDetails insertPenalty(final BigDecimal chqBouncePenalty, final Module module) {
         EgDemandDetails demandDetail = null;
         if (chqBouncePenalty != null && chqBouncePenalty.compareTo(BigDecimal.ZERO) > 0) {
-            final DemandGenericDao demandGenericDao = new DemandGenericHibDao();
             final Installment currInstallment = getCurrentInstallment(module);
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(
                     Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, module);
@@ -850,10 +854,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         return null;
     }
 
-    public void setLicenseUtils(final LicenseUtils licenseUtils) {
-        this.licenseUtils = licenseUtils;
-    }
-
     @Override
     public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
         // TODO Auto-generated method stub
@@ -863,26 +863,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     @Override
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
-    }
-
-    public LicenseUtils getLicenseUtils() {
-        return licenseUtils;
-    }
-
-    public TradeLicenseUpdateIndexService getUpdateIndexService() {
-        return updateIndexService;
-    }
-
-    public void setUpdateIndexService(final TradeLicenseUpdateIndexService updateIndexService) {
-        this.updateIndexService = updateIndexService;
-    }
-
-    public TradeLicenseSmsAndEmailService getTradeLicenseSmsAndEmailService() {
-        return tradeLicenseSmsAndEmailService;
-    }
-
-    public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
-        this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
     }
 
 }

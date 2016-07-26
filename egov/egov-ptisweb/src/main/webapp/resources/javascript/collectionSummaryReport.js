@@ -145,7 +145,7 @@ function callAjaxForCollectionSummary() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [ 
+					/*"aButtons" : [ 
 					               {
 						             "sExtends": "pdf"
 					                },
@@ -157,8 +157,19 @@ function callAjaxForCollectionSummary() {
 	                            		 }
 						             },{
 							             "sExtends": "print"
-						               }]
+						               }]*/
+				"aButtons" : [ 
+					               { "sExtends": "pdf","sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() },
+					               { "sExtends": "xls", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html(), 
+					            	   "fnClick": function ( nButton, oConfig, oFlash ) {
+	                            	    	 reCalculateTotalFooterWhenExport('tblCollectionSummary');
+	                            		     this.fnSetText(oFlash, this.fnGetTableData(oConfig));
+	                            		 }},
+					               { "sExtends": "print", "sTitle": jQuery('#pdfTitle').val(),"sPdfMessage": jQuery('#reportTitle').html() }
+					             ]
+						               
 				},
+					
 				aaSorting: [],				
 				columns : [ {						
 								"data" : function(row, type, set, meta){

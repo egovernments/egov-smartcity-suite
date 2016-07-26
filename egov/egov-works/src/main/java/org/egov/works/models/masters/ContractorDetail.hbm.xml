@@ -46,8 +46,8 @@
 		table="EGW_CONTRACTOR_DETAIL">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGW_CONTRACTOR_DETAIL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_CONTRACTOR_DETAIL</param>
 			</generator>
 		</id>
 		

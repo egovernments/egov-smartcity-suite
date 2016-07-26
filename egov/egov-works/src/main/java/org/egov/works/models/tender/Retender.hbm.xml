@@ -45,8 +45,8 @@
 	<class name="org.egov.works.models.tender.Retender" table="EGW_RETENDER">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">			
-				<param name="sequence">SEQ_EGW_RETENDER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_RETENDER</param>
 			</generator>
 		</id>
 		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" insert="false" update="false" fetch="select">

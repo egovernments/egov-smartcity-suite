@@ -89,7 +89,7 @@ function getZoneWard(){
     <label class="col-sm-3 control-label text-right"><s:text name='license.propertyNo.lbl' /></label>
     <div class="col-sm-3 add-margin">
         <!-- <div class="input-group"> -->
-         	<s:textfield name="propertyNo" id="propertyNo" value="%{propertyNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);callPropertyTaxRest();" onChange="resetOnPropertyNumChange();" class="form-control"/>
+         	<s:textfield name="assessmentNo" id="propertyNo" value="%{assessmentNo}" maxlength="15" onKeyPress="return numbersonly(this, event)" onBlur="checkLength(this,15);callPropertyTaxRest();" onChange="resetOnPropertyNumChange();" class="form-control"/>
             <!-- <span id="searchImg" class="input-group-addon" onclick="callPropertyTaxRest();"> <i class="fa fa-search specific"></i></span> -->
        <!--  </div> -->
     </div>
@@ -101,7 +101,7 @@ function getZoneWard(){
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-3 control-label text-right"><s:text name='license.ward.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-3 control-label text-right"><s:text name='license.division' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textfield name="ward" id="wardName" value="%{parentBoundary.name}"  readOnly="true" class="form-control"/>
         <s:hidden name="parentBoundary" id="parentBoundary" value="%{parentBoundary.id}"/>
@@ -114,7 +114,7 @@ function getZoneWard(){
 										id="ownershipType" listKey="key" listValue="value"
 										list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}"  />
     </div>
-    <label class="col-sm-2 control-label text-right"><s:text name='license.address.lbl' /><span class="mandatory"></span></label>
+    <label class="col-sm-2 control-label text-right"><s:text name='license.address' /><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
          <s:textarea name="address" id="address" maxlength="250" onBlur="checkLength(this,250)" class="form-control"  />
     </div>

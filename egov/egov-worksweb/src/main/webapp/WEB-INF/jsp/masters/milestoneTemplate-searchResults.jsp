@@ -55,7 +55,6 @@ window.opener.resetTemplate(code,document.getElementById('workType').value,docum
 window.close();
 }
 </script>
-
 <div>
      <s:if test="%{searchResult.fullListSize != 0}">
      	<div class="row report-section">
@@ -65,15 +64,17 @@ window.close();
 				
 				<div class="col-md-12 report-table-container">
      	 <s:hidden name="selectedCode" id="selectedCode" />
+     	 <s:hidden name="id" id="id" />
+     	 
  	     <display:table name="searchResult" pagesize="30"
 			uid="currentRow" cellpadding="0" cellspacing="0"
 			requestURI=""
 			class="table table-hover">
-			<s:if test="%{sourcepage.equals('searchForMilestone')}">
-				<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
-						<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.code}'/>" onClick="setTemplateCode(this);" />
-				</display:column>
-			</s:if>	                           
+			<s:if test="%{mode == 'edit'}">
+			<display:column headerClass="pagetableth" class="pagetabletd" title="Select" style="width:2%;" titleKey="column.title.select">
+					<input name="radio" type="radio" id="radio" value="<s:property value='%{#attr.currentRow.id}'/>" onClick="setTemplateCode(this);" />
+			</display:column>
+			</s:if>
 	        <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="Sl No"
 			   titleKey="column.title.SLNo"
@@ -85,7 +86,7 @@ window.close();
 		       class="pagetabletd" title="Template Code"
 			   titleKey="milestone.template.search.code"
 			   style="width:8%;text-align:left">
-                  <a href="${pageContext.request.contextPath}/masters/milestoneTemplate-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view&sourcepage=search">
+                  <a href="${pageContext.request.contextPath}/masters/milestoneTemplate-view.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view&sourcepage=search">
 					 <s:property  value='%{#attr.currentRow.code}' />
 				  </a>
             </display:column>
@@ -108,14 +109,14 @@ window.close();
 			   class="pagetabletd" title="Type of Work"
 			   titleKey="milestone.template.search.type"
 			   style="width:10%;text-align:left" >
-				   <s:property value="%{#attr.currentRow.workType.description}" />
+				   <s:property value="%{#attr.currentRow.typeOfWork.description}" />
 			</display:column>
                 
             <display:column headerClass="pagetableth"
 			   class="pagetabletd" title="SubType of Work"
 			   titleKey="milestone.template.search.subtype"
 			   style="width:10%;text-align:left" >
-			      <s:property value="%{#attr.currentRow.subType.description}" />
+			      <s:property value="%{#attr.currentRow.subTypeOfWork.description}" />
 			</display:column>
                 			  
 			<display:column headerClass="pagetableth"
@@ -154,4 +155,12 @@ window.close();
 			</div>
 		 </div>
 	</s:elseif>   
+	<s:if test="%{searchResult.fullListSize != 0 && mode == 'edit'}"> 
+	<div align="center">
+		<input type="button" name="MODIFY" Class="btn btn-primary" value="Modify" id="MODIFY" onclick="return modifyMilestoneTemplate();" /> 
+		<input type="button" name="closeButton" id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" /> &nbsp;&nbsp;
+	</div>
+</s:if>
+	
  </div>
+ 

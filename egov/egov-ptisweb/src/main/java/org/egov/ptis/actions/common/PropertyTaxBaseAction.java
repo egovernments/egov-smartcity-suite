@@ -39,6 +39,58 @@
  */
 package org.egov.ptis.actions.common;
 
+import static java.lang.Boolean.FALSE;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -52,12 +104,12 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -82,26 +134,11 @@ import org.egov.ptis.domain.entity.property.WorkflowBean;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Boolean.FALSE;
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static Logger LOGGER = Logger.getLogger(PropertyTaxBaseAction.class);
@@ -127,6 +164,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
     private MessagingService messagingService;
@@ -148,6 +186,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected WorkflowBean workflowBean;
     @Autowired
     private PropertyUsageService propertyUsageService;
+    @Autowired
+    protected PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     private List<File> uploads = new ArrayList<File>();
     private List<String> uploadFileNames = new ArrayList<String>();
@@ -156,6 +196,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
+    protected String userDesignationList = new String();
 
     public List<File> getUpload() {
         return uploads;
@@ -315,9 +356,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Eneterd into validateBuiltUpProperty");
 
-        if (propertyDetail.isStructure())
+        /*if (propertyDetail.isStructure())
             if (isBlank(propertyDetail.getSiteOwner()))
-                addActionError(getText("mandatory.siteowner"));
+                addActionError(getText("mandatory.siteowner"));*/
         if (null != propertyDetail.isAppurtenantLandChecked() && null == propertyDetail.getExtentAppartenauntLand())
             addActionError(getText("mandatory.extentAppartnant"));
         else if (null == propertyDetail.isAppurtenantLandChecked() && isBlank(areaOfPlot))
@@ -337,22 +378,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private void validateFloor(final PropertyTypeMaster propTypeMstr, final List<Floor> floorList,
             final Property property, final String areaOfPlot, final Date regDocDate, final String modifyRsn,
             final Date propCompletionDate) {
-        Installment currentInstallment=null;
+        boolean buildingPlanNoValidationAdded;
+        boolean buildingPlanDateValidationAdded;
+        boolean buildingPlanPlinthAreaValidationAdded;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into validateFloor \nPropertyTypeMaster:" + propTypeMstr + ", No of floors: "
                     + (floorList != null ? floorList : ZERO));
 
         if (!propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)){
             if (floorList != null && floorList.size() > 0){
-                
-                if (modifyRsn != null
-                        && modifyRsn.equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                        && propertyTaxUtil.checkIsNagarPanchayat()) {
-                    currentInstallment = propertyTaxUtil.getCurrentInstallment();
-                }
                 for (final Floor floor : floorList) {
                     List<String> msgParams = null;
                     if (floor != null) {
+                    	buildingPlanNoValidationAdded = false;
+                        buildingPlanDateValidationAdded = false;
+                        buildingPlanPlinthAreaValidationAdded = false;
                         msgParams = new ArrayList<String>();
                         if (floor.getFloorNo() == null || floor.getFloorNo().equals(-10))
                             addActionError(getText("mandatory.floorNO"));
@@ -378,6 +418,34 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyUsage() == null || null == floor.getPropertyUsage().getId()
                                 || floor.getPropertyUsage().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.usage", msgParams));
+                        
+                        if(StringUtils.isNotBlank(floor.getBuildingPermissionNo())){
+                        	if(floor.getBuildingPermissionDate() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        		buildingPlanDateValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null){
+                        		addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        		buildingPlanPlinthAreaValidationAdded = true;
+                        	}
+                        }
+                        if(floor.getBuildingPermissionDate() !=null ){
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo())){
+                       			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                       			buildingPlanNoValidationAdded = true;
+                        	}
+                        	if(floor.getBuildingPlanPlinthArea().getArea() == null)
+                        		if(!buildingPlanPlinthAreaValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.plintharea", msgParams));
+                        }
+                        if(floor.getBuildingPlanPlinthArea().getArea() != null){
+                        	if(floor.getBuildingPermissionDate() == null)
+                        		if(!buildingPlanDateValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.date", msgParams));
+                        	if(StringUtils.isBlank(floor.getBuildingPermissionNo()))
+                        		if(!buildingPlanNoValidationAdded)
+                        			addActionError(getText("mandatory.floor.buildingplan.number", msgParams));
+                        }
 
                         if (floor.getFirmName() == null || floor.getFirmName().isEmpty()
                                 || floor.getFirmName().equals("")) {
@@ -393,7 +461,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getPropertyOccupation() == null || null == floor.getPropertyOccupation().getId()
                                 || floor.getPropertyOccupation().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.floor.occ"));
-
+                        
+                        if(floor.getConstructionDate() == null || floor.getConstructionDate().equals(""))
+                        	addActionError(getText("mandatory.floor.constrDate"));
+                        
                         Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
                         if (floor.getOccupancyDate() == null || floor.getOccupancyDate().equals(""))
                             addActionError(getText("mandatory.floor.docOcc"));
@@ -404,6 +475,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 addActionError(getText("constrDate.before.6inst",msgParams));
                         }
 
+                        if(floor.getOccupancyDate() != null && floor.getConstructionDate() != null 
+                        		&& floor.getOccupancyDate().before(floor.getConstructionDate()))
+                        	addActionError(getText("effectiveDate.before.constrDate.error"));
+                        
                         if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getArea() == null
                                 || floor.getBuiltUpArea().getArea().equals("")) {
                             addActionError(getText("mandatory.assbleArea"));
@@ -418,16 +493,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                     && !floor.getOccupancyDate().equals("")) {
                                 if (DateUtils.compareDates(regDocDate, floor.getOccupancyDate()))
                                     addActionError(getText("regDate.notgreaterthan.occDate", msgParams));
-                            }
-                        }
-                        if (modifyRsn != null
-                                && modifyRsn
-                                        .equals(PropertyTaxConstants.PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)
-                                && propertyTaxUtil.checkIsNagarPanchayat()) {
-                            if (currentInstallment != null && null != floor.getOccupancyDate()
-                                    && !floor.getOccupancyDate().equals("")) {
-                                if (!DateUtils.compareDates(floor.getOccupancyDate(), currentInstallment.getFromDate()))
-                                    addActionError(getText("occDate.within.currentInstallment", msgParams));
                             }
                         }
                         if (null != modifyRsn && null != propCompletionDate) {
@@ -485,6 +550,15 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             setUserDesgn(designation.getName());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from setUserInfo");
+    }
+    
+    /**
+     * Get a String for All the Designations for logged in user
+     */
+    public void setUserDesignations() {
+        final Long userId = securityUtils.getCurrentUser().getId();
+        String designations=propertyTaxCommonUtils.getAllDesignationsForUser(userId);
+        setUserDesignationList(designations);
     }
 
     /**
@@ -614,7 +688,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertycreate.sms", args);
                     if (emailid != null) {
-                        args.add(EgovThreadLocals.getMunicipalityName());
+                        args.add(ApplicationThreadLocals.getMunicipalityName());
                         emailSubject = getText("msg.newpropertycreate.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.newpropertycreate.email", args);
@@ -624,21 +698,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.alterAssessmentForward.sms", args);
                     if (emailid != null) {
-                        args.add(EgovThreadLocals.getMunicipalityName());
+                        args.add(ApplicationThreadLocals.getMunicipalityName());
                         emailSubject = getText("msg.alterAssessmentForward.email.subject",
                                 new String[] { property.getApplicationNo() });
                         emailBody = getText("msg.alterAssessmentForward.email", args);
                     }
                 } else if (APPLICATION_TYPE_GRP.equals(applicationType)) {
                     smsMsg = getText("msg.grpcreate.sms", args);
-                    args.add(EgovThreadLocals.getMunicipalityName());
+                    args.add(ApplicationThreadLocals.getMunicipalityName());
                     emailSubject = getText("msg.grpcreate.email.subject", new String[] { property.getApplicationNo() });
                     emailBody = getText("msg.grpcreate.email", args);
 
                 }
             } else if (propertyState.getValue().endsWith(WF_STATE_REJECTED)) {
                 args.add(property.getApplicationNo());
-                args.add(EgovThreadLocals.getMunicipalityName());
+                args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyreject.sms", args);
@@ -666,7 +740,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 args.add(property.getBasicProperty().getUpicNo());
                 args.add(demandCollMap.get(CURR_FIRSTHALF_DMD_STR).add(demandCollMap.get(ARR_DMD_STR)).toString());
                 args.add(DateUtils.getFormattedDate(property.getBasicProperty().getPropOccupationDate(), "dd/MM/yyyy"));
-                args.add(EgovThreadLocals.getMunicipalityName());
+                args.add(ApplicationThreadLocals.getMunicipalityName());
                 if (APPLICATION_TYPE_NEW_ASSESSENT.equals(applicationType)) {
                     if (mobileNumber != null)
                         smsMsg = getText("msg.newpropertyapprove.sms", args);
@@ -724,9 +798,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         .get(DEMANDRSN_STR_LIBRARY_CESS)));
         BigDecimal totalTax = BigDecimal.ZERO;
         if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = demandCollMap
-                    .get(DEMANDRSN_STR_GENERAL_TAX)
+            propertyTaxDetailsMap.put("generalTax", demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_GENERAL_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                            .get(DEMANDRSN_STR_GENERAL_TAX))
                     .add(demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_EDUCATIONAL_CESS))
                     .add(demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
@@ -742,12 +817,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
         } else {
             propertyTaxDetailsMap.put("vacantLandTax",
-                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap.get(DEMANDRSN_STR_VACANT_TAX)
-                            : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX));
-            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) != null ? demandCollMap
-                    .get(DEMANDRSN_STR_VACANT_TAX) : demandCollMap.get(DEMANDRSN_STR_GENERAL_TAX)).add(
-                    demandCollMap.get(DEMANDRSN_STR_EDUCATIONAL_CESS) == null ? BigDecimal.ZERO : demandCollMap
-                            .get(DEMANDRSN_STR_EDUCATIONAL_CESS)).add(
+                    demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap.get(DEMANDRSN_STR_VACANT_TAX));
+            totalTax = (demandCollMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandCollMap
+                    .get(DEMANDRSN_STR_VACANT_TAX)).add(
                     demandCollMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO : demandCollMap
                             .get(DEMANDRSN_STR_LIBRARY_CESS));
             if (demandCollMap.get(DEMANDRSN_STR_UNAUTHORIZED_PENALTY) != null) {
@@ -879,5 +951,12 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
-
+    public String getUserDesignationList(){
+        return userDesignationList;
+    }
+    public void setUserDesignationList(String userDesignationList) {
+        this.userDesignationList = userDesignationList;
+    }
+    
+    
 }

@@ -103,9 +103,9 @@
 		</s:if>
 		<s:if test="%{basicProperty== null}">
 			<div class="headermessage" align="center">
-				Property does not exists with given Assessment Number : 
+				Property does not exists with given Assessment Number :
 				<s:property value="%{propertyId}" />
-				 , Please Enter a Valid Assessment Number.<span class="bold"></span>
+				, Please Enter a Valid Assessment Number.<span class="bold"></span>
 			</div>
 		</s:if>
 		<s:else>
@@ -620,7 +620,7 @@
 															<td class="blueborderfortd">
 																<div align="center">
 																	<a
-																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT"
+																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=<s:property value="%{serviceCode}"/>"
 																		target="_blank"> <s:property
 																			value="#rcpt.getReceiptNumber()" />
 																	</a>
@@ -677,11 +677,7 @@
 														<tr>
 															<td class="blueborderfortd">
 																<div align="center">
-																	<a
-																		href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<s:property value="#rcpt.getReceiptNumber()" />&consumerCode=<s:property value="%{propertyId}" />&serviceCode=PT"
-																		target="_blank"> <s:property
-																			value="#rcpt.getReceiptNumber()" />
-																	</a>
+																	<s:property value="#rcpt.getReceiptNumber()" />
 																</div>
 															</td>
 															<td class="blueborderfortd">
@@ -805,11 +801,16 @@
 			</s:form>
 		</s:else>
 		<div align="center">
-			<s:if test="%{isCitizen}">
+			<s:if test="%{isCitizen && searchUrl.contains('onlineSearch')}">
+				<input id="SearchProperty" class="buttonsubmit" type="button"
+					onclick="window.location='/ptis/citizen/search/search-searchByAssessmentForm.action';"
+					value="Search Property" name="SearchProperty">
+			</s:if>
+			<s:elseif test="%{isCitizen}">
 				<input id="SearchProperty" class="buttonsubmit" type="button"
 					onclick="window.location='/ptis/citizen/search/search-searchForm.action';"
 					value="Search Property" name="SearchProperty">
-			</s:if>
+			</s:elseif>
 			<input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="return confirmClose();" />
 		</div>

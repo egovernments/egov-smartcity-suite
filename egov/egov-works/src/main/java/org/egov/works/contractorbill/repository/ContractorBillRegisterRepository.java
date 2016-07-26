@@ -39,15 +39,15 @@
  */
 package org.egov.works.contractorbill.repository;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Repository
 public interface ContractorBillRegisterRepository extends JpaRepository<ContractorBillRegister, Long> {
@@ -58,8 +58,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
 
     List<ContractorBillRegister> findByWorkOrder(final WorkOrder workOrder);
 
-    @Query("select max(billSequenceNumber) from ContractorBillRegister where workOrder =:workOrder")
-    Integer findMaxBillSequenceNumberByWorkOrder(@Param("workOrder") final WorkOrder workOrder);
+    @Query("select max(billSequenceNumber) from ContractorBillRegister cbr where cbr.workOrderEstimate.estimate.lineEstimateDetails.projectCode.code = :workIdentificationNumber")
+    Integer findMaxBillSequenceNumberByWorkOrder(@Param("workIdentificationNumber") String workIdentificationNumber);
 
     @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(cbr.workOrder.estimateNumber) from ContractorBillRegister as cbr where led.estimateNumber = cbr.workOrder.estimateNumber)")
     List<String> findWorkIdentificationNumberToSearchContractorBill(@Param("code") String code);
@@ -75,4 +75,17 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select sum(cbr.billamount) from ContractorBillRegister as cbr where cbr.workOrder = :workOrder and cbr.id != :id and upper(cbr.billstatus) not in (:billStatus)")
     BigDecimal findSumOfBillAmountByWorkOrderAndStatusAndNotContractorBillRegister(@Param("workOrder") final WorkOrder workOrder,
             @Param("billStatus") final String billStatus, @Param("id") Long id);
+
+    @Query("select distinct(cbr.workOrder.workOrderNumber) from ContractorBillRegister as cbr where cbr.workOrder.workOrderNumber like :workOrderNumber and upper(cbr.billstatus) != :status")
+    List<String> findWorkOrderNumbersToCancel(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status);
+
+    @Query("select distinct(led.projectCode.code) from LineEstimateDetails as led  where upper(led.projectCode.code) like upper(:code) and exists (select distinct(cbr.workOrder.estimateNumber) from ContractorBillRegister as cbr where led.estimateNumber = cbr.workOrder.estimateNumber and billstatus = :status)")
+    List<String> findWorkIdentificationNumberToSearchContractorBillToCancel(@Param("code") String code,
+            @Param("status") String status);
+
+    @Query("select distinct(cbr.billnumber) from ContractorBillRegister as cbr where upper(cbr.billnumber) like upper(:billnumber) and billstatus = :status")
+    List<String> findBillNumberToSearchContractorBillToCancel(@Param("billnumber") String billNumber,
+            @Param("status") String status);
+    
+    List<ContractorBillRegister> findByWorkOrderAndBillstatusNot(final WorkOrder workOrder, final String billstatus);
 }

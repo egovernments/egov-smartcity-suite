@@ -45,8 +45,8 @@
     <class name="org.egov.commons.SharedFundSource" table="SHARED_FUNDSOURCE" >
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">seq_fundsource</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">seq_fundsource</param>
             </generator>
         </id>
         <many-to-one name="fundSourceId" class="org.egov.commons.Fundsource" fetch="select">

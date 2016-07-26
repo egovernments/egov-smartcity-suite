@@ -184,8 +184,7 @@ public class FeeMatrixController {
 
     @RequestMapping(value = "viewresult", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String viewresult(@RequestParam(required = false) final Long category,
-            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear,
-            final HttpServletResponse response)
+            @RequestParam(required = false) final Long subCategory, @RequestParam(required = false) final Long finyear)
             throws IOException, ParseException {
         final List<FeeMatrixDetail> feeMatrixDetails = feeMatrixDetailService.searchFeeMatrix(category, subCategory, finyear);
         final String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(feeMatrixDetails)).append("}")

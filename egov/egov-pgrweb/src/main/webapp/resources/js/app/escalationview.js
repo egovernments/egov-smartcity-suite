@@ -302,8 +302,7 @@ jQuery(document)
 
 
 function calltypeahead(currentIndex) {
-	
-	 $(".approvalDepartment"+ currentIndex).change(function(){
+	$(".approvalDepartment"+ currentIndex).change(function(){
 	$.ajax({
 		url: "/pgr/ajax-designationsByDepartment",     
 		type: "GET",
@@ -314,7 +313,6 @@ function calltypeahead(currentIndex) {
 		},
 		async:"false",
 		success: function (response) {
-			//console.log("success"+response);
 			$(".approvalDesignation"+ currentIndex).empty();
 			$(".positionHierarchyToPositionid"+ currentIndex).empty();
 			$(".approvalDesignation"+ currentIndex).append($("<option value=''>Select</option>"));
@@ -332,24 +330,20 @@ function calltypeahead(currentIndex) {
 });
 
 $(".approvalDesignation"+ currentIndex).change(function(){
-	$.ajax({
+	$.ajax({																																																	
 		url: "/pgr/ajax-positionsByDepartmentAndDesignation",     
 		type: "GET",
 		dataType: "json",
+		
 		data: {
-			//approvalDesignation : $(".approvalDesignation"+ currentIndex).val(),
-			//approvalDepartment : $(".approvalDepartment"+ currentIndex).val()
 			  approvalDepartment :   $(".approvalDepartment"+currentIndex+ " option:selected").val(),
 			  approvalDesignation : $(".approvalDesignation"+currentIndex+ " option:selected").val()
 		},
-		async:"false",
+		async:false,
 		success: function (response) { 
-		//console.log(JSON.stringify(response));
 			$(".positionHierarchyToPositionid"+ currentIndex).empty();
 			$(".positionHierarchyToPositionid"+currentIndex).append($("<option value=''>Select</option>"));
 			$.each(response, function(index, item) {
-				console.log("success"+JSON.stringify(item));
-				//setTimeout($(".positionHierarchyToPositionid"+currentIndex).append($('<option>', { value: item.id, text : item.name  })) , 4000);
 				$(".positionHierarchyToPositionid"+currentIndex).append($('<option>', { value: item.id, text : item.name  }));
 			});
 			$(".positionHierarchyToPositionid"+currentIndex).val($(".positionHierarchyToPositionid"+currentIndex).attr("data-optvalue"));

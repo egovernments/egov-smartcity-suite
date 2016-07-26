@@ -55,10 +55,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.exception.TooManyValuesException;
+import org.egov.commons.exception.NoSuchObjectException;
+import org.egov.commons.exception.TooManyValuesException;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.AssignmentDAO;
@@ -75,7 +74,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,16 +104,12 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     private static final Logger logger = Logger.getLogger(EmployeeServiceImpl.class);
     private EisUtilService eisService;
     private PersistenceService persistenceService;
-    private SessionFactory sessionFactory;
     private PersonalInformationDAO personalInformationDAO;
     private AssignmentDAO assignmentDAO;
     private AppConfigValueService appConfigValuesService;
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
@@ -407,13 +401,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             Query qry = null;
             if (code != null && !code.equals("")) {
                 logger.info(" Search by Code " + code);
-                /*
-                 * eisService = new EisUtilService(); persistenceService = new
-                 * PersistenceService();
-                 * eisService.setPersistenceService(persistenceService);
-                 * persistenceService.setSessionFactory(new SessionFactory());
-                 * persistenceService.setType(EmployeeServiceImpl.class);
-                 */
+               
                 List<EmployeeView> list = persistenceService.findAllBy(
                         " from EmployeeView ev where upper(ev.employeeCode) like ? ", code);
                 Iterator itr = list.iterator();
@@ -818,7 +806,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         try {
             String mainStr = "";
             mainStr = " select ev.assignment from EmployeeView ev where ev.assignment.isPrimary = 'Y' and ev.id = :empId and ((ev.toDate is null and ev.fromDate <= :sysDate ) OR (ev.fromDate <= :sysDate AND ev.toDate >= :sysDate))";
-            Query qry = sessionFactory.getCurrentSession().createQuery(mainStr);
+            Query qry = getCurrentSession().createQuery(mainStr);
 
             if (empId != null) {
                 qry.setInteger("empId", empId);
@@ -1647,13 +1635,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         Integer departmentId = deptId;
         List<Designation> designationMstrObj = new ArrayList<Designation>();
-        /*
-         * eisService = new EisUtilService(); persistenceService = new
-         * PersistenceService();
-         * eisService.setPersistenceService(persistenceService);
-         * persistenceService.setSessionFactory(new SessionFactory());
-         * persistenceService.setType(EmployeeServiceImpl.class);
-         */
+       
         designationMstrObj = (List<Designation>) eisService.getAllDesignationByDept(departmentId, new Date());
         return designationMstrObj;
     }
@@ -1818,7 +1800,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             } else {
                 stringbuffer.append(" and  ev.from_Date <= :givenDate AND ev.to_Date >= :givenDate");
             }
-            query = sessionFactory.getCurrentSession().createSQLQuery(stringbuffer.toString())
+            query = getCurrentSession().createSQLQuery(stringbuffer.toString())
                     .addScalar("ASS_ID", IntegerType.INSTANCE);
 
             if (query.getQueryString().contains(":givenDate")) {
@@ -2122,7 +2104,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      */
     public List<EmployeeView> getEmployeeInfoBasedOnDeptAndDesg(Integer deptId, Integer desgId) {
         List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EmployeeView.class)
+        Criteria criteria = getCurrentSession().createCriteria(EmployeeView.class)
                 .createAlias("deptId", "department").createAlias("desigId", "designation")
                 .add(Restrictions.eq("department.id", deptId))
                 .add(Restrictions.eq("designation.designationId", desgId))
@@ -2146,7 +2128,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         if (date == null)
             date = new Date();
         List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(EmployeeView.class)
+        Criteria criteria = getCurrentSession().createCriteria(EmployeeView.class)
                 .createAlias("deptId", "department").add(Restrictions.eq("department.id", deptId))
                 .add(Restrictions.eq("isActive", 1))
                 .add(Restrictions.and(Restrictions.le("fromDate", date), Restrictions.ge("toDate", date)));
@@ -2160,8 +2142,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
      * @return
      */
     public List<PersonalInformation> getAllEmployees() {
-        return sessionFactory
-                .getCurrentSession()
+        return getCurrentSession()
                 .createQuery(
                         "" + "select distinct employee from EmployeeView empview "
                                 + " where (sysdate between empview.fromDate  and empview.toDate or "
@@ -2198,14 +2179,6 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
     public void setEisService(EisUtilService eisService) {
         this.eisService = eisService;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
     }
 
     public PersonalInformationDAO getPersonalInformationDAO() {

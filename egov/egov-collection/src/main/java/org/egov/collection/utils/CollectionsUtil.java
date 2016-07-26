@@ -40,6 +40,16 @@
 
 package org.egov.collection.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.Challan;
@@ -56,6 +66,7 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.AssignmentService;
@@ -74,7 +85,6 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
@@ -93,17 +103,6 @@ import org.hibernate.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class CollectionsUtil {
     private static final Logger LOGGER = Logger.getLogger(CollectionsUtil.class);
@@ -165,6 +164,15 @@ public class CollectionsUtil {
 
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
+    }
+
+    /**
+     * This method returns the List of <code>EgwStatus</code> for ReceiptHeader
+     *
+     * @return the List of <code>EgwStatus</code> instance
+     */
+    public List<EgwStatus> getAllReceiptHeaderStatus() {
+        return egwStatusDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
 
     /**
@@ -263,7 +271,7 @@ public class CollectionsUtil {
      */
     public List getChallanServiceList() {
         return persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
-                CollectionConstants.SERVICE_TYPE_COLLECTION);
+                CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION);
     }
 
     /**
@@ -313,9 +321,10 @@ public class CollectionsUtil {
                     isDeptAllowed = true;
         }
 
-        if (isEmp && !isDeptAllowed) {
-            throw new ValidationException(Arrays.asList(new ValidationError("Department", "billreceipt.counter.deptcode.null")));
-        } else if (!isEmp || isDeptAllowed)
+        if (isEmp && !isDeptAllowed)
+            throw new ValidationException(Arrays.asList(new ValidationError("Department",
+                    "billreceipt.counter.deptcode.null")));
+        else if (!isEmp || isDeptAllowed)
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
         // collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
         else {
@@ -733,15 +742,15 @@ public class CollectionsUtil {
         collectionIndexBuilder.paymentGateway(receiptHeader.getOnlinePayment() != null ? receiptHeader
                 .getOnlinePayment().getService().getName() : "");
         collectionIndexBuilder.consumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "");
-        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getUsername()
-                : "");
+        collectionIndexBuilder.receiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy()
+                .getName() : "");
 
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
             final BillingIntegrationService billingServiceBean = (BillingIntegrationService) getBean(billingService
                     .getCode() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
             try {
                 receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(new BillReceiptInfoImpl(receiptHeader,
-                        chartOfAccountsHibernateDAO, persistenceService));
+                        chartOfAccountsHibernateDAO, persistenceService, null));
             } catch (final Exception e) {
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
@@ -793,10 +802,9 @@ public class CollectionsUtil {
                 receiptHeader.getTotalAmount(), receiptDetailList);
     }
 
-    public Date getRemittanceVoucherDate(final String receiptDate) {
+    public Date getRemittanceVoucherDate(final Date receiptDate) {
         Boolean useReceiptDateAsContraVoucherDate = false;
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat dateFomatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date voucherDate = null;
         Date rcptDate = null;
         if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
@@ -805,8 +813,8 @@ public class CollectionsUtil {
 
         try {
             Date finDate = null;
-            if (!receiptDate.isEmpty()) {
-                rcptDate = dateFomatter.parse(receiptDate);
+            if (receiptDate != null) {
+                rcptDate = receiptDate;
                 finDate = financialYearDAO.getFinancialYearByDate(rcptDate).getStartingDate();
             }
             if (finDate != null && finDate.toString().equals(financialYearDAO.getCurrYearStartDate())) {
@@ -814,8 +822,7 @@ public class CollectionsUtil {
                     voucherDate = rcptDate;
                 else
                     voucherDate = sdf.parse(sdf.format(new Date()));
-            }
-            else
+            } else
                 voucherDate = financialYearDAO.getPreviousFinancialYearByDate(new Date()).getEndingDate();
         } catch (final ParseException e) {
 
@@ -824,4 +831,14 @@ public class CollectionsUtil {
         }
         return voucherDate;
     }
+
+    public Boolean getVoucherType() {
+        Boolean voucherTypeForChequeDDCard = false;
+        if (getAppConfigValue(CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_REMITTANCEVOUCHERTYPEFORCHEQUEDDCARD).equals(
+                CollectionConstants.FINANCIAL_RECEIPTS_VOUCHERTYPE))
+            voucherTypeForChequeDDCard = true;
+        return voucherTypeForChequeDDCard;
+    }
+
 }

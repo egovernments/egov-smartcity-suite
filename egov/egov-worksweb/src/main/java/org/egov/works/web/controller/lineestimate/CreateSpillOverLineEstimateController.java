@@ -39,16 +39,24 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
-import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
-import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -59,14 +67,13 @@ import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.ModeOfAllotment;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.master.services.NatureOfWorkService;
-import org.egov.works.models.estimate.ProjectCode;
-import org.egov.works.services.ProjectCodeService;
+import org.egov.works.master.service.LineEstimateUOMService;
+import org.egov.works.master.service.ModeOfAllotmentService;
+import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -81,13 +88,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class CreateSpillOverLineEstimateController {
@@ -97,12 +97,6 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private FunctionHibernateDAO functionHibernateDAO;
-
-    @Autowired
-    private BudgetGroupDAO budgetGroupDAO;
 
     @Autowired
     private SchemeService schemeService;
@@ -120,12 +114,6 @@ public class CreateSpillOverLineEstimateController {
     private DesignationService designationService;
 
     @Autowired
-    private LineEstimateDetailsRepository lineEstimateDetailsRepository;
-
-    @Autowired
-    private ProjectCodeService projectCodeService;
-
-    @Autowired
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
@@ -133,6 +121,18 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
+    
+    @Autowired
+    private ModeOfAllotmentService modeOfAllotmentService;
+    
+    @Autowired
+    private LineEstimateUOMService lineEstimateUOMService;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -155,7 +155,7 @@ public class CreateSpillOverLineEstimateController {
             final Model model, final BindingResult errors, @RequestParam("file") final MultipartFile[] files,
             final RedirectAttributes redirectAttributes, final HttpServletRequest request,
             final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
 
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
@@ -166,7 +166,9 @@ public class CreateSpillOverLineEstimateController {
         final AppConfigValues value = values.get(0);
         if (value.getValue().equalsIgnoreCase("Y"))
             validateBudgetAmount(lineEstimate, errors);
-
+        
+        validateBudgetHead(lineEstimate, errors);
+        
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", null);
@@ -179,15 +181,40 @@ public class CreateSpillOverLineEstimateController {
         }
     }
 
+    private void validateBudgetHead(LineEstimate lineEstimate, BindingResult errors) {
+        if (lineEstimate.getBudgetHead() != null) {
+            Boolean check = false;
+            List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
+            accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
+            for (CChartOfAccountDetail detail : accountDetails) {
+                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                    check = true;
+            }
+            if (!check) {
+                errors.reject("error.budgethead.validate","error.budgethead.validate");
+            }
+
+        }
+
+    }
+
     private void validateLineEstimateDetails(final LineEstimate lineEstimate, final BindingResult errors) {
         Integer index = 0;
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails()) {
-            final LineEstimateDetails details = lineEstimateDetailsRepository
-                    .findByEstimateNumberAndLineEstimate_Status_CodeNot(led.getEstimateNumber(), WorksConstants.CANCELLED_STATUS);
-            final ProjectCode projectCode = projectCodeService.findByCode(led.getProjectCode().getCode().toUpperCase());
-            if (details != null)
+            
+            final LineEstimateDetails estimateNumber = lineEstimateDetailService
+                    .getLineEstimateDetailsByEstimateNumber(led.getEstimateNumber());
+            if(lineEstimate.getCouncilResolutionNumber() != null){
+            final LineEstimate councilResolutionNumber = lineEstimateService
+                    .getLineEstimateByCouncilResolutionNumber(lineEstimate.getCouncilResolutionNumber());
+            if (councilResolutionNumber != null)
+                errors.rejectValue("lineEstimateDetails[" + index + "].lineEstimate.councilResolutionNumber", "error.councilresolutionnumber.unique");
+            }
+            final LineEstimateDetails workIdentificationNumber = lineEstimateDetailService
+                    .getLineEstimateDetailsByProjectCode(led.getProjectCode().getCode());
+            if (estimateNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].estimateNumber", "error.estimatenumber.unique");
-            if (projectCode != null)
+            if (workIdentificationNumber != null)
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
         }
@@ -229,16 +256,17 @@ public class CreateSpillOverLineEstimateController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-        model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", lineEstimateService.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
-        model.addAttribute("modeOfAllotment", ModeOfAllotment.values());
+        model.addAttribute("modeOfAllotment", modeOfAllotmentService.findAll());
+        model.addAttribute("lineEstimateUOMs", lineEstimateUOMService.findAll());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
+        model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
 
         final List<Designation> designations = new ArrayList<Designation>();
 

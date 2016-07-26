@@ -39,9 +39,20 @@
  */
 package org.egov.wtms.utils;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -58,10 +69,10 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
@@ -81,16 +92,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 @Service
 public class WaterTaxUtils {
@@ -157,7 +158,7 @@ public class WaterTaxUtils {
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDSMSFORWATERTAX).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public String getDepartmentForWorkFlow() {
@@ -199,6 +200,17 @@ public class WaterTaxUtils {
         return !appConfigValueList.isEmpty() ? appConfigValueList : null;
     }
 
+    public Boolean getAppconfigValueForSchedulearEnabled() {
+        Boolean schedularEnabled = Boolean.FALSE;
+        final AppConfigValues appConfigValueObj = appConfigValuesService.getConfigValuesByModuleAndKeyByValueAsc(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDEMANEDBILLSCHEDULAR).get(0);
+        if (appConfigValueObj != null && appConfigValueObj.getValue() != null) {
+            if (appConfigValueObj.getValue().equals(WaterTaxConstants.APPCONFIGVALUEOFENABLED))
+                schedularEnabled = Boolean.TRUE;
+        }
+        return schedularEnabled;
+
+    }
     public Boolean getCurrentUserRole(final User currentUser) {
         Boolean applicationByOthers = false;
 
@@ -228,19 +240,19 @@ public class WaterTaxUtils {
     public Boolean isEmailEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SENDEMAILFORWATERTAX).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isMultipleNewConnectionAllowedForPID() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.MULTIPLENEWCONNECTIONFORPID).get(0);
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isConnectionAllowedIfWTDuePresent(final String connectionType) {
@@ -248,7 +260,7 @@ public class WaterTaxUtils {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WaterTaxConstants.MODULE_NAME, connectionType);
         if (null != appConfigValue && !appConfigValue.isEmpty())
-            return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
+            return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
 
         return isAllowed;
     }
@@ -263,11 +275,11 @@ public class WaterTaxUtils {
     }
 
     public String getMunicipalityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     public String getCityCode() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
     }
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
@@ -283,7 +295,7 @@ public class WaterTaxUtils {
         final Locale locale = LocaleContextHolder.getLocale();
         final String smsMsg = messageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                        waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
+                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
     }
 
@@ -473,8 +485,8 @@ public class WaterTaxUtils {
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
         // as per Adoni allowing collection for ULB Operator
-        if (EgovThreadLocals.getUserId() != null) {
-            final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
                     if (role != null && role.getName().contains(WaterTaxConstants.ROLE_BILLCOLLECTOR)) {
@@ -519,11 +531,20 @@ public class WaterTaxUtils {
 
         return waterdemandConnection;
     }
+    public List<EgDemand> getAllDemand(final WaterConnectionDetails waterConnectionDetails) {
+        List<EgDemand> demandList=new ArrayList<EgDemand>();
+        final List<WaterDemandConnection> waterDemandConnectionList = waterDemandConnectionService
+                .findByWaterConnectionDetails(waterConnectionDetails);
+        for (final WaterDemandConnection waterDemandConnection : waterDemandConnectionList)
+        	demandList.add(waterDemandConnection.getDemand());
+
+        return demandList;
+    }
 
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if (EgovThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
@@ -535,4 +556,14 @@ public class WaterTaxUtils {
             citizenrole = Boolean.TRUE;
         return citizenrole;
     }
+
+    public Boolean isDigitalSignatureEnabled() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ENABLEDIGITALSIGNATURE);
+        if (null != appConfigValue && !appConfigValue.isEmpty())
+            return WaterTaxConstants.APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfigValue.get(0).getValue());
+        else
+            return false;
+    }
+
 }

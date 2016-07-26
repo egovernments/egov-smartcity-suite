@@ -66,7 +66,7 @@
 </style>
 </head>
 <body>
-	<!-- <div id="loadImg" class="loadImg"><img src="/egi/resources/erp2/images/loading.gif"  />&nbsp;<span class="loadspan">Please wait... Sending error report...</span></div> -->
+	<!-- <div id="loadImg" class="loadImg"><img src="/collection/resources/images/loading.gif"  />&nbsp;<span class="loadspan">Please wait... Sending error report...</span></div> -->
 	<div class="formmainbox">
 		<div class="insidecontent">
 			<div class="errorroundbox2">
@@ -78,7 +78,7 @@
 						<tr>
 							<td width="59%">
 								<div class="logouttext">
-									<img src="/egi/resources/erp2/images/error.png" width="128" height="128"
+									<img src="/collection/resources/images/error.png" width="128" height="128"
 										alt="Error" />
 									<div class="oopstext">
 										Oops! Sorry your request cannot be processed!

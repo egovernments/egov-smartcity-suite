@@ -40,13 +40,13 @@
 
 package org.egov.pgr.elasticSearch.entity;
 
+import java.util.Date;
+
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pgr.entity.Complaint;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
-
-import java.util.Date;
 
 public class ComplaintIndex extends Complaint {
 
@@ -75,6 +75,9 @@ public class ComplaintIndex extends Complaint {
 
     @Searchable(name = "complaintLocation", group = Searchable.Group.COMMON)
     private GeoPoint complaintLocation;
+    
+    @Searchable(name = "source", group = Searchable.Group.COMMON)
+    private String source;
 
     public City getCitydetails() {
         return citydetails;
@@ -145,7 +148,7 @@ public class ComplaintIndex extends Complaint {
 
     @Override
     public String getIndexId() {
-        return EgovThreadLocals.getCityCode() + "-" + super.getId().toString();
+        return ApplicationThreadLocals.getCityCode() + "-" + super.getId().toString();
     }
 
     public static ComplaintIndex method(Complaint complaint) {
@@ -155,6 +158,14 @@ public class ComplaintIndex extends Complaint {
 
         }
         return complaintIndex;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }

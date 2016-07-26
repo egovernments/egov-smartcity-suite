@@ -87,7 +87,7 @@ $('#Forward').click(function(e){
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
 			}else 
-				document.forms['advertisementform'].submit();
+				return true;
 		}else{
 			e.preventDefault();
 		}

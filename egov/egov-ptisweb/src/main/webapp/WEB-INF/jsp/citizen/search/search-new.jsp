@@ -42,7 +42,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
-<sx:head />
 <script type="text/javascript">
 	function populateWard() {
 		populatewardId({
@@ -64,7 +63,7 @@
 		}
 	}
 </script>
-<title><s:text name="searchProp.title"></s:text></title>
+<title><s:text name="citizen.search.welcome"></s:text></title>
 </head>
 <body>
 	<div class="formmainbox">

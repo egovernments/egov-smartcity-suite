@@ -147,7 +147,8 @@
 			</div>
 
 			<div class="row display-hide report-section">
-				<div class="col-md-12 table-header text-left">Title Transfer Register Report Details</div>
+			<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
+			<div class="col-md-12 table-header text-left" id="reportTitle">Title Transfer Register Report Details</div>
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tblTitleTransfer">
 						<thead>
@@ -169,7 +170,6 @@
 			</div>
 		</div>
 	</div>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

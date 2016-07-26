@@ -40,6 +40,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+
 <!DOCTYPE html>
 <html class="no-js" oncontextmenu="return false;">
 	<head>
@@ -109,7 +111,8 @@
 		</div>
 		<div class="page-container horizontal-menu">
 			<div class="search">
-				<input type="text" id="searchtree" ><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+				<input type="text" id="searchtree" placeholder="Quick Find"><span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
+				<span class="applyanimation"></span>
 			</div>
 			<div class="search_list">
 				<div class="list"><ul class="ullist"></ul></div>
@@ -134,19 +137,19 @@
 						
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace active" data-toggle="tooltip" title="Worklist" data-work="worklist">
-								<i class="fa fa-list"></i>
+								<i class="fa fa-list fa-fw"></i>
 							</a>
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Drafts" data-work="drafts">
-								<i class="fa fa-pencil"></i>
+								<i class="fa fa-pencil fa-fw"></i>
 							</a>
 							
 						</li>
 						<li class="dropdown">
 							<a href="javascript:void(0);" class="tooltip-secondary workspace" data-toggle="tooltip" title="Notifications" data-work="notifications">
 
-								<i class="fa fa-bell"></i>
+								<i class="fa fa-bell fa-fw"></i>
 							</a>
 							
 						</li>
@@ -223,12 +226,14 @@
 					<div class="row main-space" id="worklist">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Worklist
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="inboxsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="inboxsearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<div class="row">
@@ -252,12 +257,14 @@
 					<div class="row main-space display-hide" id="drafts">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Drafts
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="draftsearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="draftsearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_drafts" style="width:100%;">
@@ -277,13 +284,14 @@
 					<div class="row main-space display-hide" id="notifications">
 						<div class="col-xs-12">
 							<div class="row">
-								<div class="col-md-6 col-xs-6 table-header">
+								<div class="col-md-9 col-xs-9 table-header">
 									Notifications
 								</div>
-								<div class="col-md-6 col-xs-6 add-margin text-right">
-									
-									<span class="inline-elem">Search</span>
-									<span class="inline-elem"><input type="text" id="notifysearch" class="form-control input-sm search-table"><span class="fa fa-times-circle cleartext"></span></span>
+								<div class="col-md-3 col-xs-3 add-margin text-right">
+									<div class="input-group">
+									  <input type="text" class="form-control input-sm search-table" id="notifysearch">
+									  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
+									</div>
 								</div>
 							</div>
 							<table class="table table-bordered datatable" id="official_notify" style="width:100%;">
@@ -306,7 +314,8 @@
 			<footer class="clearfix simple">
 				<div class="constrain">
 					<div id="legal">
-						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> 2015 <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
+						<c:set var="now" value="<%=new org.joda.time.DateTime()%>" />
+						<span class="copyright">Copyright <span><i class="fa fa-copyright"></i></span> <joda:format value="${now}" pattern="yyyy" /> <a href="http://www.egovernments.org" target="_blank"> eGovernments Foundation.<sup>&reg;</sup></a></span>
 						<span class="version">eGov ERP - ${app_version}_${app_buildno}<c:if test="${not empty app_core_build_no}"> @ Core - ${app_core_build_no}</c:if></span>
 					</div>
 				</div>

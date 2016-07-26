@@ -39,6 +39,8 @@
  */
 package org.egov.wtms.masters.service;
 
+import java.util.List;
+
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -47,8 +49,6 @@ import org.egov.wtms.masters.repository.DonationHeaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -66,13 +66,8 @@ public class DonationHeaderService {
     }
 
     @Transactional
-    public DonationHeader createDonationHeader(final DonationHeader donationHeader) {
+    public DonationHeader persistDonationHeader(final DonationHeader donationHeader) {
         return donationHeaderRepository.save(donationHeader);
-    }
-
-    @Transactional
-    public void updateDonationHeader(final DonationHeader donationHeader) {
-        donationHeaderRepository.save(donationHeader);
     }
 
     public List<DonationHeader> findAll() {
@@ -96,17 +91,17 @@ public class DonationHeaderService {
     }
 
     public DonationHeader findByPropertyandCategoryandUsageandMinPipeSize(final PropertyType propertyType,
-            final ConnectionCategory category,
-            final UsageType usageType, final double pipeSize) {
-        return donationHeaderRepository.findByPropertyandCategoryAndUsageTypeAndPipeSize(propertyType, category, usageType,
-                pipeSize);
+            final ConnectionCategory category, final UsageType usageType, final double pipeSize) {
+        return donationHeaderRepository.findByPropertyandCategoryAndUsageTypeAndPipeSize(propertyType, category,
+                usageType, pipeSize);
     }
 
     // findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize
-    public List<DonationHeader> findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(final PropertyType propertyType,
-            final ConnectionCategory categoryType, final UsageType usageType, final double minPipeSize, final double maxPipeSize) {
-        return donationHeaderRepository.findDonationByPropertyAndCategoryAndUsageandMinPipeSizeAndMaxPipesize(propertyType,
-                categoryType, usageType, minPipeSize, maxPipeSize);
+    public List<DonationHeader> findDonationDetailsByPropertyAndCategoryAndUsageandPipeSize(
+            final PropertyType propertyType, final ConnectionCategory categoryType, final UsageType usageType,
+            final double minPipeSize, final double maxPipeSize) {
+        return donationHeaderRepository.findDonationByPropertyAndCategoryAndUsageandMinPipeSizeAndMaxPipesize(
+                propertyType, categoryType, usageType, minPipeSize, maxPipeSize);
     }
 
 }

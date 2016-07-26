@@ -48,13 +48,13 @@ jQuery(document).ready(function ($) {
 	        format: "dd/mm/yyyy"
 		});
 	    tableContainer=$('#aplicationSearchResults');
-	    document.onkeydown=function(evt){
+	    /*document.onkeydown=function(evt){
 			 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		if(keyCode == 13){
 			$('#searchResultDiv').show();
 			submitForm();	
 		}
-		 }
+		 }*/
 	    $('#searchapplication').click(function () {
 	    	submitForm();
 	    });
@@ -154,6 +154,14 @@ jQuery(document).ready(function ($) {
 	
 });
 
+$(document).on("keypress", 'form', function (e) {
+    var code = e.keyCode || e.which;
+    if (code == 13) {
+        e.preventDefault();
+        return false;
+    }
+});
+
 function submitForm(){
 	$('.loader-class').modal('show', {backdrop: 'static'});
 	$.post("/wtms/elastic/appSearch/", $('#applicationSearchRequestForm').serialize())
@@ -182,6 +190,7 @@ function submitForm(){
 		    	}
 			},
 			{title: 'Applicant Name', data: 'resource.searchable.applicantname'},
+			{title: 'Channel', data: 'resource.clauses.channel'},
 			
 			{title: 'Applicant Address', data: 'resource.searchable.applicantAddress'},
 			{title: 'Status', data: 'resource.clauses.status'},

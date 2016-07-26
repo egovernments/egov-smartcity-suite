@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title>Direct Bank Payment</title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -57,6 +56,8 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
+	type="text/css" />
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
@@ -328,7 +329,7 @@
 
 						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
 							class="mandatory1">*</span></td>
-						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
+						<s:date name='voucherDate' var="voucherDateId" format='dd/MM/yyyy' />
 						<td class="bluebox" width="34%">
 							<div name="daterow">
 								<s:textfield id="voucherDate" name="voucherDate"
@@ -433,7 +434,7 @@ function onSubmit()
 		return false;
 	}
 	else if(!balanceCheck()){
-		 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 		 if (msg == true) {
 		   	document.dbpform.action = '/EGF/payment/directBankPayment-create.action';
 			return true;

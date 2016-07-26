@@ -136,11 +136,9 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		};
 		
 		receiptHeaderService.setType(ReceiptHeader.class);
-		receiptHeaderService.setSessionFactory(egovSessionFactory);
-		
+
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
-		scriptExecutionService.setSessionFactory(egovSessionFactory);
-		
+
 		userManager = createMock(UserManager.class);
 		boundaryDAO = createMock(BoundaryDAO.class);
 		commonsManager = createMock(CommonsManager.class);
@@ -150,7 +148,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		//receiptWorkflowServiceMock = createMock(WorkflowService.class);
 		beanProvider=createMock(ApplicationContextBeanProvider.class);
 		auditEventService =  new AuditEventService();
-		EgovThreadLocals.setUserId("1");
+		ApplicationThreadLocals.setUserId("1");
 		genericService.setType(AuditEvent.class);
 		auditEventService.setAuditEventPersistenceService(genericService);
 		
@@ -166,7 +164,6 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		
 		collectionsNumberGenerator=new CollectionsNumberGenerator();
 		collectionsNumberGenerator.setScriptExecutionService(scriptExecutionService);
-		sequenceGenerator = new SequenceNumberGenerator(egovSessionFactory);
 		collectionsNumberGenerator.setSequenceGenerator(sequenceGenerator);
 		collectionsNumberGenerator.setCollectionsUtil(collectionsUtil);
 		
@@ -176,8 +173,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		}
 		};;
 		receiptService.setType(ReceiptPayeeDetails.class);
-		receiptService.setSessionFactory(egovSessionFactory);
-		
+
 		receiptService.setFinancialsUtil(financialsUtil);
 		receiptService.setCollectionsUtil(collectionsUtil);
 		receiptService.setCollectionsNumberGenerator(collectionsNumberGenerator);
@@ -203,7 +199,6 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		};
 		
 		PersistenceService<ServiceCategory, Long> serviceCategoryService = new PersistenceService<ServiceCategory, Long>();
-		serviceCategoryService.setSessionFactory(new SessionFactory());
 		action.setServiceCategoryService(serviceCategoryService);
 		
 		Map<String, String[]> parameters = new HashMap<String, String[]>();
@@ -1211,7 +1206,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		HashMap<String, Object> sess = new HashMap<String, Object>();
 		sess.put("com.egov.user.LoginUserName", "egovernments");
 		action.setSession(sess);
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		
 		String result = action.newform();
 		assertEquals("new",result);
@@ -1220,7 +1215,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	
 	//@Test
 	public void testSaveNewMiscReceiptsForCash() throws Exception{
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		collectionsUtil=new CollectionsUtil(){
 			public List<String> getCollectionModesNotAllowed(User loggedInUser,ServiceDetails serviceDetails){
 				return (new ArrayList<String>());
@@ -1360,7 +1355,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	
 	//@Test
 	public void testSaveNewMiscReceiptsForCashWithSubledger() throws Exception{
-		EgovThreadLocals.setDomainName("localhost");
+		ApplicationThreadLocals.setDomainName("localhost");
 		collectionsUtil=new CollectionsUtil(){
 			public List<String> getCollectionModesNotAllowed(User loggedInUser){
 				return (new ArrayList<String>());

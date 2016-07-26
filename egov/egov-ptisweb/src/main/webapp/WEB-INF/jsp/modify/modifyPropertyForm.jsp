@@ -41,7 +41,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox" width="20%"><s:text name="prop.Id" /> :</td>
@@ -96,7 +96,7 @@
 		<td class="greybox" width="25%"></td>
 		<td class="greybox"></td>
 	</tr>
-	<tr class="superStructureRow">
+	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
 		<td class="bluebox"><s:text name="superstructure"></s:text> :</td>
 		<td class="bluebox"><s:checkbox name="propertyDetail.structure"
@@ -107,7 +107,7 @@
 		<td class="greybox siteowner"><s:textfield maxlength="64"
 				value="%{propertyDetail.siteOwner}" name="propertyDetail.siteOwner"
 				id="siteOwner"></s:textfield></td>
-	</tr>
+	</tr> --%>
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="ownership.type"></s:text>
@@ -222,7 +222,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center">
+			<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
 				<%@ include file="../common/FloorForm.jsp"%>
 			</div>
 		</td>

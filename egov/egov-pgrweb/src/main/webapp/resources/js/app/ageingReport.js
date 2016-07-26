@@ -74,7 +74,7 @@ jQuery(document)
 						tableContainer1
 						.dataTable({
 							ajax : {
-								url : "/pgr/report/ageing/resultList-update",
+								url : "ageing/resultList-update",
 								data : {
 									fromDate : startDate,
 									toDate : endDate,
@@ -96,16 +96,16 @@ jQuery(document)
 								"data" : "complainttype"
 
 							}, {
-								"data" : "grtthn90"
+								"data" : "grtthn90","sClass": "text-right"
 							}, {
-								"data" : "btw45to90"
+								"data" : "btw45to90","sClass": "text-right"
 							}, {
-								"data" : "btw15to45"
+								"data" : "btw15to45","sClass": "text-right"
 							}, {
-								"data" : "lsthn15",
+								"data" : "lsthn15","sClass": "text-right"
 
 							}, {
-								"data" : "total",
+								"data" : "total","sClass": "text-right"
 
 							} ],
 							"footerCallback": function ( row, data, start, end, display ) {

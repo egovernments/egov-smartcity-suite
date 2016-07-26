@@ -339,7 +339,7 @@ public class AdvertisementPermitDetail extends StateAware {
     @Override
     public String getStateDetails() {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return String.format("Advertisement Number %s with date %s.", applicationNumber,
+        return String.format("Application Number %s with date %s.", applicationNumber,
                 applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()));
     }
 

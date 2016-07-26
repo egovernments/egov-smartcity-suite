@@ -49,8 +49,8 @@
 	name="id"
 	column="ID_LANG"
 	type="int">
-	<generator class="sequence">
-		<param name="sequence">EGPIMS_LANG_KNOWN_SEQ</param>
+	<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+		<param name="sequence_name">EGPIMS_LANG_KNOWN_SEQ</param>
 	</generator>
 </id>
         

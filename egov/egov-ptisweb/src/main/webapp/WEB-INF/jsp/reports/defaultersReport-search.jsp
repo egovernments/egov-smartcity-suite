@@ -128,8 +128,8 @@
 			</div>
 
 			<div class="row display-hide report-section">
-				<div class="col-md-12 table-header text-left"><s:text name="defaultersReport.details" /></div>
-				<div class="col-md-12 table-header text-left"><s:text name="defaultersReport.message" /> <fmt:formatDate value="${now}" pattern="dd/MM/yyyy" /></div>
+			<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
+				<div class="col-md-12 table-header text-left" id="reportTitle"><s:text name="defaultersReport.details" />,<s:text name="defaultersReport.message" /><fmt:formatDate value="${now}" pattern="dd/MM/yyyy" /></div>
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tblDefaultersReport">
 						<thead>

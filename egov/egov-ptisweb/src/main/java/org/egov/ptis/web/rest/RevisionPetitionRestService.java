@@ -46,7 +46,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
@@ -141,7 +141,7 @@ public class RevisionPetitionRestService {
         Boolean isAuthenticatedUser = authenticateUser(username, password);
         if (isAuthenticatedUser) {
 
-            EgovThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
+            ApplicationThreadLocals.setUserId(Long.valueOf(LOGIN_USERID));
             ErrorDetails errorDetails = validateRevisionPetitionForm(accessmentnumber, details, receivedon, recievedBy);
             if (null != errorDetails) {
                 responseJson = getJSONResponse(errorDetails);

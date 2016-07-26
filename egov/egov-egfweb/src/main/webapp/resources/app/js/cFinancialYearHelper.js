@@ -61,6 +61,7 @@ function validateFields(){
 		var lastRow = (tbl.rows.length)-1;
 		var startingDate=getControlInBranch(tbl.rows[1],'startDate').value;
 		var finYearStartDate=document.getElementById("startingDate").value;
+		var lastRowFiscalName = getControlInBranch(tbl.rows[lastRow],'name').value;
 		var lastRowEndDate=getControlInBranch(tbl.rows[lastRow],'endDate').value;
 		var finYearEndDate=document.getElementById("endingDate").value;
 		
@@ -77,28 +78,25 @@ function validateFields(){
 			getControlInBranch(tbl.rows[lastRow],'endDate').focus();
 			return false;
 		}
-		
-	    var previousRow = lastRow - 1;
-		var name=getControlInBranch(tbl.rows[lastRow],'name').value;
-		var lastRowFiscalName = getControlInBranch(tbl.rows[lastRow],'name').value;
-		var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
-	    var previousEndDate=getControlInBranch(tbl.rows[previousRow],'endDate').value;
-		var finYearRange=document.getElementById("name").value;
-		
-	    if( compareDate(formatDate6(previousEndDate),formatDate6(lastRowStartDate)) == -1 )
-		{
-		     bootbox.alert('Enter valid Start Date');
-			 getControlInBranch(tbl.rows[lastRow],'startDate').value='';
-			 getControlInBranch(tbl.rows[lastRow],'startDate').focus();
-			 return false;
-		}
-	
 		if(lastRowFiscalName==""){
 			bootbox.alert('Enter Fiscal Period Name');
 			getControlInBranch(tbl.rows[1],'name').value='';
 			getControlInBranch(tbl.rows[1],'name').focus();
 			return false;
 		}
+	    var previousRow = lastRow - 1;
+	    if(previousRow>0){
+			var lastRowStartDate=getControlInBranch(tbl.rows[lastRow],'startDate').value;
+		    var previousEndDate=getControlInBranch(tbl.rows[previousRow],'endDate').value;
+		    if( compareDate(formatDate6(previousEndDate),formatDate6(lastRowStartDate)) == -1 )
+			{
+			     bootbox.alert('Enter valid Start Date');
+				 getControlInBranch(tbl.rows[lastRow],'startDate').value='';
+				 getControlInBranch(tbl.rows[lastRow],'startDate').focus();
+				 return false;
+			}
+	
+	    }
 	
 	 return true;
 
@@ -187,7 +185,11 @@ function addRow1()
 	hiddenId.id = "cFiscalPeriod[" + counts + "].id";
 	hiddenId.setAttribute("value", "${cFiscalPeriod[" + counts + "].id}");
 	cell4.appendChild(hiddenId);
-
+	
+	jQuery(".datepicker").datepicker({
+		format: "dd/mm/yyyy",
+		autoclose:true
+	}); 
 
 }
 
@@ -310,7 +312,6 @@ function callAjaxSearch() {
 			"data" : "finYearRange", "sClass" : "text-left"} ,{ 
 				"data" : "startingDate", "sClass" : "text-left"} ,{ 
 					"data" : "endingDate", "sClass" : "text-left"} ,{ 
-						"data" : "isActive", "sClass" : "text-left"} ,{ 
 							"data" : "isActiveForPosting", "sClass" : "text-left"} ,{ 
 								"data" : "isClosed", "sClass" : "text-left"} ,{ 
 									"data" : "transferClosingBalance", "sClass" : "text-left"}]				

@@ -45,8 +45,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 	<class name="org.egov.infstr.models.ServiceCategory" table="EGCL_SERVICECATEGORY">
 		<cache usage="transactional" />
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGCL_SERVICECATEGORY</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGCL_SERVICECATEGORY</param>
 			</generator>
 		</id>
 		<property name="name" column="NAME" type="string" />
@@ -70,15 +70,11 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			<one-to-many class="org.egov.infstr.models.ServiceDetails" />
 		</set>
 	</class>
-	<query name="SERVICE_CATEGORY_ALL">
-<![CDATA[
-from  org.egov.infstr.models.ServiceCategory where isActive='1' order by name
-]]>
+	<query name="ACTIVE_SERVICE_CATEGORY">
+		<![CDATA[select s from org.egov.infstr.models.ServiceCategory s where s.isActive=true order by s.name]]>
 	</query>
 	
-		<query name="SERVICE_CATEGORY_CODE">
-<![CDATA[
-select s from  org.egov.infstr.models.ServiceCategory s where s.code=?
-]]>
+	<query name="SERVICE_CATEGORY_BY_CODE">
+		<![CDATA[select s from  org.egov.infstr.models.ServiceCategory s where s.code=?]]>
 	</query>
 </hibernate-mapping>

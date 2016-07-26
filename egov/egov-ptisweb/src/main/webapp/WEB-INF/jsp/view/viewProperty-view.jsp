@@ -147,14 +147,17 @@
 								test="%{(roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@ROLE_ULB_OPERATOR.toUpperCase()) || roleName.contains(@org.egov.ptis.constants.PropertyTaxConstants@CSC_OPERATOR_ROLE.toUpperCase()))
 				&& !@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_EWSHS.equals(propertyDetail.propertyTypeMaster.code)}">
 								<s:if test="%{isDemandActive}">
-									<%-- <input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration of Assessment"
+								    <s:if test="%{!property.getIsExemptedFromTax()}"> 
+									<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Addition/Alteration"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=ADD_OR_ALTER&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" />
-						<input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Bifurcation"
+						           
+						<%-- <input type="button" class="buttonsubmit" name="btnModifyProperty" id="btnModifyProperty" value="Bifurcation"
 							onclick="window.location='../modify/modifyProperty-modifyForm.action?modifyRsn=BIFURCATE&indexNumber=<s:property value="%{basicProperty.upicNo}"/>';" /> --%>
 									<input type="button" class="buttonsubmit"
 										name="btnTrnsProperty" id="btnTrnsProperty"
 										value="Transfer Ownership"
-										onclick="window.location='../property/transfer/new.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
+										onclick="window.location='../property/transfer/redirect.action?assessmentNo=<s:property value="%{basicProperty.upicNo}" />';" />
+									</s:if>
 									<%-- <input type="button" class="buttonsubmit" name="taxExemption" id="taxExemption" value="Tax Exemption"
 							onclick="window.location='/ptis/exemption/form/<s:property value="%{basicProperty.upicNo}" />';" />
 						<input type="button" class="buttonsubmit" name="btnGRPProperty" id="btnGRPProperty" value="General Revision Petition"

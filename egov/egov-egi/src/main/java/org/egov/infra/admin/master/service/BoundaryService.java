@@ -48,8 +48,7 @@ import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.exception.NoSuchObjectException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -70,6 +69,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -130,15 +130,14 @@ public class BoundaryService {
     }
 
     // TODO - Later - Use materializedPath instead of recursive calling
-    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) throws NoSuchObjectException {
+    public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
         List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Boundary bndry = getBoundaryById(boundaryId);
         if (bndry != null) {
             boundaryList.add(bndry);
             if (bndry.getParent() != null)
                 boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
-        } else
-            throw new NoSuchObjectException("bndry.Obj.null");
+        }
         return boundaryList;
     }
 
@@ -298,12 +297,17 @@ public class BoundaryService {
     }
 
     public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
+        Optional<Boundary> boundary = getBoundary(latitude, longitude);
+        return boundary.isPresent() ?  boundary.get().getId() : 0;
+    }
+
+    public Optional<Boundary> getBoundary(final Double latitude, final Double longitude) {
         try {
-            Long boundaryId = 0L;
+            Boundary finalBoundary = null;
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<String, URL>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
-                        .getResource("gis/" + EgovThreadLocals.getTenantID() + "/wards.shp"));
+                        .getResource("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
                         .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
@@ -325,13 +329,12 @@ public class BoundaryService {
                                         .getBoundaryTypeByNameAndHierarchyTypeName(bndryType, "ADMINISTRATION");
                                 final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
                                         boundaryNum);
-                                if (boundary != null && true)
-                                    boundaryId = boundary.getId();
+                                if (boundary != null)
+                                    finalBoundary = boundary;
                                 else {
                                     final BoundaryType cityBoundaryType = boundaryTypeService
                                             .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
-                                    final Boundary cityBoundary = this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
-                                    boundaryId = cityBoundary.getId();
+                                    finalBoundary = this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
                                 }
 
                             }
@@ -342,8 +345,8 @@ public class BoundaryService {
                     collection.close(iterator);
                 }
             }
-            LOG.debug("Found boundary data in GIS with boundary id : {}", boundaryId);
-            return boundaryId;
+            LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getId());
+            return Optional.ofNullable(finalBoundary);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }

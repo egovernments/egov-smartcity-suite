@@ -39,6 +39,20 @@
  */
 package org.egov.works.web.actions.contractorBill;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -64,15 +78,15 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.recoveries.RecoveryService;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimateAppropriation;
+import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.egov.works.milestone.entity.TrackMilestone;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
 import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
-import org.egov.works.models.estimate.AbstractEstimate;
-import org.egov.works.models.estimate.AbstractEstimateAppropriation;
-import org.egov.works.models.estimate.FinancialDetail;
 import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.milestone.TrackMilestone;
 import org.egov.works.models.workorder.AssetsForWorkOrder;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -83,23 +97,8 @@ import org.egov.works.services.impl.MeasurementBookServiceImpl;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 public class AjaxContractorBillAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -3316045051992569984L;
     private static final Logger logger = Logger.getLogger(AjaxContractorBillAction.class);
     private static final String ADVANCE_AJUSTMENT = "advanceAdjustment";
@@ -495,7 +494,8 @@ public class AjaxContractorBillAction extends BaseFormAction {
                     addDropdownData(WorksConstants.COA_LIST, coaList);
                 } else
                     coaList = Collections.EMPTY_LIST;
-            } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode().equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
+            } else if (workOrderEstimate.getEstimate().getNatureOfWork().getCode()
+                    .equals(WorksConstants.REPAIR_AND_MAINTENANCE)) {
                 if (StringUtils.isNotBlank(accountCodeFromBudgetHead) && "no".equals(accountCodeFromBudgetHead)
                         && StringUtils.isNotBlank(worksService.getWorksConfigValue(WorksConstants.KEY_REPAIRS))) {
                     coaList = chartOfAccountsHibernateDAO.getAccountCodeByPurpose(

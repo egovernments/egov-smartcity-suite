@@ -46,9 +46,9 @@
 
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" id="applicationprocesstime-view" 
  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<input type="hidden" name="applicationProcessTimeList" id="applicationProcessTimeList" value="${applicationProcessTimeList}">
-	<input type="hidden" id="applicationprocesstimeid" name="applicationprocesstimeid" value="${applicationProcessTime.id}" />
-
+<input type="hidden" name="applicationProcessTimeList" id="applicationProcessTimeList" value="${applicationProcessTimeList}">
+<input type="hidden" id="applicationprocesstimeid" name="applicationprocesstimeid" value="${applicationProcessTime.id}" />
+<input type="hidden" value="${mode}" id="mode" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-body custom-form ">
 			<c:if test="${not empty message}">
@@ -59,24 +59,26 @@
 					<div class="form-group" align="center">No Master Data</div>
 				</c:when>
 			<c:otherwise>
-				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="applicationTbl">
 					<thead>
 						<tr>
-							<th colspan="1"  width ="10">
-								<div align="center"><spring:message code="lbl.applicationtype" /> </div>
+							<th colspan="1"  width ="10" class="text-center">
+								<spring:message code="lbl.applicationtype" />
 							</th>
-							<th align="center" width="10">
-								<div align="center"><spring:message code="lbl.category" /> </div>
+							<th colspan="1" width="10" class="text-center">
+								<spring:message code="lbl.category" />
 							</th>
-							<th align="center" width="5">
-								<div align="center"><spring:message code="lbl.processing" /></div>
+							<th colspan="1" width="5" class="text-center">
+								<spring:message code="lbl.processing" />
 							</th>
-							<th  colspan="1" width ="25">
-								<div align="center"><spring:message code="lbl.status"/></div>
+							<th  colspan="1" width ="25" class="text-center">
+								<spring:message code="lbl.status"/>
 							</th>
-							<th align="center" width="8">
-								<div align="center"><spring:message code="lbl.edit" /></div>
+							<c:if test="${mode == 'edit'}"> 
+							<th colspan="1" width="8" class="text-center">
+								<spring:message code="lbl.edit" />
 							</th>
+							</c:if>
 						</tr>
 					</thead>
 					<c:forEach var="applicationProcessTime" items="${applicationProcessTimeList}">
@@ -108,18 +110,19 @@
 								</c:choose>
 								</div>
 							</td>
+							<c:if test="${mode == 'edit'}"> 
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${applicationProcessTime.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 				</table>
 			</c:otherwise>
 			</c:choose>
 			<div class="form-group text-center">
-				<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)"><spring:message code="lbl.addnew" /></a>
 				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 			</div>
 		</div>

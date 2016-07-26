@@ -39,6 +39,12 @@
  */
 
 
+$(document).ready(function(e){
+	
+	$('.read-only').attr('readOnly','readOnly');
+	
+});
+
 
 		function calculateAmount(obj){
 	
@@ -104,24 +110,47 @@
 		$('#submitButtonId').click(function(e){
 			var i= 0;
 			var j=0;
+			 var installmentsecond = $("#current2HalfInstallment").val();
+			  var installmentfirst =$("#current1HalfInstallment").val();
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
-			  var actamount = $this.find("#actualAmount").val();
-			  var actcollection = $this.find("#actualCollection").val();
-			  if( actcollection > 0 && actamount == 0 ){
-				  bootbox.alert('please fill actual amount');
-				  e.preventDefault();
-				  return false;
+			  var actamount = parseInt($this.find("#actualAmount").val());
+			  var actcollection = parseInt($this.find("#actualCollection").val());
+			  var installment = $this.find("#installment").val();
+			  $actualtextbox=$this.find("#actualAmount");
+			  
+			  if($actualtextbox.data('old-value'))
+			  {
+				  var oldVal=parseInt($actualtextbox.data('old-value')); 
+				  if(actamount<oldVal)
+				  {
+					  bootbox.alert('Demand entered for installment '+installment +' is less than already existing demand');
+					  e.preventDefault();
+					  return false;
+				  }
 			  }
+			  
 			  if(actamount == 0 && actcollection == 0){
 				  j++;
 			  }
-			  if(parseInt(actcollection) > parseInt(actamount)){
+			  if(actcollection > actamount){
 				  bootbox.alert('Collection should not be greater than actual amount');
 				  e.preventDefault();
 				  return false;
 			  }
+			  if(installment==installmentfirst &&  actamount == 0)
+			  {
+			  bootbox.alert('Enter Demand of Current Year First installment ' +installmentfirst );
+			  e.preventDefault();
+			  return false;
+			  }
+		  if(installment==installmentsecond &&  actamount == 0)
+		  {
+		  bootbox.alert('Enter Demand of Current Year Second installment ' +installmentsecond);
+		  e.preventDefault();
+		  return false;
+		  }
 			});
 			if(i==j)
 			  {
@@ -129,6 +158,7 @@
 				  e.preventDefault();
 				  return false;
 			  }
+			
 		});
 	 
 	 

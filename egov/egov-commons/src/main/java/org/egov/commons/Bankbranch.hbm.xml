@@ -45,8 +45,8 @@
     <class name="org.egov.commons.Bankbranch" table="BANKBRANCH" >
         <id name="id" type="integer">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">seq_bankbranch</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">seq_bankbranch</param>
             </generator>
         </id>
         <many-to-one name="bank" class="org.egov.commons.Bank" fetch="select">

@@ -283,10 +283,11 @@ function getSchemelist(fund)
     populatefundSourceId({subSchemeId:-1})
 }
 
-function getBankBranchList(fund){
-        var serviceName=dom.get("serviceName").value;
-        if(fund.options[fund.selectedIndex].value!="-1"){
-            populatebankBranchMaster({serviceName:serviceName,fundId:fund.options[fund.selectedIndex].value});
+function getBankBranchList(){
+        var serviceId=dom.get("serviceId").value;
+        var fundId=dom.get("fundId").value;
+        if(fundId!="-1" && serviceId!="-1"){
+            populatebankBranchMaster({serviceId:serviceId,fundId:fundId});
         }
         else{
             if(document.getElementById("bankBranchMaster")!=null){
@@ -332,7 +333,7 @@ var valid=true;
      <s:if test="%{isFieldMandatory('voucherdate')}"> 
                  if(null != document.getElementById('voucherDate') && document.getElementById('voucherDate').value.trim().length == 0){
 
-                    document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.voucherdate.errormessage" />'+ "<br>";
+                    document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.receiptdate.errormessage" />'+ "<br>";
                     valid=false;
                 }
                   var currDate = "${currDate}";
@@ -340,7 +341,7 @@ var valid=true;
                     if(vhDate.trim().length != 0){
                         if(!checkFdateTdate(vhDate,currDate))
                         {
-                            document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.voucherdate.incorrectmessage" />'+ "<br>";
+                            document.getElementById("receipt_error_area").innerHTML+='<s:text name="miscreceipt.receiptdate.incorrectmessage" />'+ "<br>";
                             valid=false;
                         }
                     }
@@ -710,15 +711,22 @@ var totaldbamt=0,totalcramt=0;
  
      <tr>
           <td width="4%" class="bluebox">&nbsp;</td>
-         <td width="21%" class="bluebox"><s:text name="viewReceipt.receiptdate"/><span class="mandatory"/></td>
+         <td width="21%" class="bluebox"><s:text name="viewReceipt.receiptdate" /><span class="mandatory"/></td>
                   <s:date name="voucherDate" var="cdFormat" format="dd/MM/yyyy"/>
           <td width="24%" class="bluebox">
                 <s:textfield id="voucherDate" name="voucherDate" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"  onblur="validateVoucherDate(this)" data-inputmask="'mask': 'd/m/y'"/>
                 <div class="highlight2" style="width:80px">DD/MM/YYYY</div>             
           </td>
-          <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
-		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="250" onkeyup="return ismaxlength(this)"/></td>
-	    
+            <td width="21%" class="bluebox"><s:text name="challan.narration"/></td>
+		    <td width="24%" class="bluebox"><s:textarea name="referenceDesc" id="referenceDesc" value="%{referenceDesc}" cols="18" rows="1" maxlength="125" onkeyup="return ismaxlength(this)"/></td>
+          </tr>
+	       <tr> <td width="4%" class="bluebox2">&nbsp;</td>
+		   <td class="bluebox" width="21%"><s:text name="billreceipt.counter.paidby"/><span class="mandatory1">*</span></td>
+		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="49" name="paidBy" value="%{payeeName}" /></td>
+		   <td width="21%" class="bluebox2"><s:text name="challan.payeeAddress"/></td>
+		   <td width="24%" class="bluebox2"><s:textarea name="payeeAddress" id="payeeAddress" value="%{payeeAddress}" cols="18" rows="1" maxlength="255" onkeyup="return ismaxlength(this)"/></td>
+	    </tr>
+	  <tr> 
            <s:if test="%{shouldShowHeaderField('field')}">
            <td width="21%" class="bluebox"><s:text name="miscreceipt.field"/><s:if test="%{isFieldMandatory('field')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
           <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="boundaryId" id="boundaryId" cssClass="selectwk" list="dropdownData.fieldList" listKey="id" listValue="name"  /> </td>
@@ -740,10 +748,12 @@ var totaldbamt=0,totalcramt=0;
          
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service.category" /><span class="mandatory"/> </td>
         <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceCategory.id" id="serviceCategoryid" cssClass="selectwk" list="dropdownData.serviceCategoryList" listKey="id" listValue="name" value="%{serviceCategory.id}" onChange="populateService(this);" />
-       	<egov:ajaxdropdown id="service"fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+       	<egov:ajaxdropdown id="service" fields="['Text','Value']" dropdownId="serviceId" url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategoryForMisc.action" /></td>
         <td width="21%" class="bluebox"><s:text name="miscreceipt.service" /><span class="mandatory"/> </td>
-        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="service.id" id="serviceId" cssClass="selectwk"
-	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{service.id}" onchange="loadFinDetails(this);"/>
+        <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="----Choose----" name="serviceId" id="serviceId" cssClass="selectwk"
+	list="dropdownData.serviceList" listKey="id" listValue="code" value="%{serviceId}" onchange="loadFinDetails(this);getBankBranchList();"/>
+	 <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
+                url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
         </td>
          
        
@@ -756,7 +766,7 @@ var totaldbamt=0,totalcramt=0;
           <td width="4%" class="bluebox">&nbsp;</td>
            <s:if test="%{shouldShowHeaderField('fund')}">
           <td width="21%" class="bluebox"><s:text name="miscreceipt.fund"/><s:if test="%{isFieldMandatory('fund')}"><span class="bluebox"><span class="mandatory"/></s:if></td>
-          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundId" id="fundId" cssClass="selectwk" onChange="setFundId();getSchemelist(this);getBankBranchList(this);" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
+          <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('miscreceipt.select')}" name="fundId" id="fundId" cssClass="selectwk" onChange="setFundId();getSchemelist(this);getBankBranchList();" list="dropdownData.fundList" listKey="id" listValue="name" value="%{fund.id}" />
           <egov:ajaxdropdown id="bankBranchMasterDropdown" fields="['Text','Value']" dropdownId='bankBranchMaster'
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />

@@ -45,8 +45,8 @@
 	<class name="org.egov.commons.CGeneralLedgerDetail" table="GENERALLEDGERDETAIL"> 
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">SEQ_GENERALLEDGERDETAIL</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_GENERALLEDGERDETAIL</param>
 			</generator>
 			
 		</id>	

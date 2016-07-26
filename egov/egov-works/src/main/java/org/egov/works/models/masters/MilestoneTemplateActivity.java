@@ -39,36 +39,82 @@
  */
 package org.egov.works.models.masters;
 
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infstr.models.BaseModel;
-import org.hibernate.validator.constraints.Length;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
-public class MilestoneTemplateActivity extends BaseModel {
+@Entity
+@Table(name = "EGW_MILESTONE_TEMPL_ACTIVITY")
+@Unique(id = "id", tableName = "EGW_MILESTONE_TEMPL_ACTIVITY", enableDfltMsg = true)
+@SequenceGenerator(name = MilestoneTemplateActivity.SEQ_EGW_MILESTONE_TEMPL_ACTIVITY, sequenceName = MilestoneTemplateActivity.SEQ_EGW_MILESTONE_TEMPL_ACTIVITY, allocationSize = 1)
+public class MilestoneTemplateActivity extends AbstractAuditable {
+
+    public static final String SEQ_EGW_MILESTONE_TEMPL_ACTIVITY = "SEQ_EGW_MILESTONE_TEMPL_ACTIVITY";
 
     private static final long serialVersionUID = 1L;
-    private BigDecimal stageOrderNo;
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGW_MILESTONE_TEMPL_ACTIVITY, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    private double stageOrderNo;
+
+    @NotNull
     private String description;
-    private BigDecimal percentage;
+
+    @NotNull
+    private double percentage;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "milestonetemplate", nullable = false)
     private MilestoneTemplate milestoneTemplate;
 
-    @Required(message = "milestoneTemplateActivity.desc.null")
-    @Length(max = 1024, message = "milestoneTemplateActivity.desc.length")
-    public String getDescription() {
-        return description;
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    @Required(message = "milestoneTemplateActivity.percentage.null")
-    public BigDecimal getPercentage() {
-        return percentage;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public void setPercentage(final double percentage) {
+        this.percentage = percentage;
+    }
+
+    public double getStageOrderNo() {
+        return stageOrderNo;
+    }
+
+    public void setStageOrderNo(final double stageOrderNo) {
+        this.stageOrderNo = stageOrderNo;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(final String description) {
         this.description = description;
     }
 
-    public void setPercentage(final BigDecimal percentage) {
+    public Double getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(final Double percentage) {
         this.percentage = percentage;
     }
 
@@ -78,15 +124,6 @@ public class MilestoneTemplateActivity extends BaseModel {
 
     public void setMilestoneTemplate(final MilestoneTemplate milestoneTemplate) {
         this.milestoneTemplate = milestoneTemplate;
-    }
-
-    @Required(message = "milestoneTemplateActivity.stageOrderNo.null")
-    public BigDecimal getStageOrderNo() {
-        return stageOrderNo;
-    }
-
-    public void setStageOrderNo(final BigDecimal stageOrderNo) {
-        this.stageOrderNo = stageOrderNo;
     }
 
 }

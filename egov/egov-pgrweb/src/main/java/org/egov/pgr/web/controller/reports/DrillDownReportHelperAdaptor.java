@@ -40,12 +40,12 @@
 
 package org.egov.pgr.web.controller.reports;
 
+import java.lang.reflect.Type;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
-import java.lang.reflect.Type;
 
 public class DrillDownReportHelperAdaptor implements JsonSerializer<DrillDownReportResult> {
 
@@ -65,15 +65,20 @@ public class DrillDownReportHelperAdaptor implements JsonSerializer<DrillDownRep
                     .getRegistered().toString() : "0");
             jsonObject.addProperty("rejected", null != drillDownReportObject.getRejected() ? drillDownReportObject
                     .getRejected().toString() : "0");
-            jsonObject.addProperty("complaintTyeId", null != drillDownReportObject.getComplainttypeid() ? drillDownReportObject
-                    .getComplainttypeid().toString() : "0");
+            if (drillDownReportObject.getComplainttypeid() != null)
+                jsonObject.addProperty("complaintTyeId",
+                        null != drillDownReportObject.getComplainttypeid() ? drillDownReportObject
+                                .getComplainttypeid().toString() : "0");
             jsonObject.addProperty("withinsla", null != drillDownReportObject.getWithinsla() ? drillDownReportObject
                     .getWithinsla().toString() : "0");
-            jsonObject.addProperty("beyondsla", null != drillDownReportObject.getBeyondsla() ? drillDownReportObject.getBeyondsla().toString() : "0");
+            jsonObject.addProperty("beyondsla",
+                    null != drillDownReportObject.getBeyondsla() ? drillDownReportObject.getBeyondsla().toString() : "0");
             jsonObject.addProperty("total", null != drillDownReportObject.getTotal() ? drillDownReportObject.getTotal()
                     .toString() : "0");
             jsonObject.addProperty("reopened", null != drillDownReportObject.getReopened() ? drillDownReportObject
                     .getReopened().toString() : "0");
+            jsonObject.addProperty("usrid",
+                    null != drillDownReportObject.getUsrid() ? drillDownReportObject.getUsrid().toString() : "0");
         }
         return jsonObject;
     }

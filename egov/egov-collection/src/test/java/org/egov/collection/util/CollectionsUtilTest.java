@@ -16,8 +16,7 @@ public class CollectionsUtilTest{ /* extends AbstractPersistenceServiceTest {
 		objectFactory = new CollectionObjectFactory(session);
 		
 		PersistenceService<Script, Long> scriptService = new PersistenceService<Script, Long>();
-		scriptService.setSessionFactory(egovSessionFactory);
-		
+
 		collectionsUtil = new CollectionsUtil();
 		collectionsUtil.setGenericDao(new GenericHibernateDaoFactory());
 		collectionsUtil.setScriptService(scriptService);

@@ -41,6 +41,8 @@
 package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Cacheable;
@@ -81,6 +83,7 @@ public class Action extends AbstractAuditable {
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid") , inverseJoinColumns = @JoinColumn(name = "roleid") )
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Role> roles = new HashSet<>();
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -172,11 +175,16 @@ public class Action extends AbstractAuditable {
     }
 
     public void addRole(Role role) { 
-        getRoles().add(role);
+        if (!hasRole(role))
+            getRoles().add(role);
     }   
     
     public void removeRole(Role role) { 
-        if (getRoles().contains(role)) 
+        if (hasRole(role))
             getRoles().remove(role); 
+    }
+
+    public boolean hasRole(Role role) {
+        return this.getRoles().contains(role);
     }
 }

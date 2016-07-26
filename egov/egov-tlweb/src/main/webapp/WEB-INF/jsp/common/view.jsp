@@ -64,7 +64,7 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='licensee.emailId' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.emailId}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='licensee.applicantAddress' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='licensee.address' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.address}" /></div>
 	</div>
 
@@ -77,7 +77,7 @@
 
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.propertyNo.lbl' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{propertyNo}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{assessmentNo}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.locality.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{boundary.name}" /></div>
 	</div>
@@ -90,7 +90,7 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='license.ownerShipType.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{ownershipType}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='license.address.lbl' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.address' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{address}" /></div>
 	</div>
 	
@@ -104,7 +104,7 @@
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.licensenumber' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licenseNumber}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='license.old.license.number' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.oldlicensenum' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{oldLicenseNumber}" /></div>
 	</div>
 
@@ -121,15 +121,20 @@
 		<div class="col-xs-3 add-margin"><s:text name='license.subCategory.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.name}" /></div>
 	</div>
-	
+    <div class="row add-border">
+        <div class="col-xs-3 add-margin"><s:text name='license.uom.lbl' /></div>
+        <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}" /></div>
+        <div class="col-xs-3 add-margin"><s:text name='license.premises.lbl' /></div>
+        <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeArea_weight}" /></div>
+    </div>
 	<div class="row">
-		<div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
-		<div class="col-xs-3 add-margin view-content">
-		
-		<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
-		<s:text  name="commencementDate" id="startdate"  /><s:property value="%{formattedStartDate}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.remarks' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{remarks}" /></div>
+        <div class="col-xs-3 add-margin"><s:text name='license.startdate' /></div>
+        <div class="col-xs-3 add-margin view-content">
+            <s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
+            <s:property value="%{commencementDateFrmttd}" />
+        </div>
 	</div>
 	
 </div>
@@ -142,7 +147,8 @@
 <div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.agreementDate.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content">
-		<s:date  name="agreementDate" id="agreementdate" format="dd-MMM-yyyy" /><s:property value="%{agreementdate}" /></div>
+			<s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
+			<s:property value="%{agreementDateFrmttd}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.agreementDocNo.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{agreementDocNo}" /></div>
 	</div>

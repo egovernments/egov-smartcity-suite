@@ -47,6 +47,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -89,4 +90,10 @@ public class WaterRatesDetailsService {
     public WaterRatesDetails findByWaterRatesHeader(final WaterRatesHeader waterRatesHeader) {
         return waterRatesDetailsRepository.findByWaterRatesHeader(waterRatesHeader);
     }
+    
+    public WaterRatesDetails findByWaterRatesHeaderAndFromDateAndToDate(final WaterRatesHeader waterRatesHeader , final Date fromDate , final Date toDate) {
+        return waterRatesDetailsRepository.findByWaterRatesHeaderAndFromDateAndToDate(waterRatesHeader ,fromDate ,toDate);
+    }
+    
+    
 }

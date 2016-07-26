@@ -288,20 +288,21 @@
 
 			<div class="row display-hide report-section">
 				<div class="col-md-12 table-header text-left">
+				<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
 					<s:if test="%{mode=='zoneWise'}">
-						Zone Wise Collection Report Details
+						<div class="col-md-12 table-header text-left" id="reportTitle">Zone Wise Collection Report Details</div>
 					</s:if>
 					 <s:elseif test="%{mode=='wardWise'}">
-					 	Ward Wise Collection Report Details
+					 	<div class="col-md-12 table-header text-left" id="reportTitle">Ward Wise Collection Report Details</div>
 					</s:elseif>
 			         <s:elseif test="%{mode=='blockWise'}">	
-			         	Block Wise Collection Report Details
+			         	<div class="col-md-12 table-header text-left" id="reportTitle">Block Wise Collection Report Details</div>
 					</s:elseif>
 					<s:elseif test="%{mode=='localityWise'}">
-						Locality Wise Collection Report Details
+					<div class="col-md-12 table-header text-left" id="reportTitle">Locality Wise Collection Report Details</div>
 					</s:elseif>
 					<s:elseif test="%{mode=='usageWise'}">  
-						Usage Wise Collection Report Details  
+						<div class="col-md-12 table-header text-left" id="reportTitle">Usage Wise Collection Report Details</div>  
 					</s:elseif>
 				</div>
 				<div class="col-md-12 form-group report-table-container">
@@ -355,7 +356,6 @@
 			</div>
 		</div>
 	</div>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>

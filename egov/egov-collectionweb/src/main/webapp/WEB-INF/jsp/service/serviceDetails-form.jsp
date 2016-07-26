@@ -69,7 +69,7 @@ function validate(){
 		dom.get("error_area").style.display="block";
 		valid=false;
 	}
-	if(dom.get('serviceType').value.trim()== ""){
+	if(null!= document.getElementById('serviceType') && document.getElementById('serviceType').value == -1){
 		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
 		dom.get("error_area").style.display="block";
 		valid=false;
@@ -123,6 +123,20 @@ function validate(){
 			 valid=false;
 		 }            
 		</s:if>
+		if(document.getElementById('serviceType').value =="P" ){
+	        if(document.getElementById('serviceUrl').value =="" ){       
+	        document.getElementById("error_area").innerHTML+='<s:text name="service.serviceurl.null" />'+  "<br>";
+	        dom.get("error_area").style.display="block";
+	        valid=false;
+	    }
+	        if(document.getElementById('callBackurl').value ==""){       
+	            document.getElementById("error_area").innerHTML+='<s:text name="service.callbackurl.null" />'+  "<br>";
+	            dom.get("error_area").style.display="block";
+	            valid=false;
+	        }
+	 }
+		 if (valid)
+				dom.get('serviceType').disabled = false;
 		window.scroll(0,0);
 		return valid;
 }
@@ -140,6 +154,17 @@ function clearCodeIfExists(){
 	 if(dom.get("CodeUnique").style.display =="" ){
 		 document.getElementById('serviceCode').value="";
 	 }	
+}
+
+function enableUrl(obj) {
+	var selectedStatus = document.getElementById("serviceType").options[obj.selectedIndex].text;
+	if (selectedStatus == 'Payment') {
+		document.getElementById("urlDetails").style.display = "";
+	} else {
+		document.getElementById("serviceUrl").value="";
+		document.getElementById("callBackurl").value="";
+		document.getElementById("urlDetails").style.display = "none";
+	}
 }
 </script>
 
@@ -162,7 +187,7 @@ function clearCodeIfExists(){
 
 	<div class="subheadsmallnew">
 				<span class="subheadnew"> <s:text name="service.create.details.header"></s:text> </span>
-			</div><br>
+			</div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 		    <td width="3%" class="bluebox"> &nbsp; </td>
@@ -176,21 +201,20 @@ function clearCodeIfExists(){
 			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
 			<td class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
-			<td class="bluebox"><s:textfield name="code" id="serviceCode" maxLength="12"
+			<td class="bluebox"><s:textfield name="code" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" id="serviceCode" maxlength="12"
 			 onblur="uniqueCheckCode();clearCodeIfExists();"></s:textfield> </td>
 			<td class="bluebox"> <s:text name="service.create.name"></s:text><span class="mandatory1">*</span></td>
-			<td class="bluebox"> <s:textfield name="name" id="name" maxLength="100" ></s:textfield> </td>
+			<td class="bluebox"> <s:textfield name="name" id="name" maxlength="100" ></s:textfield> </td>
 		</tr>
 		<tr>
             <td></td>
 			<td class="bluebox"> <s:text name="service.master.enable"></s:text> </td>
 			<td class="bluebox"><s:checkbox name="isEnabled" /></td>
-			<td class="bluebox"><s:text name="service.master.type" /> <span class="mandatory"></td>
+			<td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
 			<td class="bluebox"> 
-				<s:select list="#{'':'-----Select----','B':'Bill Based', 'C':'Collection', 'P':'Payment'}" 
-				name="serviceType" id="serviceType"></s:select>
+				<s:select list="serviceTypeMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
+				name="serviceType" id="serviceType" onchange="return enableUrl(this)"></s:select>
 			</td>
-			
 		</tr>
 		<tr>
 		    <td></td>
@@ -207,13 +231,22 @@ function clearCodeIfExists(){
 			<td class="bluebox"></td>
 			<td class="bluebox"></td>
 		</tr>
-
-	</table>
-	
-	<div class="subheadsmallnew">
-				<span class="subheadnew"> <s:text name="service.create.findetails.header"></s:text> </span>
-			</div><br>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr id="urlDetails">
+			<td></td>
+			<td class="bluebox"><s:text name="service.create.serviceurl"></s:text><span
+				class="mandatory1">*</span></td>
+			<td class="bluebox"><s:textarea name="serviceUrl"
+					id="serviceUrl" value="%{serviceUrl}" cols="18" rows="1"
+					maxlength="255" onkeyup="return ismaxlength(this)" /></td>
+			<td class="bluebox"><s:text name="service.create.callbackurl"></s:text><span
+				class="mandatory1">*</span></td>
+			<td class="bluebox"><s:textarea name="callBackurl"
+					id="callBackurl" value="%{callBackurl}" cols="18" rows="1"
+					maxlength="255" onkeyup="return ismaxlength(this)" /></td>
+		</tr>
+		<tr >
+			<td colspan="5"><div class="subheadsmallnew"><s:text name="service.create.findetails.header"></s:text></div></td>
+		</tr>
 		<s:if test="%{shouldShowHeaderField('fund') || shouldShowHeaderField('department')}">
          <tr>
           <td width="4%" class="bluebox">&nbsp;</td>
@@ -290,7 +323,6 @@ function clearCodeIfExists(){
          
         </tr>
         </s:if>
-    </table>
 		<s:hidden name="serviceCategory.id" id="serviceCategory.id"></s:hidden>
 		<s:hidden name="id"></s:hidden>
 	</table>

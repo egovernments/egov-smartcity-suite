@@ -157,7 +157,7 @@
 															<span class="mandatory1">*</span>
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="licenseZoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" value="licensee.boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="licenseZoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" value="licensee.boundary.id" />
 															<egov:ajaxdropdown id="populateLicenseeDivision" fields="['Text','Value']" dropdownId='licenseedivision' url='domain/commonAjax-populateDivisions.action' />
 														</td>
 														<td>
@@ -165,7 +165,7 @@
 															
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="licensee.boundary" id="licenseedivision" list="dropdownData.divisionListLicensee" listKey="id" listValue='name' value="licensee.boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" disabled="%{sDisabled}" name="licensee.boundary" id="licenseedivision" list="dropdownData.divisionListLicensee" listKey="id" listValue='name' value="licensee.boundary.id" />
 
 														</td>
 													</tr>
@@ -180,7 +180,7 @@
 															<span class="mandatory1">*</span>
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" value="licensee.boundary.parent.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" name="licenseeZoneId" id="licenseeZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupLicenseeAjaxDivision(this);" value="licensee.boundary.parent.id" />
 															<egov:ajaxdropdown id="populateLicenseeDivision" fields="['Text','Value']" dropdownId='licenseedivision' url='domain/commonAjax-populateDivisions.action' />
 														</td>
 														<td>
@@ -188,7 +188,7 @@
 															
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="licensee.boundary" id="licenseedivision" list="dropdownData.divisionListLicensee" listKey="id" listValue='name' value="licensee.boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" disabled="%{sDisabled}" name="licensee.boundary" id="licenseedivision" list="dropdownData.divisionListLicensee" listKey="id" listValue='name' value="licensee.boundary.id" />
 
 														</td>
 													</tr>
@@ -291,14 +291,14 @@
 															<s:text name="license.zone" /><span class="mandatory1">*</span>
 														</td>
 														<td align="left">
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseZoneId" id="licenseZoneId" list="licenseZoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" value="boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" name="licenseZoneId" id="licenseZoneId" list="licenseZoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" value="boundary.id" />
 															<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='domain/commonAjax-populateDivisions.action' />
 														</td>
 														<td>
 															<s:text name="license.division" />
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="boundary" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" disabled="%{sDisabled}" name="boundary" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="boundary.id" />
 
 														</td>
 													</tr>
@@ -311,14 +311,14 @@
 															<s:text name="license.zone" /><span class="mandatory1">*</span>
 														</td>
 														<td align="left">
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" name="licenseZoneId" id="licenseZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" value="boundary.parent.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" name="licenseZoneId" id="licenseZoneId" list="dropdownData.zoneList" listKey="id" listValue='name' onChange="setupAjaxDivision(this);" value="boundary.parent.id" />
 															<egov:ajaxdropdown id="populateDivision" fields="['Text','Value']" dropdownId='division' url='domain/commonAjax-populateDivisions.action' />
 														</td>
 														<td>
 															<s:text name="license.division" />
 														</td>
 														<td>
-															<s:select headerKey="" headerValue="%{getText('license.default.select')}" disabled="%{sDisabled}" name="boundary" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="boundary.id" />
+															<s:select headerKey="" headerValue="%{getText('default.select')}" disabled="%{sDisabled}" name="boundary" id="division" list="dropdownData.divisionListLicense" listKey="id" listValue='name' value="boundary.id" />
 
 														</td>
 													</tr>
@@ -341,7 +341,7 @@
 														<td>
 															&nbsp;
 														</td>
-															<td><s:text name="licensee.remainingaddress" />
+															<td><s:text name="license.remainingaddress" />
 														</td>
 														<td>
 															<s:property value="licensee.address.streetRoadLine" default="N/A"/>

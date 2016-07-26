@@ -43,7 +43,7 @@
 <tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<s:text name="transferDtls" />
+								<span class="bold"><s:text name="transferDtls" /></span>
 							</div>
 						</td>
 					</tr>
@@ -189,6 +189,7 @@
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(userInfoObj.phone);
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true);
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', true);
+						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").val("OTHERS");
 						jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").attr('disabled', 'disabled');
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val(userInfoObj.careof);
 						jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', true);

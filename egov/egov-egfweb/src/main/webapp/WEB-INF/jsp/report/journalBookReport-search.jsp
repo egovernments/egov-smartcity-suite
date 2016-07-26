@@ -45,7 +45,6 @@
 <html>
 <head>
 <title><s:text name="journalBook.search.title" /></title>
-<sx:head />
 <style type="text/css">
 #codescontainer {
 	position: absolute;

@@ -76,6 +76,10 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    <div class="col-sm-3 add-margin">
 							       <s:textfield name="applicationNumber" id="applicationNumber" value="%{applicationNumber}"  cssClass="form-control" />
 							    </div>
+							    <label class="col-sm-2 control-label text-right"><s:text name='search.license.cancelled' /></label>
+								<div class="col-sm-3 add-margin">
+									<s:checkbox id="isCancelled" name="isCancelled" />
+								</div>
 							</div>
 							
 							<div class="form-group">
@@ -108,7 +112,7 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 							    <div class="col-sm-3 add-margin">
 							       <s:textfield name="tradeTitle" id="tradeTitle" value="%{tradeTitle}" cssClass="form-control" />
 							    </div>
-							    <label class="col-sm-2 control-label text-right"><s:text name='search.licensee.applicantname' /></label>
+							    <label class="col-sm-2 control-label text-right"><s:text name='licensee.applicantname' /></label>
 							    <div class="col-sm-3 add-margin">
 							      	<s:textfield name="tradeOwnerName" id="tradeOwnerName"  value="%{tradeOwnerName}"  cssClass="form-control"/>
 							    </div>
@@ -163,7 +167,6 @@ var wf_certificateGenerate_status='<s:property value="%{@org.egov.tl.utils.Const
 			</div>
 		</div>
 	</div>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>

@@ -45,8 +45,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 <hibernate-mapping>
 	<class name="org.egov.infstr.models.ServiceDetails" table="egcl_servicedetails" >
 		<id name="id" column="ID" type="long" unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">seq_egcl_servicedetails</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">seq_egcl_servicedetails</param>
 			</generator>
 		</id>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User"
@@ -76,7 +76,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			<key>
 				<column name="SERVICEDETAILS" precision="22" scale="0" />
 			</key>
-			<one-to-many class="org.egov.infstr.models.BankAccountServiceMap" />
+			<one-to-many class="org.egov.commons.entity.BankAccountServiceMap" />
 		</set>
 
 		<many-to-one name="fund" class="org.egov.commons.Fund"
@@ -112,8 +112,21 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 		</set>
 	</class>
 	
-		<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
+	<query name="SERVICE_BY_CATEGORY_FOR_TYPE">
 		<![CDATA[select sd from org.egov.infstr.models.ServiceDetails sd where sd.serviceCategory.id=? and sd.serviceType=? and sd.isEnabled=?]]>
 	</query>
+	
+	<query name="getServicesByType">
+    <![CDATA[select s from ServiceDetails s where s.serviceType = ?]]></query>
+
+	<query name="getCollectionServices">
+    <![CDATA[select s from ServiceDetails s where s.serviceType in ('B', 'C')]]></query>
+
+	<query name="getServiceByCode">
+    <![CDATA[select s from ServiceDetails s where s.code=?]]></query>
+    
+    <query name="getServicesByName">
+    <![CDATA[select s from ServiceDetails s where s.name = ?]]></query>
+	
 	
 </hibernate-mapping>

@@ -47,7 +47,7 @@ import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
@@ -80,15 +80,15 @@ public class SchedularService {
         Query queryCity = persistenceService.getSession().createSQLQuery("select domainurl from eg_city");
         List<Object> cityList = queryCity.list();
         if(cityList.size()>1){
-            EgovThreadLocals.setDomainName("localhost");
+            ApplicationThreadLocals.setDomainName("localhost");
         }else{
-            EgovThreadLocals.setDomainName(cityList.get(0).toString());
+            ApplicationThreadLocals.setDomainName(cityList.get(0).toString());
         }
         final Query qry = persistenceService
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + "  and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate ")
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
                 .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
@@ -108,7 +108,7 @@ public class SchedularService {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
                     LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
-                    final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+                    final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
                     onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                             CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()), cityWebsite.getCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))

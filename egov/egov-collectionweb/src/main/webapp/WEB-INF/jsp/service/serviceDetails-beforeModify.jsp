@@ -43,23 +43,34 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/finAccountsTable.js?rnd=${app_release_no}"></script>
 <script type="text/javascript">
-function onBodyLoad(){
-if(document.getElementById('voucherCreation').checked==false){
-		document.getElementById("voucherApprovedDetails").style.display="none";
-	}
-	else{
-	document.getElementById("voucherApprovedDetails").style.display="";
-	}
-}
+	function onBodyLoad() {
+		if (document.getElementById('voucherCreation').checked == false) {
+			document.getElementById("voucherApprovedDetails").style.display = "none";
 
-function EnableVoucherDetails(obj){
-	if(obj.checked){
-		document.getElementById("voucherApprovedDetails").style.display="";
+		} else {
+			document.getElementById("voucherApprovedDetails").style.display = "";
 		}
-	else{
-		document.getElementById("voucherApprovedDetails").style.display="none";
+
+		var selectedStatus = document.getElementById("serviceType").value;
+		if (selectedStatus == 'P') {
+			document.getElementById("urlDetails").style.display = "";
+		} else {
+			document.getElementById("urlDetails").style.display = "none";
 		}
-}
+		if (selectedStatus == 'P' || selectedStatus == 'B' ) {
+			dom.get('serviceType').disabled = true;
+		}
+	}
+
+	function EnableVoucherDetails(obj) {
+		if (obj.checked) {
+			document.getElementById("voucherApprovedDetails").style.display = "";
+		} else {
+			document.getElementById("voucherApprovedDetails").style.display = "none";
+		}
+	}
+
+	
 </script>
 
 <title> <s:text name="service.master.search.header"></s:text> </title>

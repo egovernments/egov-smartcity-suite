@@ -50,26 +50,30 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-/**
- *
- * @author subhash
- *
- */
 @Entity
-@Table(name = LicenseDocumentType.EGTL_DOCUMENT_TYPE)
-@SequenceGenerator(name = LicenseDocumentType.SEQ_EGTL_DOCUMENT_TYPE, sequenceName = LicenseDocumentType.SEQ_EGTL_DOCUMENT_TYPE, allocationSize = 1)
+@Table(name = "egtl_document_type")
+@SequenceGenerator(name = LicenseDocumentType.SEQUENCE, sequenceName = LicenseDocumentType.SEQUENCE, allocationSize = 1)
 public class LicenseDocumentType extends AbstractPersistable<Long> {
+    private static final long serialVersionUID = -4917193602014054096L;
+    public static final String SEQUENCE = "seq_egtl_document_type";
 
-    private static final long serialVersionUID = 1L;
-    static final String EGTL_DOCUMENT_TYPE = "egtl_document_type";
-    static final String SEQ_EGTL_DOCUMENT_TYPE = "seq_egtl_document_type";
     @Id
-    @GeneratedValue(generator = SEQ_EGTL_DOCUMENT_TYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     @DocumentId
     private Long id;
     private String name;
     private boolean mandatory;
     private String applicationType;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -94,15 +98,4 @@ public class LicenseDocumentType extends AbstractPersistable<Long> {
     public void setApplicationType(final String applicationType) {
         this.applicationType = applicationType;
     }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
 }

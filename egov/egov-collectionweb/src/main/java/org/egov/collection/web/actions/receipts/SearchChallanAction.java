@@ -39,6 +39,13 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -50,13 +57,6 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = SearchChallanAction.SUCCESS, location = "searchChallan.jsp") })
@@ -84,10 +84,10 @@ public class SearchChallanAction extends BaseFormAction {
         setupDropdownDataExcluding();
         addDropdownData("departmentList",
                 getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ALL_DEPARTMENTS));
-        addDropdownData("serviceCategoryList", getPersistenceService().findAllByNamedQuery("SERVICE_CATEGORY_ALL"));
+        addDropdownData("serviceCategoryList", getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         if (null != serviceCategoryId && serviceCategoryId != -1)
-            addDropdownData("serviceList",  getPersistenceService().findAllByNamedQuery("SERVICE_BY_CATEGORY_FOR_TYPE",serviceCategoryId,
-                    CollectionConstants.SERVICE_TYPE_COLLECTION, Boolean.TRUE));
+            addDropdownData("serviceList",  getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE,serviceCategoryId,
+                    CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
         else
             addDropdownData("serviceList",Collections.EMPTY_LIST);
         setFromDate(new Date());

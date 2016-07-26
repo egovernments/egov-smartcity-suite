@@ -79,4 +79,11 @@ public class RestAPIApplicationProperties {
 		else
 			return Collections.EMPTY_LIST;
 	}
+	
+	public List<String> cardIPAddress() {
+		if (environment.getProperty("card.ipaddress") != null)
+			return Arrays.asList(environment.getProperty("card.ipaddress").split(","));
+		else
+			return Collections.EMPTY_LIST;
+	}
 }

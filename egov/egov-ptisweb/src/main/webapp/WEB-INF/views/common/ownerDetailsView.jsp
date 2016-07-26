@@ -56,20 +56,21 @@
 			</div>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				class="table table-bordered" id="vacantLandTable">
-
-				<tbody>
+				<thead>
 					<tr>
-						<th class="bluebgheadtd"><spring:message code="lbl.adharno" /></th>
-						<th class="bluebgheadtd"><spring:message
+						<th><spring:message code="lbl.adharno" /></th>
+						<th><spring:message
 								code="lbl.MobileNumber" /></th>
-						<th class="bluebgheadtd"><spring:message code="lbl.OwnerName" /></th>
-						<th class="bluebgheadtd"><spring:message code="lbl.gender" /></th>
-						<th class="bluebgheadtd"><spring:message
+						<th><spring:message code="lbl.OwnerName" /></th>
+						<th><spring:message code="lbl.gender" /></th>
+						<th><spring:message
 								code="lbl.EmailAddress" /></th>
-						<th class="bluebgheadtd"><spring:message
+						<th><spring:message
 								code="lbl.GuardianRelation" /></th>
-						<th class="bluebgheadtd"><spring:message code="lbl.Guardian" /></th>
+						<th><spring:message code="lbl.Guardian" /></th>
 					</tr>
+				</thead>
+				<tbody>
 					<c:choose>
 						<c:when
 							test="${!property.basicProperty.propertyOwnerInfo.isEmpty()}">

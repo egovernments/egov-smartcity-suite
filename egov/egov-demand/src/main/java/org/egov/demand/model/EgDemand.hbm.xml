@@ -48,8 +48,8 @@
     <class name="org.egov.demand.model.EgDemand" table="EG_DEMAND" >
         <id name="id" type="java.lang.Long">
             <column name="ID"  />
-		 <generator class="native">
-			<param name="sequence">SEQ_EG_DEMAND</param>
+		 <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+			<param name="sequence_name">SEQ_EG_DEMAND</param>
 		</generator>
         </id>
    	   <timestamp

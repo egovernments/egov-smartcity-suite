@@ -55,7 +55,6 @@
 		<s:text name='licenseCategory.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){
@@ -64,13 +63,13 @@
 			 document.getElementById("name").readOnly=true;
 			 jQuery("span").remove(".mandatory");
 		} 
+		if(document.getElementById("userMode").value=='edit'){
+			document.getElementById("code").readOnly=true;
+		}
 	}
 
 	function reload(){
-		document.getElementById("code").value="";
-		document.getElementById("name").value="";
-		document.licenseCategoryForm.action='${pageContext.request.contextPath}/masters/licenseCategory-newform.action';
-    	document.licenseCategoryForm.submit();
+		jQuery("#licenseCategoryForm").trigger("reset");
 		
 	}
 
@@ -96,12 +95,13 @@
 		var screenType="categoryMaster"; 
 		var name="";
 		var code="";
+		var categoryid= document.getElementById("licenseCategory_id").value
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},categorySuccessHandler,categoryFailureHandler);
+		    	{name:name,code:code,categoryid:categoryid,screenType:screenType},categorySuccessHandler,categoryFailureHandler);
 	}
 
 	categoryFailureHandler=function(){
@@ -141,8 +141,7 @@
 				<s:actionmessage theme="simple" />
 			</div>
 			</s:if>
-			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple"
-				cssClass="form-horizontal form-groups-bordered"> 
+			<s:form name="licenseCategoryForm" action="licenseCategory" theme="simple" cssClass="form-horizontal form-groups-bordered" id="licenseCategoryForm">
 				<s:token name="%{tokenName()}"/> 
 				<s:push value="model">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -161,20 +160,20 @@
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id" /> 
+						<s:hidden name="id" value="%{id}"/> 
 						<s:hidden name="userMode" id="userMode"/>
 					
 						<div class="form-group">
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseCategory.name.lbl" /><span id="mandatory" class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="64"  onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="64"  onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseCategory.code.lbl" /><span id="mandatory" class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32"  onchange="return validateData(this,'code')"/>
+								<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="32"  onchange="return validateData(this,'code')"/>
 							</div>
 						</div>
 					</div>

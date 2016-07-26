@@ -47,7 +47,7 @@
 	<td class="greybox"><s:text name="function" /><span
 		class="mandatory1"> *</span></td>
 	<td class="greybox"><s:textfield name="commonBean.functionName"
-			id="commonBean.functionName"
+			id="commonBean.functionName" autocomplete='off'
 			onkeyup="autocompletecodeFunctionHeader(this,event)"
 			onblur="fillNeibrAfterSplitFunctionHeader(this)" size="30" /> <s:hidden
 			name="commonBean.functionId" id="commonBean.functionId" /></td>
@@ -139,7 +139,7 @@
 											id="commonBean.partyBillNumber" /></td>
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
-										id="commonBean.partyBillDateId" format='dd/MM/yyyy' />
+										var="commonBean.partyBillDateId" format='dd/MM/yyyy' />
 									<td class="bluebox"><s:textfield id="partyBillDate"
 											name="commonBean.partyBillDate"
 											value="%{commonBean.partyBillDateId}" data-date-end-date="0d"
@@ -153,7 +153,7 @@
 											name="payto" /><span class="mandatory1"> *</span></td>
 									<td class="bluebox" style="text-align: left; width: 240"
 										colspan="4"><s:textfield name="commonBean.payto"
-											id="commonBean.payto" size="55" /></td>
+											id="commonBean.payto" size="55" value="%{commonBean.payto}" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -162,6 +162,22 @@
 			</tr>
 		</table>
 	</div>
+
+	<div>
+		<table class="tablebottom" width="90%" cellspacing="0" cellpadding="0"
+			border="0">
+			<tbody>
+				<tr>
+					<th colspan="5">
+						<div class="subheadsmallnew">
+							<s:text name="bill.accountdetails" />
+						</div>
+					</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 	<div class="yui-skin-sam" align="center">
 		<div id="billDetailTable"></div>
 	</div>
@@ -266,7 +282,7 @@
 					<tr>
 						<th colspan="5">
 							<div class="subheadsmallnew">
-								<s:text name="subledger.details" />
+								<s:text name="bill.subledgerdetails" />
 							</div>
 						</th>
 					</tr>
@@ -285,5 +301,4 @@
 	</div>
 </center>
 
-<s:hidden id="scriptName" value="cbill.nextUser" />
 

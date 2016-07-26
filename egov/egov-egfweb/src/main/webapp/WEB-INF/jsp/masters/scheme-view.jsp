@@ -47,7 +47,6 @@
 <head>
 
 <title><s:text name="scheme.view.title" /></title>
-<sx:head />
 <SCRIPT type="text/javascript">
     function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
@@ -112,10 +111,11 @@
 				<tr>
 					<td class="greybox">&nbsp;</td>
 					<td class="greybox"><b><s:text name="scheme.startDate" /></b></td>
-					<td class="greybox"><s:property value="%{scheme.validfrom}" /></td>
+					<td class="greybox">
+					<s:date name="scheme.validfrom" format="dd/MM/yyyy"/></td>
 
 					<td class="greybox"><b><s:text name="scheme.endDate" /></b></td>
-					<td class="greybox"><s:property value="%{scheme.validto}" /></td>
+					<td class="greybox"><s:date name="scheme.validto" format="dd/MM/yyyy"/></td>
 				</tr>
 				<tr>
 					<td class="greybox">&nbsp;</td>

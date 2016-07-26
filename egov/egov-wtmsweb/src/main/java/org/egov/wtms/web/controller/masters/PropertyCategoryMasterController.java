@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
@@ -52,11 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -78,36 +78,46 @@ public class PropertyCategoryMasterController {
 
     }
 
-    @RequestMapping(value = "/propertyCategoryMaster", method = GET)
+    @RequestMapping(value = "/propertyCategoryMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final PropertyCategory propertyCategory = new PropertyCategory();
         model.addAttribute("propertyCategory", propertyCategory);
         model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
         model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "property-category-master";
     }
 
     @RequestMapping(value = "/propertyCategoryMaster", method = RequestMethod.POST)
-    public String addPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
-            final BindingResult errors, final Model model) {
+    public String createPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
             return "property-category-master";
         } else
             propertyCategoryService.createPropertyCategory(propertyCategory);
-        return getPropertyCategoryMasterList(model);
+        redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+        model.addAttribute("message", "Property Category created successfully.");
+        model.addAttribute("mode", "create");
+        return "property-category-master-success";
     }
 
-    @RequestMapping(value = "/propertyCategoryMaster/list", method = GET)
+    @RequestMapping(value = "/propertyCategoryMaster/list", method = RequestMethod.GET)
     public String getPropertyCategoryMasterList(final Model model) {
         final List<PropertyCategory> propertyCategoryList = propertyCategoryService.findAll();
         model.addAttribute("propertyCategoryList", propertyCategoryList);
         return "property-category-master-list";
     }
 
-    @RequestMapping(value = "/propertyCategoryMaster/{propertyCategoryId}", method = GET)
+    @RequestMapping(value = "/propertyCategoryMaster/edit", method = RequestMethod.GET)
+    public String getPropertyCategoryMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getPropertyCategoryMasterList(model);
+    }
+
+    @RequestMapping(value = "/propertyCategoryMaster/edit/{propertyCategoryId}", method = RequestMethod.GET)
     public String getPropertyCategoryMasterDetails(final Model model, @PathVariable final String propertyCategoryId) {
         final PropertyCategory propertyCategory = propertyCategoryService.findOne(Long.parseLong(propertyCategoryId));
         model.addAttribute("propertyCategory", propertyCategory);
@@ -117,16 +127,19 @@ public class PropertyCategoryMasterController {
         return "property-category-master";
     }
 
-    @RequestMapping(value = "/propertyCategoryMaster/{propertyCategoryId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/propertyCategoryMaster/edit/{propertyCategoryId}", method = RequestMethod.POST)
     public String editPropertyCategoryMasterData(@Valid @ModelAttribute final PropertyCategory propertyCategory,
-            final BindingResult errors, final Model model, @PathVariable final long propertyCategoryId) {
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final long propertyCategoryId) {
         if (errors.hasErrors()) {
             model.addAttribute("propertyType", propertyTypeService.getAllActivePropertyTypes());
             model.addAttribute("connectionCategory", connectionCategoryService.getAllActiveConnectionCategory());
             return "property-category-master";
         } else
             propertyCategoryService.updatePropertyCategory(propertyCategory);
-        return getPropertyCategoryMasterList(model);
+        redirectAttrs.addFlashAttribute("propertyCategory", propertyCategory);
+        model.addAttribute("message", "Property Category updated successfully.");
+        return "property-category-master-success";
     }
 
 }

@@ -98,6 +98,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import javax.servlet.http.HttpServletRequest;
@@ -296,39 +297,11 @@ public class EmployeeController extends ApiController {
 
     /* DATA RELATED FUCNTIONS */
 
-    private List<InboxItem> createInboxData(final List<StateAware> inboxStates) {
-        final List<InboxItem> inboxItems = new LinkedList<>();
+    private JsonArray createInboxData(final List<StateAware> inboxStates) {
+        JsonArray inboxItems = new JsonArray();
         inboxStates.sort(byCreatedDate());
         for (final StateAware stateAware : inboxStates) {
-            final State state = stateAware.getCurrentState();
-            final WorkflowTypes workflowTypes = getWorkflowType(stateAware.getStateType());
-            final InboxItem inboxItem = new InboxItem();
-
-            final Complaint complaint = complaintService.getComplaintById(stateAware.getId());
-            if (complaint != null) {
-                inboxItem.setRefNum(complaint.getCrn());
-                inboxItem.setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
-                inboxItem.setRefDate(DATE_FORMATTER.print(new DateTime(complaint.getCreatedDate())));
-                inboxItem.setCitizenName(complaint.getComplainant() != null ? complaint.getComplainant().getName() : "");
-                inboxItem.setSender(state.getSenderName());
-                inboxItem.setResolutionDate(DATE_FORMATTER.print(complaint.getEscalationDate()));
-                inboxItem.setCitizenPhoneno(complaint.getComplainant() != null ? complaint.getComplainant().getMobile() : "");
-                inboxItem.setCitizenAddress(complaint.getComplainant() != null ? complaint.getComplainant().getAddress() : "");
-                if (complaint.getChildLocation() == null)
-                    inboxItem.setLocation(complaint.getLocation() != null ? complaint.getLocation().getName() : "");
-                else
-                    inboxItem.setLocation(
-                            complaint.getLocation().getName() + "-" + complaint.getChildLocation().getName());
-                final Employee employee = employeeService.getEmployeeForPositionAndDate(state.getOwnerPosition().getId(),
-                        new Date());
-                if (employee != null)
-                    inboxItem.setSenderPhoneno(employee.getMobileNumber() != null ? employee.getMobileNumber() : "");
-                final String nextAction = inboxRenderServiceDelegate.getNextAction(state);
-                inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
-                inboxItem.setItemDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
-                inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
-                inboxItems.add(inboxItem);
-            }
+            inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
         }
         return inboxItems;
     }

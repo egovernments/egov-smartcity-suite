@@ -42,14 +42,11 @@ package org.egov.tl.repository;
 
 import org.egov.tl.entity.FeeMatrix;
 import org.egov.tl.entity.FeeMatrixDetail;
-import org.egov.tl.entity.License;
 
 import java.util.Date;
 import java.util.List;
 
 public interface FeeMatrixDetailRepositoryCustom {
-
-    List<FeeMatrixDetail> findFeeList(License license);
 
     FeeMatrixDetail findFeeDetailList(FeeMatrix feeMatrix, Integer uom, Date appdate, long financialYearId);
 

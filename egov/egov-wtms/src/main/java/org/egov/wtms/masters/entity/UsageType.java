@@ -41,6 +41,9 @@ package org.egov.wtms.masters.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -57,6 +60,8 @@ import javax.validation.constraints.NotNull;
 @Unique(id = "id", tableName = "egwtr_usage_type", columnName = { "code", "name" }, fields = { "code",
         "name" }, enableDfltMsg = true)
 @SequenceGenerator(name = UsageType.SEQ_USAGETYPE, sequenceName = UsageType.SEQ_USAGETYPE, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class UsageType extends AbstractAuditable {
 
     private static final long serialVersionUID = 796823780349590496L;
@@ -69,16 +74,19 @@ public class UsageType extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 1, max = 25)
+    @Audited
     private String code;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 50)
+    @Audited
     private String name;
 
     @SafeHtml
     private String description;
 
+    @Audited
     private boolean active;
 
     @Override

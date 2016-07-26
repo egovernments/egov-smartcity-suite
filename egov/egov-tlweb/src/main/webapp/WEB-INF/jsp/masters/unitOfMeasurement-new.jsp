@@ -56,15 +56,18 @@
 		<s:text name='uommaster.view' />
 	</s:elseif>	
 	</title>
-	<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>"/>
 	<script>
 
 	function bodyOnLoad(){
+		checkOrUncheck();
 		if(document.getElementById("userMode").value=='view' || document.getElementById("userMode").value=='success'){
 			 document.getElementById("code").readOnly=true;
 			 document.getElementById("name").readOnly=true;
 			 document.getElementById("active").disabled=true;
 			 jQuery("span").remove(".mandatory");
+		}
+		if(document.getElementById("userMode").value=='edit'){
+			document.getElementById("code").readOnly=true;
 		}
 		if(document.getElementById("userMode").value=='new'){
 			 document.getElementById("active").checked=true;
@@ -110,12 +113,13 @@
 		var screenType="uomMaster";
 		var name="";
 		var code="";
+		var uomid=document.getElementById("unitOfMeasurement_id").value;
 		if(param=="name")
 			name=obj.value;
 		else if(param=="code")
 			code=obj.value;
 		makeJSONCall(["errorMsg","isUnique","paramType"],'${pageContext.request.contextPath}/masters/ajaxMaster-validateActions.action',
-		    	{name:name,code:code,screenType:screenType},uomSuccessHandler,uomFailureHandler);
+		    	{name:name,code:code,screenType:screenType,uomid:uomid},uomSuccessHandler,uomFailureHandler);
 	}
 
 	uomFailureHandler=function(){
@@ -179,7 +183,7 @@
 					</div>
 					<div class="panel-body custom-form">
 					
-						<s:hidden name="id"/> 
+						<s:hidden name="id" value="%{id}"/> 
 						<s:hidden name="userMode" id="userMode"/>
 						<s:hidden name="uomActive" id="uomActive"/>
 					
@@ -187,13 +191,13 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxLength="32" value="%{name}" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" class="form-control patternvalidation" data-pattern="alphabetwithspacehyphenunderscore" maxlength="32" value="%{name}" onchange="return validateData(this,'name')"/>
 							</div>
 							
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="uommaster.code.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="code"	name="code" class="form-control patternvalidation" data-pattern="alphabetwithspace" value="%{code}" onchange="return validateData(this,'code')"  maxLength="5"/>
+								<s:textfield id="code"	name="code" class="form-control patternvalidation" data-pattern="alphabetwithspace" value="%{code}" onchange="return validateData(this,'code')"  maxlength="5"/>
 							</div>
 						</div>
 						

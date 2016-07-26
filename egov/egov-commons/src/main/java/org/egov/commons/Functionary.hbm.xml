@@ -46,8 +46,8 @@
     <class name="org.egov.commons.Functionary" table="FUNCTIONARY" >
         <id name="id" >
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">SEQ_FUNCTIONARY</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">SEQ_FUNCTIONARY</param>
             </generator>
         </id>
         <property name="code" type="big_decimal">

@@ -53,13 +53,5 @@ public interface PenaltyRatesRepository extends JpaRepository<PenaltyRates, Long
     @Query("select pr from PenaltyRates pr where pr.fromRange < :days and pr.toRange >= :days and pr.licenseAppType = :licenseAppType ")
     PenaltyRates findByDaysAndLicenseAppType(@Param("days") Long days, @Param("licenseAppType") LicenseAppType licenseAppType);
 
-    @Query("select pr from PenaltyRates pr where :fromRange < pr.toRange and :toRange > pr.toRange and pr.licenseAppType = :licenseAppType ")
-    PenaltyRates findByDaysAndLicenseAppTypeBetweenRange(@Param("fromRange") Long fromRange, @Param("toRange") Long toRange,
-            @Param("licenseAppType") LicenseAppType licenseAppType);
-
-    @Query("select pr from PenaltyRates pr where :fromRange < pr.toRange and :toRange > pr.toRange and pr.licenseAppType = :licenseAppType and pr.rate = :rate")
-    PenaltyRates findByDaysAndLicenseAppTypeAndRate(@Param("fromRange") Long fromRange, @Param("toRange") Long toRange,
-            @Param("licenseAppType") LicenseAppType licenseAppType, @Param("rate") Double rate);
-
     List<PenaltyRates> findByLicenseAppTypeIdOrderByIdAsc(Long licenseAppTypeId);
 }

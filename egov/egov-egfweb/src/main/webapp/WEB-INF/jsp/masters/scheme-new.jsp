@@ -45,7 +45,6 @@
 <html>
 <head>
 <title><s:text name="scheme.create.title" /></title>
-<sx:head />
 <SCRIPT type="text/javascript">
     function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
@@ -86,8 +85,14 @@
     }     
 
     function resetForm(){
-    	document.schemeForm.action='${pageContext.request.contextPath}/masters/scheme-newForm.action';
-    	document.schemeForm.submit();
+    	document.getElementById('code').value="";
+    	document.getElementById('name').value="";
+    	document.getElementById('fundId').value="";
+    	document.getElementById('isactive').value="";
+    	document.getElementById('validfromId').value="";
+    	document.getElementById('validtoId').value="";
+    	document.getElementById('description').value="";
+    	
     }    
 	function validateDate(date)
 	{
@@ -108,7 +113,12 @@
 		validate="true">
 		<div class="formmainbox">
 			<div class="subheadnew">
+			<s:if test="%{mode=='edit'}">
+				<s:text name="scheme.searchmodify.title" />
+				</s:if>
+				<s:else>
 				<s:text name="scheme.create.title" />
+				</s:else>
 			</div>
 			<s:token />
 			<s:hidden name="mode" id="mode" value="%{mode}" />
@@ -165,7 +175,7 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="scheme.validfrom" id="validfromId" 
+					<td class="greybox"><s:date name="scheme.validfrom" var="validfromId" 
 							format="dd/MM/yyyy" /> <s:textfield id="validfromId"
 							name="validfrom" value="%{validfromId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -174,7 +184,7 @@
 
 					<td class="greybox"><s:text name="scheme.endDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="scheme.validto" id="validtoId"
+					<td class="greybox"><s:date name="scheme.validto" var="validtoId"
 							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
 							name="validto" value="%{validtoId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -199,8 +209,8 @@
 						<td><input type="submit" class="buttonsubmit" value="Save"
 							id="saveButton" name="button"
 							onclick="return validateFormAndSubmit();" />&nbsp;</td>
-						<td><input type="submit" class="button" value="Reset"
-							id="resetButton" name="button" onclick="resetForm();" />&nbsp;</td>
+						<td><input type="reset" class="button" value="Reset"
+							 name="button" onclick="return resetForm();" />&nbsp;</td>
 						<td><input type="button" id="Close" value="Close"
 							onclick="javascript:window.close()" class="button" />&nbsp;</td>
 					</s:if>

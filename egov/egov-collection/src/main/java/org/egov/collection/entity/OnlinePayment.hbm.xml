@@ -45,8 +45,8 @@
 	<class name="org.egov.collection.entity.OnlinePayment" table="EGCL_ONLINEPAYMENTS">
 		<id name="id" type="long">
 			<column name="ID" precision="22" scale="0" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGCL_ONLINEPAYMENTS</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGCL_ONLINEPAYMENTS</param>
 			</generator>
 		</id>
 

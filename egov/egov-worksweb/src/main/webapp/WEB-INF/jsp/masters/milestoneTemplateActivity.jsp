@@ -59,9 +59,9 @@ var textboxFormatter = function(el, oRecord, oColumn, oData) {
     var fieldName = "templateActivities[" + oRecord.getCount() + "]." + oColumn.getKey();
     var id=oColumn.getKey()+oRecord.getId();
     if(oColumn.getKey()=='percentage'){
-    	el.innerHTML="<div class='text-right'><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></div>";
+    	el.innerHTML="<div class='text-right'><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='selectamountwk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onkeyup='isNumberKey(this);calculateTotalPercentage();' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></div>";
     }else{
-   		el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='slnowk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onblur='validateNumberInTableCell(this);' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
+   		el.innerHTML="<center><input type='text' id='"+oColumn.getKey()+oRecord.getId()+"' class='slnowk' name='"+fieldName+"' size='"+size+"' maxlength='"+maxlength+"' onkeyup='isNumberKey(this);' /><span id='error"+id+"' style='display:none;color:red;font-weight:bold'>&nbsp;x</span></center>";
     }
 }
 return textboxFormatter;
@@ -78,10 +78,10 @@ var temptActvDataTable;
 var makeTmptActvDataTable = function() {
 	var cellEditor=new YAHOO.widget.TextboxCellEditor()
 	var tmptActvColumnDefs = [ 
-		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory"></span>', minWidth:100,formatter:sTextboxFormatter},
+		{key:"stageOrderNo", label:'Stage Order No<span class="mandatory"></span>', minWidth:100,formatter:sTextboxFormatter,resizeable:true},
 		{key:"description", width:450,label:'Stage Description<span class="mandatory"></span>', formatter:textboxDescFormatter, resizeable:true},		
-		{key:"percentage",label:'Percentage of Stage<span class="mandatory"></span>',minWidth:100, formatter:pTextBoxFormatter},
-		{key:'TemptActvDelete',label:'Delete',minWidth:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
+		{key:"percentage",label:'Percentage of Stage<span class="mandatory"></span>',minWidth:100, formatter:pTextBoxFormatter,resizeable:true},
+		{key:'TemptActvDelete',label:'Delete',minWidth:50,formatter:createDeleteImageFormatter("${pageContext.request.contextPath}"),resizeable:true},
 	];
 	var temptActvDataSource = new YAHOO.util.DataSource(); 
 	temptActvDataTable = new YAHOO.widget.DataTable("tmptAtctTable",tmptActvColumnDefs, temptActvDataSource,{MSG_EMPTY:"<s:text name='milestoneTemplate.activity.initial.table.message'/>"});
@@ -99,23 +99,34 @@ var makeTmptActvDataTable = function() {
 				calculateTotalPercentage();
 		}        
 	});
+
+
+	var tfoot = temptActvDataTable.getTbodyEl().parentNode.createTFoot();
+
+	var tr = tfoot.insertRow(-1);
+	var th = tr.appendChild(document.createElement('td'));
+	th.colSpan = 1;
+	th.className= 'whitebox4wk';
+	th.innerHTML = '&nbsp;';
+
+	var td = tr.insertCell(1);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '<span class="bold text-right" style="display:block;padding:5px;">Total:</span>';
+
+	var td = tr.insertCell(2);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '<span id="totalValue" class="bold text-right" style="display:block;padding:5px;">0</span>';
+
+	var td = tr.insertCell(3);
+	td.className= 'whitebox4wk';
+	td.innerHTML = '&nbsp;';
 	
+
 	return {
 	    oDS: temptActvDataSource,
 	    oDT: temptActvDataTable
 	};        
 
-}
-
-function validateNumberInTableCell(elem){
-		elem.value=trim(elem.value);
-		dom.get('error'+elem.id).style.display='none';
-		if(isNaN(elem.value) || getNumber(elem.value)<=0 ||trim(elem.value)==""){
-			dom.get('error'+elem.id).style.display='';
-			isValidPercentage=false;
-		}else{
-			isValidPercentage=true;
-		}
 }
 
 function validateDescription(elem){
@@ -135,7 +146,7 @@ function validatePercentage(){
 	}
 
 	if(isValidPercentage){
-		temptActvDataTable.addRow({SlNo:temptActvDataTable.getRecordSet().getLength()+1});
+		temptActvDataTable.addRow({SlNo:temptActvDataTable.getRecordSet().getLength()+1});		
 	}else{
 		alert("Please enter Valid Template Activity Details.");
 		return false;
@@ -153,64 +164,72 @@ function calculateTotalPercentage(){
 	dom.get('totalValue').innerHTML=total;
 }
 
-</script>		
-      
-       
-       
+function isNumberKey(elem) {
+	var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(jQuery(elem).val()),
+    val = jQuery(elem).val();
 
-		<div id="temptActvTable"  class="panel panel-primary" data-collapsed="0" style="text-align:left">
-				<div class="panel-heading">
-					<div class="panel-title">
-					  Template Activity Details
-					  
-						<s:if test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
-	                	</s:if>
-	                	<s:else>
-							<div class="pull-right">
-				   
-						      <a id="temptActvRow" href="#" onclick="validatePercentage();return false;" class="btn btn-primary">
-					   	       Add Template Activity
-					   	      </a>
-						   
-					   		</div>
-					   </s:else>
-					  
-					</div>
+	if(!valid){
+	    console.log("Invalid input!");
+	    jQuery(elem).val(val.substring(0, val.length - 1));
+	}
+	calculateTotalPercentage();
+}
+
+
+</script>
+<div id="temptActvTable" class="panel panel-primary" data-collapsed="0"
+	style="text-align: left">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<s:text name="milestone.template.activityDetails" />
+			<s:if
+				test="%{mode=='view' || model.egwStatus.code=='CREATED' || model.egwStatus.code=='RESUBMITTED'}">
+			</s:if>
+			<s:else>
+				<div class="pull-right">
+					<a id="temptActvRow" href="#"
+						onclick="validatePercentage();return false;"
+						class="btn btn-primary"><s:text name="milestone.template.addactivity" /> </a>
 				</div>
-				<div class="panel-body no-margin-bottom">
-					<div class="form-group no-margin-bottom">
-						<div class="yui-skin-sam">
-                	    	<div id="tmptAtctTable" align="center"></div>  
-                		</div> 
-                		<div class="text-right" style="padding-right:112px;">
-                		   <s:text name="milestone.template.activity.label.total.percentage" /> : <span id="totalValue"></span>
-                		</div>
-					</div>
-					
-				</div>
-       </div>	
-              	
-	<script>
-		makeTmptActvDataTable();
-		<s:iterator  value="stages" status="row_status">
-            temptActvDataTable.addRow({
-                                    stageOrderNo:'<s:property value="stageOrderNo"/>',
-                                    description:'<s:property value="description" escape="false"/>',
-                                    percentage:'<s:property value="percentage"/>',
-                                    Delete:'X'});
-        var record = temptActvDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
-    
-        var column = temptActvDataTable.getColumn('description');
-        // Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="description" escape="false"/>';
+			</s:else>
+		</div>
+	</div>
+	<div class="panel-body no-margin-bottom">
+		<div class="form-group no-margin-bottom">
+			<div class="yui-skin-sam">
+				<div id="tmptAtctTable" align="center"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	makeTmptActvDataTable();
+	<s:iterator  value="milestoneTemplateActivities" status="row_status">
+	temptActvDataTable.addRow({
+		stageOrderNo : '<s:property value="stageOrderNo"/>',
+		description : '<s:property value="description" escapeXml="false"/>',
+		percentage : '<s:property value="percentage"/>',
+		Delete : 'X'
+	});
+
 	
-	 var column = temptActvDataTable.getColumn('stageOrderNo');
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="stageOrderNo" />';
-        
- 	var column = temptActvDataTable.getColumn('percentage');
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="percentage" />';
-        </s:iterator>
-        calculateTotalPercentage();
-	</script> 
+	var record = temptActvDataTable
+			.getRecord(parseInt('<s:property value="#row_status.index"/>'));
+
+	var column = temptActvDataTable.getColumn('description');
+	// Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="description" escapeXml="false"/>';
+
+	var column = temptActvDataTable.getColumn('stageOrderNo');
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="stageOrderNo" />';
+
+	var column = temptActvDataTable.getColumn('percentage');
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="percentage" />';
+	
+	</s:iterator>
+	calculateTotalPercentage();
+
+</script> 
 	
  

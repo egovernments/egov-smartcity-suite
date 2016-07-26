@@ -78,7 +78,7 @@ body
 				</div>
 			</div>
 			 <c:choose>
-            <c:when test="${userDesgn != designation}">
+            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
@@ -93,5 +93,3 @@ body
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript"
-	src="<c:url value='/resources/js/app/taxExemption.js'/>"></script>

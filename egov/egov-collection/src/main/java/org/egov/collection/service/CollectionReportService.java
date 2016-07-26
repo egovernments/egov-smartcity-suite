@@ -39,6 +39,18 @@
  */
 package org.egov.collection.service;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
@@ -50,17 +62,6 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 @Service
 public class CollectionReportService {
 
@@ -68,6 +69,10 @@ public class CollectionReportService {
     EntityManager entityManager;
 
     private static final Logger LOGGER = Logger.getLogger(CollectionReportService.class);
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public SQLQuery getOnlinePaymentReportData(final String districtName, final String ulbName, final String fromDate,
             final String toDate, final String transactionId) {
@@ -87,7 +92,7 @@ public class CollectionReportService {
             queryStr.append(" and opv.transactionnumber like :transactionnumber ");
         queryStr.append(" order by receiptdate desc ");
 
-        final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
 
         if (StringUtils.isNotBlank(districtName))
             query.setString("districtName", districtName);
@@ -112,7 +117,7 @@ public class CollectionReportService {
         final StringBuilder queryStr = new StringBuilder("select distinct ulbname from public.onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
-        final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         if (StringUtils.isNotBlank(districtName))
             query.setString("districtName", districtName);
         return query.list();
@@ -120,19 +125,19 @@ public class CollectionReportService {
 
     public List<Object[]> getDistrictNames() {
         final StringBuilder queryStr = new StringBuilder("select distinct districtname from public.onlinepayment_view");
-        final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
+        final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         return query.list();
     }
 
     public CollectionSummaryReportResult getCollectionSummaryReport(final Date fromDate, final Date toDate,
-            final String paymentMode, final String source, final Long serviceId) {
+            final String paymentMode, final String source, final Long serviceId, final int status,final String serviceType) {
         final SimpleDateFormat fromDateFormatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
         final SimpleDateFormat toDateFormatter = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
         final StringBuilder defaultQueryStr = new StringBuilder(500);
         final StringBuilder queryStr = new StringBuilder(500);
         queryStr.append("SELECT  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN count(*) END) AS CASH_COUNT,  ")
-                .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
-                .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
+        .append("(CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN count(*) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN count(*) END) AS CHEQUEDD_COUNT, ")
+        .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'online' THEN count(*) END) AS ONLINE_COUNT, ")
         .append(" EGCL_COLLECTIONHEADER.SOURCE AS SOURCE, EG_LOCATION.NAME AS COUNTER_NAME, EG_USER.NAME AS EMPLOYEE_NAME,SER.NAME AS SERVICE_NAME,")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CASH_AMOUNT, ")
         .append(" (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN SUM(EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT) END) AS CHEQUEDD_AMOUNT,")
@@ -166,7 +171,7 @@ public class CollectionReportService {
         // .append(" INNER JOIN EG_USER EG_USER ON EGCL_COLLECTIONHEADER.CREATEDBY = EG_USER.ID")
         .append(" INNER JOIN  EGCL_SERVICEDETAILS SER ON SER.ID = EGCL_COLLECTIONHEADER.SERVICEDETAILS WHERE")
         .append(" EGW_STATUS.DESCRIPTION != 'Cancelled' ");
-        final StringBuilder queryStrGroup = new StringBuilder(100);
+        final StringBuilder queryStrGroup = new StringBuilder();
         queryStrGroup
         .append(" GROUP BY  SOURCE, COUNTER_NAME, EMPLOYEE_NAME, USERID,SERVICE_NAME, EGF_INSTRUMENTTYPE.TYPE");
 
@@ -191,7 +196,18 @@ public class CollectionReportService {
             queryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
             onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.SERVICEDETAILS =:serviceId");
         }
+        
+        if (status != -1 ) {
+            queryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
+            onlineQueryStr.append(" AND EGCL_COLLECTIONHEADER.STATUS =:searchStatus");
+        }
 
+        if(!serviceType.equals(CollectionConstants.ALL))
+        {
+            queryStr.append(" AND SER.SERVICETYPE =:serviceType");
+            onlineQueryStr.append(" AND SER.SERVICETYPE =:serviceType");
+        }
+        
         if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
             if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
                 queryStr.setLength(0);
@@ -218,7 +234,7 @@ public class CollectionReportService {
             queryStr.setLength(0);
             queryStr.append(defaultQueryStr);
         }
-        final StringBuilder aggregateQueryStr = new StringBuilder(500);
+        final StringBuilder aggregateQueryStr = new StringBuilder();
         aggregateQueryStr.append(onlineQueryStr);
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'cash'");
         aggregateQueryStr.append(queryStrGroup);
@@ -231,23 +247,23 @@ public class CollectionReportService {
         aggregateQueryStr.append(" AND EGF_INSTRUMENTTYPE.TYPE = 'online'");
         aggregateQueryStr.append(queryStrGroup);
 
-        final StringBuilder finalQueryStr = new StringBuilder(500);
+        final StringBuilder finalQueryStr = new StringBuilder();
         finalQueryStr
-                .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,cast(sum(CASH_AMOUNT) AS NUMERIC) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS NUMERIC) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS NUMERIC) AS ONLINE_AMOUNT ,USERID FROM (");
+        .append("SELECT cast(sum(CASH_COUNT) AS NUMERIC) AS CASH_COUNT,cast(sum(CHEQUEDD_COUNT) AS NUMERIC) AS CHEQUEDD_COUNT,cast(sum(ONLINE_COUNT) AS NUMERIC) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,cast(sum(CASH_AMOUNT) AS NUMERIC) AS CASH_AMOUNT, cast(sum(CHEQUEDD_AMOUNT) AS NUMERIC) AS CHEQUEDD_AMOUNT, cast(sum(ONLINE_AMOUNT) AS NUMERIC) AS ONLINE_AMOUNT ,USERID FROM (");
         finalQueryStr
-                .append(queryStr)
-                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
+        .append(queryStr)
+        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
         final StringBuilder finalAggregateQryStr = new StringBuilder();
         finalAggregateQryStr
-                .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
+        .append("SELECT sum(CASH_COUNT) AS CASH_COUNT,sum(CHEQUEDD_COUNT) AS CHEQUEDD_COUNT,sum(ONLINE_COUNT) AS ONLINE_COUNT,SOURCE,COUNTER_NAME,EMPLOYEE_NAME,SERVICE_NAME,sum(CASH_AMOUNT) AS CASH_AMOUNT, sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT, sum(ONLINE_AMOUNT) AS ONLINE_AMOUNT ,USERID FROM (");
         finalAggregateQryStr
-                .append(aggregateQueryStr)
-                .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
+        .append(aggregateQueryStr)
+        .append(" ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.COUNTER_NAME,RESULT.EMPLOYEE_NAME,RESULT.USERID,RESULT.SERVICE_NAME order by SOURCE,EMPLOYEE_NAME, SERVICE_NAME ");
 
-        final SQLQuery query = entityManager.unwrap(Session.class).createSQLQuery(finalQueryStr.toString());
+        final SQLQuery query = getCurrentSession().createSQLQuery(finalQueryStr.toString());
 
-        final SQLQuery aggrQuery = entityManager.unwrap(Session.class).createSQLQuery(finalAggregateQryStr.toString());
+        final SQLQuery aggrQuery = getCurrentSession().createSQLQuery(finalAggregateQryStr.toString());
 
         if (!source.isEmpty() && !source.equals(CollectionConstants.ALL)) {
             query.setString("source", source);
@@ -257,16 +273,26 @@ public class CollectionReportService {
             query.setLong("serviceId", serviceId);
             aggrQuery.setLong("serviceId", serviceId);
         }
-        if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL)) {
-            if(paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
+        if (status != -1 ) {
+            query.setLong("searchStatus", status);
+            aggrQuery.setLong("searchStatus", status);
+        }
+      
+        if(!serviceType.equals(CollectionConstants.ALL))
+        {
+            query.setString("serviceType", serviceType);
+            aggrQuery.setString("serviceType", serviceType);
+        }
+        
+        if (StringUtils.isNotBlank(paymentMode) && !paymentMode.equals(CollectionConstants.ALL))
+            if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD)) {
                 query.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
                 aggrQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
             } else
-            { 
-            query.setString("paymentMode", paymentMode);
-            aggrQuery.setString("paymentMode", paymentMode);
+            {
+                query.setString("paymentMode", paymentMode);
+                aggrQuery.setString("paymentMode", paymentMode);
             }
-        }
         final List<CollectionSummaryReport> reportResults = populateQueryResults(query.list());
         final List<CollectionSummaryReport> aggrReportResults = populateQueryResults(aggrQuery.list());
         final CollectionSummaryReportResult collResult = new CollectionSummaryReportResult();
@@ -301,12 +327,12 @@ public class CollectionReportService {
             collSummaryReportResult
             .setTotalReceiptCount(receiptCount.equals(BigDecimal.ZERO) ? "" : receiptCount.toString());
             collSummaryReportResult
-                    .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
+            .setTotalAmount(((BigDecimal) arrayObjectInitialIndex[7] != null ? (BigDecimal) arrayObjectInitialIndex[7]
                     : BigDecimal.ZERO).add(
                             (BigDecimal) arrayObjectInitialIndex[8] != null ? (BigDecimal) arrayObjectInitialIndex[8]
                                     : BigDecimal.ZERO).add(
-                            (BigDecimal) arrayObjectInitialIndex[9] != null ? (BigDecimal) arrayObjectInitialIndex[9]
-                                    : BigDecimal.ZERO));
+                                            (BigDecimal) arrayObjectInitialIndex[9] != null ? (BigDecimal) arrayObjectInitialIndex[9]
+                                                    : BigDecimal.ZERO));
             reportResults.add(collSummaryReportResult);
         }
         return reportResults;

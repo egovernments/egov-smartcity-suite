@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.Category"
 		table="EGPT_MSTR_CATEGORY">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_MSTR_CATEGORY</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_MSTR_CATEGORY</param>
 			</generator>
 		</id>
 		<property name="createdDate" type="java.util.Date">

@@ -280,7 +280,7 @@
        			 	</tr>
        			 	<s:hidden name="modelId" id="modelId" value="%{modelId}"/>
 				</table>
-				<div id="loadingMask" style="display:none"><p align="center"><img src="/egi/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
+				<div id="loadingMask" style="display:none"><p align="center"><img src="/ptis/resources/erp2/images/bar_loader.gif"> <span id="message"><p style="color: red">Please wait....</p></span></p></div>
 				<div class="buttonbottom" align="center">					
 					<s:submit cssClass="buttonsubmit" value="Approve" id="Deactivate:Save" theme="simple" method="save" onclick="setWorkFlowInfo(this);doLoadingMask();"/>																				
 					<s:submit cssClass="buttonsubmit" value="Forward" id="Deactivate:Forward" theme="simple" method="forward" onclick="setWorkFlowInfo(this);doLoadingMask();"/>

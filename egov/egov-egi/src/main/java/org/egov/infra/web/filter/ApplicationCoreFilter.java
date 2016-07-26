@@ -41,7 +41,7 @@
 package org.egov.infra.web.filter;
 
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
@@ -64,27 +64,27 @@ public class ApplicationCoreFilter implements Filter {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpSession session = request.getSession();
         try {
-            prepareCityPreferences(request, session);
-            prepareThreadLocal(request, session);
+            prepareCityPreferences(session);
+            prepareThreadLocal(session);
             chain.doFilter(request, resp);
         } finally {
-            EgovThreadLocals.clearValues();
+            ApplicationThreadLocals.clearValues();
         }
     }
 
-    private void prepareCityPreferences(final HttpServletRequest request, final HttpSession session) {
+    private void prepareCityPreferences(final HttpSession session) {
         if (session.getAttribute("cityCode") == null)
             cityService.cityDataAsMap().forEach((k, v) -> {
                 session.setAttribute(k, v);
             });
     }
 
-    private void prepareThreadLocal(final HttpServletRequest request, final HttpSession session) {
-        EgovThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
-        EgovThreadLocals.setCityName((String) session.getAttribute("cityname"));
-        EgovThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));
+    private void prepareThreadLocal(final HttpSession session) {
+        ApplicationThreadLocals.setCityCode((String) session.getAttribute("cityCode"));
+        ApplicationThreadLocals.setCityName((String) session.getAttribute("cityname"));
+        ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute("citymunicipalityname"));
         if (session.getAttribute("userid") != null)
-            EgovThreadLocals.setUserId((Long) session.getAttribute("userid"));
+            ApplicationThreadLocals.setUserId((Long) session.getAttribute("userid"));
     }
 
     @Override

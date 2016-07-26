@@ -57,8 +57,6 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
 		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
-		<script src='https://www.google.com/recaptcha/api.js'></script>
-		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
@@ -166,13 +164,11 @@
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<div class="input-group" style="margin:0 auto;">
-									<div class="g-recaptcha" data-sitekey="${sessionScope.siteKey}"></div>
-									<form:errors path="active" cssClass="add-margin error-msg font-12"/>
-								</div>
-								
-							</div>
+                            <div class="add-margin">
+                                <spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
+                                <c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
+                                <form:errors path="active" cssClass="add-margin error-msg font-12"/>
+                            </div>
 							<div class="form-group signup-leftpadding">
 								<button type="submit" class="btn btn-custom btn-block btn-login signup-submit">
 									<spring:message code="btn.signup" />
@@ -189,58 +185,99 @@
 					</div>
 				</div>
 				</c:if>
-				<c:if test="${not empty param.activation}">
-					<form:form method="post" role="form" id="activationform" action="activation" modelAttribute="citizen">
-					<div class="login-content login-content-margin otp-section signup-formcontent">
-						<c:choose>
-							<c:when test="${param.activated}">
-								<div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
-			                     	<spring:message code="msg.signup.activation.success2" />
-			                    </div>
-			                    <div class="form-group text-left" style="font-size:12px;color:#777">
-			                    	<a href="/egi/login/secure" class="btn btn-custom  btn-block btn-login signin-submit"><spring:message code="lbl.signin" /></a>
-			                    </div>
-							</c:when>
-							<c:otherwise>
-								<c:if test="${not empty param.activated and not param.activated}">
-				                	<div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
-				                </c:if>
-		                        <div class="login-body">
-		                            <div class="form-group text-left">
-		                                <div class="signin-title" style="padding:0;">
-		                                   <spring:message code="lbl.signup.activate" />
-		                                </div>
-		                            </div>
-		                            <div class="">
-		                            	<c:if test="${not empty param.message}">
-		                                <div class="form-group text-left font-green">
-		                                    <spring:message code="${param.message}" />
-		                                </div>
-		                                </c:if>
-		                                <div class="form-group">
-		                                    <div class="input-group">
-		                                        <div class="input-group-addon style-label">
-		                                            <i class="fa fa-key theme-color style-color"></i>
-		                                        </div>
-		                                        <input style="display:none" type="password">
-		                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" />
-		                                    </div>
-		                                </div>
-		                                <div class="form-group text-right">
-		                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
-		                                        <spring:message code="btn.signup.activate"/>
-		                                    </button>
-		                                </div>
-		                                <div class="form-group text-left font-12">
-		                                    <spring:message code="msg.signup.info"/>
-		                                </div>
-		                            </div>
-		                        </div>
-							</c:otherwise>
-						</c:choose>
-                    </div>
-                    </form:form>
+                <c:if test="${not empty param.activation}">
+                    <c:if test="${empty param.otprss}">
+                        <div id="activation_container">
+                            <form:form method="post" role="form" id="activationform" action="activation" modelAttribute="citizen">
+                            <div class="login-content login-content-margin otp-section signup-formcontent">
+                                <c:choose>
+                                    <c:when test="${param.activated}">
+                                        <div class="alert alert-info" role="alert"><spring:message code="msg.signup.activation.success1" />
+                                            <spring:message code="msg.signup.activation.success2" />
+                                        </div>
+                                        <div class="form-group text-left" style="font-size:12px;color:#777">
+                                            <a href="/egi/login/secure" class="btn btn-custom  btn-block btn-login signin-submit"><spring:message code="lbl.signin" /></a>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:if test="${not empty param.activated and not param.activated}">
+                                            <div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
+                                        </c:if>
+                                        <div class="login-body">
+                                            <div class="form-group text-left">
+                                                <div class="signin-title" style="padding:0;">
+                                                   <spring:message code="lbl.signup.activate" />
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <c:if test="${not empty param.message}">
+                                                <div class="form-group text-left font-green">
+                                                    <div class="alert alert-info" role="alert"><spring:message code="${param.message}" /></div>
+                                                </div>
+                                                </c:if>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon style-label">
+                                                            <i class="fa fa-key theme-color style-color"></i>
+                                                        </div>
+                                                        <input style="display:none" type="password">
+                                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" required="required"/>
+                                                        <span class="mandatory set-mandatory"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group text-right">
+                                                    <button type="button" class="btn btn-success btn-login signup-submit" id="resendotpbtn">
+                                                        <spring:message code="lbl.signup.resend.otp"/>
+                                                    </button>&nbsp;&nbsp;
+                                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
+                                                        <spring:message code="btn.signup.activate"/>
+                                                    </button>
+                                                </div>
+                                                <div class="form-group text-left font-12 add-margin">
+                                                    <spring:message code="msg.signup.info"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            </form:form>
+                        </div>
                     </c:if>
+                    <div id="otpresend_container" class="display-hide">
+                    <form:form method="post" role="form" id="activationform" action="activation/resendotp" modelAttribute="citizen">
+                        <div class="login-content login-content-margin otp-section signup-formcontent">
+                            <c:if test="${not empty param.otprss and not param.otprss}">
+                                <div class="alert alert-danger" role="alert"><spring:message code="error.otp.resend.failed" /></div>
+                                <script>$("#otpresend_container").show('slow');</script>
+                            </c:if>
+                            <div class="login-body">
+                                <div class="form-group text-left">
+                                    <div class="signin-title" style="padding:0;">
+                                        <spring:message code="lbl.signup.resend.otp" />
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-addon style-label">
+                                                <i class="fa fa-envelope theme-color style-color"></i>
+                                            </div>
+                                            <input class="form-control style-form" name="email" id="email" placeholder="Enter your registered email address" autocomplete="off" required="required"/>
+                                            <span class="mandatory set-mandatory"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group text-right">
+                                        <button type="submit" class="btn btn-custom btn-login signup-submit">
+                                            <spring:message code="lbl.signup.resend.otp"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form:form>
+                </div>
+                </c:if>
 			</div>
 			<footer class="main">
 				Powered by <a href="http://eGovernments.org" target="_blank">eGovernments Foundation</a>

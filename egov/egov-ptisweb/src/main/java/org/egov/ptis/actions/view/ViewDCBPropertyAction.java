@@ -39,6 +39,32 @@
  */
 package org.egov.ptis.actions.view;
 
+import static java.math.BigDecimal.ZERO;
+import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
+import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_PROPERTYTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -54,7 +80,7 @@ import org.egov.dcb.bean.Receipt;
 import org.egov.dcb.service.DCBService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.ptis.client.model.PropertyArrearBean;
@@ -72,28 +98,6 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.exceptions.PropertyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BEANNAME_PROPERTY_TAX_BILLABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CANCELLED_RECEIPT_STATUS;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZENUSER;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -126,7 +130,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     private Integer noOfDaysForInactiveDemand;
     private String errorMessage;
     private String roleName;
+    private String serviceCode;
     private Map<String, Object> viewMap;
+    private String searchUrl;
+    
+    
 
     @Autowired
     private UserService userService;
@@ -154,6 +162,11 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     @Override
     public void prepare() {
         setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
+        if (OWNERSHIP_TYPE_VAC_LAND.equals(basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode())) {
+            serviceCode = SERVICE_CODE_VACANTLANDTAX;
+        } else {
+            serviceCode = SERVICE_CODE_PROPERTYTAX;
+        }
     }
 
     /**
@@ -171,12 +184,12 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         if (session.getAttribute(SESSIONLOGINID) == null) {
             User user = userService.getUserByUsername(CITIZENUSER);
             userId = user.getId();
-            EgovThreadLocals.setUserId(userId);
+            ApplicationThreadLocals.setUserId(userId);
             session.setAttribute("com.egov.user.LoginUserName", user.getUsername());
             if (user != null)
-                setCitizen(Boolean.TRUE);
+                setIsCitizen(Boolean.TRUE);
         } else {
-            setCitizen(Boolean.FALSE);
+            setIsCitizen(Boolean.FALSE);
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null) {
                 setRoleName(propertyTaxUtil.getRolesForUserId(userId));
@@ -261,9 +274,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
              */
             // EGOVThreadLocals.setUserId("27613");
             session.setAttribute("com.egov.user.LoginUserName", CITIZENUSER);
-            setCitizen(Boolean.TRUE);
+            setIsCitizen(Boolean.TRUE);
         } else {
-            setCitizen(Boolean.FALSE);
+            setIsCitizen(Boolean.FALSE);
         }
 
         try {
@@ -372,7 +385,9 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         for (PropertyReceipt propReceipt : propReceiptList) {
             try {
                 propReceipt.setReceiptDate(sdf.parse(sdf.format(propReceipt.getReceiptDate())));
+                if(propReceipt.getFromDate()!=null)
                 propReceipt.setFromDate(sdf.parse(sdf.format(propReceipt.getFromDate())));
+                if(propReceipt.getToDate()!=null)
                 propReceipt.setToDate(sdf.parse(sdf.format(propReceipt.getToDate())));
             } catch (ParseException e) {
                 LOGGER.error("ParseException in getPropertyArrears method for Property" + propertyId, e);
@@ -444,13 +459,7 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
         this.propertyArrearsMap = propertyArrearsMap;
     }
 
-    public Boolean getIsCitizen() {
-        return isCitizen;
-    }
-
-    public void setCitizen(Boolean isCitizen) {
-        this.isCitizen = isCitizen;
-    }
+    
 
     public List<PropertyArrearBean> getPropertyArrearsList() {
         return propertyArrearsList;
@@ -531,5 +540,31 @@ public class ViewDCBPropertyAction extends BaseFormAction implements ServletRequ
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
+    public Boolean getIsCitizen() {
+        return isCitizen;
+    }
+
+    public void setIsCitizen(Boolean isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+
+    public String getSearchUrl() {
+        return searchUrl;
+    }
+
+    public void setSearchUrl(String searchUrl) {
+        this.searchUrl = searchUrl;
+    }
+
+    
 
 }

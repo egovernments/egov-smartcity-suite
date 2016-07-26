@@ -40,6 +40,19 @@
 
 package org.egov.works.services.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,20 +64,21 @@ import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.autonumber.ContractorBillNumberGenerator;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.contractorbill.service.ContractorBillNumberGenerator;
 import org.egov.works.models.contractorBill.AssetForBill;
 import org.egov.works.models.contractorBill.DeductionTypeForBill;
 import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
 import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.models.contractorBill.WorkCompletionInfo;
-import org.egov.works.models.estimate.AbstractEstimate;
 import org.egov.works.models.measurementbook.MBDetails;
 import org.egov.works.models.measurementbook.MBForCancelledBill;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -82,19 +96,6 @@ import org.egov.works.utils.WorksConstants;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillRegister, Long> implements
         ContractorBillService {
     private static final Logger logger = Logger.getLogger(ContractorBillServiceImpl.class);
@@ -103,7 +104,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Autowired
     private PersistenceService<EgChecklists, Long> checklistService;
     @Autowired
-    private ContractorBillNumberGenerator contractorBillNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
     @Autowired
     private EgovCommon egovCommon;
     @Autowired
@@ -186,7 +187,9 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      */
     @Override
     public String generateContractorBillNumber(final ContractorBillRegister ContractorBillRegister) {
-        return contractorBillNumberGenerator.generateContractorBillNumber(ContractorBillRegister);
+        ContractorBillNumberGenerator c = beanResolver.getAutoNumberServiceFor(ContractorBillNumberGenerator.class);
+        final String contractorBillNumber = c.getNextNumber(ContractorBillRegister);
+        return contractorBillNumber;
     }
 
     /**
@@ -552,7 +555,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
      * public BigDecimal getBudgetedAmtForYear(Long workOrderId,Date asOnDate) throws ValidationException { BigDecimal val =
      * BigDecimal.ZERO; Map<String,Object> searchMap = new HashMap<String, Object>(); WorkOrder wo
      * =workOrderService.findById(workOrderId, false); List<FinancialDetail> fdList=new ArrayList<FinancialDetail>();
-     * List<FinancialDetail> fdList = financialDetailService .findAllByNamedQuery("getFinancialDetailByEstimateId",
+     * List<FinancialDetail> fdList = financialDetailService .findAllByNamedQuery("FINANCIALDETAILS_BY_ESTIMATEID",
      * wo.getAbstractEstimate().getId()); String finyearId = commonsService.getFinancialYearId
      * (DateUtils.getFormattedDate(asOnDate,"dd-MMM-yyyy")); searchMap.put("financialyearid", Long.valueOf(finyearId));
      * if(fdList!=null && !fdList.isEmpty()){ if(fdList.get(0).getFunction()!=null && fdList.get(0).getFunction().getId()!=null)
@@ -972,7 +975,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
     @Override
     public List<EgBilldetails> getRetentionMoneyDeductionList(final Long billId,
             final List<StatutoryDeductionsForBill> statutoryList, final List<DeductionTypeForBill> standardDeductionList)
-                    throws NumberFormatException, ApplicationException {
+            throws NumberFormatException, ApplicationException {
         final List<BigDecimal> retentionGlcodeIdList = new ArrayList<BigDecimal>();
         getAllRetentionMoneyGlcodeList(retentionGlcodeIdList);
         return getRetentionMoneyListforglcodes(retentionGlcodeIdList, billId);
@@ -1091,7 +1094,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
             final List<StatutoryDeductionsForBill> actionStatutorydetails,
             final List<DeductionTypeForBill> standardDeductions, final List<EgBilldetails> customDeductions,
             final List<EgBilldetails> retentionMoneyDeductions, final List<AssetForBill> accountDetailsForBill)
-                    throws NumberFormatException, ApplicationException {
+            throws NumberFormatException, ApplicationException {
         actionStatutorydetails.clear();
         actionStatutorydetails.addAll(getStatutoryListForBill(id));
         standardDeductions.clear();
@@ -1200,7 +1203,7 @@ public class ContractorBillServiceImpl extends BaseServiceImpl<ContractorBillReg
 
             if (woa.getActivity().getSchedule() == null) {
                 workCompletionDetailInfo.setTenderAmount(woa.getActivity().getQuantity()
-                        * woa.getActivity().getRate().getValue());
+                        * woa.getActivity().getRate());
                 workCompletionDetailInfo.setExecutionAmount(executionRate * Double.parseDouble(object[1].toString()));
             } else {
 

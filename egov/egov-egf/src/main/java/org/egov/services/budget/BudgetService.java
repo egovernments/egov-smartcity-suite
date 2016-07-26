@@ -49,7 +49,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -77,9 +77,12 @@ import java.util.List;
  */
 public class BudgetService extends PersistenceService<Budget, Long> {
     private static final Logger LOGGER = Logger.getLogger(BudgetService.class);
+    
+    @Autowired
     protected EisCommonService eisCommonService;
     protected WorkflowService<Budget> budgetWorkflowService;
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
     
     @Autowired
@@ -102,7 +105,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public User getUser() {
-        return (User) ((PersistenceService) this).find(" from User where id=?", EgovThreadLocals.getUserId());
+        return (User) ((PersistenceService) this).find(" from User where id=?", ApplicationThreadLocals.getUserId());
     }
 
     public Position getPositionForEmployee(final Employee emp) throws ApplicationRuntimeException
@@ -333,7 +336,7 @@ public class BudgetService extends PersistenceService<Budget, Long> {
     }
 
     public PersonalInformation getEmpForCurrentUser() {
-        return eisCommonService.getEmployeeByUserId(EgovThreadLocals.getUserId());
+        return eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
     }
 
     public Budget getReferenceBudgetFor(final Budget budget) {

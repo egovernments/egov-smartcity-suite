@@ -162,7 +162,7 @@
 						</td>         -->
 						<td class="greybox"><s:text name="chq.assignment.rtgs.date" /><span
 							class="mandatory1">*</span> <s:date name="rtgsdateMap[%{#count}]"
-								id="rtgsdateMap[%{#count}]" format="dd/MM/yyyy" /> <s:textfield
+								var="rtgsdateMap[%{#count}]" format="dd/MM/yyyy" /> <s:textfield
 								id="rtgsdateMapId" name="rtgsdateMap[%{#count}]"
 								value="%{rtgsdateMap[%{#count}]}" data-date-end-date="0d"
 								onkeyup="DateFormat(this,this.value,event,false,'3')"

@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.domain.dao.property;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -47,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import org.hibernate.Query;
 
 @Repository(value = "propertyMutationDAO")
 @Transactional(readOnly = true)
@@ -87,5 +89,37 @@ public class PropertyMutationHibDAO implements PropertyMutationDAO {
 	public PropertyMutation update(PropertyMutation propertyMutation) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * Fetch the PropertyMutation for the given assessmentNo and applicationNo
+	 * @param assessmentNo
+	 * @param applicationNo
+	 * @return PropertyMutation
+	 */
+	public PropertyMutation getPropertyMutationForAssessmentNoAndApplicationNumber(String assessmentNo, String applicationNo){
+		String query = "from PropertyMutation where applicationNo = :applicationNo ";
+		if(StringUtils.isNotBlank(assessmentNo))
+			query = query.concat(" and basicProperty.upicNo = :assessmentNo ");
+        
+		Query qry = getCurrentSession().createQuery(query);
+        qry.setParameter("applicationNo", applicationNo);
+        if(StringUtils.isNotBlank(assessmentNo))
+        	qry.setParameter("assessmentNo", assessmentNo);
+        PropertyMutation propertyMutation =  (PropertyMutation) qry.uniqueResult();
+		return propertyMutation;
+	}
+	
+	@Override
+	public PropertyMutation getPropertyLatestMutationForAssessmentNo(String assessmentNo) {
+		PropertyMutation propertyMutation = null;
+		String query = "from PropertyMutation where basicProperty.upicNo = :assessmentNo order by mutationDate desc";
+	    Query qry = getCurrentSession().createQuery(query);
+	    qry.setParameter("assessmentNo", assessmentNo);
+	    List<PropertyMutation> mutationList = qry.list();
+	    if(!mutationList.isEmpty()){
+	    	propertyMutation = mutationList.get(0);
+	    }
+	    return propertyMutation;
 	}
 }

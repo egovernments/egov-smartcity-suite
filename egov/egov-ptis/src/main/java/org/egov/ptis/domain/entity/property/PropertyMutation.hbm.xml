@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyMutation"
 		table="EGPT_PROPERTY_MUTATION">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPT_PROPERTY_MUTATION</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_PROPERTY_MUTATION</param>
 			</generator>
 		</id>
 		
@@ -66,6 +66,12 @@
 		<property name="saleDetail" column="SALEDETAIL"/>
 		<property name="createdDate" type="timestamp" column="CREATEDDATE"/>
 		<property name="lastModifiedDate" type="timestamp" column="LASTMODIFIEDDATE"/>
+		<property name="partyValue" column="PARTYVALUE"/>
+		<property name="departmentValue" column="DEPARTMENTVALUE"/>
+		<property name="partialMutation" column="ISPARTIALMUTATION" type="boolean"/>
+		<property name="registrationDone" column="ISREGISTRATIONDONE" type="boolean"/>
+		<property name="type" column="type" type="java.lang.String"/>
+		<many-to-one name="mutationRegistrationDetails" class="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" column="id_registration_details" cascade="all"/>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY"/>
 		<many-to-one name="lastModifiedBy" class="org.egov.infra.admin.master.entity.User" column="LASTMODIFIEDBY"/>
 		<many-to-one name="mutationReason" column="MUTATIONREASON" class="org.egov.ptis.domain.entity.property.PropertyMutationMaster" />

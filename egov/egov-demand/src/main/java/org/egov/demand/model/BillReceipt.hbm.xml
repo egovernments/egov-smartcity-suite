@@ -47,8 +47,8 @@
 	<class name="org.egov.demand.model.BillReceipt" table="EG_BILLRECEIPT">
 
 		<id name="id" column="ID">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EG_BILLRECEIPT</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EG_BILLRECEIPT</param>
 			</generator>
 		</id>
 		

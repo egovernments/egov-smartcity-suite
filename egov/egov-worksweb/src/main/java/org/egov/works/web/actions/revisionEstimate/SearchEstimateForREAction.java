@@ -51,7 +51,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.pims.service.PersonalInformationService;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.measurementbook.MBHeader;

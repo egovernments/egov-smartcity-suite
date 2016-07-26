@@ -215,13 +215,21 @@ function validate()
 	var fromdate=dom.get("fromDate").value;
 	var todate=dom.get("toDate").value;
 	var valSuccess = true;
+	if(null!= document.getElementById('serviceClass') && document.getElementById('serviceClass').value == '-1'){
+		dom.get("error_area").style.display="block";
+		dom.get("error_area").innerHTML = '<s:text name="service.servictype.null" />' + '<br>';
+		window.scroll(0,0);
+		valSuccess=false;
+		return false;
+	}
 	if(fromdate!="" && todate!="" && fromdate!=todate)
 	{
 		if(!checkFdateTdate(fromdate,todate))
-		{
+		{ 
 			dom.get("comparedatemessage").style.display="block";
 			window.scroll(0,0);
 			valSuccess= false;
+			return false;
 		}
 	}
 	else
@@ -229,6 +237,7 @@ function validate()
 		dom.get("comparedatemessage").style.display="none";
 		doLoadingMask('#loadingMask');
 		valSuccess= true;
+		return true;
 	}
 	return valSuccess;
 	
@@ -282,9 +291,17 @@ function checkviewforselectedrecord()
 
 }
 
+function onChangeServiceClass(obj)
+{
+    if(obj!=null && obj.value!=null && obj.value!='-1'){
+    	populateserviceType({serviceClass:obj.value});
+    }
+}
+
 </script> 
 </head>
 <body>
+<div class="errorstyle" id="error_area" style="display:none;"></div>
 <span align="center" style="display: none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
@@ -333,19 +350,27 @@ function checkviewforselectedrecord()
 
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
+	      <td class="bluebox"><s:text name="service.master.classification"/> <span class="mandatory"></td>
+			<td class="bluebox"> 
+				<s:select list="serviceClassMap" headerKey="-1" headerValue="%{getText('miscreceipt.select')}"
+				name="serviceClass" id="serviceClass" onchange="onChangeServiceClass(this);"></s:select>
+			</td>
+			 <egov:ajaxdropdown id="serviceTypeDropdown" fields="['Text','Value']" dropdownId='serviceType'
+                url='receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action' />
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.servicetype"/></td>
 	      <td width="24%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.servicetype.select')}" name="serviceTypeId" id="serviceType" cssClass="selectwk" list="dropdownData.serviceTypeList" listKey="id" listValue="name" value="%{serviceTypeId}" /> </td>
-	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
-	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td>
+	      
+	      <%-- <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.counter"/></td>
+	      <td width="30%" class="bluebox"><s:select headerKey="-1" headerValue="%{getText('searchreceipts.counter.select')}" name="counterId" id="counter" cssClass="selectwk" list="dropdownData.counterList" listKey="id" listValue="name" value="%{counterId}" /> </td> --%>
 	    </tr>
 	     <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.fromdate"/></td>
 		  <s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy"/>
-		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+		  <td width="24%" class="bluebox"><s:textfield id="fromDate" name="fromDate" value="%{cdFormat}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].fromDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.todate"/></td>
 	      <s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy"/>
-		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+		  <td width="30%" class="bluebox"><s:textfield id="toDate" name="toDate" value="%{cdFormat1}" onfocus="javascript:vDateType='3';" onkeyup="DateFormat(this,this.value,event,false,'3')"/><a href="javascript:show_calendar('forms[0].toDate');" onmouseover="window.status='Date Picker';return true;"  onmouseout="window.status='';return true;"  ><img src="/egi/resources/erp2/images/calendaricon.gif" alt="Date" width="18" height="18" border="0" align="absmiddle" /></a><div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 	    </tr>
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
@@ -359,7 +384,7 @@ function checkviewforselectedrecord()
 	    <tr>
 	      <td width="4%" class="bluebox">&nbsp;</td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.status"/></td>
-	      <td width="24%" class="bluebox"><s:select id="searchStatus" name="searchStatus" headerKey="-1" headerValue="%{getText('searchreceipts.status.select')}" cssClass="selectwk" list="%{receiptStatuses}" value="%{id}" listKey="id" listValue="description" /> </td>
+	      <td width="24%" class="bluebox"><s:select id="searchStatus" name="searchStatus" headerKey="-1" headerValue="%{getText('searchreceipts.status.select')}" cssClass="selectwk" list="%{receiptStatuses}" value="%{searchStatus}" listKey="id" listValue="description" /> </td>
 	      <td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.paymenttype"/></td>
 	      <td width="30%" class="bluebox"><s:select headerKey="" headerValue="%{getText('searchreceipts.paymenttype.select')}" name="instrumentType" id="instrumentType" cssClass="selectwk" list="dropdownData.instrumentTypeList" listKey="type" listValue="type" value="%{instrumentType}" /> </td>	
 	    </tr>
@@ -373,24 +398,24 @@ function checkviewforselectedrecord()
 	    </tr>
 	    </table>
 </div>
-<div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/egi/resources/erp2/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
+<div id="loadingMask" style="display: none; overflow: hidden; text-align: center"><img src="/collection/resources/images/bar_loader.gif"/> <span style="color: red">Please wait....</span></div>
     <div class="buttonbottom">
-      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" method="search" onclick="return validate();"/></label>
+      <label><s:submit type="submit" cssClass="buttonsubmit" id="button" value="Search" onclick="return validate();"/></label>
       <label><s:submit type="submit" cssClass="button" value="Reset" onclick="document.searchReceiptForm.action='searchReceipt-reset.action'"/></label>
-      <logic:empty name="results">
+      <s:if test="%{results.isEmpty()}">
       	<input name="closebutton" type="button" class="button" id="closebutton" value="Close" onclick="window.close();"/>
-      </logic:empty>
+      </s:if>
       
 </div>
-<logic:empty name="resultList">
+<s:if test='%{resultList.isEmpty()}'>
 		<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0" class="tablebottom">
 		<tr> 
 			<div>&nbsp;</div>
 			<div class="subheadnew"><s:text name="searchresult.norecord"/></div>
 		</tr>
 		</table>
-</logic:empty>
-<logic:notEmpty name="resultList">
+</s:if>
+<s:if test='%{!resultList.isEmpty()}'>
 
 <div align="center">		
 <display:table name="searchResult" uid="currentRow" pagesize = "20" style="width:100%;border-left: 1px solid #DFDFDF;" cellpadding="0" cellspacing="0" export="false" requestURI="">
@@ -403,7 +428,7 @@ function checkviewforselectedrecord()
 </display:column>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Receipt No." style="width:8%;text-align:center" property="receiptnumber"/>
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Manual receipt number" style="width:8%;text-align:center" property="manualreceiptnumber"/>
-<display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptDate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
+<display:column headerClass="bluebgheadtd" class="blueborderfortd" property="receiptdate" title="Receipt Date" format="{0,date,dd/MM/yyyy}" style="width:8%;text-align: center" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Service" style="width:12%;text-align:center" property="service.name" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Number" style="width:8%;text-align:center" property="referencenumber" />
 <display:column headerClass="bluebgheadtd" class="blueborderfortd" title="Bill Description" style="width:27%;text-align:center" property="referenceDesc" />
@@ -431,7 +456,7 @@ function checkviewforselectedrecord()
   </egov-authz:authorize>
   <input name="button32" type="button" class="button" id="button32" value="Close" onclick="window.close();"/>
 </div>
-</logic:notEmpty>
+</s:if>
 </s:form>
 </body>
 

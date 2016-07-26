@@ -39,59 +39,103 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.apache.commons.io.IOUtils;
+import static java.util.Arrays.asList;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.entity.Source;
+import org.egov.config.search.Index;
+import org.egov.config.search.IndexType;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.wtms.application.service.DailyWTCollectionReport;
-import org.egov.wtms.application.service.DailyWTCollectionReportService;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.search.domain.Document;
+import org.egov.search.domain.Page;
+import org.egov.search.domain.SearchResult;
+import org.egov.search.domain.Sort;
+import org.egov.search.service.SearchService;
+import org.egov.wtms.application.entity.DailyWTCollectionReportSearch;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
-@RequestMapping("/report/dailyWTCollectionReport/search")
+@RequestMapping("/report/dailyWTCollectionReport/search/")
 public class DailyWTCollectionReportController {
 
     @Autowired
-    public DailyWTCollectionReportService dailyWTCollectionReportService;
+    private SearchService searchService;
+
+    @Autowired
+    public EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    public AssignmentService assignmentService;
+
+    @Autowired
+    public AppConfigValueService appConfigValueService;
+
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     @ModelAttribute
-    public DailyWTCollectionReport reportModel() {
-        return new DailyWTCollectionReport();
+    public void reportModel(final Model model) {
+        final DailyWTCollectionReportSearch dailyCollectionReportResut = new DailyWTCollectionReportSearch();
+        model.addAttribute("dailyWTCollectionReport", dailyCollectionReportResut);
     }
 
     @ModelAttribute("collectionMode")
     public Map<String, String> loadInstrumentTypes() {
-        return dailyWTCollectionReportService.getCollectionModeMap();
+        final Map<String, String> collectionModeMap = new LinkedHashMap<String, String>(0);
+        collectionModeMap.put(Source.ESEVA.toString(), Source.ESEVA.toString());
+        collectionModeMap.put(Source.MEESEVA.toString(), Source.MEESEVA.toString());
+        collectionModeMap.put(Source.APONLINE.toString(), Source.APONLINE.toString());
+        collectionModeMap.put(Source.SOFTTECH.toString(), Source.SOFTTECH.toString());
+        collectionModeMap.put(Source.SYSTEM.toString(), Source.SYSTEM.toString());
+        return collectionModeMap;
     }
 
     @ModelAttribute("operators")
     public Set<User> loadCollectionOperators() {
-        return dailyWTCollectionReportService.getUsers();
+        final String operatorDesignation = appConfigValueService.getAppConfigValueByDate(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.COLLECTION_DESIGNATIONFORCSCOPERATOR, new Date()).getValue();
+        return assignmentService.getUsersByDesignations(operatorDesignation.split(","));
     }
 
     @ModelAttribute("status")
     public List<EgwStatus> loadStatus() {
-        return dailyWTCollectionReportService.getStatusByModule();
+
+        return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
+    }
+
+    @ModelAttribute("wards")
+    public List<Boundary> wardBoundaries() {
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
+                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(method = GET)
@@ -100,32 +144,41 @@ public class DailyWTCollectionReportController {
         return "dailyWTCollection-search";
     }
 
-    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(@RequestParam final Date fromDate,
-            @RequestParam final Date toDate, final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException {
-        String collectionMode = "";
-        String collectionOperator = "";
-        String status = "";
-        if (null != request.getParameter("collectionMode"))
-            collectionMode = request.getParameter("collectionMode");
-        if (null != request.getParameter("collectionOperator"))
-            collectionOperator = request.getParameter("collectionOperator");
-        if (null != request.getParameter("status"))
-            status = request.getParameter("status");
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public List<Document> searchCollection(@ModelAttribute final DailyWTCollectionReportSearch searchRequest) {
 
-        final List<DailyWTCollectionReport> collectionDetailsList = dailyWTCollectionReportService.getCollectionDetails(fromDate,
-                toDate, collectionMode, collectionOperator, status);
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(collectionDetailsList)).append("}")
-                .toString();
-        IOUtils.write(result, response.getWriter());
+        SearchResult consumerIndexSearchResult = null;
+        SearchResult collectionIndexSearchResult = null;
+        final List<String> consumerCodes = new ArrayList<String>();
+        final List<Document> searchResultFomatted = new ArrayList<Document>(0);
+        final Sort sortByAssessment = Sort.by().field("clauses.ward", SortOrder.ASC);
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+        searchRequest.setUlbName(cityWebsite.getName());
+
+        if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
+            consumerIndexSearchResult = searchService.search(asList(Index.WATERCHARGES.toString()),
+                    asList(IndexType.CONNECTIONSEARCH.toString()), searchRequest.searchQuery(),
+                    searchRequest.searchConnectionForWardFilters(), sortByAssessment, Page.NULL);
+            for (final Document consumerDocument : consumerIndexSearchResult.getDocuments()) {
+                final Map<String, String> consumerCommonMap = (Map<String, String>) consumerDocument.getResource().get(
+                        "clauses");
+                consumerCodes.add(consumerCommonMap.get("consumercode"));
+            }
+            searchRequest.setConsumerCode(consumerCodes);
+            collectionIndexSearchResult = getCollectionIndex(searchRequest);
+        } else
+            collectionIndexSearchResult = getCollectionIndex(searchRequest);
+
+        for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments())
+            searchResultFomatted.add(collectionIndexDocument);
+        return searchResultFomatted;
     }
 
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DailyWTCollectionReport.class,
-                new DailyWTCollectionAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+    private SearchResult getCollectionIndex(final DailyWTCollectionReportSearch searchRequest) {
+        final Sort sortByReceiptDate = Sort.by().field("searchable.receiptdate", SortOrder.ASC);
+        return searchService.search(asList(Index.COLLECTION.toString()),
+                asList(IndexType.COLLECTION_BIFURCATION.toString()), searchRequest.searchQuery(),
+                searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
     }
 }

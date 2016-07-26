@@ -39,6 +39,8 @@
  ******************************************************************************/
 package org.egov.egi.web.controller;
 
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+
 import org.apache.tiles.request.render.StringRenderer;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -47,12 +49,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
-
-import javax.transaction.Transactional;
-
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional

@@ -44,7 +44,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.master.services.ScheduleCategoryService;
+import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 

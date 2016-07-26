@@ -1,0 +1,3 @@
+INSERT INTO eg_role (id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (nextval('SEQ_EG_ROLE'), 'WC_VIEW_ACCESS_ROLE', 'User has view access to Water Charges Masters, Reports & transactional data', now(), 1, 1, now(), 0);
+
+INSERT INTO EG_ROLEACTION (roleid,actionid) (SELECT (select id from eg_role where name='WC_VIEW_ACCESS_ROLE') as roleid, id from eg_action where name in ('Inbox','InboxDraft','InboxHistory','OfficialsProfileEdit','OfficialSentFeedBack','OfficialChangePassword','AddFavourite','RemoveFavourite','Official Home Page') and contextroot = 'egi' );

@@ -48,8 +48,8 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGW_EST_TEMPLATE_ACTIVITY</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_EST_TEMPLATE_ACTIVITY</param>
 			</generator>
 		</id>
 		
@@ -62,7 +62,7 @@ PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         <many-to-one name="uom" class="org.egov.common.entity.UOM" fetch="select">
 	    	<column name="UOM_ID" />
 		</many-to-one>
-        <many-to-one name="nonSor" class="org.egov.works.models.estimate.NonSor" fetch="join" cascade="all">
+        <many-to-one name="nonSor" class="org.egov.works.abstractestimate.entity.NonSor" fetch="join" cascade="all">
             <column name="NONSOR_ID" precision="22" scale="0" />
         </many-to-one>
         

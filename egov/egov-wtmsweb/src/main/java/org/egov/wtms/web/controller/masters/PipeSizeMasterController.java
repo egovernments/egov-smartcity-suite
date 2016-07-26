@@ -40,6 +40,12 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.PipeSize;
 import org.egov.wtms.masters.service.PipeSizeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +58,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 @RequestMapping(value = "/masters")
 public class PipeSizeMasterController {
@@ -64,11 +65,12 @@ public class PipeSizeMasterController {
     @Autowired
     private PipeSizeService pipeSizeService;
 
-    @RequestMapping(value = "/pipesizeMaster", method = GET)
+    @RequestMapping(value = "/pipesizeMaster", method = RequestMethod.GET)
     public String viewForm(final Model model) {
         final PipeSize pipeSize = new PipeSize();
         model.addAttribute("pipeSize", pipeSize);
         model.addAttribute("reqAttr", false);
+        model.addAttribute("mode", "create");
         return "pipesize-master";
     }
 
@@ -79,17 +81,25 @@ public class PipeSizeMasterController {
             return "pipesize-master";
         pipeSizeService.createPipeSize(pipeSize);
         redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
-        return getPipeSizeMasterList(model);
+        model.addAttribute("message", "PipeSize created successfully.");
+        model.addAttribute("mode", "create");
+        return "pipesize-master-success";
     }
 
-    @RequestMapping(value = "/pipesizeMaster/list", method = GET)
+    @RequestMapping(value = "/pipesizeMaster/list", method = RequestMethod.GET)
     public String getPipeSizeMasterList(final Model model) {
         final List<PipeSize> pipeSizeList = pipeSizeService.findAll();
         model.addAttribute("pipeSizeList", pipeSizeList);
         return "pipesize-master-list";
     }
 
-    @RequestMapping(value = "/pipesizeMaster/{pipeSizeId}", method = GET)
+    @RequestMapping(value = "/pipesizeMaster/edit", method = RequestMethod.GET)
+    public String getPipeSizeMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getPipeSizeMasterList(model);
+    }
+
+    @RequestMapping(value = "/pipesizeMaster/edit/{pipeSizeId}", method = GET)
     public String getPipeSizeMasterDetails(final Model model, @PathVariable final String pipeSizeId) {
         final PipeSize pipeSize = pipeSizeService.findOne(Long.parseLong(pipeSizeId));
         model.addAttribute("pipeSize", pipeSize);
@@ -97,14 +107,15 @@ public class PipeSizeMasterController {
         return "pipesize-master";
     }
 
-    @RequestMapping(value = "/pipesizeMaster/{pipeSizeId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/pipesizeMaster/edit/{pipeSizeId}", method = RequestMethod.POST)
     public String editPipeSizeMasterData(@Valid @ModelAttribute final PipeSize pipeSize, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long pipeSizeId) {
         if (errors.hasErrors())
             return "pipesize-master";
         pipeSizeService.updatePipeSize(pipeSize);
         redirectAttrs.addFlashAttribute("pipeSize", pipeSize);
-        return getPipeSizeMasterList(model);
+        model.addAttribute("message", "PipeSize updated successfully.");
+        return "pipesize-master-success";
 
     }
 

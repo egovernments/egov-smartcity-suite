@@ -81,6 +81,18 @@
 		<property name="alv" column="ALV"/>
 		<property name="mobileNumber" column="mobileno"/>
 		<property name="isActive" column="isactive"/>
+		<property name="arrearDemand" column="ARREAR_DEMAND"/>
+		<property name="arrearCollection" column="ARREAR_collection"/>
+		<property name="isUnderCourtCase" column="is_under_courtcase"/>
+		<property name="categoryType" column="category_type"/>
+		<property name="regdDocNo" column="regd_doc_no"/>
+		<property name="regdDocDate" column="regd_doc_date"/>
+		<property name="pattaNo" column="pattano"/>
+		<property name="marketValue" column="marketvalue"/>
+		<property name="capitalValue" column="capitalvalue"/>
+		<property name="assessmentDate" column="assessmentdate"/>
+		<property name="lastUpdated" column="lastupdated"/>
+		<property name="surveyNo" column="surveyNo"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

@@ -39,19 +39,21 @@
  */
 package org.egov.wtms.application.service;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.dcb.bean.DCBDisplayInfo;
+import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -79,7 +81,20 @@ public class CurrentDcbService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct(i_bookno) as \"bookNumber\", i_ctrrcptno as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
-                        + "d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =" + consumerNumber);
+                        + "d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =" + consumerNumber
+                        + " order by dt_ctrrcptdt desc");
+        final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
+        return finalQuery;
+
+    }
+
+    public SQLQuery getMigratedReceiptDetails(final Long connectiondetails) throws ParseException {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append(
+                "select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\","
+                        + "amount as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
+                        + connectiondetails);
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));
         return finalQuery;

@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title><s:text name="contingent.bill" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -57,8 +56,7 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <link rel="stylesheet" href="/EGF/resources/css/tabber.css?rnd=${app_release_no}" TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
+<script type="text/javascript"	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 
@@ -492,6 +490,7 @@ return true;
 
 
 function printPreview(){
+	
 	document.forms[0].action='../bill/expenseBillPrint-print.action?id=<s:property value="billRegisterId"/>';
 	document.forms[0].submit();
 }
@@ -511,9 +510,10 @@ function onSubmit()
 			
 		
 }
+
 </script>
 </head>
-<body onload="load();">
+<body >
 	<s:form action="contingentBill" theme="css_xhtml" name="cbill" id = "cbill">
 		<s:token />
 		<s:push value="model">
@@ -547,7 +547,7 @@ function onSubmit()
 									name="commonBean.billNumber" /></td>
 							<td class="bluebox"><s:text name="bill.Date" /><span
 								class="mandatory1"> *</span></td>
-							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+							<s:date name='commonBean.billDate' var="commonBean.billDateId"
 								format='dd/MM/yyyy' />
 							<td class="bluebox"><s:textfield name="commonBean.billDate"
 									id="billDate"
@@ -561,7 +561,7 @@ function onSubmit()
 					</table>
 					<br />
 					<div align="center" style="font-family: arial; font-size: 12pt;">
-						<s:property value="sanctionedMessge" escape="false" />
+						<s:property value="sanctionedMessge" escapeHtml="false" />
 					</div>
 					<br />
 				</div>
@@ -724,6 +724,7 @@ if(null != document.getElementById("print")){
 	document.getElementById("print").disabled=false;
 }
 
+if(document.getElementById("apporoverSelection")!=null)
 document.getElementById("apporoverSelection").style.display="block";
 
 //set the approver department to primary assignment department
@@ -767,6 +768,8 @@ if(document.getElementById("Approve"))
 	document.getElementById("Approve").disabled=false;	
 if(document.getElementById("button2"))
 	document.getElementById("button2").disabled=false;		
+if(document.getElementById("print"))
+	document.getElementById("print").disabled=false;
 	  	
 </script>
 

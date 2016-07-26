@@ -52,7 +52,7 @@
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/js/app/ajaxCommonFunctions.js'/>"></script>
 
 		
 		
@@ -245,7 +245,7 @@
 										<div class="col-sm-6 col-xs-12">
 											<div id="file1block" class="add-margin col-sm-3 col-xs-6">
 												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 												<div class="add-padding" id="filename1"></div>
 										    </div>
 										</div>	
@@ -261,7 +261,7 @@
 										<div class="col-sm-6 col-xs-12">
 											<div id="file1block" class="add-margin col-sm-4 col-xs-4">
 												<img id="preview1" src="#" alt="" class="display-hide "/>
-												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="entypo-cancel-circled"></i></div>
+												<div class="remove-img preview-cross1 display-hide" data-file-id><i class="fa fa-times-circle"></i></div>
 												<div class="add-padding" id="filename1"></div>
 										</div>
 										</div>

@@ -45,15 +45,15 @@
 	<class name="org.egov.works.models.tender.WorksPackageDetails" table="EGW_WORKSPACKAGE_DETAILS">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">			
-				<param name="sequence">SEQ_EGW_WORKSPACKAGE_DETAILS</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGW_WORKSPACKAGE_DETAILS</param>
 			</generator>
 		</id>
 		<many-to-one name="worksPackage" class="org.egov.works.models.tender.WorksPackage" insert="false" update="false" fetch="select">
 			<column name="WORKSPACKAGE_ID" not-null="true" />
 		</many-to-one>
 		<many-to-one name="estimate"
-			class="org.egov.works.models.estimate.AbstractEstimate" >
+			class="org.egov.works.abstractestimate.entity.AbstractEstimate" >
 			<column name="ABSTRACTESTIMATE_ID" not-null="true"/>
 		</many-to-one>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATED_BY" fetch="select" not-null="true" />

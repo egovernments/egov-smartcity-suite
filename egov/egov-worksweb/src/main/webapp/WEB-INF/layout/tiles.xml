@@ -165,5 +165,85 @@
 		<put-attribute name="page-title" value="hdr.letterofacceptance.modify" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
 	</definition>
+	
+	<definition name="searchcontractorbill-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractor.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBillToCancel-header.jsp"/>
+    </definition>
+    
+    <definition name="searchloa-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.loa.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptanceToCancel-header.jsp"/>
+    </definition>
+    
+    <definition name="searchmilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone-header.jsp"/>
+    </definition>
+    
+    <definition name="newMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/newMilestone-form.jsp"/>
+    </definition>
+    
+    <definition name="milestoneTemplate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone.jsp"/>
+    </definition>
+
+    <definition name="milestoneTemplate-view" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestoneTemplate-view.jsp"/>
+    </definition>
+    
+    <definition name="milestone-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-success.jsp"/>
+    </definition>
+
+    <definition name="viewMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneForView-header.jsp"/>
+    </definition>
+    
+    <definition name="milestone-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-view.jsp"/>
+	</definition>
+
+	<definition name="searchTrackMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchtrackmilestonetemplate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchTrackMilestone-header.jsp"/>
+	</definition>
+	
+	<definition name="estimateAbstractReportByDepartmentWise-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbydepartmentwise" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByDepartmentWise-form.jsp"/>
+    </definition>
+
+	<definition name="estimateAbstractReportByTypeOfWorkWise-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbytypeofworkwise" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByTypeOfWorkWise-form.jsp"/>
+	</definition>
+
+	<definition name="searchlineestimate-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.lineestimate.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateToCancel-header.jsp"/>
+    </definition>
+
+    <definition name="trackMilestone-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-form.jsp"/>
+    </definition>
+    
+    <definition name="milestonecancel-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.milestone.cancel" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneToCancel-header.jsp"/>
+    </definition>
+    
+    <definition name="trackmilestone-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
+    </definition>
     
 </tiles-definitions>

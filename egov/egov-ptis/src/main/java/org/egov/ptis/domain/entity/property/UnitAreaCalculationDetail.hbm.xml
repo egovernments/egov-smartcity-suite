@@ -45,8 +45,8 @@
     <class name="org.egov.ptis.domain.entity.property.UnitAreaCalculationDetail" table="EGPT_UNITAREACALC_DETAIL" >    	
 		<id name="id" type="java.lang.Long">
             <column name="ID" />
-            <generator class="sequence">
-				<param name="sequence">SEQ_EGPT_UNITAREACALC_DETAIL</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_UNITAREACALC_DETAIL</param>
 			</generator>
         </id>
    		<property name="taxableArea" type="java.math.BigDecimal">

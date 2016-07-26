@@ -295,7 +295,7 @@ function onSubmit()
 																	</s:if>
 																	<td class="bluebox" width="18%"><s:text
 																			name="voucher.date" />&nbsp;<span class="mandatory1">*</span></td>
-																	<s:date name='voucherDate' id="voucherDateId"
+																	<s:date name='voucherDate' var="voucherDateId"
 																		format='dd/MM/yyyy' />
 																	<td class="bluebox" width="34%">
 																		<div name="daterow">

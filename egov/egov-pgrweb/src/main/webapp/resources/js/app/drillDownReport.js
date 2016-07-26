@@ -114,7 +114,7 @@ function callajaxdatatableForDrilDownReport() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -146,27 +146,34 @@ function callajaxdatatableForDrilDownReport() {
 							"sTitle" : "Boundary Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						} ],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -270,7 +277,7 @@ function callAjaxByDepartment() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -302,28 +309,35 @@ function callAjaxByDepartment() {
 							"sTitle" : "Department Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						},{
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -380,7 +394,7 @@ function callAjaxByComplaintType() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -412,28 +426,35 @@ function callAjaxByComplaintType() {
 							"sTitle" : "Grievance Type Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						}, {
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -488,7 +509,7 @@ function callAjaxByUserNameType() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -520,28 +541,35 @@ function callAjaxByUserNameType() {
 							"sTitle" : "User name-Position Name"
 						}, {
 							"mData" : "registered",
-							"sTitle" : "Registered"
+							"sTitle" : "Registered",
+							"sClass" : "text-right"
 
 						}, {
 							"data" : "inprocess",
-							"sTitle" : "Inprocess"
+							"sTitle" : "Inprocess",
+							"sClass" : "text-right"
 						}, {
 							"data" : "completed",
-							"sTitle" : "Disposed"
+							"sTitle" : "Disposed",
+							"sClass" : "text-right"
 						}, {
 							"data" : "rejected",
-							"sTitle" : "Rejected"
+							"sTitle" : "Rejected",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "withinsla",
-							"sTitle" : "Within SLA"
+							"sTitle" : "Within SLA",
+							"sClass" : "text-right"
 
 						},{
 							"data" : "beyondsla",
-							"sTitle" : "Beyond SLA"
+							"sTitle" : "Beyond SLA",
+							"sClass" : "text-right"
 						}, {
 							"data" : "total",
-							"sTitle" : "Total"
+							"sTitle" : "Total",
+							"sClass" : "text-right"
 
 						}],
 				"footerCallback" : function(row, data, start, end, display) {
@@ -596,7 +624,7 @@ function callAjaxByComplaintDetail() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/drillDown/resultList-update",
+					url : "drillDown/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -623,7 +651,7 @@ function callAjaxByComplaintDetail() {
 							"data" : "crn",
 							"sTitle" : "Complaint Number",
 							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/public/complaint/view/'
 										+ data
 										+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
 										+ data + '">' + data + '</a>';

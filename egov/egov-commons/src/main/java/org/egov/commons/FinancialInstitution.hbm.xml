@@ -46,8 +46,8 @@
     <class name="org.egov.commons.FinancingInstitution" table="Financial_Institution " >
         <id name="id" type="integer">
             <column name="ID" not-null="true" />
-            <generator class="sequence">
-            <param name="sequence">SEQ_financial_institution</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">SEQ_financial_institution</param>
             </generator>
         </id>
         <property name="name" type="string">

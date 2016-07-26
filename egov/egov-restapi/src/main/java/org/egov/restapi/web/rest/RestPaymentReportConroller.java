@@ -39,19 +39,25 @@
  */
 package org.egov.restapi.web.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.egov.infstr.models.ServiceCategory;
 import org.egov.infstr.services.PersistenceService;
@@ -71,193 +77,178 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 @RestController
 public class RestPaymentReportConroller {
-	
-	  private static final Logger LOGGER = Logger.getLogger(RestPaymentReportConroller.class);
 
-	@Autowired
-	private  CollectionIntegrationService collectionService;
+    private static final Logger LOGGER = Logger.getLogger(RestPaymentReportConroller.class);
 
-	@Autowired
-	private PersistenceService<ServiceCategory, Long> serviceCategoryService;
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
-	@Autowired
-	private  BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private PersistenceService<ServiceCategory, Long> serviceCategoryService;
 
-	@Autowired
-	ApplicationContext applicationContext;
+    @Autowired
+    private BankHibernateDAO bankHibernateDAO;
 
-	@RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
-	{
-		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
-                .getAttribute("source").toString(): "");
-	
-		LOGGER.info(request.getSession().getAttribute("source"));
-		RestResponse detailsByTransactionId=new RestResponse();
-		try {
-			 RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest); 
-			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
-			detailsByTransactionId.setAmount(detailsByTransactionId2.getAmount());
-			detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
-			detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
-			detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
-			
-		} catch (Exception e) {
-			detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
-			RestErrors err=new  RestErrors();
-			err.setErrorMessage(e.getMessage());
-			err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
-			detailsByTransactionId.getErrorDetails().add(err);   
-		}
-		return JsonConvertor.convert(detailsByTransactionId);
-		  
-	}  
+    @Autowired
+    ApplicationContext applicationContext;
 
+    @RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
+            final HttpServletRequest request)
+    {
+        paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString() : "");
 
-	@RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		
-		LOGGER.info(request.getSession().getAttribute("source"));
-		
-		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
-                .getAttribute("source").toString(): "");
+        LOGGER.info(request.getSession().getAttribute("source"));
+        final RestResponse detailsByTransactionId = new RestResponse();
+        try {
+            final RestReceiptInfo detailsByTransactionId2 = collectionService.getDetailsByTransactionId(paymentInfoSearchRequest);
+            detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+            detailsByTransactionId.setAmount(detailsByTransactionId2.getAmount());
+            detailsByTransactionId.setReceiptNo(detailsByTransactionId2.getReceiptNo());
+            detailsByTransactionId.setReferenceNo(detailsByTransactionId2.getReferenceNo());
+            detailsByTransactionId.setTransactionId(detailsByTransactionId2.getTransactionId());
 
-		List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService.getAggregateReceiptTotal(paymentInfoSearchRequest);
-		return getJSONResponse(listAggregatePaymentInfo);
-	}
+        } catch (final Exception e) {
+            detailsByTransactionId.setStatus(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
+            final RestErrors err = new RestErrors();
+            err.setErrorMessage(e.getMessage());
+            err.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DATA_FOUND);
+            detailsByTransactionId.getErrorDetails().add(err);
+        }
+        return JsonConvertor.convert(detailsByTransactionId);
 
-	@RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,HttpServletRequest request)
-			throws JsonGenerationException, JsonMappingException, IOException {
+    }
 
-		paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
-                .getAttribute("source").toString(): "");
-		List<RestReceiptInfo> receiptInfoList = collectionService.getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
-		return getJSONResponse(receiptInfoList);
-	}
+    @RequestMapping(value = "/reconciliation/paymentaggregate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchAggregatePaymentsByDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
+            final HttpServletRequest request)
+                    throws JsonGenerationException, JsonMappingException, IOException {
 
-	private void validatePaymentDetails(PaymentInfoSearchRequest  payment, BindingResult errors) {
-		if(payment.getFromdate()==null )
-		{
+        LOGGER.info(request.getSession().getAttribute("source"));
 
-		}
+        paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString() : "");
 
-	}
+        final List<RestAggregatePaymentInfo> listAggregatePaymentInfo = collectionService
+                .getAggregateReceiptTotal(paymentInfoSearchRequest);
+        return getJSONResponse(listAggregatePaymentInfo);
+    }
 
+    @RequestMapping(value = "/reconciliation/paymentdetails", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchPaymentDetailsByServiceAndDate(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
+            final HttpServletRequest request)
+                    throws JsonGenerationException, JsonMappingException, IOException {
 
-	@RequestMapping(value="/cancelReceipt",method=RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
-	public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,BindingResult errors) {
+        paymentInfoSearchRequest.setSource(request.getSession().getAttribute("source") != null ? request.getSession()
+                .getAttribute("source").toString() : "");
+        final List<RestReceiptInfo> receiptInfoList = collectionService
+                .getReceiptDetailsByDateAndService(paymentInfoSearchRequest);
+        return getJSONResponse(receiptInfoList);
+    }
 
-		ErrorDetails successDetail=new ErrorDetails();
-		try{
+    @RequestMapping(value = "/cancelReceipt", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String cancelReceipt(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest, final BindingResult errors) {
 
-			validateCancelReceipt(paymentInfoSearchRequest);
-			if(paymentInfoSearchRequest.getReceiptNo()!=null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()) {
-				EgovThreadLocals.setUserId(Long.valueOf("2"));
-				String	cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest);
-				successDetail.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
-				successDetail.setErrorMessage(cancelReceipt);
-			} else
-			{
-				ErrorDetails errorDetails=new ErrorDetails();
-				errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED);
-				errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
-				return	JsonConvertor.convert(errorDetails);
-			}
+        final ErrorDetails successDetail = new ErrorDetails();
+        try {
 
-		} catch (Exception e) {
-			ErrorDetails er=new ErrorDetails();
-			er.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
-			er.setErrorMessage(e.getMessage());
-			return	JsonConvertor.convert(er);
-		}
-		return	JsonConvertor.convert(successDetail);
+            validateCancelReceipt(paymentInfoSearchRequest);
+            if (paymentInfoSearchRequest.getReceiptNo() != null && !paymentInfoSearchRequest.getReceiptNo().isEmpty()) {
+                ApplicationThreadLocals.setUserId(Long.valueOf("2"));
+                final String cancelReceipt = collectionService.cancelReceipt(paymentInfoSearchRequest);
+                successDetail.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_SUCCESS);
+                successDetail.setErrorMessage(cancelReceipt);
+            } else
+            {
+                final ErrorDetails errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQUIRED);
+                errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+                return JsonConvertor.convert(errorDetails);
+            }
 
-	}
+        } catch (final Exception e) {
+            final ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(RestApiConstants.THIRD_PARTY_ACTION_FAILURE);
+            er.setErrorMessage(e.getMessage());
+            return JsonConvertor.convert(er);
+        }
+        return JsonConvertor.convert(successDetail);
 
-	private void validateCancelReceipt(
-			PaymentInfoSearchRequest cancelReq) {
-		if (cancelReq.getTransactionId()==null ||  cancelReq.getTransactionId().isEmpty())
-		{
-			throw new RuntimeException(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
-		}else if (cancelReq.getReceiptNo()==null || cancelReq.getReceiptNo().isEmpty() )
-		{
-			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+    }
 
-		}else if (cancelReq.getUlbCode()==null || cancelReq.getUlbCode().isEmpty() )
-		{
-			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG);
-		}else if (cancelReq.getReferenceNo()==null || cancelReq.getReferenceNo().isEmpty())
-		{
-			throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_REFNO_NO_REQ_MSG);
-		}
+    private void validateCancelReceipt(
+            final PaymentInfoSearchRequest cancelReq) {
+        if (cancelReq.getTransactionId() == null || cancelReq.getTransactionId().isEmpty())
+            throw new RuntimeException(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_TRANSANCTIONID_REQUIRED);
+        else if (cancelReq.getReceiptNo() == null || cancelReq.getReceiptNo().isEmpty())
+            throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_RECEIPT_NO_REQ_MSG);
+        else if (cancelReq.getUlbCode() == null || cancelReq.getUlbCode().isEmpty())
+            throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_ULBCODE_NO_REQ_MSG);
+        else if (cancelReq.getReferenceNo() == null || cancelReq.getReferenceNo().isEmpty())
+            throw new RuntimeException(RestApiConstants.THIRD_PARTY_ERR_CODE_REFNO_NO_REQ_MSG);
 
-	}
+    }
 
-	@RequestMapping(value="/banks",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-	public String bankNames() {
-		List<Bank> banks=null;
-		try {
-			banks = bankHibernateDAO.findAll(); 
+    @RequestMapping(value = "/banks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String bankNames() {
+        List<Bank> banks = null;
+        try {
+            banks = bankHibernateDAO.findAll();
 
-		} catch (Exception e) {
-			ErrorDetails er=new ErrorDetails();
-			er.setErrorCode(e.getMessage());
-			er.setErrorMessage(e.getMessage());
-			return	JsonConvertor.convert(er);
-		}
-		return	JsonConvertor.convert(banks);
+        } catch (final Exception e) {
+            final ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            return JsonConvertor.convert(er);
+        }
+        return JsonConvertor.convert(banks);
 
-	}
-	@RequestMapping(value="/services",method=RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-	public String services() throws JsonGenerationException, JsonMappingException, IOException {
+    }
 
-		Map<String, String> serviceCategory=null;
-		List<ServiceCategory> services;
-		try {
-			services = serviceCategoryService.findAllByNamedQuery("SERVICE_CATEGORY_ALL");
-			if(services!=null || services.size()>=0)
-			{
-				serviceCategory=new LinkedHashMap<String, String>();
-				for(ServiceCategory scs:services)
-				{
-					serviceCategory.put(scs.getCode(), scs.getName());
-				}
-			}
-		} catch (Exception e) {
-			ErrorDetails er=new ErrorDetails();
-			er.setErrorCode(e.getMessage());
-			er.setErrorMessage(e.getMessage());
-			return	JsonConvertor.convert(er);
+    @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String services() throws JsonGenerationException, JsonMappingException, IOException {
 
-		}
-		return	JsonConvertor.convert(serviceCategory);
+        Map<String, String> serviceCategory = null;
+        List<ServiceCategory> services;
+        try {
+            services = serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY);
+            if (services != null && services.size() >= 0)
+            {
+                serviceCategory = new LinkedHashMap<String, String>();
+                for (final ServiceCategory scs : services)
+                    serviceCategory.put(scs.getCode(), scs.getName());
+            }
+        } catch (final Exception e) {
+            final ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            return JsonConvertor.convert(er);
 
-	}
+        }
+        return JsonConvertor.convert(serviceCategory);
 
-	/**
-	 * This method is used to prepare jSON response.
-	 *
-	 * @param obj - a POJO object
-	 * @return jsonResponse - JSON response string
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 */
-	private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
-		final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
-				.disableHtmlEscaping().create();
-		return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
-		}.getType());
-	}
+    }
+
+    /**
+     * This method is used to prepare jSON response.
+     *
+     * @param obj - a POJO object
+     * @return jsonResponse - JSON response string
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+        final Gson jsonCreator = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+                .disableHtmlEscaping().create();
+        return jsonCreator.toJson(obj, new TypeToken<Collection<Document>>() {
+        }.getType());
+    }
 }

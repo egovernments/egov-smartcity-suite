@@ -42,12 +42,11 @@ package org.egov.eis;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Vaibhav.K
@@ -56,7 +55,7 @@ import javax.transaction.Transactional;
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-@TransactionConfiguration(transactionManager = "transactionManager",defaultRollback=true)
+@Rollback
 @ActiveProfiles("test")
 @ContextConfiguration(
         loader = SpringockitoContextLoader.class,

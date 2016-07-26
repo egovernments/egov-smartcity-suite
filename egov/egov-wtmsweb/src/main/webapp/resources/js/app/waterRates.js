@@ -38,6 +38,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	$('#waterRatesTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 7,
+			"orderable": false
+		} ]
+	});
 
 	$('#statusdiv').hide();
 	
@@ -78,47 +94,61 @@ $(document).ready(function(){
 	});
 	
 	
+	
+     });
 
-	  $('#buttonid').click(function() {
-		 
-		 if( $( "#waterRatesform").valid())
-		 {
-			  if($('#formDate').val() !=undefined)
-		  $.ajax({
-	            url: '/wtms/ajax-WaterRatescombination',
-	            type: "GET",
-	            data: {
-			categoryType:'NON_METERED',
-			waterSource:$('#waterSource').val(),
-	        usageType: $('#usageType').val(),
-			pipeSize :$('#pipeSize').val(),
-	            	
-	            },
-	            dataType : 'json',
-	            success: function (response) {
-	    			console.log("success"+response);
-	    			//bootbox.alert("response"+response);
-	    			if(response > 0){
-	    				if(!overwritedonation(response))
-	    				return false;
-		    			}
-	    			else{
-	    				 document.forms[0].submit();
-	    				 return true;
-	    			}
-	    		},error: function (response) {
-	    			console.log("failed");
-	    		}
-	        });
-		  
-		 }
+	 $('#buttonid').click(function() {
+		
+		 var activeDiv = $('#reqAttr').val();
+		  if( $("#waterRatesform").valid())
+			 {
+			  
+			  if($('#formDate').val() != '' && $('#toDate').val() != ''){
+					var start = $('#formDate').val();
+					var end = $('#toDate').val();
+					var stsplit = start.split("/");
+						var ensplit = end.split("/");
+						
+						start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+						end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+						if(!validRange(start,end))
+						{
+							
+						return false;
+						}
+				}
+			
+				  if($('#formDate').val() !=undefined)
+					
+			  if (activeDiv =='false')
+			{
+				 
+				  waterRatesSubmit();
+			}
+			  else 
+			 {
+				 
+				  waterRatesSubmit();
+			 }
+			  
+			 }
      });
 	  
 	  
-	  $('#listid').click(function() {
-			window.open("/wtms/masters/waterRatesMaster/list", "_self");
-			
-	  });
+	  function overwritedonation(res)
+	  {
+		 
+	  	var r=confirm("With entered combination,Monthly rate is present as "+res+ ",Do you want to overwrite it?")
+	  	if (r ==true){	
+
+	  		document.forms[0].submit();
+	  	}
+	  	else
+	  	{
+
+	  	    return false;
+	  	}
+	  }
 	  $('#resetid').click(function() {
 		  document.forms[0].reset();
 		  window.open("/wtms/masters/waterRatesMaster/", "_self");
@@ -129,25 +159,74 @@ $(document).ready(function(){
 		  window.open("/wtms/masters/waterRatesMaster/", "_self");
 			
 	  });
+	  
+	  function waterRatesSubmit()
+		{
+				
+				 var fromDate = $('#formDate').val();
+				 var toDate = $('#toDate').val();
+				 var activeDiv = $('#reqAttr').val();
+					if (activeDiv =='false')
+						{
+						var activeid = true;
+						}
+					else{
+						var activeid = ( $("#activeid").is(':checked') ) ? true : false;
+					    }
+			  $.ajax({
+				 
+		            url: '/wtms/ajax-WaterRatescombination',
+		            type: "GET",
+		            data: {
+		            	categoryType:'NON_METERED',   	
+				waterSource:$('#waterSource').val(),
+		        usageType: $('#usageType').val(),
+				pipeSize :$('#pipeSize').val(),
+				fromDate :$('#formDate').val(),
+				toDate :$('#toDate').val(),
+				activeid : activeid
+		            	
+		            },
+		            dataType : 'json',
+		            success: function (response) {
+		    			console.log(response);
+		    			//bootbox.alert("response"+response);
+		    			
+		    			if(response){
+		    				response=JSON.parse(response);
+		    				bootbox.alert("For the Selected Combination, there is a existing record with the date range between Effective From Date : "+response.fromDate+" and Effective To Date : "+response.toDate);
+		    				return false;
+			    			}
+		    			else{
+		    				 document.forms[0].submit();
+		    				 return true;
+		    			}
+		    		},error: function (response) {
+		    			console.log("failed");
+		    		}
+		        });
+			  
+			 }
 
-});
-
+	  function validRange(start, end) {
+	        var startDate = Date.parse(start);
+	        var endDate = Date.parse(end);
+			
+	        // Check the date range, 86400000 is the number of milliseconds in one day
+	        var difference = (endDate - startDate) / (86400000 * 7);
+	        if (difference < 0) {
+	        	bootbox.alert("From date  should not be greater than the To Date.");
+				$('#end_date').val('');
+				return false;
+				} else {
+				return true;
+			}
+	        return true;
+		}
 
 function edit(waterratesHeader)
 {
-	window.open("/wtms/masters/waterRatesMaster/"+waterratesHeader, "_self");
+	window.open("/wtms/masters/waterRatesMaster/edit/"+waterratesHeader, "_self");
 	console.log("Water Details ->"+waterratesHeader);
 	
 }
-
-function addNew()
-{
-	window.open("/wtms/masters/waterRatesMaster/", "_self");
-}
-
-function overwritedonation(res)
-{
-	
-	document.forms[0].submit();
-}
-	

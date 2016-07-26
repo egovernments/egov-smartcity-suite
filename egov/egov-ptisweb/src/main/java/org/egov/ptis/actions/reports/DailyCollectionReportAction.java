@@ -118,7 +118,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
 	private ReportService reportService;
-	private Integer reportId;
+	private String reportId;
 	ReceiptInfo totalRcptInfo = new ReceiptInfo();
 	ReceiptInfo totalCashRcptInfo = new ReceiptInfo();
 	ReceiptInfo totalChequeRcptInfo = new ReceiptInfo();
@@ -156,6 +156,9 @@ public class DailyCollectionReportAction extends BaseFormAction {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public Object getModel() {
@@ -312,7 +315,7 @@ public class DailyCollectionReportAction extends BaseFormAction {
 			LOGGER.debug("Loop took " + (System.currentTimeMillis() - loopStartTime) / 1000 + " sec(s)..!");
 			ReportRequest reportInput = new ReportRequest(REPORT_TEMPLATENAME_DAILY_COLLECTION, cashCollInfo, null);
 			reportInput.setPrintDialogOnOpenReport(true);
-			reportId = ReportViewerUtil.addReportToSession(reportService.createReport(reportInput), getSession());
+			reportId = reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
 			LOGGER.debug("Report took " + (System.currentTimeMillis() - reportStartTime) / 1000 + " sec(s)..!");
 			LOGGER.debug("Exited from generateReport method(if block)");
 			return REPORT;
@@ -629,12 +632,8 @@ public class DailyCollectionReportAction extends BaseFormAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public Date getFromDate() {

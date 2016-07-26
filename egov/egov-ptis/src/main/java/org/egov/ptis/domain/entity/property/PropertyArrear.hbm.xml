@@ -44,7 +44,7 @@
 	<class name="org.egov.ptis.domain.entity.property.PropertyArrear"
 		table="EGPT_PROPERTY_ARREARS">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
 				<param name="SEQ_EGPT_PROPERTY_ARREARS"></param>
 			</generator>
 		</id>

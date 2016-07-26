@@ -62,10 +62,11 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -112,6 +113,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private WaterConnectionSmsAndEmailService waterConnectionSmsAndEmailService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<WaterConnectionDetails> waterConnectionWorkflowService;
 
     @Autowired
@@ -260,13 +262,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     }
 
     public String getNatureOfTask(final WaterConnectionDetails waterConnectionDetails) {
-        final String wfTypeDisplayNmae = "Water Tap Connection";
+        final String wfTypeDisplayName = "Water Tap Connection";
         if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINITIATED)
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED)
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED))
-            return wfTypeDisplayNmae + "::" + "Closure Connection";
+            return  "Closure "+wfTypeDisplayName;
         else if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED)
                 || waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)
@@ -274,9 +276,15 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING)
                 || waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED))
-            return wfTypeDisplayNmae + "::" + "Reconnection";
-        else
-            return wfTypeDisplayNmae + "::" + waterConnectionDetails.getApplicationType().getName();
+            return "Reconnection "+wfTypeDisplayName;
+        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.NEWCONNECTION))
+            return "New "+wfTypeDisplayName;
+        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.ADDNLCONNECTION))
+            return "Additional "+wfTypeDisplayName;
+        else if (waterConnectionDetails.getApplicationType().getCode().equals(WaterTaxConstants.CHANGEOFUSE))
+            return "Change Of Usage "+wfTypeDisplayName;
+        else 
+            return waterConnectionDetails.getApplicationType().getName()+" "+wfTypeDisplayName;
     }
 
 }

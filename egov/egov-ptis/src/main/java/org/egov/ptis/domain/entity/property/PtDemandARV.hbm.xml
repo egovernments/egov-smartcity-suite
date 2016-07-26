@@ -46,8 +46,8 @@
 	<class name="org.egov.ptis.domain.entity.property.PtDemandARV" table="EGPT_PTDEMAND_ARV">
 		<id
 			name="id" column="ID" type="int">
-			<generator class="sequence">
-					<param name="sequence">SEQ_DEMANDARV</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+					<param name="sequence_name">SEQ_DEMANDARV</param>
 			</generator>
 		</id>
 		<timestamp

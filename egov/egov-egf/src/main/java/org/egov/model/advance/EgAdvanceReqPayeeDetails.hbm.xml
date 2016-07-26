@@ -48,8 +48,8 @@
     <class name="org.egov.model.advance.EgAdvanceReqPayeeDetails" table="EG_ADVANCEREQPAYEEDETAILS">
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
-           <generator class="sequence">
-           <param name="sequence">SEQ_EG_ADVANCEREQPAYEEDETAILS</param></generator>
+           <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+           <param name="sequence_name">SEQ_EG_ADVANCEREQPAYEEDETAILS</param></generator>
         </id>
             <timestamp
 			column="LASTUPDATEDTIME"

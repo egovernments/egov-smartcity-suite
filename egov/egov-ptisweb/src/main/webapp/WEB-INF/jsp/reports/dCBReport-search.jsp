@@ -102,8 +102,11 @@
 					</div>
 				</div>
 			</div>
-
+			<br />
 			<div class="row display-hide report-section">
+				<s:text name="reports.note.text" />
+				<br />
+				<input type="hidden" value="${sessionScope.citymunicipalityname}, ${sessionScope.districtName} District" id="pdfTitle"/>
 				<div class="col-md-12 table-header text-left">DCB Drill Down Report Details</div>
 				<div class="col-md-12 form-group report-table-container">
 					<table class="table table-bordered table-hover multiheadertbl" id="tbldcbdrilldown">
@@ -112,6 +115,7 @@
                              <th rowspan="2">Name</th>
                              <th rowspan="2">Door No</th>
 							 <th rowspan="2">Owner Name</th>
+							 <th rowspan="2">Assessment Count</th>
                              <th colspan="7">Demand</th>
                              <th colspan="7">Collection</th>
                              <th colspan="5">Balance</th>
@@ -187,6 +191,7 @@
 								<td></td>
 								<td></td>
 								<td></td>
+								<td></td>
 							<!-- 	<td></td>
 								<td></td>
 								<td></td>
@@ -202,7 +207,6 @@
 			</div>
 		</div>
 	</div>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/entypo/css/entypo.css' context='/egi'/>">
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>

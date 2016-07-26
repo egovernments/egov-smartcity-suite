@@ -39,12 +39,16 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
-	
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="true">
+
+	<context:component-scan base-package="org.egov.works.autonumber" />
+
     <bean id="AbstractEstimatePersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.works.models.estimate.AbstractEstimate" />
+        <property name="type" value="org.egov.works.abstractestimate.entity.AbstractEstimate" />
     </bean>
         
     <bean id="AbstractEstimateInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
@@ -64,14 +68,14 @@
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
     
-    <bean id="contractorService" class="org.egov.works.master.services.ContractorService">
+    <bean id="contractorService" class="org.egov.works.master.service.ContractorService">
 		<property name="type" value="org.egov.works.models.masters.Contractor"/>
 	</bean>
 	
 	<bean id="assetsForEstimateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
-			value="org.egov.works.models.estimate.AssetsForEstimate" />
+			value="org.egov.works.abstractestimate.entity.AssetsForEstimate" />
 	</bean>
 	
 	<bean id="projectCodeService" class="org.egov.works.services.ProjectCodeService">

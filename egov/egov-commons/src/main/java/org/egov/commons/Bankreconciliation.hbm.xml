@@ -45,8 +45,8 @@
     <class name="org.egov.commons.Bankreconciliation" table="BANKRECONCILIATION">
         <id name="id" type="integer">
 	    	<column name="ID" precision="22" scale="0" />
-	    	<generator class="native">
-	    		<param name="sequence">seq_bankreconciliation</param>
+	    	<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+	    		<param name="sequence_name">seq_bankreconciliation</param>
 	    	</generator>
         </id>
          <many-to-one name="bankaccount" class="org.egov.commons.Bankaccount" fetch="select">

@@ -45,13 +45,13 @@
 		<spring:message code="title.lineestimate.search" /></div>
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container" style="overflow:auto">
-		<table class="table table-bordered table-responsive table-hover multiheadertbl"
+	<div class="form-group report-table-container" >
+		<table class="table table-bordered table-responsive table-hover"
 			id="resultTable">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.ward" /></th>
+					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.location" /></th>
 					<th><spring:message code="lbl.typeofslum" /></th>
 					<th><spring:message code="lbl.beneficiaries" /></th>
@@ -70,6 +70,7 @@
 					<th><spring:message code="lbl.agreementnumber.date" /></th>
 					<th><spring:message code="lbl.contractorcode.name" /></th>
 					<th><spring:message code="lbl.agreement.amount" /></th>
+					<th><spring:message code="lbl.milestonePercentageCompleted" /></th>
 					<th><spring:message code="lbl.lastest.mb.number.date" /></th>
 					<th><spring:message code="lbl.lastest.bill.number.date" /></th>
 					<th><spring:message code="lbl.lastest.bill.type" /></th>

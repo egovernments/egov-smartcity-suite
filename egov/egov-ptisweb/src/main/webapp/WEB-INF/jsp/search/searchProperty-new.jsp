@@ -42,7 +42,6 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 	<head>
-		<%-- <sx:head /> --%>
 		<script type="text/javascript">
 			function onSubmit(obj,formId) {
 				var formObj = document.getElementById(formId);
@@ -87,11 +86,15 @@
                 	 }
                  });
              jQuery("#searchByowner").click(function(e) {
-		            if(jQuery("#locationId").val() == -1) {
-		           	  bootbox.alert("Please select location");
+		            if(jQuery("#locationId").val() == -1 && jQuery("#ownerName").val() == '') {
+		           	  bootbox.alert("Please select location and enter owner name");
 		           	  return false;
 		           	 }
-		            if(jQuery("#ownerName").val() == '') {
+		            else if(jQuery("#locationId").val() == -1) {
+		               	  bootbox.alert("Please select location");
+		               	  return false;
+		               	 }
+		            else if(jQuery("#ownerName").val() == '') {
 	               	  bootbox.alert("Please enter owner name");
 	               	  return false;
 	               	 }

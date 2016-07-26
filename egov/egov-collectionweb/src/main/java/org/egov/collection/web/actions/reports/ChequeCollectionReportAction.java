@@ -46,13 +46,13 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,7 +71,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     public Map<String, Object> critParams = new HashMap<String, Object>(0);
     private ReportService reportService;
     private CollectionsUtil collectionsUtil;
-    private Integer reportId = -1;
+    private String reportId;
 
     public static final String REPORT = "report";
     private static final String EGOV_COUNTER_OPERATOR_ID = "EGOV_COUNTER_OPERATOR_ID";
@@ -82,6 +82,8 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     private static final String EGOV_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     private static final String CHEQUE_COLLETION_TEMPLATE = "chequeCollectionReport";
     private String receiptDate;
+    @Autowired
+    private ReportViewerUtil reportViewerUtil;
 
     @Override
     public Object getModel() {
@@ -131,7 +133,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     /**
      * @return the reportId
      */
-    public Integer getReportId() {
+    public String getReportId() {
         return reportId;
     }
 
@@ -195,8 +197,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
         final ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
-        getSession().remove(ReportConstants.ATTRIB_EGOV_REPORT_OUTPUT_MAP);
-        reportId = ReportViewerUtil.addReportToSession(reportOutput, getSession());
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
 

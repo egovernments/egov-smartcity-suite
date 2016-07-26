@@ -93,7 +93,8 @@
 					<s:elseif
 						test="%{!isChequeNoGenerationAuto() && paymentMode=='cheque'}">
 						<th class="bluebgheadtdnew"><s:text
-								name="chq.assignment.instrument.serialno" /></th>
+								name="chq.assignment.instrument.serialno" /><span
+							class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew" width="10%"><s:text
 								name="chq.assignment.instrument.no" /><span class="mandatory1">*</span></th>
 						<th class="bluebgheadtdnew"><s:text
@@ -145,14 +146,14 @@
 							<td style="text-align: right" class="blueborderfortdnew"><s:select
 									name="chequeAssignmentList[%{#s.index}].serialNo"
 									id="chequeAssignmentList[%{#s.index}].serialNo"
-									list="chequeSlNoMap"
+									class="serialNo" list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
-									id="chequeNumber%{#s.index}"
+									size="6" maxlength="6" id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}"
-									onchange="validateReassignSurrenderChequeNumber(this)"
-									size="10" /></td>
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -167,13 +168,15 @@
 							<td style="text-align: right" class="blueborderfortdnew"><s:select
 									name="chequeAssignmentList[%{#s.index}].serialNo"
 									id="chequeAssignmentList[%{#s.index}].serialNo"
-									list="chequeSlNoMap"
+									class="serialNo" list="chequeSlNoMap"
 									value='%{chequeAssignmentList[%{#s.index}].serialNo}' /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:textfield
 									id="chequeNumber%{#s.index}"
 									name="chequeAssignmentList[%{#s.index}].chequeNumber"
 									value="%{chequeNumber}" onchange="validateChequeNumber(this)"
-									size="10" /></td>
+									size="6"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+									maxlength="6" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
 									name="chequeDate" var="tempChequeDate" format="dd/MM/yyyy" />
 								<s:textfield id="chequeDate%{#s.index}"
@@ -197,19 +200,21 @@
 							class="mandatory1">*</span> <s:select
 								name="vouchermis.departmentid" id="departmentid"
 								list="dropdownData.departmentList" listKey="id" listValue="name"
-								headerKey="-1" headerValue="----Choose----"
-								value="%{voucherHeader.vouchermis.departmentid.id}" /></td>
+								value="%{voucherHeader.vouchermis.departmentid.id}"
+								onChange="populateYearcode(this);" /></td>
 
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
 								class="mandatory1">*</span> <s:select name="serialNo"
-									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
+									id="serialNo" class="serialNo" list="chequeSlNoMap"
+									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
-									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
+									onchange="validateReassignSurrenderChequeNumber(this)"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
@@ -227,12 +232,14 @@
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.serialno" /><span
 								class="mandatory1">*</span> <s:select name="serialNo"
-									id="serialNo" list="chequeSlNoMap" value='%{serialNo}' /></td>
+									id="serialNo" class="serialNo" list="chequeSlNoMap"
+									value='%{serialNo}' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory1">*</span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
-									onchange="validateChequeNumber(this)" /></td>
+									onchange="validateChequeNumber(this)"
+									onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.date" /><span
 								class="mandatory1">*</span>(dd/mm/yyyy) <s:date name="chequeDt"
@@ -294,7 +301,7 @@
 				var result=true;
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					return false;
 				}
 				if(document.getElementById('selectedRows').value=='' || document.getElementById('selectedRows').value==0)
@@ -302,7 +309,16 @@
 					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
-				
+				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
+				for(var index=0;index<chequeSize;index++){
+					//console.log(document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value);
+				var srlNo=document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value;
+				if(srlNo=='')
+				{
+					bootbox.alert('Year code should not be empty');
+					return false;
+				}
+				}
 				<s:if test="%{paymentMode=='rtgs'}">
 					result= validateForRtgsMode();  
 				</s:if>    
@@ -313,7 +329,7 @@
 					 result=validateChequeDateForChequeMode();
 				</s:if> 
 				dom.get('departmentid').disabled=false;  
-				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action';
+				document.forms[0].action='${pageContext.request.contextPath}/payment/chequeAssignment-create.action?departmentId='+document.getElementById('departmentid').value;
 		    	document.forms[0].submit();
 				
 				return result;   
@@ -341,7 +357,6 @@
 				               
 				for(var index=0;index<chequeSize;index++){
 					var paymentDate= document.getElementsByName("chequeAssignmentList["+index+"].tempPaymentDate")[0].value; 
-					
 					if(document.getElementById('isSelected'+index).checked){
 					//bootbox.alert(document.getElementById('isSelected'+index).checked);
 					chkCount++;
@@ -381,7 +396,7 @@
 						//bootbox.alert(document.getElementById('isSelected'+index).checked);
 						if( compareDate(paymentDate,chequeDate) == -1){     
 						  //  bootbox.alert(paymentDate+"----"+chequeDate);      
-							bootbox.alert('Cheque Date cannot be less than than payment Date', function() {
+							bootbox.alert('Cheque Date cannot be less than payment Date', function() {
 								document.getElementById('chequeDt').value='';
 								document.getElementById('chequeDt').focus();
 								flag =  false;
@@ -406,7 +421,7 @@
 					if(document.getElementById('isSelected'+index).checked){
 						chkCount++;
 						if( compareDate(paymentDate,chequeDate) == -1){               
-							bootbox.alert('Cheque Date cannot be less than than payment Date');
+							bootbox.alert('Cheque Date cannot be less than payment Date');
 							document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].value='';
 							document.getElementsByName("chequeAssignmentList["+index+"].chequeDate")[0].focus();
 							return false;
@@ -460,7 +475,7 @@
 				
 				else if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					obj.value='';
 					return true;
 				}
@@ -501,7 +516,7 @@
 					
 				if(dom.get('departmentid') && dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value==-1)
 				{
-					bootbox.alert('Select Cheque Issued From');
+					bootbox.alert('Select Cheque Issued Department');
 					obj.value='';
 					return false;
 				}
@@ -575,6 +590,34 @@
 					document.getElementById('selectedRows').value=0;
 				}
 			}
+
+			function  populateYearcode(departmentid){
+				console.log('departmentid'+departmentid.value);
+				console.log('bankaccount'+document.getElementById('bankaccount').value);
+				jQuery.ajax({
+					url: "/EGF/voucher/common-ajaxYearCode.action?departmentId="+departmentid.value+"&bankaccount="+document.getElementById('bankaccount').value,
+					method: 'GET',
+				    async : false,
+				    
+					success: function(data)
+					   {
+						//console.log("inside success") ;  
+						jQuery('.serialNo').empty();
+						var output = '';
+						//console.log("inside data"+data+"---"+data.ResultSet+"---"+data.ResultSet.Result) ;  
+						for(i=0;i<data.ResultSet.Result.length;i++){
+							output = output+ '<option value=' + data.ResultSet.Result[i].Value + '>'
+							+ data.ResultSet.Result[i].Text+ '</option>';
+						  }
+						jQuery('.serialNo').append(output);  
+					   },
+					error: function(jqXHR, textStatus, errorThrown)
+					  {
+						console.log("inside Failure"+errorThrown) ;  
+					  }         
+				});
+
+		    }
 		</script>
 	<%-- 	<s:if test="%{isFieldMandatory('department')}">
 		<s:if

@@ -45,7 +45,7 @@ html body {
 }
 
 div.commontopyellowbg {
-	background-image: url(/egi/images/commonnewTopbg.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTopbg.jpg);
 	background-color: #ffad01;
 	background-position: right bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -62,7 +62,7 @@ div.commontopyellowbg {
 }
 
 div.commontopbluebg {
-	background-image: url(/egi/images/commonnewTop2bg.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTop2bg.jpg);
 	background-color: #486f9f;
 	background-position: right bottom;
 	font-family: Arial, Helvetica, sans-serif;
@@ -101,7 +101,7 @@ div.commontopbreadc {
 	display: block;
 	padding-right: 15px;
 	padding-left: 15px;
-	background-image: url(/egi/images/commonnewTopbc.jpg);
+	background-image: url(/ptis/resources/erp2/images/commonnewTopbc.jpg);
 	background-repeat: repeat;
 	background-position: center top;
 }

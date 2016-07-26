@@ -35,20 +35,204 @@
  	   or trademarks of eGovernments Foundation.
  
    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
---> 
-<%@ taglib prefix="s" uri="/struts-tags" %> 
-			  
-<html>  
-	<head>  
-		<title></title>  
-		<script>
+-->
+<%@ include file="/includes/taglibs.jsp"%>
+<html>
+<head>
+<title></title>
+<script>
+	function onChangeBankBranch(bankId) {
+		dom.get("bankAccountId").value = "-1";
+		populatebranchId({
+			bankId : bankId,
+		});
+	}
 
+	function onChangeBankAccount(branchId,serviceId) {
+		populatebankAccountId({
+			branchId : branchId,
+			serviceId : serviceId,
+		});
+	}
+	function populateService(serviceId) {
+		document.getElementById('serviceDetailsId').value = "-1"
+		populateserviceDetailsId({
+			serviceCatId : serviceId,
+		});
+	}
+
+	function validate(obj){
+		dom.get('error_area').innerHTML = '';
+		dom.get("error_area").style.display="none";
+		<s:if test="%{null != bankAccountServices && bankAccountServices.size() >0}">
+			if(dom.get('serviceAccountId').value == "") {
+				dom.get("error_area").innerHTML = '<s:text name="service.error.select" />';
+				dom.get("error_area").style.display="block";
+				return false;
+			}
+		</s:if>
+		document.forms[0].action=obj;
+		document.forms[0].submit;
+	}
 </script>
-	</head>  
+</head>
+<body>
+	<s:form name="serviceBankMappingForm" method="post" theme="simple">
+		<s:push value="model">
+			<div class="errorstyle" id="error_area" style="display: none;"></div>
 
-	<body>  
-	<s:form action="serviceTypeToBankAccountMapping.action" theme="simple" > 
-	  
-         </s:form>   
-	</body>  
+			<div class="formmainbox">
+				<div class="subheadnew">
+					<s:text name="service.master.bankmappping.view.header" />
+				</div>
+
+				<table width="100%" border="0" cellspacing="0" cellpadding="0"
+					style="max-width: 960px; margin: 0 auto;">
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text name="service.master.bankname" />
+							</td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="bankId" id="bankId"
+								cssClass="selectwk" list="dropdownData.bankNameList"
+								listKey="id" listValue="name" value="%{bankId}"
+								onchange="onChangeBankBranch(this.value)" /> <egov:ajaxdropdown
+								id="bankIdDropdown" fields="['Text','Value']"
+								dropdownId='branchId'
+								url='receipts/ajaxBankRemittance-bankBranchsByBankForReceiptPayments.action' /></td>
+						<td class="bluebox"><s:text name="service.master.branchName" />
+							</td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="branchId" id="branchId"
+								cssClass="selectwk" list="dropdownData.bankBranchList"
+								listKey="id" listValue="branchname" value="%{branchId}"
+								onChange="onChangeBankAccount(this.value,document.getElementById('serviceDetailsId').value)" /> <egov:ajaxdropdown
+								id="bankbranchIdDropDown" fields="['Text','Value']"
+								dropdownId='bankAccountId'
+								url='receipts/ajaxBankRemittance-bankAccountByBankBranch.action' /></td>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="service.master.accountnumber" /> </td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="bankAccountId"
+								id="bankAccountId" cssClass="selectwk" 
+								list="dropdownData.bankAccountIdList" listKey="id"
+								listValue="accountnumber" value="%{bankAccountId.id}" /></td>
+					</tr>
+					<tr>
+						<td class="bluebox">&nbsp;</td>
+						<td class="bluebox"><s:text
+								name="service.master.search.category" /></td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="serviceCategory"
+								id="serviceCategory" cssClass="selectwk"
+								list="dropdownData.serviceCategoryList" listKey="id"
+								listValue="name" value="%{serviceCategory}"
+								onChange="populateService(this.value);" /> <egov:ajaxdropdown
+								id="service" fields="['Text','Value']"
+								dropdownId="serviceDetailsId"
+								url="receipts/ajaxReceiptCreate-ajaxLoadServiceByCategory.action" /></td>
+						<td class="bluebox"><s:text name="service.master.servicetype" />
+							</td>
+						<td class="bluebox"><s:select headerKey="-1"
+								headerValue="----Choose----" name="serviceDetails"
+								id="serviceDetailsId" cssClass="selectwk"
+								list="dropdownData.serviceDetailsList" listKey="id"
+								listValue="name" value="%{serviceDetails.id}" /></td>
+					</tr>
+				</table>
+				<div align="left" class="mandatorycoll">
+					&nbsp;&nbsp;&nbsp;
+					<s:text name="common.mandatoryfields" />
+				</div>
+				<br />
+			</div>
+			<div class="buttonbottom">
+				<s:submit name="sumbit" cssClass="buttonsubmit" id="button32"
+					onclick="document.serviceBankMappingForm.action='serviceTypeToBankAccountMapping-search.action';"
+					value="View" />
+				<s:reset name="reset" cssClass="button" id="button" value="Reset" />
+				<input name="close" type="button" class="button" id="button"
+					onclick="window.close()" value="Close" />
+			</div>
+			<s:hidden id="serviceAccountId" name="serviceAccountId" />
+			<s:hidden id="sourcePage" name="sourcePage" value="modify" />
+			<div>
+				<s:if
+					test="%{null != bankAccountServices && bankAccountServices.size() >0}">
+					<div align="center">
+						<table width="100%" border="1">
+							<tr>
+								<th class="bluebgheadtd"><s:text
+										name="service.select.table.header" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.search.category" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.servicetype" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.bankname" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.branchName" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="billreceipt.accountdetails.description" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.accountnumber" /></th>
+								<th class="bluebgheadtd" style="text-align: left;"><s:text
+										name="service.master.bankmappping.glcode" /></th>
+							</tr>
+							<s:iterator var="p" value="%{bankAccountServices}" status="s">
+								<tr>
+									<td width="5%" class="bluebox"><input type="radio"
+										onclick='dom.get("serviceAccountId").value = <s:property value="id"/>'
+										name="radioButton1" /></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="serviceDetails.serviceCategory.name" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="serviceDetails.name" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="bankAccountId.bankbranch.bank.name" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="bankAccountId.bankbranch.branchname" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="bankAccountId.narration" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="bankAccountId.accountnumber" />
+										</div></td>
+									<td class="bluebox"><div align="left">
+											<s:property value="bankAccountId.chartofaccounts.glcode" />
+										</div></td>
+								</tr>
+							</s:iterator>
+						</table>
+						<s:submit type="submit" cssClass="buttonsubmit" id="button32"
+							value="Modify"
+							onclick="return validate('serviceTypeToBankAccountMapping-newform.action');" />
+						<input type="button" id="Close" value="Close"
+							onclick="javascript:window.close()" class="buttonsubmit" />
+					</div>
+				</s:if>
+				<s:else>
+					<s:if test="target=='searchresult'">
+					<table width="90%" border="0" align="center" cellpadding="0"
+						cellspacing="0" class="tablebottom">
+						<tr>
+							<div>&nbsp;</div>
+							<div class="subheadnew">
+								<s:text name="searchresult.norecord" />
+							</div>
+						</tr>
+					</table>
+					</s:if>
+				</s:else>
+			</div>
+		</s:push>
+	</s:form>
+</body>
 </html>

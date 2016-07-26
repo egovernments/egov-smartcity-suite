@@ -46,12 +46,12 @@
 		table="EGW_WORKORDER_ESTIMATE">
 		<id name="id" type="long">
 			<column name="ID" />
-			<generator class="sequence">
-				<param name="sequence">SEQ_WORKORDER_ESTIMATE</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_WORKORDER_ESTIMATE</param>
 			</generator>
 		</id>
 		<many-to-one name="workOrder" column="WORKORDER_ID" not-null="true" insert="false" update="false" fetch="select"/>
-		<many-to-one name="estimate" class="org.egov.works.models.estimate.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="join"/>
+		<many-to-one name="estimate" class="org.egov.works.abstractestimate.entity.AbstractEstimate" column="ABSTRACTESTIMATE_ID" not-null="true" fetch="join"/>
 		<property name="workCompletionDate" column="WORK_COMPLETION_DATE" />
 		<property name="estimateWOAmount" column="ESTIMATE_WO_AMOUNT" not-null="true" />	
 		
@@ -78,7 +78,7 @@
 		</list>
 		<set name="milestone" inverse="true" >
 			<key column="WORKORDER_ESTIMATE_ID" />
-			<one-to-many class="org.egov.works.models.milestone.Milestone"  />
+			<one-to-many class="org.egov.works.milestone.entity.Milestone"  />
 		</set>
 		<set name="contractorAdvanceRequisitions" inverse="true" >
 			<key column="WORKORDER_ESTIMATE_ID" />

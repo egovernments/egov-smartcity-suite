@@ -39,6 +39,22 @@
  */
 $(document).ready(function(){
 	
+	$('#applicationTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 4,
+			"orderable": false
+		} ]
+	});
+	
 	$('#statusdiv').hide();
 	var activeDiv = $('#reqAttr').val();
 	if (activeDiv =='false')
@@ -74,8 +90,7 @@ $(document).ready(function(){
 
 });
 
-
-function applicationValidation(){
+$('#buttonid').click(function() {
 	 if ($( "#applicationProcessTimeform" ).valid())
 		{
 		 $.ajax({
@@ -89,8 +104,7 @@ function applicationValidation(){
      success: function (response) {
 			console.log("success"+response);
 			if(response > 0){
-				var res = overwriteprocesstime(response)
-				if(res==false)
+				if(!overwriteprocesstime(response))
 				return false;
  			}
 			else{
@@ -102,38 +116,22 @@ function applicationValidation(){
 		}
 	});
 		}
-}
+});
 
 function overwriteprocesstime(res)
 {
-	var r=confirm("With entered combination,Processing time is present as "+res+ ",Do you want to overwrite it?")
-	if (r ==true){	
-
-		document.forms[0].submit();
-	}
-	else
-	{
-
-	    return false;
-	}
+	document.forms[0].submit();
+	
 }
-
-$('#listid').click(function() {
-	window.open("/wtms/masters/applicationProcessTime/list", "_self");
- });
 
 $('#addnewid').click(function() {
 	window.open("/wtms/masters/applicationProcessTime/", "_self");
 });
 
-function addNew()
-{
-	window.open("/wtms/masters/applicationProcessTime/", "_self");
-}
 
 function edit(applicationProcessTime)
 {
 	
-	window.open("/wtms/masters/applicationProcessTime/"+applicationProcessTime, "_self");
+	window.open("/wtms/masters/applicationProcessTime/edit/"+applicationProcessTime, "_self");
 	
 }

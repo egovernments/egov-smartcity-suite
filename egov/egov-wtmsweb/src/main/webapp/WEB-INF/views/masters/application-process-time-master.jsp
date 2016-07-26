@@ -89,16 +89,14 @@
 						</div>
 				</div>	
 			</div>
-			<input type="hidden" name="applicationProcessTime" value="${applicationProcessTime.id}" />
-				<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
-			
-			<div class="form-group text-center">
-				<button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
-				<button type="button" class="btn btn-primary" id="addnewid"><spring:message code="lbl.addnew" /></button> 
-				<button type="button" class="btn btn-primary" id="listid" ><spring:message code="lbl.list"/></button>
-				<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>
-				<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
-			</div>
+<input type="hidden" name="applicationProcessTime" value="${applicationProcessTime.id}" />
+<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
+<input type="hidden" value="${mode}" id="mode" />
+	<div class="form-group text-center">
+		<button type="button" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.save.button"/></button>
+		<button type="button" class="btn btn-default" value="Reset" id="resetid" ><spring:message code="lbl.reset"/></button>
+		<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+	</div>
 		
 	</div>
 	</div>

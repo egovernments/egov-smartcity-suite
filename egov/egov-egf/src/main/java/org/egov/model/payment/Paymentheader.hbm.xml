@@ -46,8 +46,8 @@
     <class name="org.egov.model.payment.Paymentheader" table="PAYMENTHEADER">        
         <id name="id" type="long">
             <column name="ID" precision="10" scale="0" />
-            <generator class="sequence">
-            <param name="sequence">SEQ_PAYMENTHEADER</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">SEQ_PAYMENTHEADER</param>
             </generator>
         </id>
         <many-to-one name="voucherheader" class="org.egov.commons.CVoucherHeader" fetch="select">

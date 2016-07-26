@@ -39,6 +39,10 @@
  */
 package org.egov.services.bills;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -59,15 +63,11 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,6 +81,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<EgBillregister> billRegisterWorkflowService;
     @Autowired
     @Qualifier("persistenceService")
@@ -102,8 +103,18 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     public EgBillregister createBill(EgBillregister bill, WorkflowBean workflowBean, List<CheckListHelper> checkListsTable) {
         try {
             applyAuditing(bill);
-            bill = transitionWorkFlow(bill, workflowBean);
-            applyAuditing(bill.getState());
+            if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && bill.getState() == null)
+            {
+                bill.setBillstatus("APPROVED");
+                EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
+                        FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
+                bill.setStatus(egwStatus);
+            }
+            else
+            {
+                bill = transitionWorkFlow(bill, workflowBean);
+                applyAuditing(bill.getState());
+            }
             persist(bill);
             bill.getEgBillregistermis().setSourcePath(
                     "/EGF/bill/contingentBill-beforeView.action?billRegisterId=" + bill.getId().toString());
@@ -180,6 +191,14 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
             }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+
+            final WorkFlowMatrix wfmatrix = billRegisterWorkflowService.getWfMatrix(billregister.getStateType(), null,
+                    null, null, billregister.getCurrentState().getValue(), null);
+            billregister.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                    .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
+                    .withOwner(pos)
+                    .withNextAction(wfmatrix.getNextAction());
+
             EgwStatus egwStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(FinancialConstants.CONTINGENCYBILL_FIN,
                     FinancialConstants.CONTINGENCYBILL_APPROVED_STATUS);
             billregister.setStatus(egwStatus);

@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -65,12 +66,16 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
 
     @Override
     public void executeJob() {
-        LOGGER.debug("Entered into executeJob" + modulo);
+        LOGGER.debug("Water tax Schedular Running in City:");
         super.prepareCityThreadLocal();
         final Long jobStartTime = System.currentTimeMillis();
+        Boolean schedularEnable=waterTaxUtils.getAppconfigValueForSchedulearEnabled();
         WaterConnectionBillService waterConnectionBillService = null;
         try {
             waterConnectionBillService = (WaterConnectionBillService) beanProvider
@@ -78,11 +83,12 @@ public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
         } catch (final NoSuchBeanDefinitionException e) {
             LOGGER.warn("waterConnectionBillService implementation not found");
         }
-        if (waterConnectionBillService != null)
-            waterConnectionBillService.bulkBillGeneration(modulo, billsCount);
-
+        if (waterConnectionBillService != null && (schedularEnable || schedularEnable== true)){
+            waterConnectionBillService.bulkBillGeneration(modulo, billsCount); 
+        }
         final Long timeTaken = System.currentTimeMillis() - jobStartTime;
         System.out.println("timeTaken for job= " + timeTaken);
+        LOGGER.debug("Water tax Schedular completed for City and time taked is :" + timeTaken +"==="+waterTaxUtils.getCityCode());
     }
 
     public Integer getBillsCount() {

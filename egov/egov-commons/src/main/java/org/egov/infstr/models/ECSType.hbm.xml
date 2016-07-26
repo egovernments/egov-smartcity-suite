@@ -52,8 +52,8 @@
 			column="ID"
 			type="long"
 			unsaved-value="null">
-			<generator class="native">
-				<param name="sequence">SEQ_EGF_ECSTYPE</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGF_ECSTYPE</param>
 			</generator>
 		</id>
 		<property name="type" column="type"  type="string"/>

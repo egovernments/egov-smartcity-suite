@@ -39,14 +39,57 @@
  */
 package org.egov.tl.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infstr.models.BaseModel;
+import org.egov.tl.entity.enums.RateTypeEnum;
 
-public class LicenseSubCategoryDetails extends BaseModel {
-    
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "egtl_subcategory_details")
+@SequenceGenerator(name = LicenseSubCategoryDetails.SEQUENCE, sequenceName = LicenseSubCategoryDetails.SEQUENCE, allocationSize = 1)
+public class LicenseSubCategoryDetails extends AbstractPersistable<Long> {
+
+    public static final String SEQUENCE = "SEQ_egtl_subcategory_details";
+    private static final long serialVersionUID = 5084451633368214374L;
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id")
     private LicenseSubCategory subCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "uom_id")
     private UnitOfMeasurement uom;
-    private RateTypeEnum rateType;
+
+    @ManyToOne
+    @JoinColumn(name = "feetype_id")
     private FeeType feeType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RATETYPE")
+    private RateTypeEnum rateType;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LicenseSubCategory getSubCategory() {
         return subCategory;
@@ -80,4 +123,23 @@ public class LicenseSubCategoryDetails extends BaseModel {
         this.feeType = feeType;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final LicenseSubCategoryDetails that = (LicenseSubCategoryDetails) o;
+
+        if (getSubCategory() != null ? !getSubCategory().equals(that.getSubCategory()) : that.getSubCategory() != null)
+            return false;
+        return getFeeType() != null ? getFeeType().equals(that.getFeeType()) : that.getFeeType() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getSubCategory() != null ? getSubCategory().hashCode() : 0;
+        result = 31 * result + (getFeeType() != null ? getFeeType().hashCode() : 0);
+        return result;
+    }
 }

@@ -48,6 +48,7 @@
 			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <input type="hidden" name="donationDetailsList" id="donationDetailsList" value="${donationDetailsList}"> 
 <input type="hidden" id="doantionheaderid" name="doantionheaderid" value="${waterConnectionDetails.connection.consumerCode}" />
+<input type="hidden" value="${mode}" id="mode" />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading"></div>
 			<div class="panel-body custom-form ">
@@ -59,36 +60,41 @@
 	<div class="form-group" align ="center"> No Master Data</div>
  </c:when>
  <c:otherwise>
-      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="donationMasterTbl">
                   <thead>
 					<tr>
 						<th colspan="1" >
-							<div align="center"><spring:message code="lbl.propertytype" /> </div>
+							<spring:message code="lbl.propertytype" />
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.category" /> </div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.category" /> </div>
 						</th>
-						<th colspan="1" >
-						   <div align="center"><spring:message code="lbl.usagetype" /></div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.usagetype" />
 						</th>
-						<th align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.hscpipesize.max.inches" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.hscpipesize.max.inches" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.hscpipesize.min.inches" /> </div>
+						<th colspan="1" class="text-center" >
+						   <spring:message code="lbl.hscpipesize.min.inches" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.donation.amount" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.donation.amount" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.effective.fromdate" /> </div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.effective.fromdate" />
 						</th>
-						<th  align="center" colspan="1" >
-						   <div align="center"><spring:message code="lbl.status"/></div>
+						<th  colspan="1" class="text-center">
+						   <spring:message code="lbl.effective.todate" />
 						</th>
-						<th colspan="1" >
-						    <div align="center"><spring:message code="lbl.edit" /></div>
+						<th colspan="1" class="text-center">
+						   <spring:message code="lbl.status"/>
 						</th>
+						<c:if test="${mode == 'edit'}"> 
+						<th colspan="1" class="text-center">
+						    <spring:message code="lbl.edit" />
+						</th>
+						</c:if>
 					</tr>
 					</thead>
 					<c:forEach var="donationDetails" items="${donationDetailsList}" >
@@ -119,6 +125,11 @@
 							<td colspan="1" >
 								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.fromDate}"/></div>
 							</td>
+							
+							<td colspan="1" >
+								<div align="center"><fmt:formatDate pattern="dd-MM-yyyy" value="${donationDetails.toDate}"/></div>
+							</td>
+							
 							<td colspan="1" >
 								<div align="center">
 								<c:choose>
@@ -131,18 +142,19 @@
 								</c:choose>
 								</div>
 							</td>
+							<c:if test="${mode == 'edit'}"> 
 							<td  colspan="1">
 								<div align="center">
 								  <a href="javascript:void(0);" onclick="edit('<c:out value="${donationDetails.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:if>
 						</tr>
 				</c:forEach> 	
 		</table>
 	</c:otherwise>
 </c:choose>
      <div class="form-group text-center" >
-			<a onclick="addNew()" class="btn btn-primary" href="javascript:void(0)">Add New</a>
 			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 	</div>
   </div>

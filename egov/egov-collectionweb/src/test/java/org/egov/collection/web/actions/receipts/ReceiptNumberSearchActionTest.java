@@ -56,7 +56,6 @@ public class ReceiptNumberSearchActionTest { /*extends AbstractPersistenceServic
 		action = new ReceiptNumberSearchAction();
 		receiptService = new ReceiptHeaderService();
 		receiptService.setType(ReceiptHeader.class);
-		receiptService.setSessionFactory(egovSessionFactory);
 		action.setReceiptHeaderService(receiptService);
 		objectFactory = new CollectionObjectFactory(session);
 	}

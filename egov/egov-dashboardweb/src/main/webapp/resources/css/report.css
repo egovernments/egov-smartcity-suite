@@ -1,0 +1,84 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2015>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+ 
+ li.report-li{
+	padding: 5px 0;
+}
+.panel-body {
+    position: relative;
+}
+.panel-body span.more{
+	position:absolute;
+    right: 10px;
+ 			top: -28px;
+	font-size: 10px;
+}
+.panel-body span.more a{
+	text-decoration: underline;
+}
+.search-ul{
+	position: absolute;
+	display:none;
+    z-index: 10;
+    width: 93%;
+    padding: 10px 0;
+    list-style-type: none;
+	overflow: auto;
+    text-align: left;
+    background: #fff;
+    border-radius:4px;
+	border: 1px solid #ccc;
+	-webkit-box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.75);
+}
+.search-ul li{
+	padding:5px;
+}
+.search-ul li a{
+	display:block;
+	overflow:auto;
+	color:#333;
+	padding:0 5px;
+}
+.lock i{
+	color:red;
+	vertical-align:super;
+}

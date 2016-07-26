@@ -46,7 +46,7 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.works.models.estimate.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.models.tender.TenderResponse;
 import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.AbstractEstimateService;

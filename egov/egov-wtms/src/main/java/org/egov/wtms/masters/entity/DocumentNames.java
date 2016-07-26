@@ -39,11 +39,6 @@
  */
 package org.egov.wtms.masters.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,11 +50,21 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egwtr_document_names")
 @CompositeUnique(fields = { "applicationType",
         "documentName" }, enableDfltMsg = true, message = "{documentnames.validity.exist}")
 @SequenceGenerator(name = DocumentNames.SEQ_DOCUMENTNAMES, sequenceName = DocumentNames.SEQ_DOCUMENTNAMES, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class DocumentNames extends AbstractAuditable {
 
     private static final long serialVersionUID = 479666869570332343L;
@@ -72,16 +77,19 @@ public class DocumentNames extends AbstractAuditable {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "applicationtype", nullable = false)
+    @Audited
     private ApplicationType applicationType;
 
     @NotNull
     @SafeHtml
     @Length(min = 3, max = 100)
+    @Audited
     private String documentName;
 
     @SafeHtml
     private String description;
 
+    @Audited
     private boolean required;
 
     private boolean active;

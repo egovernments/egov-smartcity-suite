@@ -43,23 +43,25 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.PropertyReceipt" table="EGPT_PROPERTY_RECEIPTS">
+	<class name="org.egov.ptis.domain.entity.property.PropertyReceipt"
+		table="EGPT_PROPERTY_RECEIPTS">
 		<id name="id" column="ID" type="java.lang.Long">
-			<generator class="sequence">
-				<param name="sequence">SEQ_EGPTPROPERTY_RECEIPTS</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_EGPT_PROPERTY_RECEIPTS</param>
 			</generator>
 		</id>
 		<many-to-one name="basicProperty"
-			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl" column="ID_BASIC_PROPERTY"
-			insert="false" update="false" />
-		
-		<property name="bookNumber" column="BOOKNUMBER" type="string"/>
-		<property name="receiptNumber" column="RCPT_NUMBER" type="string"/>
-		<property name="receiptDate" column="RCPT_DATE" type="java.util.Date"/>
-		<property name="fromDate" column="FROM_DATE" type="java.util.Date"/>
-		<property name="toDate" column="TO_DATE" type="java.util.Date"/>
+			class="org.egov.ptis.domain.entity.property.BasicPropertyImpl"
+			column="ID_BASIC_PROPERTY" />
+
+		<property name="bookNumber" column="BOOKNUMBER" type="string" />
+		<property name="receiptNumber" column="RCPT_NUMBER" type="string" />
+		<property name="receiptDate" column="RCPT_DATE" type="java.util.Date" />
+		<property name="fromDate" column="FROM_DATE" type="java.util.Date" />
+		<property name="toDate" column="TO_DATE" type="java.util.Date" />
 		<property name="receiptAmount" column="RCPT_AMOUNT" />
-		
- 	</class>
-	
+		<property name="source" column="source" type="java.lang.Character" />
+		<property name="remarks" column="remarks" type="string" />
+	</class>
+
 </hibernate-mapping>

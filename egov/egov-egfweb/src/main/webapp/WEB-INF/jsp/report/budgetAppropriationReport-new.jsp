@@ -208,7 +208,7 @@ th.bluebgheadtd {
 							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="bluebox" width="8%"><s:text name="report.todate" /><span
 						class="mandatory1">*</span></td>
-					<td class="bluebox"><s:date name="toDate" id="toDateId"
+					<td class="bluebox"><s:date name="toDate" var="toDateId"
 							format="dd/MM/yyyy" /> <s:textfield id="toDate"
 							name="budgetAppropriationReport.toDate" value="%{toDateId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

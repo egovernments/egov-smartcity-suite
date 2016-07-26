@@ -46,8 +46,8 @@
     <class name="org.egov.model.bills.EgSalaryCodes" table="EG_SALARYCODES" >
         <id name="id" type="long">
             <column name="ID" precision="22" scale="0" />
-            <generator class="native">
-            <param name="sequence">seq_eg_salarycodes</param>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+            <param name="sequence_name">seq_eg_salarycodes</param>
             </generator>
         </id>
 		<property column="LASTMODIFIEDDATE" name="modifiedDate" type="timestamp"/>

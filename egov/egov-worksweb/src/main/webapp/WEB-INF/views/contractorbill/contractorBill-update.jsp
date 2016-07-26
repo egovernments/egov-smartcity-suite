@@ -45,12 +45,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="" method="post" enctype="multipart/form-data">
-			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' "> 
+			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>'> 
 			<form:hidden path="workOrder.id"  name="workOrder" id="workOrderId" value="${workOrder.id}" />
 			<input type="hidden" id="id" value="${contractorBillRegister.id }" /> 
 			<input type="hidden" name="mode" id="mode" value="${mode }" />
-			<div class="row">
-				<div class="col-md-12"> 
 					<div class="panel panel-primary" data-collapsed="0">
 						
 						<div class="panel-heading">
@@ -83,20 +81,13 @@
 						<c:if test="${!contractorBillRegister.documentDetails.isEmpty()}">
 							<jsp:include page="uploadDocuments.jsp"/>
 						</c:if>
-						<c:if test="${mode == 'readOnly'}">
-						<div class="row">
-							<div class="col-sm-12 text-center">
-								<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
-								<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
-								<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
-								</c:if>
-							</div>
-						</div>
-						</c:if>
 						</div>
 					</div>
+			<c:if test="${contractorBillRegister.cancellationReason != null}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<jsp:include page="contractorBillCancel-view.jsp"></jsp:include>
 				</div>
-			</div>	
+			</c:if>
 			<c:if test="${!workflowHistory.isEmpty() && mode != 'readOnly'}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
@@ -112,6 +103,16 @@
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
+			</c:if>
+			<c:if test="${mode == 'readOnly'}">
+				<div class="row">
+					<div class="col-sm-12 text-center">
+						<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
+						<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
+						<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
+						</c:if>
+					</div>
+				</div>
 			</c:if>
 		</form:form>  
 	

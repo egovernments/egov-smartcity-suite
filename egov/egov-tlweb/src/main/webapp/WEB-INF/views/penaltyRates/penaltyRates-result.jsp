@@ -56,10 +56,10 @@
       <c:forEach items="${penaltyForm.penaltyRatesList}" var="penaltyRatesList" varStatus="vs">
       <tr id="resultrow${vs.index}">
         <td><input type="hidden"  name="penaltyRatesList[${vs.index}]" id="penaltyId" value="${penaltyRatesList.id}" />
-        <input type="text"  name="penaltyRatesList[${vs.index}].fromRange"  id="fromRange" value="${penaltyRatesList.fromRange}" class="form-control text-right"
-            pattern="-?\d*" maxlength="8" readonly="readonly" /></td>
-        <td><input type="text"  name="penaltyRatesList[${vs.index}].toRange" id="toRange" value="${penaltyRatesList.toRange}" class="form-control text-right"
-           pattern="-?\d*" maxlength="8" onchange="return checkValue(this);" /></td>
+        <input type="text"  name="penaltyRatesList[${vs.index}].fromRange"  id="fromRange" value="${penaltyRatesList.fromRange}" class="form-control fromRange text-right patternvalidation"
+            pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" readonly="readonly" /></td>
+        <td><input type="text"  name="penaltyRatesList[${vs.index}].toRange" id="toRange" value="${penaltyRatesList.toRange}" class="form-control text-right patternvalidation"
+           pattern="-?\d*" data-pattern="numerichyphen" maxlength="8" onchange="return checkValue(this);" /></td>
         <td><input type="text"  name="penaltyRatesList[${vs.index}].rate" id="rate" value="${penaltyRatesList.rate}"  class="form-control text-right patternvalidation"
             data-pattern="number" maxlength="8"  /></td>
         <td><button type="button" id="del-row" class="btn btn-primary" onclick="deleteThisRow(this)"><spring:message code="lbl.delete"/></button></td>
@@ -71,10 +71,10 @@
        <tbody>
        <tr id="resultrow0">
        <td><input type="hidden"  name="penaltyRatesList[0].id" id="penaltyId"/>
-        <input type="text"  name="penaltyRatesList[0].fromRange"  id="fromRange" value="0" class="form-control text-right " 
-           pattern="-?\d*" /></td>
-        <td><input type="text"  name="penaltyRatesList[0].toRange" id="toRange" class="form-control text-right "
-            pattern="-?\d*" onchange="return checkValue(this);"/></td>
+        <input type="text"  name="penaltyRatesList[0].fromRange"  id="fromRange" value="0" class="form-control text-right patternvalidation" 
+           pattern="-?\d*" data-pattern="numerichyphen"/></td>
+        <td><input type="text"  name="penaltyRatesList[0].toRange" id="toRange" class="form-control text-right patternvalidation"
+            pattern="-?\d*" data-pattern="numerichyphen" onchange="return checkValue(this);"/></td>
         <td><input type="text"  name="penaltyRatesList[0].rate" id="rate"   class="form-control text-right patternvalidation"
             data-pattern="number"  /></td>
          <td><span class="add-padding">

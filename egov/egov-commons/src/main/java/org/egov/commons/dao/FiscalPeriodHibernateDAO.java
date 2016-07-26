@@ -43,14 +43,16 @@ import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+@Repository
 public class FiscalPeriodHibernateDAO   implements FiscalPeriodDAO {
     @Transactional
     public CFiscalPeriod update(final CFiscalPeriod entity) {

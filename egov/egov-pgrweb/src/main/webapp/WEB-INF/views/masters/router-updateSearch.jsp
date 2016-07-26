@@ -92,8 +92,7 @@
 						</div>
 	                 </div>
 					<%-- <div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><small><i
-							class="entypo-star error-msg"></i></small></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
 						<div class="col-sm-6">
 							<form:input id="com_position" path="position.name" type="text" 
 							class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />

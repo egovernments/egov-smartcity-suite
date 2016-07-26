@@ -39,9 +39,12 @@
  */
 package org.egov.wtms.application.service;
 
+import java.text.ParseException;
+import java.util.List;
+
 import org.apache.log4j.Logger;
-import org.egov.demand.model.EgBill;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -49,9 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.ParseException;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,12 +67,17 @@ public class GenerateConnectionBillService {
             final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
-                + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
-                + " dcbinfo.connectiontype as  \"connectionType\" from egwtr_mv_dcb_view dcbinfo"
-                + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on"
-                + " dcbinfo.locality = localboundary.id  INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+        queryStr.append(
+                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
+                        + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
+                        + " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_dcb_view dcbinfo"
+                        + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"
+                        + " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand"
+                        + " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
+        queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
+        queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");
+        queryStr.append(" and bill.is_cancelled ='N' ");
         if (ward != null && !ward.isEmpty())
             queryStr.append(" and wardboundary.name = " + "'" + ward + "'");
         if (zone != null && !zone.isEmpty())
@@ -103,38 +108,17 @@ public class GenerateConnectionBillService {
         return generateConnectionBillList;
     }
 
-    public List<GenerateConnectionBill> getBillData(final List<GenerateConnectionBill> generateConnectionBillList) {
-
-        for (final GenerateConnectionBill connectionbill : generateConnectionBillList) {
-            final EgBill egbill = getBIll(connectionbill.getHscNo());
-            if (egbill != null) {
-                connectionbill.setBillNo(egbill.getBillNo());
-                connectionbill.setBillDate(egbill.getIssueDate().toString());
-            }
-        }
-        return generateConnectionBillList;
-    }
-
-    public EgBill getBIll(final String consumerCode) {
-        final String query = " select bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
-                + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails and bill.egDemand=conndem.demand and connDet.connectionType='NON_METERED' and "
-                + " bill.egDemand=conndem.demand and demd.isHistory = 'N' and "
-                + "connDet.connectionStatus='ACTIVE' and connDet.status=status.id and status.moduletype='WATERTAXAPPLICATION' and status.code='SANCTIONED' "
-                + "and conn.consumerCode = ? ";
-        final EgBill egBill = (EgBill) entityQueryService.find(query, consumerCode);
-        return egBill;
-    }
-
     public List<Long> getDocuments(final String consumerCode, final String applicationType) {
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
-                + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
-                + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and "
-                + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
-                + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
-                + " ");
+        queryStr.append(
+                "select filestore.filestoreid from eg_filestoremap filestore,egwtr_documents conndoc,egwtr_application_documents appD,egwtr_connectiondetails conndet,egwtr_connection  "
+                        + "conn , egwtr_demand_connection demcon ,eg_demand dem,eg_bill bill, eg_bill_type billtype"
+                        + ",egwtr_document_names docName where filestore.id=conndoc.filestoreid and conndet.connection=conn.id and conndet.id=appD.connectiondetailsid and appD.documentnamesid=docName.id and "
+                        + " bill.id_demand =demcon.demand and billtype.id = bill.id_bill_type and conndoc.applicationdocumentsid=appD.id  "
+                        + " and  demcon.connectiondetails=conndet.id and demcon.demand = dem.id and appD.documentnumber=bill.bill_no  and billtype.code='MANUAL' and dem.is_history ='N' and  docName.documentname='DemandBill' "
+                        + " ");
         queryStr.append(" and conn.consumercode=  " + "'" + consumerCode + "'");
-        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where code = '"
+        queryStr.append(" and docName.applicationtype in(select id from egwtr_application_type where name = '"
                 + applicationType + "' )");
 
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());

@@ -99,7 +99,7 @@ function roundTo(value,decimals,decimal_padding){
 
 function createDeleteImageFormatter(baseURL){
 	var deleteImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/images/removerow.gif";
+	    var imageURL="/egi/resources/erp2/images/removerow.gif";
 	    markup='<p align="center"><img height="16" border="0" width="16" alt="Delete" src="'+imageURL+'"/></p>';
 	    el.innerHTML = markup;
 	}
@@ -108,7 +108,7 @@ function createDeleteImageFormatter(baseURL){
 
 function createAddImageFormatter(baseURL){
 	var addImageFormatter = function(el, oRecord, oColumn, oData) {
-	    var imageURL="/egi/images/addrow.gif";
+	    var imageURL="/egi/resources/erp2/images/addrow.gif";
 	    markup='<p align="center"><img height="16" border="0" width="16" alt="Add" src="'+imageURL+'"/></p>'
 	    el.innerHTML = markup;
 	}
@@ -262,6 +262,29 @@ function validateNotFutureDate(inputDate,currDate){
 		return false;
 	}
 	return true;
+}
+
+
+function validatedays(chqDate,receiptDate)
+{
+	var cd = process(chqDate);
+	var rd = process(receiptDate);
+	   
+	var timeDiff = Math.abs(cd.getTime()- rd.getTime());
+	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+	if(diffDays>90)
+		{
+		return false;
+		}
+	return true;
+
+}
+
+
+function process(date){
+   var parts = date.split("/");
+   var date = new Date(parts[1] + "/" + parts[0] + "/" + parts[2]);
+   return date;
 }
 
 function validateChequeDate(chqDate,currDate){

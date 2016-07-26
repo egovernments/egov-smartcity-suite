@@ -60,7 +60,6 @@ jQuery(document)
 					});
 
 					$('#complaintTypeReportSearch').click(function(e) {
-						console.log('calling inside ajax');
 						callajaxdatatableForCompTypeReport();
 						
 						$('#compTypeReport-table_wrapper').show();
@@ -68,7 +67,6 @@ jQuery(document)
 					});
 
 					function callajaxdatatableForCompTypeReport() {
-						console.log('calling inside ajaxssssss');
 						var startDate = "";
 						var endDate = "";
 						var complTyp = "";
@@ -94,7 +92,7 @@ jQuery(document)
 						compTypereportContainer
 								.dataTable({
 									ajax : {
-										url : "/pgr/report/complaintTypeReport/resultList-update",
+										url : "complaintTypeReport/resultList-update",
 										data : {
 											fromDate : startDate,
 											toDate : endDate,
@@ -124,7 +122,7 @@ jQuery(document)
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Registered\');" data-hiddenele="boundary" data-eleval="'+ data.registered + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.registered + '</a>';
 												},
-												"sTitle" : "Registered"
+												"sTitle" : "Registered","sClass" : "text-right"
 
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
@@ -132,21 +130,21 @@ jQuery(document)
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Inprocess\');" data-hiddenele="boundary" data-eleval="'+ data.inprocess + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.inprocess + '</a>';
 												},
-												"sTitle" : "Inprocess"
+												"sTitle" : "Inprocess","sClass" : "text-right"
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Completed\');" data-hiddenele="boundary" data-eleval="'+ data.completed + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.completed + '</a>';
 												},
-												"sTitle" : "Disposed"
+												"sTitle" : "Disposed","sClass" : "text-right"
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Rejected\');" data-hiddenele="boundary" data-eleval="'+ data.rejected + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.rejected + '</a>';
 												},
-												"sTitle" : "Rejected"
+												"sTitle" : "Rejected","sClass" : "text-right"
 
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
@@ -154,7 +152,7 @@ jQuery(document)
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Rejected\');" data-hiddenele="boundary" data-eleval="'+ data.reopened + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.reopened + '</a>';
 												},
-												"sTitle" : "Reopened"
+												"sTitle" : "Reopened","sClass" : "text-right"
 
 											}, {
 												"mData" : getComplaintTypeIdWithDatakey,
@@ -162,17 +160,17 @@ jQuery(document)
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Within SLA\');" data-hiddenele="boundary" data-eleval="'+ data.withinsla + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.withinsla + '</a>';
 												},
-												"sTitle" : "Within SLA"
+												"sTitle" : "Within SLA","sClass" : "text-right"
 											},{
 												"mData" : getComplaintTypeIdWithDatakey,
 												"render" : function(data, type,row) {
 													return '<a href="javascript:void(0);" onclick="setHiddenValueByLink(this,\'Beyond SLA\');" data-hiddenele="boundary" data-eleval="'+ data.beyondsla + '" data-complaintname="'+ data.complaintTyeId + '">'
 															+ data.beyondsla + '</a>';
 												},
-												"sTitle" : "Beyond SLA"
+												"sTitle" : "Beyond SLA","sClass" : "text-right"
 											},{
 												"data" : "total",
-												"sTitle" : "Total"
+												"sTitle" : "Total","sClass" : "text-right"
 
 											} ],
 									"footerCallback" : function(row, data,
@@ -207,7 +205,6 @@ jQuery(document)
 					
 					function getComplaintTypeIdWithDatakey(row, type, set, meta)
 					{
-						//console.log(row);
 						var data;
 						if(meta!=undefined)
 						 {	
@@ -238,7 +235,7 @@ jQuery(document)
 								},
 								queryTokenizer : Bloodhound.tokenizers.whitespace,
 								remote : {
-									url : '/pgr/complaint/pgrreport/complaintTypes?complaintTypeName=%QUERY',
+									url : '/pgr/public/complaint/complaintTypes?complaintTypeName=%QUERY',
 									filter : function(data) {
 										// Map the remote source JSON array to a
 										// JavaScript object array
@@ -269,7 +266,6 @@ jQuery(document)
 
 
 function callAjaxByComplaintDetail() {
-	console.log('calling inside callAjaxByComplaintDetail');
 	var startDate = "";
 	var endDate = "";
 	var complTyp = "";
@@ -294,7 +290,7 @@ function callAjaxByComplaintDetail() {
 	compreportContainer
 			.dataTable({
 				ajax : {
-					url : "/pgr/report/complaintTypeReport/resultList-update",
+					url : "complaintTypeReport/resultList-update",
 					data : {
 						fromDate : startDate,
 						toDate : endDate,
@@ -318,7 +314,7 @@ function callAjaxByComplaintDetail() {
 							"data" : "crn",
 							"sTitle" : "Complaint Number",
 							"render" : function(data, type, row) {
-								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/view/'
+								return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/public/complaint/view/'
 										+ data
 										+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
 										+ data + '">' + data + '</a>';
@@ -361,8 +357,6 @@ function updateTotalFooter(colidx, api, key) {
 	total = api.column(colidx).data().reduce(function(a, b) {
 		var a1 = (a !== null && typeof a === 'object'? a[key]:a);
 		var b1 = (b !== null && typeof b === 'object'? b[key]:b);
-		console.log('a1 ->'+ a1);
-		console.log('b1 ->'+ b1);
 		return intVal(a1) + intVal(b1);
 	});
 	
@@ -376,7 +370,6 @@ function updateTotalFooter(colidx, api, key) {
 	pageTotal = api.column(colidx, {
 		page : 'current'
 	}).data().reduce(function(a, b) {
-		//console.log(a +' + '+ b);
 		var a1 = (a !== null && typeof a === 'object'? a[key]:a);
 		var b1 = (b !== null && typeof b === 'object'? b[key]:b);
 		return intVal(a1) + intVal(b1);

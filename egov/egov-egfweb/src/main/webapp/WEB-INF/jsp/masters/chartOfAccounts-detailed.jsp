@@ -79,9 +79,9 @@
 			var transaction = YAHOO.util.Connect.asyncRequest('GET', 'chartOfAccounts-ajaxNextGlCode.action?parentGlcode='+value.split("-")[0], callback, null);
 			document.getElementById('glCode').readOnly = true
 			}
-			else {
+			/* else {
 			bootbox.alert("Invalid Parent Account Code selected. Please select from auto complete");
-			}
+			} */
 		}
 	</script>
 </head>

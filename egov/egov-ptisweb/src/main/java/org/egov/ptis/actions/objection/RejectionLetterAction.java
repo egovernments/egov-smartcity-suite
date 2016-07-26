@@ -54,6 +54,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -75,8 +76,11 @@ public class RejectionLetterAction extends BaseFormAction {
 	private PersistenceService<RevisionPetition, Long> objectionService;
 	protected ReportService reportService;
 	public static final SimpleDateFormat DDMMYYYYFORMATS = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-	private Integer reportId = -1;
+	private String reportId;
 	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+
+	@Autowired
+	private ReportViewerUtil reportViewerUtil;
 
 	@Override
 	public Object getModel() {
@@ -117,8 +121,8 @@ public class RejectionLetterAction extends BaseFormAction {
 		return paramMap;
 	}
 
-	protected Integer addingReportToSession(ReportOutput reportOutput) {
-		return ReportViewerUtil.addReportToSession(reportOutput, getSession());
+	protected String addingReportToSession(ReportOutput reportOutput) {
+		return reportViewerUtil.addReportToTempCache(reportOutput);
 	}
 
 	public RevisionPetition getObjection() {
@@ -137,12 +141,8 @@ public class RejectionLetterAction extends BaseFormAction {
 		this.reportService = reportService;
 	}
 
-	public Integer getReportId() {
+	public String getReportId() {
 		return reportId;
-	}
-
-	public void setReportId(Integer reportId) {
-		this.reportId = reportId;
 	}
 
 	public void setPropertyTaxNumberGenerator(PropertyTaxNumberGenerator propertyTaxNumberGenerator) {

@@ -40,9 +40,19 @@
 
 package org.egov.tl.web.actions.search;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -60,21 +70,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-
-/**
- * The Class TradeSearchAction.
- */
 @ParentPackage("egov")
 @Validations
 @Results({ @Result(name = NEW, location = "searchTrade-new.jsp") })
@@ -91,7 +90,7 @@ public class SearchTradeAction extends BaseFormAction {
     private String tradeOwnerName;
     private String propertyAssessmentNo;
     private String mobileNo;
-
+    private Boolean isCancelled;
     @Autowired
     private SecurityUtils securityUtils;
 
@@ -125,9 +124,9 @@ public class SearchTradeAction extends BaseFormAction {
     public void search() throws IOException {
         List<SearchForm> resultList = new ArrayList<SearchForm>();
         String result = null;
-        List<TradeLicense> licenses = tradeLicenseService
+        final List<TradeLicense> licenses = tradeLicenseService
                 .searchTradeLicense(applicationNumber, licenseNumber, oldLicenseNumber, categoryId, subCategoryId,
-                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo);
+                        tradeTitle, tradeOwnerName, propertyAssessmentNo, mobileNo, isCancelled);
         resultList = prepareOutput(licenses);
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
@@ -167,17 +166,18 @@ public class SearchTradeAction extends BaseFormAction {
             searchFormInfo.setSubCategoryName(license.getTradeName().getName());
             searchFormInfo.setTradeTitle(license.getNameOfEstablishment());
             searchFormInfo.setTradeOwnerName(license.getLicensee().getApplicantName());
-            searchFormInfo.setPropertyAssessmentNo(license.getPropertyNo());
             searchFormInfo.setMobileNo(license.getLicensee().getMobilePhoneNumber());
+            searchFormInfo.setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
             licenseActions = new ArrayList<String>();
             licenseActions.add("View Trade");
-            //FIXME EgwStatus usage should be removed from here
+            // FIXME EgwStatus usage should be removed from here
             if (license.getEgwStatus() != null) {
-                if ((roleName.contains(Constants.ROLE_BILLCOLLECTOR)) && !license.isPaid() && !license.isStateRejected()
-                         && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
+                if (roleName.contains(Constants.ROLE_BILLCOLLECTOR) && !license.isPaid() && !license.isStateRejected()
+                        && license.getEgwStatus().getCode().equalsIgnoreCase(Constants.APPLICATION_STATUS_COLLECTION_CODE))
                     licenseActions.add("Collect Fees");
-                else if ( license.getStatus() != null
-                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE) && !(roleName.contains(Constants.ROLE_BILLCOLLECTOR)))
+                else if (license.getStatus() != null
+                        && license.getStatus().getStatusCode().equalsIgnoreCase(Constants.STATUS_ACTIVE)
+                        && !roleName.contains(Constants.ROLE_BILLCOLLECTOR))
                     licenseActions.add("Print Certificate");
             } else if (license.isLegacy() && !license.isPaid())
                 licenseActions.add("Modify Legacy License");
@@ -293,4 +293,13 @@ public class SearchTradeAction extends BaseFormAction {
     public void setMobileNo(final String mobileNo) {
         this.mobileNo = mobileNo;
     }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
 }

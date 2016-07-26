@@ -48,8 +48,8 @@
 	<class name="org.egov.model.contra.ContraJournalVoucher" table="CONTRAJOURNALVOUCHER">
 		<id name="id" type="long" unsaved-value="null" >
 			<column name="ID" not-null="true"/>
-			<generator class="native">
-				<param name="sequence">SEQ_CONTRAJOURNALVOUCHER</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_CONTRAJOURNALVOUCHER</param>
 			</generator>
 		</id>	
 		<many-to-one name="voucherHeaderId" class="org.egov.commons.CVoucherHeader" >

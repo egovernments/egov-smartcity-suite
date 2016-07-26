@@ -40,6 +40,10 @@
 
 package org.egov.wtms.web.controller.masters;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
@@ -52,9 +56,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/masters")
@@ -78,18 +79,22 @@ public class DocumentNamesMasterController {
         model.addAttribute("documentNames", documentNames);
         model.addAttribute("applicationTypes", applicationTypeService.findAll());
         model.addAttribute("reqAttr", "false");
+        model.addAttribute("mode", "create");
         return "document-name-master";
     }
 
     @RequestMapping(value = "/documentNamesMaster", method = RequestMethod.POST)
-    public String addDocumentNamesData(@Valid @ModelAttribute final DocumentNames documentNames,
+    public String createDocumentNamesData(@Valid @ModelAttribute final DocumentNames documentNames,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("applicationTypes", applicationTypeService.findAll());
             return "document-name-master";
         } else
             documentNamesService.createDocumentName(documentNames);
-        return getDocumentNamesList(model);
+        redirectAttrs.addFlashAttribute("documentNames", documentNames);
+        model.addAttribute("message", "Document Names created successfully.");
+        model.addAttribute("mode", "create");
+        return "document-name-master-success";
 
     }
 
@@ -100,7 +105,13 @@ public class DocumentNamesMasterController {
         return "document-name-master-list";
     }
 
-    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/documentNamesMaster/edit", method = RequestMethod.GET)
+    public String getDocumentNamesMaster(final Model model) {
+        model.addAttribute("mode", "edit");
+        return getDocumentNamesList(model);
+    }
+
+    @RequestMapping(value = "/documentNamesMaster/edit/{documentNameId}", method = RequestMethod.GET)
     public String getDocumentNamesMasterDetails(final Model model, @PathVariable final String documentNameId) {
         final DocumentNames documentNames = documentNamesService.findOne(Long.parseLong(documentNameId));
         model.addAttribute("documentNames", documentNames);
@@ -109,14 +120,17 @@ public class DocumentNamesMasterController {
         return "document-name-master";
     }
 
-    @RequestMapping(value = "/documentNamesMaster/{documentNameId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/documentNamesMaster/edit/{documentNameId}", method = RequestMethod.POST)
     public String editDocumentNamesMasterData(@Valid @ModelAttribute final DocumentNames documentNames,
-            final BindingResult errors, final Model model, @PathVariable final long documentNameId) {
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
+            @PathVariable final long documentNameId) {
         if (errors.hasErrors()) {
             model.addAttribute("applicationTypes", applicationTypeService.findAll());
             return "document-name-master";
         } else
             documentNamesService.updateDocumentName(documentNames);
-        return getDocumentNamesList(model);
+        redirectAttrs.addFlashAttribute("documentNames", documentNames);
+        model.addAttribute("message", "Document Names updated successfully.");
+        return "document-name-master-success";
     }
 }

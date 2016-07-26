@@ -61,8 +61,12 @@ import javax.validation.Valid;
 public class CitizenRegistrationController {
 
     private final CitizenService citizenService;
+
     @Autowired
     private ValidatorUtils validatorUtils;
+
+    @Autowired
+    private RecaptchaUtils recaptchaUtils;
 
     @Autowired
     public CitizenRegistrationController(final CitizenService citizenService) {
@@ -76,13 +80,13 @@ public class CitizenRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerCitizen(@Valid @ModelAttribute final Citizen citizen, final BindingResult errors,
-            final HttpServletRequest request,
-            final RedirectAttributes redirectAttrib) {
+                                  final HttpServletRequest request,
+                                  final RedirectAttributes redirectAttrib) {
         if (!validatorUtils.isValidPassword(citizen.getPassword()))
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
             errors.rejectValue("password", "error.pwd.mismatch");
-        if (!RecaptchaUtils.captchaIsValid(request))
+        if (!recaptchaUtils.captchaIsValid(request))
             errors.rejectValue("active", "error.recaptcha.verification");
         if (errors.hasErrors())
             return "signup";
@@ -94,5 +98,15 @@ public class CitizenRegistrationController {
     @RequestMapping(value = "/activation", method = RequestMethod.POST)
     public String citizenOTPActivation(@RequestParam final String activationCode) {
         return "redirect:register?activation=true&activated=" + (citizenService.activateCitizen(activationCode) != null);
+    }
+
+    @RequestMapping(value = "/activation/resendotp", method = RequestMethod.POST)
+    public String resendOTP(@RequestParam final String email, final RedirectAttributes redirectAttrib) {
+        Citizen citizen = citizenService.getCitizenByEmailId(email);
+        if (citizen == null)
+            return "redirect:../register?activation=true&otprss=false";
+        citizenService.resendActivationCode(citizen);
+        redirectAttrib.addAttribute("message", "msg.otpresend.success");
+        return "redirect:../register?activation=true";
     }
 }

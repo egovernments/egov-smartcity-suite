@@ -41,95 +41,101 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * The Class TradeSubCategory.
- */
-@Unique(fields = { "code" }, id = "id", tableName = "EGTL_MSTR_SUB_CATEGORY", columnName = { "code" }, message = "masters.code.isunique")
+@Entity
+@Table(name = "EGTL_MSTR_SUB_CATEGORY")
+@SequenceGenerator(name = LicenseSubCategory.SEQUENCE, sequenceName = LicenseSubCategory.SEQUENCE, allocationSize = 1)
+@Unique(fields = "code", message = "masters.code.isunique")
+@NamedQuery(name = "LICENSE_SUBCATEGORY_BY_NAME", query = "select lsc FROM LicenseSubCategory lsc where name =:name")
 public class LicenseSubCategory extends AbstractAuditable {
-    private static final long serialVersionUID = 1L;
+
+    public static final String SEQUENCE = "SEQ_EGTL_MSTR_SUB_CATEGORY";
+    public static final String BY_NAME = "LICENSE_SUBCATEGORY_BY_NAME";
+    private static final long serialVersionUID = 4137779539190266766L;
+
+    @Id
+    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private LicenseCategory category;
-    @Required(message = "tradelic.master.tradesubcategorycode.null")
-    @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")  
+
+    @NotBlank(message = "tradelic.master.tradesubcategorycode.null")
+    @Length(max = 32, message = "tradelic.master.tradesubcategorycode.length")
+    @SafeHtml
     private String code;
-    
-    @Required(message = "tradelic.master.tradesubcategoryname.null")
+
+    @NotBlank(message = "tradelic.master.tradesubcategoryname.null")
     @Length(max = 256, message = "tradelic.master.tradesubcategoryname.length")
+    @SafeHtml
     private String name;
-    
-    private boolean approvalrequired;
-    
-    private String feeBasedOn;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_CATEGORY")
+    private LicenseCategory category;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_LICENSE_TYPE")
     private LicenseType licenseType;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_NATURE")
     private NatureOfBusiness natureOfBusiness;
-    private boolean pfaApplicable;
-    private Schedule scheduleMaster;
-    private String sectionApplicable;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_LICENSE_SUB_TYPE")
     private LicenseSubType licenseSubType;
-    private Boolean nocApplicable;
-    
-    private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<LicenseSubCategoryDetails>();
+
+    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
+    @Valid
+    private Set<LicenseSubCategoryDetails> licenseSubCategoryDetails = new HashSet<LicenseSubCategoryDetails>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LicenseCategory getCategory() {
         return category;
+    }
+
+    public void setCategory(final LicenseCategory category) {
+        this.category = category;
     }
 
     public String getCode() {
         return code;
     }
 
- 
-    public String getName() {
-        return name;
-    }
-
-
-    public void setCategory(final LicenseCategory category) {
-        this.category = category;
-    }
-
     public void setCode(final String code) {
         this.code = code;
     }
 
+    public String getName() {
+        return name;
+    }
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("LicenseSubCategory={");
-        str.append("  name=").append(name == null ? "null" : name.toString());
-        str.append("  code=").append(code == null ? "null" : code.toString());
-        str.append("  category=").append(category == null ? "null" : category.toString());
-        str.append("}");
-        return str.toString();
-    }
-
-    public boolean isApprovalrequired() {
-        return approvalrequired;
-    }
-
-    public void setApprovalrequired(boolean approvalrequired) {
-        this.approvalrequired = approvalrequired;
-    }
-
-    public String getFeeBasedOn() {
-        return feeBasedOn;
-    }
-
-    public void setFeeBasedOn(String feeBasedOn) {
-        this.feeBasedOn = feeBasedOn;
     }
 
     public LicenseType getLicenseType() {
@@ -148,30 +154,6 @@ public class LicenseSubCategory extends AbstractAuditable {
         this.natureOfBusiness = natureOfBusiness;
     }
 
-    public boolean isPfaApplicable() {
-        return pfaApplicable;
-    }
-
-    public void setPfaApplicable(boolean pfaApplicable) {
-        this.pfaApplicable = pfaApplicable;
-    }
-
-    public Schedule getScheduleMaster() {
-        return scheduleMaster;
-    }
-
-    public void setScheduleMaster(Schedule scheduleMaster) {
-        this.scheduleMaster = scheduleMaster;
-    }
-
-    public String getSectionApplicable() {
-        return sectionApplicable;
-    }
-
-    public void setSectionApplicable(String sectionApplicable) {
-        this.sectionApplicable = sectionApplicable;
-    }
-
     public LicenseSubType getLicenseSubType() {
         return licenseSubType;
     }
@@ -180,34 +162,34 @@ public class LicenseSubCategory extends AbstractAuditable {
         this.licenseSubType = licenseSubType;
     }
 
-    public Boolean isNocApplicable() {
-        return nocApplicable;
+    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail) {
+        getLicenseSubCategoryDetails().add(licenseSubCategoryDetail);
     }
 
-    public void setNocApplicable(Boolean nocApplicable) {
-        this.nocApplicable = nocApplicable;
-    }
-
-   
-    public void addLicenseSubCategoryDetails(LicenseSubCategoryDetails licenseSubCategoryDetail)
-    {                       
-        getLicenseSubCategoryDetails().add(licenseSubCategoryDetail); 
-    }
-
-    public List<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
+    public Set<LicenseSubCategoryDetails> getLicenseSubCategoryDetails() {
         return licenseSubCategoryDetails;
     }
 
-    public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
+    public void setLicenseSubCategoryDetails(Set<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final LicenseSubCategory that = (LicenseSubCategory) o;
+
+        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null) return false;
+        return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
+
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        int result = getCode() != null ? getCode().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        return result;
     }
-
 }

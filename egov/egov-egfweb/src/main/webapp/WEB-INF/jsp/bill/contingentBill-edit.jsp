@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title><s:text name="contingent.bill" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -517,7 +516,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 							</s:if>
 							<td class="bluebox"><s:text name="bill.Date" /><span
 								class="mandatory">*</span></td>
-							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+							<s:date name='commonBean.billDate' var="commonBean.billDateId"
 								format='dd/MM/yyyy' />
 							<td class="bluebox"><s:textfield name="commonBean.billDate"
 									id="billDate"
