@@ -49,7 +49,7 @@
 			      			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
 			      	</div>
 		       	</spring:hasBindErrors>
-		       	
+	      <div class="panel-body"> 	
 			<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.billnumber" />
@@ -284,3 +284,4 @@
 			</tfoot>
 		</table>
 	</c:if>		
+</div>

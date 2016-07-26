@@ -44,14 +44,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-
+<div class="panel-body custom-form"> 	
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message  code="lbl.debit.details"/>
 	</div>
 </div>
 
-<div style="padding: 0 15px;">
+<div class="panel-body">
 		<table class="table table-bordered" id="tbldebitdetails-view">
 			<thead>
 				<tr>
@@ -227,3 +227,4 @@
 			</tbody>
 		</table>
 	</div>
+</div>

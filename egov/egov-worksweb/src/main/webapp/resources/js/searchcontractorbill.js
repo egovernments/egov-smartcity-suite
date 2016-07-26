@@ -111,14 +111,11 @@ function callAjaxSearch() {
 				},
 				aaSorting : [],
 				columns : [ {
-					"data" : "",
-					"sClass" : "text-center","width": "2%"
+					"data" : "","width": "2%"
 				}, {
-					"data" : "billNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "billNumber","autoWidth": "false"
 				}, {
-					"data" : "billDate",
-					"sClass" : "text-left" ,"width": "6%",
+					"data" : "billDate","width": "6%",
 					render: function (data, type, full) {
 						if(full!=null &&  full.billDate != undefined) {
 							var regDateSplit = full.billDate.split(" ")[0].split("-");		
@@ -127,34 +124,26 @@ function callAjaxSearch() {
 						else return "";
 			    	}
 				}, {
-					"data" : "billType",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "billType","autoWidth": "false"
 				}, {
 					"data" : "adminSanctionNumber","width": "6%",
-					"sClass" : "text-left"
 				}, {
-					"data" : "workIdentificationNumber",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "workIdentificationNumber","autoWidth": "false"
 				}, {
-					"data" : "workOrderNumber",
-					"sClass" : "text-left","autoWidth": "false"
+					"data" : "workOrderNumber","autoWidth": "false"
 				}, {
-					"data" : "contractorName",
-					"sClass" : "text-left","autoWidth": "false",
+					"data" : "contractorName","autoWidth": "false",
 					 "render":function(data, type, full, meta){
 					       return full.contractorName + " - " + full.contractorCode;
 					    } 
 				}, {
 					"data" : "billValue","width": "6%","sClass" : "text-right"
 				}, {
-					"data" : "billStatus",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "billStatus","autoWidth": "false"
 				}, {
-					"data" : "owner",
-					"sClass" : "text-center","autoWidth": "false"
+					"data" : "owner","autoWidth": "false"
 				}, {
-					"data" : "",
-					"sClass" : "text-left","width": "7%"
+					"data" : "","width": "7%"
 				} ]
 			});
 }

@@ -47,7 +47,7 @@
 		<div class="panel-title" style="text-align:center;"><spring:message code="title.search.contractorbill" /></div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billfromdate" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billfromdate" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="billFromDate" class="form-control datepicker"	id="billFromDate" data-inputmask="'mask': 'd/m/y'" />
 			<form:errors path="billFromDate" cssClass="add-margin error-msg" />
@@ -60,7 +60,7 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billtype" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billtype" /></label>
 			<div class="col-sm-3 add-margin">
 			<form:select path="billType" data-first-option="false" id="billtype" cssClass="form-control" >
 				<form:option value="">
@@ -78,7 +78,7 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billstatus" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billstatus" /></label>
 			<div class="col-sm-3 add-margin">
 			<form:select path="status" data-first-option="false" id="billStatus" class="form-control">
 				<form:option value="">
@@ -96,7 +96,7 @@
 	</div>
 
 		<div class="form-group">
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.contractor" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contractor" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="contractorName" id="contractorName" class="form-control" placeholder="Type first 3 letters of Contractor Name "/>
 				<form:errors path="contractorName" cssClass="add-margin error-msg" />
@@ -111,7 +111,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.spilloverwork" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:checkbox path="spillOverFlag" id="spillOverFlag" />
 			</div>

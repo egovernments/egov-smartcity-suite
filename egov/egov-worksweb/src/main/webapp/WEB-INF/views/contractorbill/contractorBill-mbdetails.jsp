@@ -47,6 +47,7 @@
 <form:hidden path="mbHeader.id"  value="${contractorBillRegister.mbHeader.id}" /> 
 <form:hidden path="mbHeader.egBillregister.id"  value="${contractorBillRegister.id}" />
 <input type="hidden" name="activitiesSize" id="activitiesSize" value="${workOrderEstimate.workOrderActivities.size()}"/>
+<div class="panel-body">
 <c:if test="${workOrderEstimate.workOrderActivities.size() == 0 }">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.mb.referencenumber" /><span class="mandatory"></span></label>
@@ -118,7 +119,6 @@
 	</div>
 	</c:if>
 	</br>
-	</br>
 	<table class="table table-bordered" id="mbdetails">
 		<thead>
 			<tr>
@@ -164,4 +164,4 @@
 		</tfoot>
 	</table>
 </c:if>
-	
+</div>	

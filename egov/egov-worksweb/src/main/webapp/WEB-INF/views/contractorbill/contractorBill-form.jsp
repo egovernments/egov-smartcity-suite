@@ -60,14 +60,15 @@
 						      	</div>
 				        	</spring:hasBindErrors>
 				        </div>
-						<div class="panel-body custom-form">
+						<!-- <div class="panel-body"> -->
 							<jsp:include page="contractorBill-header.jsp"/>
 							<jsp:include page="contractorBill-mbdetails.jsp"/>
 							<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
 							<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
-							<jsp:include page="../common/uploadDocuments.jsp"/>
-						</div>
+							
+						<!-- </div> -->
 					</div>
+					<jsp:include page="../common/uploadDocuments.jsp"/>
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />

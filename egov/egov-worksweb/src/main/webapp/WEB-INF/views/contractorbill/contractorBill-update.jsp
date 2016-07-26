@@ -75,14 +75,14 @@
 								<jsp:include page="contractorBill-debitaccountdetails.jsp"/>
 								<jsp:include page="contractorBill-creditaccountdetails.jsp"/>
 							</c:if>
-							<c:if test="${mode == 'view' || mode == 'readOnly' }">
-								<jsp:include page="contractorBill-header-view.jsp"/>
-								<jsp:include page="contractorBill-accountdetails-view.jsp"/>
-							</c:if>
-						<%-- 	<jsp:include page="contractorBill-details.jsp"/> --%>
-								<jsp:include page="../common/uploadDocuments.jsp"/>
 						</div>
+						<c:if test="${mode == 'view' || mode == 'readOnly' }">
+							<jsp:include page="contractorBill-header-view.jsp"/>
+							<jsp:include page="contractorBill-accountdetails-view.jsp"/>
+						</c:if>
+						
 					</div>
+					<jsp:include page="../common/uploadDocuments.jsp"/>
 			<c:if test="${contractorBillRegister.cancellationReason != null}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="contractorBillCancel-view.jsp"></jsp:include>

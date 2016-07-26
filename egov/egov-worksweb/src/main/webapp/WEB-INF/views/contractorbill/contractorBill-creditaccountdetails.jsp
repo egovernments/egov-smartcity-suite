@@ -59,7 +59,6 @@
 		<spring:message code="lbl.statutorydeductions" />
 	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
-	<div class="panel-body">
 		<table class="table table-bordered" id="tblstatutorydeductioncreditdetails">
 			<thead>
 				<tr>
@@ -149,7 +148,6 @@
 				</c:choose>
 			</tbody>
 		</table>
-	</div>
 </div>
 
 <div class="panel-heading custom_form_panel_heading">
@@ -157,7 +155,6 @@
 		<spring:message code="lbl.otherdeductions" />
 	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
-	<div class="panel-body">
 		<table class="table table-bordered" id="tblotherdeductioncreditdetails">
 			<thead>
 				<tr>
@@ -214,7 +211,6 @@
 				</c:choose>
 			</tbody>
 		</table>
-	</div>
 </div>
 
 <div class="panel-heading custom_form_panel_heading">
@@ -222,7 +218,6 @@
 		<spring:message code="lbl.retentionmoneydeductions" />
 	</div>
 	<input type="hidden" value="${billDetailsMap == null ? contractorBillRegister.statutoryDeductionDetailes.size() : billDetailsMap.size() - 2}" id="detailsSize" /> 
-	<div class="panel-body">
 		<table class="table table-bordered" id="tblretentionmoneydeductioncreditdetails">
 			<thead>
 				<tr>
@@ -292,7 +287,6 @@
 				</c:choose>
 			</tbody>
 		</table>
-	</div>
 </div>
 
 <div class="panel-heading custom_form_panel_heading">

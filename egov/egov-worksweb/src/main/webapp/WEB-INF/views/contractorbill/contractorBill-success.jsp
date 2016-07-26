@@ -43,7 +43,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="page-container" id="page-container">
 <input type="hidden" id="id" value="${contractorBillRegister.id }" />
-	<div class="main-content">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="alert text-center" style="color:green;">
 				<c:if test="${contractorBillRegister.getId() != null}">
@@ -62,6 +61,5 @@
 				</c:if>
 			</div>
 		</div>
-	</div>
 </div>
 <script src="<c:url value='/resources/js/searchcontractorbill.js?rnd=${app_release_no}'/>"></script>

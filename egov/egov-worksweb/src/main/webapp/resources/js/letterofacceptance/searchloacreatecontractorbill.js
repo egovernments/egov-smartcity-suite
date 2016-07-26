@@ -131,6 +131,8 @@ function callAjaxSearch() {
 										+ data.id + '\')">'
 										+ data.workOrderNumber + ' -- ' + data.workOrderDate + '</a>');
 						$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+						if(!isNaN(data.mbAmount))
+                            $('td:eq(8)',row).html(parseFloat(Math.round(data.mbAmount * 100) / 100).toFixed(2));
 						$('#btncreateloa').show();
 					return row;
 				},

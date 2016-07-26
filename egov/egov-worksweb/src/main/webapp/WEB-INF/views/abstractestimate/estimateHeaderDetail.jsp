@@ -74,14 +74,20 @@
 							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
 						</div>
 						
-						<c:if test="workOrder != null && workOrder.id != null">
 						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateamount" /> : </div> 
+							<div class="col-md-2 col-xs-6 add-margin"><c:out value="${abstractEstimate.lineEstimateDetails.estimateAmount}"/></div>
+							<c:if test="workOrder != null && workOrder.id != null">
+							<div class="row add-border">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
+								<div class="col-md-2 col-xs-6 add-margin view-content">
+									<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
+								</div>
 							</div>
+							</c:if> 
 						</div>
-						</c:if>
+						
+						
 						
 					</div>
 				</div>
