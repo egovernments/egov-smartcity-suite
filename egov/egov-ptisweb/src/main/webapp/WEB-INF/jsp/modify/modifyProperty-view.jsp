@@ -326,8 +326,8 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<s:if test="%{(model.state.nextAction!=null && 
 						@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING.equalsIgnoreCase(model.state.nextAction)) ||
-						((userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT) ||
-						userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT))
+						((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) ||
+						userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
 							&& !model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
 						<tr>
 							<%@ include file="../modify/modifyPropertyForm.jsp"%>
@@ -335,16 +335,13 @@
 					</s:if>
 					<s:elseif test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
 					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
-							userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN) ||
-							userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN) ||
-							((userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT) || 
-							userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT))
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.toUpperCase()) ||
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase()) ||
+							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
 							
 					
-					<%-- 
-					<s:if test="%{userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN)}">
-						<s:property value="%{userDesignationList}"/> --%>
 						<tr>
 							<%@ include file="../modify/modifyPropertyView.jsp"%>
 						</tr>
@@ -356,8 +353,8 @@
 					</s:if> 
 					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
 					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
-						((userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT) || 
-							userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT))
+						((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>

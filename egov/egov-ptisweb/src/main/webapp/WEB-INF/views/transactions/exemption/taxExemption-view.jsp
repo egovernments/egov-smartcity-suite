@@ -78,7 +78,7 @@ body
 				</div>
 			</div>
 			 <c:choose>
-            <c:when test="${!fn:contains(userDesignationList, designation)}">
+            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
