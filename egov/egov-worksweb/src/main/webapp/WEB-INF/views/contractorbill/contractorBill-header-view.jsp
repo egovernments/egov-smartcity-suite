@@ -112,7 +112,9 @@
 						<spring:message code="lbl.loanumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.workOrder.workOrderNumber}" /> 
+						<a style="cursor:pointer;" onclick="openLetterOfAcceptance();"><c:out default="N/A"
+								value="${workOrderEstimate.workOrder.workOrderNumber}"></c:out></a> <input
+							type="hidden" value="${workOrderEstimate.workOrder.id}" name="workOrderId" id="workOrderId" />
 					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.agreement.amount" />
@@ -133,7 +135,9 @@
 						<spring:message code="lbl.estimatenumber" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
-						<c:out default="N/A" value="${workOrderEstimate.estimate.estimateNumber}" /> 
+						<a style="cursor: pointer;" onclick="openAbstractEstimate();"><c:out default="N/A"
+							value="${workOrderEstimate.estimate.estimateNumber}"></c:out></a> <input type="hidden" value="${workOrderEstimate.estimate.id}"
+						name="abstractEstimateId" id="abstractEstimateId" />
 					</div>
 				</div>
 				<div class="row add-border">

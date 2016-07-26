@@ -787,3 +787,13 @@ function addRow(tableName,rowName) {
 function viewMB(mbHeaderId) {
 	window.open("/egworks/mb/view/"+mbHeaderId,"","height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
 }
+
+function openLetterOfAcceptance() {
+	var workOrderId = $('#workOrderId').val();
+	window.open("/egworks/letterofacceptance/view/" + workOrderId, '','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function openAbstractEstimate() {
+	var abstractEstimateId = $('#abstractEstimateId').val();
+	window.open("/egworks/abstractestimate/view/"+ abstractEstimateId , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
