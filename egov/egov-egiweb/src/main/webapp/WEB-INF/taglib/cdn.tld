@@ -44,15 +44,15 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
         version="2.0">
 
-    <description>JSTL 1.1 core library</description>
-    <display-name>JSTL core</display-name>
+    <description>CDN url tag library, its an extension for jstl core url tag</description>
+    <display-name>CDN url</display-name>
     <tlib-version>1.1</tlib-version>
-    <short-name>c</short-name>
-    <uri>http://java.sun.com/jsp/jstl/core</uri>
+    <short-name>cdn</short-name>
+    <uri></uri>
 
     <validator>
         <description>
-            Provides core validation features for JSTL tags.
+            Provides core validation features for CDN tags.
         </description>
         <validator-class>
             org.apache.taglibs.standard.tlv.JstlCoreTLV
@@ -60,7 +60,8 @@
     </validator>
     <tag>
         <description>
-            Creates a URL with optional query parameters.
+            Extension for core url tag, with an additional property called cdn,
+            should be used only for static resources.
         </description>
         <name>url</name>
         <tag-class>org.egov.infra.web.taglib.CDNTag</tag-class>
