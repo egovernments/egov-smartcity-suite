@@ -41,6 +41,7 @@ package org.egov.lcms.transactions.service;
 
 import java.util.List;
 
+import org.egov.commons.EgwStatus;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.repository.HearingsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -61,8 +62,10 @@ public class HearingsService {
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
-        hearings.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_HEARING));
+        final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
+                LcmsConstants.LEGALCASE_STATUS_HEARING);
+        hearings.setStatus(statusObj);
+        hearings.getLegalCase().setStatus(statusObj);
         return hearingsRepository.save(hearings);
     }
 
