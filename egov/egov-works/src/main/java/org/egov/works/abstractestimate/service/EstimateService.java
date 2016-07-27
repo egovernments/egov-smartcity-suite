@@ -1238,12 +1238,17 @@ public class EstimateService {
         final List<Hashtable<String, Object>> measurementSheetList = new ArrayList<Hashtable<String, Object>>();
         int slno = 1;
         Hashtable<String, Object> measurementSheetMap = null;
+        List<String> characters = new ArrayList<String>(26);
+        for (char c = 'a'; c <= 'z'; c++) {
+            characters.add(String.valueOf(c));
+        }
         for (Activity activity : abstractEstimate.getActivities()) {
             if (activity.getMeasurementSheetList().size() != 0) {
-                measurementSheetList.add(addActivityName(activity, slno++));
+                measurementSheetList.add(addActivityName(activity, slno));
+                int measurementSNo = 1;
                 for (MeasurementSheet ms : activity.getMeasurementSheetList()) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
-                    measurementSheetMap.put("sNo", "");
+                    measurementSheetMap.put("sNo", String.valueOf(slno) + characters.get((measurementSNo - 1) % 26));
                     measurementSheetMap.put("no", ms.getNo() != null ? ms.getNo() : "");
                     measurementSheetMap.put("scheduleCategory", "");
                     measurementSheetMap.put("scheduleCode", "");
@@ -1259,6 +1264,7 @@ public class EstimateService {
                     measurementSheetMap.put("uom", "");
                     measurementSheetMap.put("amount", "");
                     measurementSheetList.add(measurementSheetMap);
+                    measurementSNo++;
                 }
                 if (activity.getMeasurementSheetList().size() != 0) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
@@ -1276,6 +1282,7 @@ public class EstimateService {
                     measurementSheetMap.put("amount", activity.getAmount().getValue());
                     measurementSheetList.add(measurementSheetMap);
                 }
+                slno++;
             } else
                 measurementSheetList.add(addActivityName(activity, slno++));
         }

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-21T23:09:39 -->
+<!-- 2016-07-25T17:51:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimate_BOQ" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="020c6c36-6917-4359-abd9-63ceb063a3ac">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -77,7 +77,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
@@ -90,12 +90,12 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[SOR Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="136" y="0" width="188" height="30" uuid="5aa7b9a3-f4e3-426f-94e4-0497122cfbff"/>
+				<reportElement x="136" y="0" width="184" height="30" uuid="5aa7b9a3-f4e3-426f-94e4-0497122cfbff"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -103,12 +103,12 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="324" y="0" width="46" height="30" uuid="1f2c69fd-bad2-4cd7-b65d-fa243424842d"/>
+				<reportElement x="320" y="0" width="50" height="30" uuid="1f2c69fd-bad2-4cd7-b65d-fa243424842d"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -116,7 +116,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
@@ -129,7 +129,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Rate ]]></text>
 			</staticText>
@@ -142,7 +142,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[UOM]]></text>
 			</staticText>
@@ -155,7 +155,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Amount(Rs)]]></text>
 			</staticText>
@@ -168,7 +168,7 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Schedule Category]]></text>
 			</staticText>
@@ -203,7 +203,7 @@
 				<textFieldExpression><![CDATA[$F{schedule} != null ? $F{schedule}.getCode() : "N/A"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="136" y="0" width="188" height="30" uuid="16592046-5bd6-455c-b0a8-46b5934dfcae"/>
+				<reportElement stretchType="RelativeToTallestObject" x="136" y="0" width="184" height="30" uuid="16592046-5bd6-455c-b0a8-46b5934dfcae"/>
 				<box leftPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -217,7 +217,7 @@
 :$F{nonSor}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,###.##">
-				<reportElement stretchType="RelativeToTallestObject" x="324" y="0" width="46" height="30" uuid="9f0923f0-3f18-43fa-b060-acd4d262bab8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="320" y="0" width="50" height="30" uuid="9f0923f0-3f18-43fa-b060-acd4d262bab8"/>
 				<box rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -266,7 +266,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{amount}.getValue()).setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="31" y="0" width="55" height="30" uuid="0b63e5ee-649e-4fc5-957d-419a7f3d5152"/>
@@ -313,7 +313,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="136" y="0" width="188" height="30" uuid="0fe2c9ca-1123-4410-8113-bf2e428d15e3"/>
+				<reportElement x="136" y="0" width="184" height="30" uuid="0fe2c9ca-1123-4410-8113-bf2e428d15e3"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -326,7 +326,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="324" y="0" width="46" height="30" uuid="4b9334bc-51b3-44ab-b878-19ef7522b254"/>
+				<reportElement x="320" y="0" width="50" height="30" uuid="4b9334bc-51b3-44ab-b878-19ef7522b254"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -347,11 +347,11 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Work Value]]></text>
 			</staticText>
-			<textField pattern="#0.00#">
+			<textField pattern="#0.00">
 				<reportElement x="458" y="0" width="82" height="30" uuid="1082e1f3-77d1-4970-8149-03d8d927bef7"/>
 				<box rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -360,9 +360,9 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="true"/>
+					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{abstractEstimate}.getWorkValue()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{abstractEstimate}.getWorkValue()).setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="31" y="0" width="55" height="30" uuid="d776a5bc-28d5-4775-b29b-61cd72359611"/>

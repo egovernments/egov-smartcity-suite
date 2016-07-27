@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-24T22:55:10 -->
+<!-- 2016-07-27T15:04:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementSheet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="20" topMargin="30" bottomMargin="0" uuid="5617245c-868f-4ad2-9c27-16c5e3aa50b0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -195,7 +195,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Depth/Heigth]]></text>
+				<text><![CDATA[Depth/Height]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="329" y="16" width="49" height="24" uuid="f91d8c69-d7db-4919-b6a2-317ffb54ff19">
@@ -297,7 +297,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="121" y="0" width="74" height="30" isPrintWhenDetailOverflows="true" uuid="ebdfa9c3-f4f6-42c8-a8ba-f0269f27b181"/>
-				<box leftPadding="1">
+				<box topPadding="2" leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -309,7 +309,7 @@
 				<reportElement stretchType="RelativeToTallestObject" x="378" y="0" width="40" height="30" isPrintWhenDetailOverflows="true" uuid="93712107-e29f-4374-b613-61f05d451ca6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<box rightPadding="1">
+				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -333,7 +333,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="466" y="0" width="76" height="30" isPrintWhenDetailOverflows="true" uuid="2dfd88fb-a75c-46cc-9ff9-2b2f67b415df"/>
-				<box rightPadding="1">
+				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -344,53 +344,53 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="195" y="0" width="21" height="30" isPrintWhenDetailOverflows="true" uuid="9815947e-6796-440f-ad61-a849670e0bac"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="216" y="0" width="40" height="30" isPrintWhenDetailOverflows="true" uuid="0b977bcc-73e6-4da4-80fb-c62f0cb3c2ab"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{length}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="256" y="0" width="35" height="30" isPrintWhenDetailOverflows="true" uuid="b161de6a-9240-4389-bb75-ebc8478e9770"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{width}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="291" y="0" width="38" height="30" isPrintWhenDetailOverflows="true" uuid="f14ef368-bb59-4421-be92-f7653bf617e3"/>
-				<box leftPadding="1">
+				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{depthHeigth}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,###.##">
 				<reportElement stretchType="RelativeToTallestObject" x="329" y="0" width="49" height="30" isPrintWhenDetailOverflows="true" uuid="6882f290-70ac-461a-bd97-dfc07b74a707">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<box leftPadding="0" rightPadding="1">
+				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>

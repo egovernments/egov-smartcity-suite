@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-22T18:04:39 -->
+<!-- 2016-07-27T14:07:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -169,6 +169,7 @@
 			</band>
 		</groupHeader>
 	</group>
+	<group name="Group2"/>
 	<background>
 		<band height="802" splitType="Stretch">
 			<rectangle>
@@ -199,10 +200,11 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Department : "+$F{executingDepartment}.getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Department : "+$F{executingDepartment}.getName()
+]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -294,7 +296,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{workValue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[BigDecimal.valueOf($F{workValue}).setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00#">
 				<reportElement x="410" y="119" width="140" height="20" uuid="65c3347b-61ec-412e-8173-26d38d1d0a79"/>
@@ -307,7 +309,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{estimateValue}.subtract(BigDecimal.valueOf($F{workValue}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{estimateValue}.subtract(BigDecimal.valueOf($F{workValue})).setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<textField pattern="#0.00#">
 				<reportElement x="410" y="139" width="140" height="20" uuid="5edb899c-8b8f-4a40-93e7-9b4fa2c35fe1"/>
@@ -320,7 +322,7 @@
 				<textElement textAlignment="Right">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{estimateValue}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{estimateValue}.setScale(2, BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="90" y="99" width="320" height="20" uuid="00659941-3c9a-473f-be17-6a8e720b72cd"/>

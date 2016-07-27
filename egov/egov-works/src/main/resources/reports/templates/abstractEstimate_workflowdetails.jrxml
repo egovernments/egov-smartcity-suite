@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-11T11:42:12 -->
+<!-- 2016-07-27T14:12:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimate_workflowdetails" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="5fbab416-b149-47d8-9fb3-c2dbb87b88d6">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -66,7 +66,7 @@
 			<staticText>
 				<reportElement x="3" y="0" width="160" height="20" uuid="573b874a-3ccb-4d8e-a78b-a170b2b10b50"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font fontName="Times New Roman" size="12" isBold="true" isUnderline="true"/>
+					<font fontName="SansSerif" size="12" isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[Workflow Approval]]></text>
 			</staticText>
@@ -84,7 +84,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" isItalic="false"/>
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Designation]]></text>
 			</staticText>
@@ -97,7 +97,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Name]]></text>
 			</staticText>
@@ -110,7 +110,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Approval Step]]></text>
 			</staticText>
@@ -123,7 +123,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Approved On]]></text>
 			</staticText>
@@ -136,7 +136,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Remarks]]></text>
 			</staticText>
@@ -146,7 +146,7 @@
 		<band height="19" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="88" height="19" uuid="c57794a7-a96e-4f05-9f44-24863b3bc0c2"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -159,7 +159,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="89" y="0" width="91" height="19" uuid="f9358039-9d38-4c0a-9baf-1debebf3b097"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -172,7 +172,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="180" y="0" width="130" height="19" uuid="347762bd-cbbb-410a-abe9-be399e5ef0be"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -185,7 +185,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="310" y="0" width="99" height="19" uuid="2860b071-3264-44a9-8670-e0ece72e31ec"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -198,7 +198,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="409" y="0" width="118" height="19" uuid="ee368ed9-ffd7-470b-aa88-6c88150f7e75"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
