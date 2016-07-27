@@ -193,5 +193,8 @@
 	<put-attribute name="body" value="/WEB-INF/views/councilparty/councilparty-search.jsp"/>
 </definition>
 
-
+<definition name="create-agenda" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilagenda.create" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/agenda/create-agenda.jsp"/>
+</definition>
 </tiles-definitions>
