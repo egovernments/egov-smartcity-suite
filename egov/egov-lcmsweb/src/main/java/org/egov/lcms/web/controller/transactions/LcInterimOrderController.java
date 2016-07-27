@@ -106,7 +106,7 @@ public class LcInterimOrderController {
         lcInterimOrderService.persist(lcInterimOrder);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
-        model.addAttribute("message", "LcInterim Order Created successfully.");
+        model.addAttribute("message", "Interim Order Created successfully.");
         return "lcinterimorder-success";
 
     }
