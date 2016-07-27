@@ -1280,7 +1280,7 @@ function getActivitiesForTemplate(id){
 				}
 				if(estimateTemplateActivity.schedule != null){
 					$('#id_'+sorCount).val(estimateTemplateActivity.schedule.id);
-					$('.categoryCode_'+sorCount).html(estimateTemplateActivity.schedule.scheduleCategory.code);
+					//$('.categoryCode_'+sorCount).html(estimateTemplateActivity.schedule.scheduleCategory.code);
 					$('.code_'+sorCount).html(estimateTemplateActivity.schedule.code);
 					$('.summary_'+sorCount).html(estimateTemplateActivity.schedule.summary);
 					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
