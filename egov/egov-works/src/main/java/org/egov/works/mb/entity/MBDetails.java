@@ -300,6 +300,12 @@ public class MBDetails extends AbstractAuditable {
     }
 
     public void setMeasurementSheets(final List<MBMeasurementSheet> measurementSheets) {
-        this.measurementSheets = measurementSheets;
+        this.measurementSheets.clear();
+        if (measurementSheets != null)
+            this.measurementSheets.addAll(measurementSheets);
+    }
+    
+    public void addMBMeasurementSheet(final MBMeasurementSheet mbMeasurementSheet) {
+        this.measurementSheets.add(mbMeasurementSheet);
     }
 }

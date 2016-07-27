@@ -123,6 +123,12 @@
 								<form:input path="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
 								<form:input type="hidden" path="sorMbDetails[0].amount" id="amount_0" class="form-control table-input text-right"/>
+								<button class="btn btn-default" name="sorMbDetails[0].msadd" id="sorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+							</td>
+							<td hidden="true">
+	                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorMbDetails[0].mspresent" id="sorMbDetails[0].mspresent" data-idx="0"/>
+	                            <input class="classmsopen" type="hidden" disabled="disabled" name="sorMbDetails[0].msopen" id="sorMbDetails[0].msopen" data-idx="0"/>
+								<span  class="sorMbDetails[0].mstd" id="sorMbDetails[0].mstd" data-idx="0"></span>
 							</td>
 							<td>
 								<span class="cumulativeIncludingCurrentEntry_0"></span>
@@ -175,9 +181,28 @@
 									<span class="cumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<c:choose>
+			                    		<c:when test="${!details.measurementSheets.isEmpty() }">
+			                    			<form:input path="sorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+			                    		</c:when>
+			                    		<c:otherwise>
+			                    			<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+			                    		</c:otherwise>
+			                    	</c:choose>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].rate" value="${details.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].amount" value="${details.amount }" id="amount_${item.index }" class="form-control table-input text-right"/>
+									<c:if test="${!details.measurementSheets.isEmpty() }">
+										<button class="btn btn-default" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									</c:if>
+								</td>
+								<td hidden="true">
+									<c:set var="net" value="0" />
+									<c:set var="total" value="0" />
+		                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].mspresent" id="sorMbDetails[${item.index }].mspresent" data-idx="0"/>
+		                            <input class="classmsopen" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].msopen" id="sorMbDetails[${item.index }].msopen" data-idx="0"/>
+									<span  class="sorMbDetails[${item.index }].mstd" id="sorMbDetails[${item.index }].mstd" data-idx="0">
+										<%@ include file="../measurementsheet/mb-sor-measurementsheet-formtable-edit.jsp"%>
+									</span>
 								</td>
 								<td>
 									<span class="cumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>

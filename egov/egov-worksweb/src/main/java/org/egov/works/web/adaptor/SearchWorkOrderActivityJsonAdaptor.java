@@ -43,12 +43,15 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -59,6 +62,9 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
 
     @Override
     public JsonElement serialize(final WorkOrderActivity workOrderActivity, final Type typeOfSrc,
@@ -103,6 +109,25 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
             jsonObject.addProperty("cumulativePreviousEntry", cumulativePreviousEntry);
 
         jsonObject.addProperty("id", workOrderActivity.getId());
+        
+        if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty()) {
+            final JsonArray jsonArray = new JsonArray();
+            for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
+                final JsonObject child = new JsonObject();
+                child.addProperty("womsid", woms.getId());
+                child.addProperty("slNo", woms.getMeasurementSheet().getSlNo());
+                child.addProperty("remarks", woms.getMeasurementSheet().getRemarks());
+                child.addProperty("no", woms.getNo());
+                child.addProperty("length", woms.getLength());
+                child.addProperty("width", woms.getWidth());
+                child.addProperty("depthOrHeight", woms.getDepthOrHeight());
+                child.addProperty("quantity", woms.getQuantity());
+                child.addProperty("identifier", woms.getMeasurementSheet().getIdentifier());
+                jsonArray.add(child);
+            }
+            jsonObject.add("woms", jsonArray);
+        } else
+            jsonObject.add("woms", new JsonArray());
         return jsonObject;
     }
 

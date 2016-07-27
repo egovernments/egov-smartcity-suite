@@ -179,4 +179,12 @@ public class MBMeasurementSheet extends AbstractAuditable {
         return length;
     }
 
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
+
 }

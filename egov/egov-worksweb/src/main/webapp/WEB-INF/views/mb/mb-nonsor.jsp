@@ -102,6 +102,12 @@
 								<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].amount" id="nonSorAmount_0" class="form-control table-input text-right"/>
+								<button class="btn btn-default" name="nonSorMbDetails[0].msadd" id="nonSorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+							</td>
+							<td hidden="true">
+	                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[0].mspresent" id="nonSorMbDetails[0].mspresent" data-idx="0"/>
+	                            <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorMbDetails[0].msopen" id="nonSorMbDetails[0].msopen" data-idx="0"/>
+								<span  class="nonSorMbDetails[0].mstd" id="nonSorMbDetails[0].mstd" data-idx="0"></span>
 							</td>
 							<td>
 								<span class="nonSorCumulativeIncludingCurrentEntry_0"></span>
@@ -149,9 +155,28 @@
 									<span class="nonSorCumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<c:choose>
+			                    		<c:when test="${!details.measurementSheets.isEmpty() }">
+			                    			<form:input path="nonSorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+			                    		</c:when>
+			                    		<c:otherwise>
+			                    			<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+			                    		</c:otherwise>
+			                    	</c:choose>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].amount" value="${details.amount }" id="nonSorAmount_${item.index }" class="form-control table-input text-right"/>
+									<c:if test="${!details.measurementSheets.isEmpty() }">
+										<button class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									</c:if>
+								</td>
+								<td hidden="true">
+									<c:set var="net" value="0" />
+									<c:set var="total" value="0" />
+		                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].mspresent" id="nonSorMbDetails[${item.index }].mspresent" data-idx="0"/>
+		                            <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].msopen" id="nonSorMbDetails[${item.index }].msopen" data-idx="0"/>
+									<span  class="nonSorMbDetails[${item.index }].mstd" id="nonSorMbDetails[${item.index }].mstd" data-idx="0">
+										<%@ include file="../measurementsheet/mb-nonsor-measurementsheet-formtable-edit.jsp"%>
+									</span>
 								</td>
 								<td>
 									<span class="nonSorCumulativeIncludingCurrentEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity + details.quantity }</fmt:formatNumber></span>
@@ -189,3 +214,8 @@
 		</table>
 	</div>
 </div>
+<div id="measurement" >
+<%@ include file="../measurementsheet/mb-measurementsheet-formtable.jsp"%>
+</div>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/mb/mbmeasurementsheet.js?rnd=${app_release_no}'/>"></script>

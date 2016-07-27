@@ -105,14 +105,16 @@ function resetIndexes() {
 	
 	//regenerate index existing inputs in table row
 	$(".sorRow").each(function() {
-		$(this).find("input, span, select, textarea").each(function() {
+		$(this).find("input, span, select, textarea, button").each(function() {
 			if (!$(this).is('span')) {
 				$(this).attr({
 					'name' : function(_, name) {
-						return name.replace(/\d+/, idx);
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
 					},
 					'id' : function(_, id) {
-						return id.replace(/\d+/, idx);
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
 					},
 					'data-idx' : function(_, dataIdx) {
 						return idx;
@@ -121,8 +123,13 @@ function resetIndexes() {
 			} else {
 				$(this).attr({
 					'class' : function(_, name) {
-						return name.replace(/\d+/, idx);
-					}
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
 				});
 			}
 		});
@@ -132,14 +139,16 @@ function resetIndexes() {
 	idx = 0;
 	
 	$(".nonSorRow").each(function() {
-		$(this).find("input, span, select, textarea").each(function() {
+		$(this).find("input, span, select, textarea, button").each(function() {
 			if (!$(this).is('span')) {
 				$(this).attr({
 					'name' : function(_, name) {
-						return name.replace(/\d+/, idx);
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
 					},
 					'id' : function(_, id) {
-						return id.replace(/\d+/, idx);
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
 					},
 					'data-idx' : function(_, dataIdx) {
 						return idx;
@@ -148,8 +157,13 @@ function resetIndexes() {
 			} else {
 				$(this).attr({
 					'class' : function(_, name) {
-						return name.replace(/\d+/, idx);
-					}
+						if(name != undefined)
+							return name.replace(/\d+/, idx);
+					},
+					'id' : function(_, id) {
+						if(id != undefined)
+							return id.replace(/\d+/, idx);
+					},
 				});
 			}
 		});
@@ -169,8 +183,8 @@ function populateData(data, selectedActivities){
 		existingActivityArray.push($(this).val());
 	});
 	if(!addAll) {
-		var sorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
-		var nonSorCount = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+		var sorCount = $("#tblsor > tbody > tr:visible[id='sorRow']").length;
+		var nonSorCount = $("#tblNonSor > tbody > tr:visible[id='nonSorRow']").length;
 		$(data.data).each(function(index, workOrderActivity){
 			if($.inArray("" + workOrderActivity.id + "", existingActivityArray) == -1
 					&& $.inArray("" + workOrderActivity.id + "", activityArray) != -1) {
@@ -180,7 +194,7 @@ function populateData(data, selectedActivities){
 					$('#sorRow').removeAttr('sorinvisible');
 				}else{
 					if(workOrderActivity.sorNonSorType == 'SOR'){
-						var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
+						var key = $("#tblsor > tbody > tr:visible[id='sorRow']").length;
 						addRow('tblsor', 'sorRow');
 						resetIndexes();
 						$('#sorMbDetailsId_' + key).val('');
@@ -199,7 +213,7 @@ function populateData(data, selectedActivities){
 							$('#nonSorRow').removeAttr('nonsorinvisible');
 						}
 						if(nonSorCheck) {
-							var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+							var key = $("#tblNonSor > tbody > tr:visible[id='nonSorRow']").length;
 							addRow('tblNonSor', 'nonSorRow');
 							resetIndexes();
 							$('#nonSorMbDetailsId_' + key).val('');
@@ -225,6 +239,65 @@ function populateData(data, selectedActivities){
 					$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
 					$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 					$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#quantity_' + sorCount).attr('readonly', 'readonly');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorMbDetails[' + sorCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'sorMbDetails[' + sorCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'sorMbDetails_' + sorCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + sorCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + sorCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + sorCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + sorCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + sorCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + sorCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + sorCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + sorCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + sorCount + '_0');
+						document.getElementById('sorMbDetails[' + sorCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "sorMbDetails[" + sorCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'sorMbDetails_' + sorCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.mssubmit_' + sorCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#sorMbDetails_' + sorCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#sorMbDetails_' + sorCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#msrowidentifier_' + sorCount + '_' + index).html('No');
+									else
+										$('#msrowidentifier_' + sorCount + '_' + index).html('Yes');
+								} else
+									$('#msrow' + key + '_' + sorCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'hidden';
+					}
 					sorCount++;
 				}else{
 					$('#nonSorWorkOrderActivity_' + nonSorCount).val(workOrderActivity.id);
@@ -236,13 +309,74 @@ function populateData(data, selectedActivities){
 					$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
 					$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 					$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#nonSorQuantity_' + nonSorCount).attr('readonly', 'readonly');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow = newrow.replace(/findNet/g, 'findNonSorNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorMbDetails[' + nonSorCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonSorMbDetails[' + nonSorCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonSorMbDetails_' + nonSorCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'nonsormssubmit_' + nonSorCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'nonsormsrowslNo_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'nonsormsrowremarks_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'nonsormsrowno_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'nonsormsrowlength_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'nonsormsrowwidth_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'nonsormsrowdepthOrHeight_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'nonsormsrowquantity_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'nonsormsrowidentifier_' + nonSorCount + '_0');
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonSorMbDetails[" + nonSorCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/findNet/g, 'findNonSorNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonSorMbDetails_' + nonSorCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'nonsormsrowslNo_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'nonsormsrowremarks_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'nonsormsrowno_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'nonsormsrowlength_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'nonsormsrowwidth_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'nonsormsrowdepthOrHeight_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'nonsormsrowquantity_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'nonsormsrowidentifier_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.nonsormssubmit_' + nonSorCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#nonSorMbDetails_' + nonSorCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#nonSorMbDetails_' + nonSorCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#nonsormsrowidentifier_' + nonSorCount + '_' + index).html('No');
+									else
+										$('#nonsormsrowidentifier_' + nonSorCount + '_' + index).html('Yes');
+								} else
+									$('#nonsormsrow' + key + '_' + nonSorCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'hidden';
+					}
 					nonSorCount++;
 				}
 			}
 		});
 	} else {
-		var sorCount = $("#tblsor tbody tr:visible[id='sorRow']").length;
-		var nonSorCount = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+		var sorCount = $("#tblsor > tbody > tr:visible[id='sorRow']").length;
+		var nonSorCount = $("#tblNonSor > tbody > tr:visible[id='nonSorRow']").length;
 		$(data.data).each(function(index, workOrderActivity){
 			if($.inArray("" + workOrderActivity.id + "", existingActivityArray) == -1) {
 				if(sorCount==0 && workOrderActivity.sorNonSorType == 'SOR'){
@@ -251,7 +385,7 @@ function populateData(data, selectedActivities){
 					$('#sorRow').removeAttr('sorinvisible');
 				}else{
 					if(workOrderActivity.sorNonSorType == 'SOR'){
-						var key = $("#tblsor tbody tr:visible[id='sorRow']").length;
+						var key = $("#tblsor > tbody > tr:visible[id='sorRow']").length;
 						addRow('tblsor', 'sorRow');
 						resetIndexes();
 						$('#sorMbDetailsId_' + key).val('');
@@ -270,7 +404,7 @@ function populateData(data, selectedActivities){
 							$('#nonSorRow').removeAttr('nonsorinvisible');
 						}
 						if(nonSorCheck) {
-							var key = $("#tblNonSor tbody tr:visible[id='nonSorRow']").length;
+							var key = $("#tblNonSor > tbody > tr:visible[id='nonSorRow']").length;
 							addRow('tblNonSor', 'nonSorRow');
 							resetIndexes();
 							$('#nonSorMbDetailsId_' + key).val('');
@@ -296,6 +430,65 @@ function populateData(data, selectedActivities){
 					$('#unitRate_' + sorCount).val(workOrderActivity.unitRate);
 					$('.approvedAmount_' + sorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 					$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#quantity_' + sorCount).attr('readonly', 'readonly');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorMbDetails[' + sorCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'sorMbDetails[' + sorCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'sorMbDetails_' + sorCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + sorCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + sorCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + sorCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'msrowno_' + sorCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + sorCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + sorCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + sorCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + sorCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + sorCount + '_0');
+						document.getElementById('sorMbDetails[' + sorCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "sorMbDetails[" + sorCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'sorMbDetails_' + sorCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + sorCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.mssubmit_' + sorCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#sorMbDetails_' + sorCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#sorMbDetails_' + sorCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#msrowidentifier_' + sorCount + '_' + index).html('No');
+									else
+										$('#msrowidentifier_' + sorCount + '_' + index).html('Yes');
+								} else
+									$('#msrow' + key + '_' + sorCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'hidden';
+					}
 					sorCount++;
 				}else{
 					$('#nonSorWorkOrderActivity_' + nonSorCount).val(workOrderActivity.id);
@@ -307,6 +500,67 @@ function populateData(data, selectedActivities){
 					$('#nonSorUnitRate_' + nonSorCount).val(workOrderActivity.unitRate);
 					$('.nonSorApprovedAmount_' + nonSorCount).html(parseFloat(workOrderActivity.activityAmount).toFixed(2));
 					$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
+					if (workOrderActivity.woms != "") {
+						$('#nonSorQuantity_' + nonSorCount).attr('readonly', 'readonly');
+						var newrow= $('#msheaderrowtemplate').html();
+
+						newrow = newrow.replace(/findNet/g, 'findNonSorNet');
+						newrow=  newrow.replace(/msrowtemplate/g, 'msrownonSorMbDetails[' + nonSorCount + ']');
+						newrow=  newrow.replace(/templatesorMbDetails\[0\]/g, 'nonSorMbDetails[' + nonSorCount + ']');
+						newrow = newrow.replace(/templatesorMbDetails_0/g, 'nonSorMbDetails_' + nonSorCount);
+						newrow = newrow.replace(/templatemssubmit_0/g, 'nonsormssubmit_' + nonSorCount);
+						newrow = newrow.replace('msrowslNo_0_0', 'nonsormsrowslNo_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowremarks_0_0', 'nonsormsrowremarks_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowno_0_0', 'nonsormsrowno_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowlength_0_0', 'nonsormsrowlength_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowwidth_0_0', 'nonsormsrowwidth_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowdepthOrHeight_0_0', 'nonsormsrowdepthOrHeight_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowquantity_0_0', 'nonsormsrowquantity_' + nonSorCount + '_0');
+						newrow = newrow.replace('msrowidentifier_0_0', 'nonsormsrowidentifier_' + nonSorCount + '_0');
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].mstd').innerHTML=newrow;
+						$(workOrderActivity.woms).each(function(index, measurementSheet){
+							if (index > 0) {
+								var msrowname= "nonSorMbDetails[" + nonSorCount + "].mstable";
+								var msrownameid=msrowname.split(".")[0];
+								var rep='measurementSheets\['+ index +'\]';
+
+								var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+								$newrow = $newrow.replace(/findNet/g, 'findNonSorNet');
+								$newrow = $newrow.replace(/templatesorMbDetails\[0\]/g,msrownameid);
+								$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+								$newrow = $newrow.replace(/templatesorMbDetails_0/g, 'nonSorMbDetails_' + nonSorCount);
+								$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+								$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+								$newrow = $newrow.replace('msrowslNo_0_0', 'nonsormsrowslNo_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowremarks_0_0', 'nonsormsrowremarks_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowno_0_0', 'nonsormsrowno_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowlength_0_0', 'nonsormsrowlength_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowwidth_0_0', 'nonsormsrowwidth_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'nonsormsrowdepthOrHeight_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowquantity_0_0', 'nonsormsrowquantity_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('msrowidentifier_0_0', 'nonsormsrowidentifier_' + nonSorCount + '_' + index);
+								$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+								$('.nonsormssubmit_' + nonSorCount).closest('tr').before($newrow);
+
+								patternvalidation();
+							}
+							$.each(measurementSheet, function(key, value){
+								if(key == "womsid") {
+									$('#nonSorMbDetails_' + nonSorCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+								} else if(key == "id") {
+									$('#nonSorMbDetails_' + nonSorCount + '_measurementSheets_' + index + '_id').attr('value', value);
+								} else if(key == "identifier") {
+									if(value == 'A')
+										$('#nonsormsrowidentifier_' + nonSorCount + '_' + index).html('No');
+									else
+										$('#nonsormsrowidentifier_' + nonSorCount + '_' + index).html('Yes');
+								} else
+									$('#nonsormsrow' + key + '_' + nonSorCount + '_' + index).html(value);
+							});
+						});
+					} else {
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'hidden';
+					}
 					nonSorCount++;
 				}
 			}
@@ -328,7 +582,7 @@ function deleteSor(obj) {
     $("#removedDetailIds").val($("#removedDetailIds").val()+id);
 	
 	var tbl=document.getElementById('tblsor');	
-	var rowcount=$("#tblsor tbody tr").length;
+	var rowcount=$("#tblsor > tbody > tr").length;
 	if(rowcount==2) {
 		var rowId = $(obj).attr('class').split('_').pop();
 		$('#sorMbDetailsId_' + rowId).val('');
@@ -351,6 +605,8 @@ function deleteSor(obj) {
 		$('#sorRow').prop("hidden",true);
 		$('#sorRow').attr('sorinvisible', true);
 		$('#message').removeAttr('hidden');
+		document.getElementById('sorMbDetails[' + rowId + '].mstd').innerHTML = "";
+		sorMsArray[rowId]="";
 	} else {
 		deleteRow('tblsor',obj);
 	}
@@ -372,7 +628,7 @@ function deleteNonSor(obj) {
 	}
     $("#removedDetailIds").val($("#removedDetailIds").val()+id);
     
-	var rowcount=$("#tblNonSor tbody tr").length;
+	var rowcount=$("#tblNonSor > tbody > tr").length;
 
 	if(rowcount==2) {
 		var rowId = $(obj).attr('class').split('_').pop();
@@ -394,6 +650,7 @@ function deleteNonSor(obj) {
 		$('#nonSorRow').prop("hidden",true);
 		$('#nonSorRow').attr('nonsorinvisible', true);
 		$('#nonSorMessage').removeAttr('hidden');
+//		document.getElementById('nonSorMbDetails[' + rowId + '].mstd').innerHTML = $('#msheaderrowtemplate').html();
 	} else {
 		deleteRow('tblNonSor',obj);
 	}
@@ -419,11 +676,11 @@ function addRow(tableName,rowName) {
 		// get Next Row Index to Generate
 		var nextIdx = 0;
 		var sno = 1;
-		nextIdx = jQuery("#"+tableName+" tbody tr").length;
+		nextIdx = jQuery("#"+tableName+" > tbody > tr").length;
 		sno = nextIdx + 1;
 		
 		// Generate all textboxes Id and name with new index
-		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden, textarea").each(function() {	
+		jQuery("#"+rowName).clone().find("input,select, errors, span, input:hidden, textarea, button").each(function() {	
 			var classval = jQuery(this).attr('class');
 			if (jQuery(this).data('server')) {
 				jQuery(this).removeAttr('data-server');
@@ -460,7 +717,7 @@ function addRow(tableName,rowName) {
 					jQuery(this).val('');
 				}
 
-		}).end().appendTo("#"+tableName+" tbody");	
+		}).end().appendTo("#"+tableName+" > tbody");	
 		sno++;
 		
 	}
@@ -472,7 +729,7 @@ function deleteRow(tableName,obj){
 	    //To get all the deleted rows id
 	    var aIndex = rIndex - 1;
 		var tbl=document.getElementById(tableName);	
-		var rowcount=jQuery("#"+tableName+" tbody tr").length;
+		var rowcount=jQuery("#"+tableName+" > tbody > tr").length;
 	    if(rowcount<=1) {
 	    	bootbox.alert("This row can not be deleted");
 			return false;
@@ -482,9 +739,9 @@ function deleteRow(tableName,obj){
 			var idx= 0;
 			var sno = 1;
 			//regenerate index existing inputs in table row
-			jQuery("#"+tableName+" tbody tr").each(function() {
+			jQuery("#"+tableName+" > tbody > tr").each(function() {
 			
-					jQuery(this).find("input, select, errors, span, input:hidden, textarea").each(function() {
+					jQuery(this).find("input, select, errors, span, input:hidden, textarea, button").each(function() {
 						var classval = jQuery(this).attr('class');
 						if(classval == 'spansno') {
 							jQuery(this).text(sno);
@@ -644,7 +901,7 @@ function getFormData($form) {
 
 function validateSORDetails() {
 	if($('#mbHeader').valid()) {
-		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+		var hiddenRowCount = $("#tblsor > tbody > tr[sorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
 			
 			$('#tblsor').find('input, textarea').each(function() {
@@ -652,7 +909,7 @@ function validateSORDetails() {
 			});
 		}
 		
-		hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+		hiddenRowCount = $("#tblNonSor > tbody > tr[nonsorinvisible='true']").length;
 		if(hiddenRowCount == 1) {
 			$('#tblNonSor').find('input, textarea').each(function() {
 				$(this).attr('disabled', 'disabled');
@@ -724,18 +981,18 @@ function validateFormData() {
 		return false;
 	}
 	
-	var inVisibleSorCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-	var inVisibleNonSorCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+	var inVisibleSorCount = $("#tblsor > tbody > tr[sorinvisible='true']").length;
+	var inVisibleNonSorCount = $("#tblNonSor > tbody > tr[nonsorinvisible='true']").length;
 	if (inVisibleSorCount == 1 && inVisibleNonSorCount == 1) {
 		bootbox.alert($('#errorsornonsor').val());
 		return false;
 	}
 	
-	$("#tblsor tbody tr[sorinvisible!='true'] .quantity").each(function() {
+	$("#tblsor > tbody > tr[sorinvisible!='true'] .quantity").each(function() {
 		if (parseFloat($(this).val()) <= 0)
 			flag = false;
 	});
-	$("#tblNonSor tbody tr[nonsorinvisible!='true'] .quantity").each(function() {
+	$("#tblNonSor > tbody > tr[nonsorinvisible!='true'] .quantity").each(function() {
 		if (parseFloat($(this).val()) <= 0)
 			flag = false;
 	});

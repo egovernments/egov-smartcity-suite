@@ -174,9 +174,15 @@ function submitForm(workFlowAction) {
 					$('#errorMessage').html("");
 					if(value.sorType == "SOR") {
 						$('#sorMbDetailsId_' + sorCount).val(value.id);
+						$.each(value.msIds, function(idx, val){
+							$('#sorMbDetails_' + sorCount + '_measurementSheets_' + idx + '_id').attr('value', val.id);
+						});
 						sorCount++;
 					} else {
 						$('#nonSorMbDetailsId_' + nonSorCount).val(value.id);
+						$.each(value.msIds, function(idx, val){
+							$('#nonSorMbDetails_' + nonSorCount + '_measurementSheets_' + idx + '_id').attr('value', val.id);
+						});
 						nonSorCount++;
 					}
 				});

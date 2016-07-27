@@ -292,6 +292,8 @@ public class MBHeaderService {
                 mbDetails.setMbHeader(mbHeader);
                 mbDetails.setWorkOrderActivity(
                         workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                for (MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                    mbms.setMbDetails(mbDetails);
                 mbHeader.addMbDetails(mbDetails);
             } else
                 for (final MBDetails oldMBDetails : mbHeader.getSORMBDetails())
@@ -302,6 +304,8 @@ public class MBHeaderService {
                 mbDetails.setMbHeader(mbHeader);
                 mbDetails.setWorkOrderActivity(
                         workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
+                for (MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                    mbms.setMbDetails(mbDetails);
                 mbHeader.addMbDetails(mbDetails);
             } else
                 for (final MBDetails oldMBDetails : mbHeader.getNonSORMBDetails())
@@ -314,6 +318,25 @@ public class MBHeaderService {
         oldMBDetails.setRate(mbDetails.getRate());
         oldMBDetails.setRemarks(mbDetails.getRemarks());
         oldMBDetails.setAmount(mbDetails.getAmount());
+        for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets()) {
+            if (mbms.getId() == null) {
+                oldMBDetails.addMBMeasurementSheet(mbms);
+            } else {
+                for (final MBMeasurementSheet oldMBMS : oldMBDetails.getMeasurementSheets()) {
+                    if (oldMBMS.getId().equals(mbms.getId()))
+                        updateMBMeasurementSheet(oldMBMS, mbms);
+                }
+            }
+        }
+    }
+
+    private void updateMBMeasurementSheet(final MBMeasurementSheet oldMBMS, final MBMeasurementSheet mbms) {
+        oldMBMS.setRemarks(mbms.getRemarks());
+        oldMBMS.setNo(mbms.getNo());
+        oldMBMS.setLength(mbms.getLength());
+        oldMBMS.setWidth(mbms.getWidth());
+        oldMBMS.setDepthOrHeight(mbms.getDepthOrHeight());
+        oldMBMS.setQuantity(mbms.getQuantity());
     }
 
     public void mbHeaderStatusChange(final MBHeader mbHeader, final String workFlowAction) {
@@ -534,20 +557,33 @@ public class MBHeaderService {
         jsonObject.addProperty("id", mbHeader.getId());
 
         if (!mbHeader.getMbDetails().isEmpty()) {
-            final JsonArray jsonArray = new JsonArray();
+            final JsonArray detailIds = new JsonArray();
             for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
-                final JsonObject id = new JsonObject();
-                id.addProperty("id", mbDetails.getId());
+                final JsonObject mbDetail = new JsonObject();
+                mbDetail.addProperty("id", mbDetails.getId());
                 if (mbDetails.getWorkOrderActivity().getActivity().getSchedule() != null)
-                    id.addProperty("sorType", "SOR");
+                    mbDetail.addProperty("sorType", "SOR");
                 else
-                    id.addProperty("sorType", "Non SOR");
+                    mbDetail.addProperty("sorType", "Non SOR");
+                
+                if (!mbDetails.getMeasurementSheets().isEmpty()) {
+                    final JsonArray msIds = new JsonArray();
+                    for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets()) {
+                        final JsonObject msId = new JsonObject();
+                        msId.addProperty("id", mbms.getId());
+                        
+                        msIds.add(msId);
+                    }
+                    mbDetail.add("msIds", msIds);
+                } else {
+                    mbDetail.add("msIds", new JsonArray());
+                }
 
-                jsonArray.add(id);
+                detailIds.add(mbDetail);
             }
-            jsonObject.add("detailIds", jsonArray);
+            jsonObject.add("detailIds", detailIds);
         } else
-            jsonObject.add("detailIds", new JsonArray());
+            jsonObject.add("detailIds", new JsonObject());
     }
 
     public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors,
