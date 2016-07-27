@@ -97,14 +97,16 @@ public class CommitteeTypeService {
 		return committeeTypeRepository.findOne(id);
 	}
 
-	public List<CommitteeType> getActiveCommiteeType() {
+	public List<CommitteeType> getActiveCastes() {
 		return committeeTypeRepository.findByisActive(true);
 	}
+
 	public List<CommitteeType> search(CommitteeType committeeType) {
 		final Criteria criteria = getCurrentSession().createCriteria(
 				CommitteeType.class);
 		if (null != committeeType.getName())
-			criteria.add(Restrictions.ilike("name", committeeType.getName(),MatchMode.ANYWHERE));
+			criteria.add(Restrictions.ilike("name", committeeType.getName(),
+					MatchMode.ANYWHERE));
 		if (committeeType.getIsActive() != null
 				&& committeeType.getIsActive() == true)
 			criteria.add(Restrictions.eq("isActive", committeeType.getIsActive()));

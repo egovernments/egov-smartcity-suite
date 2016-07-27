@@ -44,9 +44,9 @@ public class CouncilPreamble extends StateAware {
     @ManyToOne
     @JoinColumn(name = "department" , nullable = false)
     private Department department;
-
+    
+    
     @Column(name = "preambleNumber", unique = true)
-    @NotNull
     @Length(max = 25)
     private String preambleNumber;
 
@@ -64,7 +64,7 @@ public class CouncilPreamble extends StateAware {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper filestoreid;
 
-    @NotNull
+    
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
