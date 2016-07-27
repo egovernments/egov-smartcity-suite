@@ -100,7 +100,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					<s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
+					<s:iterator var="rateIterator" value="model.sorRates" status="rate_row_status">
 						<tr>
 							<td><s:property value="#rate_row_status.count" /></td>
 							<td align="right">
@@ -133,7 +133,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					<s:iterator id="marketRateIterator" value="model.marketRates" status="marketrate_row_status">
+					<s:iterator var="marketRateIterator" value="model.marketRates" status="marketrate_row_status">
 						<tr>
 							<td><s:property value="#marketrate_row_status.count" /></td>
 							<td align="right">
