@@ -817,13 +817,24 @@ public class SearchPropertyAction extends BaseFormAction {
                     searchResultMap.put("currSecondHalfDemandDue", "0");
                     searchResultMap.put("arrDemandDue", "0");
                 } else {
-                    searchResultMap.put("currFirstHalfDemand", pmv.getAggrCurrFirstHalfDmd().toString());
+                    searchResultMap.put("currFirstHalfDemand",
+                            pmv.getAggrCurrFirstHalfDmd() == null ? "0" : pmv.getAggrCurrFirstHalfDmd().toString());
                     searchResultMap.put("currFirstHalfDemandDue",
-                            pmv.getAggrCurrFirstHalfDmd().subtract(pmv.getAggrCurrFirstHalfColl()).toString());
-                    searchResultMap.put("currSecondHalfDemand", pmv.getAggrCurrSecondHalfDmd().toString());
+                            (pmv.getAggrCurrFirstHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrFirstHalfDmd())
+                                    .subtract(pmv.getAggrCurrFirstHalfColl() == null ? BigDecimal.ZERO
+                                            : pmv.getAggrCurrFirstHalfColl())
+                                    .toString());
+                    searchResultMap.put("currSecondHalfDemand",
+                            pmv.getAggrCurrSecondHalfDmd() == null ? "0" : pmv.getAggrCurrSecondHalfDmd().toString());
                     searchResultMap.put("currSecondHalfDemandDue",
-                            pmv.getAggrCurrSecondHalfDmd().subtract(pmv.getAggrCurrSecondHalfColl()).toString());
-                    searchResultMap.put("arrDemandDue", pmv.getAggrArrDmd().subtract(pmv.getAggrArrColl()).toString());
+                            (pmv.getAggrCurrSecondHalfDmd() == null ? BigDecimal.ZERO : pmv.getAggrCurrSecondHalfDmd())
+                                    .subtract(pmv.getAggrCurrSecondHalfColl() == null ? BigDecimal.ZERO
+                                            : pmv.getAggrCurrSecondHalfColl())
+                                    .toString());
+                    searchResultMap.put("arrDemandDue",
+                            (pmv.getAggrArrDmd() == null ? BigDecimal.ZERO : pmv.getAggrArrDmd())
+                                    .subtract(pmv.getAggrArrColl() == null ? BigDecimal.ZERO : pmv.getAggrArrColl())
+                                    .toString());
                 }
                 searchList.add(searchResultMap);
             }
