@@ -41,7 +41,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css'/>">
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
@@ -157,6 +156,3 @@
 		</div>
 	</div>
 </div>
-
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>

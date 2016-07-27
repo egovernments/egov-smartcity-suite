@@ -54,6 +54,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -63,16 +64,16 @@
 		<meta name="author" content="eGovernments Foundation" />
         <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
-		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
-		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
-		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
+		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}'/>">
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js'/>" type="text/javascript"></script>
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
-			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body index">
@@ -82,7 +83,7 @@
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 					<div class="container-fluid">
 						<div class="navbar-header col-md-10 col-xs-10">
-							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}'/>" height="60">
 								<div>
 									<span class="title2">${sessionScope.citymunicipalityname}</span>
 								</div>
@@ -92,7 +93,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-									<img src="/egi/resources/global/images/egov_logo_tr_h.png" title="Powered by eGovernments" height="37" alt="">
+									<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/egov_logo_tr_h.png'/>" title="Powered by eGovernments" height="37" alt="">
 									</a>
 								</li>
 							</ul>
@@ -355,9 +356,9 @@
 				</div>
 			</div>
 		</div>
-		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
-		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/login.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
 	</body>
 </html>

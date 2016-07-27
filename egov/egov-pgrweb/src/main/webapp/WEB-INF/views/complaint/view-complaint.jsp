@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <c:if test="${not empty message}">
 	<div class="alert alert-success" role="alert">${message}</div>
 </c:if>
@@ -298,11 +299,11 @@
 	</div>
 </div>
 
-<link rel="stylesheet"	href="<c:url value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
-<script	src="<c:url value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
-<script	src="<c:url value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/app/complaintview.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/js/app/complaintviewmap.js?rnd=${app_release_no}'/>"></script>
+<link rel="stylesheet"	href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/image-gallery/css/blueimp-gallery.min.css' context='/egi'/>">
+<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/image-gallery/js/jquery.blueimp-gallery.min.js' context='/egi'/>"></script>
+<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/image-gallery/js/bootstrap-image-gallery.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/complaintview.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/complaintviewmap.js?rnd=${app_release_no}'/>"></script>
 <script>
 var lat = '${complaint.lat}';
 var lng = '${complaint.lng}';

@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 	<head>
 		<title>Acknowledgement Slip for Renewal of Trade License</title>
@@ -160,6 +161,6 @@
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 			</div>
-			<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
 	</body>
 </html>
