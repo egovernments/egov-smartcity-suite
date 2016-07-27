@@ -68,6 +68,7 @@ import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.AssetsForEstimate;
+import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
@@ -96,6 +97,7 @@ import org.egov.works.workorder.entity.AssetsForWorkOrder;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -378,21 +380,45 @@ public class LetterOfAcceptanceService {
                 workOrderActivity.setApprovedQuantity(activity.getQuantity());
                 workOrderActivity.setApprovedAmount(
                         workOrderActivity.getApprovedRate() * workOrderActivity.getApprovedQuantity());
+                createWorkOrderMSheet(workOrderActivity,activity);
                 workOrderActivity.setActivity(activity);
                 workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
                 workOrder.getWorkOrderEstimates().get(0).getWorkOrderActivities().add(workOrderActivity);
-
             }
         }
-        return workOrder;
+        return workOrder;     
     }
 
-    public WorkOrderEstimate createWorkOrderEstimate(final WorkOrder workOrder) {
+    private void createWorkOrderMSheet(WorkOrderActivity workOrderActivity,
+			Activity activity) {
+    	LOG.info("adding Msheet to work order......");
+    	List<WorkOrderMeasurementSheet> womSheetList=new ArrayList<WorkOrderMeasurementSheet>();
+    	WorkOrderMeasurementSheet womSheet=null;
+		for(MeasurementSheet msheet:activity.getMeasurementSheetList())
+		{
+			womSheet=new WorkOrderMeasurementSheet();
+			womSheet.setNo(msheet.getNo());
+			womSheet.setLength(msheet.getLength());
+            womSheet.setWidth(msheet.getWidth());
+            womSheet.setDepthOrHeight(msheet.getDepthOrHeight());
+            womSheet.setWoActivity(workOrderActivity);
+            womSheet.setQuantity(msheet.getQuantity());
+            womSheet.setMeasurementSheet(msheet);
+            womSheetList.add(womSheet);
+            LOG.info("added msheet"+msheet.getId());
+			
+		}
+		workOrderActivity.setWorkOrderMeasurementSheets(womSheetList);
+    	
+	}
+
+	public WorkOrderEstimate createWorkOrderEstimate(final WorkOrder workOrder) {
         workOrder.getWorkOrderEstimates().clear();
         final WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
         workOrderEstimate.setWorkOrder(workOrder);
         workOrderEstimate.setEstimate(
                 estimateService.getAbstractEstimateByEstimateNumberAndStatus(workOrder.getEstimateNumber()));
+        
         workOrderEstimate.setEstimateWOAmount(workOrder.getWorkOrderAmount());
         workOrder.addWorkOrderEstimate(workOrderEstimate);
         return workOrderEstimate;

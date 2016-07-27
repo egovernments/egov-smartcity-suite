@@ -48,7 +48,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
@@ -63,8 +63,8 @@
                     </td>
                     <td>
                         <select name="templatesorActivities[0].measurementSheetList[0].identifier"  id="templatesorActivities[0].measurementSheetList[0].identifier"  onchange="findNet(this)" class="form-control runtime-update"   >
-                            <option value="A">+</option>
-                            <option value="D">-</option>
+                            <option value="A">No</option>
+                            <option value="D">Yes</option>
                             </select>
                     </td>
                     <td>
@@ -73,7 +73,7 @@
 
                     </td>
                     <td>
-                        <input name="templatesorActivities[0].measurementSheetList[0].no" value="" maxlength="4" id="templatesorActivities[0].measurementSheetList[0].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="templatesorActivities[0].measurementSheetList[0].no" value="" maxlength="6" onkeyup="limitCharatersBy3_2(this);" id="templatesorActivities[0].measurementSheetList[0].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
@@ -103,7 +103,7 @@
                         <button   class="btn btn-xs btn-danger reset-ms">Reset</button>
                         <input type="button" value="Submit"  id="templatesorActivities[0].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
-                    <td class="text-right">Grand Total</td>
+                    <td class="text-right">Sub Total</td>
                     <td id="templatesorActivities[0].msnet" class="text-right"></td>
                     <td></td>
                 </tr>

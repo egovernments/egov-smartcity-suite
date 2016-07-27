@@ -73,8 +73,8 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = WorkOrderMeasurementSheet.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Max(9999)
-    private Long no;
+    @Max(1000)
+    private BigDecimal no;
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal depthOrHeight;
@@ -109,15 +109,17 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
         this.id = id;
     }
 
-    public Long getNo() {
-        return no;
-    }
+  
 
-    public void setNo(final Long no) {
-        this.no = no;
-    }
+    public BigDecimal getNo() {
+		return no;
+	}
 
-    public void setLength(final BigDecimal length) {
+	public void setNo(BigDecimal no) {
+		this.no = no;
+	}
+
+	public void setLength(final BigDecimal length) {
         this.length = length;
     }
 

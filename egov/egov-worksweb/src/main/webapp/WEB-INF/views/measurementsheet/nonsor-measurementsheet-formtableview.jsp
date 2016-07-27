@@ -60,12 +60,12 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /> </th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
                 <th><spring:message code="lbl.depthorheight" /></th>
-                <th><spring:message code="lbl.quantity" /><span class="mandatory"></span></th>
+                <th><spring:message code="lbl.quantity" /> </span></th>
                 </thead>
                 <tbody id="msrow1">
                 <c:forEach items="${nonSorDtls.measurementSheetList}" var="ms" varStatus="msindex" >
@@ -74,8 +74,8 @@
                         <c:out value="${ms.slNo}" />
                     </td>
                     <td class="text-center">
-                        <c:if test="${ms.identifier=='A'}"> + </c:if>
-                        <c:if test="${ms.identifier=='D'}"> - </c:if>    
+                        <c:if test="${ms.identifier=='A'}"> No </c:if>
+                        <c:if test="${ms.identifier=='D'}"> Yes </c:if>    
                             </select>
                     </td>
                     <td>
@@ -112,7 +112,7 @@
                     <td colspan="6" class="text-right">
                         
                     </td>
-                    <td class="text-right">Grand Total</td>
+                    <td class="text-right">Sub Total</td>
                     <td id="nonSorActivities[${item.index }].msnet"  class="text-right">${net}</td>
                 </tr>
                 

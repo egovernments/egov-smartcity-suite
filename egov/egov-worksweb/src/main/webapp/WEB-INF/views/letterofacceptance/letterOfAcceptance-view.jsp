@@ -105,4 +105,5 @@
 </form:form>
 
 <script src="<c:url value='/resources/js/letterofacceptance/viewletterofacceptancehelper.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/measurementsheet/measurementsheet.js?rnd=${app_release_no}'/>"></script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

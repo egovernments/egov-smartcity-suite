@@ -72,11 +72,12 @@ public class MeasurementSheet extends AbstractAuditable {
     private Long id;
     private Integer slNo;
     private char identifier;
+    
     @Length(max = 1024, message = "estimate.measurementSheet.remarks.length")
     private String remarks;
 
-    @Max(9999)
-    private Long no;
+    @Max(1000)
+    private BigDecimal no;
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal depthOrHeight;
@@ -117,15 +118,16 @@ public class MeasurementSheet extends AbstractAuditable {
         this.identifier = identifier;
     }
 
-    public Long getNo() {
-        return no;
-    }
+  
+    public BigDecimal getNo() {
+		return no;
+	}
 
-    public void setNo(Long no) {
-        this.no = no;
-    }
+	public void setNo(BigDecimal no) {
+		this.no = no;
+	}
 
-    public void setLength(BigDecimal length) {
+	public void setLength(BigDecimal length) {
         this.length = length;
     }
 

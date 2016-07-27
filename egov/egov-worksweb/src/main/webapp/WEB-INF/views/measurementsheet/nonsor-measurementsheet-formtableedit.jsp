@@ -58,7 +58,7 @@
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.description" /><span class="mandatory"></th>
+                <th><spring:message code="lbl.description" /></th>
                 <th><spring:message code="lbl.no" /></th>
                 <th><spring:message code="lbl.length" /></th>
                 <th><spring:message code="lbl.width" /></th>
@@ -77,8 +77,8 @@
                     </td>
                     <td>
                         <select name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"    id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"  onchange="findNet(this)" class="form-control runtime-update"   >
-                            <option value="A" <c:if test="${ms.identifier=='A'}"> selected="selected" </c:if>    >+</option>
-                            <option value="D" <c:if test="${ms.identifier=='D'}"> selected="selected" </c:if>    >-</option>
+                            <option value="A" <c:if test="${ms.identifier=='A'}"> selected="selected" </c:if>    >No</option>
+                            <option value="D" <c:if test="${ms.identifier=='D'}"> selected="selected" </c:if>    >Yes</option>
                             </select>
                     </td>
                     <td>
@@ -87,7 +87,7 @@
 
                     </td>
                     <td>
-                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}" maxlength="4" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
+                        <input name="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}" maxlength="6" onkeyup="limitCharatersBy3_2(this);" id="nonSorActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
                                data-pattern="decimalvalue" data-idx="0" />
 
                     </td>
@@ -124,7 +124,7 @@
                         <button   class="btn btn-xs btn-danger reset-ms">Reset</button>
                         <input type="button" value="Submit"  id="nonSorActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
-                    <td class="text-right">Grand Total</td>
+                    <td class="text-right">Sub Total</td>
                     <td id="nonSorActivities[${item.index }].msnet"  class="text-right">${net}</td>
                     <td></td>
                 </tr>

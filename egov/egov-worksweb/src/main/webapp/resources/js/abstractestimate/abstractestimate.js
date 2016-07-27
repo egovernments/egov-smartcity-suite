@@ -779,15 +779,15 @@ function resetIndexes() {
 			if (!$(this).is('span')) {
 				$(this).attr({
 					'name' : function(_, name) {
-						console.log(name);
+						//console.log(name);
 						if(name)
 							{
-							return name= name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
+							name= name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
 							return name.replace(/_\d+/,"_"+idx);
 							}
 					},
 					'id' : function(_, id) {
-						console.log(id);
+						//console.log(id);
 						if(id)
 							{
 							id= id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
@@ -802,7 +802,7 @@ function resetIndexes() {
 			} else {
 				$(this).attr({
 					'class' : function(_, name) {
-						console.log(name);
+						//console.log(name);
 						if(name)
 							{
 							name= name.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
@@ -813,7 +813,7 @@ function resetIndexes() {
 					'id' : function(_, id) {
 						if(id)
 						{
-							console.log(id);
+							//console.log(id);
 							id= id.replace(/sorActivities\[.\]/g, "sorActivities["+idx+"]");
 							return id.replace(/_\d+/,"_"+idx);
 						}
@@ -991,6 +991,18 @@ function validateQuantityInput(object) {
 function limitCharatersBy10_4(object)
 {
 	var valid = /^[0-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+	val = $(object).val();
+
+	if(!valid){
+		//console.log("Invalid input!");
+		$(object).val(val.substring(0, val.length - 1));
+	}	
+
+}
+
+function limitCharatersBy3_2(object)
+{
+	var valid = /^[0-9](\d{0,2})(\.\d{0,2})?$/.test($(object).val()),
 	val = $(object).val();
 
 	if(!valid){
@@ -2205,39 +2217,7 @@ $(document).on('click','.hide-ms',function () {
 	var mstr=document.getElementById(sid.split(".")[0]+".mstr");
 	$(mstr).remove();
 
-	/*
-	var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
-	document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
-	var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
-	if(net==NaN ||net<=0)
-	{
-		alert("Net amount should be greater than 0");
-		return false;
-	}
-	var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
-	if(!validateMsheet(qobj))
-	{
-		return false;
-	}
-
-	mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
-
-	document.getElementById(sid.split(".")[0]+".mstr")
-	document.getElementById(sid.split(".")[0]+".mstd")
-	document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
-	document.getElementById(sid.split(".")[0]+".msopen").value="0";
-	var mstr=document.getElementById(sid.split(".")[0]+".mstr");
-	$(mstr).remove();
-	if(sid.split(".")[0].indexOf("sorActivities") >= 0)
-	{
-		calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-	}else
-	{
-		calculateNonSorEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-	}
-	var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
-
-	$(qobj).attr("readonly","readonly");*/
+	 
 });
 
 
@@ -2247,14 +2227,12 @@ $(document).on('change','.runtime-update',function (e) {
 
 	if($(this).is("input"))
 	{
-		//console.log('input value change triggered!');
 		if($(this).val()==0)
 			{
-			alert("Zero is not allowed");
+			bootbox.alert("Zero is not allowed");
 			$(this).val('');
 			}
-		$(this).attr('value', $(this).val());
-		//console.log('OnChange', $(this).attr('value'));
+			$(this).attr('value', $(this).val());
 		
 
 	}
@@ -2299,7 +2277,7 @@ $(document).on('click','.ms-submit',function () {
 	var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
 	if(net==NaN ||net<=0)
 	{
-		alert("Net Quantity should be greater than 0");
+		bootbox.alert("Net Quantity should be greater than 0");
 		return false;
 	}
 	var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
@@ -2360,7 +2338,6 @@ function  deleteThisRow(obj) {
 			calculateNonSorEstimateAmount(document.getElementsByName(sid+".quantity")[0]);
 		}
 		}
-	//	bootbox.alert("This row can not be deleted");
 		return ;
 	} else {
 		tbl.deleteRow(rIndex);
@@ -2519,7 +2496,7 @@ function findNet(obj)
 		var oname=name[0]+'.measurementSheetList['+i+'].identifier';
 		var operationObj=document.getElementById(oname);
 		var operation=operationObj.options[operationObj.selectedIndex].value;
-		console.log(quantity+"---"+operation);
+		//console.log(quantity+"---"+operation);
 		if(quantity===undefined)
 			quantity=0;
 		if(quantity==NaN)
@@ -2751,24 +2728,15 @@ function validateMsheet(obj)
 		if((no===undefined ||no==NaN) && (width===undefined ||width==NaN) && (lent===undefined ||lent==NaN) 
 				&&(depthorheight===undefined ||depthorheight==NaN) &&  (qunatity===undefined ||qunatity==NaN))
 		{
-			alert("Empty row is not allowed. Please delete the empty row or Enter Quantity");
+			bootbox.alert("Empty row is not allowed. Please delete the empty row or Enter Quantity");
 			return false;
 		}
-		var desc=document.getElementById(name[0]+'.measurementSheetList['+i+'].remarks').value;
-
-		if(desc===undefined )
+		if(qunatity==NaN || qunatity<=0)
 		{
-			alert("Description is Mandatory in Measurement Sheet.");
+			bootbox.alert("Zero is not allowed in Quantity");
 			return false;
-		}else
-		{
-			desc=desc.trim();
-			if(desc=='')
-			{
-				alert("Description is Mandatory in Measurement Sheet.");
-				return false;
-			}
 		}
+			
 
 
 	}
