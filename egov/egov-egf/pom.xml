@@ -160,10 +160,6 @@
 			<artifactId>struts2-convention-plugin</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-dojo-plugin</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
@@ -177,20 +173,6 @@
 		</dependency>
 		<!-- STRUTS2 DEPENDENCIES END -->
 
-		<!-- STRUTS1 DEPENDENCIES START -->
-		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>struts</groupId>
-			<artifactId>struts-el</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-struts</artifactId>
-		</dependency>
-		<!-- STRUTS1 DEPENDENCIES END -->
 		<!-- SECURITY START -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>

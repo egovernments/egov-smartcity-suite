@@ -186,7 +186,7 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${legalCase.bipartisanDetails}"
+					<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
 							<td>
@@ -261,7 +261,7 @@
 	</thead>
 				<tbody>
 				
-				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.bipartisanDetailsBeanList}"
+				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 						varStatus="status">
 						<tr>
 							<td>

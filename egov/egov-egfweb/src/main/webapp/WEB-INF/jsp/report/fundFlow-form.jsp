@@ -57,7 +57,7 @@
 		<td class="greybox" width="15%"><s:text name="asondate" /><span
 			class="mandatory">*</span></td>
 		<td class="greybox" width="34%"><s:date name='asOnDate'
-				id="asOnDateId" format='dd/MM/yyyy' /> <s:textfield name="asOnDate"
+				var="asOnDateId" format='dd/MM/yyyy' /> <s:textfield name="asOnDate"
 				id="asOnDate" value='%{asOnDateId}'
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 			href="javascript:show_calendar('fundFlowReport.asOnDate');"

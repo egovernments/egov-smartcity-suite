@@ -660,7 +660,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      * @return the list of persisted <code>ReceiptPayeeDetails</code> instances
      */
     @Transactional
-    public ReceiptHeader persistReceiptsObject(final ReceiptHeader receiptHeader) {
+    public ReceiptHeader persistReceiptObject(final ReceiptHeader receiptHeader) {
         return super.persist(receiptHeader);
     }
 
@@ -1221,7 +1221,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
         if (reconstructedList != null) {
             onlinePaymentReceiptHeader.getReceiptDetails().clear();
-            persistReceiptsObject(onlinePaymentReceiptHeader);
+            persistReceiptObject(onlinePaymentReceiptHeader);
             LOGGER.debug("Reconstructed receiptDetailList : " + reconstructedList.toString());
             for (final ReceiptDetail receiptDetail : reconstructedList) {
                 receiptDetail.setReceiptHeader(onlinePaymentReceiptHeader);

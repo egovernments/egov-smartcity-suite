@@ -280,7 +280,7 @@ function readOnlyCheckBox() {
 	    	<s:actionmessage theme="simple"/>
 	    </div>
 	</s:if>
-	<logic:notEmpty name="receiptHeaders">
+	<s:if test="%{!receiptHeaders.isEmpty()}">
 		<table width="100%" border="0" align="center" cellpadding="0"
 			cellspacing="0" class="tablebottom">
 			<s:hidden name="inboxItemDetails" id="inboxItemDetails" value="%{inboxItemDetails}"/>	
@@ -450,24 +450,8 @@ function readOnlyCheckBox() {
 				value="<s:text name='common.buttons.close'/>"
 				onclick="window.close()" />
 			</div>		
-
-			<logic:empty name="receiptHeaders">
-				<table width="90%" border="0" align="center" cellpadding="0"
-					cellspacing="0" class="tablebottom">
-					<tr>
-						<div>&nbsp;</div>
-						<div class="subheadnew"><s:text
-							name="collectionsWorkflow.noReceipts" /></div>
-					</tr>
-				</table>
-				<br />
-					<input type="button" class="button" id="buttonClose"
-						value="<s:text name='common.buttons.close'/>"
-						onclick="window.close()" />
-				</logic:empty>
-				
 			</table>
-			</logic:notEmpty>
+			</s:if>
 			</s:form>
 			</div>
 			<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

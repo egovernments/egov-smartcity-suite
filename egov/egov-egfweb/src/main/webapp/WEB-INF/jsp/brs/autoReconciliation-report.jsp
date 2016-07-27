@@ -105,9 +105,9 @@
 				</div>
 			</div>
 		</div>
-		<s:date name="fromDate" id="fromDateId" format="dd/MM/yyyy" />
-		<s:date name="toDate" id="toDateId" format="dd/MM/yyyy" />
-		<s:date name="reconciliationDate" id="reconciliationDateId"
+		<s:date name="fromDate" var="fromDateId" format="dd/MM/yyyy" />
+		<s:date name="toDate" var="toDateId" format="dd/MM/yyyy" />
+		<s:date name="reconciliationDate" var="reconciliationDateId"
 			format="dd/MM/yyyy" />
 		<h3 class="text-center">
 			Bank reconciliation statement from

@@ -169,7 +169,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			<s:iterator id="detailsIterator" value="model.contractorDetails" status="row_status">
+			<s:iterator value="model.contractorDetails" status="row_status">
 				<tr>
 					<td><s:property value="#row_status.count" /></td>
 					<td><s:property value="%{department.name}" /></td>

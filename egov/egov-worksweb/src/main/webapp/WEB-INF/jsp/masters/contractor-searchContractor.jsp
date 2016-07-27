@@ -118,16 +118,17 @@
 		<input type="button" class="btn btn-default" value="Close" id="closeButton" name="button" onclick="window.close();" />
 	</div>
 </div>
-		<input type="hidden" id="mode" value="${mode}" />
+	<input type="hidden" id="mode" value="${mode}" />
 	<s:if test="%{mode != 'view'}"> 
-		<s:text id="modify"	name="%{getText('column.title.modify')}"></s:text>
+		<s:text var="modify"	name="%{getText('column.title.modify')}"></s:text>
  	</s:if>
- 	<s:text	id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
-	<s:text id="code" name="%{getText('contractor.code')}"></s:text>
-	<s:text id="name" name="%{getText('contractot.contractorname')}"></s:text>
-	<s:text id="class" name="%{getText('contractor.grade')}"></s:text>
-	<s:text id="status"	name="%{getText('contractor.status')}" />
-		<s:if test="%{searchResult.fullListSize != 0}">
+ 	<s:text	var="slNo" name="%{getText('column.title.SLNo')}"></s:text>
+	<s:text var="code" name="%{getText('contractor.code')}"></s:text>
+	<s:text var="name" name="%{getText('contractot.contractorname')}"></s:text>
+	<s:text var="class" name="%{getText('contractor.grade')}"></s:text>
+	<s:text var="status"	name="%{getText('contractor.status')}" />
+
+	<s:if test="%{searchResult.fullListSize != 0}">
 		<div class="row report-section">
 			<div class="col-md-12 table-header text-left">
 				<s:text name="title.search.result" />

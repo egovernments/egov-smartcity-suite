@@ -102,7 +102,6 @@
 		
 	});
 	</script>
-	<sx:head/>
 </head>
 	<body>
 		<div align="left">

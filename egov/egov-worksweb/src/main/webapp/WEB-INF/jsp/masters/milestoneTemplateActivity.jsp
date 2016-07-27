@@ -205,10 +205,10 @@ function isNumberKey(elem) {
 
 <script>
 	makeTmptActvDataTable();
-	<s:iterator  id="milestoneTemplate" value="milestoneTemplateActivities" status="row_status">
+	<s:iterator  value="milestoneTemplateActivities" status="row_status">
 	temptActvDataTable.addRow({
 		stageOrderNo : '<s:property value="stageOrderNo"/>',
-		description : '<s:property value="description" escape="false"/>',
+		description : '<s:property value="description" escapeXml="false"/>',
 		percentage : '<s:property value="percentage"/>',
 		Delete : 'X'
 	});
@@ -219,7 +219,7 @@ function isNumberKey(elem) {
 
 	var column = temptActvDataTable.getColumn('description');
 	// Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
-	dom.get(column.getKey() + record.getId()).value = '<s:property value="description" escape="false"/>';
+	dom.get(column.getKey() + record.getId()).value = '<s:property value="description" escapeXml="false"/>';
 
 	var column = temptActvDataTable.getColumn('stageOrderNo');
 	dom.get(column.getKey() + record.getId()).value = '<s:property value="stageOrderNo" />';

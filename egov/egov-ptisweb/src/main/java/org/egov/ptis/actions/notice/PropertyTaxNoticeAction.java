@@ -153,6 +153,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
     private boolean digitalSignEnabled;
+    private static final String VACANT_LAND="Vacant Land";
 
     @Autowired
     private DesignationService designationService;
@@ -439,6 +440,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     private void setNoticeInfo(final PropertyNoticeInfo propertyNotice, final BasicPropertyImpl basicProperty,
             String noticeMode) {
+    	 String ownerType=null;
+         String owner="";
         final PropertyAckNoticeInfo infoBean = new PropertyAckNoticeInfo();
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
@@ -504,9 +507,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
             infoBean.setMeesevaNo(property.getApplicationNo());
         }
         infoBean.setNoticeDate(new Date());
-        String ownerType=basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
-        String owner="";
-        if(ownerType.equalsIgnoreCase("Vacant Land")){
+        ownerType=property.getPropertyDetail().getPropertyTypeMaster().getType();
+        if(ownerType.equalsIgnoreCase(VACANT_LAND) || (noticeMode != null && noticeMode.equalsIgnoreCase(DEMOLITION))){
         	owner="(On Land)";
      	}
         infoBean.setOwnerTypeForReport(owner);

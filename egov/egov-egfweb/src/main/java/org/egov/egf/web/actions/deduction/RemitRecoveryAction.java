@@ -786,7 +786,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     {
         Bankaccount bankaccount = null;
 
-        if (paymentheader != null)
+        if (paymentheader != null && paymentheader.getBankaccount()!=null)
         {
             bankaccount = paymentheader.getBankaccount();
             common.setBranchId(bankaccount.getBankbranch().getId());

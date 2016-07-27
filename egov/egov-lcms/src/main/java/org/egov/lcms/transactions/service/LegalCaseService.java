@@ -96,15 +96,11 @@ public class LegalCaseService {
 
     }
 
-    public LegalCase findBy(final Long Id) {
+    public LegalCase findById(final Long Id) {
         return legalCaseRepository.findOne(Id);
     }
 
     public LegalCase findByLcNumber(final String lcnumber) {
-        return legalCaseRepository.findByLcNumber(lcnumber);
-    }
-
-    public LegalCase getLegalCaseByLcNumber(final String lcnumber) {
         return legalCaseRepository.findByLcNumber(lcnumber);
     }
 
@@ -113,7 +109,7 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase createLegalCase(final LegalCase legalcase) {
+    public LegalCase persist(final LegalCase legalcase) {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
@@ -192,11 +188,6 @@ public class LegalCaseService {
                 applicationDocument.setDocumentName("LegalCase");
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
-    }
-
-    @Transactional
-    public LegalCase updateLegalCase(final LegalCase legalCase) {
-        return legalCaseRepository.save(legalCase);
     }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

@@ -44,23 +44,25 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -68,15 +70,14 @@ import org.egov.lcms.masters.entity.InterimOrder;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Lcinterimorder entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_LCINTERIMORDER")
 @SequenceGenerator(name = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, sequenceName = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, allocationSize = 1)
-@CompareDates(fromDate = "sendtoStandingCounsel", toDate = "iodate", dateFormat = "dd/MM/yyyy", message = "sendtoStandingCounsel.greaterThan.iodate")
+/*
+ * @CompareDates(fromDate = "sendtoStandingCounsel", toDate = "iodate",
+ * dateFormat = "dd/MM/yyyy", message =
+ * "sendtoStandingCounsel.greaterThan.iodate")
+ */
 public class LcInterimOrder extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LCINTERIMORDER = "SEQ_EGLC_LCINTERIMORDER";
@@ -84,56 +85,82 @@ public class LcInterimOrder extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LCINTERIMORDER, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
     private LegalCase legalCase;
-    @Required(message = "io.select.iotype")
-    @ManyToOne(cascade = CascadeType.ALL)
+
     @Valid
     @NotNull
-    @JoinColumn(name = "intordertypeid", nullable = false)
+    @JoinColumn(name = "interimorder", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private InterimOrder interimOrder;
-    @DateFormat(message = "invalid.fieldvalue.model.iodate")
+
+    @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "ioDate.notAllow.futureDate")
-    @Required(message = "interimorder.date.null")
-    private Date iodate;
-    @Length(max = 50, message = "io.mpNum.length")
-    @OptionalPattern(regex = LcmsConstants.searchMixedCharType1, message = "io.mpnumber.text")
-    private String mpnumber;
-    @Length(max = 1024, message = "io.notes.length")
-    private String notes;
-    @DateFormat(message = "invalid.fieldvalue.model.sendtoStandingCounsel")
-    private Date sendtoStandingCounsel;
-    @DateFormat(message = "invalid.fieldvalue.model.petitionFiledOn")
-    private Date petitionFiledOn;
-    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDue")
-    private Date reportFilingDue;
-    @DateFormat(message = "invalid.fieldvalue.model.sendtoDepartment")
-    private Date sendtoDepartment;
-    @DateFormat(message = "invalid.fieldvalue.model.reportFromHod")
-    private Date reportFromHod;
-    @DateFormat(message = "invalid.fieldvalue.model.reportSendtoStandingCounsel")
-    private Date reportSendtoStandingCounsel;
-    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDate")
-    private Date reportFilingDate;
-    private Long documentNum;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
     @NotNull
-    @JoinColumn(name = "STATUS", nullable = false)
-    private EgwStatus status;
-    @Length(max = 50, message = "ti.referencenumber.length")
+    @Column(name = "iodate")
+    private Date ioDate;
+
+    @Length(max = 50)
+    @OptionalPattern(regex = LcmsConstants.searchMixedCharType1, message = "io.mpnumber.text")
+    @Column(name = "mpnumber")
+    private String mpNumber;
+
+    @Length(max = 1024)
+    private String notes;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "sendtostandingcounsel")
+    private Date sendtoStandingCounsel;
+
+    @DateFormat(message = "invalid.fieldvalue.model.petitionFiledOn")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "petitionfiledon")
+    private Date petitionFiledOn;
+
+    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDue")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "reportfilingdue")
+    private Date reportFilingDue;
+
+    @DateFormat(message = "invalid.fieldvalue.model.sendtoDepartment")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "senttodepartment")
+    private Date sendtoDepartment;
+
+    @DateFormat(message = "invalid.fieldvalue.model.reportFromHod")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "reportfromhod")
+    private Date reportFromHod;
+
+    @DateFormat(message = "invalid.fieldvalue.model.reportSendtoStandingCounsel")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "reportsendtostandingcounsel")
+    private Date reportSendtoStandingCounsel;
+
+    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDate")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "reportfilingdate")
+    private Date reportFilingDate;
+
+    @Length(max = 50)
     @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
     private String referenceNumber;
 
-    public Long getDocumentNum() {
-        return documentNum;
+    @OneToMany(mappedBy = "lcInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LcInterimOrderDocuments> lcInterimOrderDocuments = new ArrayList<LcInterimOrderDocuments>(0);
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setDocumentNum(final Long documentNum) {
-        this.documentNum = documentNum;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public InterimOrder getInterimOrder() {
@@ -144,20 +171,28 @@ public class LcInterimOrder extends AbstractAuditable {
         this.interimOrder = interimOrder;
     }
 
-    public Date getIodate() {
-        return iodate;
+    public List<LcInterimOrderDocuments> getLcInterimOrderDocuments() {
+        return lcInterimOrderDocuments;
     }
 
-    public void setIodate(final Date iodate) {
-        this.iodate = iodate;
+    public void setLcInterimOrderDocuments(final List<LcInterimOrderDocuments> lcInterimOrderDocuments) {
+        this.lcInterimOrderDocuments = lcInterimOrderDocuments;
     }
 
-    public String getMpnumber() {
-        return mpnumber;
+    public Date getIoDate() {
+        return ioDate;
     }
 
-    public void setMpnumber(final String mpnumber) {
-        this.mpnumber = mpnumber;
+    public void setIoDate(final Date ioDate) {
+        this.ioDate = ioDate;
+    }
+
+    public String getMpNumber() {
+        return mpNumber;
+    }
+
+    public void setMpNumber(final String mpNumber) {
+        this.mpNumber = mpNumber;
     }
 
     public String getNotes() {
@@ -231,16 +266,16 @@ public class LcInterimOrder extends AbstractAuditable {
                 && getReportFilingDue() == null)
             errors.add(new ValidationError("reportFilingDue", "reportFilingDue.required"));
 
-        if (!DateUtils.compareDates(getIodate(), legalCase.getCasedate()))
+        if (!DateUtils.compareDates(getIoDate(), legalCase.getCasedate()))
             errors.add(new ValidationError("ioDate", "ioDate.greaterThan.caseDate"));
 
         if (!DateUtils.compareDates(getPetitionFiledOn(), getSendtoStandingCounsel()))
             errors.add(new ValidationError("petitionFiledOn", "petitionFiledOn.greaterThan.sendtostandingcounsel"));
 
-        if (!DateUtils.compareDates(getReportFilingDue(), getIodate()))
+        if (!DateUtils.compareDates(getReportFilingDue(), getIoDate()))
             errors.add(new ValidationError("iodate", "reportFilingDue.greaterThan.iodate"));
 
-        if (!DateUtils.compareDates(getSendtoDepartment(), getIodate()))
+        if (!DateUtils.compareDates(getSendtoDepartment(), getIoDate()))
             errors.add(new ValidationError("iodate", "sendtoDepartment.greaterThan.iodate"));
 
         if (!DateUtils.compareDates(getReportSendtoStandingCounsel(), getReportFromHod()))
@@ -253,24 +288,6 @@ public class LcInterimOrder extends AbstractAuditable {
         return errors;
     }
 
-    public EgwStatus getStatus() {
-        return status;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setStatus(final EgwStatus status) {
-        this.status = status;
-    }
-
     public String getReferenceNumber() {
         return referenceNumber;
     }
@@ -279,18 +296,11 @@ public class LcInterimOrder extends AbstractAuditable {
         this.referenceNumber = referenceNumber;
     }
 
-    public Boolean getReplytoTI() {
-        if (getStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_ORDER_REPLYTOTI))
-            return Boolean.TRUE;
-        else
-            return Boolean.FALSE;
-    }
-
     public LegalCase getLegalCase() {
         return legalCase;
     }
 
-    public void setLegalCase(LegalCase legalCase) {
+    public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
     }
 

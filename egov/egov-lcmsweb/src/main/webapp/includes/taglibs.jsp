@@ -38,8 +38,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page language="java" errorPage="/error.jsp" pageEncoding="UTF-8"  %>
-
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>  
@@ -47,14 +45,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
 <%@ taglib uri="/WEB-INF/tags/sitemesh-decorator.tld" prefix="decorator"%>
 <%@ taglib uri="/WEB-INF/tags/sitemesh-page.tld" prefix="page"%>
-<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/tags/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/tags/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/tags/struts-nested.tld" prefix="nested" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="egovtags"%>
 <%@ taglib uri="/WEB-INF/tags/struts-tags.tld" prefix="s" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="sx" uri="/WEB-INF/tags/struts-dojo-tags.tld" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 

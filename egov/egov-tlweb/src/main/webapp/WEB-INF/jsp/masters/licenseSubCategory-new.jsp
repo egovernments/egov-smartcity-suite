@@ -218,18 +218,18 @@
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.name.lbl" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="64" onchange="return validateData(this,'name')"/>
+								<s:textfield id="name"	name="name" value="%{name}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="64" onchange="return validateData(this,'name')"/>
 							</div>
 							<label for="field-1" class="col-sm-2 control-label text-right"><s:text
 									name="licenseSubCategory.code.lbl" /><span class="mandatory"></span></label>
 							<s:if test="%{userMode=='edit'}">
 								<div class="col-sm-3 add-margin">
-									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')" readonly="true"/>
+									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="32" onchange="return validateData(this,'code')" readonly="true"/>
 								</div>
 							</s:if>
 							<s:else>
 								<div class="col-sm-3 add-margin">
-									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxLength="32" onchange="return validateData(this,'code')"/>
+									<s:textfield id="code"	name="code" value="%{code}" class="form-control patternvalidation" data-pattern="alphanumericwithspacehyphenunderscore" maxlength="32" onchange="return validateData(this,'code')"/>
 								</div>
 							</s:else>
 						</div>

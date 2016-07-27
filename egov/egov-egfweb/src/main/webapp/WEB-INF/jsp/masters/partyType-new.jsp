@@ -44,7 +44,6 @@
 <html>
 <head>
 <title><s:text name="party.create" /></title>
-<sx:head />
 <script type="text/javascript">
 
 						function onLoadTask() {

@@ -311,6 +311,22 @@
 	<put-attribute name="page-title" value="title.createcase" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/application/legalcase-success.jsp"/>
 </definition>
+<definition name="hearings-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/hearings-success.jsp"/>
+</definition>
+<definition name="hearings-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/application/hearings-new.jsp"/>
+</definition>
+<definition name="lcinterimorder-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.lcinterimorder.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/lcinterimorder-new.jsp"/>
+</definition>
 
+<definition name="lcinterimorder-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.lcinterimorder.success" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/lcinterimorder-success.jsp"/>
+</definition>
 
 </tiles-definitions>

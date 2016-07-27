@@ -91,7 +91,7 @@
 					<td class="bluebox"></td>
 					<td class="bluebox"><s:text name="lastrundate" /></td>
 					<td class="bluebox"><s:date name="lastRunDate"
-							id="lastRunDate" format="dd/MM/yyyy" /> <s:textfield
+							var="lastRunDate" format="dd/MM/yyyy" /> <s:textfield
 							name="lastRunDate" id="lastRunDate" value="%{lastRunDate}"
 							maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" />**? <a

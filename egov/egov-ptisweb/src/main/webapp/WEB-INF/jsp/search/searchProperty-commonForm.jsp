@@ -42,7 +42,6 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <html>
 	<head>
-		<%-- <sx:head /> --%>
 		<script type="text/javascript">
 			function onSubmit(obj,formId){
 				var formObj = document.getElementById(formId);

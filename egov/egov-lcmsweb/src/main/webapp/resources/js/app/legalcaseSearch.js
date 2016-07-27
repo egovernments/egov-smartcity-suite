@@ -144,9 +144,9 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 								
-								if(full.casestatus=='LCCREATED') {
-									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option></select>');
-			        			   }
+								if(full.casestatus=='LCCREATED' || full.casestatus=='IN_PROGRESS') {
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option></select>');			        			   
+									}
 								else if(full.casestatus=='JUDGMENT'){
 
 								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
@@ -208,7 +208,19 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			window.location = url;
 			
 		}
-		});
-
-
+		if (this.value == 6) {
+			var url = '/lcms/hearing/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		if (this.value == 7) {
+			var url = '/lcms/lcinterimorder/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
 		
+		});
