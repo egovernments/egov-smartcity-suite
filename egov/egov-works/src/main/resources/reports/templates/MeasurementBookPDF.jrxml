@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-26T16:52:07 -->
+<!-- 2016-07-27T13:55:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MeasurementBookPDF" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" uuid="9b7d841e-c314-47e9-8795-c4395d9ecdf3">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -61,7 +61,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="105" splitType="Stretch">
+		<band height="107" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement x="10" y="16" width="780" height="30" uuid="25da2f5d-4b2d-4fe2-8930-fece648fbb70"/>
@@ -136,9 +136,10 @@
 	</pageFooter>
 	<summary>
 		<band height="20">
+			<printWhenExpression><![CDATA[$P{measurementSize} != 0]]></printWhenExpression>
 			<subreport>
 				<reportElement isPrintRepeatedValues="false" x="1" y="1" width="689" height="19" uuid="76cbe2ce-76ed-4982-8d25-58fde6c4a8ec">
-					<printWhenExpression><![CDATA[$P{measurementSize} != 0 ? true : false]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{measurementSize} != 0]]></printWhenExpression>
 				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{measurementDetails}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("MB_measurementSheet.jasper")]]></subreportExpression>
