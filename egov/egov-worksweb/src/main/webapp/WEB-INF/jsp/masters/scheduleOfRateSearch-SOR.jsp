@@ -45,9 +45,9 @@
     "Result":[
     {
     "Id":"<s:property value="%{sor.id}" />",
-    "Description":"<s:property value="%{sor.summaryJS}" escape="false"/>",
+    "Description":"<s:property value="%{sor.summaryJS}" escapeXml="false"/>",
     "Code":"<s:property value="%{sor.code}" />",
-    "FullDescription":"<s:property value="%{sor.descriptionJS}" escape="false" />",
+    "FullDescription":"<s:property value="%{sor.descriptionJS}" escapeXml="false" />",
     "UOM":"<s:property value="%{sor.uom.uom}" />",
     "UnitRate":"<s:property value="%{currentRate.rate.value}" />",
     "scheduleCategory":"<s:property value="%{sor.scheduleCategory.code}" />",
