@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
 
@@ -111,7 +112,7 @@
 					</div>
 				</div>
 		   </c:if>	
-		   <c:if test="${!fn:containsIgnoreCase(userDesignationList, commissionerDesignation) && !fn:contains(userDesignationList, revenueClerkDesignation)}">
+		   <c:if test="${!fn:containsIgnoreCase(userDesignationList, commissionerDesignation) && !fn:containsIgnoreCase(userDesignationList, revenueClerkDesignation)}">
 		   <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 		  </c:if>
 				<div class="buttonbottom" align="center">
