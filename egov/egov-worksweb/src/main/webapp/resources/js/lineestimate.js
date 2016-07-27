@@ -604,6 +604,8 @@ function validateWorkFlowApprover(name) {
 	return true;
 }
 function getBudgetHeads() {
+	if($('#function').val() != '')
+		$functionId = $('#function').val();
 	 if ($('#fund').val() === '' || $('#executingDepartments').val() === '' || ($('#function').val() === '' && $functionId == 0) || $('#natureOfWork').val() === '') {
 		   $('#budgetHead').empty();
 		   $('#budgetHead').append($('<option>').text('Select from below').attr('value', ''));
@@ -616,7 +618,7 @@ function getBudgetHeads() {
 				dataType: "json",
 				data:{
 					'fundId' : $('#fund').val(),
-					'functionId' : $('#function').val(),
+					'functionId' : $functionId,
 					'departmentId' : $('#executingDepartments').val(),
 					'natureOfWorkId' : $('#natureOfWork').val()
 					
