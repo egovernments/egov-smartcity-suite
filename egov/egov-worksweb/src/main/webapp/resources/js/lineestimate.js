@@ -53,8 +53,9 @@ $(document).ready(function(){
 	});
 	
 	var lineEstimateStatus = $('#lineEstimateStatus').val();
+	var spillOverFlag = $('#spillOverFlag').val();
 	
-	if(lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') {
+	if((lineEstimateStatus == 'ADMINISTRATIVE_SANCTIONED' || lineEstimateStatus == 'TECHNICAL_SANCTIONED') && spillOverFlag == 'false') {
 		$('#actionButtons').prepend("<a href='javascript:void(0)' class='btn btn-primary' onclick='renderPdf()'>View Proceedings</a>");
 	}
 	

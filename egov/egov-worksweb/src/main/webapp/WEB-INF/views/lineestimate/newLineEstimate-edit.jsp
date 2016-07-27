@@ -48,6 +48,7 @@
 			<form:hidden path="" name="removedLineEstimateDetailsIds" id="removedLineEstimateDetailsIds" value="" class="form-control table-input hidden-input"/>
 			<form:hidden path="" name="lineEstimateId" id="lineEstimateId" value="${lineEstimate.id}" class="form-control table-input hidden-input"/>
 			<input type="hidden" value="${lineEstimate.status.code }" id=lineEstimateStatus />
+			<input type="hidden" value="${lineEstimate.spillOverFlag }" id=spillOverFlag />
 			<input type="hidden" value="${mode}" id="mode"/>
 			<div class="row">
 				<div class="col-md-12">

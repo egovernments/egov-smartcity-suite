@@ -121,6 +121,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Action(value = "/estimate/estimateTemplate-view")
     public String view() {
+    	mode = "view";
         return SUCCESS;
     }
 

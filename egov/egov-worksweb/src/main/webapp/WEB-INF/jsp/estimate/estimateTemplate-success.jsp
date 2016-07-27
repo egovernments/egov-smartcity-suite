@@ -54,13 +54,19 @@ padding:0;
 	<s:actionmessage theme="simple" />
 </div>
 </s:if>
+<s:if test="%{mode == 'view'}">
+	<div class="new-page-header">
+		<s:text name="estimate.template.view" />
+	</div>
+</s:if>
 <s:hidden name="id" id="id" />
+<s:hidden name="mode" id="mode" />
 
 	<%@ include file='estimateTemplate-commonView.jsp' %>
 
 <div class="row text-center">
 	<div class="add-margin">
-	<s:if test="%{mode!='edit'}">
+	<s:if test="%{mode != 'edit' && mode != 'view'}">
 		<input type="submit" name="create" Class="btn btn-primary" value="Create New Estimate Template" id="CREATE" name="button" onclick="createNewEsimate();" />
 	</s:if>
 	<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />

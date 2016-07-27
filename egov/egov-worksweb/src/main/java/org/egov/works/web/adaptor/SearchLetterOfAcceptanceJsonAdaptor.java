@@ -110,6 +110,9 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                             worksUtils.getApproverName(workOrder.getState().getOwnerPosition().getId()));
             } else
                 jsonObject.addProperty("currentowner", "NA");
+            jsonObject.addProperty("workOrderCreated",
+                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate()
+                            .isWorkOrderCreated());
 
         }
         return jsonObject;

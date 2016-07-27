@@ -66,7 +66,7 @@
 						<s:property value="%{description}" />
 					</div>
 					<div class="col-xs-3 add-margin">
-						<s:text name="estimate.template.type" />
+						<s:text name="milestone.estimate.typeofwork" />
 					</div>
 					<div class="col-xs-3 add-margin view-content">
 						<s:property value="%{workType.code}" />
@@ -98,8 +98,8 @@
 				<tr>
 					<th><s:text name="column.title.SLNo" /></th>
 					<th><s:text name="scheduleCategory.sor.category" /></th>
-					<th><s:text name="estimate.template.code" /></th>
-					<th><s:text name="estimate.template.description" /></th>
+					<th><s:text name="master.sor.code" /></th>
+					<th><s:text name="master.sor.description" /></th>
 					<th><s:text name="column.title.UOM" /></th>
 				</tr>
 			</thead>
@@ -128,7 +128,7 @@
 			<thead>
 				<tr>
 					<th><s:text name="column.title.SLNo" /></th>
-					<th><s:text name="estimate.template.description" /></th>
+					<th><s:text name="estimate.template.nonsor.descriprion" /></th>
 					<th><s:text name="column.title.UOM" /></th>
 					<th><s:text name="column.title.unitrate" /></th>
 				</tr>

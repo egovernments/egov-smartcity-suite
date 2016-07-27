@@ -107,6 +107,7 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate> {
                 totalAmount += led.getEstimateAmount().longValue();
             jsonObject.addProperty("totalAmount", totalAmount);
             jsonObject.addProperty("id", lineEstimate.getId());
+            jsonObject.addProperty("spillOverFlag", lineEstimate.isSpillOverFlag());
         }
         return jsonObject;
     }

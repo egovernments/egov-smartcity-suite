@@ -108,7 +108,7 @@ function callAjaxSearch() {
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
-					if(data.status != 'CANCELLED')
+					if(data.status != 'CANCELLED' && data.workOrderCreated == false)
 					$('td:eq(9)', row)
 							.html(
 									'<select id="actionDropdown" class="form-control" onchange="renderAction('

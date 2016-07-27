@@ -91,7 +91,7 @@
 				<c:if test="${mode == 'modify' }">
 					<form:button type="submit" name="submit" id="modify" class="btn btn-primary" ><spring:message code="lbl.modify"/></form:button>
 				</c:if>
-				<c:if test="${workOrder.egwStatus.code != 'CANCELLED' }">
+				<c:if test="${workOrder.egwStatus.code != 'CANCELLED' && !abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
 				<a
 					href="javascript:void(0)" class="btn btn-primary"
 					onclick="renderPDF()"><spring:message code="lbl.view.loapdf" /></a>
