@@ -76,8 +76,8 @@
 							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
 						</div>
 						<div class="row add-border">
-							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateamount" /> : </div> 
-							<div class="col-md-2 col-xs-6 add-margin view-content"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> . </div> 
+							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 							minFractionDigits="2" value="${abstractEstimate.lineEstimateDetails.estimateAmount}" /></div>
 							<c:if test="${workOrderEstimate!=null &&  workOrderEstimate.workOrder.id != null}">
 								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" />.</div>

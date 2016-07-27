@@ -106,7 +106,7 @@
 						</div>
 					</c:when>
 					<c:otherwise>
-					    <c:if test="${mbHeader.mbDetails != null && mbHeader.mbDetails.size() > 0}">
+					    <c:if test="${mbHeader.mbDetails != null && mbHeader.mbDetails.size() > 0 && mbHeader.egwStatus.code != 'CANCELLED'}">
 					    <a href="javascript:void(0)" class="btn btn-primary" onclick="renderMBPDF()"><spring:message code="lbl.viewmb.pdf" /></a>
 					    </c:if>
 	                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>

@@ -108,11 +108,18 @@ function callAjaxSearch() {
 										+ data.lineEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
+					if(data.status != 'CANCELLED')
 					$('td:eq(9)', row)
 							.html(
 									'<select id="actionDropdown" class="form-control" onchange="renderAction('
 											+ data.id
 											+ ', this.value)"><option value="">Select from below</option><option value="1">View LOA</option><option value="2">View PDF</option></select>');
+					else
+						$('td:eq(9)', row)
+					.html(
+							'<select id="actionDropdown" class="form-control" onchange="renderAction('
+									+ data.id
+									+ ', this.value)"><option value="">Select from below</option><option value="1">View LOA</option></select>');
 					return row;
 				},
 				aaSorting : [],

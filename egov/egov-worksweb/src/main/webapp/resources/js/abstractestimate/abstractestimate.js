@@ -1747,7 +1747,7 @@ function validateWorkFlowApprover(name) {
 		var estimateValue = parseFloat($('#estimateValueTotal').html());
 		if(estimateValue > lineEstimateAmount) {
 			var diff = estimateValue - lineEstimateAmount;
-			bootbox.alert("Abstract estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount for this estimate , please create abstract estimate with less amount");
+			bootbox.alert("Abstract estimate amount is Rs."+ diff +"/- more than the administrative sanctioned amount (Rs." + lineEstimateAmount + "/-) for this estimate , please create abstract estimate with less amount");
 			return false;
 		}
 

@@ -111,7 +111,7 @@
 						</div>
 					</c:when>
 					<c:otherwise>
-						<c:if test="${abstractEstimate.activities.size() > 0 && !abstractEstimate.egwStatus.code.equalsIgnoreCase('NEW')}">
+						<c:if test="${abstractEstimate.activities.size() > 0 && !abstractEstimate.egwStatus.code.equalsIgnoreCase('NEW') && !abstractEstimate.egwStatus.code.equalsIgnoreCase('CANCELLED')}">
 	                    	<a href="javascript:void(0)" class="btn btn-primary" onclick="viewBOQ();"><spring:message code="lbl.viewBOQ" /></a>
 	                    	<a href="javascript:void(0)" class="btn btn-primary" onclick="viewEstimatePDF();"><spring:message code="lbl.abstractestimate.pdf" /></a>
 	                    </c:if>
