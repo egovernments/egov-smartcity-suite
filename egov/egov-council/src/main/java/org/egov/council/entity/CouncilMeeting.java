@@ -139,6 +139,11 @@ public class CouncilMeeting  extends StateAware {
     public void setMeetingMOMs(Set<MeetingMOM> meetingMOMs) {
         this.meetingMOMs = meetingMOMs;
     }
+    
+    public void addMeetingMoms(MeetingMOM meetingMom)
+    {
+        this.meetingMOMs.add(meetingMom);
+    }
 
     public Set<MeetingAttendence> getMeetingAttendence() {
         return meetingAttendence;

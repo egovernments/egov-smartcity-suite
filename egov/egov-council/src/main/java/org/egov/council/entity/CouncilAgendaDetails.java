@@ -32,7 +32,7 @@ public class CouncilAgendaDetails  {
     @Column(name = "itemnumber")
     private String itemNumber;
 
-    @Column(name = "order")
+    @Column(name = "order_id")
     private Long order;
 
     @ManyToOne
