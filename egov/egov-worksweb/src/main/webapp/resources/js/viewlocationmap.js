@@ -53,7 +53,7 @@ $(document).ready(function(){
 		});
 	}
 	$('#view-location').on('show.bs.modal', function() {
-		$('#show_address_in_map').html($('#address_locate').html());
+		$('#show_address_in_map').html($('#locationHidden').val());
 		myCenter=new google.maps.LatLng(lat, lng);
 		initialize();
 		resizeMap();

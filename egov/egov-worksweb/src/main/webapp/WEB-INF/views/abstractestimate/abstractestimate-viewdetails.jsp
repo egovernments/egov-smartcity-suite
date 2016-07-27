@@ -83,14 +83,14 @@
 			<spring:message code="lbl.location" />
 		</div> 
 		<div class="col-xs-3 add-margin view-content">
+		    <input type="hidden" id="locationHidden" name="locationHidden" value="${abstractEstimate.location}"/>
 			<c:choose>
 				<c:when test="${abstractEstimate.location != null}">
-				<c:if test="${abstractEstimate.latitude != null && abstractEstimate.longitude != null}">
 				<span class="map-tool-class btn-secondary" data-toggle="tooltip"
 							data-placement="top" title="" data-original-title="Locate on map"
 							onclick="jQuery('#view-location').modal('show', {backdrop: 'static'});">
-							<i class="fa fa-map-marker"></i></span> </c:if>
-					<span id="address_locate"><c:out value="${abstractEstimate.location}"></c:out></span>
+							<i class="fa fa-map-marker"></i></span>
+					<c:out value="${abstractEstimate.location}"></c:out>
 				</c:when>
 				<c:otherwise>
 					<c:out default="N/A" value="N/A"></c:out>

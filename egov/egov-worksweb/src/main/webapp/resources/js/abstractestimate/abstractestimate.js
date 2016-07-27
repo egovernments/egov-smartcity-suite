@@ -88,7 +88,9 @@ $(document).ready(function(){
 	if($mode === 'edit')
 		$('#Cancel').prop('type',"submit");
 	if($mode == '') {
-		$("#latlonDiv").hide(); 
+		if($("#latitude").val() != '' && $("#longitude").val() != '') {
+			$("#latlonDiv").show(); 
+		} else	$("#latlonDiv").hide(); 
 	} else if($mode == 'view' || $mode == '') {
 		$(".input-group-addon").hide();
 		if($("#latitude").val() != '' && $("#longitude").val() != '') {
@@ -1758,11 +1760,11 @@ function validateWorkFlowApprover(name) {
 
 		$locationAppConfig = $('#locationAppConfig').val();
 		if($locationAppConfig == 'true') {
-			if($('#location').val() == '') {
+			if($('#location').val() == '' || $('#latitude').val() == ''  || $('#longitude').val() == '') {
 				bootbox.alert($('#errorlocation').val());
 				return false;
 			}
-		} else $('#spanlocation').hide();
+		}
 
 		flag = validateSORDetails();
 
