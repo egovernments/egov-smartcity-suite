@@ -243,6 +243,12 @@ public class AssessmentService {
                     taxDetails.add(ar);
                     propertyTaxDetails.setTaxDetails(taxDetails);
                 }
+                if(propertyTaxDetails.getErrorDetails() == null){
+                	ErrorDetails errorDetails = new ErrorDetails();
+                	errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+                    errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+                	propertyTaxDetails.setErrorDetails(errorDetails);
+                }
             }
         } catch (Exception e) {
             List<ErrorDetails> errorList = new ArrayList<ErrorDetails>(0);
