@@ -316,7 +316,7 @@ function initializeDatePicker()
 	});
 }
             makeScheduleOfRateDataTable();
-            <s:iterator id="rateIterator" value="model.sorRates" status="rate_row_status">
+            <s:iterator var="rateIterator" value="model.sorRates" status="rate_row_status">
             <s:if test="#rate_row_status == 1">
 	       ScheduleOfRateDataTable.updateRow(0,
 	    		   {id:'<s:property value="id"/>',											

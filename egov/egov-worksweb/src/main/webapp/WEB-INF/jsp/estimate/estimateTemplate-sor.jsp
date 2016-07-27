@@ -375,7 +375,7 @@ function showProcessImage(event) {
 
 <script>
 makeSORDataTable();
-<s:iterator id="soriterator" value="SORActivities" status="row_status">
+<s:iterator value="SORActivities" status="row_status">
     sorDataTable.addRow({schedule:'<s:property value="schedule.id"/>',
                         SlNo:'<s:property value="#row_status.count"/>',
                         scheduleCategory:'<s:property value="schedule.scheduleCategory.code"/>',

@@ -104,7 +104,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator id="soriterator" value="SORActivities" status="row_status">
+				<s:iterator var="soriterator" value="SORActivities" status="row_status">
 					<tr>
 						<td><s:property value="#row_status.count" /></td>
 						<td><s:property value="%{schedule.scheduleCategory.code}" /></td>
@@ -134,7 +134,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">
+				<s:iterator var="nonsoriterator" value="NonSORActivities" status="row_status">
 					<tr>
 						<td><s:property value="#row_status.count" /></td>
 						<td><s:property value="%{nonSor.descriptionJS}" /></td>

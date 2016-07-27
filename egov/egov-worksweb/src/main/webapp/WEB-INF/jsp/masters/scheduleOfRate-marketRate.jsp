@@ -139,7 +139,7 @@ var makeScheduleOfRateDataTableForMR = function() {
 	var imgURL="/resources/erp2/images/cancel.png";	
 	makeScheduleOfRateDataTableForMR();
 			
-		<s:iterator id="marketRateIterator" value="model.marketRates" status="marketrate_row_status">
+		<s:iterator var="marketRateIterator" value="model.marketRates" status="marketrate_row_status">
 			scheduleOfRateDataTableMR.addRow(
     			{id:'<s:property value="id"/>',											
                 SlNo:'<s:property value="#marketrate_row_status.count"/>',

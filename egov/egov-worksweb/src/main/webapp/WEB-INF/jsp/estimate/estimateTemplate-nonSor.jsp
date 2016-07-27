@@ -249,10 +249,10 @@ function resetNonSorTable(){
 
 <script>
 		makeNonSORDataTable();
-		<s:iterator id="nonsoriterator" value="NonSORActivities" status="row_status">
+		<s:iterator var="nonsoriterator" value="NonSORActivities" status="row_status">
             nonSorDataTable.addRow({NonSorID:'<s:property value="nonSor.id"/>',
                                     SlNo:'<s:property value="#row_status.count"/>',
-                                    nonSordescription:'<s:property value="nonSor.descriptionJS" escape="false"/>',
+                                    nonSordescription:'<s:property value="nonSor.descriptionJS" escapeXml="false"/>',
                                     Uom:'<s:property value="nonSor.uom.id"/>',
                                     nonSorUom:'<s:property value="nonSor.uom.id"/>',
                                     rate:'<s:property value="rate"/>',
@@ -261,7 +261,7 @@ function resetNonSorTable(){
     
         var column = nonSorDataTable.getColumn('nonSordescription');
         // Important to use escape=false. Otherwise struts will replace double quotes with &quote;  
-        dom.get(column.getKey()+record.getId()).value = '<s:property value="nonSor.descriptionJS" escape="false"/>';
+        dom.get(column.getKey()+record.getId()).value = '<s:property value="nonSor.descriptionJS" escapeXml="false"/>';
         
         var column = nonSorDataTable.getColumn('rate');  
         dom.get("nonsor"+column.getKey()+record.getId()).value = '<s:property value="rate"/>';
