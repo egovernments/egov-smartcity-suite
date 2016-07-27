@@ -38,32 +38,33 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.taglib;
+package org.egov.infra.utils;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.taglibs.standard.tag.rt.core.UrlTag;
+public final class ApplicationConstant {
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
+    public static final String CITY_CODE_KEY = "cityCode";
+    public static final String CITY_NAME_KEY = "cityname";
+    public static final String CITY_URL_KEY = "cityurl";
+    public static final String CITY_LOGO_KEY = "citylogo";
+    public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
+    public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
+    public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
+    public static final String CITY_LAT_KEY = "citylat";
+    public static final String CITY_LNG_KEY = "citylng";
+    public static final String CITY_CORP_GRADE_KEY = "cityGrade";
+    public static final String CITY_DIST_NAME_KEY = "districtName";
+    public static final String CITY_DIST_CODE_KEY = "districtCode";
+    public static final String CITY_CORP_NAME_KEY = "citymunicipalityname";
+    public static final String CITY_CORP_ADDRESS_KEY = "corpAddress";
+    public static final String CITY_CORP_CALLCENTER_NO_KEY = "corpCallCenterNo";
+    public static final String CITY_CORP_CONTACT_NO_KEY = "corpContactNo";
+    public static final String CITY_CORP_EMAIL_KEY = "corpContactEmail";
+    public static final String CITY_CORP_TWITTER_KEY = "corpTwitterLink";
+    public static final String CITY_CORP_FB_KEY = "corpFBLink";
+    public static final String CITY_CORP_GOOGLE_MAP_KEY = "corpGisLink";
 
-public class CDNTag extends UrlTag {
-    private String cdn;
+    public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
 
-    public CDNTag() {
-        super();
-        this.cdn = null;
-    }
-
-    public void setCdn(String cdn)  throws JspTagException {
-        this.cdn = cdn;
-    }
-
-    public int doEndTag() throws JspException {
-        if (StringUtils.isNotBlank(cdn))
-            this.value = new StringBuilder(cdn).
-                    append(context == null ? ((HttpServletRequest) pageContext.getRequest()).getContextPath() : context).
-                    append(value).toString();
-        return super.doEndTag();
-    }
+    public static final String CDN_KEY = "cdn";
+    public static final String USERID_KEY = "userid";
 }

@@ -66,6 +66,9 @@ import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.*;
+
 @Entity
 @Searchable
 @Unique(id = "id", tableName = "eg_city", fields = { "domainURL" }, columnName = { "domainURL" }, enableDfltMsg = true)
@@ -78,7 +81,6 @@ public class City extends AbstractAuditable {
     private static final long serialVersionUID = -6267923687226233397L;
     public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
-    public static final String LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
 
     @DocumentId
     @Id
@@ -266,34 +268,33 @@ public class City extends AbstractAuditable {
 
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
-        cityPrefs.put("cityurl", domainURL);
-        cityPrefs.put("cityname", name);
+        cityPrefs.put(CITY_URL_KEY, domainURL);
+        cityPrefs.put(CITY_NAME_KEY, name);
         if (preferences == null) {
-            cityPrefs.put("citylogo", "/resources/global/images/logo@2x.png");
-            cityPrefs.put("citymunicipalityname", name);
+            cityPrefs.put(CITY_LOGO_KEY, "/resources/global/images/logo@2x.png");
+            cityPrefs.put(CITY_CORP_NAME_KEY, name);
         } else {
-            cityPrefs.put("citylogo",
-                    preferences.logoExist() ? String.format(LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : "");
-            cityPrefs.put("citymunicipalityname", preferences.getMunicipalityName());
-            cityPrefs.put("corpAddress", preferences.getMunicipalityAddress());
-            cityPrefs.put("corpCallCenterNo", preferences.getMunicipalityCallCenterNo());
-            cityPrefs.put("corpContactNo", preferences.getMunicipalityContactNo());
-            cityPrefs.put("corpContactEmail", preferences.getMunicipalityContactEmail());
-            cityPrefs.put("corpTwitterLink", preferences.getMunicipalityTwitterLink());
-            cityPrefs.put("corpFBLink", preferences.getMunicipalityFacebookLink());
-            cityPrefs.put("corpGisLink", preferences.getMunicipalityGisLocation());
+            cityPrefs.put(CITY_LOGO_KEY,
+                    preferences.logoExist() ? String.format(CITY_LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : EMPTY);
+            cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
+            cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
+            cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());
+            cityPrefs.put(CITY_CORP_CONTACT_NO_KEY, preferences.getMunicipalityContactNo());
+            cityPrefs.put(CITY_CORP_EMAIL_KEY, preferences.getMunicipalityContactEmail());
+            cityPrefs.put(CITY_CORP_TWITTER_KEY, preferences.getMunicipalityTwitterLink());
+            cityPrefs.put(CITY_CORP_FB_KEY, preferences.getMunicipalityFacebookLink());
+            cityPrefs.put(CITY_CORP_GOOGLE_MAP_KEY, preferences.getMunicipalityGisLocation());
         }
 
-        cityPrefs.put("citynamelocal", localName);
-        cityPrefs.put("cityCode", code);
-        cityPrefs.put("siteSecret", recaptchaPK);
-        cityPrefs.put("siteKey", recaptchaPub);
-        cityPrefs.put("citylat", latitude);
-        cityPrefs.put("citylng", longitude);
-        cityPrefs.put("cityCode", code);
-        cityPrefs.put("districtName", districtName);
-        cityPrefs.put("districtCode", districtCode);
-        cityPrefs.put("cityGrade", grade);
+        cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
+        cityPrefs.put(CITY_CODE_KEY, code);
+        cityPrefs.put(CITY_CAPTCHA_PRIV_KEY, recaptchaPK);
+        cityPrefs.put(CITY_CAPTCHA_PUB_KEY, recaptchaPub);
+        cityPrefs.put(CITY_LAT_KEY, latitude);
+        cityPrefs.put(CITY_LNG_KEY, longitude);
+        cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
+        cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
+        cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
         return cityPrefs;
     }
 

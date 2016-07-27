@@ -54,6 +54,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+
 @Service
 @Transactional(readOnly = true)
 public class CityService {
@@ -112,11 +114,7 @@ public class CityService {
     }
 
     public String getCityCode() {
-        return (String) cityDataForKey("citycode");
-    }
-
-    public String getCityShapeFileUid() {
-        return (String) cityDataForKey("cityShapeFileStoreId");
+        return (String) cityDataForKey(CITY_CODE_KEY);
     }
 
     public String cityPrefCacheKey() {
