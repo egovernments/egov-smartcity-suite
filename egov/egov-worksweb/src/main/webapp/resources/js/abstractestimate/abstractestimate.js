@@ -1234,17 +1234,17 @@ function getActivitiesForTemplate(id){
 		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid/"+id,     
 		type: "GET",
 		dataType: "json",
-		success: function (estimateTemplateActivities) {
+		success: function (data) {
+			var responseObj = JSON.parse(data);
 			var sorCount = 0;
 			var nonSorCount = 0;
-			$.each(estimateTemplateActivities, function(index,estimateTemplateActivity){
-
+			$.each(responseObj, function(index,value) {
 				if(index==0){
 					$('#message').prop("hidden",true);
 					$('#sorRow').removeAttr("hidden");
 					$('#sorRow').removeAttr('sorinvisible');
 				}else{
-					if(estimateTemplateActivity.schedule != null){
+					if(responseObj[index].scheduleId != null){
 						var key = $("#tblsor tbody tr:visible[id='sorRow']").length - 1;
 						addRow('tblsor', 'sorRow');
 						resetIndexes();
@@ -1290,21 +1290,21 @@ function getActivitiesForTemplate(id){
 						nonSorCheck = true;
 					}
 				}
-				if(estimateTemplateActivity.schedule != null){
-					$('#id_'+sorCount).val(estimateTemplateActivity.schedule.id);
-					//$('.categoryCode_'+sorCount).html(estimateTemplateActivity.schedule.scheduleCategory.code);
-					$('.code_'+sorCount).html(estimateTemplateActivity.schedule.code);
-					$('.summary_'+sorCount).html(estimateTemplateActivity.schedule.summary);
-					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, estimateTemplateActivity.schedule.description));
-					$('.uom_'+sorCount).html(estimateTemplateActivity.schedule.uom.uom);
-					$('#sorUomid_'+sorCount).val(estimateTemplateActivity.schedule.uom.id);
+				if(responseObj[index].scheduleId != null){
+					$('#id_'+sorCount).val(responseObj[index].scheduleId);
+					$('.categoryCode_'+sorCount).html(responseObj[index].scheduleCategoryCode);
+					$('.code_'+sorCount).html(responseObj[index].scheduleCode);
+					$('.summary_'+sorCount).html(responseObj[index].scheduleSummary);
+					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, responseObj[index].scheduleDescription));
+					$('.uom_'+sorCount).html(responseObj[index].scheduleUom);
+					$('#sorUomid_'+sorCount).val(responseObj[index].scheduleUomId);
 					document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
 					document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
 					document.getElementById('sorActivities['+sorCount+'].msopen').value="0";
-					if(estimateTemplateActivity.schedule.sorRate!=null) {
-						$('.estimateRate_'+sorCount).html(estimateTemplateActivity.schedule.sorRate);
-						$('#rate_'+sorCount).val(getUnitRate(estimateTemplateActivity.schedule.uom.uom, estimateTemplateActivity.schedule.sorRate));
-						$('#estimateRate_'+sorCount).val(estimateTemplateActivity.schedule.sorRate);
+					if(responseObj[index].scheduleRate!=null) {
+						$('.estimateRate_'+sorCount).html(responseObj[index].scheduleRate);
+						$('#rate_'+sorCount).val(getUnitRate(responseObj[index].scheduleUom, responseObj[index].scheduleRate));
+						$('#estimateRate_'+sorCount).val(responseObj[index].scheduleRate);
 					}
 					else {
 						$('.estimateRate_'+sorCount).html(0);
@@ -1313,11 +1313,11 @@ function getActivitiesForTemplate(id){
 					}
 					sorCount++;
 				}else{
-					$('#nonSorDesc_'+nonSorCount).val(estimateTemplateActivity.nonSor.description);
-					$('#nonSorUom_'+nonSorCount).val(estimateTemplateActivity.uom.id);
-					$('#nonSorUomid_'+nonSorCount).val(estimateTemplateActivity.uom.id);
-					$('#nonSorEstimateRate_'+nonSorCount).val(estimateTemplateActivity.rate.formattedString);
-					$('#nonSorRate_'+nonSorCount).val(getUnitRate(estimateTemplateActivity.uom.uom,estimateTemplateActivity.rate));
+					$('#nonSorDesc_'+nonSorCount).val(responseObj[index].nonSorDescription);
+					$('#nonSorUom_'+nonSorCount).val(responseObj[index].nonSorUomId);
+					$('#nonSorUomid_'+nonSorCount).val(responseObj[index].nonSorUomId);
+					$('#nonSorEstimateRate_'+nonSorCount).val(responseObj[index].nonSorRate); 
+					$('#nonSorRate_'+nonSorCount).val(getUnitRate(responseObj[index].nonSorUom,responseObj[index].nonSorRate));
 					document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
 					document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
 					document.getElementById('nonSorActivities['+nonSorCount+'].msopen').value="0";

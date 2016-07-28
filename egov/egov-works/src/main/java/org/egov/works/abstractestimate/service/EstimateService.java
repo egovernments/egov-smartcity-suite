@@ -1014,7 +1014,7 @@ public class EstimateService {
     public void validateTechnicalSanctionDetail(final AbstractEstimate abstractEstimate, final BindingResult errors) {
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() == null)
-            errors.reject("technicalSanctionDate", "error.techdate.notnull");
+            errors.reject("error.techdate.notnull", "error.techdate.notnull");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionDate()
@@ -1022,10 +1022,10 @@ public class EstimateService {
             errors.reject("error.abstracttechnicalsanctiondate", "error.abstracttechnicalsanctiondate");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() == null)
-            errors.reject("technicalSanctionNumber", "error.technumber.notnull");
+            errors.reject("error.technumber.notnull", "error.technumber.notnull");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionBy() == null)
-            errors.reject("authority", "error.techby.notnull");
+            errors.reject("error.techby.notnull", "error.techby.notnull");
         if (abstractEstimate.getEstimateTechnicalSanctions() != null
                 && abstractEstimate.getEstimateTechnicalSanctions().get(0).getTechnicalSanctionNumber() != null) {
             final AbstractEstimate esistingAbstractEstimate = abstractEstimateRepository

@@ -52,7 +52,6 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.support.json.adapter.UserAdaptor;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
@@ -68,8 +67,9 @@ import org.egov.works.models.masters.Overhead;
 import org.egov.works.models.masters.OverheadRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.web.adaptor.AbstractEstimateForLOAJsonAdaptor;
-import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
 import org.egov.works.web.adaptor.AbstractEstimateForOfflineStatusJsonAdaptor;
+import org.egov.works.web.adaptor.EstimateTemplateJsonAdaptor;
+import org.egov.works.web.adaptor.SearchEstimatesToCancelJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -112,6 +112,9 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private AbstractEstimateForOfflineStatusJsonAdaptor abstractEstimateForOfflineStatusJsonAdaptor;
+    
+    @Autowired
+    private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
     
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
@@ -157,19 +160,21 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/ajaxgetestimatetemplatebyid/{id}", method = RequestMethod.GET)
-    public @ResponseBody List<EstimateTemplateActivity> populateMilestoneTemplateActivity(@PathVariable final String id,
+    public @ResponseBody String populateMilestoneTemplateActivity(@PathVariable final String id,
             final Model model)
             throws ApplicationException {
         final List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
                 .getEstimateTemplateActivities();
-        for (final EstimateTemplateActivity activity : activities)
-            try {
-                if (activity.getSchedule() != null)
-                    activity.getSchedule().setSorRateValue(activity.getSchedule().getRateOn(new Date()).getRate().getValue());
-            } catch (final ApplicationRuntimeException e) {
-                activity.getSchedule().setSorRateValue((double) 0);
-            }
-        return activities;
+        final String result = estimateTemplateToJson(activities);
+        return result;
+    }
+    
+    public String estimateTemplateToJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateJsonAdaptor)
+                        .create();
+        final String json = gson.toJson(object);
+        return json;
     }
 
     @RequestMapping(value = "/getAbstractEstimatesByNumber", method = RequestMethod.GET)
