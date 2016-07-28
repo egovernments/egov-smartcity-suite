@@ -53,7 +53,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PreambleNumberGeneratorImpl implements PreambleNumberGenerator {
 
-    private static final String PREAMBLE_NUMBER_SEQ = "SEQ_PREAMBLE_NUMBER";
+    private static final String PREAMBLE_NUMBER_SEQ = "SEQ_EGCNCL_PREAMBLE_NUMBER";
     @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 

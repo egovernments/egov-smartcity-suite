@@ -1,0 +1,1 @@
+create sequence SEQ_EGCNCL_PREAMBLE_NUMBER;
