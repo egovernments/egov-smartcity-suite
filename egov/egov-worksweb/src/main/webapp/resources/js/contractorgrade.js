@@ -77,7 +77,7 @@ function validateContractorGradeFormAndSubmit(){
         showMessage('contractorgrade_error', message);
 		return false;
 	}
-    if (maxAmount <= minAmount ) {
+    if (parseFloat(maxAmount) <= parseFloat(minAmount) ) {
     	var message = document.getElementById('gradeError').value;
         showMessage('contractorgrade_error', message);
         return false;

@@ -96,13 +96,11 @@ public class ContractorGrade extends AbstractAuditable {
 	@Column(name = "MIN_AMOUNT")
 	@Required(message = "contractorGrade.minAmount.null")
 	@Min(value = 0, message = "contractorGrade.minAmount.valid")
-	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.minAmount.numeric")
 	private BigDecimal minAmount;
 
 	@Column(name = "MAX_AMOUNT")
 	@Required(message = "contractorGrade.maxAmount.null")
 	@Min(value = 0, message = "contractorGrade.maxAmount.valid")
-	@OptionalPattern(regex = Constants.NUMERIC, message = "contractorGrade.maxAmount.numeric")
 	private BigDecimal maxAmount;
 
 	@Transient
