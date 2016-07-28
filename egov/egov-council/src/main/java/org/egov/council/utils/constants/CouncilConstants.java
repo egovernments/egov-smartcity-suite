@@ -3,7 +3,13 @@ package org.egov.council.utils.constants;
 import java.util.LinkedHashMap;
 
 public class CouncilConstants {
-
+    
+    public static final String COUNCILMEETING_STATUS_CREATED = "CREATED";
+    public static final String MODULE_NAME = "COUNCIL";
+    public static final String COUNCILMEETING="COUNCILMEETING";
+    public final static String PREAMBLE_STATUS_CREATED="CREATED";
+    public final static String PREAMBLE_MODULENAME = "COUNCILPREAMBLE";
+    
     public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         {
             put("9.00 AM", "9.00 AM");

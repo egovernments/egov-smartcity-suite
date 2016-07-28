@@ -7,8 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.council.entity.CouncilAgenda;
+import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
+import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
@@ -32,17 +37,22 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Controller
-@RequestMapping("/councilMeeting")
+@RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
-    private final static String COUNCILMEETING_NEW = "councilMeeting-new";
-    private final static String COUNCILMEETING_RESULT = "councilMeeting-result";
-    private final static String COUNCILMEETING_EDIT = "councilMeeting-edit";
-    private final static String COUNCILMEETING_VIEW = "councilMeeting-view";
-    private final static String COUNCILMEETING_SEARCH = "councilMeeting-search";
+    private final static String COUNCILMEETING_NEW = "councilmeeting-new";
+    private final static String COMMONERRORPAGE = "common-error-page";
+    private final static String COUNCILMEETING_RESULT = "councilmeeting-result";
+    private final static String COUNCILMEETING_EDIT = "councilmeeting-edit";
+    private final static String COUNCILMEETING_VIEW = "councilmeeting-view";
+    private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
     private final static String MODULE_NAME = "COUNCIL";
   
     @Autowired
     private CouncilMeetingService councilMeetingService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private CouncilAgendaService councilAgendaService;
     
     @Autowired
     private MessageSource messageSource;
@@ -57,29 +67,61 @@ public class CouncilMeetingController {
         model.addAttribute("commiteeTypes", committeeTypeService.getActiveCommiteeType());
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String newForm(final Model model) {
+    @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
+    public String newForm(@ModelAttribute final CouncilMeeting councilMeeting ,@PathVariable("id") final Long id,final Model model) {
+
+        CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
+        if (councilAgenda != null) {
+            //TODO: CHECK AGENDA STATUS. THROW ERROR IF AGENDA ALREADY USED IN MEETING.
+            councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
+            buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
+            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.COUNCILMEETING,CouncilConstants.COUNCILMEETING_STATUS_CREATED));
+         }else
+        {
+            model.addAttribute("message", "msg.invalid.agenda.details");
+            return COMMONERRORPAGE;
+        }
         prepareNewForm(model);
         model.addAttribute("meetingTimingMap", CouncilConstants.MEETING_TIMINGS);
-        model.addAttribute("councilMeeting", new CouncilMeeting());
+
         return COUNCILMEETING_NEW;
+    }
+
+    private void buildMeetingMomByUsingAgendaDetails(final CouncilMeeting councilMeeting, CouncilAgenda councilAgenda) {
+        for(CouncilAgendaDetails councilAgendaDetail: councilAgenda.getAgendaDetails())
+           {
+               MeetingMOM meetingMom= new MeetingMOM();
+               meetingMom.setMeeting(councilMeeting);
+               meetingMom.setAgenda(councilAgendaDetail.getAgenda());
+               meetingMom.setPreamble(councilAgendaDetail.getPreamble());
+             
+               councilMeeting.addMeetingMoms(meetingMom); 
+           }
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting,final BindingResult errors,
-          final Model model,
-            final RedirectAttributes redirectAttrs){
+          final Model model, final RedirectAttributes redirectAttrs){
+       
+        // CHECK WE NEED TO SEND SMS ?
+        //if not workflow, change the status
+        if(councilMeeting.getStatus()==null) 
+            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.COUNCILMEETING,CouncilConstants.COUNCILMEETING_STATUS_CREATED));
+
     	if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEETING_NEW;
         }
-       /* if (councilMeeting != null && councilMeeting.getStatus() == null)
-            councilMeeting.setStatus(CouncilMeetingStatus.ACTIVE);
-*/
-
-        councilMeetingService.create(councilMeeting);
+    	councilMeeting.setMeetingNumber("1");
+    	
+    	for(MeetingMOM meetingMom: councilMeeting.getMeetingMOMs())
+    	{
+    	meetingMom.setMeeting(councilMeeting); 
+    	}
+    	
+         councilMeetingService.create(councilMeeting);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilmember/result/" + councilMeeting.getId();
+        return "redirect:/councilMeeting/result/" + councilMeeting.getId();
     }
    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
@@ -101,7 +143,7 @@ public class CouncilMeetingController {
  
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilmember/result/" + councilMeeting.getId();
+        return "redirect:/councilMeeting/result/" + councilMeeting.getId();
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)

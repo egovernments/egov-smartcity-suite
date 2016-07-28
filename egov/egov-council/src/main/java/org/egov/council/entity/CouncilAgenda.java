@@ -1,6 +1,7 @@
 package org.egov.council.entity;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -52,7 +53,7 @@ public class CouncilAgenda extends StateAware {
     private EgwStatus status;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<CouncilAgendaDetails> agendaDetails = new HashSet<CouncilAgendaDetails>(0);
+    private List<CouncilAgendaDetails> agendaDetails = new ArrayList<CouncilAgendaDetails>(0);
 
     
     public Long getId() {
@@ -87,11 +88,11 @@ public class CouncilAgenda extends StateAware {
         this.status = status;
     }
 
-    public Set<CouncilAgendaDetails> getAgendaDetails() {
+    public List<CouncilAgendaDetails> getAgendaDetails() {
         return agendaDetails;
     }
 
-    public void setAgendaDetails(Set<CouncilAgendaDetails> agendaDetails) {
+    public void setAgendaDetails(List<CouncilAgendaDetails> agendaDetails) {
         this.agendaDetails = agendaDetails;
     }
 

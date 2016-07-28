@@ -52,27 +52,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PreambleNumberGeneratorImpl implements PreambleNumberGenerator {
-	
-	private static final String PREAMBLE_NUMBER_SEQ = "SEQ_PREAMBLE_NUMBER";
-	@Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-	@Override
-	public String getNextNumber(CouncilPreamble councilpreamble) {
-		// TODO Auto-generated method stub
-		
-		 final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-	     final String formattedDate = sdf.format(new Date());
-	     final String sequenceName = PREAMBLE_NUMBER_SEQ;
-	     final String currentYear = DateUtils.currentDateToYearFormat();
-	     Serializable sequenceNumber  = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+    private static final String PREAMBLE_NUMBER_SEQ = "SEQ_PREAMBLE_NUMBER";
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-	        final String result = String.format("%d/%s/%s", sequenceNumber,formattedDate,
-	        		currentYear);
-	        System.out.println(result);
-	        return result;
-		
+    @Override
+    public String getNextNumber(CouncilPreamble councilpreamble) {
+        // TODO Auto-generated method stub
 
-	}
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        final String formattedDate = sdf.format(new Date());
+        final String sequenceName = PREAMBLE_NUMBER_SEQ;
+        final String currentYear = DateUtils.currentDateToYearFormat();
+        Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+
+        final String result = String.format("%d/%s/%s", sequenceNumber, formattedDate, currentYear);
+        return result;
+
+    }
 
 }

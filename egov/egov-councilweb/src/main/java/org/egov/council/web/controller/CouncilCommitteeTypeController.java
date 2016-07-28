@@ -28,116 +28,107 @@ import com.google.gson.GsonBuilder;
 @RequestMapping("/committeetype")
 public class CouncilCommitteeTypeController {
 
-	private final static String COUNCILCOMMITTEETYPE_NEW = "councilcommittetype-new";
-	private final static String COUNCILCOMMITTEETYPE_RESULT = "councilcommitteetype-result";
-	private final static String COUNCILCOMMITTEETYPE_EDIT = "councilcommitteetype-edit";
-	private final static String COUNCILCOMMITTEETYPE_VIEW = "councilcommitteetype-view";
-	private final static String COUNCILCOMMITTEETYPE_SEARCH = "councilcommitteetype-search";
+    private final static String COUNCILCOMMITTEETYPE_NEW = "councilcommittetype-new";
+    private final static String COUNCILCOMMITTEETYPE_RESULT = "councilcommitteetype-result";
+    private final static String COUNCILCOMMITTEETYPE_EDIT = "councilcommitteetype-edit";
+    private final static String COUNCILCOMMITTEETYPE_VIEW = "councilcommitteetype-view";
+    private final static String COUNCILCOMMITTEETYPE_SEARCH = "councilcommitteetype-search";
 
-	@Autowired
-	private CommitteeTypeService committeeTypeService;
+    @Autowired
+    private CommitteeTypeService committeeTypeService;
 
-	@Autowired
-	private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
-	private void prepareNewForm(Model model) {
-	}
+    private void prepareNewForm(Model model) {
+    }
 
-	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String newForm(final Model model) {
-		prepareNewForm(model);
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    public String newForm(final Model model) {
+        prepareNewForm(model);
 
-		CommitteeType committeeType = new CommitteeType();
-		
-		  if (committeeType != null && committeeType.getCode() == null)
-		 committeeType.setCode(RandomStringUtils.random(4, Boolean.TRUE,
-		  Boolean.TRUE).toUpperCase());
-		 
+        CommitteeType committeeType = new CommitteeType();
 
-		model.addAttribute("committeeType", committeeType);
-		return COUNCILCOMMITTEETYPE_NEW;
-	}
+        if (committeeType != null && committeeType.getCode() == null)
+            committeeType.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(
-			@Valid @ModelAttribute final CommitteeType committeeType,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return COUNCILCOMMITTEETYPE_NEW;
-		}
-		committeeTypeService.create(committeeType);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.councilCommitteeType.success", null, null));
-		return "redirect:/committeetype/result/" + committeeType.getId();
-	}
+        model.addAttribute("committeeType", committeeType);
+        return COUNCILCOMMITTEETYPE_NEW;
+    }
 
-	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String view(@PathVariable("id") final Long id, Model model) {
-		CommitteeType committeeType = committeeTypeService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("committeeType", committeeType);
-		return COUNCILCOMMITTEETYPE_VIEW;
-	}
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return COUNCILCOMMITTEETYPE_NEW;
+        }
+        committeeTypeService.create(committeeType);
+        redirectAttrs.addFlashAttribute("message",
+                messageSource.getMessage("msg.councilCommitteeType.success", null, null));
+        return "redirect:/committeetype/result/" + committeeType.getId();
+    }
 
-	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-	public String edit(@PathVariable("id") final Long id, Model model) {
-		CommitteeType committeeType = committeeTypeService.findOne(id);
-		prepareNewForm(model);
-		model.addAttribute("committeeType", committeeType);
-		return COUNCILCOMMITTEETYPE_EDIT;
-	}
+    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+    public String view(@PathVariable("id") final Long id, Model model) {
+        CommitteeType committeeType = committeeTypeService.findOne(id);
+        prepareNewForm(model);
+        model.addAttribute("committeeType", committeeType);
+        return COUNCILCOMMITTEETYPE_VIEW;
+    }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(
-			@Valid @ModelAttribute final CommitteeType committeeType,
-			final BindingResult errors, final Model model,
-			final RedirectAttributes redirectAttrs) {
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final Long id, Model model) {
+        CommitteeType committeeType = committeeTypeService.findOne(id);
+        prepareNewForm(model);
+        model.addAttribute("committeeType", committeeType);
+        return COUNCILCOMMITTEETYPE_EDIT;
+    }
 
-		if (errors.hasErrors()) {
-			prepareNewForm(model);
-			return COUNCILCOMMITTEETYPE_EDIT;
-		}
-		committeeTypeService.update(committeeType);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.councilCommitteeType.success", null, null));
-		return "redirect:/committeetype/result/" + committeeType.getId();
-	}
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
 
-	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-	public String result(@PathVariable("id") final Long id, Model model) {
-		CommitteeType committeeType = committeeTypeService.findOne(id);
-		model.addAttribute("committeeType", committeeType);
-		return COUNCILCOMMITTEETYPE_RESULT;
-	}
+        if (errors.hasErrors()) {
+            prepareNewForm(model);
+            return COUNCILCOMMITTEETYPE_EDIT;
+        }
+        committeeTypeService.update(committeeType);
+        redirectAttrs.addFlashAttribute("message",
+                messageSource.getMessage("msg.councilCommitteeType.success", null, null));
+        return "redirect:/committeetype/result/" + committeeType.getId();
+    }
 
-	@RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
-	public String search(@PathVariable("mode") final String mode, Model model) {
-		CommitteeType committeeType = new CommitteeType();
-		prepareNewForm(model);
-		model.addAttribute("committeeType", committeeType);
-		return COUNCILCOMMITTEETYPE_SEARCH;
+    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, Model model) {
+        CommitteeType committeeType = committeeTypeService.findOne(id);
+        model.addAttribute("committeeType", committeeType);
+        return COUNCILCOMMITTEETYPE_RESULT;
+    }
 
-	}
+    @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
+    public String search(@PathVariable("mode") final String mode, Model model) {
+        CommitteeType committeeType = new CommitteeType();
+        prepareNewForm(model);
+        model.addAttribute("committeeType", committeeType);
+        return COUNCILCOMMITTEETYPE_SEARCH;
 
-	@RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(
-			@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final CommitteeType committeeType) {
-		List<CommitteeType> searchResultList = committeeTypeService
-				.search(committeeType);
-		String result = new StringBuilder("{ \"data\":")
-				.append(toSearchResultJson(searchResultList)).append("}")
-				.toString();
-		return result;
-	}
+    }
 
-	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(CommitteeType.class,
-				new CouncilCommitteeTypeJsonAdaptor()).create();
-		final String json = gson.toJson(object);
-		return json;
-	}
+    @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+            @ModelAttribute final CommitteeType committeeType) {
+        List<CommitteeType> searchResultList = committeeTypeService.search(committeeType);
+        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(CommitteeType.class, new CouncilCommitteeTypeJsonAdaptor())
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

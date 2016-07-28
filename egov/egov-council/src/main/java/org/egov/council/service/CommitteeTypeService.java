@@ -60,57 +60,52 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CommitteeTypeService {
 
-	private final CommitteeTypeRepository committeeTypeRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final CommitteeTypeRepository committeeTypeRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Autowired
-	public CommitteeTypeService(
-			final CommitteeTypeRepository committeeTypeRepository) {
-		this.committeeTypeRepository = committeeTypeRepository;
-	}
+    @Autowired
+    public CommitteeTypeService(final CommitteeTypeRepository committeeTypeRepository) {
+        this.committeeTypeRepository = committeeTypeRepository;
+    }
 
-	@Transactional
-	public CommitteeType create(final CommitteeType committeeType) {
-		return committeeTypeRepository.save(committeeType);
-	}
+    @Transactional
+    public CommitteeType create(final CommitteeType committeeType) {
+        return committeeTypeRepository.save(committeeType);
+    }
 
-	@Transactional
-	public CommitteeType update(final CommitteeType committeeType) {
-		return committeeTypeRepository.save(committeeType);
-	}
+    @Transactional
+    public CommitteeType update(final CommitteeType committeeType) {
+        return committeeTypeRepository.save(committeeType);
+    }
 
-	public List<CommitteeType> findAll() {
-		return committeeTypeRepository.findAll(new Sort(Sort.Direction.ASC,
-				"name"));
-	}
+    public List<CommitteeType> findAll() {
+        return committeeTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
-	public CommitteeType findByName(String name) {
-		return committeeTypeRepository.findByName(name);
-	}
+    public CommitteeType findByName(String name) {
+        return committeeTypeRepository.findByName(name);
+    }
 
-	public CommitteeType findOne(Long id) {
-		return committeeTypeRepository.findOne(id);
-	}
+    public CommitteeType findOne(Long id) {
+        return committeeTypeRepository.findOne(id);
+    }
 
-	public List<CommitteeType> getActiveCastes() {
-		return committeeTypeRepository.findByisActive(true);
-	}
+    public List<CommitteeType> getActiveCommiteeType() {
+        return committeeTypeRepository.findByisActive(true);
+    }
 
-	public List<CommitteeType> search(CommitteeType committeeType) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CommitteeType.class);
-		if (null != committeeType.getName())
-			criteria.add(Restrictions.ilike("name", committeeType.getName(),
-					MatchMode.ANYWHERE));
-		if (committeeType.getIsActive() != null
-				&& committeeType.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive", committeeType.getIsActive()));
-		return criteria.list();
-	}
+    public List<CommitteeType> search(CommitteeType committeeType) {
+        final Criteria criteria = getCurrentSession().createCriteria(CommitteeType.class);
+        if (null != committeeType.getName())
+            criteria.add(Restrictions.ilike("name", committeeType.getName(), MatchMode.ANYWHERE));
+        if (committeeType.getIsActive() != null && committeeType.getIsActive() == true)
+            criteria.add(Restrictions.eq("isActive", committeeType.getIsActive()));
+        return criteria.list();
+    }
 
 }

@@ -1,13 +1,13 @@
 package org.egov.council.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -40,12 +39,11 @@ public class CouncilMeeting  extends StateAware {
     @GeneratedValue(generator = SEQ_MEETING, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "committeeType")
     private CommitteeType committeeType;
 
-    @NotNull
+   
     @Column(name = "meetingNumber")
     private String meetingNumber;
 
@@ -59,17 +57,16 @@ public class CouncilMeeting  extends StateAware {
     @Column(name = "meetingLocation")
     private String meetingLocation;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "status", nullable = false)
+    @JoinColumn(name = "status")
     private EgwStatus status;
     
     
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MeetingMOM> meetingMOMs = new HashSet<MeetingMOM>(0);
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
+    private List<MeetingMOM> meetingMOMs = new ArrayList<MeetingMOM>(0);
 
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MeetingAttendence> meetingAttendence = new HashSet<MeetingAttendence>(0);
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
+    private List<MeetingAttendence> meetingAttendence = new ArrayList<MeetingAttendence>(0);
     
     public Long getId() {
         return id;
@@ -132,11 +129,11 @@ public class CouncilMeeting  extends StateAware {
         return String.format("Meeting Number %s ", meetingNumber);
     }
 
-    public Set<MeetingMOM> getMeetingMOMs() {
+    public List<MeetingMOM> getMeetingMOMs() {
         return meetingMOMs;
     }
 
-    public void setMeetingMOMs(Set<MeetingMOM> meetingMOMs) {
+    public void setMeetingMOMs(List<MeetingMOM> meetingMOMs) {
         this.meetingMOMs = meetingMOMs;
     }
     
@@ -145,11 +142,11 @@ public class CouncilMeeting  extends StateAware {
         this.meetingMOMs.add(meetingMom);
     }
 
-    public Set<MeetingAttendence> getMeetingAttendence() {
+    public List<MeetingAttendence> getMeetingAttendence() {
         return meetingAttendence;
     }
 
-    public void setMeetingAttendence(Set<MeetingAttendence> meetingAttendence) {
+    public void setMeetingAttendence(List<MeetingAttendence> meetingAttendence) {
         this.meetingAttendence = meetingAttendence;
     }
 
