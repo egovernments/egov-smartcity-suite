@@ -45,6 +45,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -54,37 +58,54 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.repository.ContractorRepository;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.masters.ExemptionForm;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class ContractorService extends PersistenceService<Contractor, Long> implements EntityTypeService {
-
-    public ContractorService() {
-        super(Contractor.class);
-    }
+@Service("contractorService")
+@Transactional(readOnly = true)
+public class ContractorService implements EntityTypeService {
 
     private final Logger logger = Logger.getLogger(getClass());
+
     @Autowired
     private WorksService worksService;
+
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private ContractorRepository contractorRepository;
+
+    public Contractor getContractorById(final Long contractorId) {
+        final Contractor contractor = contractorRepository.findOne(contractorId);
+        return contractor;
+    }
+
     @Override
     public List<Contractor> getAllActiveEntities(final Integer accountDetailTypeId) {
-        return findAllBy("select distinct contractorDet.contractor from ContractorDetail contractorDet " +
-                "where contractorDet.status.description=? and contractorDet.status.moduletype=?", "Active", "Contractor");
+        final Query query = entityManager
+                .createQuery("select distinct contractorDet.contractor from ContractorDetail contractorDet "
+                        + "where contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType");
+        query.setParameter("statusDescription", "Active");
+        query.setParameter("moduleType", "Contractor");
+        final List list = query.getResultList();
+        return list;
     }
 
     public static final Map<String, String> exemptionForm = new LinkedHashMap<String, String>() {
@@ -101,15 +122,19 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     @Override
     public List<Contractor> filterActiveEntities(final String filterKey,
             final int maxRecords, final Integer accountDetailTypeId) {
-        final Integer pageSize = maxRecords > 0 ? maxRecords : null;
-        final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
+        List<Contractor> contractorList = null;
+        filterKey.toUpperCase();
+        final String qryString = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
                 +
-                "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and (upper(cont.code) like ? "
+                "where cont.id=contractorDet.contractor.id and contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType and (upper(cont.code) like :contractorCodeOrName "
                 +
-                "or upper(cont.name) like ?) order by cont.code,cont.name";
-        return findPageBy(qry, 0, pageSize,
-                "Active", "Contractor", param, param).getList();
+                "or upper(cont.name) like :contractorCodeOrName) order by cont.code,cont.name";
+        final Query query = entityManager.createQuery(qryString);
+        query.setParameter("statusDescription", "Active");
+        query.setParameter("moduleType", "Contractor");
+        query.setParameter("contractorCodeOrName", "%" + filterKey.toUpperCase() + "%");
+        contractorList = query.getResultList();
+        return contractorList;
     }
 
     @Override
@@ -122,10 +147,10 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public List<Contractor> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
 
         List<Contractor> entities = null;
-        final Query entitysQuery = getSession()
+        final Query entitysQuery = entityManager
                 .createQuery(" from Contractor where panNumber is null or bank is null and id in ( :IDS )");
-        entitysQuery.setParameterList("IDS", idsList);
-        entities = entitysQuery.list();
+        entitysQuery.setParameter("IDS", idsList);
+        entities = entitysQuery.getResultList();
         return entities;
 
     }
@@ -134,24 +159,19 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
     public List<Contractor> getEntitiesById(final List<Long> idsList) throws ValidationException {
 
         List<Contractor> entities = null;
-        final Query entitysQuery = getSession().createQuery(" from Contractor where id in ( :IDS )");
-        entitysQuery.setParameterList("IDS", idsList);
-        entities = entitysQuery.list();
+        final Query entitysQuery = entityManager.createQuery(" from Contractor where id in ( :IDS )");
+        entitysQuery.setParameter("IDS", idsList);
+        entities = entitysQuery.getResultList();
         return entities;
     }
 
     public List<Contractor> getAllContractors() {
-        List<Contractor> entities = null;
-        final Query entityQuery = getSession().createQuery(" from Contractor con order by code asc");
-        entities = entityQuery.list();
-        return entities;
+        return contractorRepository.findAll(new Sort(Sort.Direction.ASC, "code"));
     }
 
     public List<Contractor> getContractorListForCriterias(final Map<String, Object> criteriaMap) {
         List<Contractor> contractorList = null;
         String contractorStr = null;
-        final List<Object> paramList = new ArrayList<Object>();
-        Object[] params;
         final String contractorName = (String) criteriaMap.get(WorksConstants.CONTRACTOR_NAME);
         final String contractorCode = (String) criteriaMap.get(WorksConstants.CONTRACTOR_CODE);
         final Long departmentId = (Long) criteriaMap.get(WorksConstants.DEPARTMENT_ID);
@@ -167,38 +187,39 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
                 || contractorName != null && !contractorName.equals(""))
             contractorStr = contractorStr + " where contractor.code is not null";
 
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode)) {
-            contractorStr = contractorStr + " and UPPER(contractor.code) like ?";
-            paramList.add("%" + contractorCode.toUpperCase() + "%");
-        }
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
+            contractorStr = contractorStr + " and UPPER(contractor.code) like :contractorCode";
 
-        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName)) {
-            contractorStr = contractorStr + " and UPPER(contractor.name) like ?";
-            paramList.add("%" + contractorName.toUpperCase() + "%");
-        }
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
+            contractorStr = contractorStr + " and UPPER(contractor.name) like :contractorName";
 
-        if (statusId != null) {
-            contractorStr = contractorStr + " and detail.status.id = ?";
-            paramList.add(statusId);
-        }
+        if (statusId != null)
+            contractorStr = contractorStr + " and detail.status.id = :statusId";
 
-        if (departmentId != null) {
-            contractorStr = contractorStr + " and detail.department.id = ?";
-            paramList.add(departmentId);
-        }
+        if (departmentId != null)
+            contractorStr = contractorStr + " and detail.department.id = :departmentId";
 
-        if (gradeId != null) {
-            contractorStr = contractorStr + " and detail.grade.id = ?";
-            paramList.add(gradeId);
-        }
+        if (gradeId != null)
+            contractorStr = contractorStr + " and detail.grade.id = :gradeId";
 
-        if (paramList.isEmpty())
-            contractorList = findAllBy(contractorStr);
-        else {
-            params = new Object[paramList.size()];
-            params = paramList.toArray(params);
-            contractorList = findAllBy(contractorStr, params);
-        }
+        final Query qry = entityManager.createQuery(contractorStr.toString());
+
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
+            qry.setParameter("contractorCode", "%" + contractorCode.toUpperCase() + "%");
+
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorName))
+            qry.setParameter("contractorName", "%" + contractorName.toUpperCase() + "%");
+
+        if (statusId != null)
+            qry.setParameter("statusId", statusId);
+
+        if (departmentId != null)
+            qry.setParameter("departmentId", departmentId);
+
+        if (gradeId != null)
+            qry.setParameter("gradeId", gradeId);
+        contractorList = qry.getResultList();
+
         return contractorList;
     }
 
@@ -257,7 +278,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         final List<AppConfigValues> configList = worksService.getAppConfigValue("Works", "CONTRACTOR_STATUS");
         final String status = configList.get(0).getValue();
 
-        final Criteria criteria = getSession().createCriteria(Contractor.class);
+        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Contractor.class);
         if (org.apache.commons.lang.StringUtils.isNotEmpty(contractorCode))
             criteria.add(Restrictions.sqlRestriction("lower({alias}.code) like lower(?)", "%" + contractorCode.trim() + "%",
                     StringType.INSTANCE));
@@ -284,6 +305,7 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
         criteria.list();
     }
 
+    @Transactional
     public void createAccountDetailKey(final Contractor cont) {
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("contractor");
         final Accountdetailkey adk = new Accountdetailkey();
@@ -304,14 +326,21 @@ public class ContractorService extends PersistenceService<Contractor, Long> impl
 
     public List<Contractor> filterActiveEntitiesByCode(final String filterKey,
             final int maxRecords, final Integer accountDetailTypeId) {
-        final Integer pageSize = maxRecords > 0 ? maxRecords : null;
-        final String param = "%" + filterKey.toUpperCase() + "%";
-        final String qry = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
-                +
-                "where cont.id=contractorDet.contractor.id and contractorDet.status.description=? and contractorDet.status.moduletype=? and upper(cont.code) like ? "
-                +
-                "order by cont.code,cont.name";
-        return findPageBy(qry, 0, pageSize,
-                "Active", "Contractor", param).getList();
+        List<Contractor> contractorList = null;
+        final String qryString = "select distinct cont from Contractor cont, ContractorDetail contractorDet "
+                + "where cont.id=contractorDet.contractor.id and contractorDet.status.description = :statusDescription and contractorDet.status.moduletype = :moduleType and upper(cont.code) like :contractorCode "
+                + "order by cont.code,cont.name";
+        final Query query = entityManager.createQuery(qryString);
+        query.setParameter("statusDescription", "Active");
+        query.setParameter("moduleType", "Contractor");
+        query.setParameter("contractorCode", "%" + filterKey.toUpperCase() + "%");
+        contractorList = query.getResultList();
+        return contractorList;
     }
+
+    @Transactional
+    public Contractor save(final Contractor contractor) {
+        return contractorRepository.save(contractor);
+    }
+
 }

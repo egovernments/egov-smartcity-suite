@@ -76,7 +76,6 @@ import org.egov.works.workorder.service.WorkOrderNumberGenerator;
 public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> implements WorkOrderService {
     private static final Logger logger = Logger.getLogger(WorkOrderServiceImpl.class);
 
-    private PersistenceService<Contractor, Long> contractorService;
     private WorksService worksService;
     private MeasurementBookService measurementBookService;
     private WorkOrderNumberGenerator workOrderNumberGenerators;
@@ -151,7 +150,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         logger.info("-------------------------Inside getContractorsWithWO---------------------");
         List<Contractor> contractorList = null;
 
-        contractorList = contractorService.findAllByNamedQuery("getContractorsWithWO");
+        contractorList = genericService.findAllByNamedQuery("getContractorsWithWO");
 
         return contractorList;
     }
@@ -838,10 +837,6 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
     //
     // }
 
-    public void setContractorService(final PersistenceService<Contractor, Long> contractorService) {
-        this.contractorService = contractorService;
-    }
-
     public void setWorksService(final WorksService worksService) {
         this.worksService = worksService;
     }
@@ -878,7 +873,7 @@ public class WorkOrderServiceImpl extends BaseServiceImpl<WorkOrder, Long> imple
         // Assuming that status is inserted using db script
         final String status = worksService.getWorksConfigValue("CONTRACTOR_STATUS");
         List<Contractor> contractorList = null;
-        contractorList = contractorService.findAllByNamedQuery("GET_All_CONTRACTORS", status);
+        contractorList = genericService.findAllByNamedQuery("GET_All_CONTRACTORS", status);
         return contractorList;
     }
 

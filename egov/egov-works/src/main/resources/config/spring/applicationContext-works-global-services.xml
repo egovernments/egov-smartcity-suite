@@ -68,10 +68,8 @@
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
     
-    <bean id="contractorService" class="org.egov.works.master.service.ContractorService">
-		<property name="type" value="org.egov.works.models.masters.Contractor"/>
-	</bean>
-	
+    <bean id="contractorService" class="org.egov.works.master.service.ContractorService" />	
+    
 	<bean id="assetsForEstimateService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"

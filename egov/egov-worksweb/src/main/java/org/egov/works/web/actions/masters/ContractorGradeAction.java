@@ -58,6 +58,7 @@ import org.egov.infstr.search.SearchQuery;
 import org.egov.works.master.service.ContractorGradeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Results({
         @Result(name = ContractorGradeAction.NEW, location = "contractorGrade-new.jsp"),
@@ -70,7 +71,9 @@ public class ContractorGradeAction extends SearchFormAction {
 
     private static final long serialVersionUID = 4500128509093695097L;
     private ContractorGrade contractorGrade = new ContractorGrade();
+
     @Autowired
+    @Qualifier("contractorGradeService")
     private ContractorGradeService contractorGradeService;
     private List<ContractorGrade> contractorGradeList = null;
     public static final String SEARCH = "searchPage";
@@ -86,16 +89,22 @@ public class ContractorGradeAction extends SearchFormAction {
     private List<String> minAmountList;
     private Map<String, Object> criteriaMap = null;
 
+    public ContractorGradeAction() {
+    }
+
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
-    	if(contractorGrade.getMaxAmount().intValue() <= contractorGrade.getMinAmount().intValue()){
-    		addActionMessage(getText("contractor.grade.maxamount.invalid"));
+        if (contractorGrade.getMaxAmount().intValue() <= contractorGrade.getMinAmount().intValue()) {
+            addActionMessage(getText("contractor.grade.maxamount.invalid"));
             return NEW;
-    	}
-        contractorGrade = contractorGradeService.persist(contractorGrade);
-        if (contractorGrade.getId() == null)
+        }
+        persistenceService.validate(contractorGrade);
+        contractorGrade.validate();
+        contractorGrade = contractorGradeService.save(contractorGrade);
+        if (!mode.equals("edit"))
             addActionMessage(getText("contractor.grade.save.success"));
-        addActionMessage(getText("contractor.grade.modify.success"));
+        else
+            addActionMessage(getText("contractor.grade.modify.success"));
         contractorGradeList = new ArrayList<ContractorGrade>();
         contractorGradeList.add(contractorGrade);
         return INDEX;
@@ -239,10 +248,6 @@ public class ContractorGradeAction extends SearchFormAction {
 
     public ContractorGrade getContractorGrade() {
         return contractorGrade;
-    }
-
-    public void setContractorGrade(final ContractorGrade contractorGrade) {
-        this.contractorGrade = contractorGrade;
     }
 
     @Override

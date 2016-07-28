@@ -47,28 +47,39 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.egov.commons.ContractorGrade;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
-import org.egov.infstr.services.PersistenceService;
+import org.egov.works.master.repository.ContractorGradeRepository;
 import org.egov.works.utils.WorksConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ContractorGradeService extends PersistenceService<ContractorGrade, Long> {
+@Service("contractorGradeService")
+@Transactional(readOnly = true)
+public class ContractorGradeService {
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private ContractorGradeRepository contractorGradeRepository;
+
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
-        final ContractorGrade contractorGrade = entityManager.find(ContractorGrade.class, contractorGradeId);
+        final ContractorGrade contractorGrade = contractorGradeRepository.findOne(contractorGradeId);
         return contractorGrade;
     }
 
     public List<ContractorGrade> getAllContractorGrades() {
-        final Query query = entityManager.createQuery("from ContractorGrade order by upper(grade)");
-        final List<ContractorGrade> contractorGradeList = query.getResultList();
-        return contractorGradeList;
+        return contractorGradeRepository.findAll(new Sort(Sort.Direction.ASC, "grade"));
+    }
+
+    @Transactional
+    public ContractorGrade save(final ContractorGrade contractorGrade) {
+        return contractorGradeRepository.save(contractorGrade);
     }
 
     public SearchQuery prepareSearchQuery(final Map<String, Object> criteriaMap) {
@@ -101,4 +112,5 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
         final String countQuery = "select count(*) " + contractorGradeStr;
         return new SearchQueryHQL(contractorGradeStr, countQuery, paramList);
     }
+
 }

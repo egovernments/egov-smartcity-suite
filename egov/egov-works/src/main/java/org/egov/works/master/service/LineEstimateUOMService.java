@@ -46,8 +46,10 @@ import org.egov.works.master.repository.LineEstimateUOMRepository;
 import org.egov.works.models.masters.LineEstimateUOM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class LineEstimateUOMService {
 
     @Autowired
@@ -57,7 +59,7 @@ public class LineEstimateUOMService {
         return lineEstimateUOMRepository.findAll();
     }
 
-    public LineEstimateUOM findById(Long id) {
+    public LineEstimateUOM findById(final Long id) {
         return lineEstimateUOMRepository.findOne(id);
     }
 }

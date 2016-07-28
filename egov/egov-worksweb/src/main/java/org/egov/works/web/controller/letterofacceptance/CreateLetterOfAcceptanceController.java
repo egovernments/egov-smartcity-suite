@@ -103,6 +103,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
     private DepartmentService departmentService;
 
     @Autowired
+    @Qualifier("contractorGradeService")
     private ContractorGradeService contractorGradeService;
 
     @Autowired
@@ -120,7 +121,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -197,7 +198,7 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
-            workOrder.setContractor(contractorService.findById(workOrder.getContractor().getId(), false));
+            workOrder.setContractor(contractorService.getContractorById(workOrder.getContractor().getId()));
             final WorkOrderEstimate workOrderEstimate = letterOfAcceptanceService.createWorkOrderEstimate(workOrder);
 
             if (abstractEstimate != null

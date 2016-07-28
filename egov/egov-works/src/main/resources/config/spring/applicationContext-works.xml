@@ -208,7 +208,6 @@
 				<property name="type" value="org.egov.works.workorder.entity.WorkOrder" />
 			</bean>
 		</constructor-arg>
-		<property name="contractorService" ref="contractorService" />
 		<property name="worksService" ref="worksService" />
 		<property name="workOrderNumberGenerators" ref="workOrderNumberGenerators" />
 		<property name="genericService" ref="persistenceService" />
@@ -307,10 +306,6 @@
 		<property name="contractorBillService" ref="contractorBillService" />
 	</bean>
 
-	<!-- <bean id="contractorGradeService" parent="persistenceService"
-		scope="prototype">
-		<property name="type" value="org.egov.commons.ContractorGrade" />
-	</bean> -->
 	<bean id="tenderResponseContractorsService" parent="persistenceService"
 		scope="prototype">
 		<property name="type"
@@ -454,10 +449,6 @@
 			value="org.egov.works.models.contractoradvance.ContractorAdvanceRequisition" />
 	</bean> -->
 
-	<!-- <bean id="employeeService" class="org.egov.pims.service.EmployeeServiceImpl"/> -->
-	<bean id="contractorGradeService" class="org.egov.works.master.service.ContractorGradeService">
-		<property name="type" value="org.egov.commons.ContractorGrade"/>
-	</bean>
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
       <constructor-arg index="0" value="org.egov.commons.Scheme" />
     </bean>

@@ -60,6 +60,7 @@ import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -78,6 +79,7 @@ import com.google.gson.GsonBuilder;
 public class AjaxLetterOfAcceptanceController {
 
     @Autowired
+    @Qualifier("contractorService")
     private ContractorService contractorService;
 
     @Autowired
@@ -109,7 +111,7 @@ public class AjaxLetterOfAcceptanceController {
 
     @Autowired
     private SearchWorkOrderForMBHeaderJsonAdaptor searchWorkOrderForMBHeaderJsonAdaptor;
-    
+
     @Autowired
     private SearchLetterOfAcceptanceToMofifyJsonAdaptor searchLetterOfAcceptanceToMofifyJsonAdaptor;
 
@@ -255,7 +257,7 @@ public class AjaxLetterOfAcceptanceController {
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchLetterOfAcceptanceJsonForModify(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(WorkOrderEstimate.class, searchLetterOfAcceptanceToMofifyJsonAdaptor)
@@ -294,8 +296,8 @@ public class AjaxLetterOfAcceptanceController {
 
     @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String checkIfBillsCreated(@RequestParam final Long id) {
-        WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
-        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
+        final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
+        final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         String message = "";
         if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(id);
@@ -355,32 +357,32 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxestimatenumbers-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForModifyLOA(@RequestParam final String estimateNumber) {
         return letterOfAcceptanceService.getApprovedEstimateNumbersForModfyLOA(estimateNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxloanumber-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbersForModifyLOA(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.getApprovedWorkOrderNumberForModfyLOA(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxestimatenumbers-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findEstimateNumbersForOfflineStatus(@RequestParam final String estimateNumber) {
         return letterOfAcceptanceService.getApprovedEstimateNumbersForSetOfflineStatus(estimateNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxloanumber-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findLoaNumbersForForOfflineStatus(@RequestParam final String workOrderNumber) {
         return letterOfAcceptanceService.getApprovedWorkOrderNumberForSetOfflineStatus(workOrderNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-loaofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorNameOrCodeForForOfflineStatus(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getApprovedContractorForSetOfflineStatus(contractorName);
     }
-    
+
     @RequestMapping(value = "/ajaxcontractors-modifyloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findContractorsForModifyLOA(@RequestParam final String contractorName) {
         return letterOfAcceptanceService.getApprovedContractorsForModfyLOA(contractorName);

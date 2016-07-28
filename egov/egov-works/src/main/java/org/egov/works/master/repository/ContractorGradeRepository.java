@@ -37,29 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.works.master.repository;
 
-package org.egov.works.master.service;
+import org.egov.commons.ContractorGrade;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface ContractorGradeRepository extends JpaRepository<ContractorGrade, Long> {
 
-import org.egov.works.master.repository.ModeOfAllotmentRepository;
-import org.egov.works.models.masters.ModeOfAllotment;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-@Transactional(readOnly = true)
-public class ModeOfAllotmentService {
-
-    @Autowired
-    private ModeOfAllotmentRepository modeOfAllotmentRepository;
-
-    public List<ModeOfAllotment> findAll() {
-        return modeOfAllotmentRepository.findAll();
-    }
-
-    public ModeOfAllotment findById(final Long id) {
-        return modeOfAllotmentRepository.findOne(id);
-    }
 }

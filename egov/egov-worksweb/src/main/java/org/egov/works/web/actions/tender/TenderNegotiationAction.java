@@ -82,6 +82,7 @@ import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.master.service.ContractorService;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.NegotiationNumberGenerator;
 import org.egov.works.models.tender.OfflineStatus;
@@ -101,6 +102,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Result(name = TenderNegotiationAction.NEW, location = "tenderNegotiation-new.jsp")
@@ -199,7 +201,9 @@ public class TenderNegotiationAction extends SearchFormAction {
     private Double sorPerDiff;
     private OfflineStatus setStatusObj = new OfflineStatus();
     private final static String TENDER_ACCEPTANCE_NOTE = "acceptanceNote";
-    private PersistenceService<Contractor, Long> contractorService;
+    @Autowired
+    @Qualifier("contractorService")
+    private ContractorService contractorService;
     private final static String CONTRACTOR_LIST = "contractorList";
     private List<String> tenderTypeList;
     private PersistenceService<OfflineStatus, Long> worksStatusService;
@@ -761,8 +765,8 @@ public class TenderNegotiationAction extends SearchFormAction {
                                 .getTenderResponseQuotesList()) {
                             final TenderResponseQuotes tenderResponseQuotes = new TenderResponseQuotes();
                             tenderResponseQuotes.setQuotedRate(tenderResponseQuotesTemp.getQuotedRate());
-                            final Contractor contractor = contractorService.findById(tenderResponseQuotesTemp
-                                    .getContractor().getId(), false);
+                            final Contractor contractor = contractorService.getContractorById(tenderResponseQuotesTemp
+                                    .getContractor().getId());
                             tenderResponseQuotes.setContractor(contractor);
                             tenderResponseQuotes.setQuotedQuantity(activity.getQuantity());
                             tenderResponseQuotesList.add(tenderResponseQuotes);
@@ -1660,10 +1664,6 @@ public class TenderNegotiationAction extends SearchFormAction {
 
     public void setActionTenderResponseContractors(final List<TenderResponseContractors> actionTenderResponseContractors) {
         this.actionTenderResponseContractors = actionTenderResponseContractors;
-    }
-
-    public void setContractorService(final PersistenceService<Contractor, Long> service) {
-        contractorService = service;
     }
 
     public Long getContractorId() {

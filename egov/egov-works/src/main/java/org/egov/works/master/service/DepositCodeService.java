@@ -57,7 +57,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("depositCodeService")
-@Transactional
+@Transactional(readOnly = true)
 public class DepositCodeService extends PersistenceService<DepositCode, Long> {
 
     @Autowired
@@ -66,6 +66,10 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> {
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
     @PersistenceContext
     private EntityManager entityManager;
+
+    public DepositCodeService() {
+        super(DepositCode.class);
+    }
 
     public DepositCode getDepositCodeById(final Long DepositCodeId) {
         final DepositCode depositCode = entityManager.find(DepositCode.class, DepositCodeId);
@@ -78,6 +82,7 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> {
         return depositCodeList;
     }
 
+    @Transactional
     public void createAccountDetailKey(final DepositCode dc) {
         final Accountdetailtype accountdetailtype = worksService.getAccountdetailtypeByName("DEPOSITCODE");
         final Accountdetailkey adk = new Accountdetailkey();

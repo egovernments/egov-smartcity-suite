@@ -73,6 +73,7 @@ import org.egov.works.models.masters.ContractorDetail;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({
@@ -95,6 +96,7 @@ public class ContractorAction extends SearchFormAction {
     public static final String EDIT = "edit";
     public static final String VIEW = "view";
     @Autowired
+    @Qualifier("contractorService")
     private ContractorService contractorService;
     private Contractor contractor = new Contractor();
 
@@ -113,6 +115,7 @@ public class ContractorAction extends SearchFormAction {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibDAO;
     @Autowired
+    @Qualifier("contractorGradeService")
     private ContractorGradeService contractorGradeService;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
@@ -152,7 +155,7 @@ public class ContractorAction extends SearchFormAction {
 
     @Action(value = "/masters/contractor-edit")
     public String edit() {
-        contractor = contractorService.findById(contractor.getId(), false);
+        contractor = contractorService.getContractorById(contractor.getId());
         if (mode.equals("edit"))
             return EDIT;
         else
@@ -181,18 +184,17 @@ public class ContractorAction extends SearchFormAction {
     @Action(value = "/masters/contractor-save")
     public String save() {
         populateContractorDetails(mode);
-        for (final ContractorDetail contractorDetail : actionContractorDetails) {
-        	if(contractorDetail != null)
-        		validateContractorDetail(contractorDetail);
-        }
-        contractorService.applyAuditing(contractor);
-        contractor = contractorService.persist(contractor);
+        for (final ContractorDetail contractorDetail : actionContractorDetails)
+            if (contractorDetail != null)
+                validateContractorDetail(contractorDetail);
+
+        contractor.validate();
+        persistenceService.validate(contractor);
+        contractor = contractorService.save(contractor);
+
         if (mode == null || mode.equals(""))
             contractorService.createAccountDetailKey(contractor);
 
-        // TODO:Fixme - Added temporarily since AccountDetailKey was not persisting. Need to find the fix for this and remove
-        // below line of code
-        contractorService.persist(contractor);
         if (StringUtils.isBlank(mode))
             addActionMessage(getText("contractor.save.success", new String[] { contractor.getCode() }));
         else
@@ -225,7 +227,7 @@ public class ContractorAction extends SearchFormAction {
     protected void populateContractorDetails(final String mode) {
         contractor.getContractorDetails().clear();
 
-        for (final ContractorDetail contractorDetail : actionContractorDetails) {
+        for (final ContractorDetail contractorDetail : actionContractorDetails)
             if (validContractorDetail(contractorDetail)) {
                 contractorDetail.setDepartment(departmentService.getDepartmentById(contractorDetail.getDepartment().getId()));
                 contractorDetail.setStatus(egwStatusHibDAO.findById(contractorDetail.getStatus().getId(), false));
@@ -236,7 +238,7 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
-                contractorService.applyAuditing(contractorDetail);
+                // contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             } else if (contractorDetail != null) {
                 if (contractorDetail.getDepartment() == null || contractorDetail.getDepartment().getId() == null)
@@ -254,11 +256,10 @@ public class ContractorAction extends SearchFormAction {
                 contractorDetail.setContractor(contractor);
                 if (mode.equals("edit"))
                     setPrimaryDetails(contractorDetail);
-                contractorService.applyAuditing(contractorDetail);
+                // contractorService.applyAuditing(contractorDetail);
                 contractor.addContractorDetail(contractorDetail);
             }
-        }
-        
+
     }
 
     protected boolean validContractorDetail(final ContractorDetail contractorDetail) {
@@ -281,7 +282,7 @@ public class ContractorAction extends SearchFormAction {
     @Override
     public void prepare() {
         if (id != null)
-            contractor = contractorService.findById(id, false);
+            contractor = contractorService.getContractorById(id);
         super.prepare();
         setupDropdownDataExcluding(WorksConstants.BANK);
         addDropdownData("departmentList", departmentService.getAllDepartments());
@@ -454,16 +455,15 @@ public class ContractorAction extends SearchFormAction {
         criteriaMap.put(WorksConstants.SEARCH_DATE, searchDate);
         return criteriaMap;
     }
-    
+
     public void validateContractorDetail(final ContractorDetail contractorDetail) {
-        for (final ContractorDetail contDetail : actionContractorDetails) {
+        for (final ContractorDetail contDetail : actionContractorDetails)
             if (contDetail != null) {
                 List<ValidationError> validationErrors = new ArrayList<ValidationError>();
                 validationErrors = contractorDetail.validate();
                 if (validationErrors != null)
                     throw new ValidationException(validationErrors);
             }
-        }
     }
 
 }
