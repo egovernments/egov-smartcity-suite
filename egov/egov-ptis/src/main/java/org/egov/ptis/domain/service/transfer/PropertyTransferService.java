@@ -335,17 +335,20 @@ public class PropertyTransferService {
         if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
         	ackBean.setTransferpropertyText("");
+        	ackBean.setTransferpropertyTextEnd("");
         	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
                      .getResolutionTime().toString());
         }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.PARTT);
         	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
+        	ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
         	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "PARTIAL TRANSFER")
                      .getResolutionTime().toString());
         }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
         	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
-        	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
+        	ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
+        	ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
                      .getResolutionTime().toString());
         }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());

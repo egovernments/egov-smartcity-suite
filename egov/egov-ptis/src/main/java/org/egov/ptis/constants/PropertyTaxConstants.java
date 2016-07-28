@@ -1447,7 +1447,8 @@ public interface PropertyTaxConstants {
     public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
     public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
     
-    public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
+    public static final String TTTEXT=" of the registration is completed";
+    public static final String TTTEXTEND= " in Registration and Stamps Office";
     
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";
