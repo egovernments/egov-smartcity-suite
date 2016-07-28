@@ -41,6 +41,7 @@ package org.egov.works.web.controller.abstractestimate;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +90,7 @@ public class ViewBillOfQuantitiesXlsController {
     private Map createHeaderParams(final AbstractEstimate estimate, final String type) {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (type.equalsIgnoreCase(BOQ)) {
             reportParams.put("workName", estimate.getName());
             reportParams.put("deptName", estimate.getExecutingDepartment().getName());
@@ -99,6 +101,7 @@ public class ViewBillOfQuantitiesXlsController {
             reportParams.put("grandTotalAmt", BigDecimal.valueOf(estimate.getWorkValue()));
             reportParams.put("estimateDate",
                     estimate.getEstimateDate() != null ? formatter.format(estimate.getEstimateDate()) : "");
+            reportParams.put("currDate", sdf.format(new Date()));
         }
         return reportParams;
     }
