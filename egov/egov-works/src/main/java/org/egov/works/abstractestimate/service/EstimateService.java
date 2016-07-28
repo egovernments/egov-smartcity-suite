@@ -420,7 +420,7 @@ public class EstimateService {
             abstractEstimateFromDB.addFinancialDetails(finacilaDetail);
         }
 
-        for (final AssetsForEstimate assetsForEstimate : newAbstractEstimate.getAssetValues()) {
+        for (final AssetsForEstimate assetsForEstimate : newAbstractEstimate.getTempAssetValues()) {
             assetsForEstimate.setAbstractEstimate(abstractEstimateFromDB);
             assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
             abstractEstimateFromDB.addAssetValue(assetsForEstimate);
@@ -560,7 +560,7 @@ public class EstimateService {
             final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
             final AppConfigValues value = appConfigvalues.get(0);
-            if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
+            if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getTempAssetValues() != null
                     && abstractEstimate.getTempAssetValues().isEmpty())
                 bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
         }

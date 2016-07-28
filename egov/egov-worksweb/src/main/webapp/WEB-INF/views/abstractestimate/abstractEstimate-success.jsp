@@ -60,7 +60,7 @@
 <input type="hidden" name="estimateId" id="estimateId" value="${abstractEstimate.id}"/>
 <div class="row text-center">
 	<div class="add-margin">
-	<c:if test="${abstractEstimate != null && abstractEstimate.state.value != 'NEW' && abstractEstimate.egwStatus.code != 'CANCELLED'}">
+	<c:if test="${abstractEstimate != null && abstractEstimate.egwStatus.code != 'NEW' && abstractEstimate.egwStatus.code != 'CANCELLED'}">
 	    <button type='submit' class='btn btn-primary' id="viewBOQ" name="viewBOQ"><spring:message code='lbl.viewBOQ' />	</button>
 	    <button type='submit' class='btn btn-primary' id="estimatepdf" name="estimatepdf"><spring:message code='lbl.abstractestimate.pdf' />	</button>
 	</c:if>
