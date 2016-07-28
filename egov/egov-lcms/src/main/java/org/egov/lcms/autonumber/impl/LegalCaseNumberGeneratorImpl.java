@@ -67,7 +67,7 @@ public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {
         final String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%s%s%06d", "LC/", legalCaseUtil.getCityCode()+"/",(finYear!=null ?(finYear.getFinYearRange().split("-")[0]):""),"/"+nextSequence);
+        return String.format("%s%s%s%06d", "LC/", legalCaseUtil.getCityCode()+"/",(finYear!=null ?(finYear.getFinYearRange().split("-")[0]+"/"):"/"),nextSequence);
     }
 
 }
