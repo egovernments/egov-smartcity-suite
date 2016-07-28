@@ -119,6 +119,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         splitSorAndNonSorActivities(abstractEstimate);
         final LineEstimateDetails lineEstimateDetails = abstractEstimate.getLineEstimateDetails();
         abstractEstimate.setTempOverheadValues(abstractEstimate.getOverheadValues());
+        abstractEstimate.setTempAssetValues(abstractEstimate.getAssetValues());
         if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
             model.addAttribute("message",
                     messageSource.getMessage("msg.estimate.saved", new String[] { abstractEstimate.getEstimateNumber() }, null));

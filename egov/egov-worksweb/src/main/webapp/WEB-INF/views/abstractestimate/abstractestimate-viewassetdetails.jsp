@@ -46,7 +46,7 @@
 	</div>
 <div class="panel-body">
 
-<table class="table table-bordered" id="tblsor">
+<table class="table table-bordered" id="tblassetdetails">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.slno" /></th>
@@ -54,11 +54,12 @@
 					<th><spring:message code="lbl.code" /></th>
 				</tr>
 			</thead>
-			<tbody id="assetTable">
+			<tbody id="assetDetailsTbl">
 				<c:choose>
 					<c:when test="${abstractEstimate.assetValues.size() != 0}">
 						<c:forEach items="${abstractEstimate.getAssetValues()}" var="assetDtls" varStatus="item">
-								<tr >
+								<tr id="assetViewRow" onmouseover="changeColor(this, true);"	onmouseout="changeColor(this, false);">
+								    <form:hidden path="assetValues[0].asset.id" name="assetValues[0].asset.id" value="${assetDtls.asset.id}" class="form-control table-input hidden-input" />
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${assetDtls.asset.name}"></c:out></td>
 								 	<td><c:out value="${assetDtls.asset.code}"></c:out></td>

@@ -250,6 +250,9 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Transient
     private List<OverheadValue> tempOverheadValues = new ArrayList<OverheadValue>(0);
+    
+    @Transient
+    private List<AssetsForEstimate> tempAssetValues = new ArrayList<AssetsForEstimate>(0);
 
     @Valid
     @OrderBy("id")
@@ -832,4 +835,14 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
     }
+
+    public List<AssetsForEstimate> getTempAssetValues() {
+        return tempAssetValues;
+    }
+
+    public void setTempAssetValues(final List<AssetsForEstimate> tempAssetValues) {
+        this.tempAssetValues = tempAssetValues;
+    }
+    
+    
 }

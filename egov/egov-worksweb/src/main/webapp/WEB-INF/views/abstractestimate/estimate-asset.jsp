@@ -57,26 +57,28 @@
 			</thead>
 			<tbody id="assetDetailsTbl">
 			<c:choose>
-				<c:when test="${abstractEstimate.assetValues.size() == 0}">
+				<c:when test="${abstractEstimate.tempAssetValues.size() == 0}">
 				<tr id="assetDetailRow" onmouseover="changeColor(this, true);"	onmouseout="changeColor(this, false);">
-				    <form:hidden path="assetValues[0].id" name="assetValues[0].id" value="${assetValues.id}" class="form-control table-input hidden-input" />
-				    <form:hidden path="assetValues[0].asset.id" name="assetValues[0].asset.id" value="${assetValues.asset.id}" class="form-control table-input hidden-input" />
+				    <form:hidden path="tempAssetValues[0].id" name="tempAssetValues[0].id" value="${assetValues.id}" class="form-control table-input hidden-input" />
+				    <form:hidden path="tempAssetValues[0].asset.id" name="tempAssetValues[0].asset.id" value="${assetValues.asset.id}" class="form-control table-input hidden-input" />
 					<td><span id="sno" class="spansno" data-sno>1</span> 
 					<td><button type="button" class="btn btn-xs btn-secondary searchAssetbtn"  data-optional="0"><span class="glyphicon glyphicon-search"></span> Search</button></td>
-					<td><span id="assetcode[0]" class="assetdetail"></span><input type="hidden" id="assetValues[0].asset.code" name="assetValues[0].asset.code" value=""  data-optional="0" data-errormsg="Select asset details!"/></td>
-					<td><span id="assetname[0]" class="assetdetail"></span><input type="hidden" id="assetValues[0].asset.name" name="assetValues[0].asset.name" value=""  /></td>
+					<td><span id="assetcode[0]" class="assetdetail"></span><input type="hidden" id="tempAssetValues[0].asset.code" name="tempAssetValues[0].asset.code" value=""  data-optional="0" data-errormsg="Select asset details!"/>
+					</td>
+					<td><span id="assetname[0]" class="assetdetail"></span><input type="hidden" id="tempAssetValues[0].asset.name" name="tempAssetValues[0].asset.name" value=""  />
+					</td>
 					<td><div class="text-left"><button type="button" onclick="deleteRow('tblassetdetails',this);" class="btn btn-xs btn-danger delete-row"  data-optional="0"><span class="glyphicon glyphicon-trash"></span> Delete</button></div></td>
 				</tr>
 				</c:when>
 				<c:otherwise>
-					<c:forEach items="${abstractEstimate.getAssetValues()}" var="assetValues" varStatus="item">
+					<c:forEach items="${abstractEstimate.getTempAssetValues()}" var="assetValues" varStatus="item">
 					 <tr id="assetDetailRow" onmouseover="changeColor(this, true);" onmouseout="changeColor(this, false);">
-						<form:hidden path="assetValues[${item.index}].id" name="assetValues[${item.index}].id" value="${assetValues.id}" class="form-control table-input hidden-input" />
-						<form:hidden path="assetValues[${item.index}].asset.id" name="assetValues[${item.index}].asset.id" value="${assetValues.asset.id}" class="form-control table-input hidden-input" />
+						<form:hidden path="tempAssetValues[${item.index}].id" name="tempAssetValues[${item.index}].id" value="${assetValues.id}" class="form-control table-input hidden-input" />
+						<form:hidden path="tempAssetValues[${item.index}].asset.id" name="tempAssetValues[${item.index}].asset.id" value="${assetValues.asset.id}" class="form-control table-input hidden-input" />
 						<td><span id="sno" class="spansno" data-sno><c:out value="${item.index + 1}"/></span> 
 					    <td><button type="button" class="btn btn-xs btn-secondary searchAssetbtn"  data-optional="0"><span class="glyphicon glyphicon-search"></span> Search</button></td>
-					     <td><span class="assetdetail" id="assetcode[${item.index}]"><c:out value="${assetValues.asset.code}"/></span><input type="hidden" id="assetValues[${item.index}].asset.code" name="assetValues[${item.index}].asset.code" value="${assetValues.asset.code}"  data-optional="0" data-errormsg="Select asset details!"/></td>
-						<td><span class="assetdetail" id="assetname[${item.index}]"><c:out value="${assetValues.asset.name}"/></span><input type="hidden" id="assetValues[${item.index}].asset.name" name="assetValues[${item.index}].asset.name" value="${assetValues.asset.name}"  /></td>
+					     <td><span class="assetdetail" id="assetcode[${item.index}]"><c:out value="${assetValues.asset.code}"/></span><input type="hidden" id="tempAssetValues[${item.index}].asset.code" name="tempAssetValues[${item.index}].asset.code" value="${assetValues.asset.code}"  data-optional="0" data-errormsg="Select asset details!"/></td>
+						<td><span class="assetdetail" id="assetname[${item.index}]"><c:out value="${assetValues.asset.name}"/></span><input type="hidden" id="tempAssetValues[${item.index}].asset.name" name="tempAssetValues[${item.index}].asset.name" value="${assetValues.asset.name}"  /></td>
 						<td><div class="text-left"><button type="button" onclick="deleteRow('tblassetdetails',this);" class="btn btn-xs btn-danger delete-row"  data-optional="0"><span class="glyphicon glyphicon-trash"></span> Delete</button></div>
 					</tr>
 					</c:forEach>

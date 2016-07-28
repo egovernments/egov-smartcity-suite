@@ -261,11 +261,7 @@ public class EstimateService {
             financialDetail.setAbstractEstimate(abstractEstimate);
 
         createOverheadValues(abstractEstimate);
-
-        for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
-            assetsForEstimate.setAbstractEstimate(abstractEstimate);
-            assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
-        }
+        createAssetValues(abstractEstimate);
         for (final Activity act : abstractEstimate.getActivities())
             act.setAbstractEstimate(abstractEstimate);
         abstractEstimate.setProjectCode(abstractEstimate.getLineEstimateDetails().getProjectCode());
@@ -565,7 +561,7 @@ public class EstimateService {
                     WorksConstants.WORKS_MODULE_NAME, WorksConstants.ASSETDETAILS_REQUIRED_FOR_ESTIMATE);
             final AppConfigValues value = appConfigvalues.get(0);
             if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getAssetValues() != null
-                    && abstractEstimate.getAssetValues().isEmpty())
+                    && abstractEstimate.getTempAssetValues().isEmpty())
                 bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
         }
     }
@@ -608,10 +604,7 @@ public class EstimateService {
 
             createOverheadValues(abstractEstimate);
 
-            for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getAssetValues()) {
-                assetsForEstimate.setAbstractEstimate(abstractEstimate);
-                assetsForEstimate.setAsset(assetService.findByCode(assetsForEstimate.getAsset().getCode()));
-            }
+            createAssetValues(abstractEstimate);
 
             mergeSorAndNonSorActivities(abstractEstimate);
             List<Activity> activities = new ArrayList<Activity>(abstractEstimate.getActivities());
@@ -658,6 +651,17 @@ public class EstimateService {
             newOverheadValue.setAmount(overheadValue.getAmount());
             newOverheadValue.setAbstractEstimate(abstractEstimate);
             abstractEstimate.getOverheadValues().add(newOverheadValue);
+        }
+    }
+    
+    private void createAssetValues(final AbstractEstimate abstractEstimate) {
+        AssetsForEstimate assetForEstimate = null;
+        abstractEstimate.getAssetValues().clear();
+        for(final AssetsForEstimate assetEstimate : abstractEstimate.getTempAssetValues()) {
+            assetForEstimate = new AssetsForEstimate();
+            assetForEstimate.setAbstractEstimate(abstractEstimate);
+            assetForEstimate.setAsset(assetService.findByCode(assetEstimate.getAsset().getCode()));
+            abstractEstimate.getAssetValues().add(assetForEstimate);
         }
     }
 

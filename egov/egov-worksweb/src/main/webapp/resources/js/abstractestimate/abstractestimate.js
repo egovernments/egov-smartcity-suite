@@ -1503,7 +1503,7 @@ function update(data)
 	var index = 0;
 	var isValid = 1;
 	jQuery("#assetDetailRow").clone().find("input:hidden").each(function() {
-		var assetId = $('input[name="assetValues['+ index +'].asset.id"]').val();
+		var assetId = $('input[name="tempAssetValues['+ index +'].asset.id"]').val();
 		if(data.id == assetId) {
 			isValid = 0;
 			return false;
@@ -1513,9 +1513,9 @@ function update(data)
 	if(isValid == 1) {
 		$('span[id="assetname['+ data.rowidx +']"]').html(data.name);
 		$('span[id="assetcode['+ data.rowidx +']"]').html(data.code);
-		$('input[name="assetValues['+ data.rowidx +'].asset.code"]').val(data.code);
-		$('input[name="assetValues['+ data.rowidx +'].asset.name"]').val(data.name);
-		$('input[name="assetValues['+ data.rowidx +'].asset.id"]').val(data.id);
+		$('input[name="tempAssetValues['+ data.rowidx +'].asset.code"]').val(data.code);
+		$('input[name="tempAssetValues['+ data.rowidx +'].asset.name"]').val(data.name);
+		$('input[name="tempAssetValues['+ data.rowidx +'].asset.id"]').val(data.id);
 	} else {
 		bootbox.alert("Selected Asset details already added");
 	}
@@ -1840,8 +1840,8 @@ function validateSORDetails() {
 		var tbl=document.getElementById('tblassetdetails');
 		var assetTableLength = jQuery('#tblassetdetails tr').length-1;
 		for (var i = 0; i < assetTableLength; i++) {
-			var assetname = document.getElementById('assetValues['+ i + '].asset.name').value;
-			var assetcode = document.getElementById('assetValues['+ i + '].asset.code').value;
+			var assetname = document.getElementById('tempAssetValues['+ i + '].asset.name').value;
+			var assetcode = document.getElementById('tempAssetValues['+ i + '].asset.code').value;
 			if(assetname == "" && assetcode== ""){
 				tbl.deleteRow(i+1);
 			}
@@ -1900,6 +1900,7 @@ function addRow(tableName,rowName) {
 		// get Next Row Index to Generate
 		var nextIdx = 0;
 		var sno = 1;
+		var isValid=1;//for default have success value 0  
 		//nextIdx =document.getElementsByName("sorRow").length;
 		nextIdx = jQuery("#"+tableName+" > tbody > tr").length-1;
 		 
@@ -1915,11 +1916,30 @@ function addRow(tableName,rowName) {
 			{
 			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
 			nextIdx=nextIdx+1;
-			}else
+			} else
 				{
-		var $row=jQuery("#"+tableName+" tr:eq(2)").clone();
+		      var $row=jQuery("#"+tableName+" tr:eq(2)").clone();
 				}
 
+		if(tableName == 'tblassetdetails') {
+			//validate existing rows in table
+			jQuery("#"+tableName+" tr").find("input:hidden").each(function() {
+				if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
+				{
+					jQuery(this).focus();
+					bootbox.alert("Please enter value for the row");
+					isValid=0;//set validation failure
+					return false;
+				}
+			});
+
+			if (isValid === 0) {
+				return false;
+			}
+			
+			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
+			nextIdx++;
+		}
 		$row.find("input,select, errors,button, span,textarea").each(function() {
 			var classval = jQuery(this).attr('class');
 			if (jQuery(this).data('server')) {
