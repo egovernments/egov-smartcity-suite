@@ -78,6 +78,20 @@
 	}
 	function onSubmit() {
 		var actionName = document.getElementById("workFlowAction").value;
+		if (actionName != 'Reject') {
+			if (document.getElementById("partyValue").value == '') {
+				bootbox.alert("Please enter the Parties consideration value");
+				return false;
+			}
+			if (document.getElementById("departmentValue").value == '') {
+				bootbox.alert("Please enter the Department guidelines value");
+				return false;
+			}
+			if(document.getElementById("mutationFee").value == ''){
+				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
+				return false;
+			} 
+		}
 		if (actionName == 'Forward') {
 			document.forms[0].action = '/ptis/property/transfer/forward.action';
 		} else {
@@ -279,25 +293,20 @@
 						<td class="greybox"><s:text name="label.parties.value" /> :</td>
 						<td class="greybox"><s:textfield name="partyValue"
 								value="%{partyValue}" id="partyValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
 						<td class="greybox"><s:text name="label.department.value" />:</td>
 						<td class="greybox"><s:textfield name="departmentValue"
 								value="%{departmentValue}" id="departmentValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
 					</tr>
 					<tr>
-						<s:if
-							test="%{!userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase())}">
-							<tr>
 								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="docValue" /> :</td>
 								<td class="bluebox"><span class="bold"><s:property
 											value="%{marketValue}" default="N/A" /></span></td>
-								<td class="bluebox"><s:text name="payablefee" />:</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{mutationFee}" default="N/A" /></span></td>
-							</tr>
-						</s:if>
+								<td class="bluebox"><s:text name="payablefee" /> :</td>
+								<td class="bluebox"><s:textfield name="mutationFee"
+									value="%{mutationFee}" id="mutationFee" maxlength="16" readonly="true"/></td>
 					</tr>
 					</table>
 				</table>
@@ -393,7 +402,7 @@
 			}
 		}
 	</script>
-	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/javascript/transferProperty.js'/>"></script>
 </body>
 </html>

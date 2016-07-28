@@ -54,6 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -98,6 +99,7 @@ import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -119,7 +121,8 @@ import org.springframework.transaction.annotation.Transactional;
         @Result(name = "userList", location = "ajaxCommon-userList.jsp"),
         @Result(name = "propCategory", location = "ajaxCommon-propCategory.jsp"),
         @Result(name = "checkExistingCategory", location = "ajaxCommon-checkExistingCategory.jsp"),
-        @Result(name = "usage", location = "ajaxCommon-usage.jsp") })
+        @Result(name = "usage", location = "ajaxCommon-usage.jsp"),
+        @Result(name = "calculateMutationFee", location = "ajaxCommon-calculateMutationFee.jsp")})
 public class AjaxCommonAction extends BaseFormAction implements ServletResponseAware {
 
     private static final String AJAX_RESULT = "AJAX_RESULT";
@@ -166,7 +169,11 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     private Date categoryFromDate;
     private String validationMessage = "";
     private String propTypeCategory;
+    private BigDecimal partyValue;
+    private BigDecimal departmentValue;
+    private BigDecimal mutationFee = BigDecimal.ZERO;
     private static final String RESULT_CHECK_EXISTING_CATEGORY = "checkExistingCategory";
+    private static final String RESULT_MUTATION_FEE = "calculateMutationFee";
 
     @Autowired
     private CategoryDao categoryDAO;
@@ -467,6 +474,39 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             IOUtils.write(jsonObject.toString(), response.getWriter());
         }
     }
+    
+    /**
+     * API to calculate Mutation Fee dynamically
+     * @return
+     */
+    @Action(value = "/ajaxCommon-calculateMutationFee")
+    public String calculateMutationFee(){
+    	// Maximum among partyValue and departmentValue will be considered as the documentValue
+    	BigDecimal documentValue = (partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue);
+    	
+    	if(documentValue.compareTo(BigDecimal.ZERO) > 0){
+    		BigDecimal excessDocValue = BigDecimal.ZERO;
+    		BigDecimal multiplicationFactor = BigDecimal.ZERO;
+    		MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) getPersistenceService().find("from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?)", documentValue,documentValue);
+    		if(mutationFeeDetails != null){
+    			if(mutationFeeDetails.getFlatAmount() != null && mutationFeeDetails.getFlatAmount().compareTo(BigDecimal.ZERO) > 0){
+    				if(mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N")){
+    					mutationFee = mutationFeeDetails.getFlatAmount();
+    				}else{
+    					excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
+    					multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(), BigDecimal.ROUND_CEILING);
+    					mutationFee = mutationFeeDetails.getFlatAmount().add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));
+    				}
+    			}
+    			if(mutationFeeDetails.getPercentage() != null && mutationFeeDetails.getPercentage().compareTo(BigDecimal.ZERO) > 0){
+    				if(mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N")){
+    					mutationFee = (documentValue.multiply(mutationFeeDetails.getPercentage())).divide(PropertyTaxConstants.BIGDECIMAL_100);
+    				}
+    			}
+    		}
+    	}
+    	return RESULT_MUTATION_FEE;
+    }
 
     public Long getZoneId() {
         return zoneId;
@@ -764,5 +804,29 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     public void setAssessmentNo(String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
+
+	public BigDecimal getPartyValue() {
+		return partyValue;
+	}
+
+	public void setPartyValue(BigDecimal partyValue) {
+		this.partyValue = partyValue;
+	}
+
+	public BigDecimal getDepartmentValue() {
+		return departmentValue;
+	}
+
+	public void setDepartmentValue(BigDecimal departmentValue) {
+		this.departmentValue = departmentValue;
+	}
+
+	public BigDecimal getMutationFee() {
+		return mutationFee;
+	}
+
+	public void setMutationFee(BigDecimal mutationFee) {
+		this.mutationFee = mutationFee;
+	}
 
 }
