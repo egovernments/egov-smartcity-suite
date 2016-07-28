@@ -365,8 +365,6 @@ public class WaterTaxExternalService {
         final ArrayList<ReceiptDetail> receiptDetails = new ArrayList<ReceiptDetail>(0);
         final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>(bill.getEgBillDetails());
         Collections.sort(billDetails);
-        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
-
         for (final EgBillDetails billDet : billDetails)
             receiptDetails.add(initReceiptDetail(billDet.getGlcode(), BigDecimal.ZERO, // billDet.getCrAmount(),
                     billDet.getCrAmount(), billDet.getDrAmount(), billDet.getDescription()));
@@ -380,28 +378,10 @@ public class WaterTaxExternalService {
                         && billDet.getDescription().equals(rd.getDescription())) {
                     isActualDemand = billDet.getAdditionalFlag() == 1 ? true : false;
                     BillAccountDetails billAccDetails;
-                    if (billDet.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
-                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
-                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
-                                isActualDemand, PURPOSE.ADVANCE_AMOUNT);
-                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()
-                            .compareTo(finYear.getStartingDate()) < 0)
-                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
-                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
-                                isActualDemand, PURPOSE.ARREAR_AMOUNT);
-                    else if (billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                            .compareTo(finYear.getStartingDate()) >= 0
-                            && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                                    .compareTo(finYear.getEndingDate()) < 0)
-                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
-                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
-                                isActualDemand, PURPOSE.CURRENT_AMOUNT);
-                    else
-                        billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(),
-                                rd.getCramount(), rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(),
-                                isActualDemand, PURPOSE.OTHERS);
+                    billAccDetails = new BillAccountDetails(billDet.getGlcode(), billDet.getOrderNo(), rd.getCramount(),
+                            rd.getDramount(), billDet.getFunctionCode(), billDet.getDescription(), isActualDemand,
+                            getPurpose(billDet));
                     billInfoImpl.getPayees().get(0).getBillDetails().get(0).addBillAccountDetails(billAccDetails);
-
                     break;
                 }
         billInfoImpl.setTransactionReferenceNumber(bill.getTransanctionReferenceNumber());
@@ -432,6 +412,22 @@ public class WaterTaxExternalService {
         billPayeeDetList.add(billPayeeDet);
         billInfoImpl.setPayees(billPayeeDetList);
         return billInfoImpl;
+    }
+
+    public PURPOSE getPurpose(final EgBillDetails billDet) {
+        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
+        if (billDet.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
+            return PURPOSE.ADVANCE_AMOUNT;
+        else if (billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()
+                .compareTo(finYear.getStartingDate()) < 0)
+            return PURPOSE.ARREAR_AMOUNT;
+        else if (billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                .compareTo(finYear.getStartingDate()) >= 0
+                && billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()
+                        .compareTo(finYear.getEndingDate()) < 0)
+            return PURPOSE.CURRENT_AMOUNT;
+        else
+            return PURPOSE.OTHERS;
     }
 
     private ReceiptDetail initReceiptDetail(final String glCode, final BigDecimal crAmount,
@@ -518,12 +514,12 @@ public class WaterTaxExternalService {
     }
 
     public final EgBill generateBill(final Billable billObj) {
-        final EgBill bill = generateBillForConnection(billObj,financialYearDAO);
+        final EgBill bill = generateBillForConnection(billObj, financialYearDAO);
         egBillDAO.create(bill);
         return bill;
     }
 
-    public EgBill generateBillForConnection(final Billable billObj,FinancialYearDAO financialYearDAO) {
+    public EgBill generateBillForConnection(final Billable billObj, final FinancialYearDAO financialYearDAO) {
         final EgBill bill = new EgBill();
         bill.setBillNo(billObj.getReferenceNumber());
         bill.setBoundaryNum(billObj.getBoundaryNum().intValue());
@@ -550,7 +546,6 @@ public class WaterTaxExternalService {
         bill.setUserId(billObj.getUserId());
         bill.setCreateDate(new Date());
         final EgDemand currentDemand = billObj.getCurrentDemand();
-        final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         bill.setEgDemand(currentDemand);
         bill.setDescription(billObj.getDescription());
         bill.setDisplayMessage(billObj.getDisplayMessage());
@@ -565,18 +560,7 @@ public class WaterTaxExternalService {
         for (final EgBillDetails billdetails : bd) {
             bill.addEgBillDetails(billdetails);
             billdetails.setEgBill(bill);
-            if (billdetails.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
-                billdetails.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
-            else if (billdetails.getEgDemandReason().getEgInstallmentMaster().getToDate()
-                    .compareTo(finYear.getStartingDate()) < 0)
-                billdetails.setPurpose(PURPOSE.ARREAR_AMOUNT.toString());
-            else if (billdetails.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                    .compareTo(finYear.getStartingDate()) >= 0
-                    && billdetails.getEgDemandReason().getEgInstallmentMaster().getFromDate()
-                            .compareTo(finYear.getEndingDate()) < 0)
-                billdetails.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
-            else
-                billdetails.setPurpose(PURPOSE.OTHERS.toString());
+            billdetails.setPurpose(getPurpose(billdetails).toString());
         }
 
         bill.setConsumerId(billObj.getConsumerId());
