@@ -93,7 +93,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -108,7 +107,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
-    private ReportService reportService;
+
     protected PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
 
@@ -147,13 +146,6 @@ public class CollectionCommon {
     }
 
     /**
-     * @param reportService the reportService to set
-     */
-    public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
-    }
-
-    /**
      * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
@@ -165,54 +157,6 @@ public class CollectionCommon {
      */
     public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
         this.financialsUtil = financialsUtil;
-    }
-
-    /**
-     * @param serviceCode Billing service code for which the receipt template is to be returned
-     * @return Receipt template to be used for given billing service code.
-     */
-    private String getReceiptTemplateName(final char receiptType, final String serviceCode) {
-        String templateName = null;
-
-        switch (receiptType) {
-        case CollectionConstants.RECEIPT_TYPE_BILL:
-            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-                    + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
-            if (!reportService.isValidTemplate(templateName)) {
-                LOGGER.info("Billing system specific report template [" + templateName
-                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                        + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
-
-                if (!reportService.isValidTemplate(templateName)) {
-                    // No template available for creating the receipt report.
-                    // Throw
-                    // exception.
-                    final String errMsg = "Report template [" + templateName
-                            + "] not available! Receipt report cannot be generated.";
-                    LOGGER.error(errMsg);
-                    throw new ApplicationRuntimeException(errMsg);
-                }
-            }
-            break;
-        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
-            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
-            break;
-        /*
-         * case CollectionConstants.RECEIPT_TYPE_ADHOC: templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE +
-         * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) {
-         * LOGGER.info("Billing system specific report template [" + templateName +
-         * "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME + "]"); templateName =
-         * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) { // No template available
-         * for creating the receipt report. // Throw // exception. final String errMsg = "Report template [" + templateName +
-         * "] not available!Miscellaneous Receipt report cannot be generated."; LOGGER.error(errMsg); throw new
-         * ApplicationRuntimeException(errMsg); } }
-         */
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
-            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-            break;
-        }
-        return templateName;
     }
 
     public ReceiptDetail addDebitAccountHeadDetails(final BigDecimal debitAmount, final ReceiptHeader receiptHeader,
@@ -291,7 +235,7 @@ public class CollectionCommon {
                         billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(),
                         collDetails.getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),
-                        billPayee.getPayeeName(), billPayee.getPayeeAddress());
+                        billPayee.getPayeeName(), billPayee.getPayeeAddress(), billPayee.getPayeeEmail());
 
                 if (collDetails.getTransactionReferenceNumber() != null) {
                     receiptHeader.setManualreceiptnumber(collDetails.getTransactionReferenceNumber());
@@ -361,7 +305,7 @@ public class CollectionCommon {
         final char receiptType = receipts[0].getReceipttype();
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
 
-        final String templateName = getReceiptTemplateName(receiptType, serviceCode);
+        final String templateName = collectionsUtil.getReceiptTemplateName(receiptType, serviceCode);
         LOGGER.info(" template name : " + templateName);
         final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
@@ -393,7 +337,7 @@ public class CollectionCommon {
         // whenever the PDF is opened
         reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(flag);
-        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
+        return reportViewerUtil.addReportToTempCache(collectionsUtil.createReport(reportInput));
     }
 
     /**
@@ -416,7 +360,7 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
+        return reportViewerUtil.addReportToTempCache(collectionsUtil.createReport(reportInput));
     }
 
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,

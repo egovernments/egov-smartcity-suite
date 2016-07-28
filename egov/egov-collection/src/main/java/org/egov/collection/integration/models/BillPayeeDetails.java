@@ -49,14 +49,16 @@ public class BillPayeeDetails {
 
     private final String payeeName;
     private final String payeeAddress;
+    private final String payeeEmail;
 
     @XStreamAlias("bills")
     private final List<BillDetails> billDetails = new ArrayList<BillDetails>(0);
 
-    public BillPayeeDetails(final String payeeName, final String payeeAddress) {
+    public BillPayeeDetails(final String payeeName, final String payeeAddress, final String payeeEmail) {
         super();
         this.payeeName = payeeName;
         this.payeeAddress = payeeAddress;
+        this.payeeEmail = payeeEmail;
     }
 
     public String getPayeeName() {
@@ -65,6 +67,10 @@ public class BillPayeeDetails {
 
     public String getPayeeAddress() {
         return payeeAddress;
+    }
+    
+    public String getPayeeEmail() {
+        return payeeEmail;
     }
 
     public List<BillDetails> getBillDetails() {
@@ -79,7 +85,7 @@ public class BillPayeeDetails {
     public boolean equals(final Object obj) {
         if (obj instanceof BillPayeeDetails) {
             final BillPayeeDetails payee = (BillPayeeDetails) obj;
-            if (payeeName.equals(payee.payeeName) && payeeAddress.equals(payee.payeeAddress))
+            if (payeeName.equals(payee.payeeName) && payeeAddress.equals(payee.payeeAddress) && payeeEmail.equals(payee.payeeEmail))
                 return true;
         }
         return false;
@@ -91,6 +97,6 @@ public class BillPayeeDetails {
      */
     @Override
     public int hashCode() {
-        return payeeName.hashCode() + payeeAddress.hashCode();
+        return payeeName.hashCode() + payeeAddress.hashCode() + payeeEmail.hashCode();
     }
 }

@@ -978,7 +978,7 @@ public class ReceiptAction extends BaseFormAction {
                 oldReceiptHeader.getOverrideAccountHeads(), oldReceiptHeader.getCallbackForApportioning(),
                 oldReceiptHeader.getDisplayMsg(), oldReceiptHeader.getService(),
                 oldReceiptHeader.getCollModesNotAllwd(), oldReceiptHeader.getPayeeName(),
-                oldReceiptHeader.getPayeeAddress());
+                oldReceiptHeader.getPayeeAddress(), oldReceiptHeader.getPayeeEmail());
         if (oldReceiptHeader.getCollModesNotAllwd() != null)
             setCollectionModesNotAllowed(Arrays.asList(oldReceiptHeader.getCollModesNotAllwd().split(",")));
         setOverrideAccountHeads(oldReceiptHeader.getOverrideAccountHeads());

@@ -80,7 +80,7 @@
 			<collectionModeNotAllowed>card</collectionModeNotAllowed> <collectionModeNotAllowed>cheque</collectionModeNotAllowed>
 			<callbackForApportioning>0</callbackForApportioning> <payees>
 			<payee> <payeeName>Mrs. ABC</payeeName> <payeeAddress>221/16
-			LMN Street, Bangalore</payeeAddress> <bills> <bill refNo="testReferenceNo1"
+			LMN Street, Bangalore</payeeAddress> <payeeEmail>test@test.com</payeeEmail> <bills> <bill refNo="testReferenceNo1"
 				billDate="21/09/2009" consumerCode="123456"> <boundaryNum>3</boundaryNum>
 			<boundaryType>Ward</boundaryType> <description>Property:
 			221/16 LMN Street, Bangalore for period 2008-09</description> <totalAmount>400.0</totalAmount>

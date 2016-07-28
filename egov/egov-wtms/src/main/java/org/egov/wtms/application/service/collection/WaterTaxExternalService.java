@@ -401,7 +401,7 @@ public class WaterTaxExternalService {
         billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
                 bill.getFundSourceCode(), bill.getDepartmentCode(), "Water Charge Collection", bill.getCitizenName(),
                 bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
-        billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress());
+        billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), null);
 
         final BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(),
                 bill.getConsumerId(), bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
