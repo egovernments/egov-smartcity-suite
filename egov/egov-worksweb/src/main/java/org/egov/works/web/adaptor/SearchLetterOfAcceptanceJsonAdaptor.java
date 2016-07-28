@@ -99,6 +99,10 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
 
             jsonObject.addProperty("id", workOrder.getId());
+            if(workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
+	            jsonObject.addProperty("workOrderCreated",
+	                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate()
+	                            .isWorkOrderCreated());
 
             if (workOrder.getState() != null) {
                 if (workOrder.getEgwStatus() != null
@@ -110,9 +114,6 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
                             worksUtils.getApproverName(workOrder.getState().getOwnerPosition().getId()));
             } else
                 jsonObject.addProperty("currentowner", "NA");
-            jsonObject.addProperty("workOrderCreated",
-                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate()
-                            .isWorkOrderCreated());
 
         }
         return jsonObject;

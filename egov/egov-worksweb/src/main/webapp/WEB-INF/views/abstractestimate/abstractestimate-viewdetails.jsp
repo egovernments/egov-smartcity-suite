@@ -126,22 +126,45 @@
 				</c:choose>
 			</div>
 		</div>
-	<div class="row">
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.nameofwork" />
-				</div> 
-			
-				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.name}"></c:out>
-				</div>
-				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.workdescription" />
-				</div> 
-			
-				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.description}"></c:out>
-				</div>
+	<div class="row add-border">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.nameofwork" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.name}"></c:out>
+		</div>
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.workdescription" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.description}"></c:out>
+		</div>
 	</div>
+	<div class="row">
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.typeofwork" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:out value="${abstractEstimate.parentCategory.description}"></c:out>
+		</div>
+		<div class="col-xs-3 add-margin">
+			<spring:message code="lbl.subtypeofwork" />
+		</div> 
+	
+		<div class="col-xs-3 add-margin view-content">
+			<c:choose>
+					<c:when test="${abstractEstimate.category != null}">
+						<c:out value="${abstractEstimate.category.description}"></c:out>
+					</c:when>
+					<c:otherwise>
+						<c:out default="N/A" value="N/A"></c:out>
+					</c:otherwise>
+				</c:choose>  
+		</div>
+	</div>	
 <script>
 var lat = '${abstractEstimate.latitude}';
 var lng = '${abstractEstimate.longitude}';
