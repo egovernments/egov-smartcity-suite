@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-06-20T15:57:09 -->
+  <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-07-28T19:01:39 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BillOfQunatities" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="0" uuid="c4f28d66-9453-4365-9c94-520990d7d3ae">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.math.BigDecimal"/>
@@ -47,6 +47,7 @@
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="deptName" class="java.lang.String"/>
 	<parameter name="workName" class="java.lang.String"/>
+	<parameter name="currDate" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
@@ -112,7 +113,7 @@
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement verticalAlignment="Middle" markup="none">
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
 						<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{amount_sum}]]></textFieldExpression>
@@ -149,7 +150,7 @@
 			<band height="97">
 				<printWhenExpression><![CDATA[$V{REPORT_COUNT}==$P{activitySize} && $P{activitySize}!=0]]></printWhenExpression>
 				<subreport>
-					<reportElement x="0" y="5" width="780" height="39" uuid="bf55c998-855b-4ab5-9038-ef0fbc1d2a72"/>
+					<reportElement x="69" y="11" width="780" height="39" uuid="bf55c998-855b-4ab5-9038-ef0fbc1d2a72"/>
 					<subreportParameter name="originalEstimateNo">
 						<subreportParameterExpression><![CDATA[$P{estimateNo}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -183,7 +184,7 @@
 						<bottomPen lineWidth="0.25"/>
 						<rightPen lineWidth="0.25"/>
 					</box>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times New Roman" size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{grandTotalAmt}]]></textFieldExpression>
@@ -333,7 +334,7 @@
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="41" splitType="Stretch">
+		<band height="46" splitType="Stretch">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}!=$P{activitySize}]]></printWhenExpression>
 			<staticText>
 				<reportElement x="329" y="0" width="118" height="20" uuid="c733b409-ba82-4b01-a80a-b32879f9e7a8"/>
@@ -343,7 +344,9 @@
 				<text><![CDATA[SOR Activities]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="46" y="21" width="325" height="20" uuid="7d1b4da8-8a8b-482d-8a92-572b112c26d1"/>
+				<reportElement x="42" y="20" width="317" height="25" uuid="7d1b4da8-8a8b-482d-8a92-572b112c26d1">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -357,7 +360,9 @@
 				<text><![CDATA[Description Item]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="21" width="94" height="20" uuid="4e9635da-0991-48ea-a5d1-805ab4713d0a"/>
+				<reportElement x="466" y="20" width="57" height="25" uuid="4e9635da-0991-48ea-a5d1-805ab4713d0a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -371,7 +376,9 @@
 				<text><![CDATA[SOR CODE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="465" y="21" width="73" height="20" uuid="8f763a43-195d-4a88-ad14-99cfa68219b7"/>
+				<reportElement x="359" y="20" width="107" height="25" uuid="4e9635da-0991-48ea-a5d1-805ab4713d0a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -380,12 +387,28 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Schedule Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="523" y="20" width="67" height="25" uuid="8f763a43-195d-4a88-ad14-99cfa68219b7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[QUANTITY]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="538" y="21" width="73" height="20" uuid="5153ac6d-8219-46b2-9c9e-caf16f0ae66e"/>
+				<reportElement x="590" y="20" width="73" height="25" uuid="5153ac6d-8219-46b2-9c9e-caf16f0ae66e"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -399,7 +422,9 @@
 				<text><![CDATA[UOM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="611" y="21" width="78" height="20" uuid="b0ef6b35-5fb0-44fa-b5b8-9b8d366a7f70"/>
+				<reportElement x="663" y="20" width="47" height="25" uuid="b0ef6b35-5fb0-44fa-b5b8-9b8d366a7f70">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -413,7 +438,9 @@
 				<text><![CDATA[RATE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="689" y="21" width="112" height="20" uuid="84522c55-e174-4faf-bbd3-27018e7bcfa5"/>
+				<reportElement x="710" y="20" width="91" height="25" uuid="84522c55-e174-4faf-bbd3-27018e7bcfa5">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -421,13 +448,15 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[       AMOUNT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="21" width="44" height="20" uuid="a2211052-4d94-4e1c-a1b5-6525ccc40371"/>
+				<reportElement x="2" y="20" width="40" height="25" uuid="a2211052-4d94-4e1c-a1b5-6525ccc40371">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -445,7 +474,10 @@
 	<detail>
 		<band height="23" splitType="Prevent">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="73" height="23" backcolor="#FFFFFF" uuid="3a7b4719-a6ca-43f5-8e37-58870f63c316"/>
+				<reportElement stretchType="RelativeToTallestObject" x="523" y="0" width="67" height="23" backcolor="#FFFFFF" uuid="3a7b4719-a6ca-43f5-8e37-58870f63c316">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -459,7 +491,9 @@
 				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="371" y="0" width="94" height="23" uuid="e3f13313-982d-42ca-80fc-aa002317c41e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="466" y="0" width="57" height="23" uuid="e3f13313-982d-42ca-80fc-aa002317c41e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -472,8 +506,24 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{schedule}.getCode()]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="359" y="0" width="107" height="23" uuid="e3f13313-982d-42ca-80fc-aa002317c41e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{schedule} != null ? $F{schedule}.getScheduleCategory().getCode() : "N/A"]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="538" y="0" width="73" height="23" uuid="62b240c6-2e0e-45bb-8e6e-5453e05575b3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="590" y="0" width="73" height="23" uuid="62b240c6-2e0e-45bb-8e6e-5453e05575b3"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -486,8 +536,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{uom}.getUom()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="611" y="0" width="78" height="23" uuid="21295e0b-9854-4ddd-b864-ac4b2db8dd2c"/>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="663" y="0" width="47" height="23" uuid="21295e0b-9854-4ddd-b864-ac4b2db8dd2c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -495,13 +547,16 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{estimateRate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="689" y="0" width="112" height="23" uuid="a3f14c54-3ff5-489b-8559-ff3c17f7d1b5"/>
+				<reportElement stretchType="RelativeToTallestObject" x="710" y="0" width="91" height="23" uuid="a3f14c54-3ff5-489b-8559-ff3c17f7d1b5">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -515,7 +570,9 @@
 				<textFieldExpression><![CDATA[$F{amount}.getValue()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="44" height="23" uuid="60907fd4-46a7-474f-a98e-5ab32d7a7db7"/>
+				<reportElement stretchType="RelativeToTallestObject" x="2" y="0" width="40" height="23" uuid="60907fd4-46a7-474f-a98e-5ab32d7a7db7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -529,7 +586,9 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="46" y="0" width="325" height="23" uuid="ac0b886c-3625-487b-a6f8-e4afbd90db96"/>
+				<reportElement stretchType="RelativeToTallestObject" x="42" y="0" width="317" height="23" uuid="ac0b886c-3625-487b-a6f8-e4afbd90db96">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -547,6 +606,18 @@
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
+	<pageFooter>
+		<band height="15">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="442" height="15" uuid="4ad4368e-8e3f-47f0-8bab-ea7b21dfb89c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Report Run Date: " + $P{currDate} + " "]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 	<summary>
 		<band height="49" splitType="Prevent">
 			<printWhenExpression><![CDATA[$P{activitySize}==0]]></printWhenExpression>
