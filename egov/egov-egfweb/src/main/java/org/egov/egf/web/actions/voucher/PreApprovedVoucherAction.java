@@ -40,6 +40,9 @@
 package org.egov.egf.web.actions.voucher;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -200,6 +203,12 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     private EgBillregister billRegister;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    private String cutOffDate;
+    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+    Date date;
 
     @Override
     public StateAware getModel() {
@@ -240,6 +249,17 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     @Action(value = "/voucher/preApprovedVoucher-voucher")
     public String voucher()
     {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                cutOffDate = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
                 Long.valueOf(parameters.get(BILLID)[0]));
         voucherHeader = egBillregister.getEgBillregistermis().getVoucherHeader();
@@ -308,14 +328,32 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             }
         else {
             CVoucherHeader model = new CVoucherHeader();
-            if (null == model || null == model.getId() || model.getCurrentState().getValue().endsWith("NEW")) {
-                validActions = Arrays.asList(FORWARD);
-            } else {
-                if (model.getCurrentState() != null) {
-                    validActions = this.customizedWorkFlowService.getNextValidActions(model
-                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                            getAdditionalRule(), model.getCurrentState().getValue(),
-                            getPendingActions(), model.getCreatedDate());
+            List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                    "DataEntryCutOffDate");
+            if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+            {
+                if (null == model || null == model.getId() || model.getCurrentState().getValue().endsWith("NEW")) {
+                    validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
+                } else {
+                    if (model.getCurrentState() != null) {
+                        validActions = this.customizedWorkFlowService.getNextValidActions(model
+                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                                getAdditionalRule(), model.getCurrentState().getValue(),
+                                getPendingActions(), model.getCreatedDate());
+                    }
+                }
+            }
+            else
+            {
+                if (null == model || null == model.getId() || model.getCurrentState().getValue().endsWith("NEW")) {
+                    validActions = Arrays.asList(FORWARD);
+                } else {
+                    if (model.getCurrentState() != null) {
+                        validActions = this.customizedWorkFlowService.getNextValidActions(model
+                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                                getAdditionalRule(), model.getCurrentState().getValue(),
+                                getPendingActions(), model.getCreatedDate());
+                    }
                 }
             }
         }
@@ -542,6 +580,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("bill id=======" + parameters.get(BILLID)[0]);
             methodName = "save";
+            String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
+            String cutOffDate1 = null;
             // check budgetary check
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
             // egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
@@ -558,11 +598,29 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             populateWorkflowBean();
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
                     Long.parseLong(parameters.get(BILLID)[0]), voucherNumber, voucherHeader.getVoucherDate());
+            if (cutOffDate != null)
+            {
+                try {
+                    date = sdf.parse(cutOffDate);
+                    cutOffDate1 = formatter1.format(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                    && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
 
-            addActionMessage(getText(
-                    egBillregister.getExpendituretype() + ".voucher.created",
-                    new String[] { voucherHeader.getVoucherNumber(),
-                            voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
+                addActionMessage(getText("Voucher created successfully. Voucher No : ")
+                        + voucherHeader.getVoucherNumber());
+            }
+            else
+            {
+                addActionMessage(getText(
+                        egBillregister.getExpendituretype() + ".voucher.created",
+                        new String[] { voucherHeader.getVoucherNumber(),
+                                voucherService.getEmployeeNameForPositionId(voucherHeader.getState().getOwnerPosition()) }));
+            }
 
         } catch (final ValidationException e)
         {
@@ -740,8 +798,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
     public List<EgBillregister> getPreApprovedVoucherList() {
         return preApprovedVoucherList;
     }
-
-  
 
     @Override
     public void validate()
@@ -1427,6 +1483,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     public void setBillRegister(EgBillregister billRegister) {
         this.billRegister = billRegister;
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 
 }
