@@ -40,7 +40,7 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading"></div>
 	<div class="panel-body">
-		<c:if test="${abstractEstimate.activities.size() != 0}">
+		<c:if test="${measurementsPresent}">
 			<div align="right">
 				<input type="button" value="Close All Measurements"
 					class="btn btn-sm btn-secondary" onclick="closeAllViewmsheet()" />

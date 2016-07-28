@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -75,6 +76,8 @@ public class ViewLetterOfAcceptanceController {
     
     @Autowired
     private LineEstimateService lineEstimateService;
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String viewLOA(@PathVariable final String id, final Model model, final HttpServletRequest request)
@@ -87,6 +90,7 @@ public class ViewLetterOfAcceptanceController {
         model.addAttribute("abstractEstimate", abstractEstimate);
         model.addAttribute("mode", "view");
         model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
+        model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
         return "letterOfAcceptance-view";

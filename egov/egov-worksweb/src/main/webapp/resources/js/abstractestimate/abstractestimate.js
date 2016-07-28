@@ -1390,6 +1390,7 @@ function getSubSchemsBySchemeId(schemeId) {
 			success: function (response) {
 				$('#subScheme').empty();
 				$('#subScheme').append($("<option value=''>Select from below</option>"));
+				if(response)
 				var responseObj = JSON.parse(response);
 				$.each(responseObj, function(index, value) {
 					$('#subScheme').append($('<option>').text(responseObj[index].name).attr('value', responseObj[index].id));

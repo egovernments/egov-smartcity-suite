@@ -90,4 +90,9 @@ public class MeasurementSheetService {
     public List<MeasurementSheet> findMeasurementForEstimateActivities(final Long abstractEstimateId) {
         return measurementSheetRepository.getMeasurementsForActivites(abstractEstimateId);
     }
+    
+   public Boolean existsByEstimate(final Long abstractEstimateId)
+   {
+	   return measurementSheetRepository.existsByEstimate(abstractEstimateId);
+   }
 }

@@ -57,6 +57,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.FinancialDetail;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -99,6 +100,9 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     @Autowired
     private EstimateService estimateService;
+    
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
 
     @ModelAttribute
     public WorkOrder getWorkOrder(@PathVariable final String id) {
@@ -134,6 +138,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
             model.addAttribute("workOrder", newWorkOrder);
             model.addAttribute("abstractEstimate", abstractEstimate);
             model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
+            model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
             model.addAttribute("workflowHistory",
                     lineEstimateService.getHistory(workOrder.getState(), workOrder.getStateHistory()));
             return "letterOfAcceptance-view";
@@ -173,6 +178,7 @@ public class UpdateLetterOfAcceptanceController extends GenericWorkFlowControlle
         model.addAttribute("documentDetails", newWorkOrder.getDocumentDetails());
         model.addAttribute("workOrder", newWorkOrder);
         model.addAttribute("abstractEstimate", abstractEstimate);
+        model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
         model.addAttribute("mode", "modify");
         model.addAttribute("workflowHistory",

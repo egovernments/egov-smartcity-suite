@@ -57,6 +57,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.OfflineStatusesFo
 import org.egov.works.abstractestimate.entity.AbstractEstimateForLoaSearchRequest;
 import org.egov.works.abstractestimate.entity.SearchAbstractEstimate;
 import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
@@ -97,6 +98,10 @@ public class SearchAbstractEstimateController {
     
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
+
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
@@ -140,6 +145,7 @@ public class SearchAbstractEstimateController {
        
         model.addAttribute("adminsanctionbydesignation",
                 worksUtils.getUserDesignation(abstractEstimate.getApprovedBy()));
+        model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
 
         String techSanctionBy = "";
         if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty())

@@ -74,7 +74,7 @@
 		</div>
 	</div>
 	<div class="panel-body">
-	<c:if test="${abstractEstimate.activities.size() != 0}">
+	<c:if test="${measurementsPresent}">
 	
 	<div align="right">
 			<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
