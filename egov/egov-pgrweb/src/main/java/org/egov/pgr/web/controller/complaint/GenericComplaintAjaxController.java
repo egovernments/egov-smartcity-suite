@@ -44,6 +44,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeViewService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ReceivingCenter;
@@ -71,7 +72,7 @@ public class GenericComplaintAjaxController {
 
     @Autowired
     private BoundaryService boundaryService;
-
+   
     @Autowired
     private DesignationService designationService;
 
@@ -162,7 +163,7 @@ public class GenericComplaintAjaxController {
     public @ResponseBody List<Boundary> getBoundariesbyType(@RequestParam final String boundaryName,
             @RequestParam final Long boundaryTypeId, final HttpServletResponse response) throws IOException {
         final String likeBoundaryName = "%" + boundaryName + "%";
-        return boundaryService.getBondariesByNameAndType(likeBoundaryName, boundaryTypeId);
+        return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(likeBoundaryName, boundaryTypeId);
     }
-
+   
 }
