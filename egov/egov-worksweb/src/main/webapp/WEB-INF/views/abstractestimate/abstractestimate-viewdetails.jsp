@@ -142,7 +142,6 @@
 					<c:out value="${abstractEstimate.description}"></c:out>
 				</div>
 	</div>
-<script src="<c:url value='/resources/js/viewlocationmap.js?rnd=${app_release_no}'/>"></script>
 <script>
 var lat = '${abstractEstimate.latitude}';
 var lng = '${abstractEstimate.longitude}';
