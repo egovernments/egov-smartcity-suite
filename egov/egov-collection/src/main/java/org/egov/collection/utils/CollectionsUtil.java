@@ -951,14 +951,6 @@ public class CollectionsUtil {
     }
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
-        final List<Object> args = new ArrayList<Object>();
-        args.add(ApplicationThreadLocals.getCityName());
-        args.add(receiptHeader.getTotalAmount().toString());
-        args.add(receiptHeader.getService().getName());
-        args.add(receiptHeader.getConsumerCode());
-        args.add(receiptHeader.getReceiptdate().toString());
-        final List<Object> args1 = new ArrayList<Object>();
-        args1.add(receiptHeader.getService().getName());
         String emailBody = collectionApplicationProperties.getEmailBody();
         emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
                 .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
