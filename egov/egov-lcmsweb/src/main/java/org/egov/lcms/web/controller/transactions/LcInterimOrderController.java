@@ -52,9 +52,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -75,9 +75,9 @@ public class LcInterimOrderController {
 
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.GET)
+    @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String viewForm(@ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
-            @PathVariable final String lcNumber, final Model model, final HttpServletRequest request) {
+    		@RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
@@ -87,14 +87,14 @@ public class LcInterimOrderController {
     }
 
     @ModelAttribute
-    private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
-            final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request, final Model model) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
@@ -106,7 +106,7 @@ public class LcInterimOrderController {
         lcInterimOrderService.persist(lcInterimOrder);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
-        model.addAttribute("message", "Interim Order Created successfully.");
+        model.addAttribute("message", "LcInterim Order Created successfully.");
         return "lcinterimorder-success";
 
     }

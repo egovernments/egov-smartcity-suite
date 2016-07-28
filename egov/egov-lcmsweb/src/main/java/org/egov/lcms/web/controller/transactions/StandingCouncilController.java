@@ -40,7 +40,6 @@
 package org.egov.lcms.web.controller.transactions;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
@@ -49,9 +48,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -61,22 +60,22 @@ public class StandingCouncilController {
 	@Autowired
 	private LegalCaseService legalCaseService;
 
-	@RequestMapping(value = "/create/{lcNumber}", method = RequestMethod.GET)
-	public String viewForm(@ModelAttribute("legalCase") LegalCase legalCase, @PathVariable final String lcNumber,
+	@RequestMapping(value = "/create/", method = RequestMethod.GET)
+	public String viewForm(@ModelAttribute("legalCase") LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
 			final Model model, final HttpServletRequest request) {
 		model.addAttribute("legalcase", legalCase);
 		return "legalcase-standingCouncil";
 	}
 
 	@ModelAttribute
-	private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+	private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
 		final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
 		return legalcase;
 	}
 
-	@RequestMapping(value = "/create/{lcNumber}", method = RequestMethod.POST)
+	@RequestMapping(value = "/create/", method = RequestMethod.POST)
 	public String create(@ModelAttribute("legalCase") LegalCase legalCase, final BindingResult errors,
-			final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
+			final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
 			final HttpServletRequest request, final Model model) {
 		if (errors.hasErrors()) {
 			model.addAttribute("legalcase", legalCase);

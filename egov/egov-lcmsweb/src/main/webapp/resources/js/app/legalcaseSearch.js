@@ -172,7 +172,7 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		function() {
 		var lcNumber = tableContainer.fnGetData($(this).parent().parent(), 0);
 		if (this.value == 1) {
-			var url = '/lcms/judgment/new/'+ lcNumber;
+			var url = '/lcms/judgment/new/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
@@ -180,7 +180,7 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		}
 		
 		if (this.value == 2) {
-			var url = '/lcms/standingCouncil/create/'+ lcNumber;
+			var url = '/lcms/standingCouncil/create/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
@@ -188,35 +188,35 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		}
 		
 		if (this.value == 5) {
-			var url = '/lcms/judgment/edit/'+ lcNumber;
+			var url = '/lcms/judgment/edit/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 4) {
-			var url = '/lcms/application/view/'+ lcNumber;
+			var url = '/lcms/application/view/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 3) {
-			var url = '/lcms/application/edit/'+ lcNumber;
+			var url = '/lcms/application/edit/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 6) {
-			var url = '/lcms/hearing/new/'+ lcNumber;
+			var url = '/lcms/hearing/new/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 7) {
-			var url = '/lcms/lcinterimorder/new/'+ lcNumber;
+			var url = '/lcms/lcinterimorder/new/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;

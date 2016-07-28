@@ -53,9 +53,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -72,7 +72,7 @@ public class EditJudgmentController {
     private JudgmentService judgmentService;
 
     @ModelAttribute
-    private LegalCase getLegalCase(@PathVariable final String lcNumber) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
@@ -81,8 +81,8 @@ public class EditJudgmentController {
         model.addAttribute("judgmentTypes", judgmentTypeService.findAll());
     }
 
-    @RequestMapping(value = "/edit/{lcNumber}", method = RequestMethod.GET)
-    public String edit(@PathVariable final String lcNumber, final Model model) {
+    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
+    public String edit( @RequestParam("lcNumber") final String lcNumber, final Model model) {
         final List<Judgment> judgementList = getLegalCase(lcNumber).getJudgment();
         final Judgment judgmentObj = judgementList.get(0);
         prepareNewForm(model);
@@ -91,8 +91,8 @@ public class EditJudgmentController {
         return "judgment-edit";
     }
 
-    @RequestMapping(value = "/edit/{lcNumber}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Judgment judgment, @PathVariable final String lcNumber,
+    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final Judgment judgment,  @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
 
         if (errors.hasErrors()) {

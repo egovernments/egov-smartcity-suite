@@ -159,5 +159,6 @@ public class PetitionTypeMasterService {
     {
         return petitionTypeMasterRepository.findAll();
     }
+   
 
 }

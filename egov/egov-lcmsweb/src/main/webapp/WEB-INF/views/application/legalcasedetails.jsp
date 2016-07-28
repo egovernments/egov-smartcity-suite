@@ -58,7 +58,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.petitiontype" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="petitionTypeMaster" data-first-option="false"
+		<form:select path="petitionTypeMaster" id="petitionTypeMaster" data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbls.select" />
@@ -74,7 +74,7 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.court" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="courtMaster" data-first-option="false"
+		<form:select path="courtMaster"  id="courtMaster"  data-first-option="false"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbls.select" />
@@ -88,7 +88,7 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.casecatagory" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin">
-		<form:select path="caseTypeMaster" data-first-option="false"
+		<form:select path="caseTypeMaster" data-first-option="false" id="caseTypeMaster"
 			cssClass="form-control" required="required">
 			<form:option value="">
 				<spring:message code="lbls.select" />

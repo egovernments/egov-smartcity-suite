@@ -46,17 +46,23 @@ import java.util.List;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
+import org.egov.lcms.masters.entity.CourtMaster;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.masters.service.CaseTypeMasterService;
+import org.egov.lcms.masters.service.CourtMasterService;
+import org.egov.lcms.masters.service.CourtTypeMasterService;
+import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -64,44 +70,71 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/legalcase/")
 public class AjaxLegalCaseController {
 
-    @Autowired
-    private DepartmentService departmentService;
+	@Autowired
+	private DepartmentService departmentService;
 
-    @Autowired
-    private AssignmentService assignmentService;
+	@Autowired
+	private AssignmentService assignmentService;
 
-    @Autowired
-    private AdvocateMasterService advocateMasterService;
+	@Autowired
+	private AdvocateMasterService advocateMasterService;
 
-    @RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Department> getAllDepartmentsByNameLike(
-            @ModelAttribute("legalcase") @RequestParam final String departmentName) {
-         return departmentService.getAllDepartmentsByNameLike(departmentName);
+	@Autowired
+	private PetitionTypeMasterService petitiontypeMasterService;
 
-    }
+	@Autowired
+	private CourtTypeMasterService courtTypeMasterService;
 
-    @RequestMapping(value = "ajax/advocateSearch", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<AdvocateMaster> getAllAdvocatesByNameLike(
-            @ModelAttribute("legalcase") @RequestParam final String advocateName,
-            @RequestParam final Boolean isSeniorAdvocate) {
+	@Autowired
+	private CourtMasterService courtMasterService;
 
-        return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
-    }
+	@Autowired
+	private CaseTypeMasterService caseTypeMasterService;
 
-    @RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
-            @ModelAttribute("legalcase") @RequestParam final String departmentName,
-            @RequestParam final String positionName) {
-    	List<Position> poslist=new ArrayList<Position>();
-        final Department deptObj = departmentService.getDepartmentByName(departmentName);
-        List<Assignment>assignList=assignmentService.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(),positionName);
-        for(Assignment assign:assignList)  
-        {
-        	poslist.add(assign.getPosition());
-        }
-        return poslist;
+	@RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Department> getAllDepartmentsByNameLike(
+			@ModelAttribute("legalcase") @RequestParam final String departmentName) {
+		return departmentService.getAllDepartmentsByNameLike(departmentName);
 
+	}
 
-    }
+	@RequestMapping(value = "ajax/advocateSearch", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<AdvocateMaster> getAllAdvocatesByNameLike(
+			@ModelAttribute("legalcase") @RequestParam final String advocateName,
+			@RequestParam final Boolean isSeniorAdvocate) {
+
+		return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
+	}
+
+	@RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<Position> getAllPositionsByDeptAndNameLike(
+			@ModelAttribute("legalcase") @RequestParam final String departmentName,
+			@RequestParam final String positionName) {
+		List<Position> poslist = new ArrayList<Position>();
+		final Department deptObj = departmentService.getDepartmentByName(departmentName);
+		List<Assignment> assignList = assignmentService
+				.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName);
+		for (Assignment assign : assignList) {
+			poslist.add(assign.getPosition());
+		}
+		return poslist;
+
+	}
+
+	@RequestMapping(value = "/ajax-petitionTypeByCourtType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<PetitionTypeMaster> getAllPetitionTypesByCountType(@RequestParam final Long courtType) {
+		List<PetitionTypeMaster> petitionTypeList = new ArrayList<PetitionTypeMaster>(0);
+		petitionTypeList = petitiontypeMasterService.findByCourtType(courtTypeMasterService.findOne(courtType));
+		petitionTypeList.forEach(petitionType -> petitionType.toString());
+		return petitionTypeList;
+	}
+
+	@RequestMapping(value = "/ajax-courtNameByCourtType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<CourtMaster> getAllCourtNamesByCountType(@RequestParam final Long courtType) {
+		List<CourtMaster> courtNameList = new ArrayList<CourtMaster>(0);
+		courtNameList = courtMasterService.findByCourtType(courtTypeMasterService.findOne(courtType));
+		courtNameList.forEach(petitionType -> petitionType.toString());
+		return courtNameList;
+	}
 
 }
