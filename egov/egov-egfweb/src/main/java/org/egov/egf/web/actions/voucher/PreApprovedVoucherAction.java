@@ -598,7 +598,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
             populateWorkflowBean();
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
                     Long.parseLong(parameters.get(BILLID)[0]), voucherNumber, voucherHeader.getVoucherDate());
-            if (cutOffDate != null)
+            if (!cutOffDate.isEmpty() && cutOffDate!=null)
             {
                 try {
                     date = sdf.parse(cutOffDate);

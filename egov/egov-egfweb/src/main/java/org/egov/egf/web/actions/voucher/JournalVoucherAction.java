@@ -204,7 +204,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
 
-                if (cutOffDate != null)
+                if (!cutOffDate.isEmpty() && cutOffDate!=null )
                 {
                     try {
                         date = sdf.parse(cutOffDate);
