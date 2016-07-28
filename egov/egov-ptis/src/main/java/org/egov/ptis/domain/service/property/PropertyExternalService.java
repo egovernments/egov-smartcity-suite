@@ -428,7 +428,7 @@ public class PropertyExternalService {
                     propertyTaxDetails.setErrorDetails(errorDetails);
         	} else {
 	            propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
-	            if (propertyTaxDetails.getErrorDetails().getErrorCode() == null) {
+	            if (propertyTaxDetails.getErrorDetails() == null) {
 	                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
 	                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
 	                propertyTaxDetails.setErrorDetails(errorDetails);
