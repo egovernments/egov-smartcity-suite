@@ -2475,8 +2475,13 @@ function findTotal(obj)
 			depthOrHeight = 1;
 		if (width === undefined || width == '' || width == 0)
 			width = 1;
-		var net=parseFloat(length * no * width * depthOrHeight).toFixed(4);
-
+		var net=length * no * width * depthOrHeight;
+		var x=net+"";
+		var y=x.split(".");
+		if(y.length>1)
+		  if(y[1].length>4)
+			  net=net.toFixed(4);  
+		
 		document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
 		$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
 
@@ -2531,7 +2536,13 @@ function findNet(obj)
 	}
 	//var fname=obj.name.split(".");
 	var netName=name[0]+'.msnet';
-	sum=parseFloat(sum).toFixed(4);
+	var x=sum+"";
+	var y=x.split(".");
+	if(y.length>1)
+	  if(y[1].length>4)
+		  sum=sum.toFixed(4);  
+	
+	//sum=parseFloat(sum).toFixed(4);
 	//console.log(document.getElementById(netName).innerHTML);
 	document.getElementById(netName).innerHTML=sum;
 	return true;
