@@ -145,9 +145,9 @@
 			</div>
 		</div>
 		<div align="right">
-			<input type="button" value="Close All MSheet" class="btn btn-sm btn-secondary"
+			<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 				onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
-				value="Open All MSheet" onclick="openAllmsheet()" />
+				value="Open All Measurements" onclick="openAllmsheet()" />
 		</div>
 		<table class="table table-bordered" id="tblsor">
 			<thead>
