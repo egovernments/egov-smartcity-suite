@@ -124,7 +124,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="<c:url value='${sessionScope.citylogo}'/>" height="60" class="homepage_logo">
+							<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}'/>" height="60" class="homepage_logo">
 						</a>
 					</div>
 					

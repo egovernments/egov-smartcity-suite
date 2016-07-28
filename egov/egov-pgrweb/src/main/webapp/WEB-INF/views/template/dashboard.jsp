@@ -41,6 +41,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
@@ -98,7 +99,9 @@
 		      </button>
 		      
 		      <a class="navbar-brand customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
-		       <img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="55">
+				  <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
+					  <img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="55">
+				  </c:if>
 		      </a>
 		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="/pgr/dashboard/home?isdefault=true">Complaints Redressal</a>
 		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
