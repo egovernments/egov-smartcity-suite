@@ -282,11 +282,11 @@ public class WorkOrderActivity extends AbstractAuditable {
         this.mbHeaderId = mbHeaderId;
     }
 
-    public final List<WorkOrderMeasurementSheet> getWorkOrderMeasurementSheets() {
+    public List<WorkOrderMeasurementSheet> getWorkOrderMeasurementSheets() {
         return workOrderMeasurementSheets;
     }
 
-    public final void setWorkOrderMeasurementSheets(final List<WorkOrderMeasurementSheet> workOrderMeasurementSheets) {
+    public void setWorkOrderMeasurementSheets(final List<WorkOrderMeasurementSheet> workOrderMeasurementSheets) {
         this.workOrderMeasurementSheets = workOrderMeasurementSheets;
     }
 

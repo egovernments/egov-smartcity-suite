@@ -45,6 +45,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -210,7 +211,7 @@ public class MBHeaderService {
 
         createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
-        
+
         savedMBHeader = mbHeaderRepository.save(savedMBHeader);
 
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, savedMBHeader,
@@ -262,10 +263,20 @@ public class MBHeaderService {
 
         createMBHeaderWorkflowTransition(updatedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
-        
+
         updatedMBHeader = mbHeaderRepository.save(updatedMBHeader);
 
         return updatedMBHeader;
+    }
+
+    private void removeEmptyMBMS(final MBDetails mbDetails) {
+        final List<MBMeasurementSheet> toRemove = new LinkedList<MBMeasurementSheet>();
+        for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+            if (mbms.getQuantity() == null || mbms.getQuantity() != null && mbms.getQuantity().equals(""))
+                toRemove.add(mbms);
+
+        for (final MBMeasurementSheet msremove : toRemove)
+            mbDetails.getMeasurementSheets().remove(msremove);
     }
 
     private List<MBDetails> removeDeletedMBDetails(final List<MBDetails> mbDetails, final String removedDetailIds) {
@@ -289,10 +300,11 @@ public class MBHeaderService {
     private void mergeSorAndNonSorMBDetails(final MBHeader mbHeader) {
         for (final MBDetails mbDetails : mbHeader.getSorMbDetails())
             if (mbDetails.getId() == null) {
+                removeEmptyMBMS(mbDetails);
                 mbDetails.setMbHeader(mbHeader);
                 mbDetails.setWorkOrderActivity(
                         workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
-                for (MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
                     mbms.setMbDetails(mbDetails);
                 mbHeader.addMbDetails(mbDetails);
             } else
@@ -301,10 +313,11 @@ public class MBHeaderService {
                         updateMBDetails(oldMBDetails, mbDetails);
         for (final MBDetails mbDetails : mbHeader.getNonSorMbDetails())
             if (mbDetails.getId() == null) {
+                removeEmptyMBMS(mbDetails);
                 mbDetails.setMbHeader(mbHeader);
                 mbDetails.setWorkOrderActivity(
                         workOrderActivityService.getWorkOrderActivityById(mbDetails.getWorkOrderActivity().getId()));
-                for (MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
+                for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets())
                     mbms.setMbDetails(mbDetails);
                 mbHeader.addMbDetails(mbDetails);
             } else
@@ -318,25 +331,28 @@ public class MBHeaderService {
         oldMBDetails.setRate(mbDetails.getRate());
         oldMBDetails.setRemarks(mbDetails.getRemarks());
         oldMBDetails.setAmount(mbDetails.getAmount());
-        for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets()) {
-            if (mbms.getId() == null) {
-                oldMBDetails.addMBMeasurementSheet(mbms);
-            } else {
-                for (final MBMeasurementSheet oldMBMS : oldMBDetails.getMeasurementSheets()) {
-                    if (oldMBMS.getId().equals(mbms.getId()))
-                        updateMBMeasurementSheet(oldMBMS, mbms);
-                }
-            }
-        }
+        oldMBDetails.setMeasurementSheets(mergeMBMeasurementSheet(oldMBDetails, mbDetails));
     }
 
-    private void updateMBMeasurementSheet(final MBMeasurementSheet oldMBMS, final MBMeasurementSheet mbms) {
-        oldMBMS.setRemarks(mbms.getRemarks());
-        oldMBMS.setNo(mbms.getNo());
-        oldMBMS.setLength(mbms.getLength());
-        oldMBMS.setWidth(mbms.getWidth());
-        oldMBMS.setDepthOrHeight(mbms.getDepthOrHeight());
-        oldMBMS.setQuantity(mbms.getQuantity());
+    private List<MBMeasurementSheet> mergeMBMeasurementSheet(final MBDetails oldMBDetails, final MBDetails mbDetails) {
+        for (final MBMeasurementSheet msnew : mbDetails.getMeasurementSheets()) {
+            if (msnew.getId() == null) {
+                msnew.setMbDetails(oldMBDetails);
+                oldMBDetails.getMeasurementSheets().add(msnew);
+                continue;
+            }
+            for (final MBMeasurementSheet msold : oldMBDetails.getMeasurementSheets())
+                if (msold.getId() != null && msnew.getId().longValue() == msold.getId().longValue()) {
+                    msold.setLength(msnew.getLength());
+                    msold.setWidth(msnew.getWidth());
+                    msold.setDepthOrHeight(msnew.getDepthOrHeight());
+                    msold.setNo(msnew.getNo());
+                    msold.setRemarks(msnew.getRemarks());
+                    msold.setQuantity(msnew.getQuantity());
+                }
+        }
+        removeEmptyMBMS(oldMBDetails);
+        return oldMBDetails.getMeasurementSheets();
     }
 
     public void mbHeaderStatusChange(final MBHeader mbHeader, final String workFlowAction) {
@@ -565,19 +581,18 @@ public class MBHeaderService {
                     mbDetail.addProperty("sorType", "SOR");
                 else
                     mbDetail.addProperty("sorType", "Non SOR");
-                
+
                 if (!mbDetails.getMeasurementSheets().isEmpty()) {
                     final JsonArray msIds = new JsonArray();
                     for (final MBMeasurementSheet mbms : mbDetails.getMeasurementSheets()) {
                         final JsonObject msId = new JsonObject();
                         msId.addProperty("id", mbms.getId());
-                        
+
                         msIds.add(msId);
                     }
                     mbDetail.add("msIds", msIds);
-                } else {
+                } else
                     mbDetail.add("msIds", new JsonArray());
-                }
 
                 detailIds.add(mbDetail);
             }
@@ -605,10 +620,10 @@ public class MBHeaderService {
             jsonObject.addProperty("errorMBEntryFutureDate", message);
             errors.reject("errorMBEntryFutureDate", message);
         }
-        
+
         final List<MBHeader> previousMBHeaders = getPreviousMBHeaders(mbHeader.getId(),
                 mbHeader.getWorkOrderEstimate().getId());
-        
+
         if (!previousMBHeaders.isEmpty()
                 && previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate().after(mbHeader.getMbDate())) {
             message = messageSource.getMessage("error.previous.mb.date",
@@ -756,14 +771,14 @@ public class MBHeaderService {
     public List<String> findContractorsToCancelMB(final String code) {
         final List<String> loaNumbers = mbHeaderRepository
                 .findContractorsToSearchMBToCancel("%" + code + "%",
-                MBHeader.MeasurementBookStatus.APPROVED.toString());
+                        MBHeader.MeasurementBookStatus.APPROVED.toString());
         return loaNumbers;
     }
 
     public List<String> findWorkIdentificationNumbersToCancelMB(final String code) {
         final List<String> workIdNumbers = mbHeaderRepository
                 .findWorkIdentificationNumbersToCancelMB("%" + code + "%",
-                MBHeader.MeasurementBookStatus.APPROVED.toString());
+                        MBHeader.MeasurementBookStatus.APPROVED.toString());
         return workIdNumbers;
     }
 
@@ -778,7 +793,8 @@ public class MBHeaderService {
     }
 
     public MBHeader getLatestMBHeaderToValidateBillDate(final Long workOrderEstimateId, final Date billDate) {
-        return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId,billDate,MBHeader.MeasurementBookStatus.APPROVED.toString(),
+        return mbHeaderRepository.findLatestMBHeaderToValidateBillDate(workOrderEstimateId, billDate,
+                MBHeader.MeasurementBookStatus.APPROVED.toString(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
     }
 
@@ -792,16 +808,15 @@ public class MBHeaderService {
         final List<Hashtable<String, Object>> measurementSheetList = new ArrayList<Hashtable<String, Object>>();
         Hashtable<String, Object> measurementSheetMap = null;
         int slno = 1;
-        List<String> characters = new ArrayList<String>(26);
-        for (char c = 'a'; c <= 'z'; c++) {
+        final List<String> characters = new ArrayList<String>(26);
+        for (char c = 'a'; c <= 'z'; c++)
             characters.add(String.valueOf(c));
-        }
-        for (MBDetails mbDetail : mBHeader.getMbDetails()) {
+        for (final MBDetails mbDetail : mBHeader.getMbDetails()) {
             final WorkOrderActivity workOrderActivity = mbDetail.getWorkOrderActivity();
             if (mbDetail != null && !mbDetail.getMeasurementSheets().isEmpty()) {
                 measurementSheetList.add(addMBDetails(mbDetail, slno));
                 int measurementSNo = 1;
-                for (MBMeasurementSheet mBMeasurement : mbDetail.getMeasurementSheets()) {
+                for (final MBMeasurementSheet mBMeasurement : mbDetail.getMeasurementSheets()) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
                     measurementSheetMap.put("sNo", String.valueOf(slno) + characters.get((measurementSNo - 1) % 26));
                     measurementSheetMap.put("scheduleCode", "");
@@ -834,7 +849,6 @@ public class MBHeaderService {
                     measurementSNo++;
                     measurementSheetList.add(measurementSheetMap);
                 }
-                
 
                 if (mbDetail.getMeasurementSheets().size() != 0) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
@@ -847,7 +861,7 @@ public class MBHeaderService {
                     measurementSheetMap.put("woWidth", "");
                     measurementSheetMap.put("woDepthHeight", "");
                     measurementSheetMap.put("woQuantity", workOrderActivity.getApprovedQuantity());
-                    Double prevCumulaticeqty = getPreviousCumulativeQuantity(mBHeader.getId(),
+                    final Double prevCumulaticeqty = getPreviousCumulativeQuantity(mBHeader.getId(),
                             mbDetail.getWorkOrderActivity().getId());
                     measurementSheetMap.put("completedMeasurement", BigDecimal.valueOf(mbDetail.getQuantity())
                             .add(prevCumulaticeqty != null ? BigDecimal.valueOf(prevCumulaticeqty) : BigDecimal.ZERO));
@@ -868,7 +882,7 @@ public class MBHeaderService {
         return measurementSheetList;
     }
 
-    private Hashtable<String, Object> addMBDetails(final MBDetails mbDetail, int slNo) {
+    private Hashtable<String, Object> addMBDetails(final MBDetails mbDetail, final int slNo) {
         final Hashtable<String, Object> measurementSheetMap = new Hashtable<String, Object>(0);
         final WorkOrderActivity workOrderActivity = mbDetail.getWorkOrderActivity();
         measurementSheetMap.put("sNo", slNo);

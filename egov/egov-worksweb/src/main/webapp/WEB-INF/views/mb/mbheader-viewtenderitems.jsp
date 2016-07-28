@@ -89,7 +89,26 @@
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td><c:out value="${mbdetails.quantity}" /></td>
+											<td>
+												<c:out value="${mbdetails.quantity}" />
+												<c:choose>
+													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
+														<button class="btn" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+													</c:when>
+													<c:otherwise>
+														<button style="visibility: hidden;" class="btn btn-default" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+													</c:otherwise>
+												</c:choose>
+											</td>
+											<td hidden="true">
+												<c:set var="net" value="0" />
+												<c:set var="total" value="0" />
+					                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].mspresent" id="sorMbDetails[${item.index }].mspresent" data-idx="0"/>
+					                            <input class="classmsopen" type="hidden" disabled="disabled" name="sorMbDetails[${item.index }].msopen" id="sorMbDetails[${item.index }].msopen" data-idx="0"/>
+												<span  class="sorMbDetails[${item.index }].mstd" id="sorMbDetails[${item.index }].mstd" data-idx="0">
+													<%@ include file="../measurementsheet/mb-sor-measurementsheet-formtable-view.jsp"%>
+												</span>
+											</td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
 											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="cumulativeQuantitycurrEnrty" id="cumulativeQuantitycurrEnrty"
@@ -155,7 +174,26 @@
 											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td><c:out value="${mbdetails.quantity}" /></td>
+											<td>
+												<c:out value="${mbdetails.quantity}" />
+												<c:choose>
+													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
+														<button class="btn" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+													</c:when>
+													<c:otherwise>
+														<button style="visibility: hidden;" class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+													</c:otherwise>
+												</c:choose>
+											</td>
+											<td hidden="true">
+												<c:set var="net" value="0" />
+												<c:set var="total" value="0" />
+					                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].mspresent" id="nonSorMbDetails[${item.index }].mspresent" data-idx="0"/>
+					                            <input class="classmsopen" type="hidden" disabled="disabled" name="nonSorMbDetails[${item.index }].msopen" id="nonSorMbDetails[${item.index }].msopen" data-idx="0"/>
+												<span  class="nonSorMbDetails[${item.index }].mstd" id="nonSorMbDetails[${item.index }].mstd" data-idx="0">
+													<%@ include file="../measurementsheet/mb-nonsor-measurementsheet-formtable-view.jsp"%>
+												</span>
+											</td>
 											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />
 											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="nonSorCumulativeQuantityCurrEnrty" id="nonSorCumulativeQuantityCurrEnrty"

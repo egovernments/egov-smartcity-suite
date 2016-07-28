@@ -42,54 +42,54 @@
     <table>
 	    <tr>
 	        <td colspan="15"><!--only for validity head end -->
-	            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+	            <div class="view-content"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
 	            <table class=" table table-bordered" id="sorMbDetails[${item.index }].mstable">
 	                <thead>
 	                	<tr>
 		                    <th colspan="1"></th>
-		                    <th colspan="7">Estimated</th>
-		                    <th colspan="6">Actuals</th>
+		                    <th colspan="7"><spring:message code="lbl.estimated" /></th>
+		                    <th colspan="6"><spring:message code="lbl.actuals" /></th>
 	                    </tr>
 	                    <tr>
-		                    <th>S.no</th>
-		                    <th>Description</th>
-		                    <th>Number</th>
-		                    <th>Length</th>
-		                    <th>Width</th>
-		                    <th>Depth/Height</th>
-		                    <th>Quantity</th>
-		                    <th>Deduction</th>
-		                    <th>Remarks</th>
-		                    <th>Number</th>
-		                    <th>Length</th>
-		                    <th>Width</th>
-		                    <th>Depth/Height</th>
-		                    <th>Quantity</th>
+		                    <th><spring:message code="lbl.slno" /></th>
+		                    <th><spring:message code="lbl.description" /></th>
+		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.length" /></th>
+		                    <th><spring:message code="lbl.width" /></th>
+		                    <th><spring:message code="lbl.depthorheight" /></th>
+		                    <th><spring:message code="lbl.quantity" /></th>
+		                    <th><spring:message code="lbl.identifier" /></th>
+		                    <th><spring:message code="lbl.remarks" /></th>
+		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.length" /></th>
+		                    <th><spring:message code="lbl.width" /></th>
+		                    <th><spring:message code="lbl.depthorheight" /></th>
+		                    <th><spring:message code="lbl.quantity" /></th>
 	                    </tr>
 	                </thead>
 	                <tbody>
-	                	<c:forEach items="${details.measurementSheets}" var="mbms" varStatus="index">
+	                	<c:forEach begin="0" end="${details.workOrderActivity.workOrderMeasurementSheets.size() - 1 }" varStatus="index">
 	                		<tr>
 			                	<td hidden="true">
 			                        <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].id" id="sorMbDetails_${item.index }_measurementSheets_${index.index }_id" />
 			                        <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].woMeasurementSheet" id="sorMbDetails_${item.index }_measurementSheets_${index.index }_woMeasurementSheet" />
 			                    </td>
-			                	<td id="msrowslNo_${item.index }_${index.index }">${mbms.woMeasurementSheet.measurementSheet.slNo }</td>
-			                    <td id="msrowremarks_${item.index }_${index.index }">${mbms.woMeasurementSheet.measurementSheet.remarks }</td>
-			                    <td id="msrowno_${item.index }_${index.index }">${mbms.woMeasurementSheet.no }</td>
-			                    <td id="msrowlength_${item.index }_${index.index }">${mbms.woMeasurementSheet.length }</td>
-			                    <td id="msrowwidth_${item.index }_${index.index }">${mbms.woMeasurementSheet.width }</td>
-			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }">${mbms.woMeasurementSheet.depthOrHeight }</td>
-			                    <td id="msrowquantity_${item.index }_${index.index }">${mbms.woMeasurementSheet.quantity }</td>
-			                    <c:if test="${mbms.woMeasurementSheet.measurementSheet.identifier == 'A'}">
-									<c:set var="total" value="${total + mbms.woMeasurementSheet.quantity}" />
+			                	<td id="msrowslNo_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.slNo }</td>
+			                    <td id="msrowremarks_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.remarks }</td>
+			                    <td id="msrowno_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).no }</td>
+			                    <td id="msrowlength_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).length }</td>
+			                    <td id="msrowwidth_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
+			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
+			                    <td id="msrowquantity_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
+			                    <c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
+									<c:set var="total" value="${total + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
-								<c:if test="${mbms.woMeasurementSheet.measurementSheet.identifier == 'D'}">
-									<c:set var="total" value="${total - mbms.woMeasurementSheet.quantity}" />
+								<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'D'}">
+									<c:set var="total" value="${total - details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
 			                    <td id="msrowidentifier_${item.index }_${index.index }">
 			                    	<c:choose>
-			                    		<c:when test="${mbms.woMeasurementSheet.measurementSheet.identifier == 'A'}">No</c:when>
+			                    		<c:when test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">No</c:when>
 			                    		<c:otherwise>Yes</c:otherwise>
 			                    	</c:choose>
 			                    </td>
@@ -121,26 +121,25 @@
 			                	<td>
 				                    <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].quantity" id="sorMbDetails[${item.index }].measurementSheets[${index.index }].quantity" class="form-control text-right patternvalidation runtime-update"
 				                           data-pattern="decimalvalue" onblur="findNet(this)" />
-									<c:if test="${mbms.woMeasurementSheet.measurementSheet.identifier == 'A'}">
-										<c:set var="net" value="${net + mbms.quantity}" />
+									<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
+										<c:set var="net" value="${net + details.measurementSheets.get(index.index).quantity}" />
 									</c:if>
-									<c:if test="${mbms.woMeasurementSheet.measurementSheet.identifier == 'D'}">
-										<c:set var="net" value="${net - mbms.quantity}" />
+									<c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'D'}">
+										<c:set var="net" value="${net - details.measurementSheets.get(index.index).quantity}" />
 									</c:if>
 			                	</td>
 			                </tr>
 	                	</c:forEach>
 		                <tr>
 		                	<td colspan="5"></td>
-		                    <td class="text-right">Total</td>
+		                    <td class="text-right"><spring:message code="lbl.total" /></td>
 		                    <td class="text-right view-content">${total }</td>
-		                    <td colspan="4" class="text-right">
-		                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger">Reset</button>
+		                    <td colspan="5" class="text-right">
+		                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger"><spring:message code="lbl.reset" /></button>
 		                        <input type="button" value="Submit" id="sorMbDetails[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit mssubmit_${item.index }"/> 
 		                    </td>
-		                    <td class="text-right">Total</td>
+		                    <td class="text-right"><spring:message code="lbl.total" /></td>
 		                    <td id="sorMbDetails[${item.index }].msnet" class="text-right">${net}</td>
-		                    <td></td>
 		                </tr>
 	                </tbody>
 	            </table>

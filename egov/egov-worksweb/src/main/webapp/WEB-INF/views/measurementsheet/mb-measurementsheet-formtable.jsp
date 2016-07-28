@@ -41,29 +41,29 @@
     <tbody id="msheaderrowtemplate">
     <tr id="templatesorMbDetails[0].mstr" class="ms-sheet-row">
         <td colspan="15">
-            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+            <div class="view-content"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             <table class=" table table-bordered" id="templatesorMbDetails[0].mstable">
                 <thead>
                 	<tr>
 	                    <th colspan="1"></th>
-	                    <th colspan="7">Estimated</th>
-	                    <th colspan="6">Actuals</th>
+	                    <th colspan="7"><spring:message code="lbl.estimated" /></th>
+	                    <th colspan="6"><spring:message code="lbl.actuals" /></th>
                     </tr>
                     <tr>
-	                    <th>S.no</th>
-	                    <th>Description</th>
-	                    <th>Number</th>
-	                    <th>Length</th>
-	                    <th>Width</th>
-	                    <th>Depth/Height</th>
-	                    <th>Quantity</th>
-	                    <th>Deduction</th>
-	                    <th>Remarks</th>
-	                    <th>Number</th>
-	                    <th>Length</th>
-	                    <th>Width</th>
-	                    <th>Depth/Height</th>
-	                    <th>Quantity</th>
+	                    <th><spring:message code="lbl.slno" /></th>
+	                    <th><spring:message code="lbl.description" /></th>
+	                    <th><spring:message code="lbl.no" /></th>
+	                    <th><spring:message code="lbl.length" /></th>
+	                    <th><spring:message code="lbl.width" /></th>
+	                    <th><spring:message code="lbl.depthorheight" /></th>
+	                    <th><spring:message code="lbl.quantity" /></th>
+	                    <th><spring:message code="lbl.identifier" /></th>
+	                    <th><spring:message code="lbl.remarks" /></th>
+	                    <th><spring:message code="lbl.no" /></th>
+	                    <th><spring:message code="lbl.length" /></th>
+	                    <th><spring:message code="lbl.width" /></th>
+	                    <th><spring:message code="lbl.depthorheight" /></th>
+	                    <th><spring:message code="lbl.quantity" /></th>
                     </tr>
                 </thead>
                 <tbody id="msrowtemplate1">
@@ -113,15 +113,14 @@
 	                </tr>
 	                <tr>
 	                	<td colspan="5"></td>
-	                    <td class="text-right">Total</td>
+	                    <td class="text-right"><spring:message code="lbl.total" /></td>
 	                    <td class="text-right view-content"></td>
-	                    <td colspan="4" class="text-right">
-	                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger reset-ms">Reset</button>
+	                    <td colspan="5" class="text-right">
+	                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
 	                        <input type="button" value="Submit"  id="templatesorMbDetails[0].mssubmit" class="btn btn-xs btn-primary ms-submit templatemssubmit_0"/> 
 	                    </td>
-	                    <td class="text-right">Total</td>
+	                    <td class="text-right"><spring:message code="lbl.total" /></td>
 	                    <td id="templatesorMbDetails[0].msnet" class="text-right"></td>
-	                    <td></td>
 	                </tr>
                 </tbody>
             </table>

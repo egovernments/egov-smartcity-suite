@@ -165,9 +165,14 @@
 			                    	</c:choose>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].amount" value="${details.amount }" id="nonSorAmount_${item.index }" class="form-control table-input text-right"/>
-									<c:if test="${!details.measurementSheets.isEmpty() }">
-										<button class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-									</c:if>
+									<c:choose>
+										<c:when test="${!details.measurementSheets.isEmpty() }">
+											<button class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+										</c:when>
+										<c:otherwise>
+											<button style="visibility: hidden;" class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+										</c:otherwise>
+									</c:choose>
 								</td>
 								<td hidden="true">
 									<c:set var="net" value="0" />

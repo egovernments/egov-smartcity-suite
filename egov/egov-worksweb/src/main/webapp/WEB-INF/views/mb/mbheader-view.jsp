@@ -121,3 +121,5 @@
 	<script type="text/javascript"
 	src="<c:url value='/resources/js/mb/mbformsubmit.js?rnd=${app_release_no}'/>"></script>
 </c:if>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/mb/mbmeasurementsheet.js?rnd=${app_release_no}'/>"></script>
