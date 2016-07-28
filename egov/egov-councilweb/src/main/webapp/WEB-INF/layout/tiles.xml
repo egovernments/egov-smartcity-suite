@@ -248,10 +248,19 @@
 	<put-attribute name="page-title" value="title.councilagenda.create" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/agenda/create-agenda.jsp"/>
 </definition>
-<definition name="councilMeeting-new" extends="base_layout">
+<definition name="councilmeeting-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilMeeting-new.jsp"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-new.jsp"/>
 </definition>
+<definition name="councilmeeting-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-result.jsp"/>
+</definition>
+<definition name="councilmeeting-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-result.jsp"/>
+</definition>
+
 <definition name="common-error-page" extends="base_layout">
 	<put-attribute name="page-title" value="title.common.error.page" cascade="true" />
 	<put-attribute name="body"	value="/WEB-INF/views/common/common-error.jsp" />

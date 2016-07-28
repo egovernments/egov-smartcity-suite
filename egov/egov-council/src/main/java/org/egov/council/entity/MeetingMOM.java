@@ -29,18 +29,19 @@ public class MeetingMOM {
     @GeneratedValue(generator = SEQ_MEETINGMOM, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+   
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "meeting", nullable = false)
     private CouncilMeeting meeting;
-    
-    @Column(name = "agenda")
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "agenda")
     private CouncilAgenda agenda;
 
-    @NotNull
-    @Column(name = "preamble")
-    private CouncilPreamble preamble;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preamble", nullable = false)
+     private CouncilPreamble preamble;
 
-    @NotNull
     @Column(name = "resolutionDetail")
     private String resolutionDetail;
 

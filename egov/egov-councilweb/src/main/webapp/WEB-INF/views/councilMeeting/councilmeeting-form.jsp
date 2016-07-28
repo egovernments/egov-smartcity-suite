@@ -53,7 +53,7 @@
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.meeting.type" /> </label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="committeeType" id="committeeType"
+				<%-- 	<form:select path="committeeType" id="committeeType"
 						cssClass="form-control" cssErrorClass="form-control error"
 						disabled="false">
 						<form:option value="">
@@ -61,9 +61,9 @@
 						</form:option>
 						<form:options items="${commiteeTypes}" itemValue="id"
 							itemLabel="name" />
-					</form:select> 
-					<%-- <b>${councilMeeting.committeeType.name}</b> 
-					<form:hidden path="committeeType" id="committypeid" />  --%>
+					</form:select>  --%>
+					<b>${councilMeeting.committeeType.name}</b> 
+					<form:hidden path="committeeType" id="committypeid" /> 
 		    <%--         <form:hidden path="status" id="statusid" value="${councilMeeting.status.id}" /> 
 		 --%>
 					<form:errors path="committeeType" cssClass="error-msg" />

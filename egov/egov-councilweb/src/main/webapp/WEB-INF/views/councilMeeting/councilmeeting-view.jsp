@@ -42,22 +42,97 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Council Meeting</div>
+					<div class="panel-title">
+						<spring:message code="title.councilmeeting" />
+					</div>
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							saved
+							<spring:message code="lbl.meeting.type" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${councilMeeting.id}</div>
-				
+							${councilMeeting.committeeType.name}</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.meeting.number" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilMeeting.meetingNumber}</div>
 					</div>
-					
-</div></div></div></div><div class="row text-center"><div class="add-margin"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a></div></div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.meeting.date" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${councilMeeting.meetingDate}" />
+						</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.meeting.place" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilMeeting.meetingLocation}</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.meeting.time" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilMeeting.meetingTime}</div>
+					</div>
+					<div class="panel-body">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.agenda.details" />
+							</div>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<th align="center"><spring:message code="lbl.serial.number" /></th>
+								<th><spring:message code="lbl.agenda.item" /></th>
+								<th><spring:message code="lbl.agenda.number" /></th>
+								<th><spring:message code="lbl.preamble.number" /></th>
+								<th><spring:message code="lbl.department" /></th>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
+										<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
+											varStatus="counter">
+											<tr>
+												<div class="row add-margin">
+													<td align="center">${counter.count}</td>
+													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
+													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
+													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
+													<td><c:out value="${mom.preamble.department.name}" /></td>
+												</div>
+											</tr>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<div class="col-md-3 col-xs-6 add-margin">
+											<spring:message code="lbl.noAgenda.Detail" />
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()">Close</a>
+	</div>
+</div>

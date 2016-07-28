@@ -70,13 +70,11 @@
 								<%-- 	<input type="hidden" value="${mom.id}" id="meetingMOMs${counter.index}" name="meetingMOMs[${counter.index}].id" />
 								<input type="hidden" value="${mom.preamble}" id="meetingMOMspreamble${counter.index}" name="meetingMOMs[${counter.index}].preamble" />
 									<input type="hidden" value="${mom.agenda}" id="meetingMOMsagenda${counter.index}" name="meetingMOMs[${counter.index}].agenda" />
-						 --%>			<form:hidden path="meetingMOMs[${counter.index}].id" id="meetingMOMs[${counter.index}].id" value="${mom.id}" />
-									<form:hidden path="meetingMOMs[${counter.index}].preamble.id" id="meetingMOMspreamble${counter.index}" value="${mom.preamble.id}" />	
-									<form:hidden path="meetingMOMs[${counter.index}].agenda.id" id="meetingMOMsagenda${counter.index}" value="${mom.agenda.id}" />		 			
+						 --%>	<%-- 		<form:hidden path="meetingMOMs[${counter.index}]" id="meetingMOMs[${counter.index}].id" value="${mom.id}" />
+							 --%> 		<form:hidden path="meetingMOMs[${counter.index}].preamble" id="meetingMOMspreamble${counter.index}" value="${mom.preamble.id}" />	
+									<form:hidden path="meetingMOMs[${counter.index}].agenda" id="meetingMOMsagenda${counter.index}" value="${mom.agenda.id}" />		 			
 						<%-- 			<form:hidden path="meetingMOMs[${counter.index}].meeting.id" id="meetingMOMmeeting${counter.index}" value="${mom.meeting.id}" />
-						 --%>						
-												
-												${counter.count}</td>
+						 --%>						${counter.count}</td>
 										<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 										<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 										<td><c:out value="${mom.preamble.preambleNumber}" /></td>

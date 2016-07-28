@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
@@ -19,6 +20,7 @@ import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -53,7 +55,9 @@ public class CouncilMeetingController {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private CouncilAgendaService councilAgendaService;
-    
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+
     @Autowired
     private MessageSource messageSource;
     @Autowired
@@ -112,16 +116,18 @@ public class CouncilMeetingController {
             prepareNewForm(model);
             return COUNCILMEETING_NEW;
         }
-    	councilMeeting.setMeetingNumber("1");
+    	 CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
+                 .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
+    	councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
     	
     	for(MeetingMOM meetingMom: councilMeeting.getMeetingMOMs())
     	{
     	meetingMom.setMeeting(councilMeeting); 
     	}
     	
-         councilMeetingService.create(councilMeeting);
+         councilMeetingService.create(councilMeeting); //TODO: CHANGE STATUS OF AGENDA ON CREATION.
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilMeeting/result/" + councilMeeting.getId();
+        return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
