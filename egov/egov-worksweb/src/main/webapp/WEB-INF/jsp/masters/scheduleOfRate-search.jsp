@@ -124,15 +124,15 @@ body
 		
 		<div class="col-md-12 report-table-container">
 			<s:if test="%{mode != 'view'}"> 
-				<s:text id="select"	name="%{getText('column.title.modify')}"></s:text>
+				<s:text var="select"	name="%{getText('column.title.modify')}"></s:text>
  			</s:if>
-			<s:text id="slNo" name="%{getText('column.title.SLNo')}"></s:text>
-			<s:text id="sorCode" name="%{getText('master.sor.code')}"></s:text>
-			<s:text id="sorDescription" name="%{getText('master.sor.description')}"></s:text>
-			<s:text id="unitOfMeasure" name="%{getText('master.sor.uom')}"></s:text>
-			<s:text id="sorRate" name="%{getText('master.sor.rate')}"></s:text>
-			<s:text id="startDate" name="%{getText('master.sor.startDate')}"></s:text>
-			<s:text id="endDate" name="%{getText('master.sor.endDate')}"></s:text>
+			<s:text var="slNo" name="%{getText('column.title.SLNo')}"></s:text>
+			<s:text var="sorCode" name="%{getText('master.sor.code')}"></s:text>
+			<s:text var="sorDescription" name="%{getText('master.sor.description')}"></s:text>
+			<s:text var="unitOfMeasure" name="%{getText('master.sor.uom')}"></s:text>
+			<s:text var="sorRate" name="%{getText('master.sor.rate')}"></s:text>
+			<s:text var="startDate" name="%{getText('master.sor.startDate')}"></s:text>
+			<s:text var="endDate" name="%{getText('master.sor.endDate')}"></s:text>
 		
 			<display:table name="searchResult" pagesize="30" uid="currentRow" cellpadding="0" cellspacing="0" requestURI=""	class="table table-hover">
 				
