@@ -334,20 +334,93 @@
 			</div>
 		</div>
 	</div>
-
-	<%-- <div class="form-group">
-		<label class="col-sm-3 control-label text-right"><font
-			size="2"><spring:message code="lbl.mesg.document" /></font> </label>
-		<div class="col-sm-3 add-margin">
-
-			<input type="file" id="file" name="legalCaseDocuments[0].files"
-				class="file-ellipsis upload-file">
-
-			<form:errors path="legalCaseDocuments[0].files"
-				cssClass="add-margin error-msg" />
-		</div>
-	</div> --%>
-	<div class="form-group">
+	<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+	<div class="main-content">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-body">
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Standing
+		Council:
+	</label>
+	<div class="col-sm-3 add-margin">
+	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Assigned Date:
+	</label>
+	<div class="col-sm-3 add-margin">
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Date on which
+		Vakalaat filed:</label>
+	<div class="col-sm-3 add-margin">
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right" id="persons">Is
+		Senior Standing Counsel Required:</label>
+	<div class="col-sm-3 add-margin">
+	
+	<c:choose>
+    <c:when test="${legalCase.isSenioradvrequired}">
+        Yes
+         </c:when>    
+    <c:otherwise>
+        No 
+    </c:otherwise>
+</c:choose>
+	</div>
+</div>
+ <c:if test="${legalCase.isSenioradvrequired}">
+<div id="seniordov1" class="form-group">
+	<label class="col-sm-3 control-label text-right">Senior
+		Standing Council:
+	</label>
+	<div class="col-sm-3 add-margin">
+		<c:out value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
+		
+	</div>
+	<div class="form-group" id="seniordov3">
+	<label class="col-sm-2 control-label text-right">Assigned On:</label>
+	<div class="col-sm-3 add-margin">
+			
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+</div>
+<div id="seniordov2" class="form-group">
+	<label class="col-sm-3 control-label text-right">Order Date:
+	</label>
+	<div class="col-sm-3 add-margin">
+				
+				<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Order Number:
+	</label>
+	<div class="col-sm-3 add-margin">
+	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
+	</div>
+	</c:if>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</c:if>
+<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>

@@ -146,7 +146,7 @@ function submitForm() {
 								
 
 								if(full.casestatus=='Created' || full.casestatus=='In Progress') {
-									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');			        			   
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add/Edit Standing Counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');			        			   
 									}
 								else if(full.casestatus=='Judgment'){
 
