@@ -161,8 +161,10 @@ $(document).ready(function(){
 			$('#nonSorServiceTaxPerc_' + key).val('');
 			$('.nonSorVatAmt_' + key).html('');
 			$('.nonSorTotal_' + key).html('');
-			document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
-			document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
+			if(document.getElementById('nonSorActivities['+key+'].mstd'))
+				document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
+			if(document.getElementById('nonSorActivities['+key+'].mspresent'))
+				document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
 
 			generateSlno();
 		} else {
@@ -179,8 +181,10 @@ $(document).ready(function(){
 			$('#nonSorMessage').attr('hidden', 'true');
 			$('#nonSorRow').removeAttr('hidden');
 			$('#nonSorRow').removeAttr('nonsorinvisible');
-			document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
-			document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
+			if(document.getElementById('nonSorActivities['+key+'].mstd'))
+				document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
+			if(document.getElementById('nonSorActivities['+key+'].mspresent'))
+				document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
 		}
 	});
 
@@ -257,8 +261,10 @@ $(document).ready(function(){
 				$('#vat_' + key).val('');
 				$('.vatAmount_' + key).html('');
 				$('.total_' + key).html('');
-				document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
-				document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
+				if(document.getElementById('sorActivities['+key+'].mstd'))
+					document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
+				if(document.getElementById('sorActivities['+key+'].mspresent'))
+					document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
 				//generateSorSno();
 			} else {
 				$('#quantity_0').val('');
@@ -268,8 +274,10 @@ $(document).ready(function(){
 				$('#message').attr('hidden', 'true');;
 				$('#sorRow').removeAttr('hidden');
 				$('#sorRow').removeAttr('sorinvisible');
-				document.getElementById('sorActivities[0].mstd').innerHTML=""; 
-				document.getElementById('sorActivities[0].mspresent').value="0"; 
+				if(document.getElementById('sorActivities[0].mstd'))
+					document.getElementById('sorActivities[0].mstd').innerHTML=""; 
+				if(document.getElementById('sorActivities[0].mspresent'))
+					document.getElementById('sorActivities[0].mspresent').value="0"; 
 			}
 
 			$.each(data, function(id, val) {
@@ -1096,7 +1104,7 @@ var templateCode_typeahead = $('#templateCode').typeahead({
 }, {
 	displayKey : 'code',
 	source : templateCode.ttAdapter()
-}).on('typeahead:selected typeahead:autocompleted', function(event, data){         
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
 	$("#templateId").val(data.id);   
 });
 $('#templateCode').blur(function() {
@@ -1242,7 +1250,7 @@ function getActivitiesForTemplate(id){
 	var estimateDate = $('#estimateDate').val;
 	var nonSorCheck  = false;
 	$.ajax({
-		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid?id="+ id + "&estimateDate="+estimateDate,     
+		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid?id="+ id + "&estimateDate="+estimateDate, 
 		type: "GET",
 		dataType: "json",
 		success: function (data) {
@@ -1267,9 +1275,12 @@ function getActivitiesForTemplate(id){
 						$('#vat_' + key).val('');
 						$('.vatAmount_' + key).html('');
 						$('.total_' + key).html('');
-						document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
-						document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
-						document.getElementById('sorActivities['+key+'].msopen').value="0";
+						if(document.getElementById('sorActivities['+key+'].mstd'))
+							document.getElementById('sorActivities['+key+'].mstd').innerHTML=""; 
+						if(document.getElementById('sorActivities['+key+'].mspresent'))
+							document.getElementById('sorActivities['+key+'].mspresent').value="0"; 
+						if(document.getElementById('sorActivities['+key+'].msopen'))
+							document.getElementById('sorActivities['+key+'].msopen').value="0";
 						generateSorSno();	
 					}else{
 						if(!nonSorCheck){
@@ -1293,9 +1304,12 @@ function getActivitiesForTemplate(id){
 							$('#nonSorServiceTaxPerc_' + key).val('');
 							$('.nonSorVatAmt_' + key).html('');
 							$('.nonSorTotal_' + key).html('');
-							document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
-							document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
-							document.getElementById('nonSorActivities['+key+'].msopen').value="0";
+							if(document.getElementById('nonSorActivities['+key+'].mstd'))
+								document.getElementById('nonSorActivities['+key+'].mstd').innerHTML=""; 
+							if(document.getElementById('nonSorActivities['+key+'].mspresent'))
+								document.getElementById('nonSorActivities['+key+'].mspresent').value="0"; 
+							if(document.getElementById('nonSorActivities['+key+'].msopen'))
+								document.getElementById('nonSorActivities['+key+'].msopen').value="0";
 							generateSlno();
 						}
 						nonSorCheck = true;
@@ -1309,9 +1323,12 @@ function getActivitiesForTemplate(id){
 					$('.description_'+sorCount).html(hint.replace(/@fulldescription@/g, responseObj[index].scheduleDescription));
 					$('.uom_'+sorCount).html(responseObj[index].scheduleUom);
 					$('#sorUomid_'+sorCount).val(responseObj[index].scheduleUomId);
-					document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
-					document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
-					document.getElementById('sorActivities['+sorCount+'].msopen').value="0";
+					if(document.getElementById('sorActivities['+sorCount+'].mstd'))
+						document.getElementById('sorActivities['+sorCount+'].mstd').innerHTML=""; 
+					if(document.getElementById('sorActivities['+sorCount+'].mspresent'))
+						document.getElementById('sorActivities['+sorCount+'].mspresent').value="0";
+					if(document.getElementById('sorActivities['+sorCount+'].msopen'))
+						document.getElementById('sorActivities['+sorCount+'].msopen').value="0";
 					if(responseObj[index].scheduleRate!=null) {
 						$('.estimateRate_'+sorCount).html(responseObj[index].scheduleRate);
 						$('#rate_'+sorCount).val(getUnitRate(responseObj[index].scheduleUom, responseObj[index].scheduleRate));
@@ -1329,9 +1346,12 @@ function getActivitiesForTemplate(id){
 					$('#nonSorUomid_'+nonSorCount).val(responseObj[index].nonSorUomId);
 					$('#nonSorEstimateRate_'+nonSorCount).val(responseObj[index].nonSorRate); 
 					$('#nonSorRate_'+nonSorCount).val(getUnitRate(responseObj[index].nonSorUom,responseObj[index].nonSorRate));
-					document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
-					document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
-					document.getElementById('nonSorActivities['+nonSorCount+'].msopen').value="0";
+					if(document.getElementById('nonSorActivities['+nonSorCount+'].mstd'))
+						document.getElementById('nonSorActivities['+nonSorCount+'].mstd').innerHTML=""; 
+					if(document.getElementById('nonSorActivities['+nonSorCount+'].mspresent'))
+						document.getElementById('nonSorActivities['+nonSorCount+'].mspresent').value="0";
+					if(document.getElementById('nonSorActivities['+nonSorCount+'].msopen'))
+						document.getElementById('nonSorActivities['+nonSorCount+'].msopen').value="0";
 					nonSorCount++;
 				}
 				resetIndexes();
@@ -1686,7 +1706,6 @@ function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
 	var approverPosId = document.getElementById("approvalPosition");
 	var button = document.getElementById("workFlowAction").value;
-
 	var flag = true;
 
 	if (button != null && button == 'Save') {
@@ -1696,33 +1715,46 @@ function validateWorkFlowApprover(name) {
 		$('#approvalComent').removeAttr('required');
 
 		flag = validateSORDetails();
+		
+		if(flag && $('#abstractEstimate').valid()) {
+			var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+			if(hiddenRowCount != 1) {
+				
+				$('.estimateRate').each(function() {
+					if (parseFloat($(this).html()) <= 0)
+						flag = false;
+				});
+				if (!flag ) {
+					bootbox.alert($('#errorrateszero').val());
+					return false;
+				}
 
-		if($('#abstractEstimate').valid()) {
-			$('.nonSorEstimateRate').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			$('.estimateRate').each(function() {
-				if (parseFloat($(this).html()) <= 0)
-					flag = false;
-			});
-			if (!flag) {
-				bootbox.alert($('#errorrateszero').val());
-				return false;
+				$('.quantity').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
+				
 			}
+			hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+			if(hiddenRowCount != 1) {
+				$('.nonSorEstimateRate').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
+				if (!flag) {
+					bootbox.alert($('#errorrateszero').val());
+					return false;
+				}
 
-			$('.quantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			$('.nonSorQuantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
+				$('.nonSorQuantity').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
 
-			if (!flag) {
-				bootbox.alert($('#errorquantityzero').val());
-				return false;
+				if (!flag && estimateAmount>0) {
+					bootbox.alert($('#errorquantityzero').val());
+					return false;
+				}
 			}
 		}		
 	}
@@ -1755,6 +1787,7 @@ function validateWorkFlowApprover(name) {
 					return false;
 				} else {
 					validateSORDetails();
+					deleteHiddenRows();
 					document.forms[0].submit();
 				}
 			});
@@ -1793,73 +1826,96 @@ function validateWorkFlowApprover(name) {
 		flag = validateSORDetails();
 
 		if($('#abstractEstimate').valid()) {
-			$('.nonSorEstimateRate').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			$('.estimateRate').each(function() {
-				if (parseFloat($(this).html()) <= 0)
-					flag = false;
-			});
-			if (!flag) {
-				bootbox.alert($('#errorrateszero').val());
-				return false;
-			}
+			var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+			if(hiddenRowCount != 1) {
+				
+				$('.estimateRate').each(function() {
+					if (parseFloat($(this).html()) <= 0)
+						flag = false;
+				});
+				if (!flag ) {
+					bootbox.alert($('#errorrateszero').val());
+					return false;
+				}
 
-			$('.quantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			$('.nonSorQuantity').each(function() {
-				if (parseFloat($(this).val()) <= 0)
-					flag = false;
-			});
-			if (!flag) {
-				bootbox.alert($('#errorquantityzero').val());
-				return false;
+				$('.quantity').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
+				
+			}
+			hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+			if(hiddenRowCount != 1) {
+				$('.nonSorEstimateRate').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
+				if (!flag) {
+					bootbox.alert($('#errorrateszero').val());
+					return false;
+				}
+
+				$('.nonSorQuantity').each(function() {
+					if (parseFloat($(this).val()) <= 0)
+						flag = false;
+				});
+
+				if (!flag && estimateAmount>0) {
+					bootbox.alert($('#errorquantityzero').val());
+					return false;
+				}
 			}
 		}
 	}
 
 	if(flag) {
+		deleteHiddenRows();
 		document.forms[0].submit;
 		return true;
 	} else
 		return false;
 }
 
+function deleteHiddenRows(){
+	
+	var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblsor');
+		tbl.deleteRow(2);
+	}
+
+	hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblNonSor');
+		tbl.deleteRow(2);
+	}
+	var overheadTableLength = jQuery('#overheadTable tr').length-1;
+	if(overheadTableLength == 1){
+		var overhead = document.getElementById('tempOverheadValues[0].name').value;
+		if(overhead==""){
+			var tbl=document.getElementById('overheadTable');
+			tbl.deleteRow(1);
+		}
+	}
+	var tbl=document.getElementById('tblassetdetails');
+	var assetTableLength = jQuery('#tblassetdetails tr').length-1;
+	for (var i = 0; i < assetTableLength; i++) {
+		var assetname = document.getElementById('tempAssetValues['+ i + '].asset.name').value;
+		var assetcode = document.getElementById('tempAssetValues['+ i + '].asset.code').value;
+		if(assetname == "" && assetcode== ""){
+			tbl.deleteRow(i+1);
+		}
+	}
+}
+
 function validateSORDetails() {
 	if($('#abstractEstimate').valid()) {
-		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblsor');
-			tbl.deleteRow(2);
-		}
-
-		hiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-		if(hiddenRowCount == 1) {
-			var tbl=document.getElementById('tblNonSor');
-			tbl.deleteRow(2);
-		}
-		var overheadTableLength = jQuery('#overheadTable tr').length-1;
-		if(overheadTableLength == 1){
-			var overhead = document.getElementById('tempOverheadValues[0].overhead.id').value;
-			if(overhead==""){
-				var tbl=document.getElementById('overheadTable');
-				tbl.deleteRow(1);
-			}
-		}
-		var tbl=document.getElementById('tblassetdetails');
-		var assetTableLength = jQuery('#tblassetdetails tr').length-1;
-		for (var i = 0; i < assetTableLength; i++) {
-			var assetname = document.getElementById('tempAssetValues['+ i + '].asset.name').value;
-			var assetcode = document.getElementById('tempAssetValues['+ i + '].asset.code').value;
-			if(assetname == "" && assetcode== ""){
-				tbl.deleteRow(i+1);
-			}
-		}
-		if(!validateOverheads())
+		
+		
+		if(!validateOverheads()){
 			return false;
+		}
+		
 		$('.disablefield').removeAttr("disabled");
 		return true;
 	} else
@@ -2180,8 +2236,10 @@ function addMSheet(obj)
 		var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
 		mscontent=k+mscontent+"</td></tr>";
 		curRow.after(mscontent);
-		document.getElementById(rowid.replace("msadd","mstd")).innerHTML="";
-		document.getElementById(rowid.replace("msadd","msopen")).value="1";
+		if(document.getElementById(rowid.replace("msadd","mstd")))
+			document.getElementById(rowid.replace("msadd","mstd")).innerHTML="";
+		if(document.getElementById(rowid.replace("msadd","msopen")))
+			document.getElementById(rowid.replace("msadd","msopen")).value="1";
 		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
 		
 		if(sortable.indexOf("sorActivities") >= 0)
@@ -2202,8 +2260,10 @@ function addMSheet(obj)
 
 		newrow=  newrow.replace(/msrowtemplate/g,'msrow'+sortable);
 		newrow=  newrow.replace(/templatesorActivities\[0\]/g,sortable);
-		document.getElementById(rowid.replace("msadd","msopen")).value="1";
-		document.getElementById(rowid.replace("msadd","mspresent")).value="1";
+		if(document.getElementById(rowid.replace("msadd","msopen")))
+			document.getElementById(rowid.replace("msadd","msopen")).value="1";
+		if(document.getElementById(rowid.replace("msadd","mspresent")))
+			document.getElementById(rowid.replace("msadd","mspresent")).value="1";
 		curRow.after(newrow);
 		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
 		if(sortable.indexOf("sorActivities") >= 0)
