@@ -139,6 +139,9 @@ function resetIndexes() {
 									'id' : function(_, id) {
 										if(id != undefined && id.indexOf('msrow') >= 0) {
 											return id.split('_')[0] + '_' + idx + '_' + subRowIdx;
+										} else {
+											if(id != undefined)
+												return id.replace(/\d+/, idx);
 										}
 									}
 								});
@@ -218,6 +221,9 @@ function resetIndexes() {
 									'id' : function(_, id) {
 										if(id != undefined && id.indexOf('msrow') >= 0) {
 											return id.split('_')[0] + '_' + idx + '_' + subRowIdx;
+										} else {
+											if(id != undefined)
+												return id.replace(/\d+/, idx);
 										}
 									}
 								});
@@ -671,6 +677,8 @@ function populateData(data, selectedActivities){
 }
 
 function deleteSor(obj) {
+	// close all measurement sheets before deleting
+	closeAllmsheet();
 	var rIndex = getRow(obj).rowIndex;
 	var id = $(getRow(obj)).children('td:first').children('input:first').val();
     //To get all the deleted rows id
@@ -717,6 +725,8 @@ function deleteSor(obj) {
 }
 
 function deleteNonSor(obj) {
+	// close all measurement sheets before deleting
+	closeAllmsheet();
     var rIndex = getRow(obj).rowIndex;
     
     var id = $(getRow(obj)).children('td:first').children('input:first').val();

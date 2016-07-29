@@ -349,40 +349,16 @@ function findNonSorNet(obj)
 	document.getElementById(netName).innerHTML=sum;
 }
 
-function closeAllmsheet()
-{
-	var open=false;
-	$('.classmsopen').each(function (index)
-			{
+function openAllmsheet() {
+	$(".openmbsheet:visible").each(function() {
+		$(this).trigger('click');
+	});
+}
 
-		if($( this ).val()==1)
-		{
-			var sid=$( this ).attr('id');
-			// var sid=k.closest('tr').attr("id");
-			var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
-			document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
-
-			mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
-
-			document.getElementById(sid.split(".")[0]+".mstr")
-			document.getElementById(sid.split(".")[0]+".mstd")
-			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
-			document.getElementById(sid.split(".")[0]+".msopen").value="false";
-			var mstr=document.getElementById(sid.split(".")[0]+".mstr");
-			$(mstr).remove(); 
-			var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
-			$(qobj).attr("readonly","readonly");
-			if(sid.split(".")[0].indexOf("sorMbDetails") >= 0)
-			{
-				calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-			}else
-			{
-				calculateNonSorEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-			}
-
-		}
-			});
-	return open;
+function closeAllmsheet() {
+	$(".hide-ms:visible").each(function() {
+		$(this).trigger('click');
+	});
 }
 
 function ismsheetOpen()

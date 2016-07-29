@@ -102,7 +102,7 @@
 								<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].amount" id="nonSorAmount_0" class="form-control table-input text-right"/>
-								<button class="btn btn-default" name="nonSorMbDetails[0].msadd" id="nonSorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								<button class="btn btn-default openmbsheet" name="nonSorMbDetails[0].msadd" id="nonSorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 							</td>
 							<td hidden="true">
 	                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[0].mspresent" id="nonSorMbDetails[0].mspresent" data-idx="0"/>
@@ -167,10 +167,10 @@
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].amount" value="${details.amount }" id="nonSorAmount_${item.index }" class="form-control table-input text-right"/>
 									<c:choose>
 										<c:when test="${!details.measurementSheets.isEmpty() }">
-											<button class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+											<button class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 										</c:when>
 										<c:otherwise>
-											<button style="visibility: hidden;" class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+											<button style="visibility: hidden;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 										</c:otherwise>
 									</c:choose>
 								</td>

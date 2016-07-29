@@ -53,6 +53,11 @@
 										<spring:message code="title.sor" />
 									</div>
 								</div>
+								<div align="right">
+									<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
+										onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+										value="Open All Measurements" onclick="openAllmsheet()" />
+								</div>
 								<table class="table table-bordered" id="tblsor">
 									<thead>
 										<tr>
@@ -93,10 +98,10 @@
 												<c:out value="${mbdetails.quantity}" />
 												<c:choose>
 													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-														<button class="btn" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														<button class="btn openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 													</c:when>
 													<c:otherwise>
-														<button style="visibility: hidden;" class="btn btn-default" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														<button style="visibility: hidden;" class="btn openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 													</c:otherwise>
 												</c:choose>
 											</td>
@@ -178,10 +183,10 @@
 												<c:out value="${mbdetails.quantity}" />
 												<c:choose>
 													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-														<button class="btn" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														<button class="btn openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 													</c:when>
 													<c:otherwise>
-														<button style="visibility: hidden;" class="btn btn-default" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														<button style="visibility: hidden;" class="btn openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 													</c:otherwise>
 												</c:choose>
 											</td>
