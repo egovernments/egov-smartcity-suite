@@ -69,7 +69,7 @@
                 <tbody id="msrowtemplate1">
 	                <tr id="msrowtemplate">
 	                	<td hidden="true">
-	                        <input name="templatesorMbDetails[0].measurementSheets[0].id" id="templatesorMbDetails_0_measurementSheets_0_id"></input>
+	                        <input name="templatesorMbDetails[0].measurementSheets[0].id" class="clearthis" id="templatesorMbDetails_0_measurementSheets_0_id"></input>
 	                        <input name="templatesorMbDetails[0].measurementSheets[0].woMeasurementSheet" id="templatesorMbDetails_0_measurementSheets_0_woMeasurementSheet"></input>
 	                    </td>
 	                	<td id="msrowslNo_0_0"></td>

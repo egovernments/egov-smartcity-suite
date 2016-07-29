@@ -161,6 +161,10 @@ function submitForm(workFlowAction) {
 					$(this).removeAttr('disabled');
 				});
 				
+				$('.clearthis').each(function() {
+					$(this).attr('value', '');
+				});
+				
 				var sorCount = 0;
 				var nonSorCount = 0;
 				

@@ -603,7 +603,7 @@ public class MBHeaderService {
 
     public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors,
             final String mode) {
-        final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId(), mbHeader.getWorkOrderEstimate().getId(),
+        final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId() == null ? -1L : mbHeader.getId(), mbHeader.getWorkOrderEstimate().getId(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
         String message = "";
         final DecimalFormat df = new DecimalFormat("#.##");

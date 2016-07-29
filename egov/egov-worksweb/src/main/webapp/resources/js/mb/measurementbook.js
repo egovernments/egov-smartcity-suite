@@ -111,8 +111,7 @@ function resetIndexes() {
 				$(this).attr({
 					'name' : function(_, name) {
 						if(name != undefined)
-							if(name)
-							{
+							if(name) {
 							  name= name.replace(/sorMbDetails\[.\]/g, "sorMbDetails["+idx+"]");
 							  return name.replace(/_\d+/,"_"+idx);
 							}
@@ -161,7 +160,10 @@ function resetIndexes() {
 												id = id.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
 												return id;
 											} else {
-												return 'sorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
+												if(id.indexOf('_woMeasurementSheet') == -1)
+													return 'sorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_id';
+												else
+													return 'sorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
 											}
 									},
 									'data-idx' : function(_, dataIdx) {
@@ -197,7 +199,10 @@ function resetIndexes() {
 				$(this).attr({
 					'name' : function(_, name) {
 						if(name != undefined)
-							return name.replace(/\d+/, idx);
+							if(name) {
+								name= name.replace(/nonSorMbDetails\[.\]/g, "nonSorMbDetails["+idx+"]");
+								return name.replace(/_\d+/,"_"+idx);
+							}
 					},
 					'id' : function(_, id) {
 						if(id != undefined)
@@ -243,7 +248,10 @@ function resetIndexes() {
 												id = id.replace(/measurementSheets\[.\]/g, "measurementSheets["+subRowIdx+"]");
 												return id;
 											} else {
-												return 'sorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
+												if(id.indexOf('_woMeasurementSheet') == -1)
+													return 'nonSorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_id';
+												else
+													return 'nonSorMbDetails_' + idx + '_measurementSheets_' + subRowIdx + '_woMeasurementSheet';
 											}
 									},
 									'data-idx' : function(_, dataIdx) {

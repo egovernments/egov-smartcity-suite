@@ -162,7 +162,7 @@ $(document).on('click','.ms-submit',function () {
 		alert("Net amount should be greater than 0");
 		return false;
 	}
-	var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheets[0].no");
+	var qobj1=sid.split(".")[0];
 	if(!validateMsheet(qobj1))
 	{
 		return false;
@@ -376,15 +376,14 @@ function ismsheetOpen()
 function validateMsheet(obj)
 {
 	var len=$(obj).closest('tbody').find('tr').length;
-	var name=obj.id.split(".");
 	var sum=0;
 	for(var i=0;i<len-1;i++){
-		var remarks=document.getElementById(name[0]+'.measurementSheets['+i+'].remarks').value;
-		var no=eval(document.getElementById(name[0]+'.measurementSheets['+i+'].no').value);
-		var lent=eval(document.getElementById(name[0]+'.measurementSheets['+i+'].length').value);
-		var width=eval(document.getElementById(name[0]+'.measurementSheets['+i+'].width').value);
-		var depthorheight=eval(document.getElementById(name[0]+'.measurementSheets['+i+'].depthOrHeight').value);
-		var quantity=eval(document.getElementById(name[0]+'.measurementSheets['+i+'].quantity').value);
+		var remarks=document.getElementById(obj+'.measurementSheets['+i+'].remarks').value;
+		var no=eval(document.getElementById(obj+'.measurementSheets['+i+'].no').value);
+		var lent=eval(document.getElementById(obj+'.measurementSheets['+i+'].length').value);
+		var width=eval(document.getElementById(obj+'.measurementSheets['+i+'].width').value);
+		var depthorheight=eval(document.getElementById(obj+'.measurementSheets['+i+'].depthOrHeight').value);
+		var quantity=eval(document.getElementById(obj+'.measurementSheets['+i+'].quantity').value);
 
 		if ((remarks != '' || no != '' || lent != '' || width != '' || depthorheight != '') && quantity == '') {
 			bootbox.alert("Please Enter Quantity");

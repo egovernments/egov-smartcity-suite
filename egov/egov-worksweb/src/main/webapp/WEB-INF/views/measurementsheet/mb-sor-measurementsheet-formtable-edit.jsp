@@ -71,7 +71,7 @@
 	                	<c:forEach begin="0" end="${details.workOrderActivity.workOrderMeasurementSheets.size() - 1 }" varStatus="index">
 	                		<tr>
 			                	<td hidden="true">
-			                        <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].id" id="sorMbDetails_${item.index }_measurementSheets_${index.index }_id" />
+			                        <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].id" class="clearthis" id="sorMbDetails_${item.index }_measurementSheets_${index.index }_id" />
 			                        <form:input path="sorMbDetails[${item.index }].measurementSheets[${index.index }].woMeasurementSheet" id="sorMbDetails_${item.index }_measurementSheets_${index.index }_woMeasurementSheet" />
 			                    </td>
 			                	<td id="msrowslNo_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.slNo }</td>
