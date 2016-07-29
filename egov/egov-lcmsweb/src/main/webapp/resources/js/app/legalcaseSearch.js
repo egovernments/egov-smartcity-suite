@@ -144,17 +144,21 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 								
+
 								if(full.casestatus=='Created' || full.casestatus=='In Progress') {
-									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option></select>');			        			   
+									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');			        			   
 									}
 								else if(full.casestatus=='Judgment'){
 
 								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
 							}
+							else if(full.casestatus=='Close Case'){
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
+						}	
 							}
 						} 
 						],
-				"footerCallback" : function(row, data, start, end, display) {
+				    "footerCallback" : function(row, data, start, end, display) {
 					var api = this.api(), data;
 					if (data.length == 0) {
 						$('#report-footer').hide();
@@ -217,6 +221,20 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		}
 		if (this.value == 7) {
 			var url = '/lcms/lcinterimorder/list/?lcNumber='+lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		if (this.value == 8) {
+			var url = '/lcms/legalcasedisposal/new/'+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
+		if (this.value == 9) {
+			var url = '/lcms/legalcasedisposal/edit/'+ lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
