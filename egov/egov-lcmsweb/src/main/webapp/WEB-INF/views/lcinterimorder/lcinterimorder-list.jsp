@@ -38,36 +38,49 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
-		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
-	<%-- <form:hidden name="lcNumber" id="lcNumber" value="${judgment.legalcase.lcNumber}"/>  --%>
-	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
-	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
-	 <%@ include file="judgment-form.jsp"%>
-	  
-	 <input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
-	</div>
-	</div>
-	</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
-			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered" id="lcInterimOrderform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	<input type="hidden"  id="lcNumber" name="lcNumber" value="${legalCase.lcNumber}" />
+	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
+		value="${lcInterimOrderList}">
+	<input type="hidden" id="lcInterimOrderid" name="lcInterimOrderid"
+		value="${lcInterimOrder}" />
+
+	<t>
+	<td colspan="5" align="right">
+		<div align="right">
+			<button type="submit" name="submit" id="createnewinterimorder"
+				class="btn btn-primary" value="Create New InterimOrder">
+				<spring:message code="lbl.createnewinterimorder" />
+			</button>
+
 		</div>
-	</div>
+	</td>
+	</t>
+	<%@ include file="lcinterimorder-list-details.jsp"%>
+	<input type="hidden" value="${mode}" id="mode" />
+
+
 </form:form>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	<link rel="stylesheet"
+	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+	<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
-	<script type="text/javascript"
+	src="<c:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
-	

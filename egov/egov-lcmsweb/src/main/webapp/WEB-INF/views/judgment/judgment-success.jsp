@@ -157,13 +157,14 @@
 					<%--  <div class="row add-border">
 					<div class="col-xs-3 add-margin"><spring:message code="lbl.judgmentdocuments" /></div>
 						<div class="col-sm-3 add-margin view-content">
-							${judgment.judgmentDocuments[0].files}
+							${judgment.judgmentDocuments[0].fileName}
 						</div>
-						</div>  --%>
-						<%-- <jsp:include page="uploadDocuments.jsp"/> --%>
+						</div>   --%>
+						 <jsp:include page="uploadDocuments.jsp"/> 
 
 				</div>
 			</div>
+			<div id="judgmentDocuments">
 		</div>
 	</div>
 	<div class="row text-center">

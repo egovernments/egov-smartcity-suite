@@ -60,14 +60,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/lcinterimorder")
-public class LcInterimOrderController {
+@RequestMapping(value = "/lcinterimorder")
+public class ViewAndEditLcInterimOrderController {
 
     @Autowired
     private LcInterimOrderService lcInterimOrderService;
 
     @Autowired
-    private LegalCaseService legalcaseService;
+    private LegalCaseService legalCaseService;
 
     @Autowired
     private InterimOrderService interimOrderService;
@@ -77,55 +77,46 @@ public class LcInterimOrderController {
 
     }
 
-    @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
-            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-        prepareNewForm(model);
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("lcInterimOrder", lcInterimOrder);
-        model.addAttribute("lcNumber", legalCase.getLcNumber());
-        model.addAttribute("mode", "create");
-        return "lcinterimorder-new";
-    }
-
     @ModelAttribute
-    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
+        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
 
-    @RequestMapping(value = "/new/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
-            final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
+    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
+    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model,
+            final HttpServletRequest request) {
+        final List<LcInterimOrder> lcInterimOrderList = getLegalCase(lcNumber).getLcInterimOrder();
+        final LcInterimOrder lcInterimOrderObj = lcInterimOrderList.get(0);
+        prepareNewForm(model);
+        model.addAttribute("lcInterimOrder", lcInterimOrderObj);
+        model.addAttribute("lcNumber", lcInterimOrderObj.getLegalCase().getLcNumber());
+        model.addAttribute("mode", "edit");
+        return "lcinterimorder-edit";
+    }
 
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
+    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+            final BindingResult errors, final RedirectAttributes redirectAttrs,
+            @RequestParam("lcNumber") final String lcNumber, final Model model) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
-            model.addAttribute("legalCase", legalCase);
-            return "lcinterimorder-new";
-        } else
-            lcInterimOrder.setLegalCase(legalCase);
+            return "lcinterimorder-edit";
+        }
         lcInterimOrderService.persist(lcInterimOrder);
-        model.addAttribute("mode", "create");
-        model.addAttribute("lcNumber", legalCase.getLcNumber());
         redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
-        model.addAttribute("message", "Interim Order Created successfully.");
+        model.addAttribute("message", "InterimOrder updated successfully.");
+        model.addAttribute("mode", "edit");
         return "lcinterimorder-success";
-
     }
 
-    @RequestMapping(value = "/list/", method = RequestMethod.GET)
-    public String getInterimOrderList(final Model model, @RequestParam("lcNumber") final String lcNumber,
-            final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<LcInterimOrder> lcInterimOrderList = lcInterimOrderService.findBYLcNumber(lcNumber);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("lcNumber", legalCase.getLcNumber());
-        model.addAttribute("lcInterimOrderList", lcInterimOrderList);
-        return "lcinterimorder-list";
-
+    @RequestMapping(value = "/view/", method = RequestMethod.GET)
+    public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
+        final List<LcInterimOrder> lcInterimOrderList = getLegalCase(lcNumber).getLcInterimOrder();
+        final LcInterimOrder lcInterimOrderObj = lcInterimOrderList.get(0);
+        model.addAttribute("lcInterimOrder", lcInterimOrderObj);
+        model.addAttribute("lcNumber", lcInterimOrderObj.getLegalCase().getLcNumber());
+        model.addAttribute("mode", "view");
+        return "lcinterimorder-success";
     }
-
 }

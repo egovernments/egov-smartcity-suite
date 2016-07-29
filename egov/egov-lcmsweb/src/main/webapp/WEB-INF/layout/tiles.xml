@@ -333,4 +333,14 @@
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standingCouncil.jsp"/>
 </definition>
+
+<definition name="lcinterimorder-list" extends="base_layout">
+	<put-attribute name="page-title" value="title.lcinterimorder.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/lcinterimorder-list.jsp"/>
+</definition>
+
+<definition name="lcinterimorder-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.lcinterimorder.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/lcinterimorder-edit.jsp"/>
+</definition>
 </tiles-definitions>

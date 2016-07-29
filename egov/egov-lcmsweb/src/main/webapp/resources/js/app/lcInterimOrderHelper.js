@@ -40,6 +40,22 @@
 
 $(document).ready(function(){
 
+	
+	$('#lcInterimOrderTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+        "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 4,
+			"orderable": false
+		} ]
+	});
 	loadDateFields();
 	$('#interimOrder').change(function(){
 		loadDateFields();
@@ -62,9 +78,7 @@ function loadDateFields(){
 		$("#reportdetails1").hide();
     	$("#reportdetails2").hide();
 	}
-	
 }
-
 
 });
 
@@ -89,3 +103,30 @@ $('#btnclose').click(function(){
 	});
 	
 });
+
+function edit(){    
+		var lcNumber = $('#lcNumber').val();
+		var url = '/lcms/lcinterimorder/edit/?lcNumber='+lcNumber;
+		window.location = url;
+       }
+$('#buttonBack').click(function() {
+	var lcNumber = $('#lcNumber').val();
+	var url = '/lcms/lcinterimorder/list/?lcNumber='+lcNumber;
+	window.location = url;
+});
+
+$('#createnewinterimorder').click(function() {
+	var lcNumber = $('#lcNumber').val();
+	var url = '/lcms/lcinterimorder/new/?lcNumber='+lcNumber;
+	$('#lcInterimOrderform').attr('method', 'get');
+	$('#lcInterimOrderform').attr('action', url);
+	window.location = url;
+ 
+});
+
+
+function viewInterimorder(){
+	var lcNumber = $('#lcNumberHY').val();
+	window.open('/lcms/lcinterimorder/view/?lcNumber=' + lcNumber, "_self",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+		

@@ -41,9 +41,16 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
+					<c:if test="${mode == 'create'}">
 				<div class="panel-heading">
 					<div class="panel-title">Interim Order</div>
 				</div>
+				</c:if>
+				<c:if test="${mode == 'edit'}">
+				<div class="panel-heading">
+					<div class="panel-title">Edit Interim Order</div>
+				</div>
+				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -78,7 +85,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="mpNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="50" />
+								data-pattern="alphanumeric" maxlength="50" required="required"/>
 							<form:errors path="mpNumber" cssClass="error-msg" />
 						</div>
 
@@ -88,7 +95,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="notes"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="1024" />
+								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="1024" required="required"/>
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 					</div>

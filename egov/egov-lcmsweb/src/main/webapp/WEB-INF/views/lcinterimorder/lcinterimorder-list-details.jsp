@@ -37,39 +37,73 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post" modelAttribute="lcInterimOrder"
-	id="lcInterimOrderform" cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<%-- <input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
-		value="${lcInterimOrderList}"> --%>
-	<input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />
-	<input type="hidden" value="${mode}" id="mode" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
-	<%@ include file="lcinterimorder-form.jsp"%>
-	<c:if test="${not empty message}">
-		<div role="alert">${message}</div>
-	</c:if>
-	</div>
-	</div>
-	</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary"
-				value="Save">
-				<spring:message code="lbl.submit" />
-			</button>
-			<button type='button' class='btn btn-default' id="btnclose">
-				<spring:message code='lbl.close' />
-			</button>
 
-		</div>
-	</div>
-</form:form>
+<div class="panel-heading">
+	<div class="panel-title">View Past Interim Order</div>
+</div>
+<c:choose>
+	<c:when test="${lcInterimOrderList.isEmpty()}">
+		<div class="form-group" align="center">No Master Data</div>
+	</c:when>
+	<c:otherwise>
+		<table width="100%" border="1" align="center" cellpadding="0"
+			cellspacing="0" class="table table-bordered datatable"
+			id="lcInterimOrderTbl">
+			<thead>
+				<tr>
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.interimorder" /></th>
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.iodate" /></th>
+					<th align="center" colspan="1" class="text-center"><spring:message
+							code="lbl.mpnumber" /></th>
+					<th align="center" colspan="1" class="text-center"><spring:message
+							code="lbl.notes" /></th>
+
+
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.edit" /></th>
+
+				</tr>
+			</thead>
+			<c:forEach var="lcInterimOrder" items="${lcInterimOrderList}">
+				<tr>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${lcInterimOrder.interimOrder.interimOrderType}" />
+						</div>
+					</td>
+
+					<td colspan="1" id="iodate">
+						<div align="center">
+							<a style="cursor: pointer;" onclick="viewInterimorder();"> <c:out
+									value="${lcInterimOrder.ioDate}" /> <input type="hidden"
+								value="${lcInterimOrder.legalCase.lcNumber}" name="lcNumberHY"
+								id="lcNumberHY" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${lcInterimOrder.mpNumber}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${lcInterimOrder.notes}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<a href="javascript:void(0);"
+								onclick="edit('<c:out value="${lcInterimOrder.legalCase.lcNumber}" />');">Edit</a>
+						</div>
+					</td>
+				</tr>
+			</c:forEach>
+		</table>
+	</c:otherwise>
+</c:choose>
+
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"

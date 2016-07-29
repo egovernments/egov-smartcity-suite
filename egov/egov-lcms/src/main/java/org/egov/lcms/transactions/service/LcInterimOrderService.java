@@ -101,7 +101,7 @@ public class LcInterimOrderService {
     }
 
     public List<LcInterimOrder> findAll() {
-        return lcInterimOrderRepository.findAll(new Sort(Sort.Direction.ASC, " "));
+        return lcInterimOrderRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
     public LcInterimOrder findById(final Long id) {
@@ -130,4 +130,9 @@ public class LcInterimOrderService {
         else
             return null;
     }
+
+    public List<LcInterimOrder> findBYLcNumber(final String lcNumber) {
+        return lcInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
 }
