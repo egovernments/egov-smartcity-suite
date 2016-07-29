@@ -59,6 +59,7 @@
 <input type="hidden" name="removedDetailIds" id="removedDetailIds" value="${removedDetailIds }" class="form-control table-input hidden-input"/>
 <input type="hidden" id="mode" name="mode" value="${mode }">
 <input name="mbHeader" type="hidden" id="id" value="${mbHeader.id }" />
+<input type="hidden" id="isMeasurementsExist" value="${isMeasurementsExist }">
 <div class="position_alert1">
 	<spring:message code="lbl.tender.finalizedperc" /> : <span id="tenderPerc">${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}</span>
 	<input type="hidden" name="tenderFinalizedPerc" id="tenderFinalizedPerc" value="${mbHeader.workOrderEstimate.workOrder.tenderFinalizedPercentage}"/>

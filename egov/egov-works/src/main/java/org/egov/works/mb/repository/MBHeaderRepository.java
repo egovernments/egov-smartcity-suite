@@ -118,4 +118,7 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     @Query("select mb from MBHeader as mb where mb.workOrderEstimate.id = :workOrderEstimateId  and mbDate <= :billDate and mb.egwStatus.code = :approvedStatusCode and not exists (select cbr from ContractorBillRegister cbr where cbr.status.code != :cancelStatusCode and cbr = mb.egBillregister))")
     List<MBHeader> findMBHeaderBasedOnbillDate(@Param("workOrderEstimateId") final Long workOrderEstimateId, @Param("billDate") final Date billDate, @Param("approvedStatusCode") final String approvedStatusCode,@Param("cancelStatusCode") final String cancelStatusCode );
 
+    @Query("select sum(mbms.quantity) from MBMeasurementSheet mbms where (mbms.mbDetails.mbHeader.createdDate < (select createdDate from MBHeader where id = :mbHeaderId) or (select count(*) from MBHeader where id = :mbHeaderId) = 0 ) and mbms.mbDetails.mbHeader.egwStatus.code != :status group by mbms.woMeasurementSheet having mbms.woMeasurementSheet.id = :woMeasurementSheetId")
+    Double getMeasurementsPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId, @Param("status") final String status,
+            @Param("woMeasurementSheetId") final Long woMeasurementSheetId);
 }

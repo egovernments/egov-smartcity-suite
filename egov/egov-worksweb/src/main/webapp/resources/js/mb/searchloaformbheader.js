@@ -279,6 +279,9 @@ $('#btncreatemb').click(function(e) {
 						else
 							$('#' + key).val(value);
 					});
+					if($('#isMeasurementsExist').val() == 'false') {
+						$('.openCloseAll').hide();
+					}
 				});
 				$('.title2').html('Create Measurement Book');
 				$('#measurementBookDiv').removeAttr('hidden');

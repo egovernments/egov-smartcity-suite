@@ -40,14 +40,14 @@
 <table hidden="true" >
     <tbody id="msheaderrowtemplate">
     <tr id="templatesorMbDetails[0].mstr" class="ms-sheet-row">
-        <td colspan="15">
+        <td colspan="16">
             <div class="view-content"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             <table class=" table table-bordered" id="templatesorMbDetails[0].mstable">
                 <thead>
                 	<tr>
 	                    <th colspan="1"></th>
-	                    <th colspan="7"><spring:message code="lbl.estimated" /></th>
-	                    <th colspan="6"><spring:message code="lbl.actuals" /></th>
+	                    <th colspan="8"><spring:message code="lbl.approved.qty" /></th>
+	                    <th colspan="6"><spring:message code="lbl.current.entry" /></th>
                     </tr>
                     <tr>
 	                    <th><spring:message code="lbl.slno" /></th>
@@ -58,6 +58,7 @@
 	                    <th><spring:message code="lbl.depthorheight" /></th>
 	                    <th><spring:message code="lbl.quantity" /></th>
 	                    <th><spring:message code="lbl.identifier" /></th>
+	                    <th><spring:message code="lbl.cumulative.previous.entry" /></th>
 	                    <th><spring:message code="lbl.remarks" /></th>
 	                    <th><spring:message code="lbl.no" /></th>
 	                    <th><spring:message code="lbl.length" /></th>
@@ -74,12 +75,13 @@
 	                    </td>
 	                	<td id="msrowslNo_0_0"></td>
 	                    <td id="msrowremarks_0_0"></td>
-	                    <td id="msrowno_0_0"></td>
-	                    <td id="msrowlength_0_0"></td>
-	                    <td id="msrowwidth_0_0"></td>
-	                    <td id="msrowdepthOrHeight_0_0"></td>
-	                    <td id="msrowquantity_0_0"></td>
+	                    <td id="msrowno_0_0" align="right"></td>
+	                    <td id="msrowlength_0_0" align="right"></td>
+	                    <td id="msrowwidth_0_0" align="right"></td>
+	                    <td id="msrowdepthOrHeight_0_0" align="right"></td>
+	                    <td id="msrowquantity_0_0" align="right"></td>
 	                    <td id="msrowidentifier_0_0"></td>
+	                    <td id="msrowmbmsPreviousEntry_0_0" align="right"></td>
 	                    <td>
 	                        <textarea name="templatesorMbDetails[0].measurementSheets[0].remarks" value=""  id="templatesorMbDetails[0].measurementSheets[0].remarks" class="form-control text-left patternvalidation runtime-update"
 	                               data-pattern="alphanumeric" maxlength="1024" ></textarea>
@@ -115,8 +117,8 @@
 	                	<td colspan="5"></td>
 	                    <td class="text-right"><spring:message code="lbl.total" /></td>
 	                    <td class="text-right view-content"></td>
-	                    <td colspan="5" class="text-right">
-	                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
+	                    <td colspan="6" class="text-right">
+	                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-ms" />
 	                        <input type="button" value="Submit"  id="templatesorMbDetails[0].mssubmit" class="btn btn-xs btn-primary ms-submit templatemssubmit_0"/> 
 	                    </td>
 	                    <td class="text-right"><spring:message code="lbl.total" /></td>

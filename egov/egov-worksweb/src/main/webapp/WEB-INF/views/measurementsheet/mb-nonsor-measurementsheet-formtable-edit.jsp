@@ -41,14 +41,14 @@
 	<!--only for validity head start -->                         
     <table>
 	    <tr>
-	        <td colspan="15"><!--only for validity head end -->
+	        <td colspan="16"><!--only for validity head end -->
 	            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
 	            <table class=" table table-bordered" id="nonSorMbDetails[${item.index }].mstable">
 	                <thead>
 	                	<tr>
 		                    <th colspan="1"></th>
-		                    <th colspan="7"><spring:message code="lbl.estimated" /></th>
-		                    <th colspan="6"><spring:message code="lbl.actuals" /></th>
+		                    <th colspan="8"><spring:message code="lbl.approved.qty" /></th>
+	                    	<th colspan="6"><spring:message code="lbl.current.entry" /></th>
 	                    </tr>
 	                    <tr>
 		                    <th><spring:message code="lbl.slno" /></th>
@@ -59,6 +59,7 @@
 		                    <th><spring:message code="lbl.depthorheight" /></th>
 		                    <th><spring:message code="lbl.quantity" /></th>
 		                    <th><spring:message code="lbl.identifier" /></th>
+		                    <th><spring:message code="lbl.cumulative.previous.entry" /></th>
 		                    <th><spring:message code="lbl.remarks" /></th>
 		                    <th><spring:message code="lbl.no" /></th>
 		                    <th><spring:message code="lbl.length" /></th>
@@ -76,11 +77,12 @@
 			                    </td>
 			                	<td id="nonsormsrowslNo_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.slNo }</td>
 			                    <td id="nonsormsrowremarks_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.remarks }</td>
-			                    <td id="nonsormsrowno_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).no }</td>
-			                    <td id="nonsormsrowlength_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).length }</td>
-			                    <td id="nonsormsrowwidth_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
-			                    <td id="nonsormsrowdepthOrHeight_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
-			                    <td id="nonsormsrowquantity_${item.index }_${index.index }">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
+			                    <td id="nonsormsrowno_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).no }</td>
+			                    <td id="nonsormsrowlength_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).length }</td>
+			                    <td id="nonsormsrowwidth_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).width }</td>
+			                    <td id="nonsormsrowdepthOrHeight_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).depthOrHeight }</td>
+			                    <td id="nonsormsrowquantity_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity }</td>
+			                    <td id="nonsormsrowmbmsPreviousEntry_${item.index }_${index.index }" align="right">${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).cumulativeQuantity }</td>
 			                    <c:if test="${details.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">
 									<c:set var="total" value="${total + details.workOrderActivity.workOrderMeasurementSheets.get(index.index).quantity}" />
 								</c:if>
@@ -134,8 +136,8 @@
 		                	<td colspan="5"></td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>
 		                    <td class="text-right view-content">${total }</td>
-		                    <td colspan="5" class="text-right">
-		                        <button name="resetButton" id="resetButton" class="btn btn-xs btn-danger"><spring:message code="lbl.reset" /></button>
+		                    <td colspan="6" class="text-right">
+		                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-ms" />
 		                        <input type="button" value="Submit" id="nonSorMbDetails[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit mssubmit_${item.index }"/> 
 		                    </td>
 		                    <td class="text-right"><spring:message code="lbl.total" /></td>

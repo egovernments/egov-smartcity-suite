@@ -41,6 +41,7 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +58,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBDetails;
@@ -67,6 +69,7 @@ import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -109,6 +112,9 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
 
     @ModelAttribute
     public MBHeader getMBHeader(@PathVariable final String mbHeaderId) {
@@ -125,6 +131,11 @@ public class UpdateMBController extends GenericWorkFlowController {
             final Double prevCumulativeQuantity = mbHeaderService.getPreviousCumulativeQuantity(details.getMbHeader().getId(),
                     details.getWorkOrderActivity().getId());
             details.setPrevCumlvQuantity(prevCumulativeQuantity != null ? prevCumulativeQuantity : 0);
+            for (final WorkOrderMeasurementSheet woms : details.getWorkOrderActivity().getWorkOrderMeasurementSheets()) {
+                final Double prevMBMSCumulativeQuantity = mbHeaderService.getMeasurementsPreviousCumulativeQuantity(
+                        details.getMbHeader().getId(), woms.getId());
+                woms.setCumulativeQuantity(prevMBMSCumulativeQuantity != null ? new BigDecimal(prevCumulativeQuantity) : new BigDecimal(0));
+            }
         }
 
         splitSorAndNonSorMBDetails(mbHeader);
@@ -339,6 +350,9 @@ public class UpdateMBController extends GenericWorkFlowController {
                     sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
         } else
             model.addAttribute("previousMBDate", "");
+        
+        model.addAttribute("isMeasurementsExist",
+                measurementSheetService.existsByEstimate(mbHeader.getWorkOrderEstimate().getEstimate().getId()));
 
         // TODO: check if only quantities to be edited or the whole mb can be editable
         if (mbHeader.getEgwStatus().getCode().equals(MBHeader.MeasurementBookStatus.NEW.toString()) ||

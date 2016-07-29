@@ -48,6 +48,7 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
@@ -75,6 +76,9 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
 
     @Override
     public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
@@ -139,6 +143,8 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
             } else
                 jsonObject.addProperty("previousMBDate", "");
 
+            jsonObject.addProperty("isMeasurementsExist",
+                measurementSheetService.existsByEstimate(workOrderEstimate.getEstimate().getId()));
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
         }
         return jsonObject;

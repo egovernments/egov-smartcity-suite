@@ -40,6 +40,7 @@
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="errorquantitieszero" value="<spring:message code='error.quantity.zero' />">
 	<input type="hidden" id="errorcumulativequantity" value="<spring:message code='error.approved.quantity.cumulative' />">
+	<input type="hidden" id="isMeasurementsExist" value="${isMeasurementsExist }">
 	<div class="panel-heading">
 		<div class="position_alert3"><spring:message code="lbl.pagetotal" /> : &#8377 <span id="pageTotal"></span></div>
 		<div class="panel-title">
@@ -59,7 +60,7 @@
 			<spring:message code="title.sor" />
 		</div>
 	</div>
-	<div align="right">
+	<div align="right" class="openCloseAll">
 		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
 			value="Open All Measurements" onclick="openAllmsheet()" />

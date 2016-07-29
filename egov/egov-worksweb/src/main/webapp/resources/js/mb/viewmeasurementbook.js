@@ -84,6 +84,10 @@ $(document).ready(function() {
 	 $("#nonSorTotal").html(nonSorTotal);
 	 var pageTotal = parseFloat((parseFloat(sorTotal) + parseFloat(nonSorTotal))).toFixed(2);  
 	 $("#pageTotal").html(pageTotal);
+	 
+	 if($('#isMeasurementsExist').val() == 'false') {
+		$('.openCloseAll').hide();
+	 }
 });
 
 function renderMBPDF() {

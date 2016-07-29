@@ -41,13 +41,9 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
-import java.util.List;
-
 import org.egov.works.mb.service.MBHeaderService;
-import org.egov.works.milestone.entity.MilestoneActivity;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
-import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,9 +59,6 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
     @Autowired
     private MBHeaderService mbHeaderService;
     
-    @Autowired
-    private WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
-
     @Override
     public JsonElement serialize(final WorkOrderActivity workOrderActivity, final Type typeOfSrc,
             final JsonSerializationContext context) {
@@ -123,6 +116,9 @@ public class SearchWorkOrderActivityJsonAdaptor implements JsonSerializer<WorkOr
                 child.addProperty("depthOrHeight", woms.getDepthOrHeight());
                 child.addProperty("quantity", woms.getQuantity());
                 child.addProperty("identifier", woms.getMeasurementSheet().getIdentifier());
+                Double mbmsCumulativePreviousEntry = mbHeaderService
+                        .getMeasurementsPreviousCumulativeQuantity(workOrderActivity.getMbHeaderId(), woms.getId());
+                child.addProperty("mbmsPreviousEntry", mbmsCumulativePreviousEntry != null ? mbmsCumulativePreviousEntry : 0);
                 jsonArray.add(child);
             }
             jsonObject.add("woms", jsonArray);

@@ -914,4 +914,8 @@ public class MBHeaderService {
         return measurementSheetMap;
     }
 
+    public Double getMeasurementsPreviousCumulativeQuantity(final Long mbHeaderId, final Long woMeasurementSheetId) {
+        return mbHeaderRepository.getMeasurementsPreviousCumulativeQuantity(mbHeaderId, MBHeader.MeasurementBookStatus.CANCELLED.toString(),
+                woMeasurementSheetId);
+    }
 }

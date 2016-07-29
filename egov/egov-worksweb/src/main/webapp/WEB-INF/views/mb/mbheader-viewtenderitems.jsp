@@ -53,7 +53,7 @@
 										<spring:message code="title.sor" />
 									</div>
 								</div>
-								<div align="right">
+								<div align="right" class="openCloseAll">
 									<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
 										onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
 										value="Open All Measurements" onclick="openAllmsheet()" />
