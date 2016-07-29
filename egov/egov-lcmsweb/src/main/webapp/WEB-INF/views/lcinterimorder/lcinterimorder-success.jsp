@@ -45,12 +45,13 @@
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
 	modelAttribute="lcInterimOrder" id="lcInterimOrderform">
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />  
-	<input type="hidden"  id="lcNumber" name="lcNumber" value="${legalCase.lcNumber}" /> 
-	
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	<input type="hidden" id="lcNumber" name="lcNumber"
+		value="${legalCase.lcNumber}" />
+
 	<input type="hidden" name="lcInterimOrder" id="lcInterimOrder"
 		value="${lcInterimOrder}">
-			<input type="hidden" name="mode" value="${mode}" />  
+	<input type="hidden" name="mode" value="${mode}" />
 	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
@@ -158,14 +159,19 @@
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
-					 <button type="button" class="btn btn-default" id="buttonBack" onclick="goback()"><spring:message code="lbl.back"/></button>
-					
+				<button type="button" class="btn btn-default" id="buttonBack"
+					onclick="goback()">
+					<spring:message code="lbl.back" />
+				</button>
+
 			</div>
 		</div>
 </form:form>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
-	<script type="text/javascript"
+<script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>

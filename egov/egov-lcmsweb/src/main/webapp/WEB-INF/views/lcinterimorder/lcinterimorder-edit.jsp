@@ -48,7 +48,6 @@
 	<%@ include file="lcinterimorder-form.jsp"%>
 	<input type="hidden" name="lcInterimOrder" value="${lcInterimOrderObj.id}" />
 	<input type="hidden"  id="lcNumber" name="lcNumber" value="${legalCase.lcNumber}" /> 
-	
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />   
 	</div>
 	</div>
@@ -60,6 +59,7 @@
 				<spring:message code='lbl.update' />
 			</button>
 			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
+			 <button type="button" class="btn btn-default" id="buttonBack" onclick="goback()"><spring:message code="lbl.back"/></button>
 		</div>
 	</div>
 </form:form>
