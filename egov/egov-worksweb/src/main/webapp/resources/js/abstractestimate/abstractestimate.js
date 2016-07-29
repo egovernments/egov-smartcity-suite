@@ -1825,7 +1825,7 @@ function validateWorkFlowApprover(name) {
 
 		flag = validateSORDetails();
 
-		if($('#abstractEstimate').valid()) {
+		if(flag && $('#abstractEstimate').valid()) {
 			var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
 			if(hiddenRowCount != 1) {
 				
@@ -1860,7 +1860,7 @@ function validateWorkFlowApprover(name) {
 						flag = false;
 				});
 
-				if (!flag && estimateAmount>0) {
+				if (!flag) {
 					bootbox.alert($('#errorquantityzero').val());
 					return false;
 				}
@@ -2194,7 +2194,7 @@ function getUnitRate(uom,estimateRate){
 	var exceptionalUOMArray = $.makeArray( exceptionalUOMValues );
 	$.map( exceptionalUOMArray, function( val, i ) {
 		if(val.split(",")[0] == uom)
-			unitRate = parseFloat( parseFloat(estimateRate) / parseFloat( val.split(",")[1] )).toFixed(2);
+			unitRate = parseFloat( parseFloat(estimateRate) / parseFloat( val.split(",")[1] ));
 	});
 	if(unitRate!=0)
 		return unitRate;
