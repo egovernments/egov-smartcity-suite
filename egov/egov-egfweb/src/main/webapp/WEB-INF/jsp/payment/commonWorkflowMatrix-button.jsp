@@ -77,24 +77,10 @@
 	    	bootbox.alert("Please Select the Approver ");
 			return false;
 	    }
-	    if((name=="Approve" || name=="approve" ||name=="Create And Approve")) {
-		    var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
-		    var billDatePart=document.getElementById("billDate").value.split("/");
-		    var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
-					+ cutOffDatePart[2]);
-		    var billDate = new Date(billDatePart[1] + "/" + billDatePart[0] + "/"
-					+ billDatePart[2]);
-	    	if(billDate<=cutOffDate)
-		    	{
-	    		return approveSubmit();
-		    	}
-	    	else
-		    	{
-	    		var msg1='<s:text name="wf.cutoffdate.message"/>';
-	    		var msg2='<s:text name="wf.cutoffdate.msg"/>';
-	    		bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+	    if((name=="Create And Approve")) {
+
+		    if(!validateCutOff())
 	    		return false;
-		    	}
 	    }
 	   
 	    </s:if>
