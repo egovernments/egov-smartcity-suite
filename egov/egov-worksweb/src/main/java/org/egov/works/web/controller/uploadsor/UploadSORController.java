@@ -341,9 +341,9 @@ public class UploadSORController {
                 else if (obj.getRate().compareTo(BigDecimal.ZERO) == -1 || obj.getRate().compareTo(BigDecimal.ZERO) == 0)
                     error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.rate", null, null)
                             + obj.getRate() + ",";
-                else if (!(obj.getRate().toString().matches("[0-9]+([,.][0-9]{1,4})?")))
+                else if (!(obj.getRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")))
                     error = error + " "
-                            + messageSource.getMessage("error.more.then.four.decimal.places.not.allowed.rate", null, null)
+                            + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.rate", null, null)
                             + obj.getRate() + ",";
 
                 // Validating from date
@@ -365,9 +365,9 @@ public class UploadSORController {
                 if (obj.getMarketRate() != null && obj.getMarketFromDate() == null) {
                     error = error + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ",";
                 }
-                if (obj.getMarketRate() != null && !(obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,4})?")))
+                if (obj.getMarketRate() != null && !(obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")))
                     error = error + " "
-                            + messageSource.getMessage("error.more.then.four.decimal.places.not.allowed.market.rate", null, null)
+                            + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null, null)
                             + obj.getRate() + ",";
 
                 if (obj.getMarketFromDate() != null && obj.getMarketRate() == null) {
@@ -481,7 +481,7 @@ public class UploadSORController {
                 } catch (final Exception e) {
                     sorRate.setErrorReason(messageSource.getMessage("error.todate.invalid", null, null));
                 }
-                sorRate.setMarketRate(
+                /*sorRate.setMarketRate(
                         getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null
                                 : getNumericValue(row
                                         .getCell(MARKET_RATE_CELL_INDEX)));
@@ -496,7 +496,7 @@ public class UploadSORController {
                             : row.getCell(MARKET_RATE_TODATE_CELL_INDEX).getDateCellValue());
                 } catch (final Exception e) {
                     sorRate.setErrorReason(messageSource.getMessage("error.market.todate.invalid", null, null));
-                }
+                }*/
             }
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
@@ -519,7 +519,7 @@ public class UploadSORController {
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
-            HSSFCell cell = row.createCell(10);
+            HSSFCell cell = row.createCell(7);
             cell.setCellValue("Error Reason");
 
             for (UploadScheduleOfRate obj : uploadSORRatesList)
@@ -528,7 +528,7 @@ public class UploadSORController {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= uploadSORRatesList.size(); i++) {
                 HSSFRow errorRow = sheet.getRow(i);
-                HSSFCell errorCell = errorRow.createCell(10);
+                HSSFCell errorCell = errorRow.createCell(7);
                 errorCell.setCellValue(errorsMap.get((getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SORCATEGORY_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SOR_DESCRIPTION_CELL_INDEX)) + "-"
@@ -569,7 +569,7 @@ public class UploadSORController {
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
-            HSSFCell cell = row.createCell(10);
+            HSSFCell cell = row.createCell(7);
             cell.setCellValue("Status");
 
             for (UploadScheduleOfRate obj : uploadSORRatesList)
@@ -578,7 +578,7 @@ public class UploadSORController {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= uploadSORRatesList.size(); i++) {
                 HSSFRow errorRow = sheet.getRow(i);
-                HSSFCell errorCell = errorRow.createCell(10);
+                HSSFCell errorCell = errorRow.createCell(7);
                 errorCell.setCellValue(finalStatusMap.get((getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SORCATEGORY_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SOR_DESCRIPTION_CELL_INDEX)) + "-"
