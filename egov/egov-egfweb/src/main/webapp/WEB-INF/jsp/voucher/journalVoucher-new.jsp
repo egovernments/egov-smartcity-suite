@@ -91,15 +91,14 @@
 							</s:if>
 							<td class="greybox"><s:text name="voucher.date" /><span
 								class="mandatory1">*</span></td>
-							<td class="greybox"><s:date name="voucherDate"
+
+							<td class="bluebox"><s:date name="voucherDate"
 									var="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
-									name="voucherDate" id="voucherDate" value="%{voucherDateId}"
-									maxlength="10"
-									onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
-								href="javascript:show_calendar('jvcreateform.voucherDate',null,null,'DD/MM/YYYY');"
-								style="text-decoration: none">&nbsp;<img tabIndex=-1
-									src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
-							</td>
+									id="voucherDate" name="voucherDate" value="%{voucherDateId}"
+									data-date-end-date="0d"
+									onkeyup="DateFormat(this,this.value,event,false,'3')"
+									placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+									data-inputmask="'mask': 'd/m/y'" /></td>
 							<s:else>
 								<td class="greybox">&nbsp;</td>
 								<td class="greybox">&nbsp;</td>
@@ -153,6 +152,8 @@
 		</script>
 				<br />
 				<div class="subheadsmallnew" /></div>
+				<s:hidden id="voucherDate" name="voucherDate" />
+				<s:hidden id="cutOffDate" name="cutOffDate" />
 				<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 				<br />
@@ -231,6 +232,27 @@
 			return false;
 		}
 	}
+
+	function validateCutOff()
+	{
+	var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+    var voucherDatePart=document.getElementById("voucherDate").value.split("/");
+    var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+			+ cutOffDatePart[2]);
+    var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+			+ voucherDatePart[2]);
+	if(voucherDate<=cutOffDate)
+	{
+		return true;
+	}
+	else{
+		var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+		var msg2='<s:text name="wf.cutoffdate.msg"/>';
+		bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+			return false;
+		}
+	}
+	
 	function validateJV()
 	{
 	   //document.getElementById("buttonValue").value=btnval;

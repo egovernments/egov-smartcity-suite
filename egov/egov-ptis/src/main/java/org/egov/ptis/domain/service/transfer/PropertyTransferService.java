@@ -210,9 +210,6 @@ public class PropertyTransferService {
     public void initiatePropertyTransfer(final BasicProperty basicProperty, final PropertyMutation propertyMutation) {
         propertyMutation.setBasicProperty(basicProperty);
         propertyMutation.setProperty(basicProperty.getActiveProperty());
-        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(),
-                propertyMutation.getDepartmentValue());
-        propertyMutation.setMutationFee(mutationFee);
         // Setting Document value
         defineDocumentValue(propertyMutation);
         for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
@@ -253,8 +250,6 @@ public class PropertyTransferService {
      defineDocumentValue(propertyMutation);
         createUserIfNotExist(propertyMutation,propertyMutation.getTransfereeInfosProxy());
         basicProperty.setUnderWorkflow(true);
-        BigDecimal mutationFee = calculateMutationFee(propertyMutation.getPartyValue(), propertyMutation.getDepartmentValue());
-        propertyMutation.setMutationFee(mutationFee);
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         mutationRegistrationService.persist(propertyMutation.getMutationRegistrationDetails());
         basicPropertyService.persist(basicProperty);
@@ -340,17 +335,20 @@ public class PropertyTransferService {
         if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
         	ackBean.setTransferpropertyText("");
+        	ackBean.setTransferpropertyTextEnd("");
         	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "REGISTERED TRANSFER")
                      .getResolutionTime().toString());
         }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_PARTIAL_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.PARTT);
         	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
+        	ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
         	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "PARTIAL TRANSFER")
                      .getResolutionTime().toString());
         }else if(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)){
         	ackBean.setApplicationType(PropertyTaxConstants.FULLTT);
         	ackBean.setTransferpropertyText(PropertyTaxConstants.TTTEXT);
-        	 ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
+        	ackBean.setTransferpropertyTextEnd(PropertyTaxConstants.TTTEXTEND);
+        	ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, "FULL TRANSFER")
                      .getResolutionTime().toString());
         }
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
@@ -401,10 +399,10 @@ public class PropertyTransferService {
             noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
             noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
-            if (propertyMutation.isRegistrationDone()) {
+            if (propertyMutation.getDeedDate() != null) {
                 noticeBean.setRegDocDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getDeedDate()));
-                noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             }
+            noticeBean.setRegDocNo(propertyMutation.getDeedNo());
             noticeBean.setAssessmentNo(basicProp.getUpicNo());
             noticeBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(propertyMutation.getMutationDate()));
             if (basicProp.getAddress() != null) {

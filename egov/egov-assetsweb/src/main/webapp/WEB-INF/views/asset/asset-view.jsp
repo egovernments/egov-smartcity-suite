@@ -44,7 +44,7 @@
 	<div>
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Asset</div>
+				<div class="panel-title"><spring:message code="title.asset.result.header" /></div>
 			</div>
 			<div class="panel-body custom">
 				<div class="row add-border">

@@ -142,6 +142,9 @@ label.error {
   color: #ff0000;
   font-size: 13px;
 }
+.success-msg {
+  color: #4CAF50;
+}
 .form-control.error {
   border-color: #ff0000;
 }

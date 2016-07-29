@@ -61,8 +61,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -99,13 +97,12 @@ public class LcInterimOrder extends AbstractAuditable {
     private InterimOrder interimOrder;
 
     @Temporal(TemporalType.DATE)
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "ioDate.notAllow.futureDate")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @NotNull
     @Column(name = "iodate")
     private Date ioDate;
 
     @Length(max = 50)
-    @OptionalPattern(regex = LcmsConstants.searchMixedCharType1, message = "io.mpnumber.text")
     @Column(name = "mpnumber")
     private String mpNumber;
 
@@ -116,38 +113,31 @@ public class LcInterimOrder extends AbstractAuditable {
     @Column(name = "sendtostandingcounsel")
     private Date sendtoStandingCounsel;
 
-    @DateFormat(message = "invalid.fieldvalue.model.petitionFiledOn")
     @Temporal(TemporalType.DATE)
     @Column(name = "petitionfiledon")
     private Date petitionFiledOn;
 
-    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDue")
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfilingdue")
     private Date reportFilingDue;
 
-    @DateFormat(message = "invalid.fieldvalue.model.sendtoDepartment")
     @Temporal(TemporalType.DATE)
     @Column(name = "senttodepartment")
     private Date sendtoDepartment;
 
-    @DateFormat(message = "invalid.fieldvalue.model.reportFromHod")
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfromhod")
     private Date reportFromHod;
 
-    @DateFormat(message = "invalid.fieldvalue.model.reportSendtoStandingCounsel")
     @Temporal(TemporalType.DATE)
     @Column(name = "reportsendtostandingcounsel")
     private Date reportSendtoStandingCounsel;
 
-    @DateFormat(message = "invalid.fieldvalue.model.reportFilingDate")
     @Temporal(TemporalType.DATE)
     @Column(name = "reportfilingdate")
     private Date reportFilingDate;
 
     @Length(max = 50)
-    @OptionalPattern(regex = LcmsConstants.referenceNumberTIRegx, message = "ti.referencenumber.alphanumeric")
     private String referenceNumber;
 
     @OneToMany(mappedBy = "lcInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

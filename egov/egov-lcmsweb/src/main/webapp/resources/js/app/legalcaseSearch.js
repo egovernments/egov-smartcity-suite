@@ -144,10 +144,10 @@ function submitForm() {
 							"className" : "text-right",
 							render : function(data, type, full) {
 								
-								if(full.casestatus=='LCCREATED' || full.casestatus=='IN_PROGRESS') {
+								if(full.casestatus=='Created' || full.casestatus=='In Progress') {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgement</option><option value="2">Add Standing counsel</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option></select>');			        			   
 									}
-								else if(full.casestatus=='JUDGMENT'){
+								else if(full.casestatus=='Judgment'){
 
 								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
 							}
@@ -172,7 +172,7 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		function() {
 		var lcNumber = tableContainer.fnGetData($(this).parent().parent(), 0);
 		if (this.value == 1) {
-			var url = '/lcms/judgment/new/'+ lcNumber;
+			var url = '/lcms/judgment/new/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
@@ -180,7 +180,7 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		}
 		
 		if (this.value == 2) {
-			var url = '/lcms/standingCouncil/create/'+ lcNumber;
+			var url = '/lcms/standingCouncil/create/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
@@ -188,35 +188,35 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 		}
 		
 		if (this.value == 5) {
-			var url = '/lcms/judgment/edit/'+ lcNumber;
+			var url = '/lcms/judgment/edit/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 4) {
-			var url = '/lcms/application/view/'+ lcNumber;
+			var url = '/lcms/application/view/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 3) {
-			var url = '/lcms/application/edit/'+ lcNumber;
+			var url = '/lcms/application/edit/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 6) {
-			var url = '/lcms/hearing/new/'+ lcNumber;
+			var url = '/lcms/hearing/new/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 7) {
-			var url = '/lcms/lcinterimorder/new/'+ lcNumber;
+			var url = '/lcms/lcinterimorder/list/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;

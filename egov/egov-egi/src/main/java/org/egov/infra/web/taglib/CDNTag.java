@@ -43,6 +43,7 @@ package org.egov.infra.web.taglib;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.taglibs.standard.tag.rt.core.UrlTag;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
@@ -60,7 +61,9 @@ public class CDNTag extends UrlTag {
 
     public int doEndTag() throws JspException {
         if (StringUtils.isNotBlank(cdn))
-            this.value = new StringBuilder(cdn).append(context).append(value).toString();
+            this.value = new StringBuilder(cdn).
+                    append(context == null ? ((HttpServletRequest) pageContext.getRequest()).getContextPath() : context).
+                    append(value).toString();
         return super.doEndTag();
     }
 }

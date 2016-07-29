@@ -184,7 +184,9 @@
 			<property name="source" type="string">
 			<column name="source" length="20" />
 		</property>
-			
+		<property name="payeeEmail" type="string">
+			<column name="payeeemail" length="254" />
+		</property>	
 	</class>
 	<query name="RECEIPTS_FOR_VOUCHERS">
 	<![CDATA[select receiptHeader from org.egov.collection.entity.ReceiptVoucher rv where rv.voucherheader.id in (:param_0)]]></query>

@@ -428,7 +428,7 @@ public class PropertyExternalService {
                     propertyTaxDetails.setErrorDetails(errorDetails);
         	} else {
 	            propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
-	            if (propertyTaxDetails.getErrorDetails().getErrorCode() == null) {
+	            if (propertyTaxDetails.getErrorDetails() == null) {
 	                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
 	                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
 	                propertyTaxDetails.setErrorDetails(errorDetails);
@@ -516,7 +516,6 @@ public class PropertyExternalService {
                             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
                             errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }
-                propertyTaxDetails.setErrorDetails(errorDetails);
             }
             final Property property = basicProperty.getProperty();
             ptDemandDAO.getDemandCollMap(property);

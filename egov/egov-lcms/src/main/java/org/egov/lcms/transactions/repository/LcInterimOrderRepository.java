@@ -39,11 +39,15 @@
  */
 package org.egov.lcms.transactions.repository;
 
+import java.util.List;
+
 import org.egov.lcms.transactions.entity.LcInterimOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LcInterimOrderRepository extends JpaRepository<LcInterimOrder, java.lang.Long> {
+    
+    List<LcInterimOrder> findByLegalCase_lcNumber(final String lcNumber);
 
 }

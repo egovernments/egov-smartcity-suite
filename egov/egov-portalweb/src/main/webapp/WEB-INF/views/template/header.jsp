@@ -52,7 +52,9 @@
 					<div class="container-fluid">
 						<div class="navbar-header col-lg-4 col-md-6 col-sm-2 col-xs-3">
 							<a class="navbar-brand" href="javascript:void(0);">
-								<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+								<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
+									<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
+								</c:if>
 								<div>
 									<span class="title2 hidden-sm hidden-xs citizen-title">Citizen Portal<br>${cityName}</span>
 								</div>

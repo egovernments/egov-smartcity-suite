@@ -626,6 +626,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
     public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
     public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
+    public static final String WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING = "Bill Collector Approval Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1446,7 +1447,8 @@ public interface PropertyTaxConstants {
     public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
     public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
     
-    public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
+    public static final String TTTEXT=" of the registration is completed";
+    public static final String TTTEXTEND= " in Registration and Stamps Office";
     
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";

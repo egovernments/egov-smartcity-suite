@@ -42,10 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-
-<script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <script>
 	function deleteRow(obj) {
 		var tb1 = document.getElementById("escalationTable");
@@ -251,4 +248,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<c:url value='/resources/js/app/escalationTimeviewsearch.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/escalationTimeviewsearch.js?rnd=${app_release_no}'/>"></script>

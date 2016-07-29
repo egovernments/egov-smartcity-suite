@@ -40,6 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="col-md-12 col-sm-12 col-xs-12">
 <div class="row form-group view-content header-color hidden-xs">
 	<div class="col-md-1 col-xs-1"><s:text name="doctable.sno" /></div>
@@ -73,4 +74,4 @@
    	</div>
 </s:iterator>
 </div>
-<script src="<c:url value='/resources/js/app/documentupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/documentupload.js?rnd=${app_release_no}'/>"></script>
