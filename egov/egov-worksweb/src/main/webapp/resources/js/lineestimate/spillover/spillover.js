@@ -45,8 +45,14 @@ $subSchemeId = 0;
 $detailsRowCount = $('#detailsSize').val();
 $budgetHeadId=0;
 $functionId = 0;
+
 $(document).ready(function(){
-	
+	var i=0;
+	initializeDatePicker()
+	if($('#billsCreated').val() == 'true'){
+		$('#billsCreatedCheckbox').show();
+		i=1;
+	}
 	$(".quantity").each(function() {
 		if (parseFloat($(this).val()) <= 0)
 			$(this).val('');
@@ -733,4 +739,86 @@ function getFunctionsByFundAndDepartment() {
 							});
 				});
 			}
+}
+var cuttOffDate = new Date(($('#cuttOffDate').val().split('/').reverse().join('-'))).getTime();
+var currFinDate = new Date(($('#currFinDate').val().split('/').reverse().join('-'))).getTime();
+
+function initializeDatePicker(){
+	$('#lineEstimateDate').datepicker().off('changeDate');
+	jQuery( "#lineEstimateDate" ).datepicker({ 
+		format: 'dd/mm/yyyy',
+		autoclose:true,
+		onRender: function(date) {
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		}
+		}).on('changeDate', function(ev) {
+			var string=jQuery(this).val();
+			if(!(string.indexOf("_") > -1)){
+			isDatepickerOpened=false; 
+			if(i != 0 && $('#isBillsCreated').prop("checked") == true){
+				bootbox.confirm({
+				    message: $('#msgBillsCreated').val(),
+				    buttons: {
+				        'cancel': {
+				            label: 'No',
+				            className: 'btn-default pull-right'
+				        },
+				        'confirm': {
+				            label: 'Yes',
+				            className: 'btn-danger pull-right'
+				        }
+				    },
+				    callback: function(result) {
+				        if (result) {
+				        	var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
+				        	if(lineEstimateDate < currFinDate){
+				        		$('#billsCreatedCheckbox').show();
+				        		$(".grossAmountBilled").val('');
+					        	$(".thGrossAmount").hide();
+					        	$(".tdGrossAmount").hide();
+					        	$(".grossAmountBilled").removeAttr('required');
+					        	$('#isBillsCreated').prop('checked', false);
+				        	} else{
+				        	$('#billsCreatedCheckbox').hide();
+				        	$('#isBillsCreated').prop('checked', false);
+				        	$(".grossAmountBilled").val('');
+				        	$(".grossAmountBilled").removeAttr('required');
+				        	$(".thGrossAmount").hide();
+				        	$(".tdGrossAmount").hide();
+				        	}
+				        }
+				    }
+				});
+			}
+			
+			validateStatusDates(this);
+			i++;
+			$('#lineEstimateDate').datepicker('hide');
+			}
+
+		}).data('datepicker');
+	
+	$('#lineEstimateDate').datepicker('update');
+	try { $("#lineEstimateDate").inputmask(); }catch(e){}	
+
+}
+
+function validateStatusDates(obj){
+	
+	var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
+	
+	if(lineEstimateDate >= cuttOffDate){
+		$(obj).datepicker("setDate", new Date());
+		$(obj).val('');
+		$(obj).datepicker('update');
+		bootbox.alert("Spill over line estimate date cannot be more than the cut-off date " + $('#cuttOffDate').val().split('-').reverse().join('/') +". Please enter proper date");
+		return false;
+	}
+	
+	if(lineEstimateDate > currFinDate && lineEstimateDate < cuttOffDate){
+		$('#billsCreatedCheckbox').hide();
+		return false
+	} else
+		$('#billsCreatedCheckbox').show();
+	return true;
 }

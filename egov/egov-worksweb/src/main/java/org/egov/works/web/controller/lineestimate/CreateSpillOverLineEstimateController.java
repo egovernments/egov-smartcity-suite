@@ -41,6 +41,8 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -173,6 +175,7 @@ public class CreateSpillOverLineEstimateController {
             model.addAttribute("documentDetails", lineEstimate.getDocumentDetails());
             model.addAttribute("mode", null);
             model.addAttribute("designation", request.getParameter("designation"));
+            model.addAttribute("billsCreated", lineEstimate.isBillsCreated());
             return "spillOverLineEstimate-form";
         } else {
             final LineEstimate newLineEstimate = lineEstimateService.createSpillOver(lineEstimate, files);
@@ -218,6 +221,28 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
         }
+        Date cutOffDate = null;
+        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+				WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
+		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+		final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
+		if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
+			final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
+			try {
+				cutOffDate = formatter.parse(appConfigValue.getValue());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        if (lineEstimate.getLineEstimateDate().after(cutOffDate)) {
+        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(cutOffDate).toString() } ,"error.spilloverle.cutoffdate");
+        }
+        if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated()) {
+        	errors.reject("error.spilloverle.bills.checked","error.spilloverle.bills.checked");
+        }
+
     }
 
     private void validateAdminSanctionDetail(final LineEstimate lineEstimate, final BindingResult errors) {
@@ -259,6 +284,20 @@ public class CreateSpillOverLineEstimateController {
         for (final AppConfigValues value : configValues)
             designations.add(designationService.getDesignationByName(value.getValue()));
         model.addAttribute("designations", designations);
+        
+		final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+				WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
+		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+		if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
+			final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
+			try {
+				model.addAttribute("cuttOffDate",formatter.parse(appConfigValue.getValue()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		model.addAttribute("currFinDate",lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)

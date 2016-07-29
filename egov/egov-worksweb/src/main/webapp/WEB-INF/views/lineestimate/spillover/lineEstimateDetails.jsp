@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <input type="hidden" id="msgWorkOrderCreated" value="<spring:message code="error.workordercreated.required" />" />
 <input type="hidden" id="msgAbstractEstimateCreated" value="<spring:message code="error.abstractestimate.required" />" />
-
+<input type="hidden" id="msgBillsCreated" value="<spring:message code="errors.abstractestimate.clear.billscreated" />" />
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title"><spring:message code="lbl.workdetails" /></div>
@@ -57,14 +57,17 @@
 		<div class="col-sm-1 add-margin">
 			<form:checkbox path="workOrderCreated" id="isWorkOrderCreated" />
 		</div>
+		<div id="billsCreatedCheckbox" style="display: none;">
 		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bills.created" /></span>
 		</label>
 		<div class="col-sm-1 add-margin">
 			<form:checkbox path="billsCreated" id="isBillsCreated" />
 			<input id="isBillsCreatedInput" type="hidden" value="${lineEstimate.billsCreated }" />
 		</div>
+		</div>
 	</div>
 	<input type="hidden" value="${lineEstimate.lineEstimateDetails.size() }" id="detailsSize" />
+	<input type="hidden" value="${billsCreated }" id="billsCreated" />
 	<div class="panel-body">
 		<table class="table table-bordered" id="tblestimate">
 			<thead>
