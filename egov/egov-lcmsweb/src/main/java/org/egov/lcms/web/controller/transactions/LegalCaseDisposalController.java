@@ -51,9 +51,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -66,9 +66,9 @@ public class LegalCaseDisposalController {
     @Autowired
     private LegalCaseService legalCaseService;
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.GET)
+    @RequestMapping(value = "/new/", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final LegalCaseDisposal legalCaseDisposal, final Model model,
-            @PathVariable final String lcNumber, final HttpServletRequest request) {
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("legalCaseDisposal", legalCaseDisposal);
@@ -76,9 +76,9 @@ public class LegalCaseDisposalController {
         return "legalcaseDisposal-new";
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCaseDisposal legalCaseDisposal, final BindingResult errors,
-            @PathVariable final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
+            @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         if (errors.hasErrors())
             return "legalcaseDisposal-new";

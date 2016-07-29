@@ -42,7 +42,6 @@ package org.egov.lcms.web.controller.transactions;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.eis.service.EmployeeService;
 import org.egov.lcms.transactions.entity.Hearings;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.HearingsService;
@@ -66,22 +65,17 @@ public class HearingsController {
 
     @Autowired
     private LegalCaseService legalCaseService;
-    
-    @Autowired
-    private EmployeeService employeeService;
-
-    
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute("hearings") final Hearings hearings,final Model model,
-    		@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);;
+    public String newForm(@ModelAttribute("hearings") final Hearings hearings, final Model model,
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "create");
         return "hearings-new";
     }
-    
+
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
@@ -90,7 +84,7 @@ public class HearingsController {
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final Hearings hearings, final BindingResult errors,
-    		@RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
+            @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
@@ -98,12 +92,12 @@ public class HearingsController {
             return "hearings-new";
         }
         hearings.setLegalCase(legalCase);
-        
+
         hearingsService.persist(hearings);
         redirectAttrs.addFlashAttribute("hearings", hearings);
         model.addAttribute("message", "Hearing created successfully.");
         model.addAttribute("mode", "create");
         return "hearings-success";
     }
-  
+
 }

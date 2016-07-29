@@ -37,7 +37,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -59,7 +58,7 @@
 		<div class="text-center">
 			<form:button type="submit" name="submit" id="buttonid"
 				class="btn btn-primary" value="Save">
-				<spring:message code="lbl.submit" />
+				<spring:message code="lbl.save" />
 			</form:button>
 			<form:button type="button" class="btn btn-default" id="btnclose">
 				<spring:message code="lbl.close" />
@@ -68,9 +67,11 @@
 	</div>
 </form:form>
 
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/hearings.js?rnd=${app_release_no}'/>"></script>
-	<script type="text/javascript"
+<script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>

@@ -150,7 +150,7 @@ function submitForm() {
 									}
 								else if(full.casestatus=='Judgment'){
 
-								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option></select>');
+								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option><option value="8">Close Case</option></select>');
 							}
 							else if(full.casestatus=='Close Case'){
 								return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="9">Edit Close Case</option></select>');
@@ -227,14 +227,14 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			
 		}
 		if (this.value == 8) {
-			var url = '/lcms/legalcasedisposal/new/'+ lcNumber;
+			var url = '/lcms/legalcasedisposal/new/?lcNumber='+ lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;
 			
 		}
 		if (this.value == 9) {
-			var url = '/lcms/legalcasedisposal/edit/'+ lcNumber;
+			var url = '/lcms/legalcasedisposal/edit/?lcNumber='+ lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;

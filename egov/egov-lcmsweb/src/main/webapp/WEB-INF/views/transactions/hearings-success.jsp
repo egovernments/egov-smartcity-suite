@@ -57,7 +57,7 @@
 				<div class="panel-body ">
 					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin">
-							Hearing Date
+							<spring:message code="lbl.hearingdate" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<fmt:formatDate value="${hearings.hearingDate}" var="HD"
@@ -68,37 +68,39 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							Purpose Of Hearing
+							<spring:message code="lbl.purposeofhearing" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.purposeofHearings}</div>
 							<div class="col-xs-3 add-margin">
-							Outcome Of Hearing
+							<spring:message
+								code="lbl.outcomeofhearing" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.hearingOutcome}</div>
 					   </div>
 					   <div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							Additional Lawyer
+						<spring:message
+								code="lbl.additionallawyer" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.additionalLawyers}</div>
 							<div class="col-xs-3 add-margin">
-							Was Standing Counsel Present ?
+							<spring:message
+								code="lbl.standingcounsel" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${hearings.isStandingCounselPresent}</div>
 					   </div>
 				</div>
-				
 			</div>
 		</div>
 	</div>
 	<div class="row text-center">
 		<div class="add-margin">
 			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()">Close</a>
+				onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>
 	</div>
 </form:form>
