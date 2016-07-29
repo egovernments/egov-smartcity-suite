@@ -38,6 +38,33 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	if($('#seniourAdvisRequired').val() == 'false')
+	{
+			    $("#seniordov1").hide(); 
+			    $("#seniordov2").hide(); 
+			    $("#seniordov3").hide();
+	}
+	else{
+		$("#isSeniorAdvocate").prop("checked", true);
+	  var elm = document.getElementById('isSeniorAdvocate');
+	  if(elm.checked)
+	{
+			    $("#seniordov1").show(); 
+			    $("#seniordov2").show();
+			    $("#seniordov3").show();
+	}
+	else
+	{
+		 $("#seniordov1").hide(); 
+		    $("#seniordov2").hide();
+		     $("#seniordov3").show();
+		    dom.get('seniorAdvocateName').value="";
+			  dom.get('assignedtodateForsenior').value="";
+		      dom.get('orderDate').value="";
+		      dom.get("orderNumber").value="";
+	}
+}
 var department = new Bloodhound({
 							datumTokenizer : function(datum) {
 									return Bloodhound.tokenizers

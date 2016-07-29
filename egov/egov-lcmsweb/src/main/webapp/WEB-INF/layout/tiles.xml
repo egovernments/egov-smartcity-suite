@@ -358,5 +358,9 @@
 	<put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcaseDisposal-edit.jsp"/>
 </definition>
+  <definition name="legalcase-standingCouncil" extends="base_layout">
+	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
+</definition>
 
 </tiles-definitions>
