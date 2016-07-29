@@ -1073,6 +1073,11 @@ var templateCode = new Bloodhound({
 	remote: {
 		url: '/egworks/abstractestimate/ajaxestimatetemplatebycode?code=%QUERY', 
 		filter: function (data) {
+			var estimateDate = $('#esdtimateDate').val();
+			if(estimateDate == "" || estimateDate == null){
+				bootbox.alert($('#msgestimatedate').val());
+				return false;
+			}
 			return $.map(data, function (ct) {
 				return {
 					code: ct.code,
@@ -1091,7 +1096,7 @@ var templateCode_typeahead = $('#templateCode').typeahead({
 }, {
 	displayKey : 'code',
 	source : templateCode.ttAdapter()
-}).on('typeahead:selected typeahead:autocompleted', function(event, data){            
+}).on('typeahead:selected typeahead:autocompleted', function(event, data){         
 	$("#templateId").val(data.id);   
 });
 $('#templateCode').blur(function() {
@@ -1127,6 +1132,11 @@ $('#searchTemplate').click(function() {
 
 
 function resetTemplate(id){
+	var estimateDate = $('#esdtimateDate').val();
+	if(estimateDate == "" || estimateDate == null){
+		bootbox.alert($('#msgestimatedate').val());
+		return false;
+	}
 	var sorHiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
 	var nonSorHiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
 	if(id!="" && (sorHiddenRowCount !=1 || nonSorHiddenRowCount!=1)){ 
@@ -1229,9 +1239,10 @@ function clearActivities(){
 }
 
 function getActivitiesForTemplate(id){
+	var estimateDate = $('#estimateDate').val;
 	var nonSorCheck  = false;
 	$.ajax({
-		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid/"+id,     
+		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid?id="+ id + "&estimateDate="+estimateDate,     
 		type: "GET",
 		dataType: "json",
 		success: function (data) {

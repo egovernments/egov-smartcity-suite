@@ -1036,8 +1036,10 @@ public class EstimateService {
             if (esistingAbstractEstimate != null)
                 errors.reject("error.technumber.unique", "error.technumber.unique");
         }
+        if (abstractEstimate.getEstimateDate() == null)
+            errors.reject("errors.abbstractestimate.estimatedate", "errors.abbstractestimate.estimatedate");
         if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getEstimateDate()
+                && abstractEstimate.getEstimateDate() != null && abstractEstimate.getEstimateDate()
                 .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }

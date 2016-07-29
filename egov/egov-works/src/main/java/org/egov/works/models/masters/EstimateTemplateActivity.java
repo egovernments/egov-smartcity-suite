@@ -40,6 +40,7 @@
 package org.egov.works.models.masters;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -64,6 +65,8 @@ public class EstimateTemplateActivity extends BaseModel {
     private UOM uom;
 
     private Money rate = new Money(0.0);
+    
+    private transient Date estimateDate;
 
     public EstimateTemplate getEstimateTemplate() {
         return estimateTemplate;
@@ -117,6 +120,14 @@ public class EstimateTemplateActivity extends BaseModel {
             validationErrors.add(new ValidationError("estimateTemplateActivity.nonsor.invalid",
                     "estimateTemplateActivity.nonsor.invalid"));
         return validationErrors;
+    }
+    
+    public Date getEstimateDate() {
+        return estimateDate;
+    }
+
+    public void setEstimateDate(final Date estimateDate) {
+        this.estimateDate = estimateDate;
     }
 
 }

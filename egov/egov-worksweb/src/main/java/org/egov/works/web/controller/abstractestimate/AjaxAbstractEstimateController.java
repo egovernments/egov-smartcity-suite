@@ -159,12 +159,14 @@ public class AjaxAbstractEstimateController {
         return estimateTemplateService.getEstimateTemplateByCodeIgnoreCase(code);
     }
 
-    @RequestMapping(value = "/ajaxgetestimatetemplatebyid/{id}", method = RequestMethod.GET)
-    public @ResponseBody String populateMilestoneTemplateActivity(@PathVariable final String id,
-            final Model model)
+    @RequestMapping(value = "/ajaxgetestimatetemplatebyid", method = RequestMethod.GET)
+    public @ResponseBody String populateMilestoneTemplateActivity(@RequestParam final String id,
+            final Model model,@RequestParam final Date estimateDate)
             throws ApplicationException {
         final List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
                 .getEstimateTemplateActivities();
+        for (final EstimateTemplateActivity estimateTemplateActivitys : activities)
+        	estimateTemplateActivitys.setEstimateDate(estimateDate);
         final String result = estimateTemplateToJson(activities);
         return result;
     }

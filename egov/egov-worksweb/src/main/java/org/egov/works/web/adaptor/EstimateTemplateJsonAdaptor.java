@@ -40,7 +40,6 @@
 package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
-import java.util.Date;
 
 import org.egov.works.abstractestimate.entity.NonSor;
 import org.egov.works.models.masters.EstimateTemplateActivity;
@@ -69,7 +68,7 @@ public class EstimateTemplateJsonAdaptor implements JsonSerializer<EstimateTempl
                 jsonObject.addProperty("scheduleDescription", schedule.getSummary());
                 jsonObject.addProperty("scheduleUom", schedule.getUom().getUom());
                 jsonObject.addProperty("scheduleUomId", schedule.getUom().getId());
-                schedule.setSorRateValue(schedule.getRateOn(new Date()).getRate().getValue());
+                schedule.setSorRateValue(schedule.getRateOn(estimateTemplateActivity.getEstimateDate()).getRate().getValue());
                 jsonObject.addProperty("scheduleRate", schedule.getSorRate());
             } else {
                 final NonSor nonSor = estimateTemplateActivity.getNonSor();
