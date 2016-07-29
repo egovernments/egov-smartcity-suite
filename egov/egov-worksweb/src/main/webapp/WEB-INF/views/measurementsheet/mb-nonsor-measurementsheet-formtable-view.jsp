@@ -96,27 +96,27 @@
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).remarks }"></c:out>
 			                    	</c:if>
 			                    </td>
-			                    <td>
+			                    <td align="right">
 			                    	<c:if test="${mbdetails.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).no }"></c:out>
 			                    	</c:if>
 			                    </td>
-			                    <td>
+			                    <td align="right">
 			                    	<c:if test="${mbdetails.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).length }"></c:out>
 			                    	</c:if>
 			                    </td>
-			                    <td>
+			                    <td align="right">
 			                    	<c:if test="${mbdetails.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).width }"></c:out>
 			                    	</c:if>
 			                    </td>
-			                    <td>
+			                    <td align="right">
 			                    	<c:if test="${mbdetails.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).depthOrHeight }"></c:out>
 			                    	</c:if>
 			                	</td>
-			                	<td>
+			                	<td align="right">
 			                		<c:if test="${mbdetails.measurementSheets.size() > index.index }">
 			                    		<c:out default="" value="${mbdetails.measurementSheets.get(index.index).quantity }"></c:out>
 			                    		<c:if test="${mbdetails.workOrderActivity.workOrderMeasurementSheets.get(index.index).measurementSheet.identifier == 'A'}">

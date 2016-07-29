@@ -54,9 +54,9 @@
 									</div>
 								</div>
 								<div align="right" class="openCloseAll">
-									<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
+									<input type="button" value="Close all m-sheet" class="btn btn-sm btn-secondary"
 										onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
-										value="Open All Measurements" onclick="openAllmsheet()" />
+										value="Open all m-sheet" onclick="openAllmsheet()" />
 								</div>
 								<table class="table table-bordered" id="tblsor">
 									<thead>
@@ -90,11 +90,11 @@
 												<a href="#" class="hintanchor"	title="<c:out value="${mbdetails.workOrderActivity.activity.schedule.description}"></c:out>"><i
 													class="fa fa-question-circle" aria-hidden="true"></i></a></td>   
 											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
-											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
+											<td align="right"><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
-											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td>
+											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
+											<td align="right">
 												<c:out value="${mbdetails.quantity}" />
 												<c:choose>
 													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
@@ -115,7 +115,7 @@
 												</span>
 											</td>
 											<input type="hidden" name="currMbEnrty" id="currMbEnrty" value="${mbdetails.quantity}" />
-											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="cumulativeQuantitycurrEnrty" id="cumulativeQuantitycurrEnrty"
 												value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" />
 											<td class="text-right"><span id="amountCurrentEntry"></span></td>
@@ -175,11 +175,11 @@
 												title="<c:out value="${mbdetails.workOrderActivity.activity.nonSor.description}"></c:out>"><i
 													class="fa fa-question-circle" aria-hidden="true"></i></a></td>
 											<td><c:out value="${mbdetails.workOrderActivity.activity.uom.uom}"></c:out></td>
-											<td><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
+											<td align="right"><c:out value="${mbdetails.workOrderActivity.approvedQuantity}" /></td>
 											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
-											<td><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td>
+											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
+											<td align="right">
 												<c:out value="${mbdetails.quantity}" />
 												<c:choose>
 													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
@@ -200,7 +200,7 @@
 												</span>
 											</td>
 											<input type="hidden" name="nonSorCurrMbEnrty" id="nonSorCurrMbEnrty" value="${mbdetails.quantity}" />
-											<td><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
+											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" /></td>
 											<input type="hidden" name="nonSorCumulativeQuantityCurrEnrty" id="nonSorCumulativeQuantityCurrEnrty"
 												value="${mbdetails.prevCumlvQuantity + mbdetails.quantity}" />
 											<td class="text-right"><span id="nonSorAmountCurrentEntry"></span></td>
