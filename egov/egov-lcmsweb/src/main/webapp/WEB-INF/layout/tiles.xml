@@ -363,4 +363,14 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
 </definition>
 
+<definition name="vacatestay-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.vacatestay.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/vacatestay-new.jsp"/>
+</definition>
+
+<definition name="vacatestay-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.vacatestay.success" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/vacatestay-success.jsp"/>
+</definition>
+
 </tiles-definitions>

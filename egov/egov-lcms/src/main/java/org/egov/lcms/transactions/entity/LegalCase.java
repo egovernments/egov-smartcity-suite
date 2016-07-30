@@ -165,7 +165,7 @@ public class LegalCase extends AbstractAuditable {
     private List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LcInterimOrder> lcInterimOrder = new ArrayList<LcInterimOrder>(0);
+    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
 
     @Transient
     private String wpYear;
@@ -296,14 +296,16 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /**
-     * @param errors Validation Check for Batch case:
+     * @param errors
+     *            Validation Check for Batch case:
      */
     protected void batchCaseValidation(final List<ValidationError> errors) {
         Boolean duplicateCaseNumberCheck = false;
         int i = 0;
         for (final BatchCase batchcase : getBatchCaseSet()) {
             /*
-             * Both the batch case number and primary case number should not be same
+             * Both the batch case number and primary case number should not be
+             * same
              */
             if (StringUtils.isNotBlank(getCaseNumber()) && StringUtils.isNotBlank(batchcase.getCasenumber())
                     && getCaseNumber().equals(batchcase.getCasenumber())) {
@@ -431,7 +433,6 @@ public class LegalCase extends AbstractAuditable {
         this.nextDate = nextDate;
     }
 
-
     public CourtMaster getCourtMaster() {
         return courtMaster;
     }
@@ -532,18 +533,19 @@ public class LegalCase extends AbstractAuditable {
         this.assigntoIdboundary = assigntoIdboundary;
     }
 
-    public List<LcInterimOrder> getEglcLcinterimorders() {
-        return lcInterimOrder;
-    }
-
-    public void setEglcLcinterimorders(final List<LcInterimOrder> eglcLcinterimorders) {
-        lcInterimOrder = eglcLcinterimorders;
-    }
-
     /*
-     * public List<Contempt> getEglcContempts() { return eglcContempts; } public void setEglcContempts(final List<Contempt>
-     * eglcContempts) { this.eglcContempts = eglcContempts; }
+     * public List<Contempt> getEglcContempts() { return eglcContempts; } public
+     * void setEglcContempts(final List<Contempt> eglcContempts) {
+     * this.eglcContempts = eglcContempts; }
      */
+
+    public List<LegalCaseInterimOrder> getLegalCaseInterimOrder() {
+        return legalCaseInterimOrder;
+    }
+
+    public void setLegalCaseInterimOrder(final List<LegalCaseInterimOrder> legalCaseInterimOrder) {
+        this.legalCaseInterimOrder = legalCaseInterimOrder;
+    }
 
     public List<BipartisanDetails> getBipartisanDetails() {
         return bipartisanDetails;
@@ -562,8 +564,9 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public List<Appeal> getEglcAppeals() { return eglcAppeals; } public void setEglcAppeals(final List<Appeal> eglcAppeals) {
-     * this.eglcAppeals = eglcAppeals; }
+     * public List<Appeal> getEglcAppeals() { return eglcAppeals; } public void
+     * setEglcAppeals(final List<Appeal> eglcAppeals) { this.eglcAppeals =
+     * eglcAppeals; }
      */
 
     public List<Hearings> getHearings() {
@@ -631,8 +634,9 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public Long getDocumentNum() { return documentNum; } public void setDocumentNum(final Long documentNum) { this.documentNum
-     * = documentNum; }
+     * public Long getDocumentNum() { return documentNum; } public void
+     * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
+     * }
      */
 
     public Date getCasefirstappearancedate() {
@@ -652,8 +656,9 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void setPetFirstAppDate(final Date petFirstAppDate) {
-     * this.petFirstAppDate = petFirstAppDate; }
+     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void
+     * setPetFirstAppDate(final Date petFirstAppDate) { this.petFirstAppDate =
+     * petFirstAppDate; }
      */
 
     public String getStampNumber() {
@@ -758,17 +763,15 @@ public class LegalCase extends AbstractAuditable {
         this.caseTypeMaster = caseTypeMaster;
     }
 
-    
+    public String getCaseNumber() {
+        return caseNumber;
+    }
 
-	public String getCaseNumber() {
-		return caseNumber;
-	}
+    public void setCaseNumber(final String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
 
-	public void setCaseNumber(String caseNumber) {
-		this.caseNumber = caseNumber;
-	}
-
-	public List<Judgment> getJudgmentsBeanList() {
+    public List<Judgment> getJudgmentsBeanList() {
         return judgmentsBeanList;
     }
 
@@ -782,14 +785,6 @@ public class LegalCase extends AbstractAuditable {
 
     public void setLegalCaseDocuments(final List<LegalCaseDocuments> legalCaseDocuments) {
         this.legalCaseDocuments = legalCaseDocuments;
-    }
-
-    public List<LcInterimOrder> getLcInterimOrder() {
-        return lcInterimOrder;
-    }
-
-    public void setLcInterimOrder(final List<LcInterimOrder> lcInterimOrder) {
-        this.lcInterimOrder = lcInterimOrder;
     }
 
     public List<LegalCaseDisposal> getLegalCaseDisposal() {
@@ -820,7 +815,7 @@ public class LegalCase extends AbstractAuditable {
         return petitionTypeMaster;
     }
 
-    public void setPetitionTypeMaster(PetitionTypeMaster petitionTypeMaster) {
+    public void setPetitionTypeMaster(final PetitionTypeMaster petitionTypeMaster) {
         this.petitionTypeMaster = petitionTypeMaster;
     }
 

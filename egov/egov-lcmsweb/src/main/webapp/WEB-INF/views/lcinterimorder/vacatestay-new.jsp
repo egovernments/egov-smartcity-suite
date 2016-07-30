@@ -39,36 +39,47 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post"  modelAttribute="legalCaseInterimOrder"
-	id="legalCaseInterimOrderform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form"  method="post" modelAttribute="vacateStay"
+	id="vacateStayform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<%--  <input type="hidden" id="lcInterimOrderid" name="lcInterimOrderid"
+		value="${lcInterimOrderId}" />  --%>
+	 <input type="hidden" id="legalCaseInterimOrder" name="legalCaseInterimOrder"
+		value="${legalCaseInterimOrder.id}" /> 
+		<input type="hidden" id="lcNumber" name="lcNumber"
+		value="${legalCase.lcNumber}" />
+		<input type="hidden" name="legalCase" value="${legalCase.id}" />
+		<input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
+		value="${lcInterimOrderList}">
+	<input type="hidden" value="${mode}" id="mode" />
+	<input type="hidden" name="lcInterimOrderId" value="${legalCaseInterimOrder.id}" />
+	<%@ include file="vacatestay-form.jsp"%>
 	<c:if test="${not empty message}">
-					<div role="alert">${message}</div>
-				</c:if>
-	<%@ include file="lcinterimorder-form.jsp"%>
-	<%-- <input type="hidden" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
-	<%-- <input type="hidden"  id="lcInterimOrderId" name="lcInterimOrderId" value="${lcInterimOrder.id}" />  --%>
-	<form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrder.id}" class="form-control table-input hidden-input"/>
-	<input type="hidden" name="legalCase" value="${legalCase.id}" /> 
-	<input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCaseInterimOrder.legalCase.lcNumber}" />  
+		<div role="alert">${message}</div>
+	</c:if>
 	</div>
 	</div>
 	</div>
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update' />
+			<button type="submit" name="submit" id="save" class="btn btn-primary"
+				value="Save">
+				<spring:message code="lbl.submit" />
 			</button>
-			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
-			 <button type="button" class="btn btn-default" id="buttonBack" onclick="goback()"><spring:message code="lbl.back"/></button>
+			<button type='button' class='btn btn-default' id="btnclose">
+				<spring:message code='lbl.close' />
+			</button>
+			<button type="button" class="btn btn-default" id="buttonBack" onclick="goback()"><spring:message code="lbl.back"/></button>
+
 		</div>
 	</div>
 </form:form>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"> 
+<script
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
-	<script type="text/javascript"
-	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/js/app/vacateStay.js?rnd=${app_release_no}'/>"></script>

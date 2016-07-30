@@ -63,41 +63,57 @@
 
 					<th colspan="1" class="text-center"><spring:message
 							code="lbl.edit" /></th>
+							<th colspan="1" class="text-center"><spring:message
+							code="lbl.vacatestay" /></th>
 
 				</tr>
 			</thead>
-			<c:forEach var="lcInterimOrder" items="${lcInterimOrderList}">
+			<c:forEach var="legalCaseInterimOrder" items="${lcInterimOrderList}">
 				<tr>
 					<td colspan="1">
 						<div align="center">
-							<c:out value="${lcInterimOrder.interimOrder.interimOrderType}" />
+							<c:out value="${legalCaseInterimOrder.interimOrder.interimOrderType}" />
 						</div>
 					</td>
 
 					<td colspan="1" id="iodate">
 						<div align="center">
 							<a style="cursor: pointer;" onclick="viewInterimorder();"> <c:out
-									value="${lcInterimOrder.ioDate}" /> <input type="hidden"
-								value="${lcInterimOrder.legalCase.lcNumber}" name="lcNumberHY"
-								id="lcNumberHY" />
+									value="${legalCaseInterimOrder.ioDate}" /> <input type="hidden"
+								value="${legalCaseInterimOrder.id}" name="legalCaseInterimOrder" />
 						</div>
 					</td>
 					<td colspan="1">
 						<div align="center">
-							<c:out value="${lcInterimOrder.mpNumber}" />
+							<c:out value="${legalCaseInterimOrder.mpNumber}" />
 						</div>
 					</td>
 					<td colspan="1">
 						<div align="center">
-							<c:out value="${lcInterimOrder.notes}" />
+							<c:out value="${legalCaseInterimOrder.notes}" />
 						</div>
 					</td>
 					<td colspan="1">
 						<div align="center">
 							<a href="javascript:void(0);"
-								onclick="edit('<c:out value="${lcInterimOrder.legalCase.lcNumber}" />');">Edit</a>
+								onclick="edit('<c:out value="${legalCaseInterimOrder.id}" />');">Edit</a>
+								<input type="hidden" id="lcInterimOrderId" name="lcInterimOrderId"
+		value="${legalCaseInterimOrder.id}" /> 
 						</div>
 					</td>
+					
+					<td colspan="1">
+						<div align="center">
+						<c:if test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay'}">
+							<a href="javascript:void(0);"
+								onclick="vacatestay('<c:out value="${legalCaseInterimOrder.id}" />');"><spring:message
+							code="lbl.vacatestay" /></a>
+							<%-- <input type="hidden" id="legalCaseInterimOrderid" name="legalCaseInterimOrderid"
+		value="${lcInterimOrderId}" /> --%>
+			</c:if>
+						</div>
+					</td>
+				
 				</tr>
 			</c:forEach>
 		</table>

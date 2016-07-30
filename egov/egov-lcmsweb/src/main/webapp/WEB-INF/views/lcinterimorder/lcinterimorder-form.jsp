@@ -85,7 +85,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="mpNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="50" required="required"/>
+								data-pattern="number" maxlength="50" required="required"/>
 							<form:errors path="mpNumber" cssClass="error-msg" />
 						</div>
 
@@ -164,4 +164,4 @@
 					</div>
 				</div>
 			
-				<input type="hidden" name="lcInterimOrder" value="${lcInterimOrder.id}" />
+				<input type="hidden" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" />

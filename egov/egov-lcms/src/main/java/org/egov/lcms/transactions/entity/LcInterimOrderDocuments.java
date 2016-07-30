@@ -75,7 +75,7 @@ public class LcInterimOrderDocuments extends AbstractPersistable<Long> {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lcInterimOrder", nullable = false)
-    private LcInterimOrder lcInterimOrder;
+    private LegalCaseInterimOrder legalCaseInterimOrder;
 
     @NotNull
     @Length(min = 3, max = 100)
@@ -121,13 +121,15 @@ public class LcInterimOrderDocuments extends AbstractPersistable<Long> {
         this.documentName = documentName;
     }
 
-    public LcInterimOrder getLcInterimOrder() {
-        return lcInterimOrder;
+    public LegalCaseInterimOrder getLegalCaseInterimOrder() {
+        return legalCaseInterimOrder;
     }
 
-    public void setLcInterimOrder(LcInterimOrder lcInterimOrder) {
-        this.lcInterimOrder = lcInterimOrder;
+    public void setLegalCaseInterimOrder(LegalCaseInterimOrder legalCaseInterimOrder) {
+        this.legalCaseInterimOrder = legalCaseInterimOrder;
     }
+
+   
 
    
 

@@ -44,13 +44,15 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
-	modelAttribute="legalCaseInterimOrder" id="legalCaseInterimOrderform">
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	modelAttribute="vacateStay" id="vacateStayform">
+	<input type="hidden" name="lcInterimOrder" value="${lcInterimOrder.id}" />
+	<input type="hidden" name="vacateStay" id="vacateStay"
+		value="${vacateStay}">
+	<input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
+		value="${lcInterimOrderList}">
 	<input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCaseInterimOrder.legalCase.lcNumber}" /> 
-		<%-- <form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrderId}" class="form-control table-input hidden-input"/> --%>
-
-	 <input type="hidden" name="lcInterimOrderId" value="${legalCaseInterimOrder.id}" />
+		value="${legalCase.lcNumber}" />
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="main-content">
 		<div class="row">
@@ -60,96 +62,45 @@
 				</c:if>
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Interim Order Details</div>
+						<div class="panel-title">Vacate Stay Details</div>
 					</div>
 					<div class="panel-body custom">
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.interimorder" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								${legalCaseInterimOrder.interimOrder.interimOrderType}</div>
-
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.iodate" />
+								<spring:message code="lbl.vsreceivedfromstandingcounsel" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<fmt:formatDate value="${legalCaseInterimOrder.ioDate}" var="ioDate"
-									pattern="dd/MM/yyyy" />
-								<c:out value="${ioDate}" />
-							</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.mpnumber" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								${legalCaseInterimOrder.mpNumber}</div>
-
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.notes" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								${legalCaseInterimOrder.notes}</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.sendtostandingcounsel" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.sendtoStandingCounsel}" />
-							</div>
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.petitionfiledon" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.petitionFiledOn}" />
-							</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.reportfilingdue" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.reportFilingDue}" />
-							</div>
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.sendtodepartment" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.sendtoDepartment}" />
-							</div>
-						</div>
-						<div class="row add-border">
-							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.reportfromhod" />
-							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.reportFromHod}" />
+								<fmt:formatDate
+									value="${vacateStay.vsReceivedFromStandingCounsel}"
+									var="vsRecv" pattern="dd/MM/yyyy" />
+								<c:out value="${vsRecv}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.reportsendtostandingcounsel" />
+								<spring:message code="lbl.vssendtostandingcounsel" />
 							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.reportSendtoStandingCounsel}" />
+							<div class="col-md-3 col-xs-6 add-margin view-content">
+								<fmt:formatDate value="${vacateStay.vsSendToStandingCounsel}"
+									var="vsSend" pattern="dd/MM/yyyy" />
+								<c:out value="${vsSend}" />
 							</div>
 						</div>
 						<div class="row add-border">
+
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.reportfilingdate" />
+								<spring:message code="lbl.vspetitionfiledon" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${legalCaseInterimOrder.reportFilingDate}" />
+									value="${vacateStay.vsPetitionFiledOn}" />
 							</div>
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.remark" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${vacateStay.remarks}</div>
 						</div>
+
 					</div>
 
 				</div>
@@ -157,13 +108,14 @@
 		</div>
 		<div class="row text-center">
 			<div class="add-margin">
-			<button type="button" class="btn btn-default" id="buttonBack"
+				<button type="button" class="btn btn-default" id="buttonBack"
 					onclick="goback()">
 					<spring:message code="lbl.back" />
 				</button>
 				<a href="javascript:void(0)" class="btn btn-default"
 					onclick="self.close()">Close</a>
-				</div>
+
+			</div>
 		</div>
 </form:form>
 <script
@@ -173,4 +125,4 @@
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/js/app/vacatestay.js?rnd=${app_release_no}'/>"></script>

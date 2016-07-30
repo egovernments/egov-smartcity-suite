@@ -45,9 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.masters.service.InterimOrderService;
-import org.egov.lcms.transactions.entity.LcInterimOrder;
 import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.service.LcInterimOrderService;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.service.LegalCaseInterimOrderService;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,10 +61,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/lcinterimorder")
-public class LcInterimOrderController {
+public class LegalCaseInterimOrderController {
 
     @Autowired
-    private LcInterimOrderService lcInterimOrderService;
+    private LegalCaseInterimOrderService legalCaseInterimOrderService;
 
     @Autowired
     private LegalCaseService legalcaseService;
@@ -78,12 +78,12 @@ public class LcInterimOrderController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+    public String viewForm(@ModelAttribute("lcInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
-        model.addAttribute("lcInterimOrder", lcInterimOrder);
+        model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("mode", "create");
         return "lcinterimorder-new";
@@ -96,7 +96,8 @@ public class LcInterimOrderController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+    public String create(
+            @Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
 
@@ -106,11 +107,11 @@ public class LcInterimOrderController {
             model.addAttribute("legalCase", legalCase);
             return "lcinterimorder-new";
         } else
-            lcInterimOrder.setLegalCase(legalCase);
-        lcInterimOrderService.persist(lcInterimOrder);
+            legalCaseInterimOrder.setLegalCase(legalCase);
+        legalCaseInterimOrderService.persist(legalCaseInterimOrder);
         model.addAttribute("mode", "create");
         model.addAttribute("lcNumber", legalCase.getLcNumber());
-        redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
+        redirectAttrs.addFlashAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("message", "Interim Order Created successfully.");
         return "lcinterimorder-success";
 
@@ -120,9 +121,10 @@ public class LcInterimOrderController {
     public String getInterimOrderList(final Model model, @RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<LcInterimOrder> lcInterimOrderList = lcInterimOrderService.findBYLcNumber(lcNumber);
+        final List<LegalCaseInterimOrder> lcInterimOrderList = legalCaseInterimOrderService.findBYLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
+        model.addAttribute("lcInterimOrderId", legalCase.getLegalCaseInterimOrder());
         model.addAttribute("lcInterimOrderList", lcInterimOrderList);
         return "lcinterimorder-list";
 

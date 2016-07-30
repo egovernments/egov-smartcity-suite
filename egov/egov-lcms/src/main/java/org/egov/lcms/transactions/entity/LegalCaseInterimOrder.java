@@ -70,13 +70,13 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LCINTERIMORDER")
-@SequenceGenerator(name = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, sequenceName = LcInterimOrder.SEQ_EGLC_LCINTERIMORDER, allocationSize = 1)
+@SequenceGenerator(name = LegalCaseInterimOrder.SEQ_EGLC_LCINTERIMORDER, sequenceName = LegalCaseInterimOrder.SEQ_EGLC_LCINTERIMORDER, allocationSize = 1)
 /*
  * @CompareDates(fromDate = "sendtoStandingCounsel", toDate = "iodate",
  * dateFormat = "dd/MM/yyyy", message =
  * "sendtoStandingCounsel.greaterThan.iodate")
  */
-public class LcInterimOrder extends AbstractAuditable {
+public class LegalCaseInterimOrder extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_LCINTERIMORDER = "SEQ_EGLC_LCINTERIMORDER";
 
@@ -140,9 +140,13 @@ public class LcInterimOrder extends AbstractAuditable {
     @Length(max = 50)
     private String referenceNumber;
 
-    @OneToMany(mappedBy = "lcInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LcInterimOrderDocuments> lcInterimOrderDocuments = new ArrayList<LcInterimOrderDocuments>(0);
+    
+    @OneToMany(mappedBy = "legalCaseInterimOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VacateStay> vacateStay = new ArrayList<VacateStay>(0);
 
+   
     @Override
     public Long getId() {
         return id;
@@ -293,5 +297,13 @@ public class LcInterimOrder extends AbstractAuditable {
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
     }
+    public List<VacateStay> getVacateStay() {
+        return vacateStay;
+    }
+
+    public void setVacateStay(List<VacateStay> vacateStay) {
+        this.vacateStay = vacateStay;
+    }
+
 
 }
