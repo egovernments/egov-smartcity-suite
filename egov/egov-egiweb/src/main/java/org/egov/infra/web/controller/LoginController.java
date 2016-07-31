@@ -47,6 +47,7 @@ import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.validation.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,15 +73,19 @@ public class LoginController {
     private ApplicationProperties applicationProperties;
 
     @RequestMapping(value = "/password/recover", method = RequestMethod.POST)
-    public String sendPasswordRecoveryURL(@RequestParam final String identity, @RequestParam final String originURL,
+    public String sendPasswordRecoveryURL(@RequestParam String identity,
+                                          @RequestParam String originURL,
+                                          @RequestParam boolean byOTP,
                                           final RedirectAttributes redirectAttrib) {
         redirectAttrib.addAttribute("recovered", identityRecoveryService.generateAndSendUserPasswordRecovery(identity,
-                originURL + "/egi/login/password/reset?token="));
+                originURL + "/egi/login/password/reset?token=", byOTP));
+        redirectAttrib.addAttribute("byOTP", byOTP);
         return "redirect:/login/secure";
     }
 
     @RequestMapping(value = "/password/reset", params = "token", method = RequestMethod.GET)
-    public String viewPasswordReset(@RequestParam final String token) {
+    public String viewPasswordReset(@RequestParam final String token, Model model) {
+        model.addAttribute("valid", identityRecoveryService.tokenValid(token));
         return "password/reset";
     }
 

@@ -50,36 +50,47 @@
 				&nbsp;
 			</div>
 			<div class="panel-body custom-form">
-				<form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
-					<c:if test="${not empty param.error}">
-                    	<div id="error-msg" class="error-msg text-center add-margin"><spring:message code="${param.error}"/></div>
-                	</c:if>
-					<div class="form-group">
-						<label class="col-sm-4 control-label">
-							<spring:message code="lbl.new.pwd"/> <span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-4" >
-							<input style="display:none" type="password">
-							<input type="password" name="newPassword" autocomplete="new-password" class="form-control check-password" id="new-pass" required="required" maxlength="32" data-toggle="popover" data-content='${pwdmsg}'/>
+				<c:choose>
+					<c:when test="${valid}">
+						<form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
+							<c:if test="${not empty param.error}">
+								<div id="error-msg" class="error-msg text-center add-margin"><spring:message code="${param.error}"/></div>
+							</c:if>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">
+									<spring:message code="lbl.new.pwd"/> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-4" >
+									<input style="display:none" type="password">
+									<input type="password" name="newPassword" autocomplete="new-password" placeholder="Enter your new password" class="form-control check-password" id="new-pass" required="required" maxlength="32" data-toggle="popover" data-content='${pwdmsg}'/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label">
+									<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-4" >
+									<input type="password" name="confirmPwd" autocomplete="new-password" placeholder="Re-enter your new password" class="form-control check-password" id="retype-pass" required="required" maxlength="32"/>
+									<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
+								</div>
+							</div>
+							<div class="form-group text-center">
+								<div class="col-md-12 add-margin">
+									<button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
+									<button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
+								</div>
+							</div>
+						</form:form>
+					</c:when>
+					<c:otherwise>
+						<div class="alert alert-error" role="alert">
+                            <div class="error-msg text-center add-margin">
+                                <spring:message code="err.reset.password.invalid"/>
+                            </div>
 						</div>
-					</div>
-					
-					<div class="form-group">
-						<label class="col-sm-4 control-label">
-							<spring:message code="lbl.pwd.confirm"/> <span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-4" >
-							<input type="password" name="confirmPwd" autocomplete="new-password" class="form-control check-password" id="retype-pass" required="required" maxlength="32"/>
-							<div class="password-error error-msg display-hide"><spring:message code="lbl.pwd.mismatch"/> </div>
-						</div>
-					</div>
-					<div class="form-group text-center">
-						<div class="col-md-12 add-margin">
-							<button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
-							<button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
-						</div>
-					</div>
-					</form:form>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>
 	</div>

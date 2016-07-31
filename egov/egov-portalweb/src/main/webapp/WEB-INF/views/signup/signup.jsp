@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -52,16 +53,16 @@
 		<spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
 		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg"/>
 		<title>Citizen Portal Registration</title>
-		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
-		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css">
-		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
+		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js' context='/egi'/>" type="text/javascript"></script>
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
-			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body">
@@ -83,7 +84,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-									<img src="/egi/resources/global/images/egov_logo_tr_h.png" title="Powered by eGovernments" height="37" alt="">
+									<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/egov_logo_tr_h.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
 									</a>
 								</li>
 							</ul>
@@ -101,17 +102,18 @@
                                     <spring:message code="title.signup"/>
                                 </div>
                             </div>
-                             <div class="form-group" id="wrap">
+							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
-										<i class="fa fa-user theme-color style-color"></i>
+										<i class="fa fa-phone theme-color style-color"></i>
 									</div>
-									<form:input path="username" cssClass="form-control style-form patternvalidation" data-pattern="username" id="username" placeholder="Username" minlength="2" maxlength="64" autocomplete="off" required="required" data-container="#wrap" data-toggle="popover" data-content="Should contain only upper case, lower case alphabet, number, underscore and dot"/>
-									<span class="mandatory set-mandatory"></span>
-									<form:errors path="username" cssClass="add-margin error-msg font-12"/>
+									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+									<form:hidden path="username" id="username"/>
+                                    <span class="mandatory set-mandatory"></span>
+									<form:errors path="mobileNumber" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<input style="display:none" type="password">
+                            <input style="display:none" type="password">
 							<div class="row form-group" id="wrap">
 								<div class="col-md-6" style="margin:0">
 									<div class="input-group">
@@ -146,33 +148,23 @@
 									<form:errors path="name" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
-							<div class="form-group">
-								<div class="input-group">
-									<div class="input-group-addon style-label">
-										<i class="fa fa-phone theme-color style-color"></i>
-									</div>
-									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="is_valid_number" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
-									<span class="mandatory set-mandatory"></span>
-									<form:errors path="mobileNumber" cssClass="add-margin error-msg font-12"/>
-								</div>
-							</div>
+
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon style-label">
 										<i class="fa fa-envelope theme-color style-color"></i>
 									</div>
-									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off" required="required"/>
-									<span class="mandatory set-mandatory"></span>
+									<form:input path="emailId" cssClass="form-control style-form" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" title="Enter vaild Email ID!" id="emailId" placeholder="Email" minlength="5" maxlength="128" autocomplete="off"/>
 									<form:errors path="emailId" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
                             <div class="add-margin">
                                 <spring:eval expression="@environment.getProperty('captcha.strength')" var="strength"/>
-                                <c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context="/egi"/>
+                                <c:import url="/WEB-INF/views/common/captcha-${strength}.jsp" context='/egi'/>
                                 <form:errors path="active" cssClass="add-margin error-msg font-12"/>
                             </div>
 							<div class="form-group signup-leftpadding">
-								<button type="submit" class="btn btn-custom btn-block btn-login signup-submit">
+								<button type="button" class="btn btn-custom btn-block btn-login signup-submit" id="signupbtn">
 									<spring:message code="btn.signup" />
 								</button>
 							</div>
@@ -223,7 +215,7 @@
                                                             <i class="fa fa-key theme-color style-color"></i>
                                                         </div>
                                                         <input style="display:none" type="password">
-                                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Activation Code" autocomplete="off" required="required"/>
+                                                        <input type="password" class="form-control style-form" name="activationCode" id="activationCode" placeholder="Enter OTP here" autocomplete="off" required="required"/>
                                                         <span class="mandatory set-mandatory"></span>
                                                     </div>
                                                 </div>
@@ -265,7 +257,7 @@
                                             <div class="input-group-addon style-label">
                                                 <i class="fa fa-envelope theme-color style-color"></i>
                                             </div>
-                                            <input class="form-control style-form" name="email" id="email" placeholder="Enter your registered email address" autocomplete="off" required="required"/>
+                                            <input class="form-control style-form" name="mobile" id="mobile" placeholder="Enter your registered mobile" minlength="10" maxlength="10" autocomplete="off" required="required"/>
                                             <span class="mandatory set-mandatory"></span>
                                         </div>
                                     </div>
@@ -461,9 +453,9 @@
                 </div>
             </div>
         </div>
-        <script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
-        <script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
-		<script src="/egi/resources/global/js/egov/custom.js" type="text/javascript"></script>
-        <script src="../resources/js/signup.js"></script>
+        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js' context='/egi'/>" type="text/javascript"></script>
+        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/signup.js'/>"></script>
   </body>
 </html>						
