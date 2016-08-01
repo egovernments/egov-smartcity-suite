@@ -63,7 +63,6 @@ import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalCaseDepartment;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
-import org.egov.lcms.transactions.repository.BipartisanDetailsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -80,8 +79,6 @@ public class LegalCaseService {
 
 	private final LegalCaseRepository legalCaseRepository;
 
-	@Autowired
-	private BipartisanDetailsRepository bipartisanDetailsRepository;
 	@Autowired
 	@Qualifier("fileStoreService")
 	protected FileStoreService fileStoreService;

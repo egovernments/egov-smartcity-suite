@@ -179,7 +179,7 @@ public class LegalCase extends AbstractAuditable {
     private String finwpYear;
     
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<BipartisanDetails> bipartisanDetails= new ArrayList<BipartisanDetails>(0);
+    private List<BipartisanDetails> bipartisanDetails=null;
     
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)    
