@@ -1126,7 +1126,7 @@ $('#searchTemplate').click(function() {
 
 
 function resetTemplate(id){
-	var estimateDate = $('#esdtimateDate').val();
+	var estimateDate = $('#estimateDate').val();
 	if(estimateDate == "" || estimateDate == null){
 		bootbox.alert($('#msgestimatedate').val());
 		return false;
@@ -1167,7 +1167,7 @@ function clearActivities(){
 			$("#removedActivityIds").val($("#removedActivityIds").val()+id);
 		}
 	});
-	var hiddenRowCount = $("#tblsor tbody tr:hidden[id='sorRow']").length;
+	var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
 	if(hiddenRowCount == 0) {
 		var sorrowcount = jQuery("#tblsor > tbody > tr").length;
 		var sortbl=document.getElementById('tblsor');
@@ -1193,15 +1193,18 @@ function clearActivities(){
 				$('#sorRow').prop("hidden",true);
 				$('.msopen').val('0');
 				$('#sorRow').attr('sorinvisible', 'true');
-
+				$('#message').removeAttr("hidden");
 			} else {
 				sortbl.deleteRow(3);
 			}
+			calculateEstimateAmountTotal();
+			calculateVatAmountTotal();
+			total();
 		}
 	}
 
-	hiddenRowCount = $("#tblNonSor tbody tr:hidden[id='nonSorRow']").length;
-	if(hiddenRowCount == 0) {
+	var nonSorHiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+	if(nonSorHiddenRowCount == 0) {
 		var nonsorrowcount = jQuery("#tblNonSor > tbody > tr").length;
 		var nonsortbl=document.getElementById('tblNonSor');
 		for(rowcount=2;rowcount<=nonsorrowcount;rowcount++){
@@ -1227,6 +1230,9 @@ function clearActivities(){
 			} else {
 				nonsortbl.deleteRow(3);
 			}
+			calculateNonSorEstimateAmountTotal();
+			calculateNonSorVatAmountTotal();
+			nonSorTotal();
 		}
 		resetIndexes();
 	}
@@ -2847,4 +2853,50 @@ function validateMsheet(obj)
 	}
 	return true;
 
+}
+
+function clearOverHeads() {
+	var overheadTableLength = jQuery('#overheadTable tr').length-1;
+	for (var i = 1; i <= overheadTableLength; i++) {
+		index=i-1;
+		if(overheadTableLength == i){
+			document.getElementById('tempOverheadValues[0].id').value = "";
+			document.getElementById('tempOverheadValues[0].name').value = "";
+			document.getElementById('tempOverheadValues[0].overhead.id').value = "";
+			document.getElementById('tempOverheadValues[0].percentage').value = "";
+			document.getElementById('tempOverheadValues[0].amount').value = "";
+		}else{
+			var tbl=document.getElementById('overheadTable');
+			var objects = $('.delete-row');
+			deleteRow('overheadTable', objects[i]);
+		}
+	}
+}
+
+
+function resetWorkDetails() {
+	var prevEstimateDate  = $('#prevEstimateDate').val();
+	if(prevEstimateDate!= undefined && prevEstimateDate!=null && prevEstimateDate!=""){
+		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+		var nonSorHiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+		var overheadData = document.getElementById('tempOverheadValues[0].overhead.id').value;
+		if(hiddenRowCount != 1 || nonSorHiddenRowCount!= 1 || overheadData != "") {
+				bootbox
+					.confirm(
+							'Changing the estimate date will reset the information in work details and overhead tab , do you want to continue.',
+							function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					return false;
+				} else {
+					$("#workdetails").addClass("active");
+					clearActivities();
+					clearOverHeads();
+					resetAddedOverheads();
+				}
+			});
+		}
+	}else{
+		$('#prevEstimateDate').val($('#estimateDate').val());
+	}
 }

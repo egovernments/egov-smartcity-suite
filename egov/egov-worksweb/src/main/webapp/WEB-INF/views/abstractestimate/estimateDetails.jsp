@@ -19,7 +19,8 @@
 			<div class="col-sm-3 add-margin">
 				<c:choose>
 						<c:when test="${abstractEstimate.lineEstimateDetails != null && abstractEstimate.lineEstimateDetails.lineEstimate.abstractEstimateCreated == true }" >
-							 <form:input path="estimateDate" id="estimateDate" data-errormsg="Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" required="required" />
+							 <form:input path="estimateDate" id="estimateDate" data-errormsg="Estimate Date of the work is mandatory!" data-idx="0" data-optional="0" class="form-control datepicker estimateDateClassId" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" required="required"  />
+							 <input type="hidden" id="prevEstimateDate" name="prevEstimateDate" />
 						</c:when>
 						<c:otherwise>
 							<form:input path="estimateDate" name="estimateDate" class="form-control disablefield" value="${estimateDate}"/>						

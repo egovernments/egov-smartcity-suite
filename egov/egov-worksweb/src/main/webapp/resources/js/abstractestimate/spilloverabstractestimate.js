@@ -140,6 +140,7 @@ function validateAbstractEstimateDate(obj){
 		validateTechinicalSanctionDate(obj);
 	if(adminSanctionDate != '')
 		validateAdminSanctionDate(obj);
+	resetWorkDetails();
 	
 }
 
