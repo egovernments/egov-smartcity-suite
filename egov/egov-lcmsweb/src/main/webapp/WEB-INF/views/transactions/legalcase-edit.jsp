@@ -89,9 +89,10 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script
 	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	<script
+	src="<c:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+
 

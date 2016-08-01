@@ -39,9 +39,7 @@
  */
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
-	$("#seniordov1").hide(); 
-    $("#seniordov2").hide(); 
-    $("#seniordov3").hide(); 
+	
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
@@ -113,16 +111,18 @@ function addPetRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
+			var dd=nextIdx-1;
+			alert("dd= "+ '[' + dd + ']');
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
 					jQuery(this).attr({
 								'id' : function(_, id) {
-									return id.replace('[0]', '['
+									return id.replace('[' + dd + ']', '['
 											+ nextIdx + ']');
 								},
 								'name' : function(_, name) {
-									return name.replace('[0]', '['
+									return name.replace('[' + dd + ']', '['
 											+ nextIdx + ']');
 								}
 					});  

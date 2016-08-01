@@ -24,7 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application/")
-public class ViewAndEditLegalCaseController {
+public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
 
     @Autowired
     private LegalCaseService legalCaseService;
@@ -41,6 +41,7 @@ public class ViewAndEditLegalCaseController {
     @Autowired
     private CourtMasterService courtMasterService;
 
+    
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
@@ -51,16 +52,16 @@ public class ViewAndEditLegalCaseController {
     public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
-        final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
+        /*final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
         final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
         for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
-            if (dd.getIsRepondent())
+            if (!dd.getIsRepondent())
                 pettempList.add(dd);
             else
-                respoTempList.add(dd);
+                respoTempList.add(dd);*/
         model.addAttribute("mode", "view");
-        model.addAttribute("pettempList", pettempList);
-        model.addAttribute("respoTempList", respoTempList);
+      /*  model.addAttribute("pettempList", pettempList);
+        model.addAttribute("respoTempList", respoTempList);*/
         return "legalcasedetails-view";
     }
 
@@ -69,15 +70,9 @@ public class ViewAndEditLegalCaseController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         setDropDownValues(model);
-        final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
-        final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
-            if (dd.getIsRepondent())
-                pettempList.add(dd);
-            else
-                respoTempList.add(dd);
-        model.addAttribute("pettempList", pettempList);
-        model.addAttribute("respoTempList", respoTempList);
+   String[] casenumberyear=legalCase.getCaseNumber().split("/");
+   legalCase.setCaseNumber(casenumberyear[0]);
+   legalCase.setWpYear(casenumberyear[1]);
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
@@ -96,9 +91,9 @@ public class ViewAndEditLegalCaseController {
     }
 
     private void setDropDownValues(final Model model) {
-        model.addAttribute("courtTypeList", courtTypeMasterService.getCourtTypeList());
+       // model.addAttribute("courtTypeList", courtTypeMasterService.getCourtTypeList());
         model.addAttribute("courtsList", courtMasterService.findAll());
-        model.addAttribute("caseTypeList", caseTypeMasterService.getCaseTypeList());
+       // model.addAttribute("caseTypeList", caseTypeMasterService.getCaseTypeList());
         model.addAttribute("petitiontypeList", petitiontypeMasterService.getPetitiontypeList());
     }
 

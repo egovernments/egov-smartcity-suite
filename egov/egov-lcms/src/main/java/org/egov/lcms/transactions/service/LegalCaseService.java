@@ -129,7 +129,7 @@ public class LegalCaseService {
 			if (bipartObj.getName() != null && !"".equals(bipartObj.getName())) {
 				bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
 				bipartObj.setLegalCase(legalcase);
-				bipartObj.setIsRepondent(Boolean.TRUE);
+				bipartObj.setIsRepondent(Boolean.FALSE);
 				partitionDetails.add(bipartObj);
 			}
 		legalcase.getBipartisanDetails().clear();
@@ -140,7 +140,7 @@ public class LegalCaseService {
 				bipartObjtemp.setSerialNumber(
 						bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
 				bipartObjtemp.setLegalCase(legalcase);
-				bipartObjtemp.setIsRepondent(Boolean.FALSE);
+				bipartObjtemp.setIsRepondent(Boolean.TRUE);
 				legalcase.getBipartisanDetails().add(bipartObjtemp);
 			}
 

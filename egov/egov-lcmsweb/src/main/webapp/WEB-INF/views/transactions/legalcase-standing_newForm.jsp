@@ -69,6 +69,9 @@
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 
 <script
+	src="<c:url value='/resources/js/app/standingCouncil.js?rnd=${app_release_no}'/>"></script>
+	<script>
+<script
 	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script>
 	$('#btnclose').click(function(){

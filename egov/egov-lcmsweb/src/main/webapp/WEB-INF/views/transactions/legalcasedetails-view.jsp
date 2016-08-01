@@ -186,7 +186,7 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${pettempList}"
+					<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
 							<td><form:input type="hidden"
@@ -221,13 +221,13 @@
 								value="${bipartisanDetails.contactNumber}" /></td>
 
 							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].governmentDepartment"
-									path="bipartisanDetails[${status.index}].governmentDepartment" />
+									id="bipartisanDetails[${status.index}].governmentDepartment.name"
+									path="bipartisanDetails[${status.index}].governmentDepartment.name" />
 								<input type="text"
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>
@@ -254,7 +254,7 @@
 			</thead>
 			<tbody>
 
-				<c:forEach var="bipartisanDetailsBeanList" items="${respoTempList}"
+				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 					varStatus="status">
 					<tr>
 						<td><form:input type="hidden"
@@ -291,12 +291,12 @@
 							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
 
 						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
-								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
+								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name"
+								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name" />
 							<input type="text" id="table_governmentDepartment${status.index}"
 							class="form-control" readonly="readonly"
 							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+							value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
 
 					</tr>
 				</c:forEach>
@@ -335,11 +335,21 @@
 		</div>
 	</div>
 	<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+	<div class="panel-heading">
+			<div class="panel-title">
+				<label class="col-sm-3 control-label text-right">Standing
+				Council Details:<span class="mandatory"></span>:
+			</label>
+			</div>
+		</div>
+	
 	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-body">
+						<div class="form-group">
+							<div class="row add-border">
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right">Standing
 		Council:
@@ -413,6 +423,7 @@
 	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
 	</div>
 	</c:if>
+</div>
 </div>
 </div>
 </div>
