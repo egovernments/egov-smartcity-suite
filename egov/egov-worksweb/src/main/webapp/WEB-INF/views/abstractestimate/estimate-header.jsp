@@ -44,7 +44,7 @@
   color:blue;
 }
 </style>
-
+<input type="hidden" id="msgEstimateDateChange" value="<spring:message code='msg.estimate.date.change' />">
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title" style="text-align: left;">

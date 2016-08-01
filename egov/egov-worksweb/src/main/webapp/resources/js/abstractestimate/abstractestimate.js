@@ -2881,10 +2881,7 @@ function resetWorkDetails() {
 		var nonSorHiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
 		var overheadData = document.getElementById('tempOverheadValues[0].overhead.id').value;
 		if(hiddenRowCount != 1 || nonSorHiddenRowCount!= 1 || overheadData != "") {
-				bootbox
-					.confirm(
-							'Changing the estimate date will reset the information in work details and overhead tab , do you want to continue.',
-							function(result) {
+			bootbox.confirm($('#msgEstimateDateChange').val(), function(result) {
 				if(!result) {
 					bootbox.hideAll();
 					return false;
