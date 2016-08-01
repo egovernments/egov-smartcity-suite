@@ -41,7 +41,6 @@ package org.egov.works.web.controller.lineestimate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +64,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.pims.commons.Designation;
-import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
@@ -77,6 +75,7 @@ import org.egov.works.master.service.LineEstimateUOMService;
 import org.egov.works.master.service.ModeOfAllotmentService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -99,9 +98,6 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private FundHibernateDAO fundHibernateDAO;
-
-    @Autowired
-    private SchemeService schemeService;
 
     @Autowired
     private NatureOfWorkService natureOfWorkService;
@@ -135,6 +131,9 @@ public class CreateSpillOverLineEstimateController {
     
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
+    
+    @Autowired
+    private WorksUtils worksUtils;
 
     @RequestMapping(value = "/newspilloverform", method = RequestMethod.GET)
     public String showNewSpillOverLineEstimateForm(@ModelAttribute("lineEstimate") final LineEstimate lineEstimate,
@@ -221,23 +220,11 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
         }
-        Date cutOffDate = null;
-        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
-				WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 		final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
-		if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
-			final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
-			try {
-				cutOffDate = formatter.parse(appConfigValue.getValue());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
         Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
-        if (lineEstimate.getLineEstimateDate().after(cutOffDate)) {
-        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(cutOffDate).toString() } ,"error.spilloverle.cutoffdate");
+        if (lineEstimate.getLineEstimateDate().after(worksUtils.getCutOffDate())) {
+        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(worksUtils.getCutOffDate()).toString() } ,"error.spilloverle.cutoffdate");
         }
         if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated()) {
         	errors.reject("error.spilloverle.bills.checked","error.spilloverle.bills.checked");
@@ -285,18 +272,7 @@ public class CreateSpillOverLineEstimateController {
             designations.add(designationService.getDesignationByName(value.getValue()));
         model.addAttribute("designations", designations);
         
-		final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
-				WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-		if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
-			final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
-			try {
-				model.addAttribute("cuttOffDate",formatter.parse(appConfigValue.getValue()));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+        model.addAttribute("cuttOffDate",worksUtils.getCutOffDate());
 		model.addAttribute("currFinDate",lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
     }
 
