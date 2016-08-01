@@ -797,7 +797,7 @@ function initializeDatePicker(){
 				    }
 				});
 			} else{
-				if(lineEstimateDate > currFinDate && lineEstimateDate < cuttOffDate){
+				if(cuttOffDate != '' && lineEstimateDate > currFinDate && lineEstimateDate < cuttOffDate){
         			$('#billsCreatedCheckbox').hide();
         			$(".grossAmountBilled").val('');
         	    	$(".thGrossAmount").hide();
@@ -822,7 +822,7 @@ function initializeDatePicker(){
 
 function validateStatusDates(obj){
 	var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
-	if(lineEstimateDate > cuttOffDate){
+	if(cuttOffDate != '' && lineEstimateDate > cuttOffDate){
 		$(obj).datepicker("setDate", new Date());
 		$(obj).val('');
 		$(obj).datepicker('update');

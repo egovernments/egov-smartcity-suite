@@ -223,8 +223,11 @@ public class CreateSpillOverLineEstimateController {
 		final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
 
         Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
-        if (lineEstimate.getLineEstimateDate().after(worksUtils.getCutOffDate())) {
-        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(worksUtils.getCutOffDate()).toString() } ,"error.spilloverle.cutoffdate");
+        
+        Date cuttOfdate = worksUtils.getCutOffDate();
+        
+        if (cuttOfdate != null && lineEstimate.getLineEstimateDate().after(cuttOfdate)) {
+        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(cuttOfdate).toString() } ,"error.spilloverle.cutoffdate");
         }
         if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated()) {
         	errors.reject("error.spilloverle.bills.checked","error.spilloverle.bills.checked");
@@ -329,5 +332,5 @@ public class CreateSpillOverLineEstimateController {
              */
         }
     }
-
+    
 }
