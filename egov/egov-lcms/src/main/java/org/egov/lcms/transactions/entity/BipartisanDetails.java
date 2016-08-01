@@ -79,9 +79,8 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "legalcase")
+    @ManyToOne
+    @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
     @Length(max = 128, message = "petitionerName.length")
     @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")

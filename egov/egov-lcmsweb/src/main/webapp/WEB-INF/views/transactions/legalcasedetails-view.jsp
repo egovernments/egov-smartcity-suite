@@ -431,6 +431,8 @@
 </div>
 </div>
 </c:if>
+		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+
 <div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"

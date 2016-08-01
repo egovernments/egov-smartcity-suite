@@ -41,8 +41,10 @@ package org.egov.lcms.transactions.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -151,6 +153,9 @@ public class LegalCase extends AbstractAuditable {
 
     @Transient
     private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
+    
+    @Transient
+    private List<BipartisanDetails> bipartisanPetitionDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
     private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
@@ -172,9 +177,10 @@ public class LegalCase extends AbstractAuditable {
 
     @Transient
     private String finwpYear;
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
+    
+    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
+    private List<BipartisanDetails> bipartisanDetails= new ArrayList<BipartisanDetails>(0);
+    
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)    
     private List<LegalCaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
@@ -350,22 +356,34 @@ public class LegalCase extends AbstractAuditable {
     public List<BipartisanDetails> getPetitioners() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=0)
-        final List<BipartisanDetails> petitionerslist = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails bp : getBipartisanDetails())
-            if (!bp.getIsRepondent())
-                petitionerslist.add(bp);
-        return petitionerslist;
+    
+    	List<BipartisanDetails>tempList=new ArrayList<BipartisanDetails>();
+    	for(BipartisanDetails temp:bipartisanDetails)
+    	{
+    		if(!temp.getIsRepondent()){
+    			tempList.add(temp);
+    		}
+    	}
+    	Set<BipartisanDetails>tempset=new HashSet<BipartisanDetails>(tempList);
+    	bipartisanPetitionDetailsList = new ArrayList<BipartisanDetails>(tempset);
+    	return bipartisanPetitionDetailsList;
+        
     }
 
     public List<BipartisanDetails> getRespondents() {
         // iterate through this.getBipartisan and return only petitioners (based
         // on isRespondent=1)
-
-        final List<BipartisanDetails> respondentlist = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails bp : getBipartisanDetails())
-            if (bp.getIsRepondent())
-                respondentlist.add(bp);
-        return respondentlist;
+    	List<BipartisanDetails>tempList=new ArrayList<BipartisanDetails>();
+    	for(BipartisanDetails temp:bipartisanDetails)
+    	{
+    		if(temp.getIsRepondent()){
+    			tempList.add(temp);
+    			
+    		}
+    	}
+    	Set<BipartisanDetails>tempset=new HashSet<BipartisanDetails>(tempList);
+    	bipartisanDetailsBeanList=new ArrayList<BipartisanDetails>(tempset);
+        return bipartisanDetailsBeanList;
     }
 
     public Judgment getJudgmentValue() {
@@ -548,13 +566,29 @@ public class LegalCase extends AbstractAuditable {
     }
 
     public List<BipartisanDetails> getBipartisanDetails() {
+    	
         return bipartisanDetails;
     }
 
     public void setBipartisanDetails(final List<BipartisanDetails> bipartisanDetails) {
-        this.bipartisanDetails = bipartisanDetails;
+    	if (this.bipartisanDetails == null) {
+    		 this.bipartisanDetails = bipartisanDetails;
+    	  } else {
+    	    this.bipartisanDetails.retainAll(bipartisanDetails);
+    	   this.bipartisanDetails.addAll(bipartisanDetails);
+    	  }
+      
     }
 
+    public void addBipartisanDetails(BipartisanDetails bipartisanDetails)
+    {
+    	this.bipartisanDetails.add(bipartisanDetails);
+    }
+    public void removeBipartisanDetails(BipartisanDetails bipartisanDetails)
+    {
+    	this.bipartisanDetails.remove(bipartisanDetails);
+    }
+      
     public List<LegalCaseAdvocate> getEglcLegalcaseAdvocates() {
         return eglcLegalcaseAdvocates;
     }
@@ -687,10 +721,22 @@ public class LegalCase extends AbstractAuditable {
         return eglcPwrs;
     }
 
+   
     public void setEglcPwrs(final List<Pwr> eglcPwrs) {
-        this.eglcPwrs = eglcPwrs;
+    	this.eglcPwrs.clear();
+        if (eglcPwrs != null) {        
+            this.eglcPwrs.addAll(eglcPwrs);
+        }   
     }
 
+    public void addEglcPwrs(Pwr eglcPwrs)
+    {
+    	this.eglcPwrs.add(eglcPwrs);
+    }
+    public void removeEglcPwrs(Pwr eglcPwrs)
+    {
+    	this.eglcPwrs.remove(eglcPwrs);
+    }
     public Date getCaseDate() {
         return caseDate;
     }
@@ -715,13 +761,7 @@ public class LegalCase extends AbstractAuditable {
         this.appealNum = appealNum;
     }
 
-    public List<BipartisanDetails> getBipartisanDetailsBeanList() {
-        return bipartisanDetailsBeanList;
-    }
-
-    public void setBipartisanDetailsBeanList(final List<BipartisanDetails> bipartisanDetailsBeanList) {
-        this.bipartisanDetailsBeanList = bipartisanDetailsBeanList;
-    }
+    
 
     public String getFunctionaryCode() {
         return functionaryCode;
@@ -799,10 +839,22 @@ public class LegalCase extends AbstractAuditable {
         return legalCaseDepartment;
     }
 
+
     public void setLegalCaseDepartment(final List<LegalCaseDepartment> legalCaseDepartment) {
-        this.legalCaseDepartment = legalCaseDepartment;
+    	this.legalCaseDepartment.clear();
+        if (legalCaseDepartment != null) {        
+            this.legalCaseDepartment.addAll(legalCaseDepartment);
+        }   
     }
 
+    public void addEglcPwrs(LegalCaseDepartment legalCaseDepartment)
+    {
+    	this.legalCaseDepartment.add(legalCaseDepartment);
+    }
+    public void removeEglcPwrs(LegalCaseDepartment legalCaseDepartment)
+    {
+    	this.legalCaseDepartment.remove(legalCaseDepartment);
+    }
     public List<LegalCaseMiscDetails> getLegalCaseMiscDetails() {
         return legalCaseMiscDetails;
     }
@@ -818,5 +870,24 @@ public class LegalCase extends AbstractAuditable {
     public void setPetitionTypeMaster(final PetitionTypeMaster petitionTypeMaster) {
         this.petitionTypeMaster = petitionTypeMaster;
     }
+
+	public List<BipartisanDetails> getBipartisanDetailsBeanList() {
+		return bipartisanDetailsBeanList;
+	}
+
+	public void setBipartisanDetailsBeanList(List<BipartisanDetails> bipartisanDetailsBeanList) {
+		this.bipartisanDetailsBeanList = bipartisanDetailsBeanList;
+	}
+
+	public List<BipartisanDetails> getBipartisanPetitionDetailsList() {
+		return bipartisanPetitionDetailsList;
+	}
+
+	public void setBipartisanPetitionDetailsList(List<BipartisanDetails> bipartisanPetitionDetailsList) {
+		this.bipartisanPetitionDetailsList = bipartisanPetitionDetailsList;
+	}
+
+	
+	
 
 }

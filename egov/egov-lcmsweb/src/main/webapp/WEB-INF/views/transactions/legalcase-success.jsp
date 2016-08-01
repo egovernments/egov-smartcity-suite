@@ -314,7 +314,7 @@
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+								value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>
@@ -352,7 +352,7 @@
 				</div>
 			</div>
 			</div>
-
+<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<%-- <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><font
 			size="2"><spring:message code="lbl.mesg.document" /></font> </label>

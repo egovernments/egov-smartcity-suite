@@ -111,22 +111,24 @@ function addPetRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
+			alert("nextIdx===="+nextIdx +" dd= "+'['+currentROwIndex+']');
 			jQuery(rowObj).find("input, select").each(
 					function() {
-
+					
 					jQuery(this).attr({
 								'id' : function(_, id) {
-									return id.replace('[0]', '['
+									return id.replace('['+ currentROwIndex +']', '['
 											+ nextIdx + ']');
 								},
 								'name' : function(_, name) {
-									return name.replace('[0]', '['
+									return name.replace('[' + currentROwIndex + ']', '['
 											+ nextIdx + ']');
+									
 								}
 					});  
 		   });
-
-		   tbody.appendChild(rowObj);
+			tbody.appendChild(rowObj);
 		   
 }
 
@@ -139,20 +141,24 @@ function addResRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
+			alert("nextIdx in Res===="+nextIdx +" dd= "+'['+currentROwIndex+']');
 			jQuery(rowObj).find("input, select").each(
 					function() {
-
+					
 					jQuery(this).attr({
 								'id' : function(_, id) {
-									return id.replace('[0]', '['
+									return id.replace('['+ currentROwIndex +']', '['
 											+ nextIdx + ']');
 								},
 								'name' : function(_, name) {
-									return name.replace('[0]', '['
+									return name.replace('[' + currentROwIndex + ']', '['
 											+ nextIdx + ']');
+									
 								}
 					});  
 		   });
+
 
 		   tbody.appendChild(rowObj);
 		

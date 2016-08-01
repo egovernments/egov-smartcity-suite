@@ -148,6 +148,11 @@
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td>
+				<input type="hidden" 
+						id="bipartisanDetailsBeanList[0].isRepondent"
+						name="bipartisanDetailsBeanList[0].isRepondent" 
+					class="form-control table-input text-right" style="text-align: center"
+					value="${true}" />
 				
 			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><i class="fa fa-trash"></i></a></td>
