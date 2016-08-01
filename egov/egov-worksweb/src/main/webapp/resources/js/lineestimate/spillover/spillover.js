@@ -743,6 +743,7 @@ function getFunctionsByFundAndDepartment() {
 var cuttOffDate = new Date(($('#cuttOffDate').val().split('/').reverse().join('-'))).getTime();
 var currFinDate = new Date(($('#currFinDate').val().split('/').reverse().join('-'))).getTime();
 
+var lineEstimateDateArray=[];
 function initializeDatePicker(){
 	$('#lineEstimateDate').datepicker().off('changeDate');
 	jQuery( "#lineEstimateDate" ).datepicker({ 
@@ -751,11 +752,14 @@ function initializeDatePicker(){
 		onRender: function(date) {
 			return date.valueOf() < now.valueOf() ? 'disabled' : '';
 		}
+	
 		}).on('changeDate', function(ev) {
+			lineEstimateDateArray.push($(this).val());
+			var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
 			var string=jQuery(this).val();
 			if(!(string.indexOf("_") > -1)){
 			isDatepickerOpened=false; 
-			if(i != 0 && $('#isBillsCreated').prop("checked") == true){
+			if(i != 0 && lineEstimateDate >= currFinDate && $('#isBillsCreated').prop("checked") == true){
 				bootbox.confirm({
 				    message: $('#msgBillsCreated').val(),
 				    buttons: {
@@ -770,7 +774,6 @@ function initializeDatePicker(){
 				    },
 				    callback: function(result) {
 				        if (result) {
-				        	var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
 				        	if(lineEstimateDate < currFinDate){
 				        		$('#billsCreatedCheckbox').show();
 				        		$(".grossAmountBilled").val('');
@@ -778,36 +781,48 @@ function initializeDatePicker(){
 					        	$(".tdGrossAmount").hide();
 					        	$(".grossAmountBilled").removeAttr('required');
 					        	$('#isBillsCreated').prop('checked', false);
-				        	} else{
-				        	$('#billsCreatedCheckbox').hide();
-				        	$('#isBillsCreated').prop('checked', false);
-				        	$(".grossAmountBilled").val('');
-				        	$(".grossAmountBilled").removeAttr('required');
-				        	$(".thGrossAmount").hide();
-				        	$(".tdGrossAmount").hide();
-				        	}
-				        }
+				        	} else {
+			        			$('#billsCreatedCheckbox').hide();
+			        			$(".grossAmountBilled").val('');
+			        	    	$(".thGrossAmount").hide();
+			        	    	$(".tdGrossAmount").hide();
+			        	    	$(".grossAmountBilled").removeAttr('required');
+			        	    	$('#isBillsCreated').prop('checked', false);
+			        		}
+				        }else{
+		    				$('#lineEstimateDate').datepicker('setDate',new Date((lineEstimateDateArray[(lineEstimateDateArray.length) - 2].split('/').reverse().join('-'))));
+		    				$('#lineEstimateDate').datepicker("update", $('#lineEstimateDate').val());
+		    				lineEstimateDateArray.pop();
+		    			}
 				    }
 				});
+			} else{
+				if(lineEstimateDate > currFinDate && lineEstimateDate < cuttOffDate){
+        			$('#billsCreatedCheckbox').hide();
+        			$(".grossAmountBilled").val('');
+        	    	$(".thGrossAmount").hide();
+        	    	$(".tdGrossAmount").hide();
+        	    	$(".grossAmountBilled").removeAttr('required');
+        	    	$('#isBillsCreated').prop('checked', false);
+        			return false
+        		} else if(lineEstimateDate < currFinDate){
+        			$('#billsCreatedCheckbox').show();
+        		}
 			}
-			
 			validateStatusDates(this);
 			i++;
 			$('#lineEstimateDate').datepicker('hide');
 			}
 
 		}).data('datepicker');
-	
 	$('#lineEstimateDate').datepicker('update');
 	try { $("#lineEstimateDate").inputmask(); }catch(e){}	
 
 }
 
 function validateStatusDates(obj){
-	
 	var lineEstimateDate = new Date(($('#lineEstimateDate').val().split('/').reverse().join('-'))).getTime();
-	
-	if(lineEstimateDate >= cuttOffDate){
+	if(lineEstimateDate > cuttOffDate){
 		$(obj).datepicker("setDate", new Date());
 		$(obj).val('');
 		$(obj).datepicker('update');
@@ -815,10 +830,4 @@ function validateStatusDates(obj){
 		return false;
 	}
 	
-	if(lineEstimateDate > currFinDate && lineEstimateDate < cuttOffDate){
-		$('#billsCreatedCheckbox').hide();
-		return false
-	} else
-		$('#billsCreatedCheckbox').show();
-	return true;
 }
