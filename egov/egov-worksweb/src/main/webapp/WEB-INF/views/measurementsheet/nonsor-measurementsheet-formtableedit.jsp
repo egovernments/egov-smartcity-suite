@@ -49,12 +49,12 @@
                              <span name="nonSorActivities[${item.index }].mstd" class="nonSorActivities[${item.index }].mstd" id="nonSorActivities[${item.index }].mstd" data-idx="0">
     <!--only for validity head start -->                         
     <table>
-    <tr>
+    <tr class='msheet-tr'>
         <td colspan="9"><!--only for validity head end -->
-            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered" id="nonSorActivities[${item.index }].mstable">
+            <table class=" table table-bordered  msheet-table" id="nonSorActivities[${item.index }].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -115,16 +115,16 @@
 				<c:set var="net" value="${net-ms.quantity}" />
 			</c:if>
 											</td>
-                    <td><span class="glyphicon glyphicon-trash" onclick="deleteThisRow(this)" data-idx="${msindex.index}"></span></td>
+                    <td><span class="glyphicon glyphicon-trash"   data-toggle="tooltip" title="" data-original-title="Delete!"   onclick="deleteThisRow(this)" data-idx="${msindex.index}"></span></td>
                 </tr>
                 </c:forEach>
                 <tr>
                     <td colspan="6" class="text-right">
-                        <input type="button" value ="Add Row" class="btn btn-xs btn-info add-msrow">
-                        <button   class="btn btn-xs btn-danger reset-ms">Reset</button>
-                        <input type="button" value="Submit"  id="nonSorActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
+                        <input type="button" value ="<spring:message code="lbl.addrow" />" class="btn btn-xs btn-info add-msrow">
+                        <button   class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
+                        <input type="button" value="<spring:message code="lbl.submit" />"  id="nonSorActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
-                    <td class="text-right">Sub Total</td>
+                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
                     <td id="nonSorActivities[${item.index }].msnet"  class="text-right">${net}</td>
                     <td></td>
                 </tr>

@@ -47,6 +47,19 @@
       .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
       }
+     
+.msheet-tr {
+	background: #f7f7f7;
+}
+
+.msheet-table {
+	border: 1px solid #ddd;
+}
+
+.msheet-table thead:first-child>tr:first-child th {
+	background: #E7E7E7;
+	color: #333;
+}
     </style>
 <form:form name="abstractEstimateForm" role="form" method="post" modelAttribute="abstractEstimate" id="abstractEstimate"
 	class="form-horizontal form-groups-bordered"

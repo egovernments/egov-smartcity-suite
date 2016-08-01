@@ -118,8 +118,10 @@
 							</td>
 
 							<td>
+							<div class="input-group" style="width:150px">
 								<form:input path="nonSorActivities[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-								<button class="btn btn-default" name="nonSorActivities[0].msadd" id="nonSorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								<span class="input-group-addon" name="nonSorActivities[0].msadd" id="nonSorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+						    </div>
 							</td>
                              <td hidden="true">
                              <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorActivities[0].mspresent" id="nonSorActivities[0].mspresent" data-idx="0"/>
@@ -183,8 +185,10 @@
 										<c:set var="isreadonly" value="true"/>
 									</c:if>
 									<td>
+										<div class="input-group" style="width:150px">
 										<form:input path="nonSorActivities[${item.index }].quantity" readonly="${isreadonly}" id="nonSorQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right nonSorQuantity" maxlength="64" onchange="calculateNonSorEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
-									     <button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									     <span class="input-group-addon" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
+								</div>
 									</td>       
  
 									<%@ include file="../measurementsheet/nonsor-measurementsheet-formtableedit.jsp"%>  

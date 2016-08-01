@@ -208,8 +208,10 @@
 								<form:hidden path="sorActivities[0].estimateRate" id="estimateRate_0" />
 							</td>
 							<td>
-								<form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-								<button class="btn btn-default" name="sorActivities[0].msadd" id="sorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								<div class="input-group" style="width:150px">
+								  <form:input path="sorActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+								  <span class="input-group-addon" name="sorActivities[0].msadd" id="sorActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+								</div>
 							</td>
 							<td hidden="true">
                             <input class="classmspresent" type="hidden" disabled="disabled" name="sorActivities[0].mspresent" id="sorActivities[0].mspresent" data-idx="0"/>
@@ -266,8 +268,10 @@
  									<c:set var="isreadonly" value="true"/>
  									</c:if>
 									<td>
+										<div class="input-group" style="width:150px">
 									  <form:input path="sorActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" readonly="${isreadonly}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-					                  <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>				
+					                  <span class="input-group-addon" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>				
+                                    	</div>
                                      </td>
                                 	<%@ include file="../measurementsheet/sor-measurementsheet-formtableedit.jsp"%>
 									<td align="right">

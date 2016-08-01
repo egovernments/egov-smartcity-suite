@@ -2241,7 +2241,7 @@ function addMSheet(obj)
 			  }
 		
 		var curRow = $(obj).closest('tr');
-		var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
+		var k= "<tr class='msheet-tr' id=\""+sortable+".mstr\"><td colspan=\"9\">";
 		mscontent=k+mscontent+"</td></tr>";
 		curRow.after(mscontent);
 		if(document.getElementById(rowid.replace("msadd","mstd")))
@@ -2675,7 +2675,7 @@ function openAllViewmsheet()
 					}
 
 					var curRow = $(this).closest('tr');
-					var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
+					var k= "<tr id=\""+sortable+".mstr\" class='msheet-tr' ><td colspan=\"9\">";
 					mscontent=k+mscontent+"</td></tr>";
 					curRow.after(mscontent);
 					document.getElementById(sid.replace("msopen","mstd")).innerHTML="";
@@ -2725,7 +2725,7 @@ function openAllmsheet()
 					}
 
 					var curRow = $(this).closest('tr');
-					var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"9\">";
+					var k= "<tr id=\""+sortable+".mstr\" class='msheet-tr'><td colspan=\"9\">";
 					mscontent=k+mscontent+"</td></tr>";
 					curRow.after(mscontent);
 					document.getElementById(sid.replace("msopen","mstd")).innerHTML="";

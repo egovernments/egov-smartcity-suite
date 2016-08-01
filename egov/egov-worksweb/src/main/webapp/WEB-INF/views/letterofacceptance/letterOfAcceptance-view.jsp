@@ -43,6 +43,20 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<style>
+.msheet-tr {
+	background: #f7f7f7;
+}
+
+.msheet-table {
+	border: 1px solid #ddd;
+}
+
+.msheet-table thead:first-child>tr:first-child th {
+	background: #E7E7E7;
+	color: #333;
+}
+</style>
 <form:form name="loaViewForm" action="" role="form" modelAttribute="workOrder" id="workOrder" class="form-horizontal form-groups-bordered" method="post">
 
 		<div class="panel-heading">

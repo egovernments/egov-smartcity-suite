@@ -53,10 +53,10 @@
     <table>
     <tr>
         <td colspan="9"><!--only for validity head end -->
-            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+            <div class="view-content" style="color:#f2851f" ><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered" id="nonSorActivities[${item.index }].mstable">
+            <table class=" table table-bordered  msheet-table" id="nonSorActivities[${item.index }].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -112,7 +112,7 @@
                     <td colspan="6" class="text-right">
                         
                     </td>
-                    <td class="text-right">Sub Total</td>
+                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
                     <td id="nonSorActivities[${item.index }].msnet"  class="text-right">${net}</td>
                 </tr>
                 

@@ -347,25 +347,40 @@ public class EstimateService {
         List<MeasurementSheet> toRemove = new LinkedList<MeasurementSheet>();
     	for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
     	{
-            Boolean found = false;
-    	for(MeasurementSheet msnew:activity.getMeasurementSheetList())
-		 {
-    		 
-    		if(msnew.getId()!=null && (msnew.getId().longValue()==msold.getId().longValue()))
-			 {
-                    found = true;
-                }
+    		Boolean found = false;
+    		LOG.debug(oldActivity.getMeasurementSheetList().size()+"activity.getMeasurementSheetList()");  
+    		LOG.debug(msold.getId()+"------msold.getId()");
+    		if(msold.getId()==null)
+    		{
+    			continue;
+    		}
+    		
+    		for(MeasurementSheet msnew:activity.getMeasurementSheetList())
+    		{
 
-            }
-    	if(!found)
-    	{
-                toRemove.add(msold);
-            }
+    			if(msnew.getId()==null)
+    			{
+    				//found=true;
+    			}else if(msnew.getId().longValue()==msold.getId().longValue())
+    			{
+    				LOG.debug(msnew.getId()+"------msnew.getId()");
+    				LOG.debug(msnew.getRemarks()+"------remarks");
 
-        }
+    				found = true;
+    			}
+
+    		}
+
+    		if(!found)
+    		{
+    			toRemove.add(msold);
+    		}
+
+    	}
 
     	for(MeasurementSheet msremove:toRemove)
     	{
+    	 
     		LOG.info("...........Removing rows....................Of MeasurementSheet"+msremove.getId());
             oldActivity.getMeasurementSheetList().remove(msremove);
         }

@@ -43,7 +43,20 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
+<style>
+.msheet-tr {
+	background: #f7f7f7;
+}
 
+.msheet-table {
+	border: 1px solid #ddd;
+}
+
+.msheet-table thead:first-child>tr:first-child th {
+	background: #E7E7E7;
+	color: #333;
+}
+</style>
 <form:form id="createLetterOfAcceptanceForm" class="form-horizontal form-groups-bordered" modelAttribute="workOrder" role="form" action="loa-save" method="post" enctype="multipart/form-data">
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.cancel.loa.confirm" />" />
 	<div class="new-page-header"><spring:message code="title.loa.create" /></div>

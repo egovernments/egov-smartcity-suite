@@ -39,12 +39,12 @@
   --%>
 <table hidden="true" >
     <tbody id="msheaderrowtemplate">
-    <tr id="templatesorActivities[0].mstr" class="ms-sheet-row">
+    <tr id="templatesorActivities[0].mstr" class='msheet-tr'>
         <td colspan="9">
-            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
+            <div class="view-content" style="color:#f2851f"> <spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
             </div>
 
-            <table class=" table table-bordered" id="templatesorActivities[0].mstable">
+            <table class=" table table-bordered  msheet-table"  id="templatesorActivities[0].mstable">
                 <thead>
                 <th><spring:message code="lbl.slno" /></th>
                 <th><spring:message code="lbl.identifier" /></th>
@@ -95,15 +95,15 @@
                            data-pattern="decimalvalue" required="required" onblur="findNet(this)" />
 
                 </td>
-                    <td><span class="glyphicon glyphicon-trash" onclick="deleteThisRow(this)" data-idx="0"/></td>
+                    <td><span class="glyphicon glyphicon-trash" data-toggle="tooltip" title="" data-original-title="Delete!" onclick="deleteThisRow(this)" data-idx="0" style="cursor:pointer;"/></td>
                 </tr>
                 <tr>
                     <td colspan="6" class="text-right">
-                        <input type="button" value ="Add Row" class="btn btn-xs btn-info add-msrow">
-                        <button   class="btn btn-xs btn-danger reset-ms">Reset</button>
-                        <input type="button" value="Submit"  id="templatesorActivities[0].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
+                        <input type="button" value ="<spring:message code="lbl.addrow" />" class="btn btn-xs btn-info add-msrow">
+                        <button   class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
+                        <input type="button" value="<spring:message code="lbl.submit" />"  id="templatesorActivities[0].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
                     </td>
-                    <td class="text-right">Sub Total</td>
+                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
                     <td id="templatesorActivities[0].msnet" class="text-right"></td>
                     <td></td>
                 </tr>
