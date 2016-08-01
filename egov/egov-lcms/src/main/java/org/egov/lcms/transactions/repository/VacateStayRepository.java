@@ -37,7 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.lcms.transactions.repository;
 
-jQuery(document).ready(function($)
-{
-	});
+import org.egov.lcms.transactions.entity.VacateStay;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface VacateStayRepository extends JpaRepository<VacateStay, Long> {
+
+}

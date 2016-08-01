@@ -41,16 +41,27 @@
 $(document).ready(function()
 {
 	
-	$('#recovrbtn').click(function(){
+	$('.recovrbtn').click(function(){
 		if($('#emailOrMobileNum').val()===""){
 			$('#emailOrMobileNoReq').show();
 		}else{
 			$('#originURL').val(location.origin);
+			if($(this).attr("id") == "recoveryotpbtn")
+				$("#byOtp").val(true);
+            else
+                $("#byOtp").val(false);
 			$('#forgotPasswordForm').attr('action', '/egi/login/password/recover').trigger('submit');
 		}
 		return false;
 	});
-	
+
+    $("#otprecoverybtn").click( function () {
+            if ($("#token").val() != "") {
+                window.location = '/egi/login/password/reset?token='+$("#token").val();
+            }
+        }
+    );
+
 	$('#compsearch').click(function() {
 		var compnum=$('#compsearchtxt').val();
 		if (compnum !== "") {

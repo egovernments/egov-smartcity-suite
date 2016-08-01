@@ -112,7 +112,7 @@
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
 			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
 			<th class="text-center"><spring:message
-					code="lbl.add/delete_pet" /></th>
+					code="lbl.add/delete_Res" /></th>
 		</tr>
 	</thead>
 	<tbody>

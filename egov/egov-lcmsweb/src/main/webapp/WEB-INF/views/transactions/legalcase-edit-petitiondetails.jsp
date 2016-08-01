@@ -60,17 +60,16 @@
 		</tr>
 	</thead>
 	<tbody>
-		<c:forEach var="bipartisanDetails" items="${pettempList}"
+		<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
 			varStatus="status">
 			<tr>
 				<td><form:input type="hidden"
 						id="bipartisanDetails[${status.index}].isRespondentGovernment"
 						path="bipartisanDetails[${status.index}].isRespondentGovernment" />
 
-					<input type="checkbox"
-					id="table_isRespondentGovernment${status.index}"
+					<input type="checkbox" id="activeid"
 					class="form-control" style="text-align: center"
-					value="${bipartisanDetails.isRespondentGovernment}" /></td>
+					value="${bipartisanDetails.isRespondentGovernment}" onblur="onChangeofPetitioncheck()" /></td>
 
 				<td><form:input type="hidden"
 						id="bipartisanDetails[${status.index}].name"
@@ -137,18 +136,17 @@
 	</thead>
 	<tbody>
 
-		<c:forEach var="bipartisanDetailsBeanList" items="${respoTempList}"
+		<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 			varStatus="status">
 			<tr>
 				<td><form:input type="hidden"
 						id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 						path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
 
-					<input type="checkbox"
-					id="table_isRespondentGovernment${status.index}"
+					<input type="checkbox"  id="activeid"
 					class="form-control" style="text-align: center"
 					value="${bipartisanDetailsBeanList.isRespondentGovernment}"
-					onblur="onChangeofPetitioncheck()" /></td>
+					onblur="onChangeofRespodantcheck()" /></td>
 
 				<td><form:input type="text"
 						id="bipartisanDetailsBeanList[${status.index}].name"

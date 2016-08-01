@@ -46,20 +46,20 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-left">Hearing
-							Date :<span class="mandatory"></span>
-						</label>
+						<label class="col-sm-2 control-label text-left"><spring:message
+								code="lbl.hearingdate" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="hearingDate" class="form-control datepicker"
-								data-date-end-date="" data-inputmask="'mask': 'd/m/y'" required="required"/>
+								data-date-end-date="" data-inputmask="'mask': 'd/m/y'"
+								required="required" />
 							<form:errors path="hearingDate" cssClass="error-msg" />
 						</div>
 
 					</div>
 
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-left">Purpose Of
-							Hearing :<span class="mandatory"></span>
+						<label class="col-sm-2 control-label text-left"><spring:message
+								code="lbl.purposeofhearing" /> :<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="purposeofHearings"
@@ -68,8 +68,8 @@
 							<form:errors path="purposeofHearings" cssClass="error-msg" />
 						</div>
 
-						<label class="col-sm-3 control-label text-right">Outcome
-							Of Hearing :</label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.outcomeofhearing" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="hearingOutcome"
 								class="form-control text-left patternvalidation"
@@ -78,18 +78,19 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right">Additional
-							Lawyer :</label>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.additionallawyer" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="additionalLawyers"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphabetwithspace" maxlength="50" />
 							<form:errors path="additionalLawyers" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-3 control-label text-right">Was
-							Standing Counsel Present ?</label>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.standingcounsel" /></label>
 						<div class="col-sm-2 add-margin">
-							<form:checkbox path="isStandingCounselPresent" value="${isStandingCounselPresent}"/>
+							<form:checkbox path="isStandingCounselPresent"
+								value="${isStandingCounselPresent}" />
 							<form:errors path="isStandingCounselPresent" cssClass="error-msg" />
 						</div>
 					</div>
@@ -98,8 +99,8 @@
 							<div class="panel-title">Employee Details</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label text-right">Search
-								Position Of Employee :</label>
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.positionofemployee" /> :</label>
 							<div class="col-sm-3 add-margin">
 								<form:input id="positionName" type="text" class="form-control "
 									autocomplete="off" path="" name="" value="" placeholder="" />
@@ -119,7 +120,7 @@
 							<thead>
 								<tr>
 									<th class="text-center">Position-Employee</th>
-									<th class="text-center">Delete Employee</th>
+									<th class="text-center">Delete</th>
 								</tr>
 							</thead>
 
@@ -130,4 +131,3 @@
 					</div>
 
 					<input type="hidden" name="hearings" value="${hearings.id}" />
-					

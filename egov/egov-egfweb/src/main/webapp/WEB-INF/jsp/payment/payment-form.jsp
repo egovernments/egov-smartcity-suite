@@ -55,7 +55,7 @@
 
 </script>
 </head>
-<body >
+<body>
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -495,6 +495,7 @@
 						</td>
 					</tr>
 				</table>
+				<s:hidden name="cutOffDate" id="cutOffDate" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>
@@ -682,6 +683,27 @@
 				return true;
 				}
 		}
+
+		function validateCutOff()
+		{
+		var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+		var voucherDatePart=document.getElementById("voucherdate").value.split("/");
+		var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+				+ cutOffDatePart[2]);
+		var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+				+ voucherDatePart[2]);
+		if(voucherDate<=cutOffDate)
+		{
+			return true;
+		}
+		else{
+			var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+			var msg2='<s:text name="wf.cutoffdate.msg"/>';
+			bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+				return false;
+			}
+		}
+				
 		function checkLength(obj)
 		{
 			if(obj.value.length>250)

@@ -367,6 +367,11 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
     public void setCallbackForApportion(final Boolean b) {
         isCallbackForApportion = b;
     }
+    
+    @Override
+    public String getEmailId() {
+        return getBasicProperty().getPrimaryOwner().getEmailId();
+    }
 
     @Override
     public BigDecimal calculatePenalty(final Date latestCollReceiptDate, final Date fromDate, final BigDecimal amount) {

@@ -39,35 +39,28 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.lcms.masters.service.InterimOrderService;
-import org.egov.lcms.transactions.entity.LcInterimOrder;
-import org.egov.lcms.transactions.entity.LegalCase;
-import org.egov.lcms.transactions.service.LcInterimOrderService;
-import org.egov.lcms.transactions.service.LegalCaseService;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.service.LegalCaseInterimOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/lcinterimorder")
-public class ViewAndEditLcInterimOrderController {
+public class ViewAndEditLegalCaseInterimOrderController {
 
     @Autowired
-    private LcInterimOrderService lcInterimOrderService;
-
-    @Autowired
-    private LegalCaseService legalCaseService;
+    private LegalCaseInterimOrderService legalCaseInterimOrderService;
 
     @Autowired
     private InterimOrderService interimOrderService;
@@ -78,44 +71,43 @@ public class ViewAndEditLcInterimOrderController {
     }
 
     @ModelAttribute
-    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-        final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
-        return legalCase;
+    public LegalCaseInterimOrder getLcInterimOrder(@PathVariable final String lcInterimOrderId) {
+        final LegalCaseInterimOrder legalCaseInterimOrder = legalCaseInterimOrderService
+                .findById(Long.parseLong(lcInterimOrderId));
+        return legalCaseInterimOrder;
     }
 
-    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
-    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model,
+    @RequestMapping(value = "/edit/{lcInterimOrderId}", method = RequestMethod.GET)
+    public String edit(@PathVariable("lcInterimOrderId") final String lcInterimOrderId, final Model model,
             final HttpServletRequest request) {
-        final List<LcInterimOrder> lcInterimOrderList = getLegalCase(lcNumber).getLcInterimOrder();
-        final LcInterimOrder lcInterimOrderObj = lcInterimOrderList.get(0);
+        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
         prepareNewForm(model);
-        model.addAttribute("lcInterimOrder", lcInterimOrderObj);
-        model.addAttribute("lcNumber", lcInterimOrderObj.getLegalCase().getLcNumber());
+        model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
+        model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
         model.addAttribute("mode", "edit");
         return "lcinterimorder-edit";
     }
 
-    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute("lcInterimOrder") final LcInterimOrder lcInterimOrder,
+    @RequestMapping(value = "/edit/{lcInterimOrderId}", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             final BindingResult errors, final RedirectAttributes redirectAttrs,
-            @RequestParam("lcNumber") final String lcNumber, final Model model) {
+            @PathVariable("lcInterimOrderId") final String lcInterimOrderId, final Model model) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return "lcinterimorder-edit";
         }
-        lcInterimOrderService.persist(lcInterimOrder);
-        redirectAttrs.addFlashAttribute("lcInterimOrder", lcInterimOrder);
+        legalCaseInterimOrderService.persist(legalCaseInterimOrder);
+        redirectAttrs.addFlashAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("message", "InterimOrder updated successfully.");
         model.addAttribute("mode", "edit");
         return "lcinterimorder-success";
     }
 
-    @RequestMapping(value = "/view/", method = RequestMethod.GET)
-    public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
-        final List<LcInterimOrder> lcInterimOrderList = getLegalCase(lcNumber).getLcInterimOrder();
-        final LcInterimOrder lcInterimOrderObj = lcInterimOrderList.get(0);
-        model.addAttribute("lcInterimOrder", lcInterimOrderObj);
-        model.addAttribute("lcNumber", lcInterimOrderObj.getLegalCase().getLcNumber());
+    @RequestMapping(value = "/view/{lcInterimOrderId}", method = RequestMethod.GET)
+    public String view(@PathVariable("lcInterimOrderId") final String lcInterimOrderId, final Model model) {
+        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
+        model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
+        model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
         model.addAttribute("mode", "view");
         return "lcinterimorder-success";
     }

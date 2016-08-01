@@ -236,7 +236,7 @@
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>
@@ -260,7 +260,6 @@
 		</tr>
 	</thead>
 				<tbody>
-				
 				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 						varStatus="status">
 						<tr>

@@ -317,9 +317,9 @@ public class PropertyExternalService {
     }
 
     private void loadPrimaryMobileAndEmail() {
-        final PropertyOwnerInfo propOwnerInfo = basicProperty.getPropertyOwnerInfo().get(0);
-        assessmentDetail.setPrimaryEmail(propOwnerInfo.getOwner().getEmailId());
-        assessmentDetail.setPrimaryMobileNo(propOwnerInfo.getOwner().getMobileNumber());
+        final User primaryOwner = basicProperty.getPrimaryOwner();
+        assessmentDetail.setPrimaryEmail(primaryOwner.getEmailId());
+        assessmentDetail.setPrimaryMobileNo(primaryOwner.getMobileNumber());
     }
 
     private void loadPropertyDues() {

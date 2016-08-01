@@ -202,7 +202,7 @@ public class CommonController extends ApiController {
 	        }
 	       
 	        if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-	                identity, redirectURL + "/egi/login/password/reset?token=")) {
+	                identity, redirectURL + "/egi/login/password/reset?token=", false)) {
 	            return res.success("", "Password has been sent to mail");
 	        }
 	

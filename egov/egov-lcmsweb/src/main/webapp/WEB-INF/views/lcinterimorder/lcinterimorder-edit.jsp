@@ -39,16 +39,19 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post"  modelAttribute="lcInterimOrder"
-	id="lcInterimOrderform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" method="post"  modelAttribute="legalCaseInterimOrder"
+	id="legalCaseInterimOrderform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<c:if test="${not empty message}">
 					<div role="alert">${message}</div>
 				</c:if>
 	<%@ include file="lcinterimorder-form.jsp"%>
-	<input type="hidden" name="lcInterimOrder" value="${lcInterimOrderObj.id}" />
-	<input type="hidden"  id="lcNumber" name="lcNumber" value="${legalCase.lcNumber}" /> 
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />   
+	<%-- <input type="hidden" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
+	<%-- <input type="hidden"  id="lcInterimOrderId" name="lcInterimOrderId" value="${lcInterimOrder.id}" />  --%>
+	<form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrder.id}" class="form-control table-input hidden-input"/>
+	<input type="hidden" name="legalCase" value="${legalCase.id}" /> 
+	<input type="hidden" id="lcNumber" name="lcNumber"
+		value="${legalCaseInterimOrder.legalCase.lcNumber}" />  
 	</div>
 	</div>
 	</div>

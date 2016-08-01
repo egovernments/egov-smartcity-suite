@@ -101,7 +101,7 @@ public class JudgmentService {
     }
 
     public List<Judgment> findAll() {
-        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, "orderDate"));
+        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
 
     public Judgment findById(final Long id) {

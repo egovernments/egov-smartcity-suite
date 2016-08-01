@@ -39,11 +39,11 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post" modelAttribute="lcInterimOrder"
-	id="lcInterimOrderform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" method="post" modelAttribute="legalCaseInterimOrder"
+	id="legalCaseInterimOrderform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<%-- <input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
-		value="${lcInterimOrderList}"> --%>
+ <input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
+		value="${lcInterimOrderList}"> 
 	<input type="hidden" id="lcNumber" name="lcNumber"
 		value="${legalCase.lcNumber}" />
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />

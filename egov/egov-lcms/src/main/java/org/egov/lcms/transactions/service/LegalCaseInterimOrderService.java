@@ -53,9 +53,9 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.lcms.transactions.entity.LcInterimOrder;
 import org.egov.lcms.transactions.entity.LcInterimOrderDocuments;
-import org.egov.lcms.transactions.repository.LcInterimOrderRepository;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.repository.LegalCaseInterimOrderRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -68,9 +68,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
-public class LcInterimOrderService {
+public class LegalCaseInterimOrderService {
 
-    private final LcInterimOrderRepository lcInterimOrderRepository;
+    private final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -86,32 +86,33 @@ public class LcInterimOrderService {
     protected FileStoreService fileStoreService;
 
     @Autowired
-    public LcInterimOrderService(final LcInterimOrderRepository lcInterimOrderRepository) {
-        this.lcInterimOrderRepository = lcInterimOrderRepository;
+    public LegalCaseInterimOrderService(final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository) {
+        this.legalCaseInterimOrderRepository = legalCaseInterimOrderRepository;
     }
 
     @Transactional
-    public LcInterimOrder persist(final LcInterimOrder lcInterimOrder) {
+    public LegalCaseInterimOrder persist(final LegalCaseInterimOrder legalCaseInterimOrder) {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
-        lcInterimOrder.getLegalCase().setStatus(statusObj);
-        legalCaseRepository.save(lcInterimOrder.getLegalCase());
-        processAndStoreApplicationDocuments(lcInterimOrder);
-        return lcInterimOrderRepository.save(lcInterimOrder);
+        legalCaseInterimOrder.getLegalCase().setStatus(statusObj);
+        legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
+        processAndStoreApplicationDocuments(legalCaseInterimOrder);
+        return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
     }
 
-    public List<LcInterimOrder> findAll() {
-        return lcInterimOrderRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+    public List<LegalCaseInterimOrder> findAll() {
+        return legalCaseInterimOrderRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
     }
 
-    public LcInterimOrder findById(final Long id) {
-        return lcInterimOrderRepository.findOne(id);
+    public LegalCaseInterimOrder findById(final Long id) {
+        return legalCaseInterimOrderRepository.findById(id);
     }
 
-    protected void processAndStoreApplicationDocuments(final LcInterimOrder lcInterimOrder) {
-        if (!lcInterimOrder.getLcInterimOrderDocuments().isEmpty())
-            for (final LcInterimOrderDocuments applicationDocument : lcInterimOrder.getLcInterimOrderDocuments()) {
-                applicationDocument.setLcInterimOrder(lcInterimOrder);
+    protected void processAndStoreApplicationDocuments(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        if (!legalCaseInterimOrder.getLcInterimOrderDocuments().isEmpty())
+            for (final LcInterimOrderDocuments applicationDocument : legalCaseInterimOrder
+                    .getLcInterimOrderDocuments()) {
+                applicationDocument.setLegalCaseInterimOrder(legalCaseInterimOrder);
                 applicationDocument.setDocumentName("LcInterimOrder");
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
@@ -131,8 +132,8 @@ public class LcInterimOrderService {
             return null;
     }
 
-    public List<LcInterimOrder> findBYLcNumber(final String lcNumber) {
-        return lcInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
+    public List<LegalCaseInterimOrder> findBYLcNumber(final String lcNumber) {
+        return legalCaseInterimOrderRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
 }

@@ -40,14 +40,6 @@
 
 package org.egov.infra.messaging;
 
-import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-
-import java.io.InputStream;
-import java.util.Map;
-
-import javax.jms.Destination;
-import javax.jms.MapMessage;
-
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -55,6 +47,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+
+import javax.jms.Destination;
+import javax.jms.MapMessage;
+
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 @Service
 public class MessagingService {

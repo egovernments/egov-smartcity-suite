@@ -44,7 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <form:form method="post" action=""
-	class="form-horizontal form-groups-bordered" id="lcInterimOrderform"
+	class="form-horizontal form-groups-bordered" modelAttribute="legalCaseInterimOrder" id="lcInterimOrderform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
@@ -52,8 +52,9 @@
 	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
 		value="${lcInterimOrderList}">
-	<input type="hidden" id="lcInterimOrderid" name="lcInterimOrderid"
-		value="${lcInterimOrder}" />
+	<input type="hidden" id=legalCaseInterimOrder name="legalCaseInterimOrder"
+		value="${legalCaseInterimOrder.id}" />
+		<input type="hidden" name="lcInterimOrderId" value="${legalCaseInterimOrder.id}" />
 
 	<t>
 	<td colspan="5" align="right">

@@ -119,6 +119,12 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
     public EgDemand getCurrentDemand() {
         return advertisement != null ? advertisement.getDemandId() : null;
     }
+   
+    @Override
+    public String getEmailId() {
+        return "";
+    }
+
 
     @Override
     public List<EgDemand> getAllDemands() {

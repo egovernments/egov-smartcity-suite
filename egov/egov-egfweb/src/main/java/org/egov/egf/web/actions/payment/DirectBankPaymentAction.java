@@ -42,12 +42,20 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.exilant.exility.common.TaskFailedException;
-import com.exilant.exility.dataservice.DatabaseConnectionException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -100,18 +108,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.exilant.exility.common.TaskFailedException;
+import com.exilant.exility.dataservice.DatabaseConnectionException;
+import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author mani
@@ -172,6 +174,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @Autowired
     @Qualifier("miscbilldetailService")
     private MiscbilldetailService miscbilldetailService;
+    private String cutOffDate;
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+    Date date;
 
     public BigDecimal getBalance() {
         return balance;
@@ -215,6 +222,17 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public String newform() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Resetting all........................... ");
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                cutOffDate = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         voucherHeader.reset();
         commonBean.reset();
         commonBean.setModeOfPayment(MDP_CHEQUE);
@@ -247,7 +265,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         loadAjaxedDropDowns();
         removeEmptyRowsAccoutDetail(billDetailslist);
         removeEmptyRowsSubledger(subLedgerlist);
-
+        String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
+        String cutOffDate1 = null;
         try {
             if (!validateDBPData(billDetailslist, subLedgerlist)) {
                 if (commonBean.getModeOfPayment().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS)) {
@@ -265,21 +284,51 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId, commonBean,
                         billDetailslist, subLedgerlist, workflowBean);
                 showMode = "create";
-                
-                if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
+
+                if (!cutOffDate.isEmpty() && cutOffDate != null)
                 {
-                    addActionMessage(getText("directbankpayment.transaction.success")
-                            + paymentheader.getVoucherheader().getVoucherNumber());
-                } else {
-                    addActionMessage(getText("directbankpayment.transaction.success")
-                            + paymentheader.getVoucherheader().getVoucherNumber()
-                            + " and "
-                            + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader().getVouchermis()
-                                    .getBudgetaryAppnumber() }));
+                    try {
+                        date = sdf.parse(cutOffDate);
+                        cutOffDate1 = formatter1.format(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
-                addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
-                        .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
-            } else
+                if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                        && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                {
+                    if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
+                    {
+                        addActionMessage(getText("directbankpayment.transaction.success")
+                                + paymentheader.getVoucherheader().getVoucherNumber());
+                    } else {
+                        addActionMessage(getText("directbankpayment.transaction.success")
+                                + paymentheader.getVoucherheader().getVoucherNumber()
+                                + " and "
+                                + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader()
+                                        .getVouchermis()
+                                        .getBudgetaryAppnumber() }));
+                    }
+                }
+                else
+                {
+                    if (paymentheader.getVoucherheader().getVouchermis().getBudgetaryAppnumber() == null)
+                    {
+                        addActionMessage(getText("directbankpayment.transaction.success")
+                                + paymentheader.getVoucherheader().getVoucherNumber());
+                    } else {
+                        addActionMessage(getText("directbankpayment.transaction.success")
+                                + paymentheader.getVoucherheader().getVoucherNumber()
+                                + " and "
+                                + getText("budget.recheck.sucessful", new String[] { paymentheader.getVoucherheader()
+                                        .getVouchermis()
+                                        .getBudgetaryAppnumber() }));
+                    }
+                    addActionMessage(getText("payment.voucher.approved", new String[] { paymentService
+                            .getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+                }
+            }
+            else
                 throw new ValidationException(Arrays.asList(new ValidationError("engine.validation.failed", "Validation Faild")));
 
         } catch (final ValidationException e) {
@@ -872,14 +921,34 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        if (null == paymentheader || null == paymentheader.getId() || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-            validActions = Arrays.asList(FORWARD);
-        } else {
-            if (paymentheader.getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                        getPendingActions(), paymentheader.getCreatedDate());
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
             }
         }
         return validActions;
@@ -1071,5 +1140,13 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     public String getCurrentState() {
         return paymentheader.getState().getValue();
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 }

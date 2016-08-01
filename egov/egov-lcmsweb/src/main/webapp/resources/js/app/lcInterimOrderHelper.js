@@ -39,30 +39,14 @@
  */
 
 $(document).ready(function(){
-
 	
-	$('#lcInterimOrderTbl').dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
-		"autoWidth": false,
-		"destroy":true,
-		/* Disable initial sort */
-		"paging":false,
-        "aaSorting": [],
-		"oLanguage": {
-			"sInfo": ""
-		},
-		"columnDefs": [ {
-			"targets": 4,
-			"orderable": false
-		} ]
-	});
+	
 	loadDateFields();
 	$('#interimOrder').change(function(){
 		loadDateFields();
 	});
 	
-	
-function loadDateFields(){
+	function loadDateFields(){
 	if ($('#interimOrder :selected').text().localeCompare("Stay") == 0 || 
 			$('#interimOrder :selected').text().localeCompare("Stay on Condition") ==0) { 
 		$("#staydetails").show();
@@ -79,8 +63,25 @@ function loadDateFields(){
     	$("#reportdetails2").hide();
 	}
 }
+	$('#lcInterimOrderTbl').dataTable({
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"destroy":true,
+		/* Disable initial sort */
+		"paging":false,
+	    "aaSorting": [],
+		"oLanguage": {
+			"sInfo": ""
+		},
+		"columnDefs": [ {
+			"targets": 4,
+			"orderable": false
+		} ]
+	});
 
 });
+
+
 
 $('#btnclose').click(function(){
 	bootbox.confirm({
@@ -104,9 +105,9 @@ $('#btnclose').click(function(){
 	
 });
 
-function edit(){    
-		var lcNumber = $('#lcNumber').val();
-		var url = '/lcms/lcinterimorder/edit/?lcNumber='+lcNumber;
+function edit(legalCaseInterimOrder){    
+		var legalCaseInterimOrder = $('#lcInterimOrderId').val();
+		var url = '/lcms/lcinterimorder/edit/'+legalCaseInterimOrder;
 		window.location = url;
        }
 $('#buttonBack').click(function() {
@@ -125,8 +126,12 @@ $('#createnewinterimorder').click(function() {
 });
 
 
-function viewInterimorder(){
-	var lcNumber = $('#lcNumberHY').val();
-	window.open('/lcms/lcinterimorder/view/?lcNumber=' + lcNumber, "_self",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function viewInterimorder(legalCaseInterimOrder){
+	var legalCaseInterimOrder = $('#lcInterimOrderId').val()
+	window.open('/lcms/lcinterimorder/view/' + legalCaseInterimOrder, "_self",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
-		
+	
+function vacatestay(Obj){    
+	var url = '/lcms/vacatestay/new/?lcInterimOrderId='+Obj;
+	window.location = url;
+   }

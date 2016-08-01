@@ -73,8 +73,8 @@ public class HearingsService {
         return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
 
-    public Hearings findBy(final Long hearings) {
-        return hearingsRepository.findOne(hearings);
+    public Hearings findById(final Long id) {
+        return hearingsRepository.findOne(id);
     }
 
 }

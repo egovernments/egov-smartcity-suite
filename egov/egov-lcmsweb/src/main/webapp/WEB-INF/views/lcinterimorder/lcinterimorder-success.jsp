@@ -44,13 +44,13 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
-	modelAttribute="lcInterimOrder" id="lcInterimOrderform">
+	modelAttribute="legalCaseInterimOrder" id="legalCaseInterimOrderform">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />
+		value="${legalCaseInterimOrder.legalCase.lcNumber}" /> 
+		<%-- <form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrderId}" class="form-control table-input hidden-input"/> --%>
 
-	<input type="hidden" name="lcInterimOrder" id="lcInterimOrder"
-		value="${lcInterimOrder}">
+	 <input type="hidden" name="lcInterimOrderId" value="${legalCaseInterimOrder.id}" />
 	<input type="hidden" name="mode" value="${mode}" />
 	<div class="main-content">
 		<div class="row">
@@ -68,13 +68,13 @@
 								<spring:message code="lbl.interimorder" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${lcInterimOrder.interimOrder.interimOrderType}</div>
+								${legalCaseInterimOrder.interimOrder.interimOrderType}</div>
 
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.iodate" />
 							</div>
 							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<fmt:formatDate value="${lcInterimOrder.ioDate}" var="ioDate"
+								<fmt:formatDate value="${legalCaseInterimOrder.ioDate}" var="ioDate"
 									pattern="dd/MM/yyyy" />
 								<c:out value="${ioDate}" />
 							</div>
@@ -84,13 +84,13 @@
 								<spring:message code="lbl.mpnumber" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${lcInterimOrder.mpNumber}</div>
+								${legalCaseInterimOrder.mpNumber}</div>
 
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.notes" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${lcInterimOrder.notes}</div>
+								${legalCaseInterimOrder.notes}</div>
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
@@ -98,14 +98,14 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.sendtoStandingCounsel}" />
+									value="${legalCaseInterimOrder.sendtoStandingCounsel}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.petitionfiledon" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.petitionFiledOn}" />
+									value="${legalCaseInterimOrder.petitionFiledOn}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -114,14 +114,14 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.reportFilingDue}" />
+									value="${legalCaseInterimOrder.reportFilingDue}" />
 							</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.sendtodepartment" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.sendtoDepartment}" />
+									value="${legalCaseInterimOrder.sendtoDepartment}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -130,7 +130,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.reportFromHod}" />
+									value="${legalCaseInterimOrder.reportFromHod}" />
 							</div>
 
 							<div class="col-xs-3 add-margin">
@@ -138,7 +138,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.reportSendtoStandingCounsel}" />
+									value="${legalCaseInterimOrder.reportSendtoStandingCounsel}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -147,7 +147,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<fmt:formatDate pattern="MM/dd/yyyyy"
-									value="${lcInterimOrder.reportFilingDate}" />
+									value="${legalCaseInterimOrder.reportFilingDate}" />
 							</div>
 						</div>
 					</div>
@@ -157,14 +157,13 @@
 		</div>
 		<div class="row text-center">
 			<div class="add-margin">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()">Close</a>
-				<button type="button" class="btn btn-default" id="buttonBack"
+			<button type="button" class="btn btn-default" id="buttonBack"
 					onclick="goback()">
 					<spring:message code="lbl.back" />
 				</button>
-
-			</div>
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="self.close()">Close</a>
+				</div>
 		</div>
 </form:form>
 <script

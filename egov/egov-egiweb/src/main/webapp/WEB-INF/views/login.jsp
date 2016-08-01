@@ -235,10 +235,29 @@
 								<div class="form-group">
 									<c:choose>
 										<c:when test="${param.recovered}">
-											<div class="text-center  font-green font-12"><spring:message code="msg.success.pwd.recov"/></div>
+                                            <div class="alert alert-info" role="alert">
+                                                <div class="text-center font-green font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
+                                                <c:if test="${param.byOTP}">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon style-label">
+                                                            <i class="fa fa-key theme-color style-color"></i>
+                                                        </div>
+                                                        <input style="display:none" type="password">
+                                                        <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="off" required="required"/>
+                                                        <span class="mandatory set-mandatory"></span>
+                                                    </div>
+                                                    <div class="form-group text-right">
+                                                        <button type="button" class="btn btn-custom recovrbtn" id="otprecoverybtn">
+                                                            <spring:message code="title.reset.password"/>
+                                                        </button>
+                                                    </div>
+                                                </c:if>
+                                            </div>
 										</c:when>
 										<c:otherwise>
-											<div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.recov"/></div>
+                                            <div class="alert alert-danger">
+											    <div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.recov"/></div>
+                                            </div>
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -330,12 +349,18 @@
 										required="required" placeholder="Your Username"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
+                                        <input type="hidden" name="byOTP" id="byOtp">
 								</div>
 								<div id="emailOrMobileNoReq" class="error-msg display-hide"><spring:message code="lbl.pwd.recover.un.req"/></div>
 								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;"><spring:message code="lbl.pwd.reset.link"/></div>
 							</div>
 							<div class="form-group text-right">
-								<button type="submit" id="recovrbtn" class="btn btn-primary"><spring:message code="btn.lbl.recover"/></button>
+								<button type="button" class="btn btn-primary recovrbtn">
+									<spring:message code="btn.lbl.recover.link"/>
+								</button>
+								<button type="button" id="recoveryotpbtn" class="btn btn-primary recovrbtn">
+									<spring:message code="btn.lbl.recover.otp"/>
+								</button>
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal"><spring:message code="lbl.close"/></button>
 							</div>

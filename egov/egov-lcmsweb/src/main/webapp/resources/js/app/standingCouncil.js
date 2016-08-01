@@ -37,17 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.repository;
 
-import java.util.List;
-
-import org.egov.lcms.transactions.entity.LcInterimOrder;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface LcInterimOrderRepository extends JpaRepository<LcInterimOrder, java.lang.Long> {
-    
-    List<LcInterimOrder> findByLegalCase_lcNumber(final String lcNumber);
-
+jQuery(document).ready(function($)
+{
+	
+	if($('#seniourAdvisRequired').val() == 'false')
+	{
+			    $("#seniordov1").hide(); 
+			    $("#seniordov2").hide(); 
+			    $("#seniordov3").hide();
+	}
+	else{
+		$("#isSeniorAdvocate").prop("checked", true);
+	  var elm = document.getElementById('isSeniorAdvocate');
+	  if(elm.checked)
+	{
+			    $("#seniordov1").show(); 
+			    $("#seniordov2").show();
+			    $("#seniordov3").show();
+	}
+	else
+	{
+		 $("#seniordov1").hide(); 
+		    $("#seniordov2").hide();
+		     $("#seniordov3").show();
+		    dom.get('seniorAdvocateName').value="";
+			  dom.get('assignedtodateForsenior').value="";
+		      dom.get('orderDate').value="";
+		      dom.get("orderNumber").value="";
+	}
 }
+	});

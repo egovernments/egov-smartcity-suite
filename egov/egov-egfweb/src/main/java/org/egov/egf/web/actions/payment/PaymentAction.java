@@ -39,8 +39,21 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -89,19 +102,8 @@ import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
@@ -205,6 +207,11 @@ public class PaymentAction extends BasePaymentAction {
     private FinancialYearHibernateDAO financialYearDAO;
     @Autowired
     private PaymentActionHelper paymentActionHelper;
+    private String cutOffDate;
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+    Date date;
 
     public PaymentAction() {
         if (LOGGER.isDebugEnabled())
@@ -216,12 +223,12 @@ public class PaymentAction extends BasePaymentAction {
 
     @Override
     public void prepare() {
-    	
+
         super.prepare();
-        if(fromDate==null)
-        	fromDate="";
-        if(toDate==null)
-        	toDate="";
+        if (fromDate == null)
+            fromDate = "";
+        if (toDate == null)
+            toDate = "";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting prepare...");
         // mandatoryFields = new ArrayList<String>();
@@ -527,7 +534,7 @@ public class PaymentAction extends BasePaymentAction {
                 contractorBillList = getPersistenceService().findPageBy(contractorBillSql1, 1, 500, "Works").getList();
             final Set<EgBillregister> tempBillList = new LinkedHashSet<EgBillregister>(contractorBillList);
             contractorBillList.clear();
-            
+
             contractorBillList.addAll(tempBillList);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("contractorBillSql  ===> " + contractorBillSql);
@@ -772,6 +779,17 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-save")
     public String save() throws ValidationException {
         final List<PaymentBean> paymentList = new ArrayList<PaymentBean>();
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                cutOffDate = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             final String paymentMd = parameters.get("paymentMode")[0];
             if (LOGGER.isDebugEnabled())
@@ -867,49 +885,49 @@ public class PaymentAction extends BasePaymentAction {
 
         String tempAttributes = "";
         if (list != null) {
-            for (final PaymentBean bean : list){
-            	if(bean==null)
-            		continue;
-            //    if (bean.getIsSelected()) {
-                    if (chk.equals("")) {
-                        chk = "checked";
-                        fundNameStr = bean.getFundName() == null ? "" : bean.getFundName();
-                        functionNameStr = bean.getFunctionName() == null ? "" : bean.getFunctionName();
-                        deptNameStr = bean.getDeptName() == null ? "" : bean.getDeptName();
-                        fundSourceNameStr = bean.getFundsourceName() == null ? "" : bean.getFundsourceName();
-                        schemeStr = bean.getSchemeName() == null ? "" : bean.getSchemeName();
-                        subSchemeStr = bean.getSubschemeName() == null ? "" : bean.getSubschemeName();
-                        region = bean.getRegion() == null ? "" : bean.getRegion();
-                        /*
-                         * attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-" +
-                         * schemeStr + "-" + subSchemeStr;
-                         */
-                        attributes = fundNameStr + "-" + fundSourceNameStr + "-"
-                                + schemeStr + "-" + subSchemeStr;
-                    }
+            for (final PaymentBean bean : list) {
+                if (bean == null)
+                    continue;
+                // if (bean.getIsSelected()) {
+                if (chk.equals("")) {
+                    chk = "checked";
+                    fundNameStr = bean.getFundName() == null ? "" : bean.getFundName();
+                    functionNameStr = bean.getFunctionName() == null ? "" : bean.getFunctionName();
+                    deptNameStr = bean.getDeptName() == null ? "" : bean.getDeptName();
+                    fundSourceNameStr = bean.getFundsourceName() == null ? "" : bean.getFundsourceName();
+                    schemeStr = bean.getSchemeName() == null ? "" : bean.getSchemeName();
+                    subSchemeStr = bean.getSubschemeName() == null ? "" : bean.getSubschemeName();
+                    region = bean.getRegion() == null ? "" : bean.getRegion();
                     /*
-                     * tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-" + (bean.getFunctionName() ==
-                     * null ? "" : bean.getFunctionName()) + "-" + (bean.getDeptName() == null ? "" : bean.getDeptName()) + "-" +
-                     * (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-" + (bean.getSchemeName() == null ?
-                     * "" : bean.getSchemeName()) + "-" + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
+                     * attributes = fundNameStr + "-" + functionNameStr + "-" + deptNameStr + "-" + fundSourceNameStr + "-" +
+                     * schemeStr + "-" + subSchemeStr;
                      */
-                    tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-"
-                            + (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-"
-                            + (bean.getSchemeName() == null ? "" : bean.getSchemeName()) + "-"
-                            + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
-                    if (attributes.equalsIgnoreCase(tempAttributes)) {
-                        billList.add(bean);
-                        ids = ids + bean.getBillId() + ",";
-                      }  
-                    else {
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("Validation Error mismatch in attributes ");
-                        throw new ValidationException(Arrays.asList(new ValidationError("Mismatch in attributes",
-                                "Mismatch in attributes!!")));
-                    }
+                    attributes = fundNameStr + "-" + fundSourceNameStr + "-"
+                            + schemeStr + "-" + subSchemeStr;
                 }
-          //      else
-            //        continue;
+                /*
+                 * tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-" + (bean.getFunctionName() == null
+                 * ? "" : bean.getFunctionName()) + "-" + (bean.getDeptName() == null ? "" : bean.getDeptName()) + "-" +
+                 * (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-" + (bean.getSchemeName() == null ? "" :
+                 * bean.getSchemeName()) + "-" + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
+                 */
+                tempAttributes = (bean.getFundName() == null ? "" : bean.getFundName()) + "-"
+                        + (bean.getFundsourceName() == null ? "" : bean.getFundsourceName()) + "-"
+                        + (bean.getSchemeName() == null ? "" : bean.getSchemeName()) + "-"
+                        + (bean.getSubschemeName() == null ? "" : bean.getSubschemeName());
+                if (attributes.equalsIgnoreCase(tempAttributes)) {
+                    billList.add(bean);
+                    ids = ids + bean.getBillId() + ",";
+                }
+                else {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Validation Error mismatch in attributes ");
+                    throw new ValidationException(Arrays.asList(new ValidationError("Mismatch in attributes",
+                            "Mismatch in attributes!!")));
+                }
+            }
+            // else
+            // continue;
             if (ids.length() > 0)
                 ids = ids.substring(0, ids.length() - 1);
         }
@@ -923,6 +941,10 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-create")
     public String create() {
         try {
+            String vdate = parameters.get("voucherdate")[0];
+            Date date1 = sdf1.parse(vdate);
+            String voucherDate = formatter1.format(date1);
+            String cutOffDate1 = null;
             // billregister.getEgBillregistermis().setFunction(functionSel);
             paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
             if (LOGGER.isDebugEnabled())
@@ -937,11 +959,33 @@ public class PaymentAction extends BasePaymentAction {
             paymentheader = paymentService.createPayment(parameters, billList, billregister, workflowBean);
             miscBillList = paymentActionHelper.getPaymentBills(paymentheader);
             // sendForApproval();// this should not be called here as it is public method which is called from jsp submit
-            addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
-                    .getVoucherNumber() }));
-            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-                addActionMessage(getMessage("payment.voucher.approved",
-                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+
+            if (!cutOffDate.isEmpty() && cutOffDate != null)
+            {
+                try {
+                    date = sdf1.parse(cutOffDate);
+                    cutOffDate1 = formatter1.format(date);
+                } catch (ParseException e) {
+                  //  e.printStackTrace();
+                }
+            }
+            if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                    && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+
+                addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
+                        .getVoucherNumber() }));
+            }
+            else
+            {
+                addActionMessage(getMessage("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
+                        .getVoucherNumber() }));
+                if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                    addActionMessage(getMessage("payment.voucher.approved",
+                            new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState()
+                                    .getOwnerPosition()) }));
+
+            }
 
         } catch (final ValidationException e) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1560,6 +1604,78 @@ public class PaymentAction extends BasePaymentAction {
             addFieldError(objectName, getMessage(errorKey));
     }
 
+    public List<String> getValidActions() {
+        List<String> validActions = Collections.emptyList();
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
+            }
+        }
+        return validActions;
+    }
+
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (paymentheader.getId() != null) {
+            if (paymentheader.getCurrentState() != null) {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), paymentheader
+                                .getCurrentState().getValue(), getPendingActions(), paymentheader
+                                .getCreatedDate());
+            } else {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
+                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
+                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader
+                                .getCreatedDate());
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Paymentheader getPayment() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting getPayment...");
+        String paymentid = null;
+        paymentid = parameters.get(PAYMENTID)[0];
+        if (paymentid != null)
+            paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+        if (paymentheader == null)
+            paymentheader = new Paymentheader();
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed getPayment.");
+        return paymentheader;
+    }
+
     protected String getMessage(final String key) {
         return getText(key);
     }
@@ -1641,58 +1757,6 @@ public class PaymentAction extends BasePaymentAction {
     }
 
     public Paymentheader getPaymentheader() {
-        return paymentheader;
-    }
-
-    public List<String> getValidActions() {
-        List<String> validActions = Collections.emptyList();
-        if (null == paymentheader || null == paymentheader.getId() || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-            validActions = Arrays.asList(FORWARD);
-        } else {
-            if (paymentheader.getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                        getPendingActions(), paymentheader.getCreatedDate());
-            }
-        }
-        return validActions;
-    }
-
-    public String getNextAction() {
-        WorkFlowMatrix wfMatrix = null;
-        if (paymentheader.getId() != null) {
-            if (paymentheader.getCurrentState() != null) {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
-                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), paymentheader
-                                .getCurrentState().getValue(), getPendingActions(), paymentheader
-                                .getCreatedDate());
-            } else {
-                wfMatrix = this.customizedWorkFlowService.getWfMatrix(paymentheader.getStateType(),
-                        getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), paymentheader
-                                .getCreatedDate());
-            }
-        }
-        return wfMatrix == null ? "" : wfMatrix.getNextAction();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Paymentheader getPayment() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting getPayment...");
-        String paymentid = null;
-        paymentid = parameters.get(PAYMENTID)[0];
-        if (paymentid != null)
-            paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
-        if (paymentheader == null)
-            paymentheader = new Paymentheader();
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed getPayment.");
         return paymentheader;
     }
 
@@ -2154,6 +2218,14 @@ public class PaymentAction extends BasePaymentAction {
 
     public String getCurrentState() {
         return paymentheader.getState().getValue();
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 
 }

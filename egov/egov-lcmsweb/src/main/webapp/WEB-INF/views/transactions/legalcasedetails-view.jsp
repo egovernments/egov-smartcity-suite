@@ -186,7 +186,7 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${pettempList}"
+					<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
 							<td><form:input type="hidden"
@@ -221,13 +221,13 @@
 								value="${bipartisanDetails.contactNumber}" /></td>
 
 							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].governmentDepartment"
-									path="bipartisanDetails[${status.index}].governmentDepartment" />
+									id="bipartisanDetails[${status.index}].governmentDepartment.name"
+									path="bipartisanDetails[${status.index}].governmentDepartment.name" />
 								<input type="text"
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>
@@ -254,7 +254,7 @@
 			</thead>
 			<tbody>
 
-				<c:forEach var="bipartisanDetailsBeanList" items="${respoTempList}"
+				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 					varStatus="status">
 					<tr>
 						<td><form:input type="hidden"
@@ -291,12 +291,12 @@
 							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
 
 						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
-								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
+								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name"
+								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name" />
 							<input type="text" id="table_governmentDepartment${status.index}"
 							class="form-control" readonly="readonly"
 							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+							value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
 
 					</tr>
 				</c:forEach>
@@ -334,20 +334,104 @@
 			</div>
 		</div>
 	</div>
-
-	<%-- <div class="form-group">
-		<label class="col-sm-3 control-label text-right"><font
-			size="2"><spring:message code="lbl.mesg.document" /></font> </label>
-		<div class="col-sm-3 add-margin">
-
-			<input type="file" id="file" name="legalCaseDocuments[0].files"
-				class="file-ellipsis upload-file">
-
-			<form:errors path="legalCaseDocuments[0].files"
-				cssClass="add-margin error-msg" />
+	<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+	<div class="panel-heading">
+			<div class="panel-title">
+				<label class="col-sm-3 control-label text-right">Standing
+				Council Details:<span class="mandatory"></span>:
+			</label>
+			</div>
 		</div>
-	</div> --%>
-	<div class="form-group">
+	
+	<div class="main-content">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-body">
+						<div class="form-group">
+							<div class="row add-border">
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Standing
+		Council:
+	</label>
+	<div class="col-sm-3 add-margin">
+	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Assigned Date:
+	</label>
+	<div class="col-sm-3 add-margin">
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right">Date on which
+		Vakalaat filed:</label>
+	<div class="col-sm-3 add-margin">
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right" id="persons">Is
+		Senior Standing Counsel Required:</label>
+	<div class="col-sm-3 add-margin">
+	
+	<c:choose>
+    <c:when test="${legalCase.isSenioradvrequired}">
+        Yes
+         </c:when>    
+    <c:otherwise>
+        No 
+    </c:otherwise>
+</c:choose>
+	</div>
+</div>
+ <c:if test="${legalCase.isSenioradvrequired}">
+<div id="seniordov1" class="form-group">
+	<label class="col-sm-3 control-label text-right">Senior
+		Standing Council:
+	</label>
+	<div class="col-sm-3 add-margin">
+		<c:out value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
+		
+	</div>
+	<div class="form-group" id="seniordov3">
+	<label class="col-sm-2 control-label text-right">Assigned On:</label>
+	<div class="col-sm-3 add-margin">
+			
+		<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+</div>
+</div>
+<div id="seniordov2" class="form-group">
+	<label class="col-sm-3 control-label text-right">Order Date:
+	</label>
+	<div class="col-sm-3 add-margin">
+				
+				<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}" var="assignDate" />
+								<c:out value="${assignDate}" />
+	</div>
+	<label class="col-sm-2 control-label text-right">Order Number:
+	</label>
+	<div class="col-sm-3 add-margin">
+	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
+	</div>
+	</c:if>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</c:if>
+<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>

@@ -238,7 +238,7 @@ public class CollectionHelper {
         billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
                 bill.getFundSourceCode(), bill.getDepartmentCode(), bill.getDisplayMessage(), bill.getCitizenName(),
                 bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList, collType);
-        billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), null);
+        billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
 
         BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),
                 bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(), amountPaid, // the

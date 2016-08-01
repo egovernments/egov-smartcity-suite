@@ -53,6 +53,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
@@ -87,9 +88,8 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "advocatemaster", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "advocatemaster")
     private AdvocateMaster advocateMaster;
 
     @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
@@ -131,7 +131,9 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     private String reassignmentreasonsenior;
     private Boolean changeAdvocate = Boolean.FALSE;
     private Boolean changeSeniorAdvocate = Boolean.FALSE;
-
+    @Transient
+    private Boolean isSeniorAdvocate=Boolean.FALSE;
+    
     public Boolean getChangeAdvocate() {
         return changeAdvocate;
     }
@@ -307,5 +309,14 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     public void setLegalCase(final LegalCase legalCase) {
         this.legalCase = legalCase;
     }
+
+	public Boolean getIsSeniorAdvocate() {
+		return isSeniorAdvocate;
+	}
+
+	public void setIsSeniorAdvocate(Boolean isSeniorAdvocate) {
+		this.isSeniorAdvocate = isSeniorAdvocate;
+	}
+    
 
 }

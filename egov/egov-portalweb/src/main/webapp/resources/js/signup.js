@@ -92,9 +92,10 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('form#signupform').submit(function(){
-		$('#signupform').attr('action', '/portal/citizen/register').trigger('submit');
-		return false;
+	$('#signupbtn').click(function(){
+		$('#username').val($('#mobileNumber').val());
+		$('#signupform').trigger('submit');
+		return true;
 	});
 	
 	$('form#citizenactivationform').submit(function(){
