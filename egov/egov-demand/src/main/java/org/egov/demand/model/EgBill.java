@@ -89,6 +89,7 @@ public class EgBill implements java.io.Serializable {
 	private String displayMessage;
 	private Boolean callBackForApportion;
 	private String transanctionReferenceNumber;
+	private String emailId;
 
 	@Override
 	public String toString() {
@@ -401,6 +402,14 @@ public class EgBill implements java.io.Serializable {
 
     public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
     }
 
     @Override

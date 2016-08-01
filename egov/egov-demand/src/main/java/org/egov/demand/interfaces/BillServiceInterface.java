@@ -132,6 +132,7 @@ public abstract class BillServiceInterface {
 		bill.setEgDemand(currentDemand);
 		bill.setDescription(billObj.getDescription());
 		bill.setDisplayMessage(billObj.getDisplayMessage());
+		bill.setEmailId(billObj.getEmailId());
 		
 		if (currentDemand != null && currentDemand.getMinAmtPayable() != null) {
 			bill.setMinAmtPayable(currentDemand.getMinAmtPayable());

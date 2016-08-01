@@ -119,6 +119,12 @@ public class AgencyWiseBillable extends AbstractBillable implements Billable {
     }
 
     @Override
+    public String getEmailId() {
+        return "";
+    }
+
+
+    @Override
     public List<EgDemand> getAllDemands() {
         final List<EgDemand> demands = new ArrayList<EgDemand>();
         if (getCurrentDemand() != null)
