@@ -81,7 +81,7 @@
 					    <td><button type="button" class="btn btn-xs btn-secondary searchAssetbtn" data-idx="${item.index}" data-optional="0"><span class="glyphicon glyphicon-search"></span> Search</button></td>
 					    <td><a id="assetcode[${item.index}]" class="viewAsset" href='javascript:void(0)' ><c:out value="${assetValues.asset.code}"/></a>
 					    </td>
-					     <<input type="hidden" id="tempAssetValues[${item.index}].asset.code" name="tempAssetValues[${item.index}].asset.code" value="${assetValues.asset.code}"  data-optional="0" data-errormsg="Select asset details!"/>
+					     <input type="hidden" id="tempAssetValues[${item.index}].asset.code" name="tempAssetValues[${item.index}].asset.code" value="${assetValues.asset.code}"  data-optional="0" data-errormsg="Select asset details!"/>
 						<td><span class="assetdetail" id="assetname[${item.index}]"><c:out value="${assetValues.asset.name}"/></span><input type="hidden" id="tempAssetValues[${item.index}].asset.name" name="tempAssetValues[${item.index}].asset.name" value="${assetValues.asset.name}"  /></td>
 						<td><div class="text-left"><button type="button" onclick="deleteRow('tblassetdetails',this);" class="btn btn-xs btn-danger delete-row"  data-optional="0"><span class="glyphicon glyphicon-trash"></span> Delete</button></div>
 					</tr>
