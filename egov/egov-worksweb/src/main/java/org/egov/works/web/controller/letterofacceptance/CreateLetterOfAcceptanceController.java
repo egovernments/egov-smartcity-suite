@@ -366,7 +366,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
             resultBinder.rejectValue("fileDate", "error.loa.filedate",
                     new String[] { formatter.format(abstractEstimate.getApprovedDate()) }, null);
         }
-        if (workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
+        if (workOrder.getWorkOrderDate() == null)
+            resultBinder.rejectValue("workOrderDate", "error.loa.workorderdate.requires");
+        if (workOrder.getWorkOrderDate() != null && workOrder.getWorkOrderDate().before(workOrder.getFileDate()))
             resultBinder.rejectValue("fileDate", "error.loa.workorderdate");
     }
 
