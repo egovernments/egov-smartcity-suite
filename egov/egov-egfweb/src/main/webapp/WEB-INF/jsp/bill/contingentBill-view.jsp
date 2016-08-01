@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title><s:text name="contingent.bill" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -548,7 +547,7 @@ function onSubmit()
 									name="commonBean.billNumber" /></td>
 							<td class="bluebox"><s:text name="bill.Date" /><span
 								class="mandatory1"> *</span></td>
-							<s:date name='commonBean.billDate' id="commonBean.billDateId"
+							<s:date name='commonBean.billDate' var="commonBean.billDateId"
 								format='dd/MM/yyyy' />
 							<td class="bluebox"><s:textfield name="commonBean.billDate"
 									id="billDate"
@@ -562,7 +561,7 @@ function onSubmit()
 					</table>
 					<br />
 					<div align="center" style="font-family: arial; font-size: 12pt;">
-						<s:property value="sanctionedMessge" escape="false" />
+						<s:property value="sanctionedMessge" escapeHtml="false" />
 					</div>
 					<br />
 				</div>

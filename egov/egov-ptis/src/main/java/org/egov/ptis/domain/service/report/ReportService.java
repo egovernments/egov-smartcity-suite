@@ -140,6 +140,7 @@ public class ReportService {
             queryStr.append(" and pmv.ward.id=:ward ");
         if (StringUtils.isNotBlank(block))
             queryStr.append(" and pmv.block.id=:block ");
+        queryStr.append("and pmv.propTypeMstrID.code<>'VAC_LAND'");
         queryStr.append(" order by pmv.propertyId, pmv.ward");
         final Query query = propPerServ.getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(ward))

@@ -47,7 +47,6 @@
 <html>
   <head>
     <title><s:text name='NewProp.title'/></title>
-<sx:head/>
 <script type="text/javascript">
 	function loadOnStartUp() {
    		setCorrCheckBox();

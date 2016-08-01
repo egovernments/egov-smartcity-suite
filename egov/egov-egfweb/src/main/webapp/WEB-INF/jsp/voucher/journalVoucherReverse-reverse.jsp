@@ -380,7 +380,7 @@
 
 							<td class="bluebox"><s:text name="voucher.date" /></td>
 							<td class="bluebox"><s:date name="voucherDate"
-									id="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
+									var="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
 									name="voucherDate" id="voucherDate" value="%{voucherDateId}"
 									maxlength="10" readonly="true" size="10" /> (dd/mm/yyyy)</td>
 						</tr>

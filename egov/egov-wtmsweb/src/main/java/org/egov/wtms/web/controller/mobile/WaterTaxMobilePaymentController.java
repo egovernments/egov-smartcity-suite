@@ -124,9 +124,9 @@ public class WaterTaxMobilePaymentController {
 	 * @return
 	 * @throws ParseException
 	 */
-	@RequestMapping(value = "/payWatertax/{consumerNo},{ulbCode},{amountToBePaid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/payWatertax/{consumerNo},{ulbCode},{amountToBePaid},{mobileNumber},{emailId}", method = RequestMethod.GET)
 	public String collectTax(final Model model, @PathVariable final String consumerNo, @PathVariable String ulbCode,
-			@PathVariable BigDecimal amountToBePaid, final HttpServletRequest request) throws ParseException {
+			@PathVariable BigDecimal amountToBePaid,@PathVariable String mobileNumber, @PathVariable String emailId, final HttpServletRequest request) throws ParseException {
 		String redirectUrl = "";
 		BillInfoImpl billInfo = getBillInfo(consumerNo, amountToBePaid);
 		if (billInfo != null) {

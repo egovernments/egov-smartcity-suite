@@ -41,6 +41,7 @@ package org.egov.collection.utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,10 +91,12 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.utils.MoneyUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
@@ -104,7 +107,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CollectionCommon {
 
     private static final Logger LOGGER = Logger.getLogger(CollectionCommon.class);
-    private ReportService reportService;
+
     protected PersistenceService persistenceService;
     private ReceiptHeaderService receiptHeaderService;
 
@@ -143,13 +146,6 @@ public class CollectionCommon {
     }
 
     /**
-     * @param reportService the reportService to set
-     */
-    public void setReportService(final ReportService reportService) {
-        this.reportService = reportService;
-    }
-
-    /**
      * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
@@ -161,54 +157,6 @@ public class CollectionCommon {
      */
     public void setFinancialsUtil(final FinancialsUtil financialsUtil) {
         this.financialsUtil = financialsUtil;
-    }
-
-    /**
-     * @param serviceCode Billing service code for which the receipt template is to be returned
-     * @return Receipt template to be used for given billing service code.
-     */
-    private String getReceiptTemplateName(final char receiptType, final String serviceCode) {
-        String templateName = null;
-
-        switch (receiptType) {
-        case CollectionConstants.RECEIPT_TYPE_BILL:
-            templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE
-            + CollectionConstants.RECEIPT_TEMPLATE_NAME;// <servicecode>_collection_receipt
-            if (!reportService.isValidTemplate(templateName)) {
-                LOGGER.info("Billing system specific report template [" + templateName
-                        + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
-                        + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
-
-                if (!reportService.isValidTemplate(templateName)) {
-                    // No template available for creating the receipt report.
-                    // Throw
-                    // exception.
-                    final String errMsg = "Report template [" + templateName
-                            + "] not available! Receipt report cannot be generated.";
-                    LOGGER.error(errMsg);
-                    throw new ApplicationRuntimeException(errMsg);
-                }
-            }
-            break;
-        case CollectionConstants.RECEIPT_TYPE_CHALLAN:
-            templateName = CollectionConstants.CHALLAN_RECEIPT_TEMPLATE_NAME;
-            break;
-            /*
-             * case CollectionConstants.RECEIPT_TYPE_ADHOC: templateName = serviceCode + CollectionConstants.SEPARATOR_UNDERSCORE +
-             * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) {
-             * LOGGER.info("Billing system specific report template [" + templateName +
-             * "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME + "]"); templateName =
-             * CollectionConstants.RECEIPT_TEMPLATE_NAME; if (!reportService.isValidTemplate(templateName)) { // No template available
-             * for creating the receipt report. // Throw // exception. final String errMsg = "Report template [" + templateName +
-             * "] not available!Miscellaneous Receipt report cannot be generated."; LOGGER.error(errMsg); throw new
-             * ApplicationRuntimeException(errMsg); } }
-             */
-        case CollectionConstants.RECEIPT_TYPE_ADHOC:
-            templateName = CollectionConstants.RECEIPT_TEMPLATE_NAME;
-            break;
-        }
-        return templateName;
     }
 
     public ReceiptDetail addDebitAccountHeadDetails(final BigDecimal debitAmount, final ReceiptHeader receiptHeader,
@@ -233,14 +181,14 @@ public class CollectionCommon {
                 && !otherInstrumenttotal.toString().trim().equals(CollectionConstants.ZERO_DOUBLE)) {
             if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CASH));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CASH));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_CARD))
                 newReceiptDetail
-                .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
-                        CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
-                        CollectionConstants.INSTRUMENTTYPE_CARD));
+                        .setAccounthead((CChartOfAccounts) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_CHARTOFACCOUNT_BY_INSTRTYPE,
+                                CollectionConstants.INSTRUMENTTYPE_CARD));
             else if (instrumentType.equals(CollectionConstants.INSTRUMENTTYPE_BANK))
                 newReceiptDetail.setAccounthead(receiptHeader.getReceiptInstrument().iterator().next()
                         .getBankAccountId().getChartofaccounts());
@@ -261,7 +209,7 @@ public class CollectionCommon {
      * unmarshalled <code>BillCollection</code> instance.
      */
     public ReceiptHeader initialiseReceiptModelWithBillInfo(final BillInfo collDetails, final Fund fund,
-            final Department dept) {
+            final Department dept) throws ValidationException {
         ReceiptHeader receiptHeader = null;
 
         final StringBuilder collModesNotAllowed = new StringBuilder();
@@ -277,13 +225,17 @@ public class CollectionCommon {
             for (final BillDetails billDetail : billPayee.getBillDetails()) {
                 final ServiceDetails service = (ServiceDetails) persistenceService.findByNamedQuery(
                         CollectionConstants.QUERY_SERVICE_BY_CODE, collDetails.getServiceCode());
+                if (service == null)
+                    throw new ValidationException(Arrays.asList(new ValidationError(
+                            "billreceipt.improperbilldata.missingservice",
+                            "billreceipt.improperbilldata.missingservice")));
 
                 receiptHeader = new ReceiptHeader(billDetail.getRefNo(), billDetail.getBilldate(),
                         billDetail.getConsumerCode(), billDetail.getDescription(), billDetail.getTotalAmount(),
                         billDetail.getMinimumAmount(), collDetails.getPartPaymentAllowed(),
                         collDetails.getOverrideAccountHeadsAllowed(), collDetails.getCallbackForApportioning(),
                         collDetails.getDisplayMessage(), service, collModesNotAllowed.toString(),
-                        billPayee.getPayeeName(), billPayee.getPayeeAddress());
+                        billPayee.getPayeeName(), billPayee.getPayeeAddress(), billPayee.getPayeeEmail());
 
                 if (collDetails.getTransactionReferenceNumber() != null) {
                     receiptHeader.setManualreceiptnumber(collDetails.getTransactionReferenceNumber());
@@ -353,7 +305,7 @@ public class CollectionCommon {
         final char receiptType = receipts[0].getReceipttype();
         final List<BillReceiptInfo> receiptList = new ArrayList<BillReceiptInfo>(0);
 
-        final String templateName = getReceiptTemplateName(receiptType, serviceCode);
+        final String templateName = collectionsUtil.getReceiptTemplateName(receiptType, serviceCode);
         LOGGER.info(" template name : " + templateName);
         final Map<String, Object> reportParams = new HashMap<String, Object>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
@@ -377,14 +329,15 @@ public class CollectionCommon {
                             persistenceService));
                 else
                     receiptList
-                    .add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
+                            .add(new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO, persistenceService, null));
             }
         final ReportRequest reportInput = new ReportRequest(templateName, receiptList, reportParams);
 
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
+        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
         reportInput.setPrintDialogOnOpenReport(flag);
-        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
+        return reportViewerUtil.addReportToTempCache(collectionsUtil.createReport(reportInput));
     }
 
     /**
@@ -407,7 +360,7 @@ public class CollectionCommon {
         // Set the flag so that print dialog box is automatically opened
         // whenever the PDF is opened
         reportInput.setPrintDialogOnOpenReport(flag);
-        return reportViewerUtil.addReportToTempCache(reportService.createReport(reportInput));
+        return reportViewerUtil.addReportToTempCache(collectionsUtil.createReport(reportInput));
     }
 
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,
@@ -549,7 +502,7 @@ public class CollectionCommon {
 
         final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
                 oldReceiptHeader.getReceiptMisc().getFund(), null, null, oldReceiptHeader.getReceiptMisc()
-                .getDepartment(), newReceiptHeader, null, null, null);
+                        .getDepartment(), newReceiptHeader, null, null, null);
         newReceiptHeader.setReceiptMisc(receiptMisc);
         newReceiptHeader.setReceiptdate(new Date());
         final List<CChartOfAccounts> bankCOAList = chartOfAccountsHibernateDAO.getBankChartofAccountCodeList();
@@ -702,7 +655,7 @@ public class CollectionCommon {
             invalidBankPaytMsg += "Missing Bank Transaction Date \n";
         if (new Date().compareTo(paytInfoBank.getTransactionDate()) == -1)
             invalidBankPaytMsg += "Bank Transaction Date[" + paytInfoBank.getTransactionDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bankaccount account = null;
         if (paytInfoBank.getBankAccountId() == null)
             invalidBankPaytMsg += "Missing Bank Account Id \n";
@@ -711,7 +664,7 @@ public class CollectionCommon {
 
             if (account == null)
                 invalidBankPaytMsg += "No account found for bank account id[" + paytInfoBank.getBankAccountId()
-                + "] \n";
+                        + "] \n";
         }
 
         if (!CollectionConstants.BLANK.equals(invalidBankPaytMsg))
@@ -745,18 +698,18 @@ public class CollectionCommon {
         if (paytInfoChequeDD.getInstrumentAmount() == null
                 || paytInfoChequeDD.getInstrumentAmount().compareTo(BigDecimal.ZERO) <= 0)
             invalidChequeDDPaytMsg += "Invalid cheque/DD Instrument Amount[" + paytInfoChequeDD.getInstrumentAmount()
-            + "] \n";
+                    + "] \n";
         if (paytInfoChequeDD.getInstrumentNumber() == null
                 || CollectionConstants.BLANK.equals(paytInfoChequeDD.getInstrumentNumber())
                 || !MoneyUtils.isInteger(paytInfoChequeDD.getInstrumentNumber())
                 || paytInfoChequeDD.getInstrumentNumber().length() != 6)
             invalidChequeDDPaytMsg += "Invalid Cheque/DD Instrument Number[" + paytInfoChequeDD.getInstrumentNumber()
-            + "]. \n";
+                    + "]. \n";
         if (paytInfoChequeDD.getInstrumentDate() == null)
             invalidChequeDDPaytMsg += "Missing Cheque/DD Transaction Date \n";
         if (new Date().compareTo(paytInfoChequeDD.getInstrumentDate()) == -1)
             invalidChequeDDPaytMsg += "Cheque/DD Transaction Date[" + paytInfoChequeDD.getInstrumentDate()
-            + "] cannot be a future date \n";
+                    + "] cannot be a future date \n";
         Bank bank = null;
         if (paytInfoChequeDD.getBankId() != null) {
             bank = bankDAO.findById(paytInfoChequeDD.getBankId().intValue(), false);

@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2016-05-24T17:31:25 -->
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-07-26T15:22:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt_accounts" language="groovy" pageWidth="551" pageHeight="802" columnWidth="551" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="dbbc36f2-fb09-429d-8985-50a04d1a0b3f">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -110,7 +110,7 @@
 		<initialValueExpression><![CDATA[BigDecimal.valueOf(0)]]></initialValueExpression>
 	</variable>
 	<variable name="from_date" class="java.lang.String" calculation="Lowest">
-		<variableExpression><![CDATA[$F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length())]]></variableExpression>
+		<variableExpression><![CDATA[$F{crAmount}>0 && !"ADVANCE_AMOUNT".equals($F{purpose})?($F{description}.substring($F{description}.indexOf('-')+1, $F{description}.length())):$V{to_date}]]></variableExpression>
 	</variable>
 	<variable name="to_year" class="java.lang.String" calculation="Highest">
 		<variableExpression><![CDATA[$V{to_date}.substring(0,$V{to_date}.indexOf('-'))-1]]></variableExpression>

@@ -43,7 +43,6 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<sx:head />
 <script type="text/javascript" language="javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <meta http-equiv="Content-Type"

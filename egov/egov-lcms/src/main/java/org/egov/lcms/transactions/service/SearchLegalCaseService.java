@@ -62,7 +62,7 @@ public class SearchLegalCaseService {
 		final StringBuilder queryStr = new StringBuilder();
 		queryStr.append("select distinct legalObj.casenumber as \"caseNumber\",courtmaster.name  as \"courtName\","
 				+ "legalObj.casetitle  as \"caseTitle\","
-				+ " legalObj.appealnum  as \"standingCouncil\",egwStatus.code  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" "
+				+ " legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\",legalObj.lcNumber as \"lcNumber\" "
 				+ "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
 				+ "eglc_petitiontype_master petmaster,egw_status egwStatus");
 

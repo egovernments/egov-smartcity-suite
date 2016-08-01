@@ -265,12 +265,19 @@
 							class="mandatory1">*</span> :</td>
 						<td class="bluebox"><s:textfield name="partyValue"
 								value="%{partyValue}" id="partyValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
 						<td class="bluebox"><s:text name="label.department.value" /><span
 							class="mandatory1">*</span> :</td>
 						<td class="bluebox"><s:textfield name="departmentValue"
 								value="%{departmentValue}" id="departmentValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
+								onblur="validNumber(this);checkZero(this);calculateMutationFee();" /></td>
+					</tr>
+					<tr>
+						<td class="bluebox2">&nbsp;</td>
+						<td class="bluebox"><s:text name="payablefee" /> :</td>
+						<td class="bluebox"><s:textfield name="mutationFee"
+								value="%{mutationFee}" id="mutationFee" maxlength="16" readonly="true"/></td>
+						<td class="bluebox" colspan="2" />
 					</tr>
 					</table>
 					</table>
@@ -336,8 +343,25 @@
 				}
 			}
 		}
+		
+		function onSubmit() {
+			if (document.getElementById("partyValue").value == '') {
+				bootbox.alert("Please enter the Parties consideration value");
+				return false;
+			}
+			if (document.getElementById("departmentValue").value == '') {
+				bootbox.alert("Please enter the Department guidelines value");
+				return false;
+			}
+			if(document.getElementById("mutationFee").value == ''){
+				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
+				return false;
+			}
+			return true;
+		} 
+		
 	</script>
-	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/javascript/transferProperty.js'/>"></script>
 </body>
 </html>

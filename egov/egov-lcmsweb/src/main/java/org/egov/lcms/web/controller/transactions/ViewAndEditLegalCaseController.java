@@ -17,9 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -42,13 +42,13 @@ public class ViewAndEditLegalCaseController {
     private CourtMasterService courtMasterService;
 
     @ModelAttribute
-    private LegalCase getLegalCase(@PathVariable final String lcNumber) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
 
-    @RequestMapping(value = "/view/{lcNumber}", method = RequestMethod.GET)
-    public String view(@PathVariable("lcNumber") final String lcNumber, final Model model) {
+    @RequestMapping(value = "/view/", method = RequestMethod.GET)
+    public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
@@ -64,8 +64,8 @@ public class ViewAndEditLegalCaseController {
         return "legalcasedetails-view";
     }
 
-    @RequestMapping(value = "/edit/{lcNumber}", method = RequestMethod.GET)
-    public String edit(@PathVariable final String lcNumber, final Model model) {
+    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
+    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         setDropDownValues(model);
@@ -82,12 +82,12 @@ public class ViewAndEditLegalCaseController {
         return "legalcase-edit";
     }
 
-    @RequestMapping(value = "/edit/{lcNumber}", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final LegalCase legalCase, @PathVariable final String lcNumber,
+    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "legalcase-edit";
-        legalCaseService.createLegalCase(legalCase);
+        legalCaseService.persist(legalCase);
         setDropDownValues(model);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");

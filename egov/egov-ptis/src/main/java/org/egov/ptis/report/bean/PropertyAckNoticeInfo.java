@@ -107,7 +107,7 @@ public class PropertyAckNoticeInfo {
     private String ownerTypeForReport;
     private String applicationType;
     private String transferpropertyText;
-    
+    private String transferpropertyTextEnd;
 
 	public String getCreationReason() {
         return creationReason;
@@ -612,7 +612,13 @@ public class PropertyAckNoticeInfo {
 	public void setTransferpropertyText(String transferpropertyText) {
 		this.transferpropertyText = transferpropertyText;
 	}
-	
-	
+
+	public String getTransferpropertyTextEnd() {
+		return transferpropertyTextEnd;
+	}
+
+	public void setTransferpropertyTextEnd(String transferpropertyTextEnd) {
+		this.transferpropertyTextEnd = transferpropertyTextEnd;
+	}
 	
 }

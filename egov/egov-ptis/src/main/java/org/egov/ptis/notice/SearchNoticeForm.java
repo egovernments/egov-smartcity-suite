@@ -39,9 +39,7 @@
  */
 package org.egov.ptis.notice;
 
-import org.apache.struts.action.ActionForm;
-
-public class SearchNoticeForm extends ActionForm
+public class SearchNoticeForm
 {
 	private String noticeType = null;
 	private String noticeNumber = null;

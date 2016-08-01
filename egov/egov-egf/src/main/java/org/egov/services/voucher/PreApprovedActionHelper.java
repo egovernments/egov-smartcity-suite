@@ -39,22 +39,24 @@
  */
 package org.egov.services.voucher;
 
-import com.exilant.exility.common.TaskFailedException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.voucher.WorkflowBean;
+import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.exilant.exility.common.TaskFailedException;
 
 @Transactional(readOnly = true)
 @Service
@@ -90,8 +92,16 @@ public class PreApprovedActionHelper {
     public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)
     {
         try {
-            voucherHeader = journalVoucherActionHelper.transitionWorkFlow(voucherHeader, workflowBean);
-            voucherService.applyAuditing(voucherHeader.getState());
+            if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+                    && voucherHeader.getState() == null)
+            {
+                voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
+            }
+            else
+            {
+                voucherHeader = journalVoucherActionHelper.transitionWorkFlow(voucherHeader, workflowBean);
+                voucherService.applyAuditing(voucherHeader.getState());
+            }
             voucherService.persist(voucherHeader);
 
         } catch (final ValidationException e) {

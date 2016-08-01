@@ -89,6 +89,26 @@ function openSource(){
 	}
 	window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
 }
+function validateCutOff()
+{
+	console.log(document.getElementById("cutOffDate"));
+var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+var voucherDatePart=document.getElementById("voucherDate").value.split("/");
+var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+		+ cutOffDatePart[2]);
+var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+		+ voucherDatePart[2]);
+if(voucherDate<=cutOffDate)
+{
+	return true;
+}
+else{
+	var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+	var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+		return false;
+	}
+}
 function onSubmit()
 {
 	var voucherdate =document.getElementById('voucherDate').value ;
@@ -133,7 +153,7 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 									class="mandatory1">*</span></td>
 								<td class="greybox" width="25%">
 									<div name="daterow">
-										<s:date name="voucherDate" id="voucherDateId"
+										<s:date name="voucherDate" var="voucherDateId"
 											format="dd/MM/yyyy" />
 										<s:textfield id="voucherDate" name="voucherDate"
 											data-date-end-date="0d" value="%{voucherDateId}"
@@ -258,6 +278,7 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 					</table>
 				</div>
 				<s:if test="%{!mode.equalsIgnoreCase('save')}">
+					<s:hidden id="cutOffDate" name="cutOffDate" />
 					<%@ include file='../workflow/commonWorkflowMatrix.jsp'%>
 					<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 				</s:if>

@@ -76,7 +76,7 @@
 						class="mandatory1">*</span></td>
 
 					<td class="greybox"><s:date name="billDateFrom"
-							id="billDateFrom" format="dd/MM/yyyy" /> <s:textfield
+							var="billDateFrom" format="dd/MM/yyyy" /> <s:textfield
 							id="billDateFrom" name="billDateFrom" value="%{billDateFrom}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
@@ -85,7 +85,7 @@
 					<td class="greybox"><s:text name="bill.search.dateTo" /> <span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="billDateTo" id="billDateTo"
+					<td class="greybox"><s:date name="billDateTo" var="billDateTo"
 							format="dd/MM/yyyy" /> <s:textfield id="billDateTo"
 							name="billDateTo" value="%{billDateTo}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

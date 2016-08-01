@@ -43,6 +43,9 @@
 package org.egov.egf.web.actions.bill;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,6 +62,7 @@ import java.util.Set;
 import javax.script.ScriptContext;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -142,7 +146,12 @@ public class ContingentBillAction extends BaseBillAction {
     private boolean showPrintPreview;
     private String sanctionedMessge;
     private Department primaryDepartment;
-
+    private String cutOffDate;
+    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+    Date date;
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -239,8 +248,20 @@ public class ContingentBillAction extends BaseBillAction {
     @Override
     @SuppressWarnings("unchecked")
     @SkipValidation
-    @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-newform")
+    @Action(value = "/bill/contingentBill-newform")
     public String newform() {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        Date date;
+        if (!cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                cutOffDate = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         reset();
         commonBean.setBillDate(getDefaultDate());
         if (LOGGER.isDebugEnabled())
@@ -250,7 +271,7 @@ public class ContingentBillAction extends BaseBillAction {
 
     @ValidationErrorPage(VIEW)
     @SkipValidation
-    @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-update")
+    @Action(value = "/bill/contingentBill-update")
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contingent Bill Action  | update | start");
@@ -320,13 +341,15 @@ public class ContingentBillAction extends BaseBillAction {
             // @RequiredFieldValidator(fieldName = "commonBean.functionName",message="",key=REQUIRED)
     })
     @ValidationErrorPage(value = NEW)
-    @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-create")
+    @Action(value = "/bill/contingentBill-create")
     public String create() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
         try {
             voucherHeader.setVoucherDate(commonBean.getBillDate());
             voucherHeader.setVoucherNumber(commonBean.getBillNumber());
+            String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
+            String cutOffDate1 = null;
             if (commonBean.getFunctionId() != null) {
                 CFunction function1 = (CFunction) getPersistenceService().find(" from CFunction where id=?",
                         commonBean.getFunctionId().longValue());
@@ -352,11 +375,31 @@ public class ContingentBillAction extends BaseBillAction {
             bill = egBillRegisterService.createBill(bill, workflowBean, checkListsTable);
             addActionMessage(getText("cbill.transaction.succesful") + bill.getBillnumber());
             billRegisterId = bill.getId();
-            if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
-                addActionMessage(getText("budget.recheck.sucessful", new String[] { bill.getEgBillregistermis()
-                        .getBudgetaryAppnumber() }));
-            addActionMessage(getText("bill.forwarded",
-                    new String[] { voucherService.getEmployeeNameForPositionId(bill.getState().getOwnerPosition()) }));
+
+            if (!cutOffDate.isEmpty() && cutOffDate != null)
+            {
+                try {
+                    date = sdf.parse(cutOffDate);
+                    cutOffDate1 = formatter1.format(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                    && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+                if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
+                    addActionMessage(getText("budget.recheck.sucessful", new String[] { bill.getEgBillregistermis()
+                            .getBudgetaryAppnumber() }));
+            }
+            else
+            {
+                if (bill.getEgBillregistermis().getBudgetaryAppnumber() != null)
+                    addActionMessage(getText("budget.recheck.sucessful", new String[] { bill.getEgBillregistermis()
+                            .getBudgetaryAppnumber() }));
+                addActionMessage(getText("bill.forwarded",
+                        new String[] { voucherService.getEmployeeNameForPositionId(bill.getState().getOwnerPosition()) }));
+            }
         } catch (final ValidationException e) {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("Inside catch block");
@@ -375,15 +418,34 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     public List<String> getValidActions() {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
         List<String> validActions = Collections.emptyList();
-        if (null == bill || null == bill.getId() || bill.getCurrentState().getValue().endsWith("NEW")) {
-            validActions = Arrays.asList(FORWARD);
-        } else {
-            if (bill.getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(bill
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), bill.getCurrentState().getValue(),
-                        getPendingActions(), bill.getCreatedDate());
+        if (!cutOffDateconfigValue.isEmpty())
+        {
+            if (null == bill || null == bill.getId() || bill.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (bill.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(bill
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), bill.getCurrentState().getValue(),
+                            getPendingActions(), bill.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == bill || null == bill.getId() || bill.getCurrentState().getValue().endsWith("NEW")) {
+                // read from constant
+                validActions = Arrays.asList(FORWARD);
+            } else {
+                if (bill.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(bill
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), bill.getCurrentState().getValue(),
+                            getPendingActions(), bill.getCreatedDate());
+                }
             }
         }
         return validActions;
@@ -614,7 +676,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @SkipValidation
-    @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-beforeView")
+    @Action(value = "/bill/contingentBill-beforeView")
     public String beforeView() throws ClassNotFoundException {
         bill = egBillRegisterService.find("from EgBillregister where id=?", billRegisterId);
         /*
@@ -792,7 +854,7 @@ public class ContingentBillAction extends BaseBillAction {
     }
 
     @SkipValidation
-    @org.apache.struts2.convention.annotation.Action(value = "/bill/contingentBill-beforeEdit")
+    @Action(value = "/bill/contingentBill-beforeEdit")
     public String beforeEdit() throws ClassNotFoundException {
         final EgBillregister cbill = prepareForViewModifyReverse();
         addDropdownData(USER_LIST, Collections.EMPTY_LIST);
@@ -1204,6 +1266,14 @@ public class ContingentBillAction extends BaseBillAction {
 
     public String getCurrentState() {
         return bill.getState().getValue();
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 
 }

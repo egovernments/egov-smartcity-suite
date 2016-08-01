@@ -52,10 +52,8 @@ import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
-import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.GovernmentDepartmentService;
-import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -71,20 +69,15 @@ public class GenericLegalCaseController {
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
 
-    @Autowired
-    private PetitionTypeMasterService petitiontypeMasterService;
-
-    @Autowired
-    private CourtMasterService courtMasterService;
 
 
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
         return courtTypeMasterService.getCourtTypeList();
     }
 
-    public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
-        return courtMasterService.findAll();
-    }
+  /*  public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
+        return null;
+    }*/
 
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
         return governmentDepartmentService.findAll();
@@ -106,9 +99,9 @@ public class GenericLegalCaseController {
         return caseTypeMasterService.getCaseTypeList();
     }
 
-    public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> petitiontypeList() {
-        return petitiontypeMasterService.getPetitiontypeList();
-    }
+  /*  public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> petitiontypeList() {
+        return null;
+    }*/
 
     public @ModelAttribute("wPYearList") List<Integer> getWPYearList() {
         final List<Integer> wPYearList = new ArrayList<Integer>();

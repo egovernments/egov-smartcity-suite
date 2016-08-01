@@ -142,6 +142,7 @@ public class CollectionApportioner {
             if (balance.isZero()) {
                 // nothing left to apportion
                 receiptDetail.zeroDrAndCrAmounts();
+                receiptDetails.add(receiptDetail);
                 continue;
             }
             crAmountToBePaid = billDetail.getCrAmount();

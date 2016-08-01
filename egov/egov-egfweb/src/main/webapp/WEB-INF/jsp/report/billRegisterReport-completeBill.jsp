@@ -77,7 +77,7 @@
 			<tr>
 			<td style="width: 5%"></td>
 				<td class="greybox"><s:text name="voucher.fromdate" /></td>
-				<td class="greybox"><s:date name="fromDate" id="fromDateId"
+				<td class="greybox"><s:date name="fromDate" var="fromDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="fromDate" id="fromDate"
 						value="%{fromDateId}" maxlength="10"
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
@@ -86,7 +86,7 @@
 						src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)
 				</td>
 				<td class="greybox"><s:text name="voucher.todate" /></td>
-				<td class="greybox"><s:date name="toDate" id="toDateId"
+				<td class="greybox"><s:date name="toDate" var="toDateId"
 						format="dd/MM/yyyy" /> <s:textfield name="toDate" id="toDate"
 						value="%{toDateId}" maxlength="10"
 						onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a

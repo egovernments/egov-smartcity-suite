@@ -106,7 +106,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator id="milestoneTemplate" value="milestoneTemplateActivities" status="row_status">
+				<s:iterator value="milestoneTemplateActivities" status="row_status">
 					<tr>
 						<td><s:property value="%{stageOrderNo}" /></td>
 						<td><s:property value="%{description}" /></td>

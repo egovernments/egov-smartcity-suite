@@ -123,8 +123,8 @@ function getUom(){
     
 	<label class="col-sm-2 control-label text-right"><s:text name='license.startdate' /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-	<s:date name="commencementDate" id="formattedStartDate" format="dd/MM/yyyy" />
-	<s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"  maxlength="10" value="%{formattedStartDate}"/>
+	<s:date name="commencementDate" format="dd/MM/yyyy" var="commencementDateFrmttd"/>
+	<s:textfield name="commencementDate" cssClass="form-control datepicker" required="true" id="startDate"  maxlength="10" value="%{commencementDateFrmttd}"/>
     </div>
 </div>
 <s:set value="outstandingFee" var="feeInfo"></s:set>
@@ -166,8 +166,8 @@ function getUom(){
 	<div class="form-group">
 	    <label class="col-sm-3 control-label text-right"><s:text name='license.agreementDate.lbl' /><span class="mandatory"></span></label>
 	    <div class="col-sm-3 add-margin">
-		<s:date name="agreementDate" id="formattedAgreementDate" format="dd/MM/yyyy" />
-		<s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d" id="agreementDate"  maxlength="10" value="%{formattedAgreementDate}"/>
+			<s:date name="agreementDate" format="dd/MM/yyyy" var="agreementDateFrmttd"/>
+			<s:textfield name="agreementDate" cssClass="form-control datepicker" data-date-end-date="0d" id="agreementDate"  maxlength="10" value="%{agreementDateFrmttd}"/>
 	    </div>
 	    
 	    <label class="col-sm-2 control-label text-right"><s:text name='license.agreementDocNo.lbl' /><span class="mandatory"></span></label>

@@ -89,7 +89,7 @@ public class GenerateBillForConsumerCodeController {
     private FileStoreService fileStoreService;
 
     @RequestMapping(value = "/generateBillForHSCNo/{consumerCode}", method = GET)
-    public void newForm(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request,
+    public String newForm(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request,
             final HttpServletResponse response) {
         WaterConnectionBillService waterConnectionBillService = null;
         try {
@@ -100,20 +100,24 @@ public class GenerateBillForConsumerCodeController {
         }
         if (waterConnectionBillService != null)
             waterConnectionBillService.generateBillForConsumercode(consumerCode);
-        generatePDF(consumerCode, request, response);
-
-    }
-
-    public void generatePDF(final String consumerCode, final HttpServletRequest request,
-            final HttpServletResponse response) {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
+        model.addAttribute("successMessage", "Demand Bill got generated, Please click on download.");
+        model.addAttribute("fileStoreId",!waterChargesDocumentslist.isEmpty() ? waterChargesDocumentslist.get(0) : "");
+        return "generatebill-consumercode";
+
+    }
+
+    @RequestMapping(value = "/generateBillForHSCNo/downloadDemandBill")
+    public void generatePDF(final String consumerCode, final HttpServletRequest request,
+            final HttpServletResponse response) {
+          String signedFileStoreId = request.getParameter("signedFileStoreId");
         response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
-        if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
+        if (signedFileStoreId != null)
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository
-                        .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
+                        .findByFileStoreId(signedFileStoreId);
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final FileInputStream inStream = new FileInputStream(file);
                 final PrintWriter outStream = response.getWriter();

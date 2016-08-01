@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-04T12:10:22 -->
+<!-- 2016-07-28T17:49:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="transferProperty_ack" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="30" bottomMargin="20" uuid="90410d1d-7197-42e9-8dea-efbd3a8dbb85">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -57,6 +18,7 @@
 	<field name="ulbLogo" class="java.lang.String"/>
 	<field name="transferpropertyText" class="java.lang.String"/>
 	<field name="applicationType" class="java.lang.String"/>
+	<field name="transferpropertyTextEnd" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -91,40 +53,26 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Application Date : "+$F{receivedDate}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="373" y="181" width="150" height="20" uuid="592538a9-1346-4fe5-a30e-944f03280984"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Signature]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="312" y="221" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
+				<reportElement x="262" y="221" width="211" height="20" uuid="b2546c69-d2ff-44a2-b1a3-84378eae6833"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{municipalityName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["("+$F{municipalityName}+")"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="42" y="183" width="247" height="58" uuid="36f833e4-ad1c-4d82-be59-65212f0df50a"/>
-				<textElement verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Signature of the receiver]]></text>
-			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="42" y="60" width="481" height="83" uuid="31f2c4a0-c30d-4844-95df-095199d692d8"/>
+				<reportElement x="42" y="60" width="481" height="70" uuid="31f2c4a0-c30d-4844-95df-095199d692d8"/>
 				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
 					<font size="12" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["    This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{applicationType}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{receivedDate}+"</style>. This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{noOfDays}+"</style> days"+$F{transferpropertyText}+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{applicationType}+"</style> has been received from Sri/Smt.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerName}+"</style> with address<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> on<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{receivedDate}+"</style>. "]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="85" y="264" width="438" height="57" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
+				<reportElement x="42" y="264" width="508" height="56" uuid="a3b0aacd-1949-4ffb-86df-8c987a1c6357"/>
 				<textElement verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the special notice is not given as indicated above on the date fixed.
+				<text><![CDATA[1. The applicant can contact the municipal commissioner, immediately if the Transfer of ownership proceeding is not given as indicated above on the date fixed.
 2. Compensation will be paid @ Rs. 50/- per day for the delay caused and towards the valuable time lost by the applicant, if the special notice is not given as indicated above in the date fixed.]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
@@ -135,19 +83,26 @@
 				<textFieldExpression><![CDATA["Application No : "+$F{applicationNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="42" y="264" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
+				<reportElement x="42" y="244" width="43" height="27" uuid="a7502c52-065f-4748-a942-b8ebd6839039"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Note:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="201" width="150" height="20" uuid="df9c3743-c2a3-4854-ba9c-5d97ab5390f9"/>
+				<reportElement x="260" y="201" width="261" height="20" uuid="df9c3743-c2a3-4854-ba9c-5d97ab5390f9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true"/>
+					<font size="12" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Commissioner]]></text>
+				<text><![CDATA[Name and signature of the operator]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="43" y="131" width="481" height="43" uuid="5e281cd5-c6d4-4f3a-b7f5-9f773d8a6a3a"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
+					<font size="12" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["This will be resolved within<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{noOfDays}+"</style> days"+$F{transferpropertyText}+"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$F{transferpropertyTextEnd}+"</style>."]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>

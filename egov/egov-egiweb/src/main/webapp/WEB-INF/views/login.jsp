@@ -54,6 +54,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -63,16 +64,16 @@
 		<meta name="author" content="eGovernments Foundation" />
         <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
-		<link rel="icon" href="/egi/resources/global/images/favicon.png" sizes="32x32">
-		<link rel="stylesheet" href="/egi/resources/global/css/bootstrap/bootstrap.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/egi/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}">
-		<script src="/egi/resources/global/js/jquery/jquery.js" type="text/javascript"></script>
+		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}'/>">
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js'/>" type="text/javascript"></script>
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
-			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body index">
@@ -82,7 +83,7 @@
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 					<div class="container-fluid">
 						<div class="navbar-header col-md-10 col-xs-10">
-							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}'/>" height="60">
 								<div>
 									<span class="title2">${sessionScope.citymunicipalityname}</span>
 								</div>
@@ -92,7 +93,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-									<img src="/egi/resources/global/images/egov_logo_tr_h.png" title="Powered by eGovernments" height="37" alt="">
+									<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/egov_logo_tr_h.png'/>" title="Powered by eGovernments" height="37" alt="">
 									</a>
 								</li>
 							</ul>
@@ -234,10 +235,29 @@
 								<div class="form-group">
 									<c:choose>
 										<c:when test="${param.recovered}">
-											<div class="text-center  font-green font-12"><spring:message code="msg.success.pwd.recov"/></div>
+                                            <div class="alert alert-info" role="alert">
+                                                <div class="text-center font-green font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
+                                                <c:if test="${param.byOTP}">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon style-label">
+                                                            <i class="fa fa-key theme-color style-color"></i>
+                                                        </div>
+                                                        <input style="display:none" type="password">
+                                                        <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="off" required="required"/>
+                                                        <span class="mandatory set-mandatory"></span>
+                                                    </div>
+                                                    <div class="form-group text-right">
+                                                        <button type="button" class="btn btn-custom recovrbtn" id="otprecoverybtn">
+                                                            <spring:message code="title.reset.password"/>
+                                                        </button>
+                                                    </div>
+                                                </c:if>
+                                            </div>
 										</c:when>
 										<c:otherwise>
-											<div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.recov"/></div>
+                                            <div class="alert alert-danger">
+											    <div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.recov"/></div>
+                                            </div>
 										</c:otherwise>
 									</c:choose>
 								</div>
@@ -329,12 +349,18 @@
 										required="required" placeholder="Your Username"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
+                                        <input type="hidden" name="byOTP" id="byOtp">
 								</div>
 								<div id="emailOrMobileNoReq" class="error-msg display-hide"><spring:message code="lbl.pwd.recover.un.req"/></div>
 								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;"><spring:message code="lbl.pwd.reset.link"/></div>
 							</div>
 							<div class="form-group text-right">
-								<button type="submit" id="recovrbtn" class="btn btn-primary"><spring:message code="btn.lbl.recover"/></button>
+								<button type="button" class="btn btn-primary recovrbtn">
+									<spring:message code="btn.lbl.recover.link"/>
+								</button>
+								<button type="button" id="recoveryotpbtn" class="btn btn-primary recovrbtn">
+									<spring:message code="btn.lbl.recover.otp"/>
+								</button>
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal"><spring:message code="lbl.close"/></button>
 							</div>
@@ -355,9 +381,9 @@
 				</div>
 			</div>
 		</div>
-		<script src="/egi/resources/global/js/bootstrap/bootstrap.js" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
-		<script src="/egi/resources/global/js/jquery/plugins/jquery.validate.min.js"></script>
-		<script src="/egi/resources/js/app/login.js?rnd=${applicationScope.buildno}" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/login.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
 	</body>
 </html>

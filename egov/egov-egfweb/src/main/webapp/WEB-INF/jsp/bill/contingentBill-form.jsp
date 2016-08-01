@@ -139,7 +139,7 @@
 											id="commonBean.partyBillNumber" /></td>
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
-										id="commonBean.partyBillDateId" format='dd/MM/yyyy' />
+										var="commonBean.partyBillDateId" format='dd/MM/yyyy' />
 									<td class="bluebox"><s:textfield id="partyBillDate"
 											name="commonBean.partyBillDate"
 											value="%{commonBean.partyBillDateId}" data-date-end-date="0d"
@@ -153,7 +153,7 @@
 											name="payto" /><span class="mandatory1"> *</span></td>
 									<td class="bluebox" style="text-align: left; width: 240"
 										colspan="4"><s:textfield name="commonBean.payto"
-											id="commonBean.payto" size="55" value="%{commonBean.payto}"/></td>
+											id="commonBean.payto" size="55" value="%{commonBean.payto}" /></td>
 								</tr>
 							</tbody>
 						</table>
@@ -301,5 +301,4 @@
 	</div>
 </center>
 
-<s:hidden id="scriptName" value="cbill.nextUser" />
 

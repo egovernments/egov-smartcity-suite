@@ -60,8 +60,13 @@ public class EmailQueueListener {
     public void onMessage(Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
-                    emailMessage.getString("message"));
+            if (emailMessage.itemExists("type"))
+                emailService.sendMailWithAttachment(emailMessage.getString("email"), emailMessage.getString("subject"),
+                        emailMessage.getString("message"), emailMessage.getString("type"),
+                        emailMessage.getString("name"), emailMessage.getObject("attachment"));
+            else
+                emailService.sendMail(emailMessage.getString("email"), emailMessage.getString("subject"),
+                        emailMessage.getString("message"));
         } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }

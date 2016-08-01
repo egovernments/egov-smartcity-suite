@@ -297,7 +297,7 @@ function resetSubmit()
 					<td class="greybox" width="10%">As On Date:<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="asOnDate" id="asOnDateId"
+					<td class="greybox"><s:date name="asOnDate" var="asOnDateId"
 							format="dd/MM/yyyy" /> <s:textfield id="asOnDate"
 							name="asOnDate" value="%{asOnDateId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

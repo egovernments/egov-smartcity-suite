@@ -47,19 +47,26 @@ import java.text.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.model.EgBill;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.integration.utils.SpringBeanUtil;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Property;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -90,6 +97,9 @@ public class MobilePaymentController {
 	@Autowired
     private PTBillServiceImpl ptBillServiceImpl;
 	
+	@Autowired
+    private PtDemandDao ptDemandDAO;
+	
 	/**
 	 * API to process payments from Mobile App 
 	 * @param model
@@ -107,19 +117,70 @@ public class MobilePaymentController {
     		@PathVariable String mobileNumber, @PathVariable String emailId, @PathVariable String category, final HttpServletRequest request)
             throws ParseException {
 		String redirectUrl = "";
-		BillInfoImpl billInfo = getBillInfo(assessmentNo, amountToBePaid);
-		if(billInfo != null){
-			PaymentRequest paymentRequest = SpringBeanUtil.getCollectionIntegrationService().processMobilePayments(billInfo);
-	        if(paymentRequest != null){
-	        	for(Object obj : paymentRequest.getRequestParameters().values()){
-		        	redirectUrl = obj.toString();
+		if (!basicPropertyDAO.isAssessmentNoExist(assessmentNo)) {
+			model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+            return PROPERTY_VALIDATION;
+        }
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if(basicProperty != null){
+        	Property property = basicProperty.getProperty();
+        	if(property != null){
+        		if(property.getIsExemptedFromTax()){
+        			model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_EXEMPTED_PROPERTY);
+                    return PROPERTY_VALIDATION;
+        		}
+        		Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+            	BigDecimal totalTaxDue = BigDecimal.ZERO;
+            	String propType = property.getPropertyDetail().getPropertyTypeMaster().getCode();
+            	if(currentPtdemand != null){
+            		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+            			if(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0){
+            				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+            	    	}
+            	    }
+            	}
+            	if(amountToBePaid.compareTo(totalTaxDue) > 0){
+            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG);
+                    return PROPERTY_VALIDATION;
+            	}
+            	if(!propType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT) 
+            			&& category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)){
+            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_VACANTLAND_ASSESSMENT_NOT_FOUND);
+                    return PROPERTY_VALIDATION;
+            	} else if(propType.equalsIgnoreCase(PropertyTaxConstants.PROPERTY_TYPE_CODE_VACANT) 
+            			&& category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX)){
+            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_PROPERTY_TAX_ASSESSMENT_NOT_FOUND);
+                    return PROPERTY_VALIDATION;
+            	}
+            	if(!category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX) 
+            			&& !category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX)){
+            		model.addAttribute("errorMsg", PropertyTaxConstants.THIRD_PARTY_ERR_MSG_WRONG_CATEGORY);
+                    return PROPERTY_VALIDATION;
+            	}
+        	}
+        }
+        try{
+			BillInfoImpl billInfo = getBillInfo(assessmentNo, amountToBePaid, category);
+			if(billInfo != null){
+				PaymentRequest paymentRequest = SpringBeanUtil.getCollectionIntegrationService().processMobilePayments(billInfo);
+		        if(paymentRequest != null){
+		        	for(Object obj : paymentRequest.getRequestParameters().values()){
+			        	redirectUrl = obj.toString();
+			        }
+			        model.addAttribute("redirectUrl", redirectUrl);
 		        }
-		        model.addAttribute("redirectUrl", redirectUrl);
-	        }
-		}else{
-			model.addAttribute("errorMsg", "Bill data is incorrect");
+			}else{
+				model.addAttribute("errorMsg", PropertyTaxConstants.MOBILE_PAYMENT_INCORRECT_BILL_DATA);
+	            return PROPERTY_VALIDATION;
+			}
+        } catch (ValidationException e) {
+            e.printStackTrace();
+            return PROPERTY_VALIDATION;
+        } catch (Exception e) {
+            e.printStackTrace();
             return PROPERTY_VALIDATION;
 		}
+        
         return PAYTAX_FORM;
     }
 	
@@ -128,7 +189,7 @@ public class MobilePaymentController {
      * @param mobilePropertyTaxDetails
      * @return
      */
-    public BillInfoImpl getBillInfo(final String assessmentNo, final BigDecimal amountToBePaid) {
+    public BillInfoImpl getBillInfo(final String assessmentNo, final BigDecimal amountToBePaid, final String category) {
     	BillInfoImpl billInfoImpl = null;
         final BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         propertyTaxBillable.setBasicProperty(basicProperty);
@@ -138,6 +199,8 @@ public class MobilePaymentController {
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         propertyTaxBillable.setBillType(egBillDAO.getBillTypeByCode(BILLTYPE_AUTO));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);
+        if(StringUtils.isNotBlank(category) && category.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX))
+        	propertyTaxBillable.setVacantLandTaxPayment(true);
 
         final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
         final CollectionHelper collectionHelper = new CollectionHelper(egBill);

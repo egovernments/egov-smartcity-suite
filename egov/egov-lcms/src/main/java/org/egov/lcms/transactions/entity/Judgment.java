@@ -96,13 +96,13 @@ public class Judgment extends AbstractAuditable {
 
     @NotNull
     @Temporal(TemporalType.DATE)
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.order.date")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "orderdate")
     private Date orderDate;
 
     @NotNull
     @Temporal(TemporalType.DATE)
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.sentDept.date")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "senttodepton")
     private Date sentToDeptOn;
 

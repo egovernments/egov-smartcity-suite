@@ -42,10 +42,6 @@
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ page language="java"%>
-<%@ taglib uri="/WEB-INF/tags/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/tags/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/tags/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/tags/struts-nested.tld" prefix="nested"%>
 <%@ taglib uri="/WEB-INF/tags/c.tld" prefix="c"%>
 
 <html>
@@ -134,7 +130,7 @@ function validateCancel()
 				<td class="bluebox" ></td>
 					<td class="bluebox"><s:text name="from.date" /></td>
 
-					<td class="bluebox"><s:date name="fromDate" id="fromDate"
+					<td class="bluebox"><s:date name="fromDate" var="fromDate"
 							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
 							name="fromDate" value="%{fromDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -143,7 +139,7 @@ function validateCancel()
 					<td class="bluebox"><s:text name="to.date" /></td>
 
 
-					<td class="bluebox"><s:date name="toDate" id="toDate"
+					<td class="bluebox"><s:date name="toDate" var="toDate"
 							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
 							value="%{toDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

@@ -47,7 +47,6 @@
 <html>
 <head>
 <title><s:text name="openingBalance.search.title" /></title>
-<sx:head />
 <style type="text/css">
 #codescontainer {
 	position: absolute;

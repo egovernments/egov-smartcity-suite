@@ -204,7 +204,7 @@
 						<s:if test="%{reassignSurrenderChq && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory"></span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
 									onchange="validateReassignSurrenderChequeNumber(this)" /></td>
 							<td class="greybox"><s:text
@@ -225,7 +225,7 @@
 							test="%{!isChequeNoGenerationAuto() && paymentMode!='cheque'}">
 							<td class="greybox"><s:text
 									name="chq.assignment.instrument.no" /><span class="mandatory"></span>
-								<s:textfield id="chequeNumber0" name="chequeNo" maxLength="6"
+								<s:textfield id="chequeNumber0" name="chequeNo" maxlength="6"
 									size="6" value="%{chequeNo}"
 									onchange="validateChequeNumber(this)" /></td>
 							<td class="greybox"><s:text

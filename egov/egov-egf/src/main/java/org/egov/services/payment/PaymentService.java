@@ -413,9 +413,18 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 					.setSourcePath(
 							"/EGF/payment/payment-view.action?" + PAYMENTID
 									+ "=" + paymentheader.getId());
-			paymentheader = transitionWorkFlow(paymentheader, workflowBean);
-			applyAuditing(paymentheader.getState());
-			applyAuditing(paymentheader);
+			 if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+		                    && voucherHeader.getState() == null)
+		            {
+		                paymentheader.getVoucherheader().setStatus(
+		                        FinancialConstants.CREATEDVOUCHERSTATUS);
+		            }
+		            else
+		            {
+		                paymentheader = transitionWorkFlow(paymentheader, workflowBean);
+		                applyAuditing(paymentheader.getState());
+		                applyAuditing(paymentheader);
+		            }
 			update(paymentheader);
 			entityManager.flush();
 		} catch (final ValidationException e) {

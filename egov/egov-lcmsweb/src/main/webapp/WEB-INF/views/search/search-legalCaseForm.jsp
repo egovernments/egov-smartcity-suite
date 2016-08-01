@@ -62,12 +62,12 @@
 								<label for="field-1" class="col-sm-3 control-label">Case Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="caseNumber" class="form-control patternvalidation" 
-									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="caseNumber"/>
+									data-pattern="alphanumerichyphenbackslash" maxlength="50" id="caseNumber"/>
 								</div>
 								<label for="field-1" class="col-sm-2 control-label">LegalCase Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="lcNumber" class="form-control patternvalidation" 
-									data-pattern="alphanumerichyphenbackslash" maxlength="16" id="lcNumber"/>
+									data-pattern="alphanumerichyphenbackslash" maxlength="50" id="lcNumber"/>
 								</div>
 
 							

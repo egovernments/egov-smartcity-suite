@@ -264,8 +264,18 @@ public class PaymentActionHelper {
 
     @Transactional
     public Paymentheader sendForApproval(Paymentheader paymentheader, WorkflowBean workflowBean) {
-        paymentService.transitionWorkFlow(paymentheader, workflowBean);
-        paymentService.applyAuditing(paymentheader.getState());
+
+        if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+                && paymentheader.getState() == null)
+        {
+            paymentheader.getVoucherheader().setStatus(
+                    FinancialConstants.CREATEDVOUCHERSTATUS);
+        }
+        else
+        {
+            paymentService.transitionWorkFlow(paymentheader, workflowBean);
+            paymentService.applyAuditing(paymentheader.getState());
+        }
         paymentService.persist(paymentheader);
         return paymentheader;
     }

@@ -116,6 +116,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     private String source;
     private String remittanceReferenceNumber;
+    private String payeeEmail;
 
     public ReceiptHeader() {
     }
@@ -124,7 +125,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
             final String referenceDesc, final BigDecimal totalAmount, final BigDecimal minimumAmount,
             final Boolean partPaymentAllowed, final Boolean overrideAccountHeadsAllowed,
             final Boolean callbackForApportioning, final String displayMsg, final ServiceDetails service,
-            final String collModesNotAllwd, final String payeeName, final String payeeAddress) {
+            final String collModesNotAllwd, final String payeeName, final String payeeAddress, final String payeeEmail) {
         this.referencenumber = referencenumber;
         this.referencedate = referencedate;
         this.consumerCode = consumerCode;
@@ -139,6 +140,7 @@ public class ReceiptHeader extends StateAware implements Auditable {
         this.collModesNotAllwd = collModesNotAllwd;
         this.payeeName = payeeName;
         this.payeeAddress = payeeAddress;
+        this.payeeEmail = payeeEmail;
     }
 
     public ReceiptHeader(final Boolean isReconciled, final Boolean isModifiable, final char receiptType,
@@ -740,5 +742,13 @@ public class ReceiptHeader extends StateAware implements Auditable {
 
     public void setRemittanceReferenceNumber(String remittanceReferenceNumber) {
         this.remittanceReferenceNumber = remittanceReferenceNumber;
+    }
+
+    public String getPayeeEmail() {
+        return payeeEmail;
+    }
+
+    public void setPayeeEmail(String payeeEmail) {
+        this.payeeEmail = payeeEmail;
     }
 }

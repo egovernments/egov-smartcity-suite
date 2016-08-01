@@ -392,9 +392,7 @@
 							<td class="bluebox"><span class="bold"><s:property
 										value="%{departmentValue}" default="N/A" /></span></td>
 						</tr>
-						<s:if
-							test="%{!userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN)}">
-							<tr>
+						<tr>
 								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="docValue" /> :</td>
 								<td class="bluebox"><span class="bold"><s:property
@@ -402,8 +400,7 @@
 								<td class="bluebox"><s:text name="payablefee" />:</td>
 								<td class="bluebox"><span class="bold"><s:property
 											value="%{mutationFee}" default="N/A" /></span></td>
-							</tr>
-						</s:if>
+						</tr>
 						<s:if
 						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) &&
 						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  

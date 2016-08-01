@@ -219,7 +219,7 @@ function onSubmit()
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
 		 if(!balanceCheck()){
 
-			 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+			 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 			 if (msg == true) {
 				 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
 				return true;
@@ -235,6 +235,25 @@ function onSubmit()
 		return false;
 		
 	
+}
+function validateCutOff()
+{
+var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+var voucherDatePart=document.getElementById("voucherDate").value.split("/");
+var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+		+ cutOffDatePart[2]);
+var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+		+ voucherDatePart[2]);
+if(voucherDate<=cutOffDate)
+{
+	return true;
+}
+else{
+	var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+	var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+		return false;
+	}
 }
 </script>
 </head>
@@ -295,7 +314,7 @@ function onSubmit()
 																	</s:if>
 																	<td class="bluebox" width="18%"><s:text
 																			name="voucher.date" />&nbsp;<span class="mandatory1">*</span></td>
-																	<s:date name='voucherDate' id="voucherDateId"
+																	<s:date name='voucherDate' var="voucherDateId"
 																		format='dd/MM/yyyy' />
 																	<td class="bluebox" width="34%">
 																		<div name="daterow">
@@ -435,6 +454,7 @@ function onSubmit()
 					</table>
 
 				</div>
+				<s:hidden name="cutOffDate" id="cutOffDate" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>

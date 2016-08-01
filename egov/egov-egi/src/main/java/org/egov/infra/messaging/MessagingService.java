@@ -73,19 +73,21 @@ public class MessagingService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    public void sendEmailAndSMS(final User user, final String subject, final String templateName, final Object... messageValues) {
+    public void sendEmailAndSMS(final User user, final String subject, final String templateName,
+            final Object... messageValues) {
         sendEmail(user, subject, templateName, messageValues);
         sendSMS(user, templateName, messageValues);
     }
 
-    public void sendEmail(final User user, final String subject, final String templateName, final Object... messageValues) {
-        sendEmail(user.getEmailId(), subject, messageTemplateService
-                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
+    public void sendEmail(final User user, final String subject, final String templateName,
+            final Object... messageValues) {
+        sendEmail(user.getEmailId(), subject, messageTemplateService.realizeMessage(
+                messageTemplateService.getByTemplateName(templateName), messageValues));
     }
 
     public void sendSMS(final User user, final String templateName, final Object... messageValues) {
-        sendSMS(user.getMobileNumber(), messageTemplateService
-                .realizeMessage(messageTemplateService.getByTemplateName(templateName), messageValues));
+        sendSMS(user.getMobileNumber(), messageTemplateService.realizeMessage(
+                messageTemplateService.getByTemplateName(templateName), messageValues));
     }
 
     public void sendEmail(final String email, final String subject, final String message) {
@@ -105,6 +107,21 @@ public class MessagingService {
                 final MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString("mobile", "91" + mobileNo);
                 mapMessage.setString("message", message);
+                return mapMessage;
+            });
+    }
+
+    public void sendEmailWithAttachment(final String email, final String subject, final String message,
+            final String fileType, final String fileName, final byte[] attachment) {
+        if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
+            jmsTemplate.send(emailQueue, session -> {
+                final MapMessage mapMessage = session.createMapMessage();
+                mapMessage.setString("email", email);
+                mapMessage.setString("message", message);
+                mapMessage.setString("subject", subject);
+                mapMessage.setString("type", fileType);
+                mapMessage.setString("name", fileName);
+                mapMessage.setBytes("attachment", attachment);
                 return mapMessage;
             });
     }

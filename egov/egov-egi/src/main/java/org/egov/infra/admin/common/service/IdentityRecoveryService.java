@@ -40,6 +40,7 @@
 
 package org.egov.infra.admin.common.service;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
@@ -81,21 +82,28 @@ public class IdentityRecoveryService {
     }
 
     @Transactional
-    public IdentityRecovery generate(final User user, final Date timeToExpire) {
+    public IdentityRecovery generate(final User user, final Date timeToExpire, boolean byOTP) {
         final IdentityRecovery identityRecovery = new IdentityRecovery();
-        identityRecovery.setToken(UUID.randomUUID().toString());
+        identityRecovery.setToken(byOTP ?
+                RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase() :
+                UUID.randomUUID().toString());
         identityRecovery.setUser(user);
         identityRecovery.setExpiry(timeToExpire);
         return identityRecoveryRepository.save(identityRecovery);
     }
 
     @Transactional
-    public boolean generateAndSendUserPasswordRecovery(final String identity, final String urlToSent) {
+    public boolean generateAndSendUserPasswordRecovery(final String identity, final String urlToSent, boolean byOTP) {
         final Optional<User> user = userService.checkUserWithIdentity(identity);
         if (user.isPresent()) {
-            final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate());
-            messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
-                    identityRecovery.getToken(), System.getProperty("line.separator"));
+            final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate(), byOTP);
+            if (byOTP) {
+                String message = "Your OTP for recovering password is " + identityRecovery.getToken();
+                messagingService.sendSMS(user.get().getMobileNumber(), message);
+                messagingService.sendEmail(user.get().getEmailId(), "Password Reset", message);
+            } else
+                messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PWD_RECOVERY_TMPLTE, urlToSent,
+                        identityRecovery.getToken(), System.getProperty("line.separator"));
         }
         return user.isPresent();
     }
@@ -116,6 +124,11 @@ public class IdentityRecoveryService {
             identityRecoveryRepository.delete(idRecovery);
         }
         return recoverd;
+    }
+
+    public boolean tokenValid(final String token) {
+        final Optional<IdentityRecovery> identityRecovery = getByToken(token);
+        return identityRecovery.isPresent() && identityRecovery.get().getExpiry().isAfterNow();
     }
 
 }

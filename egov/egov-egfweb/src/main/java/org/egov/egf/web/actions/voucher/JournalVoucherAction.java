@@ -39,6 +39,15 @@
  */
 package org.egov.egf.web.actions.voucher;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -47,6 +56,8 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
@@ -65,10 +76,6 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp") })
@@ -97,7 +104,15 @@ public class JournalVoucherAction extends BaseVoucherAction
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
-    
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
+    private String cutOffDate;
+    protected DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+    Date date;
+
     @Autowired
     private ScriptService scriptService;
 
@@ -114,6 +129,17 @@ public class JournalVoucherAction extends BaseVoucherAction
     @Action(value = "/voucher/journalVoucher-newForm")
     public String newForm()
     {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                cutOffDate = formatter.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         billDetailslist = new ArrayList<VoucherDetails>();
         subLedgerlist = new ArrayList<VoucherDetails>();
         billDetailslist.add(new VoucherDetails());
@@ -155,6 +181,8 @@ public class JournalVoucherAction extends BaseVoucherAction
     public String create() throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | Start");
+        String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
+        String cutOffDate1 = null;
         removeEmptyRowsAccoutDetail(billDetailslist);
         removeEmptyRowsSubledger(subLedgerlist);
         target = "";
@@ -175,34 +203,72 @@ public class JournalVoucherAction extends BaseVoucherAction
                 populateWorkflowBean();
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
-                if (voucherHeader.getVouchermis().getBudgetaryAppnumber() == null)
+
+                if (!cutOffDate.isEmpty() && cutOffDate!=null )
                 {
-                message = "Voucher  "
-                        + voucherHeader.getVoucherNumber()
-                        + " Created Sucessfully"
-                        + "\\n"
-                        + getText("pjv.voucher.approved",
-                                new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
-                                        .getOwnerPosition()) });
-                target = "success";
+                    try {
+                        date = sdf.parse(cutOffDate);
+                        cutOffDate1 = formatter1.format(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
-                
+                if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                        && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+                {
+                    if (voucherHeader.getVouchermis().getBudgetaryAppnumber() == null)
+                    {
+                        message = "Voucher  "
+                                + voucherHeader.getVoucherNumber()
+                                + " Created Sucessfully";
+                        target = "success";
+                    }
+
+                    else
+                    {
+                        message = "Voucher  "
+                                + voucherHeader.getVoucherNumber()
+                                + " Created Sucessfully"
+                                + "\\n"
+                                + "And "
+                                + getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
+                                        .getBudgetaryAppnumber() });
+                        target = "success";
+
+                    }
+                }
+
                 else
                 {
-                	message = "Voucher  "
-                            + voucherHeader.getVoucherNumber()
-                            + " Created Sucessfully"
-                            + "\\n"
-                            + "And "
-                            +getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
-                                    .getBudgetaryAppnumber() })
-                            + "\\n"
-                            + getText("pjv.voucher.approved",
-                                    new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
-                                            .getOwnerPosition()) });
-                	
-                    target = "success";
-                   
+                    if (voucherHeader.getVouchermis().getBudgetaryAppnumber() == null)
+                    {
+                        message = "Voucher  "
+                                + voucherHeader.getVoucherNumber()
+                                + " Created Sucessfully"
+                                + "\\n"
+                                + getText("pjv.voucher.approved",
+                                        new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                                                .getOwnerPosition()) });
+                        target = "success";
+                    }
+
+                    else
+                    {
+                        message = "Voucher  "
+                                + voucherHeader.getVoucherNumber()
+                                + " Created Sucessfully"
+                                + "\\n"
+                                + "And "
+                                + getText("budget.recheck.sucessful", new String[] { voucherHeader.getVouchermis()
+                                        .getBudgetaryAppnumber() })
+                                + "\\n"
+                                + getText("pjv.voucher.approved",
+                                        new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
+                                                .getOwnerPosition()) });
+
+                        target = "success";
+
+                    }
                 }
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("JournalVoucherAction | create  | Success | message === " + message);
@@ -238,6 +304,42 @@ public class JournalVoucherAction extends BaseVoucherAction
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | End");
         return NEW;
+    }
+
+    public List<String> getValidActions() {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        List<String> validActions = Collections.emptyList();
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            if (null == voucherHeader || null == voucherHeader.getId()
+                    || voucherHeader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (voucherHeader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(voucherHeader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), voucherHeader.getCurrentState().getValue(),
+                            getPendingActions(), voucherHeader.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == voucherHeader || null == voucherHeader.getId()
+                    || voucherHeader.getCurrentState().getValue().endsWith("NEW")) {
+                // read from constant
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+            } else {
+                if (voucherHeader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(voucherHeader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), voucherHeader.getCurrentState().getValue(),
+                            getPendingActions(), voucherHeader.getCreatedDate());
+                }
+            }
+        }
+        return validActions;
     }
 
     public Position getPosition() throws ApplicationRuntimeException
@@ -372,13 +474,20 @@ public class JournalVoucherAction extends BaseVoucherAction
         this.showMode = showMode;
     }
 
-
     public WorkflowBean getWorkflowBean() {
         return workflowBean;
     }
 
     public void setWorkflowBean(WorkflowBean workflowBean) {
         this.workflowBean = workflowBean;
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 
 }

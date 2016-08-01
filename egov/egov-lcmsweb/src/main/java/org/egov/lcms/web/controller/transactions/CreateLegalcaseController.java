@@ -41,6 +41,7 @@
 package org.egov.lcms.web.controller.transactions;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
@@ -74,17 +75,17 @@ public class CreateLegalcaseController extends GenericLegalCaseController {
     }
 
     @RequestMapping(value = "create/", method = RequestMethod.POST)
-    public String create(@ModelAttribute final LegalCase legalCase, final BindingResult errors,
+    public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
-
+        if (errors.hasErrors())
+            return "legalCase-newForm";
         if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
             legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         else
             legalCase.setLcnumber(
                     legalCase.getLcNumber() + (legalCase.getFinwpYear() != null ? "/" + legalCase.getFinwpYear() : ""));
-        if (errors.hasErrors())
-            return "legalCase-newForm";
-        legalCaseService.createLegalCase(legalCase);
+       
+        legalCaseService.persist(legalCase);
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("message", "Legal Case created successfully.");
         model.addAttribute("mode", "create");

@@ -52,6 +52,7 @@ import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.pgi.PaymentRequest;
+import org.egov.infra.validation.exception.ValidationException;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -190,6 +191,6 @@ public interface CollectionIntegrationService {
      * @param billInfo
      * @return PaymentRequest
      */
-    public PaymentRequest processMobilePayments(BillInfoImpl billInfo);
+    public PaymentRequest processMobilePayments(BillInfoImpl billInfo) throws ValidationException;
 
 }

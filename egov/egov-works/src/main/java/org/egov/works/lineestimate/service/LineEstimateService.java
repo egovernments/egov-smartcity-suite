@@ -212,6 +212,8 @@ public class LineEstimateService {
         createLineEstimateWorkflowTransition(newLineEstimate,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
+        lineEstimateRepository.save(newLineEstimate);
+        
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -542,7 +544,9 @@ public class LineEstimateService {
 
         createLineEstimateWorkflowTransition(updatedLineEstimate,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-
+        
+        updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
+        
         return updatedLineEstimate;
     }
 
@@ -806,10 +810,10 @@ public class LineEstimateService {
         for (final LineEstimateDetails lineEstimateDetails : lineEstimate.getLineEstimateDetails())
             lineEstimateDetails.setLineEstimate(lineEstimate);
 
-        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
-
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
+        
+        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
                 WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);

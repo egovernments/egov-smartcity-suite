@@ -43,16 +43,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -62,6 +66,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -82,25 +87,33 @@ public class Hearings extends AbstractAuditable {
     @Required(message = "hearing.date.null")
     private Date hearingDate;
     @ManyToOne
-    @NotNull
     @Valid
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
+    @Column(name = "isstandingcounselpresent")
     private boolean isStandingCounselPresent;
     @Length(max = 128, message = "hearing.additionalLawyer.length")
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
+
+    @OneToMany(mappedBy = "hearing", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    List<EmployeeHearing> employeeHearingList = new ArrayList<EmployeeHearing>();
+    @Transient
+    List<Position> positionTemplList = new ArrayList<Position>(0);
     /*
-     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
-     * Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to check
+     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
+     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
+     * check
      */
+
     @Length(max = 1024, message = "hearing.outcome.length")
     private String hearingOutcome;
     private boolean isSeniorStandingCounselPresent;
-    @Length(max = 1024, message = "hearing.purpose.length")
+    @Length(max = 2056, message = "hearing.purpose.length")
+    @Column(name = "purposeofhearing")
     private String purposeofHearings;
     @ManyToOne
-    @NotNull
     @Valid
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
@@ -109,7 +122,8 @@ public class Hearings extends AbstractAuditable {
     private String referenceNumber;
 
     /*
-     * public void addEmployee(final PersonalInformation empObj) { eglcEmployeehearings.add(empObj); }
+     * public void addEmployee(final PersonalInformation empObj) {
+     * eglcEmployeehearings.add(empObj); }
      */
 
     public Date getHearingDate() {
@@ -137,9 +151,10 @@ public class Hearings extends AbstractAuditable {
     }
 
     /*
-     * public Set<PersonalInformation> getEglcEmployeehearings() { return eglcEmployeehearings; } public void
-     * setEglcEmployeehearings(final Set<PersonalInformation> eglcEmployeehearings) { this.eglcEmployeehearings =
-     * eglcEmployeehearings; }
+     * public Set<PersonalInformation> getEglcEmployeehearings() { return
+     * eglcEmployeehearings; } public void setEglcEmployeehearings(final
+     * Set<PersonalInformation> eglcEmployeehearings) {
+     * this.eglcEmployeehearings = eglcEmployeehearings; }
      */
 
     public String getHearingOutcome() {
@@ -155,7 +170,7 @@ public class Hearings extends AbstractAuditable {
     }
 
     public void setIsSeniorStandingcounselpresent(final boolean isSeniorStandingcounselpresent) {
-        this.isSeniorStandingCounselPresent = isSeniorStandingcounselpresent;
+        isSeniorStandingCounselPresent = isSeniorStandingcounselpresent;
     }
 
     public String getPurposeofHearings() {
@@ -205,13 +220,6 @@ public class Hearings extends AbstractAuditable {
         this.referenceNumber = referenceNumber;
     }
 
-    public Boolean getReplytoTI() {
-        if (getStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI))
-            return Boolean.TRUE;
-        else
-            return Boolean.FALSE;
-    }
-
     @Override
     public Long getId() {
         return id;
@@ -222,20 +230,36 @@ public class Hearings extends AbstractAuditable {
         this.id = id;
     }
 
-    public boolean isStandingCounselPresent() {
+    public boolean getIsStandingCounselPresent() {
         return isStandingCounselPresent;
     }
 
-    public void setStandingCounselPresent(boolean isStandingCounselPresent) {
+    public void setIsStandingCounselPresent(final boolean isStandingCounselPresent) {
         this.isStandingCounselPresent = isStandingCounselPresent;
     }
 
-    public boolean isSeniorStandingCounselPresent() {
-        return isSeniorStandingCounselPresent;
+    public void setSeniorStandingCounselPresent(final boolean isSeniorStandingCounselPresent) {
+        this.isSeniorStandingCounselPresent = isSeniorStandingCounselPresent;
     }
 
-    public void setSeniorStandingCounselPresent(boolean isSeniorStandingCounselPresent) {
-        this.isSeniorStandingCounselPresent = isSeniorStandingCounselPresent;
+    public void setStandingCounselPresent(final boolean isStandingCounselPresent) {
+        this.isStandingCounselPresent = isStandingCounselPresent;
+    }
+
+    public List<EmployeeHearing> getEmployeeHearingList() {
+        return employeeHearingList;
+    }
+
+    public void setEmployeeHearingList(final List<EmployeeHearing> employeeHearingList) {
+        this.employeeHearingList = employeeHearingList;
+    }
+
+    public List<Position> getPositionTemplList() {
+        return positionTemplList;
+    }
+
+    public void setPositionTemplList(final List<Position> positionTemplList) {
+        this.positionTemplList = positionTemplList;
     }
 
 }

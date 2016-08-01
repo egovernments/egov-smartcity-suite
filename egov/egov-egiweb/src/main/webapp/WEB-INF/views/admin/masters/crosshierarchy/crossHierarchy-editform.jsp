@@ -42,12 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<script
-	src="<c:url value='/resources/js/app/crosshierarchy.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
 	<div class="errorstyle" id="egi_error_area" style="display: none;"></div>
 
@@ -165,27 +161,10 @@
 
 </div>
 
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/multiselect.js' context='/egi'/>"></script>
-<script
-	src="<c:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
 <script type="text/javascript">
 		$('#multiselect').multiselect();
-	</script>
+</script>
 
-
-<script
-	src="<c:url value='/resources/js/app/crosshierarchy.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/crosshierarchy.js'/>"></script>
 

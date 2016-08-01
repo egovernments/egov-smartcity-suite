@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title>Direct Bank Payment</title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -57,6 +56,8 @@
 	src="/EGF/resources/javascript/ajaxCommonFunctions.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
+	type="text/css" />
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <style type="text/css">
@@ -328,7 +329,7 @@
 
 						<td class="bluebox" width="18%"><s:text name="voucher.date" /><span
 							class="mandatory1">*</span></td>
-						<s:date name='voucherDate' id="voucherDateId" format='dd/MM/yyyy' />
+						<s:date name='voucherDate' var="voucherDateId" format='dd/MM/yyyy' />
 						<td class="bluebox" width="34%">
 							<div name="daterow">
 								<s:textfield id="voucherDate" name="voucherDate"
@@ -350,6 +351,7 @@
 
 					</br>
 				</table>
+				<s:hidden name="cutOffDate" id="cutOffDate" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 			</div>
 			<div align="center">
@@ -445,6 +447,27 @@ function onSubmit()
 		return true;
 		}
 }
+
+function validateCutOff()
+{
+var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+var voucherDatePart=document.getElementById("voucherDate").value.split("/");
+var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+		+ cutOffDatePart[2]);
+var voucherDate = new Date(voucherDatePart[1] + "/" + voucherDatePart[0] + "/"
+		+ voucherDatePart[2]);
+if(voucherDate<=cutOffDate)
+{
+	return true;
+}
+else{
+	var msg1='<s:text name="wf.vouchercutoffdate.message"/>';
+	var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
+		return false;
+	}
+}
+
 </SCRIPT>
 </body>
 </html>
