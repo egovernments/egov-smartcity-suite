@@ -1332,7 +1332,17 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
 			</plugin>
-
+			<plugin>
+                                <groupId>org.flywaydb</groupId>
+                                <artifactId>flyway-maven-plugin</artifactId>
+                                <version>${flyway-core-version}</version>
+                                <configuration>
+                                        <driver>${db.driver}</driver>
+                                        <url>${db.url}</url>
+                                        <user>${db.user}</user>
+                                        <password>${db.password}</password>
+                                </configuration>
+                        </plugin>
 		</plugins>
 	</build>
 </project>
