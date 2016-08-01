@@ -78,7 +78,7 @@ public class LegalCaseInterimOrderController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("lcInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
+    public String viewForm(@ModelAttribute("legalCaseInterimOrder") final LegalCaseInterimOrder legalCaseInterimOrder,
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);

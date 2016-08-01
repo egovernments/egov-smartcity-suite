@@ -104,12 +104,10 @@
 					
 					<td colspan="1">
 						<div align="center">
-						<c:if test="${legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay'}">
+						<c:if test="${(legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay')||(legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay on Condition')}">
 							<a href="javascript:void(0);"
 								onclick="vacatestay('<c:out value="${legalCaseInterimOrder.id}" />');"><spring:message
 							code="lbl.vacatestay" /></a>
-							<%-- <input type="hidden" id="legalCaseInterimOrderid" name="legalCaseInterimOrderid"
-		value="${lcInterimOrderId}" /> --%>
 			</c:if>
 						</div>
 					</td>
