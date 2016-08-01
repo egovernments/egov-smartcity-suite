@@ -159,7 +159,7 @@ $(document).on('click','.ms-submit',function () {
 	var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
 	if(net==NaN ||net<=0)
 	{
-		alert("Net amount should be greater than 0");
+		alert("Net quantity should be greater than 0");
 		return false;
 	}
 	var qobj1=sid.split(".")[0];
