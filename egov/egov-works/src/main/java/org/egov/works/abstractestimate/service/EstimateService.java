@@ -348,8 +348,11 @@ public class EstimateService {
     	for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
     	{
     		Boolean found = false;
+    		if(LOG.isDebugEnabled())
+    		{
     		LOG.debug(oldActivity.getMeasurementSheetList().size()+"activity.getMeasurementSheetList()");  
     		LOG.debug(msold.getId()+"------msold.getId()");
+    		}
     		if(msold.getId()==null)
     		{
     			continue;
@@ -363,8 +366,10 @@ public class EstimateService {
     				//found=true;
     			}else if(msnew.getId().longValue()==msold.getId().longValue())
     			{
+    				if(LOG.isDebugEnabled()){
     				LOG.debug(msnew.getId()+"------msnew.getId()");
     				LOG.debug(msnew.getRemarks()+"------remarks");
+    				}
 
     				found = true;
     			}
@@ -380,7 +385,7 @@ public class EstimateService {
 
     	for(MeasurementSheet msremove:toRemove)
     	{
-    	 
+    	    if(LOG.isInfoEnabled())
     		LOG.info("...........Removing rows....................Of MeasurementSheet"+msremove.getId());
             oldActivity.getMeasurementSheetList().remove(msremove);
         }
