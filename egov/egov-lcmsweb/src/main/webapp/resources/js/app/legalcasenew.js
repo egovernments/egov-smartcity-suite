@@ -111,18 +111,16 @@ function addPetRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			var dd=nextIdx-1;
-			alert("dd= "+ '[' + dd + ']');
 			jQuery(rowObj).find("input, select").each(
 					function() {
 
 					jQuery(this).attr({
 								'id' : function(_, id) {
-									return id.replace('[' + dd + ']', '['
+									return id.replace('[0]', '['
 											+ nextIdx + ']');
 								},
 								'name' : function(_, name) {
-									return name.replace('[' + dd + ']', '['
+									return name.replace('[0]', '['
 											+ nextIdx + ']');
 								}
 					});  
