@@ -1,15 +1,9 @@
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
-import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,16 +46,9 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     public String view(@RequestParam("lcNumber") final String lcNumber, final Model model) {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
-        /*final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
-        final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
-        for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
-            if (!dd.getIsRepondent())
-                pettempList.add(dd);
-            else
-                respoTempList.add(dd);*/
         model.addAttribute("mode", "view");
-      /*  model.addAttribute("pettempList", pettempList);
-        model.addAttribute("respoTempList", respoTempList);*/
+        model.addAttribute("legalCaseDocList",
+                legalCaseService.getLegalCaseDocList(legalCase));
         return "legalcasedetails-view";
     }
 
@@ -72,13 +59,18 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         setDropDownValues(model);
    String[] casenumberyear=legalCase.getCaseNumber().split("/");
    legalCase.setCaseNumber(casenumberyear[0]);
+   if(casenumberyear.length > 1)
    legalCase.setWpYear(casenumberyear[1]);
+   legalCase.getBipartisanPetitionDetailsList().addAll(legalCase.getPetitioners());
+   legalCase.getBipartisanDetailsBeanList().addAll(legalCase.getRespondents());
+   model.addAttribute("legalCaseDocList",
+           legalCaseService.getLegalCaseDocList(legalCase));
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
+    public String update( @ModelAttribute final LegalCase legalCase, @RequestParam("lcNumber") final String lcNumber,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "legalcase-edit";
