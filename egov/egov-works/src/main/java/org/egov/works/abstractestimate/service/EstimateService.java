@@ -52,6 +52,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.assets.model.Asset;
 import org.egov.assets.service.AssetService;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -563,6 +564,24 @@ public class EstimateService {
             if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getTempAssetValues() != null
                     && abstractEstimate.getTempAssetValues().isEmpty())
                 bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
+            
+            Asset asset = null;
+            Integer index = 0;
+            for(AssetsForEstimate assetsForEstimate : abstractEstimate.getTempAssetValues()) {
+                if(assetsForEstimate != null) {
+                    if(StringUtils.isBlank(assetsForEstimate.getAsset().getCode())) {
+                        bindErrors.rejectValue("tempAssetValues[" + index + "].asset.code", "error.assetcode.required");
+                    }
+                    if(StringUtils.isBlank(assetsForEstimate.getAsset().getName())) {
+                        bindErrors.rejectValue("tempAssetValues[" + index + "].asset.name", "error.assetname.required");
+                    }
+                    if(asset != null && asset.getCode().equals(assetsForEstimate.getAsset().getCode())) {
+                        bindErrors.rejectValue("tempAssetValues[" + index + "].asset.code", "error.asset.not.unique");
+                    }
+                    asset = assetsForEstimate.getAsset();
+                    index++;
+                }
+            }
         }
     }
 
