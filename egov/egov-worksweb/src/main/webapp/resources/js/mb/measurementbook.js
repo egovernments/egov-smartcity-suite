@@ -353,7 +353,7 @@ function populateData(data, selectedActivities){
 					$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
 					if (workOrderActivity.woms != "") {
 						$('#quantity_' + sorCount).attr('readonly', 'readonly');
-						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'visible';
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.display = 'block';
 						var newrow= $('#msheaderrowtemplate').html();
 
 						newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorMbDetails[' + sorCount + ']');
@@ -411,7 +411,7 @@ function populateData(data, selectedActivities){
 							});
 						});
 					} else {
-						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'hidden';
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.display = 'none';
 						$('#quantity_' + sorCount).removeAttr('readonly');
 					}
 					sorCount++;
@@ -427,7 +427,7 @@ function populateData(data, selectedActivities){
 					$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
 					if (workOrderActivity.woms != "") {
 						$('#nonSorQuantity_' + nonSorCount).attr('readonly', 'readonly');
-						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'visible';
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'block';
 						var newrow= $('#msheaderrowtemplate').html();
 
 						newrow = newrow.replace(/findNet/g, 'findNonSorNet');
@@ -487,7 +487,7 @@ function populateData(data, selectedActivities){
 							});
 						});
 					} else {
-						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'hidden';
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'none';
 						$('#nonSorQuantity_' + sorCount).removeAttr('readonly');
 					}
 					nonSorCount++;
@@ -552,7 +552,7 @@ function populateData(data, selectedActivities){
 					$('.cumulativePreviousEntry_' + sorCount).html(workOrderActivity.cumulativePreviousEntry);
 					if (workOrderActivity.woms != "") {
 						$('#quantity_' + sorCount).attr('readonly', 'readonly');
-						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'visible';
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.display = 'block';
 						var newrow= $('#msheaderrowtemplate').html();
 
 						newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorMbDetails[' + sorCount + ']');
@@ -610,7 +610,7 @@ function populateData(data, selectedActivities){
 							});
 						});
 					} else {
-						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.visibility = 'hidden';
+						document.getElementById('sorMbDetails[' + sorCount + '].msadd').style.display = 'none';
 						$('#quantity_' + sorCount).removeAttr('readonly');
 					}
 					sorCount++;
@@ -626,7 +626,7 @@ function populateData(data, selectedActivities){
 					$('.nonSorCumulativePreviousEntry_' + nonSorCount).html(workOrderActivity.cumulativePreviousEntry);
 					if (workOrderActivity.woms != "") {
 						$('#nonSorQuantity_' + nonSorCount).attr('readonly', 'readonly');
-						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'visible';
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'block';
 						var newrow= $('#msheaderrowtemplate').html();
 
 						newrow = newrow.replace(/findNet/g, 'findNonSorNet');
@@ -686,7 +686,7 @@ function populateData(data, selectedActivities){
 							});
 						});
 					} else {
-						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.visibility = 'hidden';
+						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'none';
 						$('#nonSorQuantity_' + sorCount).removeAttr('readonly');
 					}
 					nonSorCount++;

@@ -170,7 +170,7 @@
 											<button class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 										</c:when>
 										<c:otherwise>
-											<button style="visibility: hidden;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+											<button style="display: none;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 										</c:otherwise>
 									</c:choose>
 								</td>
