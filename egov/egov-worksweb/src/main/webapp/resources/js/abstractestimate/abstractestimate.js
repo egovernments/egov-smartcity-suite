@@ -340,20 +340,6 @@ $(document).ready(function(){
 
 	var $rowId = 0;
 	var index = 0;
-	$(document).on('click', '#tblassetdetails tbody tr', function(e) {
-		$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
-		$rowId = $(this).find('span[id$="sno"]');
-		index = $rowId.text() - 1;
-		var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
-		if((status != '' && $inputHiddenAssetId.val() === '') || (e.target.textContent === " Search" && $inputHiddenAssetId.val() !== '')) {
-			window.open("/egassets/asset/showsearchpage?mode=view&rowId="+index+"&assetStatus="+status,"",
-			"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
-		} else {
-			if($inputHiddenAssetId.val() === '')
-				bootbox.alert("No Asset can be link for selected nature of work");
-		}
-	});
-
 	var currentState = $('#currentState').val();
 	if(currentState == 'Technical Sanctioned') {
 		$('#approverDetailHeading').hide();
@@ -1520,15 +1506,22 @@ function updateUom(obj) {
 	calculateNonSorEstimateAmount($('#nonSorQuantity_' + rowId));
 }
 
-$(document).on('click', '#tblassetdetails tbody tr', function(e) {
-	$inputHiddenAssetId = $(this).find('input[name$="asset.id"]');
-	if($inputHiddenAssetId.val() && e.target.textContent !== " Search")
-	{
-		assetId = $inputHiddenAssetId.val();
-		var url = "/egassets/asset/view/"+assetId;
-		window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
-	}
+$(document).on('click','.viewAsset',function(e) {
+	var assetId = jQuery(this).text(); 
+	var url = "/egassets/asset/view/"+assetId;
+	window.open(url,'', 'height=650,width=980,scrollbars=yes,status=yes'); 
 });
+
+$(document).on('click','.searchAssetbtn',function(e) {
+	var index = $(this).attr("data-idx"); 
+	var status = getStatusForNatureOfWork($("#natureOfWork option:selected" ).text());
+	if((status != '') || (e.target.textContent === " Search" && $inputHiddenAssetId.val() !== '')) {
+		window.open("/egassets/asset/showsearchpage?mode=view&rowId="+index+"&assetStatus="+status,"",
+		"height=600,width=1200,scrollbars=yes,left=0,top=0,status=yes");
+	} else {
+			bootbox.alert("No Asset can be link for selected nature of work");
+	}
+}); 
 
 function update(data)
 {
@@ -1544,7 +1537,7 @@ function update(data)
 	});
 	if(isValid == 1) {
 		$('span[id="assetname['+ data.rowidx +']"]').html(data.name);
-		$('span[id="assetcode['+ data.rowidx +']"]').html(data.code);
+		$('a[id="assetcode['+ data.rowidx +']"]').html(data.code);
 		$('input[name="tempAssetValues['+ data.rowidx +'].asset.code"]').val(data.code);
 		$('input[name="tempAssetValues['+ data.rowidx +'].asset.name"]').val(data.name);
 		$('input[name="tempAssetValues['+ data.rowidx +'].asset.id"]').val(data.id);
@@ -1910,12 +1903,10 @@ function deleteHiddenRows(){
 
 function validateSORDetails() {
 	if($('#abstractEstimate').valid()) {
-		
-		
 		if(!validateOverheads()){
 			return false;
 		}
-		
+		deleteHiddenRows();
 		$('.disablefield').removeAttr("disabled");
 		return true;
 	} else
@@ -2008,7 +1999,7 @@ function addRow(tableName,rowName) {
 			$row=jQuery("#"+tableName+" tr:eq(1)").clone();
 			nextIdx++;
 		}
-		$row.find("input,select, errors,button, span,textarea").each(function() {
+		$row.find("a,input,select, errors,button, span,textarea").each(function() {
 			var classval = jQuery(this).attr('class');
 			if (jQuery(this).data('server')) {
 				jQuery(this).removeAttr('data-server');
@@ -2021,9 +2012,10 @@ function addRow(tableName,rowName) {
 				jQuery(this).text(nextIdx+1);
 			}
 
-			if(classval == 'assetdetail') {
+			if(classval == 'assetdetail' || classval == 'viewAsset') {
 				$(this).html('');
 				$(this).val(''); 
+				jQuery(this).text('');
 			} 
 			jQuery(this).attr(
 					{
@@ -2038,11 +2030,11 @@ function addRow(tableName,rowName) {
 						'class' : function(_, name) {
 							if(!(jQuery(this).attr('class')===undefined))
 								return name.replace(/\d+/, nextIdx); 
-						}/*,
+						},
 						'data-idx' : function(_,dataIdx)
 						{
-							return nextIdx++;
-						}*/
+							return nextIdx;
+						}
 					});
 			// if element is static attribute hold values for next row, otherwise it will be reset
 			if (!jQuery(this).data('static')) {
@@ -2071,8 +2063,18 @@ function deleteRow(tableName,obj){
 	var tbl=document.getElementById(tableName);	
 	var rowcount=jQuery("#"+tableName+" > tbody > tr").length;
 	if(rowcount<=1) {
+		if(tableName == 'tblassetdetails') {
+			$('a[id="assetcode[0]').html('');
+			$('span[id="assetname[0]').html('');
+			$('input[name="tempAssetValues[0].asset.code"]').val('');
+			$('input[name="tempAssetValues[0].asset.name"]').val('');
+			$('input[name="tempAssetValues[0].asset.id"]').val('');
+			$('input[name="tempAssetValues[0].id"]').val('');
+		}
+	  else {
 		bootbox.alert("This row can not be deleted");
 		return false;
+		}
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
@@ -2152,7 +2154,7 @@ function deleteRow(tableName,obj){
 			}else
 			{
 
-				jQuery(this).find("input, select,button,textarea, errors, span, input:hidden").each(function() {
+				jQuery(this).find("a,input, select,button,textarea, errors, span, input:hidden").each(function() {
 					var classval = jQuery(this).attr('class');
 
 					if(classval == 'spansno') {
