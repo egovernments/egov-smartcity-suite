@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -67,11 +69,14 @@ public class VacateStayController {
     private VacateStayService vacateStayService;
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("vacateStay") final VacateStay vacateStay,
+    public String viewForm(@ModelAttribute("vacateStay") VacateStay vacateStay,
             @RequestParam("lcInterimOrderId") final String lcInterimOrderId, final Model model,
             final HttpServletRequest request) {
 
-        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId, request);
+        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
+        final List<VacateStay> vacateStayList = getLcInterimOrder(lcInterimOrderId).getVacateStay();
+        if (!vacateStayList.isEmpty())
+            vacateStay = vacateStayList.get(0);
         model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("vacateStay", vacateStay);
         model.addAttribute("lcNumber", legalCaseInterimOrder.getLegalCase().getLcNumber());
@@ -81,8 +86,7 @@ public class VacateStayController {
     }
 
     @ModelAttribute
-    private LegalCaseInterimOrder getLcInterimOrder(@RequestParam("lcInterimOrderId") final String lcInterimOrderId,
-            final HttpServletRequest request) {
+    private LegalCaseInterimOrder getLcInterimOrder(@RequestParam("lcInterimOrderId") final String lcInterimOrderId) {
         final LegalCaseInterimOrder legalCaseInterimOrder = legalCaseInterimOrderService
                 .findById(Long.parseLong(lcInterimOrderId));
         return legalCaseInterimOrder;
@@ -93,7 +97,7 @@ public class VacateStayController {
             final RedirectAttributes redirectAttrs, @RequestParam("lcInterimOrderId") final String lcInterimOrderId,
             final HttpServletRequest request, final Model model) {
 
-        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId, request);
+        final LegalCaseInterimOrder legalCaseInterimOrder = getLcInterimOrder(lcInterimOrderId);
         if (errors.hasErrors()) {
             model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
             return "vacatestay-new";
