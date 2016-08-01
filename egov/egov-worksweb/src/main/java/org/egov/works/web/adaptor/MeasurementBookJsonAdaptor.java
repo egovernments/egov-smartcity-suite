@@ -84,9 +84,6 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
     private MeasurementSheetService measurementSheetService;
 
     @Autowired
-    private LineEstimateService lineEstimateService;
-
-    @Autowired
     private WorksUtils worksUtils;
 
     @Override
@@ -160,11 +157,11 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
             if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                     && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+                final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
                 jsonObject.addProperty("cutOffDate",
                         worksUtils.getCutOffDate() != null ? sdf.format(worksUtils.getCutOffDate()) : "");
-                final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date())
-                        .getStartingDate();
-                jsonObject.addProperty("currFinYearStartDate", sdf.format(currFinYearStartDate));
+                jsonObject.addProperty("cutOffDateDisplay",
+                        worksUtils.getCutOffDate() != null ? fmt.format(worksUtils.getCutOffDate()) : "");
             }
             jsonObject.addProperty("spillOverFlag",
                     workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag());

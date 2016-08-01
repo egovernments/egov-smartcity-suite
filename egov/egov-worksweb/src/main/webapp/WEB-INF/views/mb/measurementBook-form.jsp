@@ -78,8 +78,8 @@
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.mb.confirm" />" />
 	<input id="errorMandatory" type="hidden" value="<spring:message code="error.mandatory.fields" />" />
 	<input type="hidden" id="mode" name="mode" value="${mode }">
-	<input type="hidden" name="cutOffDate" id="cutOffDate"  value="${cutOffDate}">
-    <input type="hidden" name="currFinYearStartDate" id="currFinYearStartDate"  value="${currFinYearStartDate}">
+	<input type="hidden" name="cutOffDate" id="cutOffDate"  value="${cutOffDate}"> 
+	<input type="hidden" name="cutOffDateDisplay" id="cutOffDateDisplay"  value="${cutOffDateDisplay}">
     <input name="mbStatus" type="hidden" id="mbStatus" value="${mbHeader.egwStatus}" />
     <input type="hidden" value="${spillOverFlag}" id=spillOverFlag /> 
     <input id="cuttoffdateerrormsg1" type="hidden" value="<spring:message code="error.mbdate.cutoffdate.errmsg1" />" />

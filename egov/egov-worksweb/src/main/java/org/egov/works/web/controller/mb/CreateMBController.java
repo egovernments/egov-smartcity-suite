@@ -60,9 +60,6 @@ public class CreateMBController {
 
     @Autowired
     private WorksUtils worksUtils;
-    
-    @Autowired
-    private LineEstimateService lineEstimateService;
 
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
@@ -240,9 +237,7 @@ public class CreateMBController {
     private  void validateMBDateToSkipWorkflow(final MBHeader mBHeader, final JsonObject jsonObject, final BindingResult errors) {
         Date cutOffDate = worksUtils.getCutOffDate();
         final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
-        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
-        if (cutOffDate != null && (mBHeader.getMbDate().before(currFinYearStartDate)
-                || mBHeader.getMbDate().after(cutOffDate))) {
+        if (cutOffDate != null && mBHeader.getMbDate().after(cutOffDate)) {
             final String message = messageSource.getMessage("error.mbdate.cutoffdate",
                     new String[] {fmt.format(cutOffDate)},null);
             jsonObject.addProperty("cutoffdateerror", message);

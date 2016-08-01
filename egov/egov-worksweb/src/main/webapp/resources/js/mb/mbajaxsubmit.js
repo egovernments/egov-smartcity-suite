@@ -83,11 +83,11 @@ $('#CreateAndApprove').click(function() {
 	}
 
 	var mbDate = $('#mbDate').data('datepicker').date;
-	var cutOffDate = $('#cutOffDate').val();
-	var finYearDate = $('#currFinYearStartDate').val();
-	if(cutOffDate != '' && finYearDate != '' && $('#mbDate').val() != '') {
-	if(mbDate.getTime() > new Date(cutOffDate).getTime() || mbDate.getTime() < new Date(finYearDate).getTime()) {
-		bootbox.alert($('#cuttoffdateerrormsg1').val() + ' ' +cutOffDate+ '.'+'</br>'+$('#cuttoffdateerrormsg2').val());
+	var cutOffDate = $('#cutOffDate').val(); 
+	var cutOffDateDisplay = $('#cutOffDateDisplay').val();
+	if(cutOffDate != '' && $('#mbDate').val() != '') {
+	if(mbDate.getTime() > new Date(cutOffDate).getTime()) {
+		bootbox.alert($('#cuttoffdateerrormsg1').val() + ' ' +cutOffDateDisplay+ '.'+'</br>'+$('#cuttoffdateerrormsg2').val());
 		$('#mbDate').val('');
 		return false;
 	 }
