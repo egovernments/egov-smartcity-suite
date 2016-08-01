@@ -172,6 +172,7 @@ public class RtgsIssueRegisterReportAction extends ReportAction {
                     JRHtmlExporterParameter.SIZE_UNIT_POINT);
             return "HTML";
         }
+        addActionMessage("No data found ");
         prepare();
         return "search";
     }
