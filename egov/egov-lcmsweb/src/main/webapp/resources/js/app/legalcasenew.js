@@ -112,17 +112,16 @@ function addPetRow()
 			
 			nextIdx=(lastRow-1);
 			var currentROwIndex=nextIdx-1;
-			alert("nextIdx===="+nextIdx +" dd= "+'['+currentROwIndex+']');
 			jQuery(rowObj).find("input, select").each(
 					function() {
 					
 					jQuery(this).attr({
 								'id' : function(_, id) {
-									return id.replace('['+ currentROwIndex +']', '['
+									return id.replace('[0]', '['
 											+ nextIdx + ']');
 								},
 								'name' : function(_, name) {
-									return name.replace('[' + currentROwIndex + ']', '['
+									return name.replace('[0]', '['
 											+ nextIdx + ']');
 									
 								}
@@ -142,7 +141,64 @@ function addResRow()
 			
 			nextIdx=(lastRow-1);
 			var currentROwIndex=nextIdx-1;
-			alert("nextIdx in Res===="+nextIdx +" dd= "+'['+currentROwIndex+']');
+			jQuery(rowObj).find("input, select").each(
+					function() {
+					
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('[0]', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[0]', '['
+											+ nextIdx + ']');
+									
+								}
+					});  
+		   });
+
+
+		   tbody.appendChild(rowObj);
+		
+ }
+function addPetEditRow()
+{     
+			var tableObj=document.getElementById('petitionDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
+			jQuery(rowObj).find("input, select").each(
+					function() {
+					
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('['+ currentROwIndex +']', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[' + currentROwIndex + ']', '['
+											+ nextIdx + ']');
+									
+								}
+					});  
+		   });
+			tbody.appendChild(rowObj);
+		   
+}
+
+function addResEditRow()
+{     
+	var index=document.getElementById('respodantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respodantDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
 			jQuery(rowObj).find("input, select").each(
 					function() {
 					
@@ -163,7 +219,6 @@ function addResRow()
 		   tbody.appendChild(rowObj);
 		
  }
-
 $(document).on('click',"#pet_delete_row",function (){
 	var table = document.getElementById('petitionDetails');
     var rowCount = table.rows.length;

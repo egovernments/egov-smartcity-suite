@@ -42,6 +42,7 @@ package org.egov.lcms.transactions.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,6 +83,7 @@ public class LegalCaseService {
 	@Autowired
 	@Qualifier("fileStoreService")
 	protected FileStoreService fileStoreService;
+	
 
 	@Autowired
 	private DepartmentService departmentService;
@@ -139,12 +141,12 @@ public class LegalCaseService {
 		 }
 		 return legalDOc;
 	 }
-	 private void prepareChildEntities(final LegalCase legalcase) {
+/*	 private void prepareChildEntities(final LegalCase legalcase) {
 			final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
 			final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
 			final List<Pwr> pwrList = new ArrayList<Pwr>();
 
-			for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails())
+			for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList())
 				if (bipartObj.getName() != null && !"".equals(bipartObj.getName())) {
 					bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
 					bipartObj.setLegalCase(legalcase);
@@ -152,7 +154,6 @@ public class LegalCaseService {
 					partitionDetails.add(bipartObj);
 				}
 			legalcase.getBipartisanDetails().clear();
-			legalcase.setBipartisanDetails(partitionDetails);
 
 			for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList())
 				if (bipartObjtemp.getName() != null && !"".equals(bipartObjtemp.getName())) {
@@ -162,7 +163,8 @@ public class LegalCaseService {
 					bipartObjtemp.setIsRepondent(Boolean.TRUE);
 					legalcase.getBipartisanDetails().add(bipartObjtemp);
 				}
-
+			
+			legalcase.setBipartisanDetails(partitionDetails);
 			for (final LegalCaseDepartment legaldeptObj : legalcase.getLegalCaseDepartment()) {
 
 				legaldeptObj.setLegalCase(legalcase);
@@ -181,36 +183,38 @@ public class LegalCaseService {
 			legalcase.getEglcPwrs().clear();
 			legalcase.setEglcPwrs(pwrList);
 
-		}
+		}*/
 	
-/*	private void prepareChildEntities(final LegalCase legalcase) {
-		final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
+	private void prepareChildEntities(final LegalCase legalcase) {
+		final Set<BipartisanDetails> partitionDetails = new HashSet<BipartisanDetails>();
 		final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
 		final List<Pwr> pwrList = new ArrayList<Pwr>();
 		
 		for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList()){
 			if (bipartObj.getName() != null &&  bipartObj.getIsRepondent().equals(Boolean.FALSE) && !"".equals(bipartObj.getName())) {
 				bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
-				bipartObj.setLegalCase(legalcase);
 				bipartObj.setIsRepondent(Boolean.FALSE);
+				bipartObj.setLegalCase(legalcase);
 				partitionDetails.add(bipartObj);
 			}
-		
 		}
 		legalcase.getBipartisanDetails().clear();
 		legalcase.setBipartisanDetails(partitionDetails);
 
 		for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList())
 			if (bipartObjtemp.getName() != null &&  bipartObjtemp.getIsRepondent().equals(Boolean.TRUE) && !"".equals(bipartObjtemp.getName())) {
-				
 				bipartObjtemp.setSerialNumber(
 						bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
 				bipartObjtemp.setLegalCase(legalcase);
 				bipartObjtemp.setIsRepondent(Boolean.TRUE);
 				legalcase.getBipartisanDetails().add(bipartObjtemp);
-				legalcase.addBipartisanDetails(bipartObjtemp);
+				
 			}
-		
+		for(BipartisanDetails bipartObj:legalcase.getBipartisanDetails())
+		{
+			if(bipartObj!=null)
+			System.out.println(bipartObj.getId());
+		}
 		for (final LegalCaseDepartment legaldeptObj : legalcase.getLegalCaseDepartment()) {
 
 			legaldeptObj.setLegalCase(legalcase);
@@ -228,7 +232,7 @@ public class LegalCaseService {
 		}
 		legalcase.getEglcPwrs().clear();
 		legalcase.setEglcPwrs(pwrList);
-	}*/
+	}
 
 	
 
@@ -273,12 +277,18 @@ public class LegalCaseService {
 
 	@Transactional
 	protected void processAndStoreApplicationDocuments(final LegalCase legalcase) {
-		if (!legalcase.getLegalCaseDocuments().isEmpty())
+		
+		if (!legalcase.getLegalCaseDocuments().isEmpty()){
 			for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
 				applicationDocument.setLegalCase(legalcase);
 				applicationDocument.setDocumentName("LegalCase");
 				applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
 			}
+		}
+		else
+		{
+			
+		}
 	}
 
 	protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

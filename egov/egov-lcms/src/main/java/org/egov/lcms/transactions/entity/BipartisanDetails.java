@@ -39,9 +39,11 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -71,15 +73,15 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
 @SequenceGenerator(name = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, sequenceName = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, allocationSize = 1)
-public class BipartisanDetails extends AbstractPersistable<Long> {
+public class BipartisanDetails implements Serializable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
+    private static final long serialVersionUID = 845357231248646624L;
     public static final String SEQ_EGLC_BIPARTISANDETAILS = "SEQ_EGLC_BIPARTISANDETAILS";
 
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
     @Length(max = 128, message = "petitionerName.length")
@@ -132,12 +134,12 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
         this.contactNumber = contactNumber;
     }
 
-    @Override
+    
     public Long getId() {
         return id;
     }
 
-    @Override
+    
     public void setId(final Long id) {
         this.id = id;
     }

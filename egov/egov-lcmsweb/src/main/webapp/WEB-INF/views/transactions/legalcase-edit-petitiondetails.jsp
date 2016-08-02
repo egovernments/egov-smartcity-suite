@@ -109,7 +109,7 @@
 			id="bipartisanPetitionDetailsList[${status.index}].id" 
 			value="${bipartisanPetitionDetailsList.id}"/>
 			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetEditRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
 	</tr>
 		</c:forEach>
@@ -189,7 +189,7 @@
 					class="form-control table-input text-right" style="text-align: center"
 					value="${true}" />
 			<td class="text-center"><a href="javascript:void(0);"
-					class="btn-sm btn-default" onclick="addResRow();"><i
+					class="btn-sm btn-default" onclick="addResEditRow();"><i
 						class="fa fa-plus"></i></a> <a href="javascript:void(0);"
 					class="btn-sm btn-default" id="res_delete_row"><i
 						class="fa fa-trash"></i></a></td>

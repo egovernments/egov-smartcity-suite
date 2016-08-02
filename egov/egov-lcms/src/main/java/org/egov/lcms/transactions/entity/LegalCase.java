@@ -178,8 +178,10 @@ public class LegalCase extends AbstractAuditable {
     @Transient
     private String finwpYear;
     
-    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<BipartisanDetails> bipartisanDetails=null;
+   
+    
+    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<BipartisanDetails> bipartisanDetails = new HashSet<BipartisanDetails>(0);
     
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)    
@@ -208,11 +210,11 @@ public class LegalCase extends AbstractAuditable {
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
 
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+   /* @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
+    private List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);*/
 
     @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
     private Date casefirstappearancedate;
@@ -565,22 +567,17 @@ public class LegalCase extends AbstractAuditable {
         this.legalCaseInterimOrder = legalCaseInterimOrder;
     }
 
-    public List<BipartisanDetails> getBipartisanDetails() {
-    	
-        return bipartisanDetails;
-    }
+   
 
-    public void setBipartisanDetails(final List<BipartisanDetails> bipartisanDetails) {
-    	if (this.bipartisanDetails == null) {
-    		 this.bipartisanDetails = bipartisanDetails;
-    	  } else {
-    	    this.bipartisanDetails.retainAll(bipartisanDetails);
-    	   this.bipartisanDetails.addAll(bipartisanDetails);
-    	  }
-      
-    }
+    public Set<BipartisanDetails> getBipartisanDetails() {
+		return bipartisanDetails;
+	}
 
-    public void addBipartisanDetails(BipartisanDetails bipartisanDetails)
+	public void setBipartisanDetails(Set<BipartisanDetails> bipartisanDetails) {
+		this.bipartisanDetails = bipartisanDetails;
+	}
+
+	public void addBipartisanDetails(BipartisanDetails bipartisanDetails)
     {
     	this.bipartisanDetails.add(bipartisanDetails);
     }
@@ -650,7 +647,7 @@ public class LegalCase extends AbstractAuditable {
     public void setBatchCaseSet(final List<BatchCase> batchCaseSet) {
         this.batchCaseSet = batchCaseSet;
     }
-
+/*
     public List<PaperBook> getPaperBookSet() {
         return paperBookSet;
     }
@@ -665,7 +662,7 @@ public class LegalCase extends AbstractAuditable {
 
     public void setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
         this.processRegisterSet = processRegisterSet;
-    }
+    }*/
 
     /*
      * public Long getDocumentNum() { return documentNum; } public void

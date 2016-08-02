@@ -79,6 +79,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         redirectAttrs.addFlashAttribute("legalCase", legalCase);
         model.addAttribute("mode", "edit");
         model.addAttribute("message", "LegalCase updated successfully.");
+        model.addAttribute("legalCaseDocList",
+                legalCaseService.getLegalCaseDocList(legalCase));
         return "legalcase-success";
     }
 
