@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-26T15:58:26 -->
+<!-- 2016-08-02T15:21:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementBook_tenderitems" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="20" topMargin="0" bottomMargin="20" uuid="9dd7c10b-bcf6-4a20-8208-9cc6d9a4aed0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="mBHeader" class="org.egov.works.mb.entity.MBHeader"/>
@@ -57,7 +57,7 @@
 	<title>
 		<band height="35">
 			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="350" y="7" width="121" height="28" uuid="c583b0f9-3d04-4771-a640-1a841c885ef6">
+				<reportElement stretchType="RelativeToTallestObject" x="272" y="7" width="149" height="28" uuid="c583b0f9-3d04-4771-a640-1a841c885ef6">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -67,10 +67,10 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled"/>
-				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Total (Rs): </style>"+$V{pageTotal}.setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Total (Rs) : </style>"+$V{pageTotal}.setScale(2,BigDecimal.ROUND_HALF_UP)]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,###.##">
-				<reportElement stretchType="RelativeToTallestObject" x="471" y="7" width="179" height="28" uuid="ea5440fc-47ca-4a9f-8ebc-a59940aa4fec">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToTallestObject" x="421" y="7" width="211" height="28" uuid="ea5440fc-47ca-4a9f-8ebc-a59940aa4fec">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -83,7 +83,7 @@
 				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Finalized tender percentage : </style>"+$P{tenderFinalizedPerc}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement x="650" y="7" width="133" height="28" uuid="39a6305a-f606-41bf-ab8c-553e80f1a9fc">
+				<reportElement x="632" y="7" width="151" height="28" uuid="39a6305a-f606-41bf-ab8c-553e80f1a9fc">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -271,7 +271,7 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getDescription() : $F{workOrderActivity}.getActivity().getNonSor().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,###.##">

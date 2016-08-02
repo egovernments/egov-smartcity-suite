@@ -826,7 +826,7 @@ public class MBHeaderService {
                     measurementSheetMap.put("scheduleCode", "");
                     measurementSheetMap.put("scheduleCategory", "");
                     measurementSheetMap.put("description",
-                            mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks());
+                            mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() != null  ? mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() : "" );
                     measurementSheetMap.put("woNo", mBMeasurement.getWoMeasurementSheet().getNo() != null
                             ? mBMeasurement.getWoMeasurementSheet().getNo() : "");
                     measurementSheetMap.put("woLength", mBMeasurement.getWoMeasurementSheet().getLength() != null

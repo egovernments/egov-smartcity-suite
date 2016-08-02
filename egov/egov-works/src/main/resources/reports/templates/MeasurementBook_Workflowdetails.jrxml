@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-18T11:31:04 -->
+<!-- 2016-08-02T12:36:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MeasurementBook_Workflowdetails" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d3e6f5fa-c3ac-4008-8499-bbc258a05fc8">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<field name="designation" class="java.lang.Object"/>
@@ -78,7 +78,7 @@
 				<text><![CDATA[Approval Step]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="0" width="173" height="30" uuid="e0d36a60-13fb-4501-b186-ae108fce63e2"/>
+				<reportElement x="187" y="0" width="163" height="30" uuid="e0d36a60-13fb-4501-b186-ae108fce63e2"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -91,7 +91,7 @@
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="360" y="0" width="151" height="30" uuid="2de133fc-1297-4739-b163-4cab24c031d3"/>
+				<reportElement x="350" y="0" width="151" height="30" uuid="2de133fc-1297-4739-b163-4cab24c031d3"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -104,7 +104,7 @@
 				<text><![CDATA[Designation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="511" y="0" width="109" height="30" uuid="69d4c959-6fcf-4943-a046-a6920483e738"/>
+				<reportElement x="501" y="0" width="119" height="30" uuid="69d4c959-6fcf-4943-a046-a6920483e738"/>
 				<box>
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -145,7 +145,7 @@
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="187" y="0" width="173" height="30" uuid="889b8040-2a96-41f2-ba1b-a9b0926f8639"/>
+				<reportElement stretchType="RelativeToTallestObject" x="187" y="0" width="163" height="30" uuid="889b8040-2a96-41f2-ba1b-a9b0926f8639"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -156,7 +156,7 @@
 				<textFieldExpression><![CDATA[$F{user}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="151" height="30" uuid="d3e512fd-3e35-44f3-a2b3-26a8fc863e48"/>
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="151" height="30" uuid="d3e512fd-3e35-44f3-a2b3-26a8fc863e48"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -167,7 +167,7 @@
 				<textFieldExpression><![CDATA[$F{designation}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="511" y="0" width="109" height="30" uuid="0c7d650f-6e28-4395-bf87-a66aeb4a96db"/>
+				<reportElement stretchType="RelativeToTallestObject" x="501" y="0" width="119" height="30" uuid="0c7d650f-6e28-4395-bf87-a66aeb4a96db"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>

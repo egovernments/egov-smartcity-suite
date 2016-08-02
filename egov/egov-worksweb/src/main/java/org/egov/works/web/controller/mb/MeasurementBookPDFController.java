@@ -51,9 +51,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.entity.MBMeasurementSheet;
@@ -118,6 +120,11 @@ public class MeasurementBookPDFController {
               reportParams.put("measurementDetails", mBHeaderService.getMeasurementsForMB(mBHeader));
           }  
         } 
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                .concat((String) request.getSession().getAttribute("citylogo")));
+        final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
+        reportParams.put("cityName", cityName);
         reportParams.put("currDate", sdf.format(new Date()));
         reportParams.put("tenderItems", calculateCumulaticeQuantiy(mBHeader));
         reportInput = new ReportRequest(MEASUREMENTBOOKPDF, mBHeader, reportParams);

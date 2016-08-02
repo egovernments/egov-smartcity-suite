@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-26T15:48:51 -->
+<!-- 2016-08-02T14:49:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MB_measurementSheet" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c1fa2805-e3c7-415a-b9f2-e147caae031e">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<queryString>
@@ -69,7 +69,7 @@
 			<staticText>
 				<reportElement x="336" y="0" width="200" height="30" uuid="011b5090-ea84-4ffe-8cf7-21c809077771"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="16" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Measurement Sheet]]></text>
 			</staticText>
@@ -94,7 +94,7 @@
 				<text><![CDATA[Sl No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="0" width="44" height="50" uuid="e5e5e1e9-3698-4dfe-97a2-e084aef46157">
+				<reportElement x="30" y="0" width="40" height="50" uuid="e5e5e1e9-3698-4dfe-97a2-e084aef46157">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -109,7 +109,7 @@
 				<text><![CDATA[SOR Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="74" y="0" width="50" height="50" uuid="a4abb716-66e7-4a4e-a21e-3e8043f903c9">
+				<reportElement x="70" y="0" width="50" height="50" uuid="a4abb716-66e7-4a4e-a21e-3e8043f903c9">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -119,12 +119,12 @@
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Schedule Category]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="124" y="0" width="90" height="50" uuid="6bb376ae-437f-4197-8d1a-d6d30dc7fae1">
+				<reportElement x="120" y="0" width="86" height="50" uuid="6bb376ae-437f-4197-8d1a-d6d30dc7fae1">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -139,7 +139,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="214" y="0" width="186" height="25" uuid="e5417d05-64f9-4a78-8bba-d45a83843807">
+				<reportElement x="206" y="0" width="190" height="25" uuid="e5417d05-64f9-4a78-8bba-d45a83843807">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -155,7 +155,7 @@
 				<text><![CDATA[Approved Quantity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="214" y="25" width="23" height="25" uuid="d2efd9f5-6544-4d04-8362-6d18dc446f9f">
+				<reportElement x="206" y="25" width="27" height="25" uuid="d2efd9f5-6544-4d04-8362-6d18dc446f9f">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -170,7 +170,7 @@
 				<text><![CDATA[Nos]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="237" y="25" width="40" height="25" uuid="8da18c45-83d9-4d91-842a-3a2a19e98d27">
+				<reportElement x="233" y="25" width="40" height="25" uuid="8da18c45-83d9-4d91-842a-3a2a19e98d27">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -185,7 +185,7 @@
 				<text><![CDATA[Length]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="277" y="25" width="35" height="25" uuid="22c2827b-27e9-47fd-97b0-baf8121c1518">
+				<reportElement x="273" y="25" width="35" height="25" uuid="22c2827b-27e9-47fd-97b0-baf8121c1518">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -200,7 +200,7 @@
 				<text><![CDATA[Width]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="312" y="25" width="40" height="25" uuid="c1472064-8ce0-4145-8e00-783a7b5aaef3">
+				<reportElement x="308" y="25" width="40" height="25" uuid="c1472064-8ce0-4145-8e00-783a7b5aaef3">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -215,7 +215,7 @@
 				<text><![CDATA[Depth/Height]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="352" y="25" width="48" height="25" uuid="3ad659aa-7ab2-4243-a174-987ae51d43ad">
+				<reportElement x="348" y="25" width="48" height="25" uuid="3ad659aa-7ab2-4243-a174-987ae51d43ad">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -230,7 +230,7 @@
 				<text><![CDATA[Quantity]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="400" y="0" width="255" height="25" uuid="89d788ea-fe60-4a0a-8370-f84e2f0ec455">
+				<reportElement x="466" y="0" width="189" height="25" uuid="89d788ea-fe60-4a0a-8370-f84e2f0ec455">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -246,7 +246,7 @@
 				<text><![CDATA[Current Measurement]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="470" y="25" width="23" height="25" uuid="2c7c0ca4-a59e-4734-853d-30298737a5ee">
+				<reportElement x="466" y="25" width="27" height="25" uuid="2c7c0ca4-a59e-4734-853d-30298737a5ee">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -366,7 +366,7 @@
 				<text><![CDATA[Amount(Rs)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="400" y="25" width="70" height="25" uuid="aec4987e-0ff6-4b8e-b2fa-38c8c9d08198">
+				<reportElement x="396" y="0" width="70" height="50" uuid="aec4987e-0ff6-4b8e-b2fa-38c8c9d08198">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -398,7 +398,7 @@
 				<textFieldExpression><![CDATA[$F{sNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="44" height="30" uuid="dd709977-fe21-47ea-bec0-2da20764cce6">
+				<reportElement stretchType="RelativeToTallestObject" x="30" y="0" width="40" height="30" uuid="dd709977-fe21-47ea-bec0-2da20764cce6">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -411,7 +411,7 @@
 				<textFieldExpression><![CDATA[$F{scheduleCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="74" y="0" width="50" height="30" uuid="fc8d3003-c5df-44ea-99a1-d16eded7c089">
+				<reportElement stretchType="RelativeToTallestObject" x="70" y="0" width="50" height="30" uuid="fc8d3003-c5df-44ea-99a1-d16eded7c089">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -424,8 +424,9 @@
 				<textFieldExpression><![CDATA[$F{scheduleCategory}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="124" y="0" width="90" height="30" uuid="f8cc8ebd-c374-4aaf-a4a2-22842b88450d">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="120" y="0" width="86" height="30" uuid="f8cc8ebd-c374-4aaf-a4a2-22842b88450d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="3" leftPadding="3">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -433,12 +434,13 @@
 					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="214" y="0" width="23" height="30" uuid="ab65c867-b1ee-4a22-bf48-01a67c00b464">
+				<reportElement stretchType="RelativeToTallestObject" x="206" y="0" width="27" height="30" uuid="ab65c867-b1ee-4a22-bf48-01a67c00b464">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -450,8 +452,9 @@
 				<textFieldExpression><![CDATA[$F{woNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="237" y="0" width="40" height="30" uuid="f987a15d-e98d-42b2-b4bd-2a23f730548d">
+				<reportElement stretchType="RelativeToTallestObject" x="233" y="0" width="40" height="30" uuid="f987a15d-e98d-42b2-b4bd-2a23f730548d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -463,8 +466,9 @@
 				<textFieldExpression><![CDATA[$F{woLength}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="277" y="0" width="35" height="30" uuid="126dcc5c-b7fc-44bf-a4a4-9c413c1f911d">
+				<reportElement stretchType="RelativeToTallestObject" x="273" y="0" width="35" height="30" uuid="126dcc5c-b7fc-44bf-a4a4-9c413c1f911d">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -476,8 +480,9 @@
 				<textFieldExpression><![CDATA[$F{woWidth}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="312" y="0" width="40" height="30" uuid="84f8fe34-fee2-4ef1-9e78-f1945b08c8a0">
+				<reportElement stretchType="RelativeToTallestObject" x="308" y="0" width="40" height="30" uuid="84f8fe34-fee2-4ef1-9e78-f1945b08c8a0">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -488,9 +493,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{woDepthHeight}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,###.##">
-				<reportElement stretchType="RelativeToTallestObject" x="352" y="0" width="48" height="30" uuid="0f13e6f5-d772-4320-a51b-f23965b5dc98">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement stretchType="RelativeToTallestObject" x="348" y="0" width="48" height="30" uuid="0f13e6f5-d772-4320-a51b-f23965b5dc98">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{mbQuantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -502,7 +508,7 @@
 				<textFieldExpression><![CDATA[$F{woQuantity}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="470" y="0" width="23" height="30" forecolor="#F51A16" uuid="9a104c26-4188-4b09-b1aa-1856eeee093b">
+				<reportElement stretchType="RelativeToTallestObject" x="466" y="0" width="27" height="30" forecolor="#F51A16" uuid="9a104c26-4188-4b09-b1aa-1856eeee093b">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -557,7 +563,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{mbDepthHeight}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,###.##">
+			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement stretchType="RelativeToTallestObject" x="608" y="0" width="47" height="30" forecolor="#F51A16" uuid="d1e0c637-767f-47dd-8380-98ceaee09310">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -610,7 +616,7 @@
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#0.00#">
-				<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="70" height="30" uuid="7bcaeabf-8c65-47a3-9e16-469a1c6dfbe1">
+				<reportElement stretchType="RelativeToTallestObject" x="396" y="0" width="70" height="30" uuid="7bcaeabf-8c65-47a3-9e16-469a1c6dfbe1">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -621,6 +627,19 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{completedMeasurement}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="120" y="0" width="276" height="30" uuid="8afe4560-5d28-4ab9-a78f-09c06fad87d5">
+					<printWhenExpression><![CDATA[$F{mbQuantity} == ""]]></printWhenExpression>
+				</reportElement>
+				<box topPadding="1" leftPadding="2" bottomPadding="1">
+					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
