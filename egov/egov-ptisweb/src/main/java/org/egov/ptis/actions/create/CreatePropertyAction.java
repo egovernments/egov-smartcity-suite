@@ -1228,6 +1228,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setTaxExemptedReason(taxExemptionReason);
             property.setIsExemptedFromTax(Boolean.TRUE);
         }
+        if (StringUtils.isBlank(taxExemptionId)) {
+            property.setTaxExemptedReason(null);
+            property.setIsExemptedFromTax(Boolean.FALSE);
+        }
         
     	propService.updateFloorDetails(property,getFloorDetails());
     	basicPropertyService.update(basicProp);
