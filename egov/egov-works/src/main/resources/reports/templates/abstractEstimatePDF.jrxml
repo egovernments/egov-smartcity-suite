@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-07-27T14:07:53 -->
+<!-- 2016-08-02T16:50:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="abstractEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isSummaryWithPageHeaderAndFooter="true" isFloatColumnFooter="true" uuid="21febbd0-09ca-473a-b5e5-726fffd82711">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -52,6 +52,7 @@
 	<parameter name="workflowdetails" class="java.util.List"/>
 	<parameter name="currDate" class="java.lang.String"/>
 	<parameter name="measurementExists" class="java.lang.Boolean"/>
+	<parameter name="cityLogo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -67,12 +68,12 @@
 	<field name="estimateValue" class="java.math.BigDecimal"/>
 	<field name="name" class="java.lang.String"/>
 	<variable name="overheadvalue" class="java.math.BigDecimal"/>
-	<group name="Group1" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+	<group name="Dummy Group Header2" isReprintHeaderOnEachPage="true">
 		<groupHeader>
 			<band height="49">
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="28" width="190" height="21" uuid="85ff36b1-cf4e-4c2e-b73f-91effe97d2b3"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -86,7 +87,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="28" width="180" height="21" uuid="c959ad0c-719a-4498-b8c9-fe8c2e3349bb"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -99,7 +100,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="28" width="170" height="21" uuid="87197316-2bce-400c-b3b3-571999c7fb49"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -114,7 +115,7 @@
 			<band height="20">
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="190" height="20" uuid="30f63d9f-1619-42f1-b6d9-01ae5b9e2bcd"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -127,7 +128,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="200" y="0" width="180" height="20" uuid="81c9e575-9004-4c55-a765-ce872a0057ce"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -140,7 +141,7 @@
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="380" y="0" width="170" height="20" uuid="bb5ca7a8-c230-45ed-a245-d9fcf97fc71a"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -155,7 +156,7 @@
 			<band height="21">
 				<textField isStretchWithOverflow="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="540" height="21" uuid="d0f6165b-8b01-4dcf-a123-555898d2d27f"/>
-					<box leftPadding="1">
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -169,7 +170,6 @@
 			</band>
 		</groupHeader>
 	</group>
-	<group name="Group2"/>
 	<background>
 		<band height="802" splitType="Stretch">
 			<rectangle>
@@ -203,9 +203,12 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="Times New Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Department : "+$F{executingDepartment}.getName()
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Department : "+$F{executingDepartment}.getName()]]></textFieldExpression>
 			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="17" y="6" width="54" height="53" uuid="cc088b76-9c3f-4bad-a021-86d4966751f8"/>
+				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
@@ -213,7 +216,7 @@
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField isStretchWithOverflow="true">
 				<reportElement positionType="Float" isPrintRepeatedValues="false" x="10" y="0" width="540" height="20" uuid="81f7e317-4887-40d6-9284-1b59ba0aa75a"/>
-				<box leftPadding="1">
+				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -287,7 +290,7 @@
 			</staticText>
 			<textField pattern="#0.00#">
 				<reportElement x="410" y="99" width="140" height="20" uuid="eb6f39ad-2a2a-4790-b998-9d07857fdbbe"/>
-				<box rightPadding="1">
+				<box rightPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -300,7 +303,7 @@
 			</textField>
 			<textField pattern="#0.00#">
 				<reportElement x="410" y="119" width="140" height="20" uuid="65c3347b-61ec-412e-8173-26d38d1d0a79"/>
-				<box rightPadding="1">
+				<box rightPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -313,7 +316,7 @@
 			</textField>
 			<textField pattern="#0.00#">
 				<reportElement x="410" y="139" width="140" height="20" uuid="5edb899c-8b8f-4a40-93e7-9b4fa2c35fe1"/>
-				<box rightPadding="1">
+				<box rightPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -326,7 +329,7 @@
 			</textField>
 			<staticText>
 				<reportElement x="90" y="99" width="320" height="20" uuid="00659941-3c9a-473f-be17-6a8e720b72cd"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -339,7 +342,7 @@
 			</staticText>
 			<staticText>
 				<reportElement x="90" y="119" width="320" height="20" uuid="31f73f97-4325-4a0b-8a3c-20c105c01ce2"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -352,7 +355,7 @@
 			</staticText>
 			<staticText>
 				<reportElement x="90" y="139" width="320" height="20" uuid="25d466a2-d279-4ab3-b896-fcc6c9c0e7db"/>
-				<box leftPadding="1">
+				<box leftPadding="2">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>

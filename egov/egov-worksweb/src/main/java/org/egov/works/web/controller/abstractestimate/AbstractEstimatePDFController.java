@@ -51,9 +51,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
@@ -106,6 +108,9 @@ public class AbstractEstimatePDFController {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         reportParams.put("cityName", cityName);
+        final String url = WebUtils.extractRequestDomainURL(request, false);
+        reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
+                .concat((String) request.getSession().getAttribute("citylogo")));
         if (abstractEstimate != null) {
             reportParams.put("estimateDate", formatter.format(abstractEstimate.getEstimateDate()));
             reportParams.put("abstractEstimate", abstractEstimate);

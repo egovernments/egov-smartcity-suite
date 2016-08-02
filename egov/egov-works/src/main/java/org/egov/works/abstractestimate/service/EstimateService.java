@@ -1320,7 +1320,7 @@ public class EstimateService {
                     measurementSheetMap.put("no", ms.getNo() != null ? ms.getNo() : "");
                     measurementSheetMap.put("scheduleCategory", "");
                     measurementSheetMap.put("scheduleCode", "");
-                    measurementSheetMap.put("description", "");
+                    measurementSheetMap.put("description", ms.getRemarks() != null ? ms.getRemarks() : "");
                     measurementSheetMap.put("length", ms.getLength() != null ? ms.getLength() : "");
                     measurementSheetMap.put("width", ms.getWidth() != null ? ms.getWidth() : "");
                     measurementSheetMap.put("depthHeigth", ms.getDepthOrHeight() != null ? ms.getDepthOrHeight() : "");
