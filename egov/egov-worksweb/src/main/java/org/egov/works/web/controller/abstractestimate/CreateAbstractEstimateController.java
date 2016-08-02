@@ -181,6 +181,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateMandatory(abstractEstimate, bindErrors);
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         estimateService.validateActivities(abstractEstimate, bindErrors);
+        estimateService.validateOverheads(abstractEstimate, bindErrors);
         
         //Added server side validation for selected abstract estimate created flag
         if (abstractEstimate.getLineEstimateDetails() != null

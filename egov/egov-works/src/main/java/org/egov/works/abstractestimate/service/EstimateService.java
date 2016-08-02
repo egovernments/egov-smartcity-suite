@@ -235,9 +235,9 @@ public class EstimateService {
         else
             newAbstractEstimate = updateAbstractEstimate(abstractEstimateFromDB, abstractEstimate);
 
-        if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
-            abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
+        if (newAbstractEstimate.getLineEstimateDetails() != null
+                && newAbstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
+            newAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                     EstimateStatus.ADMIN_SANCTIONED.toString()));
         else
             createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
@@ -416,6 +416,8 @@ public class EstimateService {
         abstractEstimateFromDB.setWard(newAbstractEstimate.getWard());
         abstractEstimateFromDB.setNatureOfWork(newAbstractEstimate.getNatureOfWork());
         abstractEstimateFromDB.setLocation(newAbstractEstimate.getLocation());
+        abstractEstimateFromDB.setLatitude(newAbstractEstimate.getLatitude());
+        abstractEstimateFromDB.setLongitude(newAbstractEstimate.getLongitude());
         abstractEstimateFromDB.setParentCategory(newAbstractEstimate.getParentCategory());
         abstractEstimateFromDB.setCategory(newAbstractEstimate.getCategory());
         abstractEstimateFromDB.setExecutingDepartment(newAbstractEstimate.getExecutingDepartment());
@@ -461,6 +463,12 @@ public class EstimateService {
             newOverheadValue.setAmount(value.getAmount());
             newOverheadValue.setAbstractEstimate(abstractEstimateFromDB);
             abstractEstimateFromDB.getOverheadValues().add(newOverheadValue);
+        }
+        
+        abstractEstimateFromDB.getEstimateTechnicalSanctions().clear();
+        for (final EstimateTechnicalSanction ets : newAbstractEstimate.getEstimateTechnicalSanctions()) {
+            ets.setAbstractEstimate(abstractEstimateFromDB);
+            abstractEstimateFromDB.getEstimateTechnicalSanctions().add(ets);
         }
 
         abstractEstimateRepository.save(abstractEstimateFromDB);
@@ -984,6 +992,21 @@ public class EstimateService {
                 errors.reject("error.quantity.zero", "error.quantity.zero");
             if (activity.getRate() <= 0)
                 errors.reject("error.rates.zero", "error.rates.zero");
+        }
+    }
+    
+    public void validateOverheads(final AbstractEstimate abstractEstimate, final BindingResult errors) {
+        for (final OverheadValue value : abstractEstimate.getTempOverheadValues()) {
+            if (value.getOverhead().getId() == null) {
+                errors.reject("error.overhead.null", "error.overhead.null");
+                break;
+            }
+        }
+        for (final OverheadValue value : abstractEstimate.getTempOverheadValues()) {
+            if (value.getAmount() <= 0) {
+                errors.reject("error.overhead.amount", "error.overhead.amount");
+                break;
+            }
         }
     }
 

@@ -180,6 +180,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             estimateService.validateMandatory(abstractEstimate, errors);
             estimateService.validateAssetDetails(abstractEstimate, errors);
             estimateService.validateActivities(abstractEstimate, errors);
+            estimateService.validateOverheads(abstractEstimate, errors);
             if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
                 if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                     errors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");

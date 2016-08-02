@@ -362,7 +362,7 @@ public class LineEstimateService {
                 " where not exists (select distinct(wo.estimateNumber) from WorkOrder as wo where led.estimateNumber = wo.estimateNumber and upper(wo.egwStatus.code) !=:wostatus) ");
         mainQuery.append(" and upper(led.lineEstimate.status.code) =:lestatus ");
         mainQuery.append(
-                " and exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.state is null and ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:aestatus) ");
+                " and exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.state is null and not exists (select act.abstractEstimate from Activity as act where ae = act.abstractEstimate) and ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:aestatus) ");
         mainQuery.append(filterConditions.toString());
 
         query = null;

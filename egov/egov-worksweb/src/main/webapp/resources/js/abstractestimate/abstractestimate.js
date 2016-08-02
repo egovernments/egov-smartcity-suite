@@ -37,7 +37,9 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
+$.validator.setDefaults({
+	ignore: ""
+});
 $subTypeOfWorkId = 0;
 $ExceptionalUOMs = "";
 $schemeId = "";
@@ -269,6 +271,7 @@ $(document).ready(function(){
 			} else {
 				$('#quantity_0').val('');
 				$('#quantity_0').removeAttr('readonly');
+				$('#quantity_0').attr('required', 'required');
 				$('#vat_0').val('');
 				key = 0;
 				$('#message').attr('hidden', 'true');;
@@ -640,6 +643,7 @@ function deleteSor(obj) {
 		$('#soractivityid_' + rowId).val('');
 		$('.sorhiddenid').val('');
 		$('#quantity_' + rowId).val('');
+		$('#quantity_' + rowId).removeAttr('required');
 		$('.amount_' + rowId).html('');
 		$('#vat_' + rowId).val('');
 		$('.vatAmount_' + rowId).html('');
@@ -742,6 +746,7 @@ function deleteNonSor(obj) {
 		$('#nonSorEstimateRate_' + rowId).val('');
 		$('#nonSorRate_' + rowId).val('');
 		$('#nonSorQuantity_' + rowId).val('');
+		$('#nonSorQuantity_' + rowId).removeAttr('required');
 		$('.nonSorAmount_' + rowId).html('');
 		$('#nonSorServiceTaxPerc_' + rowId).val('');
 		$('.nonSorVatAmount_' + rowId).html('');
@@ -1017,12 +1022,15 @@ function validateOverheads(){
 				+ index + '].name').value;
 		var amount = document.getElementById('tempOverheadValues['
 				+ index + '].amount').value;
-		if(overheadvalue!=""){
-			if(amount=="" || amount<=0){
-				document.getElementById('tempOverheadValues['+ index + '].amount').focus();
-				bootbox.alert("Amount is requried for overheads line:  "+(index+1));
-				return false;
-			}
+		if(overheadvalue=="" && resultLength != 1){
+			document.getElementById('tempOverheadValues['+ index + '].name').focus();
+			bootbox.alert("Select overhead name for overheads line:  "+(index+1) + " in Schedule B Tab");
+			return false;
+		}
+		if(resultLength != 1 && (amount=="" || amount<=0)){
+			document.getElementById('tempOverheadValues['+ index + '].amount').focus();
+			bootbox.alert("Amount is requried for overheads line:  "+(index+1) + " in Schedule B Tab");
+			return false;
 		}
 	}
 	return true;
@@ -1179,6 +1187,7 @@ function clearActivities(){
 				$('#quantity_0').val('');
 				$('#categoryCode_0').val('');
 				$('#quantity_0').removeAttr('readonly');
+				$('#quantity_0').attr('required', 'required');
 				$('.amount_0').html('');
 				$('#vat_0').val('');
 				$('.vatAmount_0').html('');
@@ -1217,6 +1226,7 @@ function clearActivities(){
 				$('.nonSorRate').val('');
 				$('.nonSorQuantity').val('');
 				$('.nonSorQuantity').removeAttr('readonly');
+				$('.nonSorQuantity').attr('required', 'required');
 				$('.nonsoramount').html('');
 				$('.nonSorServiceTaxPerc').val('');
 				$('.nonSorVatAmt').html('');
@@ -1263,6 +1273,7 @@ function getActivitiesForTemplate(id){
 						$('#quantity_' + key).val('');
 						$('#categoryCode_' + key).val('');
 						$('#quantity_' + key).removeAttr('readonly');
+						$('#quantity_' + key).attr('required', 'required');
 						$('.amount_' + key).html('');
 						$('#vat_' + key).val('');
 						$('.vatAmount_' + key).html('');
@@ -1292,6 +1303,7 @@ function getActivitiesForTemplate(id){
 							$('#nonSorEstimateRate_' + key).val('');
 							$('#nonSorQuantity_' + key).val('');
 							$('#nonSorQuantity_' + key).removeAttr('readonly');
+							$('#nonSorQuantity_' + key).attr('required', 'required');
 							$('.nonSorAmount_' + key).html('');
 							$('#nonSorServiceTaxPerc_' + key).val('');
 							$('.nonSorVatAmt_' + key).html('');

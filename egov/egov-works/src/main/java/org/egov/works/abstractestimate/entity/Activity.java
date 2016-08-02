@@ -113,8 +113,6 @@ public class Activity extends AbstractAuditable {
     @GreaterThan(value = 0, message = "activity.estimaterate.non.negative")
     private double estimateRate = 0.0;
 
-    @NotNull(message = "activity.quantity.not.null")
-    @GreaterThan(value = 0, message = "activity.quantity.non.negative")
     private double quantity;
 
     @Min(value = 0, message = "activity.servicetax.non.negative")
