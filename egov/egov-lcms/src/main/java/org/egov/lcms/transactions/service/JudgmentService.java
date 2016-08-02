@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -98,6 +99,13 @@ public class JudgmentService {
         legalCaseRepository.save(judgment.getLegalCase());
         return judgmentRepository.save(judgment);
 
+    }
+
+    public List<JudgmentDocuments> getJudgmentDocList(final Judgment judgment) {
+        final List<JudgmentDocuments> judgmentDOc = new ArrayList<JudgmentDocuments>();
+        for (final JudgmentDocuments judgmentDoc : judgment.getJudgmentDocuments())
+            judgmentDOc.add(judgmentDoc);
+        return judgmentDOc;
     }
 
     public List<Judgment> findAll() {

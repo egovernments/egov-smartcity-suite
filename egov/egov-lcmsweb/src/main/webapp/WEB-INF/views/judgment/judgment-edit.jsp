@@ -11,6 +11,7 @@
 	<%@ include file="judgment-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 			<input type="hidden" name="legalCase" value="${legalCase.id}" />
+			<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
 
 	</div>
 	</div>
