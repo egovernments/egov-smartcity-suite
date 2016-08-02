@@ -186,20 +186,32 @@ public class LegalCaseService {
 		}*/
 	
 	private void prepareChildEntities(final LegalCase legalcase) {
-		final Set<BipartisanDetails> partitionDetails = new HashSet<BipartisanDetails>();
+		final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
 		final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
 		final List<Pwr> pwrList = new ArrayList<Pwr>();
 		
-		for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList()){
-			if (bipartObj.getName() != null &&  bipartObj.getIsRepondent().equals(Boolean.FALSE) && !"".equals(bipartObj.getName())) {
-				bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
-				bipartObj.setIsRepondent(Boolean.FALSE);
-				bipartObj.setLegalCase(legalcase);
-				partitionDetails.add(bipartObj);
+		if(legalcase !=null && legalcase.getId()!=null){
+			for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList()){
+				if (bipartObj.getName() != null &&  bipartObj.getIsRepondent().equals(Boolean.FALSE) && !"".equals(bipartObj.getName())) {
+					bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
+					bipartObj.setIsRepondent(Boolean.FALSE);
+					bipartObj.setLegalCase(legalcase);
+					partitionDetails.add(bipartObj);
+				}
+			}}
+			else
+			{
+				for (final BipartisanDetails bipartObj : legalcase.getBipartisanDetails()){
+					if (bipartObj.getName() != null &&  bipartObj.getIsRepondent().equals(Boolean.FALSE) && !"".equals(bipartObj.getName())) {
+						bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
+						bipartObj.setIsRepondent(Boolean.FALSE);
+						bipartObj.setLegalCase(legalcase);
+						partitionDetails.add(bipartObj);
+					}
+				}
 			}
-		}
-		legalcase.getBipartisanDetails().clear();
-		legalcase.setBipartisanDetails(partitionDetails);
+			legalcase.getBipartisanDetails().clear();
+			legalcase.setBipartisanDetails(partitionDetails);
 
 		for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList())
 			if (bipartObjtemp.getName() != null &&  bipartObjtemp.getIsRepondent().equals(Boolean.TRUE) && !"".equals(bipartObjtemp.getName())) {

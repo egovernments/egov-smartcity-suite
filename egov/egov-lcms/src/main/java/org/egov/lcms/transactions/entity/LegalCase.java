@@ -181,7 +181,7 @@ public class LegalCase extends AbstractAuditable {
    
     
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BipartisanDetails> bipartisanDetails = new HashSet<BipartisanDetails>(0);
+    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
     
     @OrderBy("id")
     @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)    
@@ -569,13 +569,6 @@ public class LegalCase extends AbstractAuditable {
 
    
 
-    public Set<BipartisanDetails> getBipartisanDetails() {
-		return bipartisanDetails;
-	}
-
-	public void setBipartisanDetails(Set<BipartisanDetails> bipartisanDetails) {
-		this.bipartisanDetails = bipartisanDetails;
-	}
 
 	public void addBipartisanDetails(BipartisanDetails bipartisanDetails)
     {
@@ -669,8 +662,17 @@ public class LegalCase extends AbstractAuditable {
      * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
      * }
      */
+ 
 
-    public Date getCasefirstappearancedate() {
+    public List<BipartisanDetails> getBipartisanDetails() {
+		return bipartisanDetails;
+	}
+
+	public void setBipartisanDetails(List<BipartisanDetails> bipartisanDetails) {
+		this.bipartisanDetails = bipartisanDetails;
+	}
+
+	public Date getCasefirstappearancedate() {
         return casefirstappearancedate;
     }
 
