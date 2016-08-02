@@ -1067,7 +1067,7 @@ var templateCode = new Bloodhound({
 	remote: {
 		url: '/egworks/abstractestimate/ajaxestimatetemplatebycode?code=%QUERY', 
 		filter: function (data) {
-			var estimateDate = $('#esdtimateDate').val();
+			var estimateDate = $('#estimateDate').val();
 			if(estimateDate == "" || estimateDate == null){
 				bootbox.alert($('#msgestimatedate').val());
 				return false;
@@ -1239,7 +1239,7 @@ function clearActivities(){
 }
 
 function getActivitiesForTemplate(id){
-	var estimateDate = $('#estimateDate').val;
+	var estimateDate = $('#estimateDate').val();
 	var nonSorCheck  = false;
 	$.ajax({
 		url: "/egworks/abstractestimate/ajaxgetestimatetemplatebyid?id="+ id + "&estimateDate="+estimateDate, 
