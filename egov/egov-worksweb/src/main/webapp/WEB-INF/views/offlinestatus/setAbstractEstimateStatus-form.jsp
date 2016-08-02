@@ -58,7 +58,7 @@
 	</div>
 	<input type="hidden" value="<spring:message code="error.offlinestatus.status.date" />" id="errorStatusDates" />
 	<input type="hidden" name="abstractEstimate" value="${abstractEstimate.id}" />
-	<input type="hidden" id="estimateDate" value='<fmt:formatDate value="${abstractEstimate.estimateDate}" pattern="yyyy-MM-dd" />' />
+	<input type="hidden" id="adminSanctionDate" value='<fmt:formatDate value="${abstractEstimate.approvedDate}" pattern="yyyy-MM-dd" />' />
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -96,8 +96,8 @@
 				<fmt:formatDate value="${abstractEstimate.estimateDate}" pattern="dd/MM/yyyy" />
 			</div>
 		</div>
-	
-		<jsp:include page="/WEB-INF/views/offlinestatus/setOfflineStatusForAbstractEstimate.jsp" />
+			
+			<jsp:include page="/WEB-INF/views/offlinestatus/setOfflineStatusForAbstractEstimate.jsp" />
 		
 	</div>
 </div>

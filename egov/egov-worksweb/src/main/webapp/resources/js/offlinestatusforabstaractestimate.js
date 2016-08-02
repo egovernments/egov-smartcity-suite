@@ -111,9 +111,9 @@ function validateForm(){
 function validateStatusDates(obj){
 	var rIndex = getRow(obj).rowIndex - 1;
 	k = rIndex-1;
-	var estimateDate=new Date($('#estimateDate').val());
+	var adminSanctionDate=new Date($('#adminSanctionDate').val());
 	var statusDate = $(obj).data('datepicker').date;
-	if(rIndex == 0 && statusDate<estimateDate)
+	if(rIndex == 0 && statusDate<adminSanctionDate)
 	{
 		var message = document.getElementById('errorStatusAEDate').value;
 		$(obj).datepicker("setDate", new Date());
