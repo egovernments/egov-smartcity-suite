@@ -104,8 +104,8 @@ function callAjaxSearch() {
 					$('td:eq(0)', row).html(index + 1);
 					if (data.estimateNumber != null)
 						$('td:eq(3)', row).html(
-								'<a href="javascript:void(0);" onclick="openLineEstimate(\''
-										+ data.lineEstimateId + '\')">'
+								'<a href="javascript:void(0);" onclick="openAbstractEstimate(\''
+										+ data.abstractEstimateId + '\')">'
 										+ data.estimateNumber + '</a>');
 					$('td:eq(6)',row).html(parseFloat(Math.round(data.workOrderAmount * 100) / 100).toFixed(2));
 					if(data.status != 'CANCELLED' && data.workOrderCreated == false)
@@ -155,8 +155,8 @@ function callAjaxSearch() {
 			});
 }
 
-function openLineEstimate(lineEstimateId) {
-	window.open("/egworks/lineestimate/view/" + lineEstimateId, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+function openAbstractEstimate(abstractEstimateId) {
+	window.open("/egworks/abstractestimate/view/"+ abstractEstimateId , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
 
 $(document).ready(function() {

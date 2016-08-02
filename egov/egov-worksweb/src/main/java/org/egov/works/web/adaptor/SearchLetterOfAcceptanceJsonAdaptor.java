@@ -97,13 +97,13 @@ public class SearchLetterOfAcceptanceJsonAdaptor implements JsonSerializer<WorkO
             else
                 jsonObject.addProperty("lineEstimateId", "");
             jsonObject.addProperty("workOrderAmount", workOrder.getWorkOrderAmount());
-
             jsonObject.addProperty("id", workOrder.getId());
             if(workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
 	            jsonObject.addProperty("workOrderCreated",
 	                    workOrder.getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails().getLineEstimate()
 	                            .isWorkOrderCreated());
-
+            jsonObject.addProperty("abstractEstimateId", workOrder.getWorkOrderEstimates().get(0).getEstimate().getId());
+            
             if (workOrder.getState() != null) {
                 if (workOrder.getEgwStatus() != null
                         && (workOrder.getEgwStatus().getCode().equalsIgnoreCase(WorksConstants.APPROVED)
