@@ -95,7 +95,7 @@ public class PetitionTypeMasterService {
     }
 
     public List<PetitionTypeMaster> findByCourtType(final CourtTypeMaster courtType) {
-        return petitionTypeMasterRepository.findByCourtType(courtType);
+        return petitionTypeMasterRepository.findByActiveTrueAndCourtType(courtType);
     }
 
     public List<PetitionTypeMaster> search(final PetitionTypeMaster petitionTypeMaster) {

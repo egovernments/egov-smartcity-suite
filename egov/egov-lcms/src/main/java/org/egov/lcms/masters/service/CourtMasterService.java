@@ -89,8 +89,8 @@ public class CourtMasterService {
         return courtMasterRepository.findOne(id);
     }
 
-    public List<CourtMaster> findByCourtType(final CourtTypeMaster courtType) {
-        return courtMasterRepository.findByCourtType(courtType);
+    public List<CourtMaster> findCourtByCourtType(final CourtTypeMaster courtType) {
+        return courtMasterRepository.findByActiveTrueAndCourtType(courtType);
     }
 
     public List<CourtMaster> search(final CourtMaster courtMaster) {

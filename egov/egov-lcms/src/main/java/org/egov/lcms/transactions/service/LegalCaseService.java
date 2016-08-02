@@ -127,8 +127,9 @@ public class LegalCaseService {
 				legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
 		legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
 				LcmsConstants.LEGALCASE_STATUS_CREATED));
+		List<LegalCaseDocuments>legalDoc=legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
 		prepareChildEntities(legalcase);
-		processAndStoreApplicationDocuments(legalcase);
+		processAndStoreApplicationDocuments(legalcase,legalDoc);
 		return legalCaseRepository.save(legalcase);
 	}
 
@@ -288,17 +289,25 @@ public class LegalCaseService {
 	}
 
 	@Transactional
-	protected void processAndStoreApplicationDocuments(final LegalCase legalcase) {
-		
+	protected void processAndStoreApplicationDocuments(final LegalCase legalcase,final List<LegalCaseDocuments>legalDoc) {
+		if(legalcase.getId()==null){
 		if (!legalcase.getLegalCaseDocuments().isEmpty()){
 			for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
 				applicationDocument.setLegalCase(legalcase);
 				applicationDocument.setDocumentName("LegalCase");
 				applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
 			}
-		}
+		}}
 		else
 		{
+			
+			for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
+				applicationDocument.setLegalCase(legalcase);
+				applicationDocument.setDocumentName("LegalCase");
+				applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+			}
+			legalcase.getLegalCaseDocuments().addAll(legalDoc);
+			System.out.println(legalcase.getLegalCaseDocuments().size());
 			
 		}
 	}

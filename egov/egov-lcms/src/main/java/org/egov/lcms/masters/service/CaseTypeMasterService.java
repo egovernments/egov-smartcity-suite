@@ -82,6 +82,10 @@ public class CaseTypeMasterService {
         {
             return casetypeMasterRepository.findAll();
         }
+	public List<CaseTypeMaster> getActiveCaseTypeList()
+    {
+        return casetypeMasterRepository.findByActiveTrueOrderByCaseTypeAsc();
+    }
 	@Transactional
 	public CaseTypeMaster update(final CaseTypeMaster casetypeMaster) {
 		return casetypeMasterRepository.save(casetypeMaster);

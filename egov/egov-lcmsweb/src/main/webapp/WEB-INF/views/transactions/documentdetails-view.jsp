@@ -56,11 +56,11 @@
 				<tbody>
 					<tr>
 						
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-							<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=LCMS" target="_blank">  
-								<c:out value="${file.fileName}"/> </a> 
+						<c:forEach items="${docs.getSupportDocs()}" var="file">
+							<td><a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=LCMS" target="_blank">  
+								<c:out value="${file.fileName}"/> </a> </td>
 							</c:forEach>
-						</td>
+						
 						
 					</tr>
 				</tbody>

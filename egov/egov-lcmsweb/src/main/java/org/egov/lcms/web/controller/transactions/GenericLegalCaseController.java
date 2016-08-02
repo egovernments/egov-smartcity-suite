@@ -46,10 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.lcms.masters.entity.CaseTypeMaster;
-import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.entity.GovernmentDepartment;
-import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
@@ -72,12 +70,8 @@ public class GenericLegalCaseController {
 
 
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
-        return courtTypeMasterService.getCourtTypeList();
+        return courtTypeMasterService.getActiveCourtTypes();
     }
-
-  /*  public @ModelAttribute("courtsList") List<CourtMaster> courtList() {
-        return null;
-    }*/
 
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
         return governmentDepartmentService.findAll();
@@ -96,12 +90,9 @@ public class GenericLegalCaseController {
     }
 
     public @ModelAttribute("caseTypeList") List<CaseTypeMaster> caseTypeList() {
-        return caseTypeMasterService.getCaseTypeList();
+        return caseTypeMasterService.getActiveCaseTypeList();
     }
 
-  /*  public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> petitiontypeList() {
-        return null;
-    }*/
 
     public @ModelAttribute("wPYearList") List<Integer> getWPYearList() {
         final List<Integer> wPYearList = new ArrayList<Integer>();

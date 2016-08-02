@@ -52,7 +52,6 @@ import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
-import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
@@ -88,8 +87,6 @@ public class AjaxLegalCaseController {
 	@Autowired
 	private CourtMasterService courtMasterService;
 
-	@Autowired
-	private CaseTypeMasterService caseTypeMasterService;
 
 	@RequestMapping(value = "ajax/departments", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Department> getAllDepartmentsByNameLike(
@@ -124,16 +121,20 @@ public class AjaxLegalCaseController {
 	@RequestMapping(value = "/ajax-petitionTypeByCourtType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<PetitionTypeMaster> getAllPetitionTypesByCountType(@RequestParam final Long courtType) {
 		List<PetitionTypeMaster> petitionTypeList = new ArrayList<PetitionTypeMaster>(0);
+		if(courtType!=null){
 		petitionTypeList = petitiontypeMasterService.findByCourtType(courtTypeMasterService.findOne(courtType));
 		petitionTypeList.forEach(petitionType -> petitionType.toString());
+		}
 		return petitionTypeList;
 	}
 
 	@RequestMapping(value = "/ajax-courtNameByCourtType", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<CourtMaster> getAllCourtNamesByCountType(@RequestParam final Long courtType) {
 		List<CourtMaster> courtNameList = new ArrayList<CourtMaster>(0);
-		courtNameList = courtMasterService.findByCourtType(courtTypeMasterService.findOne(courtType));
+		if(courtType!=null){
+		courtNameList = courtMasterService.findCourtByCourtType(courtTypeMasterService.findOne(courtType));
 		courtNameList.forEach(petitionType -> petitionType.toString());
+		}
 		return courtNameList;
 	}
 
