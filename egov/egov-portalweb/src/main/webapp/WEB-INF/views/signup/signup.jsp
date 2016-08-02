@@ -116,6 +116,7 @@
 									<form:hidden path="username" id="username"/>
                                     <span class="mandatory set-mandatory"></span>
 									<form:errors path="mobileNumber" cssClass="add-margin error-msg font-12"/>
+                                    <form:errors path="username" cssClass="add-margin error-msg font-12"/>
 								</div>
 							</div>
                             <input style="display:none" type="password">
