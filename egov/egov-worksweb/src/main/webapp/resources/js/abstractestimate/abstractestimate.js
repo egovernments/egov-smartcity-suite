@@ -2872,28 +2872,3 @@ function clearOverHeads() {
 		}
 	}
 }
-
-
-function resetWorkDetails() {
-	var prevEstimateDate  = $('#prevEstimateDate').val();
-	if(prevEstimateDate!= undefined && prevEstimateDate!=null && prevEstimateDate!=""){
-		var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
-		var nonSorHiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
-		var overheadData = document.getElementById('tempOverheadValues[0].overhead.id').value;
-		if(hiddenRowCount != 1 || nonSorHiddenRowCount!= 1 || overheadData != "") {
-			bootbox.confirm($('#msgEstimateDateChange').val(), function(result) {
-				if(!result) {
-					bootbox.hideAll();
-					return false;
-				} else {
-					$("#workdetails").addClass("active");
-					clearActivities();
-					clearOverHeads();
-					resetAddedOverheads();
-				}
-			});
-		}
-	}else{
-		$('#prevEstimateDate').val($('#estimateDate').val());
-	}
-}

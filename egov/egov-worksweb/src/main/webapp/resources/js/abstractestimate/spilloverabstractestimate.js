@@ -140,10 +140,10 @@ function validateAbstractEstimateDate(obj){
 		validateTechinicalSanctionDate(obj);
 	if(adminSanctionDate != '')
 		validateAdminSanctionDate(obj);
-	resetWorkDetails();
 	
 }
 
+var estimateDateArray=[];
 function initializeDatePicker(){
 	
 	$('#approvedDate').datepicker().off('changeDate');
@@ -190,15 +190,55 @@ function initializeDatePicker(){
 			return date.valueOf() < now.valueOf() ? 'disabled' : '';
 		}
 		}).on('changeDate', function(ev) {
-		
+			estimateDateArray.push($(this).val());
+			var estimateDate = new Date(($('#estimateDate').val().split('/').reverse().join('-'))).getTime();
 			var string=jQuery(this).val();
 			if(!(string.indexOf("_") > -1)){
-			isDatepickerOpened=false; 
-			validateAbstractEstimateDate(this);
-			$('#estimateDate').datepicker('hide');
+				var flag = validateAbstractEstimateDate(this);
+				if(flag == false) {
+					estimateDateArray.pop();
+				}
+				var hiddenRowCount = $("#tblsor tbody tr[sorinvisible='true']").length;
+				var nonSorHiddenRowCount = $("#tblNonSor tbody tr[nonsorinvisible='true']").length;
+				var overheadData = document.getElementById('tempOverheadValues[0].overhead.id').value;
+				if(flag == undefined && (hiddenRowCount != 1 || nonSorHiddenRowCount!= 1 || overheadData != "")) {
+					bootbox.confirm({
+					    message: $('#msgEstimateDateChange').val(),
+					    buttons: {
+					        'cancel': {
+					            label: 'No',
+					            className: 'btn-default pull-right'
+					        },
+					        'confirm': {
+					            label: 'Yes',
+					            className: 'btn-danger pull-right'
+					        }
+					    },
+					    callback: function(result) {
+					        if (result) {
+					        	$("#workdetails").addClass("active");
+								clearActivities();
+								clearOverHeads();
+								resetAddedOverheads();
+					        }else{
+					        	if(estimateDateArray.length > 1)
+					        		$('#estimateDate').datepicker('setDate',new Date((estimateDateArray[(estimateDateArray.length) - 2].split('/').reverse().join('-'))));
+					        	else {
+					        		$('#estimateDate').datepicker("setDate", new Date());
+					        		$('#estimateDate').val('');
+					        		$('#estimateDate').datepicker("update", $('#estimateDate').val(''));
+					        	}
+			    				estimateDateArray.pop();
+					        	bootbox.hideAll();
+								return false;
+			    			}
+					    }
+					});
+				}
+				$('#estimateDate').datepicker('hide');
 			}
-
 		}).data('datepicker');
+	$('#estimateDate').datepicker('update');
 	
 	$('#technicalSanctionDate').datepicker('update');
 
