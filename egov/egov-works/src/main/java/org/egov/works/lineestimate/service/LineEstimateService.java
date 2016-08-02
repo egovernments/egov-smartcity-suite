@@ -430,12 +430,9 @@ public class LineEstimateService {
     }
 
     public List<String> findAdminSanctionNumbers(final String name) {
-        final List<LineEstimate> lineEstimates = lineEstimateRepository
-                .findByAdminSanctionNumberContainingIgnoreCase(name);
-        final List<String> results = new ArrayList<String>();
-        for (final LineEstimate estimate : lineEstimates)
-            results.add(estimate.getAdminSanctionNumber());
-        return results;
+        final List<String> adminSanctionNumbers = lineEstimateRepository
+                .findDistinctAdminSanctionNumberContainingIgnoreCase("%" + name + "%");
+        return adminSanctionNumbers;
     }
 
     public List<String> findAdminSanctionNumbersForLoa(final String name) {

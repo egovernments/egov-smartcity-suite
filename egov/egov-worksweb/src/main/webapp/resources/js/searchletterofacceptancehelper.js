@@ -232,7 +232,7 @@ $(document).ready(function() {
 		},
 		queryTokenizer : Bloodhound.tokenizers.whitespace,
 		remote : {
-			url : '/egworks/letterofacceptance/ajaxloanumber?name=%QUERY',
+			url : '/egworks/letterofacceptance/ajaxloanumber?workOrderNumber=%QUERY',
 			filter : function(data) {
 				return $.map(data, function(ct) {
 					return {

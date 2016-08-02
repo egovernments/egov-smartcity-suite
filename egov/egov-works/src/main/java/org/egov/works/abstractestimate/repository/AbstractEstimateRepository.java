@@ -50,8 +50,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AbstractEstimateRepository extends JpaRepository<AbstractEstimate, Long> {
-
-    List<AbstractEstimate> findByEstimateNumberContainingIgnoreCase(final String estimateNumber);
+    
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:estimateNumber)")
+    List<String> findDistinctEstimateNumberContainingIgnoreCase(@Param("estimateNumber") final String estimateNumber);
 
     List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
 
@@ -75,7 +76,7 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     List<String> findAbstractEstimateNumbersToCancelLineEstimate(@Param("lineEstimateId") final Long lineEstimateId,
             @Param("status") final String status);
 
-    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.estimateNumber not in (select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code != :status)")
+    @Query("select distinct(ae.estimateNumber) from AbstractEstimate as ae where upper(ae.estimateNumber) like upper(:code) and ae.egwStatus.code != :status and ae.estimateNumber not in (select distinct(woe.workOrder.estimateNumber) from WorkOrderEstimate as woe where woe.workOrder.egwStatus.code != :status)")
     List<String> findAbstractEstimateNumbersToCancelEstimate(@Param("code") final String code,
             @Param("status") final String status);
     

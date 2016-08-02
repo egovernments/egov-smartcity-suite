@@ -180,12 +180,8 @@ public class AjaxAbstractEstimateController {
     }
 
     @RequestMapping(value = "/getAbstractEstimatesByNumber", method = RequestMethod.GET)
-    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String number) {
-        final List<AbstractEstimate> abstractEstimates = estimateService.getAbstractEstimateByEstimateNumberLike(number);
-        final List<String> results = new ArrayList<String>();
-        for (final AbstractEstimate abstractEstimate : abstractEstimates)
-            results.add(abstractEstimate.getEstimateNumber());
-        return results;
+    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String estimateNumber) {
+        return estimateService.getAbstractEstimateByEstimateNumberLike(estimateNumber);
     }
 
     @RequestMapping(value = "/ajaxsearchabstractestimatesforloa", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

@@ -838,8 +838,8 @@ public class EstimateService {
             LOG.debug(" WorkFlow Transition Completed  ...");
     }
 
-    public List<AbstractEstimate> getAbstractEstimateByEstimateNumberLike(final String estimateNumber) {
-        return abstractEstimateRepository.findByEstimateNumberContainingIgnoreCase("%" + estimateNumber + "%");
+    public List<String> getAbstractEstimateByEstimateNumberLike(final String estimateNumber) {
+        return abstractEstimateRepository.findDistinctEstimateNumberContainingIgnoreCase("%" + estimateNumber + "%");
     }
 
     public List<User> getAbstractEstimateCreatedByUsers() {
