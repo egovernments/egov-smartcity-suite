@@ -98,56 +98,71 @@ public class LegalCase extends AbstractAuditable {
 
     @DateFormat(message = "invalid.fieldvalue.model.nextDate")
     private Date nextDate;
+    
     @Required(message = "case.casetype.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "CASETYPE", nullable = false)
     private CaseTypeMaster caseTypeMaster;
+    
     @Required(message = "case.court.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "COURT", nullable = false)
     private CourtMaster courtMaster;
+    
     @ManyToOne
     @JoinColumn(name = "STATUS", nullable = false)
     private EgwStatus status;
+    
     @Required(message = "case.petitiontype.null")
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "PETITIONTYPE", nullable = false)
     private PetitionTypeMaster petitionTypeMaster;
+    
     @NotNull
     @Column(name = "casenumber")
     private String caseNumber;
+    
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
     // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
     // message = "invalid.case.date")
     @Column(name = "casedate")
     private Date caseDate;
+    
     @Required(message = "case.title.null")
     @Length(max = 1024, message = "casetitle.length")
     @Column(name = "casetitle")
     private String caseTitle;
+    
     @Length(max = 50, message = "appealnum.length")
     @Column(name = "appealnum")
     private String appealNum;
+    
     @Length(max = 1024, message = "remarks.length")
     private String remarks;
+    
     @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.caseReceivingDate.date")
     @Column(name = "casereceivingdate")
     private Date caseReceivingDate;
+    
     private Boolean isfiledbycorporation;
+    
     @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
     @Length(max = 50, message = "lcnumber.length")
     @Column(name = "lcnumber")
     private String lcNumber;
+    
     @Required(message = "case.prayer.null")
     @Length(max = 1024, message = "prayer.length")
     private String prayer;
+    
     @Column(name = "isSenioradvrequired")
     private Boolean isSenioradvrequired = Boolean.FALSE;
+    
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
@@ -194,13 +209,16 @@ public class LegalCase extends AbstractAuditable {
     @Length(max = 128, message = "oppPartyAdvocate.length")
     @Column(name = "oppPartyAdvocate")
     private String oppPartyAdvocate;
+    
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "representedby.alphanumeric")
     @Length(max = 256, message = "representedby.length")
     @Column(name = "representedby")
     private String representedby;
+    
     @Column(name = "lcNumberType")
     @Enumerated(EnumType.STRING)
     private LCNumberType lcNumberType;
+    
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
@@ -210,6 +228,7 @@ public class LegalCase extends AbstractAuditable {
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatchCase> batchCaseSet = new ArrayList<BatchCase>(0);
 
+    //TODO:need to enable when we  start work on PaperBook and ProcessRegister object
    /* @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
 
@@ -553,11 +572,6 @@ public class LegalCase extends AbstractAuditable {
         this.assigntoIdboundary = assigntoIdboundary;
     }
 
-    /*
-     * public List<Contempt> getEglcContempts() { return eglcContempts; } public
-     * void setEglcContempts(final List<Contempt> eglcContempts) {
-     * this.eglcContempts = eglcContempts; }
-     */
 
     public List<LegalCaseInterimOrder> getLegalCaseInterimOrder() {
         return legalCaseInterimOrder;
@@ -587,11 +601,6 @@ public class LegalCase extends AbstractAuditable {
         this.eglcLegalcaseAdvocates = eglcLegalcaseAdvocates;
     }
 
-    /*
-     * public List<Appeal> getEglcAppeals() { return eglcAppeals; } public void
-     * setEglcAppeals(final List<Appeal> eglcAppeals) { this.eglcAppeals =
-     * eglcAppeals; }
-     */
 
     public List<Hearings> getHearings() {
         return hearings;

@@ -55,18 +55,17 @@
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
 			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-			<th class="text-center"><spring:message
-					code="lbl.add/delete_pet" /></th>
+			<th class="text-center">Delete Petitioner <%-- <spring:message
+					code="lbl.add/delete_pet" /> --%></th>
 		</tr>
 	</thead>
 	<tbody>
-		<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.bipartisanPetitionDetailsList}"
+		<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.getPetitioners()}"
 			varStatus="status">
 				<tr class="">
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
-			id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
-			
+			value="${bipartisanPetitionDetailsList.isRespondentGovernment}"
 				onblur="onChangeofPetitioncheck()" /></td>
 				
 			<td class="text-right">
@@ -98,9 +97,6 @@
 					value="${bipartisanPetitionDetailsList.governmentDepartment.name}"
 					cssClass="form-control" onfocus="callAlertForDepartment();"
 					cssErrorClass="form-control error">
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td>
@@ -109,7 +105,7 @@
 			id="bipartisanPetitionDetailsList[${status.index}].id" 
 			value="${bipartisanPetitionDetailsList.id}"/>
 			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetEditRow();"><i class="fa fa-plus"></i></a>
+			<!-- <a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetEditRow();"><i class="fa fa-plus"></i></a> -->
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
 	</tr>
 		</c:forEach>
@@ -131,13 +127,13 @@
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
 			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-			<th class="text-center"><spring:message
-					code="lbl.add/delete_pet" /></th>
+			<th class="text-center">Delete Respondant<%-- <spring:message
+					code="lbl.add/delete_pet" /> --%></th>
 		</tr>
 	</thead>
 	<tbody>
 
-		<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.bipartisanDetailsBeanList}"
+		<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 			varStatus="status">
 			<tr>
 				<td><input type="checkbox"  id="activeid"
@@ -170,11 +166,9 @@
 					<form:select path="" data-first-option="false"
 						name="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 						id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
-						cssClass="form-control" onfocus="callAlertForDepartment();"
+						cssClass="form-control" 
+						value="${bipartisanDetailsBeanList.governmentDepartment.name}"
 						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
 						<form:options items="${govtDeptList}" itemValue="id"
 							itemLabel="code" />
 					</form:select>
@@ -188,9 +182,9 @@
 						name="bipartisanDetailsBeanList[${status.index}].isRepondent" 
 					class="form-control table-input text-right" style="text-align: center"
 					value="${true}" />
-			<td class="text-center"><a href="javascript:void(0);"
+			<!-- <a href="javascript:void(0);"
 					class="btn-sm btn-default" onclick="addResEditRow();"><i
-						class="fa fa-plus"></i></a> <a href="javascript:void(0);"
+						class="fa fa-plus"></i></a> --><td class="text-center"> <a href="javascript:void(0);"
 					class="btn-sm btn-default" id="res_delete_row"><i
 						class="fa fa-trash"></i></a></td>
 			</tr>

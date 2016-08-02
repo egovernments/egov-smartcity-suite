@@ -1,8 +1,6 @@
 package org.egov.lcms.web.controller.transactions;
 
-import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.masters.service.CourtMasterService;
-import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
@@ -22,12 +20,6 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
 
     @Autowired
     private LegalCaseService legalCaseService;
-
-    @Autowired
-    private CourtTypeMasterService courtTypeMasterService;
-
-    @Autowired
-    private CaseTypeMasterService caseTypeMasterService;
 
     @Autowired
     private PetitionTypeMasterService petitiontypeMasterService;
@@ -57,14 +49,14 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         final LegalCase legalCase = legalCaseService.findByLcNumber(lcNumber);
         model.addAttribute("legalCase", legalCase);
         setDropDownValues(model);
-   String[] casenumberyear=legalCase.getCaseNumber().split("/");
-   legalCase.setCaseNumber(casenumberyear[0]);
-   if(casenumberyear.length > 1)
-   legalCase.setWpYear(casenumberyear[1]);
-   legalCase.getBipartisanPetitionDetailsList().addAll(legalCase.getPetitioners());
-   legalCase.getBipartisanDetailsBeanList().addAll(legalCase.getRespondents());
-   model.addAttribute("legalCaseDocList",
-           legalCaseService.getLegalCaseDocList(legalCase));
+	   String[] casenumberyear=legalCase.getCaseNumber().split("/");
+	   legalCase.setCaseNumber(casenumberyear[0]);
+	   if(casenumberyear.length > 1)
+	   legalCase.setWpYear(casenumberyear[1]);
+	   legalCase.getBipartisanPetitionDetailsList().addAll(legalCase.getPetitioners());
+	   legalCase.getBipartisanDetailsBeanList().addAll(legalCase.getRespondents());
+	   model.addAttribute("legalCaseDocList",
+	           legalCaseService.getLegalCaseDocList(legalCase));
         model.addAttribute("mode", "edit");
         return "legalcase-edit";
     }
@@ -85,10 +77,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
     }
 
     private void setDropDownValues(final Model model) {
-       // model.addAttribute("courtTypeList", courtTypeMasterService.getCourtTypeList());
-        model.addAttribute("courtsList", courtMasterService.findAll());
-       // model.addAttribute("caseTypeList", caseTypeMasterService.getCaseTypeList());
-        model.addAttribute("petitiontypeList", petitiontypeMasterService.getPetitiontypeList());
+       model.addAttribute("courtsList", courtMasterService.findAll());
+       model.addAttribute("petitiontypeList", petitiontypeMasterService.getPetitiontypeList());
     }
 
 }
