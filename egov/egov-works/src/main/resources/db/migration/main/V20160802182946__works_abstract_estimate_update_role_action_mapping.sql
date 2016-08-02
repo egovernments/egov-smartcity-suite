@@ -1,0 +1,1 @@
+update eg_action set url='/abstractestimate/getabstractestimatesbynumber' where name='GetAbstractEstimatesByNumber' and parentmodule = (select id from eg_module where name = 'WorksAbstractEstimate');

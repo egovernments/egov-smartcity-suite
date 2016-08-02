@@ -179,7 +179,7 @@ public class AjaxAbstractEstimateController {
         return json;
     }
 
-    @RequestMapping(value = "/getAbstractEstimatesByNumber", method = RequestMethod.GET)
+    @RequestMapping(value = "/getabstractestimatesbynumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(@RequestParam final String estimateNumber) {
         return estimateService.getAbstractEstimateByEstimateNumberLike(estimateNumber);
     }

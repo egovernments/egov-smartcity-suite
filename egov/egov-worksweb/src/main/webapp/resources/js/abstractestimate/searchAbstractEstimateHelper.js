@@ -176,7 +176,7 @@ $(document).ready(function(){
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egworks/abstractestimate/getAbstractEstimatesByNumber?estimateNumber=%QUERY',
+            url: '/egworks/abstractestimate/getabstractestimatesbynumber?estimateNumber=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
