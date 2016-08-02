@@ -82,8 +82,7 @@ public class ModuleRepositoryImpl implements ModuleRepositoryCustom {
                 .append("UNION SELECT distinct view_ram.action_id as id,view_ram.action_name as name,view_ram.action_url as url,view_ram.typeflag as typeflag, ")
                 .append("view_ram.context_root as ctx_root,view_ram.order_number as ordernumber FROM VIEW_EG_MENULINK view_ram where   parent_id = ? and typeflag='A' ")
                 .append("AND view_ram.is_enabled=true and (view_ram.action_id in (select actionid from eg_roleaction ra  where ra.roleid in ")
-                .append("(select roleid from eg_userrole ur where ur.userid = ?))  OR NOT EXISTS (SELECT actionid FROM eg_roleaction ra ")
-                .append("where actionid = view_ram.action_id)) order by typeflag desc,ordernumber asc");
+                .append("(select roleid from eg_userrole ur where ur.userid = ?))) order by typeflag desc,ordernumber asc");
 
         final Query query = entityManager.createNativeQuery(sql.toString());
         query.setParameter(1, parentId);
