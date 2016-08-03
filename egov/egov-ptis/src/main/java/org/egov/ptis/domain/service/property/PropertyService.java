@@ -2508,14 +2508,19 @@ public class PropertyService {
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
         Assignment wfInitiator;
-        if (isEmployee(property.getCreatedBy()))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-        else if (!property.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE))
+        	wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-                    .getId());
+        else{
+	        if (isEmployee(property.getCreatedBy()))
+	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+	        else if (!property.getStateHistory().isEmpty())
+	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+	                    .getOwnerPosition().getId());
+	        else
+	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+	                    .getId());
+        }
         return wfInitiator;
     }
 

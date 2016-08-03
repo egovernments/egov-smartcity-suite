@@ -49,7 +49,7 @@
 function populateBoundaries() {
 	console.log("came jursidiction"+jQuery('#locality').val());
 	jQuery.ajax({
-		url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+		url: "/egi/public/boundary/ajaxBoundary-blockByLocality.action",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()

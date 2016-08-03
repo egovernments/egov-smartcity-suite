@@ -69,6 +69,7 @@
 				<security:filter-chain pattern="/view/viewDCBProperty-displayHeadwiseDcb.action" filters="none" />
 				<security:filter-chain pattern="/view/viewDCBProperty-showMigData.action" filters="none" />
 				<security:filter-chain pattern="/citizen/collection/**" filters="none" />
+				<security:filter-chain pattern="/citizen/create/**" filters="none" />
 				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReport-form" filters="none" />  
 				<security:filter-chain pattern="/reports/billcollectorDailyCollectionReportList" filters="none" />  
 				<security:filter-chain pattern="/reports/getRegionHeirarchyByType" filters="none" />

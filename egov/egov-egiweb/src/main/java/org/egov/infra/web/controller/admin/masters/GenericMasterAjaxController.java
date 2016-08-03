@@ -193,7 +193,7 @@ public class GenericMasterAjaxController {
         return jsonArray.toString();
     }
     
-    @RequestMapping(value = "/boundary/ajaxBoundary-blockByLocality", method = RequestMethod.GET)
+    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByLocality", "/public/boundary/ajaxBoundary-blockByLocality"}, method = RequestMethod.GET)
     public void blockByLocality(@RequestParam final Long locality, final HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());

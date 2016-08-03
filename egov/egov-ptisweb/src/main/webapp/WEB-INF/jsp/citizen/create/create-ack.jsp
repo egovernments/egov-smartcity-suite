@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
@@ -38,30 +36,56 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:security="http://www.springframework.org/schema/security"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-	   http://www.springframework.org/schema/beans/spring-beans.xsd
-	   http://www.springframework.org/schema/security
-	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
+  --%>
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
-		<constructor-arg>
-			<list>
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/help*" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/login/secure**" filters="none" />
-				<security:filter-chain pattern="/login/password/recover**" filters="none" />
-				<security:filter-chain pattern="/login/password/reset**" filters="none" />
-				<security:filter-chain pattern="/login/requiredlocations*" filters="none" />
-				<security:filter-chain pattern="/downloadfile/logo**" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/public/**" filters="anonymousAuthenticationFilter"/>
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
-			</list>
-		</constructor-arg>
-	</bean>	
-</beans>
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><s:text name='CreateAck.title' /></title>
+<script type="text/javascript">
+	function onSubmit(action) {
+		document.forms[0].action = action;
+		document.forms[0].submit;
+		return true;
+	}
+</script>
+</head>
+
+<body>
+	<s:form name="CreatePropertyAckForm" theme="simple">
+		<s:push value="model">
+			<s:token />
+			<div class="formmainbox">
+				<div class="headingbg">
+					<s:text name="CreatePropertyAckHeader" />
+				</div>
+				<br />
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<s:hidden name="modelId" id="modelId" value="%{id}" />
+					<tr>
+						<td colspan="5" style="font-size: 15px;" align="center"><s:property value="%{ackMessage}" /> <span
+									class="bold"><s:property value="%{approverName}"/></span><s:property value="%{applicationNoMessage}"/>
+									<span class="bold"> <s:property value="%{applicationNo}" /></span></td>
+					</tr>
+					<tr>
+						<td>
+							<div class="buttonbottom" align="center">
+								<%-- <s:submit value="Print" name="PrintAck" id="PrintAck"
+										method="printAck" cssClass="buttonsubmit" align="center"
+										onclick="return onSubmit('create-printAck.action');" /> --%>
+								&nbsp;
+								<input type="button" class="button" onclick="window.close();" value="Close">
+							</div>
+						</td>
+					</tr>
+				</table>
+				<br/>
+			</div>
+		</s:push>
+	</s:form>
+</body>
+</html>

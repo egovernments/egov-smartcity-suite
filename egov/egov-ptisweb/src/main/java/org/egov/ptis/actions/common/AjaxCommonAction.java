@@ -73,6 +73,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -345,7 +346,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
     }
 
     @SuppressWarnings("unchecked")
-    @Action(value = "/ajaxCommon-propTypeCategoryByPropType")
+    @Actions({ 
+    	@Action(value = "/ajaxCommon-propTypeCategoryByPropType"), 
+    	@Action(value = "/public/ajaxCommon-propTypeCategoryByPropType")})
     public String propTypeCategoryByPropType() {
         LOGGER.debug("Entered into propTypeCategoryByPropType, propTypeId: " + propTypeId);
         PropertyTypeMaster propType = (PropertyTypeMaster) getPersistenceService().find(
@@ -411,7 +414,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         return RESULT_STRUCTURAL;
     }
 
-    @Action(value = "/ajaxCommon-getUserByMobileNo")
+    @Actions({ 
+    	@Action(value = "/ajaxCommon-getUserByMobileNo"), 
+    	@Action(value = "/public/ajaxCommon-getUserByMobileNo")})
     public void getUserByMobileNo() throws IOException {
         if (StringUtils.isNotBlank(mobileNumber)) {
             final User user = (User) getPersistenceService().find("From User where mobileNumber = ?", mobileNumber);
@@ -446,7 +451,9 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
         return RESULT_CHECK_EXISTING_CATEGORY;
     }
 
-    @Action(value = "/ajaxCommon-usageByPropType")
+    @Actions({ 
+    	@Action(value = "/ajaxCommon-usageByPropType"), 
+    	@Action(value = "/public/ajaxCommon-usageByPropType")})
     public String usageByPropType() {
         LOGGER.debug("Entered into usageByPropType, propTypeId: " + propTypeId);
         if (propTypeCategory.equals(CATEGORY_MIXED))

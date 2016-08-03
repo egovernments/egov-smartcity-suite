@@ -656,13 +656,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
-        if (propService.isEmployee(property.getCreatedBy())) {
-            assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-            propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
-                    .concat(assignment.getPosition().getName());
-        } else {
-            propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        	propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
+        } else {
+        	if (propService.isEmployee(property.getCreatedBy())) {
+                assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+                propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
+                        .concat(assignment.getPosition().getName());
+            } else {
+                propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+            }
         }
         if (property.getState().getValue().equals("Closed")) {
             assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
