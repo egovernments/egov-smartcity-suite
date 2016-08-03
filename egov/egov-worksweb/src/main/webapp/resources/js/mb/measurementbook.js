@@ -488,7 +488,7 @@ function populateData(data, selectedActivities){
 						});
 					} else {
 						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'none';
-						$('#nonSorQuantity_' + sorCount).removeAttr('readonly');
+						$('#nonSorQuantity_' + nonSorCount).removeAttr('readonly');
 					}
 					nonSorCount++;
 				}
@@ -687,7 +687,7 @@ function populateData(data, selectedActivities){
 						});
 					} else {
 						document.getElementById('nonSorMbDetails[' + nonSorCount + '].msadd').style.display = 'none';
-						$('#nonSorQuantity_' + sorCount).removeAttr('readonly');
+						$('#nonSorQuantity_' + nonSorCount).removeAttr('readonly');
 					}
 					nonSorCount++;
 				}
