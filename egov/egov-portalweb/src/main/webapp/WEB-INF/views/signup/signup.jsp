@@ -115,8 +115,9 @@
 									<form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
 									<form:hidden path="username" id="username"/>
                                     <span class="mandatory set-mandatory"></span>
-									<form:errors path="mobileNumber" cssClass="add-margin error-msg font-12"/>
-                                    <form:errors path="username" cssClass="add-margin error-msg font-12"/>
+                                    <div class="userormobileerror text-right" style="margin:0;">
+                                    	<form:errors path="username" cssClass="add-margin error-msg font-12"/>
+                                    </div>
 								</div>
 							</div>
                             <input style="display:none" type="password">
@@ -139,9 +140,8 @@
 										autocomplete="new-password" required="required" maxlength="32"/><span class="mandatory set-mandatory"></span>
 									</div>
 								</div>
-								<div class="text-right add-margin error-msg display-hide password-error">These passwords don't match. Try again!</div>
-								<%-- <font size="1" color="gray"><spring:message code="hint.password.strength"/></font> --%>
-								<form:errors path="password" cssClass="add-margin error-msg font-12"/>
+								<div class="col-md-12 text-right add-margin error-msg display-hide password-error" style="margin:0;">These passwords don't match. Try again!</div>
+								<div class="col-md-12 text-right" style="margin:0;"><form:errors path="password" cssClass="error-check add-margin error-msg font-12"/></div>
 							</div>
 							<div class="add-margin overflow-section"></div>
 							<div class="form-group">
@@ -151,7 +151,7 @@
 									</div>
 									<form:input path="name" cssClass="form-control style-form patternvalidation" data-pattern="alphabetwithspace" id="name" placeholder="Full name" minlength="2" maxlength="100" autocomplete="off" required="required"/>
 									<span class="mandatory set-mandatory"></span>
-									<form:errors path="name" cssClass="add-margin error-msg font-12"/>
+									<div class="text-right" style="margin:0;"><form:errors path="name" cssClass="add-margin error-msg font-12"/></div>
 								</div>
 							</div>
 
@@ -203,9 +203,7 @@
                                         </div>
                                     </c:when>
                                     <c:otherwise>
-                                        <c:if test="${not empty param.activated and not param.activated}">
-                                            <div class="alert alert-danger" role="alert"><spring:message code="error.signup.activation.failed" /></div>
-                                        </c:if>
+                                        
                                         
                                             <div class="form-group text-left">
                                                 <div class="signin-title" style="padding:0;">
@@ -223,6 +221,11 @@
                                                         <span class="mandatory set-mandatory"></span>
                                                     </div>
                                                 </div>
+                                                <c:if test="${not empty param.activated and not param.activated}">
+                                                	<div class="form-group error-msg text-right">
+		                                            	<div><spring:message code="error.signup.activation.failed" /></div>
+		                                            </div>
+		                                        </c:if>
                                                 <c:if test="${not empty param.message}">
 	                                                <div class="form-group text-right font-12 add-margin">
 	                                                	<div>OTP sent to your registered email or mobile</div>
@@ -253,10 +256,6 @@
                     <div id="otpresend_container" class="display-hide">
                     <form:form method="post" role="form" id="activationform" action="activation/resendotp" modelAttribute="citizen">
                         <div class="login-content login-content-margin otp-section signup-formcontent">
-                            <c:if test="${not empty param.otprss and not param.otprss}">
-                                <div class="alert alert-danger" role="alert"><spring:message code="error.otp.resend.failed" /></div>
-                                <script>$("#otpresend_container").show('slow');</script>
-                            </c:if>
                             <div class="login-body">
                                 <div class="form-group text-left">
                                     <div class="signin-title" style="padding:0;">
@@ -264,19 +263,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div>
-                                        <div class="input-group">
-                                            <div class="input-group-addon style-label">
-                                                <i class="fa fa-mobile theme-color style-color"></i>
-                                            </div>
-                                            <input class="form-control style-form" name="mobile" id="mobile" placeholder="Mobile Number" minlength="10" maxlength="10" autocomplete="off" required="required"/>
-                                            <span class="mandatory set-mandatory"></span>
+                                    <div class="input-group" style="margin:0;">
+                                        <div class="input-group-addon style-label">
+                                            <i class="fa fa-mobile theme-color style-color"></i>
                                         </div>
+                                        <input class="form-control style-form" name="mobile" id="mobile" placeholder="Mobile Number" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+                                        <span class="mandatory set-mandatory"></span>
                                     </div>
-                                    <div class="form-group text-right">
-                                        <button type="submit" class="btn btn-custom btn-login signup-submit">
-                                            <spring:message code="lbl.signup.resend.otp"/>
-                                        </button>
+                                </div>
+                               	<div class="form-group">
+                                	<div class="error-msg text-right">
+	                                	<c:if test="${not empty param.otprss and not param.otprss}">
+	                                		<spring:message code="error.otp.resend.failed" />
+	                                		<script>$("#otpresend_container").show('slow');</script>
+	                                	</c:if>
+                                	</div>
+                                </div>
+                                <div class="form-group text-right">
+                                	<div>
+	                                    <button type="submit" class="btn btn-custom btn-login signup-submit">
+	                                        <spring:message code="lbl.signup.resend.otp"/>
+	                                    </button>
                                     </div>
                                 </div>
                             </div>

@@ -75,6 +75,9 @@ $(document).ready(function(){
 			}else{
 				$('.password-error').show();
 				$('.check-password').addClass('error');
+				if($('.error-check').is(':visible')){
+					$('.error-check').hide();
+				}
 			}
 		}
 	});
