@@ -101,8 +101,19 @@
 				<%@ include file="../common/uploadDocuments.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="workdetails">
-				 <%@ include file="abstractestimate-viewsor.jsp"%> 
-			 	 <%@ include file="abstractestimate-viewnonsor.jsp"%> 
+				<c:choose>
+					<c:when test="${abstractEstimate.activities.isEmpty()}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form">
+								<div class="col-sm-9 add-margin error-msg text-left"><spring:message code="msg.abstractestimate.boq.null" /></div>
+							</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<%@ include file="abstractestimate-viewsor.jsp"%> 
+			 			<%@ include file="abstractestimate-viewnonsor.jsp"%> 
+					</c:otherwise>
+				</c:choose>  
 			</div>
 			<div class="tab-pane fade" id="overheads">
 				<%@ include file="abstractestimate-viewoverheads.jsp"%>

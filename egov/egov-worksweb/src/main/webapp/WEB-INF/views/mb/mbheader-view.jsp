@@ -100,7 +100,18 @@
 			</div>
 			
 			<div class="tab-pane" id="tenderitems">
-				<%@ include file="mbheader-viewtenderitems.jsp"%>
+				<c:choose>
+					<c:when test="${mbHeader.mbDetails.isEmpty()}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form">
+								<div class="col-sm-9 add-margin error-msg text-left"><spring:message code="msg.mb.boq.null" /></div>
+							</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<%@ include file="mbheader-viewtenderitems.jsp"%>
+					</c:otherwise>	
+				</c:choose>
 			</div>
 			<c:if test="${!workflowHistory.isEmpty()}">
 				<div class="panel panel-primary" data-collapsed="0">
