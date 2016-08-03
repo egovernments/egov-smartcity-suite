@@ -279,7 +279,9 @@ $('#adminSanctionAuthority').change(function(){
 
 $('#saveSpillAbstractEstimate').click(function() {
 	if($('#abstractEstimate').valid()) {
-		validateSORDetails();
+		var flag = validateSORDetails();
+		if(!flag)
+			return false;
 		$('.disablefield').removeAttr("disabled");
 		return true;
 	} else

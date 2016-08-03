@@ -424,6 +424,8 @@ public class EstimateService {
         abstractEstimateFromDB.setProjectCode(newAbstractEstimate.getLineEstimateDetails().getProjectCode());
         abstractEstimateFromDB.setLineEstimateDetails(newAbstractEstimate.getLineEstimateDetails());
         abstractEstimateFromDB.setEgwStatus(newAbstractEstimate.getEgwStatus());
+        abstractEstimateFromDB.setApprovedBy(newAbstractEstimate.getApprovedBy());
+        abstractEstimateFromDB.setApprovedDate(newAbstractEstimate.getApprovedDate());
 
         abstractEstimateFromDB.getMultiYearEstimates().clear();
         for (final MultiYearEstimate multiYearEstimate : newAbstractEstimate.getMultiYearEstimates()) {
