@@ -49,7 +49,6 @@
        default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.lcms" />
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
     
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="parentMessageSource" ref="parentMessageSource" />
