@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-02T18:20:47 -->
+<!-- 2016-08-03T17:51:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="measurementSheet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="20" topMargin="30" bottomMargin="0" uuid="5617245c-868f-4ad2-9c27-16c5e3aa50b0">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -306,7 +306,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="115" y="0" width="72" height="30" isPrintWhenDetailOverflows="true" uuid="ebdfa9c3-f4f6-42c8-a8ba-f0269f27b181">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} == ""]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -362,7 +362,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="187" y="0" width="27" height="30" isPrintWhenDetailOverflows="true" uuid="9815947e-6796-440f-ad61-a849670e0bac">
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} == ""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -377,7 +377,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="214" y="0" width="40" height="30" isPrintWhenDetailOverflows="true" uuid="0b977bcc-73e6-4da4-80fb-c62f0cb3c2ab">
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} == ""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -392,7 +392,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="254" y="0" width="35" height="30" isPrintWhenDetailOverflows="true" uuid="b161de6a-9240-4389-bb75-ebc8478e9770">
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} == ""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -407,7 +407,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToTallestObject" x="289" y="0" width="38" height="30" isPrintWhenDetailOverflows="true" uuid="f14ef368-bb59-4421-be92-f7653bf617e3">
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} == ""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -423,7 +423,6 @@
 			<textField isStretchWithOverflow="true" pattern="#,###.##">
 				<reportElement stretchType="RelativeToTallestObject" x="327" y="0" width="47" height="30" isPrintWhenDetailOverflows="true" uuid="6882f290-70ac-461a-bd97-dfc07b74a707">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{quantity} != ""]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0" rightPadding="2">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
@@ -437,9 +436,9 @@
 				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="115" y="0" width="259" height="30" isPrintWhenDetailOverflows="true" uuid="7b13dda4-db14-49b5-a8d5-fd34d3607f14">
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="0" width="212" height="30" isPrintWhenDetailOverflows="true" uuid="7b13dda4-db14-49b5-a8d5-fd34d3607f14">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<printWhenExpression><![CDATA[$F{quantity} == ""]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{scheduleCategory} != ""]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
 					<topPen lineWidth="0.2" lineStyle="Solid" lineColor="#000000"/>
