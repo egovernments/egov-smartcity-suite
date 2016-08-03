@@ -82,7 +82,7 @@
 						<div class="col-sm-2 add-margin">
 							<div class="input-group">
 								<span class="input-group-addon">+91</span>
-                                <form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10" required="required"/>
+                                <form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10" disabled="true" required="required"/>
 							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>
