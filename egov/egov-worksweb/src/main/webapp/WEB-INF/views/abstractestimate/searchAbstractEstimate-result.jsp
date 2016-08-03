@@ -51,12 +51,14 @@
 					<%-- <th><spring:message code="lbl.slno" /></th> --%>
 					<th><spring:message code="lbl.lineestimatenumber" /></th>
 					<th><spring:message code="lbl.estimatenumberanddate" /></th>
+					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.workidentificationnumber" /></th>
 					<th><spring:message code="lbl.estimateamount" /></th>
 					<th><spring:message code="lbl.department" /></th>
-					<th><spring:message code="lbl.estimate.ward" /></th>
+					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.currentowner" /></th>
+					
 				</tr>
 			</thead>
 			<tbody class="no-pointer">

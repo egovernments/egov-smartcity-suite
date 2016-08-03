@@ -130,13 +130,14 @@ function callAjaxSearch() {
 							return '<a href="javascript:void(0);" onclick="openAbstractEstimate('+row.id+');" data-hiddenele="estimateNumberAndDate" data-eleval="'
 									+ data + '">' + data + '</a>';
 							}
-						} ,
+						} ,{	
+							"data" : "nameofwork"} ,
 					{"data" : "workIdentificationNumber"} ,{ 
 					"data" : "estimateAmount", "sClass" : "text-right"} ,{
 					"data" : "departmentName"} ,{
-					"data" : "ward"} ,{
-					"data" : "status"} ,{
-					"data" : "currentowner"}]				
+					"data" : "ward","sWidth" : "10"} ,{
+					"data" : "status","sWidth" : "10"} ,{
+					"data" : "currentowner"} ]				
 				});
 		
 		//show/hide department
