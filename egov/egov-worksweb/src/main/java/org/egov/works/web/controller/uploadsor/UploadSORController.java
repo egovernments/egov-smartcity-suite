@@ -46,7 +46,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -455,6 +457,7 @@ public class UploadSORController {
 
     private UploadScheduleOfRate getRowData(HSSFRow row) {
         UploadScheduleOfRate sorRate = new UploadScheduleOfRate();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         try {
             if (row != null) {
                 sorRate.setSorCode(getStrValue(row.getCell(SORCODE_CELL_INDEX)) == null ? null : getStrValue(row
@@ -469,34 +472,41 @@ public class UploadSORController {
                         getNumericValue(row.getCell(RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null : getNumericValue(row
                                 .getCell(RATE_CELL_INDEX)));
                 try {
-                    sorRate.setFromDate(
+                    sorRate.setTempFromDate(
                             row.getCell(FROMDATE_CELL_INDEX) == null ? null
-                                    : row.getCell(FROMDATE_CELL_INDEX).getDateCellValue());
+                                    : row.getCell(FROMDATE_CELL_INDEX).getStringCellValue());
+
+                    if (sorRate.getTempFromDate() != null && !sorRate.getTempFromDate().equalsIgnoreCase(""))
+                        sorRate.setFromDate(df.parse(sorRate.getTempFromDate()));
+                    else
+                        sorRate.setErrorReason(sorRate.getErrorReason() != null ? sorRate.getErrorReason() + ","
+                                : "" + messageSource.getMessage("error.fromdate.invalid", null, null));
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(messageSource.getMessage("error.fromdate.invalid", null, null));
+                    sorRate.setErrorReason(
+                            sorRate.getErrorReason() != null ? sorRate.getErrorReason() + ","
+                                    : "" + messageSource.getMessage("error.fromdate.invalid", null, null));
                 }
+
                 try {
-                    sorRate.setToDate(
-                            row.getCell(TODATE_CELL_INDEX) == null ? null : row.getCell(TODATE_CELL_INDEX).getDateCellValue());
+                    sorRate.setTempToDate(
+                            row.getCell(TODATE_CELL_INDEX) == null ? null : getStrValue(row.getCell(TODATE_CELL_INDEX)));
+                    if (sorRate.getTempToDate() != null && !sorRate.getTempToDate().equalsIgnoreCase(""))
+                        sorRate.setToDate(df.parse(sorRate.getTempToDate()));
                 } catch (final Exception e) {
-                    sorRate.setErrorReason(messageSource.getMessage("error.todate.invalid", null, null));
+                    sorRate.setErrorReason(
+                            sorRate.getErrorReason() != null ? sorRate.getErrorReason() + ","
+                                    : "" + messageSource.getMessage("error.todate.invalid", null, null));
                 }
-                /*sorRate.setMarketRate(
-                        getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null
-                                : getNumericValue(row
-                                        .getCell(MARKET_RATE_CELL_INDEX)));
-                try {
-                    sorRate.setMarketFromDate(row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX) == null ? null
-                            : row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX).getDateCellValue());
-                } catch (final Exception e) {
-                    sorRate.setErrorReason(messageSource.getMessage("error.market.fromdate.invalid", null, null));
-                }
-                try {
-                    sorRate.setMarketToDate(row.getCell(MARKET_RATE_TODATE_CELL_INDEX) == null ? null
-                            : row.getCell(MARKET_RATE_TODATE_CELL_INDEX).getDateCellValue());
-                } catch (final Exception e) {
-                    sorRate.setErrorReason(messageSource.getMessage("error.market.todate.invalid", null, null));
-                }*/
+                /*
+                 * sorRate.setMarketRate( getNumericValue(row.getCell(MARKET_RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ?
+                 * null : getNumericValue(row .getCell(MARKET_RATE_CELL_INDEX))); try {
+                 * sorRate.setMarketFromDate(row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX) == null ? null :
+                 * row.getCell(MARKET_RATE_FROMDATE_CELL_INDEX).getDateCellValue()); } catch (final Exception e) {
+                 * sorRate.setErrorReason(messageSource.getMessage("error.market.fromdate.invalid", null, null)); } try {
+                 * sorRate.setMarketToDate(row.getCell(MARKET_RATE_TODATE_CELL_INDEX) == null ? null :
+                 * row.getCell(MARKET_RATE_TODATE_CELL_INDEX).getDateCellValue()); } catch (final Exception e) {
+                 * sorRate.setErrorReason(messageSource.getMessage("error.market.todate.invalid", null, null)); }
+                 */
             }
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),

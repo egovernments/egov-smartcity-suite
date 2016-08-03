@@ -58,11 +58,19 @@ public class UploadScheduleOfRate {
 
     private BigDecimal rate;
 
+    private String tempFromDate;
+
+    private String tempToDate;
+
     private Date fromDate;
 
     private Date toDate;
 
     private BigDecimal marketRate;
+
+    private String tempMarketFromDate;
+
+    private String tempMarketToDate;
 
     private Date marketFromDate;
 
@@ -206,6 +214,38 @@ public class UploadScheduleOfRate {
 
     public void setCreateSor(Boolean createSor) {
         this.createSor = createSor;
+    }
+
+    public String getTempFromDate() {
+        return tempFromDate;
+    }
+
+    public void setTempFromDate(String tempFromDate) {
+        this.tempFromDate = tempFromDate;
+    }
+
+    public String getTempToDate() {
+        return tempToDate;
+    }
+
+    public void setTempToDate(String tempToDate) {
+        this.tempToDate = tempToDate;
+    }
+
+    public String getTempMarketFromDate() {
+        return tempMarketFromDate;
+    }
+
+    public void setTempMarketFromDate(String tempMarketFromDate) {
+        this.tempMarketFromDate = tempMarketFromDate;
+    }
+
+    public String getTempMarketToDate() {
+        return tempMarketToDate;
+    }
+
+    public void setTempMarketToDate(String tempMarketToDate) {
+        this.tempMarketToDate = tempMarketToDate;
     }
 
 }
