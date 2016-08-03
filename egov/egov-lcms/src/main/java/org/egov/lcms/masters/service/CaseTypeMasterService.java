@@ -53,7 +53,6 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.repository.CaseTypeMasterRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -63,92 +62,93 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CaseTypeMasterService {
 
-	private final CaseTypeMasterRepository casetypeMasterRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final CaseTypeMasterRepository casetypeMasterRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	public CaseTypeMasterService(final CaseTypeMasterRepository casetypeMasterRepository) {
-		this.casetypeMasterRepository = casetypeMasterRepository;
-	}
+    @Autowired
+    public CaseTypeMasterService(final CaseTypeMasterRepository casetypeMasterRepository) {
+        this.casetypeMasterRepository = casetypeMasterRepository;
+    }
 
-	@Transactional
-	public CaseTypeMaster create(final CaseTypeMaster casetypeMaster) {
-		return casetypeMasterRepository.save(casetypeMaster);
-	}
+    @Transactional
+    public CaseTypeMaster create(final CaseTypeMaster casetypeMaster) {
+        return casetypeMasterRepository.save(casetypeMaster);
+    }
 
+    public List<CaseTypeMaster> getCaseTypeList()
+    {
+        return casetypeMasterRepository.findAll();
+    }
 
-	public List<CaseTypeMaster> getCaseTypeList()
-        {
-            return casetypeMasterRepository.findAll();
-        }
-	public List<CaseTypeMaster> getActiveCaseTypeList()
+    public List<CaseTypeMaster> getActiveCaseTypeList()
     {
         return casetypeMasterRepository.findByActiveTrueOrderByCaseTypeAsc();
     }
-	@Transactional
-	public CaseTypeMaster update(final CaseTypeMaster casetypeMaster) {
-		return casetypeMasterRepository.save(casetypeMaster);
-	}
 
-	public List<CaseTypeMaster> findAll() {
-		return casetypeMasterRepository.findAll(new Sort(Sort.Direction.ASC, "caseType"));
-	}
+    @Transactional
+    public CaseTypeMaster update(final CaseTypeMaster casetypeMaster) {
+        return casetypeMasterRepository.save(casetypeMaster);
+    }
 
-	public CaseTypeMaster findByCode(String code) {
-		return casetypeMasterRepository.findByCode(code);
-	}
+    public List<CaseTypeMaster> findAll() {
+        return casetypeMasterRepository.findAll(new Sort(Sort.Direction.ASC, "caseType"));
+    }
 
-	public CaseTypeMaster findOne(Long id) {
-		return casetypeMasterRepository.findOne(id);
-	}
+    public CaseTypeMaster findByCode(final String code) {
+        return casetypeMasterRepository.findByCode(code);
+    }
 
-	public List<CaseTypeMaster> search(final CaseTypeMaster casetypeMaster) {
+    public CaseTypeMaster findOne(final Long id) {
+        return casetypeMasterRepository.findOne(id);
+    }
 
-		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<CaseTypeMaster> createQuery = cb.createQuery(CaseTypeMaster.class);
-		final Root<CaseTypeMaster> casetypemasters = createQuery.from(CaseTypeMaster.class);
-		createQuery.select(casetypemasters);
-		final Metamodel m = entityManager.getMetamodel();
-		final javax.persistence.metamodel.EntityType<CaseTypeMaster> CasetypeMaster = m.entity(CaseTypeMaster.class);
+    public List<CaseTypeMaster> search(final CaseTypeMaster casetypeMaster) {
 
-		final List<CaseTypeMaster> resultList;
-		final List<Predicate> predicates = new ArrayList<Predicate>();
-		if (casetypeMaster.getCaseType() == null && casetypeMaster.getCode() == null
-				&& casetypeMaster.getActive() == null)
-			resultList = findAll();
-		else {
-			if (casetypeMaster.getCode() != null) {
-				final String code = "%" + casetypeMaster.getCode().toLowerCase() + "%";
-				predicates.add(cb.isNotNull(casetypemasters.get("code")));
-				predicates.add(cb.like(
-						cb.lower(
-								casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("code", String.class))),
-						code));
-			}
-			if (casetypeMaster.getCaseType() != null) {
-				final String caseType = "%" + casetypeMaster.getCaseType().toLowerCase() + "%";
-				predicates.add(cb.isNotNull(casetypemasters.get("caseType")));
-				predicates.add(cb.like(
-						cb.lower(casetypemasters
-								.get(CasetypeMaster.getDeclaredSingularAttribute("caseType", String.class))),
-						caseType));
-			}
-			if (casetypeMaster.getActive() != null)
-				if (casetypeMaster.getActive() == true)
-					predicates.add(cb.equal(
-							casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
-							true));
-				else
-					predicates.add(cb.equal(
-							casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
-							false));
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<CaseTypeMaster> createQuery = cb.createQuery(CaseTypeMaster.class);
+        final Root<CaseTypeMaster> casetypemasters = createQuery.from(CaseTypeMaster.class);
+        createQuery.select(casetypemasters);
+        final Metamodel m = entityManager.getMetamodel();
+        final javax.persistence.metamodel.EntityType<CaseTypeMaster> CasetypeMaster = m.entity(CaseTypeMaster.class);
 
-			createQuery.where(predicates.toArray(new Predicate[] {}));
-			final TypedQuery<CaseTypeMaster> query = entityManager.createQuery(createQuery);
+        final List<CaseTypeMaster> resultList;
+        final List<Predicate> predicates = new ArrayList<Predicate>();
+        if (casetypeMaster.getCaseType() == null && casetypeMaster.getCode() == null
+                && casetypeMaster.getActive() == null)
+            resultList = findAll();
+        else {
+            if (casetypeMaster.getCode() != null) {
+                final String code = "%" + casetypeMaster.getCode().toLowerCase() + "%";
+                predicates.add(cb.isNotNull(casetypemasters.get("code")));
+                predicates.add(cb.like(
+                        cb.lower(
+                                casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("code", String.class))),
+                        code));
+            }
+            if (casetypeMaster.getCaseType() != null) {
+                final String caseType = "%" + casetypeMaster.getCaseType().toLowerCase() + "%";
+                predicates.add(cb.isNotNull(casetypemasters.get("caseType")));
+                predicates.add(cb.like(
+                        cb.lower(casetypemasters
+                                .get(CasetypeMaster.getDeclaredSingularAttribute("caseType", String.class))),
+                        caseType));
+            }
+            if (casetypeMaster.getActive() != null)
+                if (casetypeMaster.getActive() == true)
+                    predicates.add(cb.equal(
+                            casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            true));
+                else
+                    predicates.add(cb.equal(
+                            casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("active", Boolean.class)),
+                            false));
 
-			resultList = query.getResultList();
-		}
-		return resultList;
-	}
+            createQuery.where(predicates.toArray(new Predicate[] {}));
+            final TypedQuery<CaseTypeMaster> query = entityManager.createQuery(createQuery);
+
+            resultList = query.getResultList();
+        }
+        return resultList;
+    }
 }

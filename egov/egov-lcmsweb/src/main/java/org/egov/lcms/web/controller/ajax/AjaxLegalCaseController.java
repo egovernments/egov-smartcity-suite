@@ -122,7 +122,7 @@ public class AjaxLegalCaseController {
 	public @ResponseBody List<PetitionTypeMaster> getAllPetitionTypesByCountType(@RequestParam final Long courtType) {
 		List<PetitionTypeMaster> petitionTypeList = new ArrayList<PetitionTypeMaster>(0);
 		if(courtType!=null){
-		petitionTypeList = petitiontypeMasterService.findByCourtType(courtTypeMasterService.findOne(courtType));
+		petitionTypeList = petitiontypeMasterService.findActivePetitionByCourtType(courtTypeMasterService.findOne(courtType));
 		petitionTypeList.forEach(petitionType -> petitionType.toString());
 		}
 		return petitionTypeList;
@@ -132,7 +132,7 @@ public class AjaxLegalCaseController {
 	public @ResponseBody List<CourtMaster> getAllCourtNamesByCountType(@RequestParam final Long courtType) {
 		List<CourtMaster> courtNameList = new ArrayList<CourtMaster>(0);
 		if(courtType!=null){
-		courtNameList = courtMasterService.findCourtByCourtType(courtTypeMasterService.findOne(courtType));
+		courtNameList = courtMasterService.findActiveCourtByCourtType(courtTypeMasterService.findOne(courtType));
 		courtNameList.forEach(petitionType -> petitionType.toString());
 		}
 		return courtNameList;

@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -46,9 +45,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -72,9 +68,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class LegalCaseInterimOrderService {
 
     private final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;

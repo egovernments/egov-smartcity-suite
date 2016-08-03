@@ -89,7 +89,7 @@ public class CourtMasterService {
         return courtMasterRepository.findOne(id);
     }
 
-    public List<CourtMaster> findCourtByCourtType(final CourtTypeMaster courtType) {
+    public List<CourtMaster> findActiveCourtByCourtType(final CourtTypeMaster courtType) {
         return courtMasterRepository.findByActiveTrueAndCourtType(courtType);
     }
 
