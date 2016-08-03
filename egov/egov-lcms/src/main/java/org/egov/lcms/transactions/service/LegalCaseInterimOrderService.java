@@ -40,6 +40,7 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -98,6 +99,13 @@ public class LegalCaseInterimOrderService {
         legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
         processAndStoreApplicationDocuments(legalCaseInterimOrder);
         return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
+    }
+
+    public List<LcInterimOrderDocuments> getLcInterimOrderDocList(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        final List<LcInterimOrderDocuments> lcInterimOrderDOc = new ArrayList<LcInterimOrderDocuments>();
+        for (final LcInterimOrderDocuments lcInterimOrderDoc : legalCaseInterimOrder.getLcInterimOrderDocuments())
+            lcInterimOrderDOc.add(lcInterimOrderDoc);
+        return lcInterimOrderDOc;
     }
 
     public List<LegalCaseInterimOrder> findAll() {

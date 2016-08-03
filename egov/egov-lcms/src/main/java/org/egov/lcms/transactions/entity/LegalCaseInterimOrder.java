@@ -84,16 +84,17 @@ public class LegalCaseInterimOrder extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_LCINTERIMORDER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+   
     @Valid
     @NotNull
     @JoinColumn(name = "LEGALCASE", nullable = false)
+    @ManyToOne
     private LegalCase legalCase;
 
     @Valid
     @NotNull
     @JoinColumn(name = "interimorder", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private InterimOrder interimOrder;
 
     @Temporal(TemporalType.DATE)

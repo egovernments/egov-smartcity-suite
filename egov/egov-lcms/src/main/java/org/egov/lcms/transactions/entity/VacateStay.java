@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -76,21 +75,12 @@ public class VacateStay extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_VACATESTAY_PETITION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @NotNull
     @JoinColumn(name = "lcinterimorder", nullable = false)
     private LegalCaseInterimOrder legalCaseInterimOrder;
 
-    public LegalCaseInterimOrder getLegalCaseInterimOrder() {
-        return legalCaseInterimOrder;
-    }
-
-    public void setLegalCaseInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
-        this.legalCaseInterimOrder = legalCaseInterimOrder;
-    }
-
     @Temporal(TemporalType.DATE)
-
     @Column(name = "receivedfromstandingcounsel")
     private Date vsReceivedFromStandingCounsel;
 
@@ -100,12 +90,30 @@ public class VacateStay extends AbstractAuditable {
 
     @NotNull
     @Temporal(TemporalType.DATE)
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "petitionfiledon.notAllow.futureDate")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "petitionfiledon")
     private Date vsPetitionFiledOn;
 
     @Length(max = 1024)
     private String remarks;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public LegalCaseInterimOrder getLegalCaseInterimOrder() {
+        return legalCaseInterimOrder;
+    }
+
+    public void setLegalCaseInterimOrder(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        this.legalCaseInterimOrder = legalCaseInterimOrder;
+    }
 
     public Date getVsReceivedFromStandingCounsel() {
         return vsReceivedFromStandingCounsel;
@@ -159,16 +167,6 @@ public class VacateStay extends AbstractAuditable {
             errors.add(new ValidationError("petitionFiledOn", "vsSendToStandingCounsel.greaterThan.petitionFiledOn"));
 
         return errors;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
 }

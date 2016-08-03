@@ -46,12 +46,16 @@
 					<div role="alert">${message}</div>
 				</c:if>
 	<%@ include file="lcinterimorder-form.jsp"%>
-	<%-- <input type="hidden" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
+	<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
+	 <input type="hidden" name="lcInterimOrderDocList" value="${lcInterimOrderDocList}" />
+ 	<%-- <input type="hidden" id="legalCaseInterimOrder" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
 	<%-- <input type="hidden"  id="lcInterimOrderId" name="lcInterimOrderId" value="${lcInterimOrder.id}" />  --%>
-	<form:hidden path="" name="lcInterimOrderId" id="lcInterimOrderId" value="${legalCaseInterimOrder.id}" class="form-control table-input hidden-input"/>
-	<input type="hidden" name="legalCase" value="${legalCase.id}" /> 
+	<%-- <form:hidden path ="" name="legalCaseInterimOrder" id="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" class="form-control table-input hidden-input"/> --%>
+	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
 		value="${legalCaseInterimOrder.legalCase.lcNumber}" />  
+		<input type="hidden" name="interimOrders" value="${interimOrders}" />
+		
 	</div>
 	</div>
 	</div>

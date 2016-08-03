@@ -159,6 +159,7 @@
 			<div></div>
 		</div>
 		<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
+		<input type="hidden" name="judgmentDocList" value="${judgmentDocList}" />
 		<div class="row text-center">
 			<div class="add-margin">
 				<a href="javascript:void(0)" class="btn btn-default"

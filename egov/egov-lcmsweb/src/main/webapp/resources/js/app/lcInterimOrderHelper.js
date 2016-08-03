@@ -105,8 +105,7 @@ $('#btnclose').click(function(){
 	
 });
 
-function edit(legalCaseInterimOrder){    
-		var legalCaseInterimOrder = $('#lcInterimOrderId').val();
+function edit(legalCaseInterimOrder){  
 		var url = '/lcms/lcinterimorder/edit/'+legalCaseInterimOrder;
 		window.location = url;
        }
@@ -127,11 +126,10 @@ $('#createnewinterimorder').click(function() {
 
 
 function viewInterimorder(legalCaseInterimOrder){
-	var legalCaseInterimOrder = $('#lcInterimOrderId').val()
 	window.open('/lcms/lcinterimorder/view/' + legalCaseInterimOrder, "_self",'','height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 	
-function vacatestay(Obj){    
+function vacatestay(Obj){  
 	var url = '/lcms/vacatestay/new/?lcInterimOrderId='+Obj;
 	window.location = url;
    }

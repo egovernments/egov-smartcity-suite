@@ -73,7 +73,7 @@ public class LcInterimOrderDocuments extends AbstractPersistable<Long> {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "lcInterimOrder", nullable = false)
     private LegalCaseInterimOrder legalCaseInterimOrder;
 

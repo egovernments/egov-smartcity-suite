@@ -86,11 +86,13 @@ public class Judgment extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @NotNull
     @JoinColumn(name = "judgmenttype", nullable = false)
     private JudgmentType judgmentType;
 
@@ -150,7 +152,7 @@ public class Judgment extends AbstractAuditable {
     @Column(name = "issapaccepted")
     private boolean sapAccepted;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent")
     @Fetch(value = FetchMode.SELECT)
     private Judgment parent;

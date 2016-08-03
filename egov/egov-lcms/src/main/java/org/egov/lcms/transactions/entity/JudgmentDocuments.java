@@ -74,7 +74,7 @@ public class JudgmentDocuments extends AbstractPersistable<Long> {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "judgment", nullable = false)
     private Judgment judgment;
 
