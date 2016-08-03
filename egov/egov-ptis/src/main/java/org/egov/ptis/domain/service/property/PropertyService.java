@@ -3091,9 +3091,22 @@ public class PropertyService {
      * @return
      */
     public List<Assignment> getAssignmentsForDesignation(String designationName){
-    	List<Assignment> assignmentsList = new ArrayList<Assignment>();
-    	assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
-    	return assignmentsList;
+        List<Assignment> assignmentsList = new ArrayList<Assignment>();
+        assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
+        return assignmentsList;
+    }
+    
+    /**
+     * Update Reference Basic Property in Property Status values (Bifurcation workflow)
+     * @param basicProperty, parentPropId
+     */
+    public void updateReferenceBasicProperty(final BasicProperty basicProperty, final String parentPropId ){
+        
+        PropertyStatusValues propStatVal= (PropertyStatusValues) propPerServ.find("from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
+        final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ.find(
+                "from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
+        propStatVal.setReferenceBasicProperty(referenceBasicProperty);
+        
     }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {
