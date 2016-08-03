@@ -42,8 +42,8 @@
     <table>
 	    <tr>
 	        <td colspan="16"><!--only for validity head end -->
-	            <div class="view-content"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
-	            <table class=" table table-bordered" id="sorMbDetails[${item.index }].mstable">
+	            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div></div>
+	            <table class=" table table-bordered msheet-table" id="sorMbDetails[${item.index }].mstable">
 	                <thead>
 	                	<tr>
 		                    <th colspan="1"></th>

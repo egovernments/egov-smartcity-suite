@@ -126,10 +126,12 @@
 								<span class="cumulativePreviousEntry_0"></span>
 							</td>
 							<td>
-								<form:input path="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="sorMbDetails[0].rate" id="unitRate_0" class="form-control table-input text-right"/>
 								<form:input type="hidden" path="sorMbDetails[0].amount" id="amount_0" class="form-control table-input text-right"/>
-								<button class="btn btn-default openmbsheet" name="sorMbDetails[0].msadd" id="sorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								<div class="input-group" style="width:150px">
+									<form:input path="sorMbDetails[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<span class="input-group-addon openmbsheet" name="sorMbDetails[0].msadd" id="sorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+								</div>
 							</td>
 							<td hidden="true">
 	                            <input class="classmspresent" type="hidden" disabled="disabled" name="sorMbDetails[0].mspresent" id="sorMbDetails[0].mspresent" data-idx="0"/>
@@ -187,24 +189,26 @@
 									<span class="cumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<c:choose>
-			                    		<c:when test="${!details.measurementSheets.isEmpty() }">
-			                    			<form:input path="sorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-			                    		</c:when>
-			                    		<c:otherwise>
-			                    			<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-			                    		</c:otherwise>
-			                    	</c:choose>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].rate" value="${details.rate }" id="unitRate_${item.index }" class="form-control table-input text-right"/>
 									<form:input type="hidden" path="sorMbDetails[${item.index }].amount" value="${details.amount }" id="amount_${item.index }" class="form-control table-input text-right"/>
-									<c:choose>
-										<c:when test="${!details.measurementSheets.isEmpty() }">
-											<button class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-										</c:when>
-										<c:otherwise>
-											<button style="display: none;" class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-										</c:otherwise>
-									</c:choose>
+									<div class="input-group" style="width:150px">
+										<c:choose>
+			            	        		<c:when test="${!details.measurementSheets.isEmpty() }">
+			                	    			<form:input path="sorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+			                    			</c:when>
+			                    			<c:otherwise>
+			                    				<form:input path="sorMbDetails[${item.index }].quantity" value="${details.quantity }" id="quantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+				                    		</c:otherwise>
+				                    	</c:choose>
+										<c:choose>
+											<c:when test="${!details.measurementSheets.isEmpty() }">
+												<span class="input-group-addon openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+											</c:when>
+											<c:otherwise>
+												<span style="display: none;" class="input-group-addon openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+											</c:otherwise>
+										</c:choose>
+									</div>
 								</td>
 								<td hidden="true">
 									<c:set var="net" value="0" />

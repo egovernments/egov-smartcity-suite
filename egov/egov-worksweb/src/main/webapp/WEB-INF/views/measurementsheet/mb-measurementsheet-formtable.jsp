@@ -39,10 +39,10 @@
   --%>
 <table hidden="true" >
     <tbody id="msheaderrowtemplate">
-    <tr id="templatesorMbDetails[0].mstr" class="ms-sheet-row">
+    <tr id="templatesorMbDetails[0].mstr" class="msheet-tr">
         <td colspan="16">
-            <div class="view-content"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
-            <table class=" table table-bordered" id="templatesorMbDetails[0].mstable">
+            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div></div>
+            <table class=" table table-bordered msheet-table" id="templatesorMbDetails[0].mstable">
                 <thead>
                 	<tr>
 	                    <th colspan="1"></th>
@@ -88,27 +88,27 @@
 	
 	                    </td>
 	                    <td>
-	                        <input name="templatesorMbDetails[0].measurementSheets[0].no" value=""  id="templatesorMbDetails[0].measurementSheets[0].no" class="form-control text-right patternvalidation runtime-update"
+	                        <input name="templatesorMbDetails[0].measurementSheets[0].no" value="" onkeyup="limitCharatersBy3_2(this);"  id="templatesorMbDetails[0].measurementSheets[0].no" class="form-control text-right patternvalidation runtime-update"
 	                               data-pattern="decimalvalue" data-idx="0" />
 	
 	                    </td>
 	                    <td>                                                                     
-	                        <input name="templatesorMbDetails[0].measurementSheets[0].length" id="templatesorMbDetails[0].measurementSheets[0].length" class="form-control text-right patternvalidation runtime-update"
+	                        <input name="templatesorMbDetails[0].measurementSheets[0].length" onkeyup="limitCharatersBy10_4(this);" id="templatesorMbDetails[0].measurementSheets[0].length" class="form-control text-right patternvalidation runtime-update"
 	                               data-pattern="decimalvalue" data-idx="0" />
 	
 	                    </td>
 	                    <td>
-	                        <input name="templatesorMbDetails[0].measurementSheets[0].width" id="templatesorMbDetails[0].measurementSheets[0].width" class="form-control text-right patternvalidation runtime-update"
+	                        <input name="templatesorMbDetails[0].measurementSheets[0].width" onkeyup="limitCharatersBy10_4(this);" id="templatesorMbDetails[0].measurementSheets[0].width" class="form-control text-right patternvalidation runtime-update"
 	                               data-pattern="decimalvalue"  data-idx="0" />
 	
 	                    </td>
 	                    <td>
-		                    <input name="templatesorMbDetails[0].measurementSheets[0].depthOrHeight" id="templatesorMbDetails[0].measurementSheets[0].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+		                    <input name="templatesorMbDetails[0].measurementSheets[0].depthOrHeight" onkeyup="limitCharatersBy10_4(this);" id="templatesorMbDetails[0].measurementSheets[0].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
 		                           data-pattern="decimalvalue"  data-idx="0" />
 	
 	                	</td>
 	                	<td>
-		                    <input name="templatesorMbDetails[0].measurementSheets[0].quantity" id="templatesorMbDetails[0].measurementSheets[0].quantity" class="form-control text-right patternvalidation runtime-update"
+		                    <input name="templatesorMbDetails[0].measurementSheets[0].quantity" onkeyup="limitCharatersBy10_4(this);" id="templatesorMbDetails[0].measurementSheets[0].quantity" class="form-control text-right patternvalidation runtime-update"
 		                           data-pattern="decimalvalue" onblur="findNet(this)" />
 	
 	                	</td>

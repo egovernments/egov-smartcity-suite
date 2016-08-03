@@ -56,6 +56,20 @@
       .position_alert3{
         background:#F2DEDE;padding:10px 20px;border-radius: 5px;margin-right: 10px;color:#333;font-size:14px;position: absolute; top: 11px;right: 180px;
       }
+      
+.msheet-tr {
+	background: #f7f7f7;
+}
+
+.msheet-table {
+	border: 1px solid #ddd;
+}
+
+.msheet-table thead:first-child>tr:first-child th, .msheet-table thead > tr th {
+	background: #E7E7E7;
+	color: #333;
+	font-weight: normal;
+}
     </style>
 <form:form modelAttribute="mbHeader" name="mbHeader" role="form" method="post" id="mbHeader"
 	class="form-horizontal form-groups-bordered"

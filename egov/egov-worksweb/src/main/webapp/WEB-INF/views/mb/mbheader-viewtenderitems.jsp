@@ -95,15 +95,17 @@
 											<td class="text-right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
 											<td align="right">
-												<c:out value="${mbdetails.quantity}" />
-												<c:choose>
-													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-														<button class="btn openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-													</c:when>
-													<c:otherwise>
-														<button style="visibility: hidden;" class="btn openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-													</c:otherwise>
-												</c:choose>
+												<div class="input-group" style="width:150px">
+													<c:out value="${mbdetails.quantity}" />
+														<c:choose>
+															<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
+																<button class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+															</c:when>
+															<c:otherwise>
+																<button style="display: none;" class="btn btn-default openmbsheet" name="sorMbDetails[${item.index }].msadd" id="sorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+															</c:otherwise>
+														</c:choose>
+												</div>
 											</td>
 											<td hidden="true">
 												<c:set var="net" value="0" />
@@ -180,15 +182,17 @@
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
 											<td align="right">
-												<c:out value="${mbdetails.quantity}" />
-												<c:choose>
-													<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
-														<button class="btn openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-													</c:when>
-													<c:otherwise>
-														<button style="visibility: hidden;" class="btn openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-													</c:otherwise>
-												</c:choose>
+												<div class="input-group" style="width:150px">
+													<c:out value="${mbdetails.quantity}" />
+													<c:choose>
+														<c:when test="${!mbdetails.measurementSheets.isEmpty() }">
+															<button class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														</c:when>
+														<c:otherwise>
+															<button style="display: none;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+														</c:otherwise>
+													</c:choose>
+												</div>
 											</td>
 											<td hidden="true">
 												<c:set var="net" value="0" />

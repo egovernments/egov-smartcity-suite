@@ -67,7 +67,7 @@ function addMBMSheet(obj)
 		  }
 		
 		var curRow = $(obj).closest('tr');
-		var k= "<tr id=\""+sortable+".mstr\"><td colspan=\"15\">";
+		var k= "<tr id=\""+sortable+".mstr\" class=\"msheet-tr\"><td colspan=\"15\">";
 		mscontent=k+mscontent+"</td></tr>";
 		curRow.after(mscontent);
 		document.getElementById(rowid.replace("msadd","mstd")).innerHTML="";
@@ -391,4 +391,22 @@ function validateMsheet(obj)
 		}
 	}
 	return true;
+}
+
+function limitCharatersBy10_4(object) {
+	var valid = /^[0-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+	val = $(object).val();
+	if(!valid){
+		//console.log("Invalid input!");
+		$(object).val(val.substring(0, val.length - 1));
+	}	
+}
+
+function limitCharatersBy3_2(object) {
+	var valid = /^[0-9](\d{0,2})(\.\d{0,2})?$/.test($(object).val()),
+	val = $(object).val();
+	if(!valid){
+		//console.log("Invalid input!");
+		$(object).val(val.substring(0, val.length - 1));
+	}	
 }

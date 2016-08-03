@@ -40,10 +40,10 @@
 <c:if test="${!details.measurementSheets.isEmpty() }">
 	<!--only for validity head start -->                         
     <table>
-	    <tr>
+	    <tr class='msheet-tr'>
 	        <td colspan="16"><!--only for validity head end -->
-	            <div class="view-content">Measurement Sheet <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
-	            <table class=" table table-bordered" id="nonSorMbDetails[${item.index }].mstable">
+	            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div></div>
+	            <table class=" table table-bordered msheet-table" id="nonSorMbDetails[${item.index }].mstable">
 	                <thead>
 	                	<tr>
 		                    <th colspan="1"></th>
@@ -101,22 +101,22 @@
 			
 			                    </td>
 			                    <td>
-			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].no"  id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].no" class="form-control text-right patternvalidation runtime-update"
+			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].no" onkeyup="limitCharatersBy3_2(this);"  id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].no" class="form-control text-right patternvalidation runtime-update"
 			                               data-pattern="decimalvalue" data-idx="0" />
 			
 			                    </td>
 			                    <td>                                                                     
-			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].length" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].length" class="form-control text-right patternvalidation runtime-update"
+			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].length" onkeyup="limitCharatersBy10_4(this);" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].length" class="form-control text-right patternvalidation runtime-update"
 			                               data-pattern="decimalvalue" data-idx="0" />
 			
 			                    </td>
 			                    <td>
-			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].width" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].width" class="form-control text-right patternvalidation runtime-update"
+			                        <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].width" onkeyup="limitCharatersBy10_4(this);" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].width" class="form-control text-right patternvalidation runtime-update"
 			                               data-pattern="decimalvalue"  data-idx="0" />
 			
 			                    </td>
 			                    <td>
-				                    <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].depthOrHeight" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+				                    <form:input path="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].depthOrHeight" onkeyup="limitCharatersBy10_4(this);" id="nonSorMbDetails[${item.index }].measurementSheets[${index.index }].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
 				                           data-pattern="decimalvalue"  data-idx="0" />
 			
 			                	</td>

@@ -99,10 +99,12 @@
 								<span class="nonSorCumulativePreviousEntry_0"></span>
 							</td>
 							<td>
-								<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].rate" id="nonSorUnitRate_0" class="form-control table-input text-right"/>
 								<form:input type="hidden" path="nonSorMbDetails[0].amount" id="nonSorAmount_0" class="form-control table-input text-right"/>
-								<button class="btn btn-default openmbsheet" name="nonSorMbDetails[0].msadd" id="nonSorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								<div class="input-group" style="width:150px">
+									<form:input path="nonSorMbDetails[0].quantity" id="nonSorQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+									<span class="input-group-addon openmbsheet" name="nonSorMbDetails[0].msadd" id="nonSorMbDetails[0].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+								</div>
 							</td>
 							<td hidden="true">
 	                            <input class="classmspresent" type="hidden" disabled="disabled" name="nonSorMbDetails[0].mspresent" id="nonSorMbDetails[0].mspresent" data-idx="0"/>
@@ -155,24 +157,26 @@
 									<span class="nonSorCumulativePreviousEntry_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${details.prevCumlvQuantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<c:choose>
-			                    		<c:when test="${!details.measurementSheets.isEmpty() }">
-			                    			<form:input path="nonSorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-			                    		</c:when>
-			                    		<c:otherwise>
-			                    			<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-			                    		</c:otherwise>
-			                    	</c:choose>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].rate" value="${details.rate }" id="nonSorUnitRate_${item.index }" class="form-control table-input text-right"/>
 									<form:input type="hidden" path="nonSorMbDetails[${item.index }].amount" value="${details.amount }" id="nonSorAmount_${item.index }" class="form-control table-input text-right"/>
-									<c:choose>
-										<c:when test="${!details.measurementSheets.isEmpty() }">
-											<button class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-										</c:when>
-										<c:otherwise>
-											<button style="display: none;" class="btn btn-default openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-										</c:otherwise>
-									</c:choose>
+									<div class="input-group" style="width:150px">
+										<c:choose>
+				                    		<c:when test="${!details.measurementSheets.isEmpty() }">
+				                    			<form:input path="nonSorMbDetails[${item.index }].quantity" readonly="true" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+				                    		</c:when>
+				                    		<c:otherwise>
+				                    			<form:input path="nonSorMbDetails[${item.index }].quantity" value="${details.quantity }" id="nonSorQuantity_${item.index }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateNonSorAmounts(this);" onkeyup="validateQuantityInput(this);"/>
+				                    		</c:otherwise>
+				                    	</c:choose>
+										<c:choose>
+											<c:when test="${!details.measurementSheets.isEmpty() }">
+												<span class="input-group-addon openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+											</c:when>
+											<c:otherwise>
+												<span style="display: none;" class="input-group-addon openmbsheet" name="nonSorMbDetails[${item.index }].msadd" id="nonSorMbDetails[${item.index }].msadd" data-idx="0" onclick="addMBMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+											</c:otherwise>
+										</c:choose>
+									</div>
 								</td>
 								<td hidden="true">
 									<c:set var="net" value="0" />
