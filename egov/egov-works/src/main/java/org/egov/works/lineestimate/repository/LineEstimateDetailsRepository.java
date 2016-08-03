@@ -70,7 +70,7 @@ public interface LineEstimateDetailsRepository extends JpaRepository<LineEstimat
     List<String> findEstimateNumbersToSearchAbstractEstimatesForLoa(@Param("aeStatus") String aeStatus,
             @Param("woStatus") String woStatus);
 
-    @Query("select distinct(led.lineEstimate.adminSanctionNumber) from LineEstimateDetails as led  where led.lineEstimate.adminSanctionNumber like :adminSanctionNumber and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where led.estimateNumber = woe.estimate.estimateNumber and upper(woe.workOrder.egwStatus.code) != :status) and  not exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:status)")
+    @Query("select distinct(led.lineEstimate.adminSanctionNumber) from LineEstimateDetails as led  where upper(led.lineEstimate.adminSanctionNumber) like upper(:adminSanctionNumber) and led.lineEstimate.status.code = :egwStatus and not exists (select distinct(woe.estimate.estimateNumber) from WorkOrderEstimate as woe where led.estimateNumber = woe.estimate.estimateNumber and upper(woe.workOrder.egwStatus.code) != :status) and  not exists (select distinct(ae.lineEstimateDetails.id) from AbstractEstimate as ae where ae.lineEstimateDetails.id = led.id and upper(ae.egwStatus.code) !=:status)")
     List<String> findAdminSanctionNumbersForAbstractEstimate(@Param("adminSanctionNumber") String adminSanctionNumber,
             @Param("egwStatus") String egwStatus, @Param("status") String status);
 
