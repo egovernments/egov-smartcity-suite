@@ -201,6 +201,7 @@ function validateWINNumber(obj) {
 
 $('#isBillsCreated').click(function() {
 	if($(this).prop("checked") == true) {
+		$('#footNoteMsg').show();
 		$(".thGrossAmount").show();
 		$(".tdGrossAmount").each(
 				function() {
@@ -210,6 +211,7 @@ $('#isBillsCreated').click(function() {
 		});
 	} else {
 		$(".thGrossAmount").hide();
+		$('#footNoteMsg').hide();
 		$(".tdGrossAmount").each(
 				function() {
 					$(this).find('input').val("");

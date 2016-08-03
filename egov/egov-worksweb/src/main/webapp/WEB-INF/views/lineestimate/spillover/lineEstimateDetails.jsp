@@ -199,6 +199,8 @@
 		</table>
 		<div id="documentDetails">
 		</div>
+		<div class="col-sm-7 add-margin"></div>
+		<div class="col-sm-5 add-margin"><div class="add-margin error-msg text-right" style="display: none;" id="footNoteMsg"><spring:message code="msg.lineestimate.billscreated.footnote" /></div></div>
 		<div class="col-sm-12 text-center">
 			<button id="addRowBtn" type="button" class="btn btn-primary" onclick="addLineEstimate()"><spring:message code="lbl.addrow" /></button>
 		</div>
