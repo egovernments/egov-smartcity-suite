@@ -1093,7 +1093,9 @@ function validateFormData() {
 	}
 	
 	if(mbDate.getTime() < new Date(workCommencedDate).getTime()) {
-		bootbox.alert($('#errorentrydate').val());
+		var message = $('#errorentrydate').val();
+		message = message.replace(/\{0\}/g, $('#mbDate').val());
+		bootbox.alert(message);
 		$('#mbDate').val('');
 		return false;
 	}
@@ -1122,17 +1124,40 @@ function validateFormData() {
 		return false;
 	}
 	
+	var message = "";
+	message = " for SOR Sl No : ";
+	var index = 0;
 	$("#tblsor > tbody > tr[sorinvisible!='true'] .quantity").each(function() {
-		if (parseFloat($(this).val()) <= 0)
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
 			flag = false;
+			message = message + index + ", ";
+		}
 	});
+	if (!flag) {
+		message = message.slice(0,-2);
+	} else {
+		message = "";
+	}
+	index = 0;
+	var slNo = "";
 	$("#tblNonSor > tbody > tr[nonsorinvisible!='true'] .quantity").each(function() {
-		if (parseFloat($(this).val()) <= 0)
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
 			flag = false;
+			slNo = slNo + index + ", ";
+		}
 	});
 	
 	if (!flag) {
-		bootbox.alert($('#errorquantitieszero').val());
+		if(slNo != "") {
+			slNo = slNo.slice(0, -2);
+			if(message == "")
+				message += " for Non SOR Sl No : " + slNo;
+			else
+				message += " and for Non SOR Sl No : " + slNo;
+		}
+		bootbox.alert($('#errorquantitieszero').val() + message);
 		return false;
 	}
 	return flag;
