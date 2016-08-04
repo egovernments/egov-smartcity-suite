@@ -59,10 +59,6 @@
 	<p>Your browser does not support iframes.</p>
 	</iframe>
 	<br />
-	<div class="buttonbottom">
-		<input name="closeButton" type="button" class="button"
-			id="buttonClose" value="Close" onclick="window.close()" /> &nbsp;
-	</div>
 </s:form>
 </body>
 </html>
