@@ -100,7 +100,7 @@ public class AjaxLegalCaseController {
 			@ModelAttribute("legalcase") @RequestParam final String advocateName,
 			@RequestParam final Boolean isSeniorAdvocate) {
 
-		return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName, isSeniorAdvocate);
+		return advocateMasterService.getAllAdvocatesByNameLikeAndIsSeniorAdvocate(advocateName.toUpperCase(), isSeniorAdvocate);
 	}
 
 	@RequestMapping(value = "ajax/positions", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
