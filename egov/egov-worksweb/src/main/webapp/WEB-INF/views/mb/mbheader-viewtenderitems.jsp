@@ -94,7 +94,7 @@
 											<input type="hidden" name="apprQuantity" id="apprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"	minFractionDigits="2" value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td align="right">
+											<td class="text-right">
 												<div class="input-group" style="width:150px">
 													<c:out value="${mbdetails.quantity}" />
 														<c:choose>
@@ -181,7 +181,7 @@
 											<input type="hidden" name="nonSorApprQuantity" id="nonSorApprQuantity" value="${mbdetails.workOrderActivity.approvedQuantity}" />
 											<td class="text-right"><c:out value="${mbdetails.workOrderActivity.activity.estimateRate}" /></td>
 											<td align="right"><c:out value="${mbdetails.prevCumlvQuantity}" /></td>
-											<td align="right">
+											<td class="text-right">
 												<div class="input-group" style="width:150px">
 													<c:out value="${mbdetails.quantity}" />
 													<c:choose>

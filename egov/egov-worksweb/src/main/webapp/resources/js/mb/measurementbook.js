@@ -1093,8 +1093,10 @@ function validateFormData() {
 	}
 	
 	if(mbDate.getTime() < new Date(workCommencedDate).getTime()) {
+		var dateArray = workCommencedDate.split('-');
 		var message = $('#errorentrydate').val();
 		message = message.replace(/\{0\}/g, $('#mbDate').val());
+		message = message.replace(/\{1\}/g, dateArray[2] + '/' + dateArray[1] + '/' + dateArray[0]);
 		bootbox.alert(message);
 		$('#mbDate').val('');
 		return false;

@@ -652,7 +652,7 @@ public class MBHeaderService {
         if (offlineStatus != null) {
             if (offlineStatus.getStatusDate().after(mbHeader.getMbDate())) {
                 message = messageSource.getMessage("error.mb.entry.date.commenced.date",
-                        new String[] { mbHeader.getMbDate().toString()},
+                        new String[] { mbHeader.getMbDate().toString(), offlineStatus.getStatusDate().toString()},
                         null);
                 jsonObject.addProperty("errorEntryCommencedDate", message);
                 errors.reject("errorEntryCommencedDate", message);
