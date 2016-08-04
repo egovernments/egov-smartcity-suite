@@ -66,10 +66,10 @@ var regexp_alphanumericdot = /[^a-zA-Z0-9 .]/g ;
 var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 
 //This will allow you to enter alphabets and numbers with specified all special characters. (eg: data-pattern="alphanumericwithallspecialcharacters")
-var regexp_alphanumericallspecialcharacters = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>? ]/g ;
+var regexp_alphanumericallspecialcharacters = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>?`~ ]/g ;
 
 //This will allow you to enter alphabets and numbers with specified all special characters. (eg: data-pattern="alphanumericwithallspecialcharacterswithoutspace")
-var regexp_alphanumericallspecialcharacterswithoutspace = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>?]/g ;
+var regexp_alphanumericallspecialcharacterswithoutspace = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>?`~]/g ;
 
 
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspacehyphenunderscore")
