@@ -62,26 +62,26 @@
 	<tbody>
 		<tr class="">
 			<td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanDetails[0].isRespondentGovernment"
-				id="bipartisanDetails[0].isRespondentGovernment"
-				onblur="onChangeofPetitioncheck()" /></td>
+				name="bipartisanPetitionDetailsList[0].isRespondentGovernment"
+				id="bipartisanPetitionDetailsList[0].isRespondentGovernment"
+				onblur="onChangeofPetitioncheck(this)" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
-				name="bipartisanDetails[0].name" id="bipartisanDetails[0].name"
+				name="bipartisanPetitionDetailsList[0].name" id="bipartisanPetitionDetailsList[0].name"
 				maxlength="50" required="required"></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input" name="bipartisanDetails[0].address"
-				id="bipartisanDetails[0].address" maxlength="256"></td>
+				class="form-control table-input" name="bipartisanPetitionDetailsList[0].address"
+				id="bipartisanPetitionDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right patternvalidation"
-				data-pattern="number" name="bipartisanDetails[0].contactNumber"
-				id="bipartisanDetails[0].contactNumber" maxlength="10"></td>
+				data-pattern="number" name="bipartisanPetitionDetailsList[0].contactNumber"
+				id="bipartisanPetitionDetailsList[0].contactNumber" maxlength="10"></td>
 			<td class="text-right"><form:select path=""
 					data-first-option="false"
-					name="bipartisanDetails[0].governmentDepartment"
-					id="bipartisanDetails[0].governmentDepartment"
-					cssClass="form-control" onfocus="callAlertForDepartment();"
+					name="bipartisanPetitionDetailsList[0].governmentDepartment"
+					id="bipartisanPetitionDetailsList[0].governmentDepartment"
+					cssClass="form-control" 
 					cssErrorClass="form-control error">
 					<form:option value="">
 						<spring:message code="lbl.select" />
@@ -120,7 +120,7 @@
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
 				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
-				onblur="onChangeofRespodantcheck()" /></td>
+				onblur="onChangeofPetitioncheck(this)" /></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
@@ -140,7 +140,7 @@
 					data-first-option="false"
 					name="bipartisanDetailsBeanList[0].governmentDepartment"
 					id="bipartisanDetailsBeanList[0].governmentDepartment"
-					cssClass="form-control" onfocus="callAlertForDepartment();"
+					cssClass="form-control"
 					cssErrorClass="form-control error">
 					<form:option value="">
 						<spring:message code="lbl.select" />

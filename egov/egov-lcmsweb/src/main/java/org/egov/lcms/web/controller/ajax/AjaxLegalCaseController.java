@@ -110,9 +110,13 @@ public class AjaxLegalCaseController {
 		List<Position> poslist = new ArrayList<Position>();
 		final Department deptObj = departmentService.getDepartmentByName(departmentName);
 		List<Assignment> assignList = assignmentService
-				.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName);
+				.getAllPositionsByDepartmentAndPositionNameForGivenRange(deptObj.getId(), positionName.toUpperCase());
 		for (Assignment assign : assignList) {
 			poslist.add(assign.getPosition());
+		}
+		for(Position dd:poslist)
+		{
+			System.out.println(dd.getId());
 		}
 		return poslist;
 

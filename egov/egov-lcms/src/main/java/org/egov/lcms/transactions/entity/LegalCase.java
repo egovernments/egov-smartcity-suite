@@ -222,7 +222,7 @@ public class LegalCase extends AbstractAuditable {
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
 
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<LegalCaseDepartment> legalCaseDepartment = new ArrayList<LegalCaseDepartment>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

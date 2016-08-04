@@ -186,57 +186,57 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
+					<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
 							<td>
 								<form:input type="hidden"
-									id="bipartisanDetails[${status.index}].isRespondentGovernment"
-									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
+									id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
+									path="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment" />
 
 									<input type="text"
 										id="table_isRespondentGovernment${status.index}"
 										class="form-control" readonly="readonly" style="text-align: center"
-										value="${bipartisanDetails.isRespondentGovernment}" />
+										value="${bipartisanPetitionDetailsList.isRespondentGovernment}" />
 								</td>
 								<td>
 								 <form:input type="hidden"
-											id="bipartisanDetails[${status.index}].name"
-											path="bipartisanDetails[${status.index}].name" /> 
+											id="bipartisanPetitionDetailsList[${status.index}].name"
+											path="bipartisanPetitionDetailsList[${status.index}].name" /> 
 									<input type="text" id="table_name${status.index}" class="form-control"
 								readonly="readonly" style="text-align: center"
-								value="${bipartisanDetails.name}" /> 
+								value="${bipartisanPetitionDetailsList.name}" /> 
 								</td>
 								<td>
 								<form:input type="hidden" 
-								     id="bipartisanDetails[${status.index}].address"
-									path="bipartisanDetails[${status.index}].address" /> 
+								     id="bipartisanPetitionDetailsList[${status.index}].address"
+									path="bipartisanPetitionDetailsList[${status.index}].address" /> 
 								<input type="text" id="table_address${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.address}" /> 
+								value="${bipartisanPetitionDetailsList.address}" /> 
 								</td>
 								
 								<td>
 								<form:input type="hidden"
-									id="bipartisanDetails[${status.index}].contactNumber"
-									path="bipartisanDetails[${status.index}].contactNumber" /> 
+									id="bipartisanPetitionDetailsList[${status.index}].contactNumber"
+									path="bipartisanPetitionDetailsList[${status.index}].contactNumber" /> 
 									<input type="text" id="table_contactNumber${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.contactNumber}" /> 
+								value="${bipartisanPetitionDetailsList.contactNumber}" /> 
 								</td>
 								
 								<td>
 								<form:input
 									type="hidden"
-									id="bipartisanDetails[${status.index}].governmentDepartment"
-									path="bipartisanDetails[${status.index}].governmentDepartment" />
+									id="bipartisanPetitionDetailsList[${status.index}].governmentDepartment"
+									path="bipartisanPetitionDetailsList[${status.index}].governmentDepartment" />
 								<input type="text"
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment.name}" /></td>
+								value="${bipartisanPetitionDetailsList.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>

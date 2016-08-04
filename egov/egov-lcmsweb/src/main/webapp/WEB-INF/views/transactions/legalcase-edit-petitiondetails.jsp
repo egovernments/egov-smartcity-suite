@@ -66,7 +66,7 @@
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
 			value="${bipartisanPetitionDetailsList.isRespondentGovernment}"
-				onblur="onChangeofPetitioncheck()" /></td>
+				onblur="onChangeofPetitioncheck(this)" /></td>
 				
 			<td class="text-right">
 			<input type="text"
@@ -95,7 +95,7 @@
 					name="bipartisanPetitionDetailsList[${status.index}].governmentDepartment"
 					id="bipartisanPetitionDetailsList[${status.index}].governmentDepartment"
 					value="${bipartisanPetitionDetailsList.governmentDepartment.name}"
-					cssClass="form-control" onfocus="callAlertForDepartment();"
+					cssClass="form-control"
 					cssErrorClass="form-control error">
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
@@ -105,7 +105,7 @@
 			id="bipartisanPetitionDetailsList[${status.index}].id" 
 			value="${bipartisanPetitionDetailsList.id}"/>
 			<td class="text-center">
-			<!-- <a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetEditRow();"><i class="fa fa-plus"></i></a> -->
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
 	</tr>
 		</c:forEach>
@@ -127,8 +127,8 @@
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
 			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
-			<th class="text-center">Delete Respondant<%-- <spring:message
-					code="lbl.add/delete_pet" /> --%></th>
+			<th class="text-center"><spring:message
+					code="lbl.add/delete_Res" /> </th>
 		</tr>
 	</thead>
 	<tbody>
@@ -141,7 +141,7 @@
 					id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 						name="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" 
 					value="${bipartisanDetailsBeanList.isRespondentGovernment}"
-					onblur="onChangeofRespodantcheck()" /></td>
+					onblur="onChangeofPetitioncheck(this)"/></td>
 
 				<td><input type="text"
 				class="form-control table-input text-right"
@@ -182,9 +182,9 @@
 						name="bipartisanDetailsBeanList[${status.index}].isRepondent" 
 					class="form-control table-input text-right" style="text-align: center"
 					value="${true}" />
-			<!-- <a href="javascript:void(0);"
-					class="btn-sm btn-default" onclick="addResEditRow();"><i
-						class="fa fa-plus"></i></a> --><td class="text-center"> <a href="javascript:void(0);"
+			<td class="text-center"><a href="javascript:void(0);"
+					class="btn-sm btn-default" onclick="addResRow();"><i
+						class="fa fa-plus"></i></a>  <a href="javascript:void(0);"
 					class="btn-sm btn-default" id="res_delete_row"><i
 						class="fa fa-trash"></i></a></td>
 			</tr>

@@ -128,6 +128,8 @@ function addPetRow()
 					});  
 		   });
 			tbody.appendChild(rowObj);
+			
+			 $('#petitionDetails tbody tr:last').find('input').val('');
 		   
 }
 
@@ -159,6 +161,7 @@ function addResRow()
 
 
 		   tbody.appendChild(rowObj);
+		   $('#respodantDetails tbody tr:last').find('input').val('');
 		
  }
 function addPetEditRow()
@@ -198,7 +201,8 @@ function addResEditRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
-			var currentROwIndex=nextIdx-1;
+			var currentROwIndex=nextIdx;
+			nextIdx=nextIdx+1;
 			jQuery(rowObj).find("input, select").each(
 					function() {
 					
@@ -257,33 +261,16 @@ $(document).on('click',"#pet_delete_row",function (){
 	}
 });
 
-function onChangeofPetitioncheck()
+function onChangeofPetitioncheck(obj)
 {
-	 $("#petitionDetails tbody tr").each(function( index ) {
-		 var $this = $(this);
-	        
-	        if ( $('#activeid').val() == "true") {
-	        	$this.find("select, button").prop("disabled", false);
-	        }
-	        if ( !($('#activeid').val()) == "false") {
-	        	$this.find("select, button").prop("disabled", true);
-	        }
-
-	    });	
-}
-function onChangeofRespodantcheck()
-{
-	 $("#respodantDetails tbody tr").each(function( index ) {
-		 var $this = $(this);
-	        
-	        if ( $('#activeid').val() == "true") {
-	        	$this.find("select, button").prop("disabled", false);
-	        }
-	        if ( !($('#activeid').val()) == "false") {
-	        	$this.find("select, button").prop("disabled", true);
-	        }
-
-	    });	
+		if ( $(obj).is(':checked')) {
+	    	console.log('Checkbox checked');
+	    	$(obj).closest('tr').find("select").removeAttr("disabled");
+	    }else{
+	    	console.log('Checkbox not checked');
+	    	$(obj).closest('tr').find("select").attr("disabled", "disabled");
+	    }
+		
 }
 
 $(document).on('click',"#res_delete_row",function (){
