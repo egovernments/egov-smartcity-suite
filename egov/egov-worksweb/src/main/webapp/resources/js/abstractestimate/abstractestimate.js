@@ -963,6 +963,7 @@ function calculateEstimateValue() {
 	$('#estimateValue').val(estimateValue);
 	$('#workValue').val(workValue);
 	$('#estimateValueTotal').html(estimateValue);
+	$('#workValueTotal').html(workValue);
 }
 
 

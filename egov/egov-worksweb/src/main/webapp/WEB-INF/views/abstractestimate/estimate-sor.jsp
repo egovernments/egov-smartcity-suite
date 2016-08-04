@@ -105,6 +105,7 @@
 <div id="baseSORTable" class="panel panel-primary" data-collapsed="0">
 	<input type="hidden" id="isServiceVATRequired" value="${isServiceVATRequired }">
 	<div class="panel-heading">
+	<div class="position_alert1"><spring:message code="lbl.workvalue" /> : &#8377 <span class="text-right" id="workValueTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2" ><c:out value="${abstractEstimate.workValue}" default="0.0" /> </fmt:formatNumber></span></div>
 		<div class="panel-title">
 			<spring:message code="title.sor" />
 		</div>
