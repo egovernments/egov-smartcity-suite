@@ -357,7 +357,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title">Reset Password</h4>
+						<h4 class="modal-title"><spring:message code="lbl.recover.pwd"/></h4>
 					</div>
 					<form method="post" role="form">
 						<c:choose>
@@ -381,6 +381,14 @@
 		                                           <spring:message code="title.reset.password"/>
 		                                       </button>
 		                                   </div>
+                                        </c:if>
+                                        <c:if test="${not param.byOTP}">
+                                        	<div class="modal-body">
+										    	<div class="text-center font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
+		                                    </div>
+		                                    <div class="modal-footer">
+		                                         <button type="button" class="btn btn-default text-right" data-dismiss="modal">Close</button>
+		                                    </div>
                                         </c:if>
 							</c:when>
 							<c:otherwise>
