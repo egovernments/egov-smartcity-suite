@@ -74,11 +74,10 @@
 					<tr>
 						<td>
 							<div class="buttonbottom" align="center">
-								<%-- <s:submit value="Print" name="PrintAck" id="PrintAck"
+								<s:submit value="Print" name="PrintAck" id="PrintAck"
 										method="printAck" cssClass="buttonsubmit" align="center"
-										onclick="return onSubmit('create-printAck.action');" /> --%>
+										onclick="return onSubmit('create-printAck.action');" />
 								&nbsp;
-								<input type="button" class="button" onclick="window.close();" value="Close">
 							</div>
 						</td>
 					</tr>
