@@ -73,6 +73,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -83,6 +84,7 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -205,6 +207,7 @@ public class WorkOrder extends StateAware implements Auditable {
     private Date fileDate;
 
     @Length(max = 1024, message = "bankguarantee.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "workorder.bankguarantee.alphaNumeric")
     private String bankGuarantee;
 
     @Length(max = 100)

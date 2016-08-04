@@ -120,7 +120,7 @@
 			    <spring:message code="lbl.nameofwork" />
 			</label>
 			<div class="col-sm-3 add-margin ">
-			<form:textarea path="name" name="name" id="workName" class="form-control disablefield" />
+			<form:textarea path="name" name="name" id="workName" class="form-control disablefield patternvalidation" data-pattern="alphanumericwithallspecialcharacters"/>
 			<input type="hidden" id="nameOfWork" name="nameOfWork" value="${abstractEstimate.lineEstimateDetails.nameOfWork}"/>
 			<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
@@ -129,7 +129,7 @@
 			    <spring:message code="lbl.workdescription" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="description" id="description" name="description" class="form-control"  maxlength="1024" required="required"/>
+				<form:textarea path="description" id="description" name="description" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1024" required="required"/>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>

@@ -356,6 +356,8 @@ function addLineEstimate() {
 	} else {
 		  bootbox.alert('limit reached!');
 	}
+	
+	patternvalidation();
 }
 
 

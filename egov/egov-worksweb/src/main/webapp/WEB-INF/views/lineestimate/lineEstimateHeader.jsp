@@ -77,19 +77,19 @@
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.subject" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:hidden path="id" name="id" value="${id}" class="form-control table-input hidden-input" />
-				<form:textarea name="subject" path="subject" id="subject" class="form-control" value="${subject}" maxlength="256" required="required"></form:textarea>
+				<form:textarea name="subject" path="subject" id="subject" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" value="${subject}" maxlength="256" required="required"></form:textarea>
 				<form:errors path="subject" cssClass="add-margin error-msg" />
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.letter.reference" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control" maxlength="1024" required="required"></form:textarea>
+				<form:textarea name="reference" path="reference" id="reference" value="${reference}" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="reference" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea name="description" path="description" id="description" class="form-control" value="${description}" maxlength="1024" required="required"></form:textarea>
+				<form:textarea name="description" path="description" id="description" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" value="${description}" maxlength="1024" required="required"></form:textarea>
 				<form:errors path="description" cssClass="add-margin error-msg" />
 			</div>
 		</div>

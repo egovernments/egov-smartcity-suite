@@ -53,11 +53,13 @@ import org.apache.log4j.Logger;
 import org.egov.common.entity.UOM;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
@@ -68,11 +70,13 @@ public class ScheduleOfRate extends BaseModel {
     private static final Logger logger = Logger.getLogger(ScheduleOfRate.class);
     static Integer MAX_DESCRIPTION_LENGTH = 100;
 
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE, message = "sor.code.alphaNumeric")
     @NotEmpty(message = "sor.code.not.empty")
     private String code;
     @Required(message = "sor.category.not.null")
     private ScheduleCategory scheduleCategory;
 
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "sor.description.alphaNumeric")
     @NotEmpty(message = "sor.description.not.empty")
     private String description;
     @Required(message = "sor.uom.not.null")

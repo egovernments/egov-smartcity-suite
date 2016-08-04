@@ -259,7 +259,7 @@ var makeScheduleOfRateDataTable = function() {
 			    <s:text name="master.sor.code" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textfield name="code" cssClass="form-control" id="code" value = "%{code}" maxlength = "50" autocomplete="off" />
+				<s:textfield name="code" cssClass="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacterswithoutspace" id="code" value = "%{code}" maxlength = "50" autocomplete="off" />
 			</div>
 		</div>
 	</div>
@@ -269,7 +269,7 @@ var makeScheduleOfRateDataTable = function() {
 			    <s:text name="master.sor.description" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="description" cols="45"  rows="3" cssClass="form-control" id="description" value = "%{description}"  maxlength = "4000"  /> 
+				<s:textarea name="description" cols="45"  rows="3" cssClass="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" id="description" value = "%{description}"  maxlength = "4000"  /> 
 			</div>
 			<label class="col-sm-2 control-label text-right">
 			    <s:text name="master.sor.uom" /><span class="mandatory"></span>

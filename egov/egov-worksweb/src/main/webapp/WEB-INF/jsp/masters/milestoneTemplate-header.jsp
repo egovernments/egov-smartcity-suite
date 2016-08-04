@@ -88,15 +88,15 @@
 					name="milestone.template.name" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="name" cols="35" cssClass="form-control" id="name"
-					maxlength="256" value="%{name}" />
+				<s:textarea name="name" cols="35" cssClass="form-control patternvalidation"  id="name"
+					data-pattern="alphanumericwithallspecialcharacters" maxlength="256" value="%{name}" />
 			</div>
 			<label class="col-sm-2 control-label text-right"> <s:text
 					name="milestone.template.description" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="description" cols="35" cssClass="form-control"
-					maxlength="1024" id="templateDescription"
+				<s:textarea name="description" cols="35" cssClass="form-control patternvalidation"
+					maxlength="1024" id="templateDescription" data-pattern="alphanumericwithallspecialcharacters"
 					onkeyup="return ismaxlength(this)" value="%{description}" />
 			</div>
 		</div>

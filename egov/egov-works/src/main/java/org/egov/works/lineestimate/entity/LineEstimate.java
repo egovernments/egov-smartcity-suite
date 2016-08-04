@@ -72,6 +72,7 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
@@ -79,6 +80,7 @@ import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.NatureOfWork;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -106,6 +108,7 @@ public class LineEstimate extends StateAware {
     @NotNull
     @SafeHtml
     @Length(max = 256)
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "lineestimate.subject.alphaNumeric")
     private String subject;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -115,6 +118,7 @@ public class LineEstimate extends StateAware {
     @NotNull
     @SafeHtml
     @Length(max = 1024)
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "lineestimate.reference.alphaNumeric")
     private String reference;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -124,6 +128,7 @@ public class LineEstimate extends StateAware {
     @NotNull
     @SafeHtml
     @Length(max = 1024)
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "lineestimate.description.alphaNumeric")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

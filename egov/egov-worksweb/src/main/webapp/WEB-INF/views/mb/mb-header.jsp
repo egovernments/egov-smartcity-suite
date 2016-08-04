@@ -92,7 +92,7 @@
 			    <spring:message code="lbl.measurement.abstract" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="mbAbstract" id="mbAbstract" class="form-control required" maxlength="1056" required="required"></form:textarea>
+				<form:textarea path="mbAbstract" id="mbAbstract" class="form-control required patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1056" required="required"></form:textarea>
 			</div>
 		</div>
 	</div>
@@ -158,7 +158,7 @@
 			    <spring:message code="lbl.contractor.comments" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<form:textarea path="contractorComments" id="contractorComments" class="form-control"></form:textarea>
+				<form:textarea path="contractorComments" id="contractorComments" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters"></form:textarea>
 			</div>
 		</div>
 	</div>

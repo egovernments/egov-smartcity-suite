@@ -104,10 +104,12 @@ public class Contractor extends AbstractAuditable implements EntityType {
 
     @Length(max = 250, message = "contractor.correspondenceAddress.length")
     @Column(name = "CORRESPONDENCE_ADDRESS")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.correspondenceaddress.alphaNumeric")
     private String correspondenceAddress;
 
     @Length(max = 250, message = "contractor.paymentAddress.length")
     @Column(name = "PAYMENT_ADDRESS")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.paymentaddress.alphaNumeric")
     private String paymentAddress;
 
     @Length(max = 100, message = "contractor.contactPerson.length")
@@ -120,6 +122,7 @@ public class Contractor extends AbstractAuditable implements EntityType {
     private String email;
 
     @Length(max = 1024, message = "contractor.narration.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.narration.alphaNumeric")
     private String narration;
 
     @Length(max = 10, message = "contractor.panNumber.length")

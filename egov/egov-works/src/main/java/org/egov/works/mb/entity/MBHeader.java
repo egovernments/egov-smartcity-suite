@@ -70,12 +70,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.GreaterThan;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.validator.constraints.Length;
@@ -147,6 +149,7 @@ public class MBHeader extends StateAware {
     private String mbRefNo;
 
     @Length(max = 400, message = "mbheader.contractorComments.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "mb.contractorComments.alphaNumeric")
     @Column(name = "CONTRACTOR_COMMENTS")
     private String contractorComments;
 
@@ -163,6 +166,7 @@ public class MBHeader extends StateAware {
 
     // @Required(message = "mbheader.mbabstract.null")
     @Length(max = 400, message = "mbheader.mbabstract.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "mb.mbabstract.alphaNumeric")
     @Column(name = "ABSTRACT")
     private String mbAbstract;
 

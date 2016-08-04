@@ -80,6 +80,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -90,6 +91,7 @@ import org.egov.works.models.masters.DepositCode;
 import org.egov.works.models.masters.NatureOfWork;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -151,11 +153,13 @@ public class AbstractEstimate extends StateAware implements Auditable {
     @SafeHtml
     @Length(max = 1024)
     @Column(name = "nameofwork")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "abstractEstimate.name.alphaNumeric")
     private String name;
 
     @NotNull
     @SafeHtml
     @Length(max = 1024)
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "abstractEstimate.description.alphaNumeric")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

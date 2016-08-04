@@ -46,10 +46,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -61,6 +63,8 @@ public class ScheduleCategory extends BaseModel {
     private static final long serialVersionUID = -9168726999209110086L;
     @Length(max = 150, message = "ScheCategory.description.length")
     private String description;
+    
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE, message = "schedulecategory.code.alphaNumeric")
     @Length(max = 15, message = "ScheCategory.code.length")
     @Required(message = "contractor.code.null")
     private String code;

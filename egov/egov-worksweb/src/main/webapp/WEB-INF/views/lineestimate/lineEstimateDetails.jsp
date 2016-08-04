@@ -68,7 +68,7 @@
 								<form:hidden path="lineEstimateDetails[0].id" name="lineEstimateDetails[0].id" value="${lineEstimateDetails[0].id}" class="form-control table-input hidden-input"/>
 							</td>
 							<td>
-								<form:textarea path="lineEstimateDetails[0].nameOfWork" name="lineEstimateDetails[0].nameOfWork" value="${lineEstimateDetails[0].nameOfWork}" data-errormsg="Name of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
+								<form:textarea path="lineEstimateDetails[0].nameOfWork" name="lineEstimateDetails[0].nameOfWork" value="${lineEstimateDetails[0].nameOfWork}" data-errormsg="Name of the work is mandatory!" data-idx="0" data-optional="0" class="form-control table-input patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1024" required="required"/>
 								<form:errors path="lineEstimateDetails[0].nameOfWork" cssClass="add-margin error-msg" />
 							</td>
 							<td>

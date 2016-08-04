@@ -65,6 +65,13 @@ var regexp_alphanumericdot = /[^a-zA-Z0-9 .]/g ;
 //This will allow you to enter alphabets and numbers with specified special characters like dot(.), slash(/), hash(#), ampersand(&), plus(+), minus(-). If you need some additional special characters, add those characters to the corresponding regular expression. (eg: data-pattern="alphanumericwithspecialcharacters")
 var regexp_alphanumericspecialcharacters = /[^a-zA-Z0-9_@./#&+-]/g ;
 
+//This will allow you to enter alphabets and numbers with specified all special characters. (eg: data-pattern="alphanumericwithallspecialcharacters")
+var regexp_alphanumericallspecialcharacters = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>? ]/g ;
+
+//This will allow you to enter alphabets and numbers with specified all special characters. (eg: data-pattern="alphanumericwithallspecialcharacterswithoutspace")
+var regexp_alphanumericallspecialcharacterswithoutspace = /[^a-zA-Z0-9_@./#&+\-!(){}",\^$%*|=;:<>?]/g ;
+
+
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and underscore(_). (eg: data-pattern="alphanumericwithspacehyphenunderscore")
 var regexp_alphanumerichyphenunderscore = /[^a-zA-Z0-9 _-]/g ;
 
@@ -135,6 +142,19 @@ function alphanumericwithspecialcharacters(obj){
 		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericspecialcharacters,'') );
 	}
 }
+
+function alphanumericwithallspecialcharacters(obj){
+	if(jQuery(obj).val().match(regexp_alphanumericallspecialcharacters)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericallspecialcharacters,'') );
+	}
+}
+
+function alphanumericwithallspecialcharacterswithoutspace(obj){
+	if(jQuery(obj).val().match(regexp_alphanumericallspecialcharacterswithoutspace)){
+		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericallspecialcharacterswithoutspace,'') );
+	}
+}
+
 
 function alphanumericwithspacehyphenunderscore(obj){
 	if(jQuery(obj).val().match(regexp_alphanumerichyphenunderscore)){

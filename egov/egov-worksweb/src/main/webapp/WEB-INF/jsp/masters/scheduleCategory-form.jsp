@@ -55,7 +55,7 @@
 			<s:hidden name="id"	id="id" />
 			<s:hidden name="mode" id="mode" />
 		<div class="col-sm-3 add-margin">
-			<s:textfield cssClass="form-control" name="code" maxlength="15"	id="code" size="40" />
+			<s:textfield cssClass="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacterswithoutspace" name="code" maxlength="15"	id="code" size="40" />
 		</div>
 		<label class="col-sm-2 control-label text-right"> <s:text name="schedCategory.description" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">

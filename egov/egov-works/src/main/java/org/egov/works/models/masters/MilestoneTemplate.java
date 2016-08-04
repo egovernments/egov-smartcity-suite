@@ -57,7 +57,9 @@ import javax.persistence.Table;
 
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.works.utils.WorksConstants;
 
 @Entity
 @Table(name = "EGW_MILESTONE_TEMPLATE")
@@ -74,9 +76,11 @@ public class MilestoneTemplate extends AbstractAuditable {
     private Long id;
 
     private String code;
-
+    
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.name.alphaNumeric")
     private String name;
-
+    
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.description.alphaNumeric")
     private String description;
 
     private Integer status;

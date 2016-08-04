@@ -146,7 +146,7 @@
 	</div>
     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" /></label>
     <div class="col-sm-3 add-margin">
-    	<form:textarea name="narration" path="narration" id="narration" class="form-control" maxlength="1024" ></form:textarea>
+    	<form:textarea name="narration" path="narration" id="narration" class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" maxlength="1024" ></form:textarea>
 		<form:errors path="narration" cssClass="add-margin error-msg" />
 	</div>
 </div>

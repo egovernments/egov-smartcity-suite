@@ -49,10 +49,12 @@ import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
+import org.egov.works.utils.WorksConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -63,8 +65,12 @@ public class EstimateTemplate extends BaseModel {
     private static final long serialVersionUID = -1150757466961896868L;
     @Required(message = "estimatetemplate.code.not.null")
     private String code;
+
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "estimatetemplate.name.alphaNumeric")
     @Required(message = "estimatetemplate.name.not.null")
     private String name;
+
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "estimatetemplate.description.alphaNumeric")
     @Required(message = "estimatetemplate.description.not.null")
     private String description;
     private int status;

@@ -137,7 +137,7 @@
 	</div>	
     <label class="col-sm-2 control-label text-right"><spring:message code="lbl.bank.guarantee" /></label>
     <div class="col-sm-3 add-margin">
-    	<form:textarea name="bankGuarantee" path="bankGuarantee" id="bankGuarantee" class="form-control" maxlength="1024" ></form:textarea>
+    	<form:textarea name="bankGuarantee" path="bankGuarantee" id="bankGuarantee" class="form-control patternvalidation"  data-pattern="alphanumericwithallspecialcharacters" maxlength="1024" ></form:textarea>
 		<form:errors path="bankGuarantee" cssClass="add-margin error-msg" />
 	</div>
 </div>

@@ -55,7 +55,7 @@
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.nameofwork" /></label>
 	<div class="col-sm-3 add-margin">
-		<textarea class="form-control" id="nameOfWork" disabled>${abstractEstimate.name}</textarea>
+		<textarea class="form-control patternvalidation" data-pattern="alphanumericwithallspecialcharacters" id="nameOfWork" disabled>${abstractEstimate.name}</textarea>
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" /></label>
 	<div class="col-sm-3 add-margin">	
