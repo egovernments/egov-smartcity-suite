@@ -103,5 +103,16 @@
 					</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+		  jQuery(document).on("keydown", disableRefreshAndBack);
+		  function disableRefreshAndBack(e) {
+			 	var key = (e.which || e.keyCode);
+			 	if (key == 116)
+			 		e.preventDefault();
+			 	if (e.ctrlKey)
+			 	if (key == 82)
+			 		e.preventDefault();
+			 };
+		</script>
     </body>
 </html>

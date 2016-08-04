@@ -111,7 +111,7 @@ window.document.onkeydown = function(event) {
 </script>
  <decorator:head/>
 </head>
-<body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  >
+<body <decorator:getProperty property="body.id" writeEntireProperty="yes"/><decorator:getProperty property="body.class" writeEntireProperty="true"/> <decorator:getProperty property="body.onload" writeEntireProperty="true"/>  oncontextmenu="return false;">
 	  <div class="page-container">
 		    <!-- header -->
 		    <egov:breadcrumb/>

@@ -97,7 +97,7 @@
 								<form:errors path="lineEstimateDetails[0].nameOfWork" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].estimateNumber" name="lineEstimateDetails[0].estimateNumber" id="estimateNumber0" onblur="validateEstimateNumber(this);" data-errormsg="Estimate Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input estimateNumber" maxlength="1024" required="required"/>
+								<form:input path="lineEstimateDetails[0].estimateNumber" name="lineEstimateDetails[0].estimateNumber" id="estimateNumber0" onblur="validateEstimateNumber(this);" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Estimate Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input estimateNumber" maxlength="1024" required="required"/>
 								<form:errors path="lineEstimateDetails[0].estimateNumber" cssClass="add-margin error-msg" />
 							</td>
 							<td>
@@ -105,7 +105,7 @@
 								<form:errors path="lineEstimateDetails[0].estimateAmount" cssClass="add-margin error-msg" />
 							</td>
 							<td>
-								<form:input path="lineEstimateDetails[0].projectCode.code" name="lineEstimateDetails[0].projectCode.code" onblur="validateWINNumber(this);" data-errormsg="WIN Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
+								<form:input path="lineEstimateDetails[0].projectCode.code" name="lineEstimateDetails[0].projectCode.code" onblur="validateWINNumber(this);" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="WIN Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
 								<form:errors path="lineEstimateDetails[0].projectCode.code" cssClass="add-margin error-msg" />
 							</td>
 							<td class="tdGrossAmount" style="display: none;">
@@ -144,7 +144,7 @@
 									<form:errors path="lineEstimateDetails[${item.index}].nameOfWork" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].estimateNumber" name="lineEstimateDetails[${item.index}].estimateNumber" id="estimateNumber${item.index}" onblur="validateEstimateNumber(this);" data-errormsg="Estimate Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input estimateNumber" maxlength="1024" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].estimateNumber" name="lineEstimateDetails[${item.index}].estimateNumber" id="estimateNumber${item.index}" onblur="validateEstimateNumber(this);" onkeyup="alphanumerichyphenbackslash(this);" data-errormsg="Estimate Number is mandatory!" data-idx="0" data-optional="0" class="form-control table-input estimateNumber" maxlength="1024" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].estimateNumber" cssClass="add-margin error-msg" />
 								</td>
 								<td>
@@ -152,7 +152,7 @@
 									<form:errors path="lineEstimateDetails[${item.index}].estimateAmount" cssClass="add-margin error-msg" />
 								</td>
 								<td>
-									<form:input path="lineEstimateDetails[${item.index}].projectCode.code" name="lineEstimateDetails[${item.index}].projectCode.code" data-errormsg="WIN Number is mandatory!" onblur="validateWINNumber(this);" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
+									<form:input path="lineEstimateDetails[${item.index}].projectCode.code" name="lineEstimateDetails[${item.index}].projectCode.code" data-errormsg="WIN Number is mandatory!" onblur="validateWINNumber(this);" onkeyup="alphanumerichyphenbackslash(this);" data-idx="0" data-optional="0" class="form-control table-input" maxlength="1024" required="required"/>
 									<form:errors path="lineEstimateDetails[${item.index}].projectCode.code" cssClass="add-margin error-msg" />
 								</td>
 								<td class="tdGrossAmount" style="display: none;">
