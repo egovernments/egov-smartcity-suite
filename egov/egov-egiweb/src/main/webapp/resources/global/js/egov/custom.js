@@ -429,6 +429,15 @@ function cleardependentfield(dependentfield){
 	}
 }
 
+function disableRefreshAndBack(e) {
+	var key = (e.which || e.keyCode);
+	if (key == 116 || key == 8)
+		e.preventDefault();
+	if (e.ctrlKey)
+		if (key == 82)
+			e.preventDefault();
+};
+
 /*$(".refreshInBox refeshDraft").on('click', function() {
 	if(window.opener)
 		window.opener.refreshInbox();

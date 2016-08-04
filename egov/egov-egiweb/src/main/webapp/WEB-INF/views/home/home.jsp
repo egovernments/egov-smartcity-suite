@@ -508,6 +508,7 @@
 				document.getElementById("loadingMask").style.display = "none";
 		    });
 			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
+			jQuery(document).on("keydown", disableRefreshAndBack);
 		</script>
 	</body>
 </html>																						
