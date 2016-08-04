@@ -2507,11 +2507,12 @@ public class PropertyService {
     }
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
-        Assignment wfInitiator;
-        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE))
-        	wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+        Assignment wfInitiator = null;
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        	if(!property.getStateHistory().isEmpty())
+        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
-        else{
+        } else{
 	        if (isEmployee(property.getCreatedBy()))
 	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
 	        else if (!property.getStateHistory().isEmpty())
@@ -3105,7 +3106,8 @@ public class PropertyService {
         PropertyStatusValues propStatVal= (PropertyStatusValues) propPerServ.find("from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
         final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ.find(
                 "from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
-        propStatVal.setReferenceBasicProperty(referenceBasicProperty);
+        if(referenceBasicProperty != null)
+        	propStatVal.setReferenceBasicProperty(referenceBasicProperty);
         
     }
     
