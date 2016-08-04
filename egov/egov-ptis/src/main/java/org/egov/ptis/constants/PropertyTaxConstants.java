@@ -1275,6 +1275,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
+    public static final String APPLICATION_TYPE_ADD_DEMAND = "Add_demand";
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
