@@ -181,7 +181,7 @@
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.status" /> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="status.id" id="status" cssClass="form-control"
+						<form:select path="status" id="status" cssClass="form-control"
 							required="required" onchange="validateStatus(this);" cssErrorClass="form-control error">
 							<form:option value="">
 								<spring:message code="lbl.select" />
