@@ -333,4 +333,7 @@ public class WorksConstants {
     
     public static final String APPCONFIG_KEY_GIS_INTEGRATION = "GIS_INTEGRATION";
     
+    public static final String APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY = "CUTOFFDATEFORLEGACYDATAENTRY";
+    
+    
 }

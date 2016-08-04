@@ -48,6 +48,13 @@ $(document).ready(function(){
 		$("#netPayableAmount").val($("#mbTotalAmount").html());
 		$("#debitamount").prop("readonly",true);
 	}
+	
+	var billStatus = $('#billStatus').val();
+	var spillOverFlag = $('#spillOverFlag').val();
+	
+	if(billStatus != null && billStatus == '' && spillOverFlag == 'true') {
+		$('#actionButtons').prepend("<input type='submit' value='Create and Approve' class='btn btn-primary' id='createandapprove' name='Create and APprove'></input>");
+	}
 
 	calculateNetPayableAmount();
 	// TODO: remove this condition
@@ -81,7 +88,7 @@ $(document).ready(function(){
 				
 	$('.btn-primary').click(function(){
 		var button = $(this).attr('id');
-		if (button != null && button == 'Forward') {
+		if (button != null && (button == 'Forward' || button == 'createandapprove')) {
 			//TODO: remove code till billdate < workOrderDate condition check
 			var billDate = $('#billdate').data('datepicker').date;
 			var workOrderDate = $('#workOrderDate').data('datepicker').date;
@@ -173,9 +180,28 @@ $(document).ready(function(){
 				return false;
 			if(!validateNetPayableAmount())
 				return false;
-			return validateWorkFlowApprover(button);
+			if(button != 'createandapprove')
+			   return validateWorkFlowApprover(button);
+			else {
+				if($('#currFinYearStartDate').val() != '' && $('#cutOffDate').val() != '') {
+					var finYearStartDate = $('#currFinYearStartDate').data('datepicker').date;
+					var cutOffDate = $('#cutOffDate').data('datepicker').date;
+					if(billDate < finYearStartDate || billDate > cutOffDate) {
+						bootbox.alert($('#errorcutoffdatemsg1').val() + ' '  + $('#cutOffDate').val() + '.' + '</br>' + $('#errorcutoffdatemsg2').val()); 
+						$('#billDate').val(""); 
+						return false;
+					}
+				}
+			}
 		}
-		return validateWorkFlowApprover(button);
+		if(button != 'createandapprove') {
+		  return validateWorkFlowApprover(button);
+		} else {
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
+			$('#approvalComent').removeAttr('required');
+		}
 	});
 	
 	var netPayableAccountCodeId = $('#netPayableAccountCodeId').val();

@@ -44,10 +44,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>	
 		<form:form id="contractorBillForm" class="form-horizontal form-groups-bordered" modelAttribute="contractorBillRegister" role="form" action="contractorbill-save" method="post" enctype="multipart/form-data">
-
+            <input type="hidden" name="cutOffDate" id="cutOffDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${cutOffDate}" pattern="dd/MM/yyyy"/>' >
+            <input type="hidden" name="currFinYearStartDate" id="currFinYearStartDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${currFinYearStartDate}" pattern="dd/MM/yyyy"/>' >
 			<input type="hidden" name="workOrderDate" id="workOrderDate" class="form-control datepicker" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" value='<fmt:formatDate value="${workOrderEstimate.workOrder.workOrderDate}" pattern="dd/MM/yyyy"/>' > 
 			<form:hidden path="workOrderEstimate.workOrder.id"  name="workOrder" id="workOrderId" value="${workOrderEstimate.workOrder.id}" /> 
 			<input type="hidden"  name="woeId" id="woeId" value="${woeId}" />
+			<input type="hidden" value="${contractorBillRegister.status}" id=billStatus />
+			<input type="hidden" value="${workOrderEstimate.estimate.lineEstimateDetails.lineEstimate.spillOverFlag }" id=spillOverFlag />
 			
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">

@@ -41,6 +41,8 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +53,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
@@ -122,7 +125,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private MBHeaderService mBHeaderService;
 
@@ -136,7 +139,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         setDropDownValues(model);
         model.addAttribute("assetValues", workOrderEstimate.getAssetValues());
         model.addAttribute("documentDetails", contractorBillRegister.getDocumentDetails());
-
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
         model.addAttribute("woeId", woeId);
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
@@ -174,6 +176,19 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService
                 .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
                         WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
+        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
+            final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
+            try {
+                model.addAttribute("cutOffDate",formatter.parse(appConfigValue.getValue()));
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        model.addAttribute("currFinYearStartDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
         model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
         model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
     }
@@ -195,6 +210,9 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         contractorBillRegisterService.mergeDeductionDetails(contractorBillRegister);
 
         validateInput(contractorBillRegister, workOrderEstimate, resultBinder, request);
+        if (StringUtils.isBlank(workFlowAction)) {
+            validateBillDateToSkipWorkflow(contractorBillRegister, resultBinder);
+        }
 
         contractorBillRegister = addBillDetails(contractorBillRegister, workOrderEstimate, resultBinder, request);
 
@@ -215,7 +233,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
             model.addAttribute("mode", "new");
-            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister,model));
+            model.addAttribute("billDetailsMap", getBillDetailsMap(contractorBillRegister, model));
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
@@ -376,12 +394,12 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     && contractorBillRegister.getMbHeader().getMbDate()
                             .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
-            
-            if (contractorBillRegister.getMbHeader().getMbDate() != null 
+
+            if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getBilldate()
                     .before(contractorBillRegister.getMbHeader().getMbDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
-                
+
         }
 
         if (org.apache.commons.lang.StringUtils.isBlank(request.getParameter("netPayableAccountCode")))
@@ -436,20 +454,20 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             if (contractorBillRegister.getBilldate().before(currentFinYear))
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
         }
-        
+
         final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
         if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
-        
+
         if (contractorBillRegister.getWorkOrderEstimate() != null
                 && !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
          final List<MBHeader> mbheaders = mBHeaderService.getMBHeaderBasedOnBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
-         if (mbheaders != null && mbheaders.isEmpty()) {
-             resultBinder.reject("error.mbnotexists.tocreatebill", "error.mbnotexists.tocreatebill");
-         }
+            if (mbheaders != null && mbheaders.isEmpty()) {
+                resultBinder.reject("error.mbnotexists.tocreatebill", "error.mbnotexists.tocreatebill");
+            }
         }
-        
+
     }
 
     private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
@@ -675,6 +693,31 @@ public class CreateContractorBillController extends GenericWorkFlowController {
             billDetailsList.add(billDetails);
         }
         return billDetailsList;
+    }
+
+    private void validateBillDateToSkipWorkflow(final ContractorBillRegister contractorBillRegister,
+            final BindingResult resultBinder) {
+        Date cutOffDate = null;
+        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+        if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
+            final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
+            try {
+                cutOffDate = formatter.parse(appConfigValue.getValue());
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        if (contractorBillRegister.getBilldate().before(currFinYearStartDate)
+                || contractorBillRegister.getBilldate().after(cutOffDate)) {
+            resultBinder.reject("error.billdate.cutoffdate",
+                    new String[] { fmt.format(cutOffDate) },
+                    null);
+        }
     }
 
 }

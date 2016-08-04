@@ -52,6 +52,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -132,7 +133,7 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private MBForCancelledBillService mbForCancelledBillService;
-
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -187,9 +188,17 @@ public class ContractorBillRegisterService {
         }
        ContractorBillRegister savedContractorBillRegister = contractorBillRegisterRepository
                 .save(contractorBillRegister);
-
+       
+        if(StringUtils.isNotBlank(workFlowAction)) {
         createContractorBillRegisterWorkflowTransition(savedContractorBillRegister, approvalPosition, approvalComent,
                 additionalRule, workFlowAction);
+        } else {
+            contractorBillRegister.setApprovedDate(contractorBillRegister.getBilldate());
+            contractorBillRegister.setApprovedBy(securityUtils.getCurrentUser());
+            contractorBillRegister.setStatus(worksUtils.getStatusByModuleAndCode(
+                    WorksConstants.CONTRACTORBILL, ContractorBillRegister.BillStatus.APPROVED.toString()));
+            contractorBillRegister.setBillstatus(contractorBillRegister.getStatus().getCode());
+        }
         
         savedContractorBillRegister = contractorBillRegisterRepository
                 .save(contractorBillRegister);
@@ -496,7 +505,11 @@ public class ContractorBillRegisterService {
                     .equals(ContractorBillRegister.BillStatus.REJECTED.toString()))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.RESUBMITTED.toString()));
-            else
+            else if(contractorBillRegister.getStatus().getCode()
+                    .equals(ContractorBillRegister.BillStatus.APPROVED.toString()))
+                mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
+                        MBHeader.MeasurementBookStatus.APPROVED.toString()));
+            else 
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.MBHEADER,
                         MBHeader.MeasurementBookStatus.CREATED.toString()));
             mbHeader.setEgBillregister(contractorBillRegister);
@@ -628,4 +641,5 @@ public class ContractorBillRegisterService {
             if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
     }
+  
 }
