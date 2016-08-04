@@ -1909,18 +1909,14 @@ public class PropertyExternalService {
                 }
         	}
         	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
-    			assessmentDetails.setIsMutationFeePaid("Y");
-    			assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
-    			Date receiptDate = null;
-    			final Query qry = entityManager.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
-    	        qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
-    	        receiptDate = (Date) qry.getSingleResult();
-    	        assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
-    	        assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
-    		}
-    		else
-    			assessmentDetails.setIsMutationFeePaid("N");
-    		
+	        	assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+	        	assessmentDetails.setIsMutationFeePaid("Y");
+	        	assessmentDetails.setMutationFee(BigDecimal.ZERO);
+        	}else{
+        		assessmentDetails.setIsMutationFeePaid("N");
+        		assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+        	}
+        	
     		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
         }else{
     		assessmentDetails.setIsMutationFeePaid("N");
