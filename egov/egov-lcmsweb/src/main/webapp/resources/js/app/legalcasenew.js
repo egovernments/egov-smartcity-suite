@@ -130,7 +130,15 @@ function addPetRow()
 			tbody.appendChild(rowObj);
 			
 			 $('#petitionDetails tbody tr:last').find('input').val('');
+			 generateSno(".petitionDetails");
 		   
+}
+
+function generateSno(tablenameclass)
+{
+	$(tablenameclass+'.spansno').each(function(idx){
+		$(this).html(""+(idx+1));
+	});
 }
 
 function addResRow()
@@ -162,6 +170,7 @@ function addResRow()
 
 		   tbody.appendChild(rowObj);
 		   $('#respodantDetails tbody tr:last').find('input').val('');
+		   generateSno(".respodantDetails");
 		
  }
 function addPetEditRow()
@@ -190,6 +199,8 @@ function addPetEditRow()
 		   });
 			tbody.appendChild(rowObj);
 		   
+			generateSno(".petitionDetails");
+			
 }
 
 function addResEditRow()
@@ -221,6 +232,7 @@ function addResEditRow()
 
 
 		   tbody.appendChild(rowObj);
+		   generateSno(".respodantDetails");
 		
  }
 $(document).on('click',"#pet_delete_row",function (){
@@ -256,6 +268,8 @@ $(document).on('click',"#pet_delete_row",function (){
 			
 			idx++;
 		});
+		
+		generateSno(".petitionDetails");
 		
 		return true;
 	}
@@ -308,6 +322,8 @@ $(document).on('click',"#res_delete_row",function (){
 		    });
 			idx++;
 		});
+		
+		generateSno(".respodantDetails");
 		
 		return true;
 	}

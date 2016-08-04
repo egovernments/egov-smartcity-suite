@@ -49,18 +49,23 @@
 <table class="table table-striped table-bordered" id="petitionDetails">
 	<thead>
 		<tr>
-			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+		 	<th class="text-center"><spring:message code="lbl.slno" />
+			 <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> 
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			 <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> 
 			<th class="text-center"><spring:message
 					code="lbl.add/delete_pet" /></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="">
+			<td>
+					<span class="petitionDetails spansno">1</span>
+					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+							</td>
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanPetitionDetailsList[0].isRespondentGovernment"
 				id="bipartisanPetitionDetailsList[0].isRespondentGovernment"
@@ -105,6 +110,7 @@
 <table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
+		<th class="text-center"><spring:message code="lbl.slno" />
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
@@ -117,6 +123,10 @@
 	</thead>
 	<tbody>
 		<tr class="">
+		<td>
+					<span class="respodantDetails spansno">1</span>
+					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+							</td>
 			<td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
 				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
