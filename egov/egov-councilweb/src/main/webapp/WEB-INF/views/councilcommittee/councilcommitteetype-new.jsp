@@ -43,7 +43,7 @@
 	id="councilCommitteeTypeform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilcommitteetype-form.jsp"%>
-
+	<%@ include file="councilcommitteemember-form.jsp"%>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -54,11 +54,6 @@
 		</div>
 	</div>
 </form:form>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>
+
+<script
+	src="<c:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>

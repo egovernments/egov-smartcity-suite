@@ -85,13 +85,11 @@ public class CouncilAgendaController {
     }
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final CouncilAgenda councilAgenda,@RequestParam String id, final BindingResult errors,
+    public String create(@Valid @ModelAttribute final CouncilAgenda councilAgenda,@RequestParam(name="id") String id, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
         System.out.println(id);
         System.out.println("Testing");
-        if (errors.hasErrors()) {
-           
-        }
+        
       return null;
     }
     

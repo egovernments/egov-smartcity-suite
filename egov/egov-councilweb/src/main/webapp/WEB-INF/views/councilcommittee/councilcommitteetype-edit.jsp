@@ -43,8 +43,7 @@
 	id="councilCommitteetypeform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilcommitteetype-form.jsp"%>
-	<input type="hidden" name="councilCommitteetype" value="${committeeType.id}" />
-	
+	<%@ include file="councilcommitteemember-form.jsp"%>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -63,3 +62,5 @@
 		}
 	});
 </script>
+<script
+	src="<c:url value='/resources/app/js/councilCommitteeMember.js?rnd=${app_release_no}'/>"></script>

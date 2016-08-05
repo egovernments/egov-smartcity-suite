@@ -59,6 +59,9 @@ public class CouncilMember extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "partyAffiliation")
     private CouncilParty partyAffiliation;
+    
+   
+    
 
     @Enumerated(EnumType.ORDINAL)
     @NotNull
@@ -95,6 +98,9 @@ public class CouncilMember extends AbstractAuditable {
     
     @Transient
     private MultipartFile attachments;
+    
+    @Transient
+    private Boolean checked;
     
     @ManyToOne(cascade = CascadeType.ALL)
      @JoinColumn(name = "filestoreid")
@@ -239,4 +245,13 @@ public class CouncilMember extends AbstractAuditable {
         this.status = status;
     }
 
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
+    }
+
+    
 }

@@ -44,7 +44,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Council Committee Type</div>
+					<div class="panel-title">Council Committee Type And Members</div>
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">
@@ -60,6 +60,33 @@
 							${committeeType.isActive}</div>
 					</div>
 				</div>
+				<div class="panel-body custom">
+				<table class="table table-bordered  multiheadertbl" name="councilcommittee"
+								id=councilcommittee>
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th>Member Name</th>
+										<th>Election Ward</th>
+										<th>Designation</th>
+										<th>Qualification</th>
+										<th>Party Affiliation</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${committeeMembers}" var="committeemem" varStatus="counter">
+									<tr>
+										<td>${counter.index+1}</td>
+										<td><c:out value="${committeemem.councilMember.name}" /></td>
+										<td><c:out value="${committeemem.councilMember.electionWard.name}" /></td>
+										<td><c:out value="${committeemem.councilMember.designation.name}" /></td>
+										<td><c:out value="${committeemem.councilMember.qualification.name}" /></td>	
+										<td><c:out value="${committeemem.councilMember.partyAffiliation.name}" /></td>					
+									</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
 			</div>
 		</div>
 	</div>

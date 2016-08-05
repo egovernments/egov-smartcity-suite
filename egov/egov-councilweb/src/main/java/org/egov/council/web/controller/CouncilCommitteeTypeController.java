@@ -1,12 +1,17 @@
 package org.egov.council.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CommitteeType;
+import org.egov.council.entity.CouncilMember;
 import org.egov.council.service.CommitteeTypeService;
+import org.egov.council.service.CouncilCommitteeMemberService;
+import org.egov.council.service.CouncilMemberService;
 import org.egov.council.web.adaptor.CouncilCommitteeTypeJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -39,6 +44,12 @@ public class CouncilCommitteeTypeController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private CouncilMemberService councilMemberService;
+    
+    @Autowired
+    private CouncilCommitteeMemberService councilCommitteeMemberService;
 
     private void prepareNewForm(Model model) {
     }
@@ -51,7 +62,7 @@ public class CouncilCommitteeTypeController {
 
         if (committeeType != null && committeeType.getCode() == null)
             committeeType.setCode(RandomStringUtils.random(4, Boolean.TRUE, Boolean.TRUE).toUpperCase());
-
+        model.addAttribute("councilMembers",councilMemberService.findAll());
         model.addAttribute("committeeType", committeeType);
         return COUNCILCOMMITTEETYPE_NEW;
     }
@@ -59,10 +70,22 @@ public class CouncilCommitteeTypeController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
+        
+        List<CommitteeMembers> committeeMembersList = new ArrayList<CommitteeMembers>();
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILCOMMITTEETYPE_NEW;
         }
+        for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+            if(committeeMembers != null && committeeMembers.getCouncilMember() != null && committeeMembers.getCouncilMember().getChecked()) {
+                committeeMembers.setCouncilMember(committeeMembers.getCouncilMember());
+                committeeMembers.setCommitteeType(committeeType);
+                committeeMembersList.add(committeeMembers);
+            }
+            
+        }
+        committeeType.getCommiteemembers().clear();
+        committeeType.setCommiteemembers(committeeMembersList);
         committeeTypeService.create(committeeType);
         redirectAttrs.addFlashAttribute("message",
                 messageSource.getMessage("msg.councilCommitteeType.success", null, null));
@@ -74,24 +97,67 @@ public class CouncilCommitteeTypeController {
         CommitteeType committeeType = committeeTypeService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("committeeType", committeeType);
+        model.addAttribute("committeeMembers", councilCommitteeMemberService.findAllByCommitteType(committeeType));
         return COUNCILCOMMITTEETYPE_VIEW;
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, Model model) {
+        List<CommitteeMembers> committeeMembersList = new ArrayList<CommitteeMembers>();
+        List<CouncilMember> councilMembersList = new ArrayList<CouncilMember>();
         CommitteeType committeeType = committeeTypeService.findOne(id);
-        prepareNewForm(model);
-        model.addAttribute("committeeType", committeeType);
+        CommitteeType committeeType1 = new CommitteeType();
+        committeeType1.setId(committeeType.getId());
+        committeeType1.setCode(committeeType.getCode());
+        committeeType1.setName(committeeType.getName());
+        committeeType1.setIsActive(committeeType.getIsActive());
+        if(committeeType1.getCommiteemembers().isEmpty()){
+            for (CouncilMember councilMember : councilMemberService.findAll()) {
+                boolean found=false;
+                for(CommitteeMembers committeeMembers :committeeType.getCommiteemembers()){
+                    if(committeeMembers.getCouncilMember().getId().equals(councilMember.getId())){
+                        committeeMembersList.add(committeeMembers);
+                        found=true;
+                        break;
+                    } 
+                }
+                if(!found){
+                    councilMembersList.add(councilMember);
+                }
+            }
+        }
+        committeeType1.setCommiteemembers(committeeMembersList);
+        model.addAttribute("councilMembers", councilMembersList);
+        model.addAttribute("committeeType", committeeType1);
+        
         return COUNCILCOMMITTEETYPE_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CommitteeType committeeType, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs) {
-
+       List<CommitteeMembers> existingCommitteeMembersList = councilCommitteeMemberService.findAllByCommitteType(committeeType);
         if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILCOMMITTEETYPE_EDIT;
+        }
+        
+        List<CommitteeMembers> committeeMembersList = new ArrayList<CommitteeMembers>();
+        for (CommitteeMembers committeeMembers : committeeType.getCommiteemembers()) {
+            if(committeeMembers.getChecked() != null && committeeMembers.getChecked() && committeeMembers.getId() != null) {
+                    committeeMembers.setCommitteeType(committeeType);
+                    committeeMembersList.add(committeeMembers);
+            } else if(committeeMembers.getCouncilMember().getChecked() != null && committeeMembers.getCouncilMember().getChecked() && committeeMembers.getCouncilMember().getId() != null) {
+                committeeMembers.setCommitteeType(committeeType);
+                committeeMembersList.add(committeeMembers);
+            }
+        }
+        //committeeType.getCommiteemembers().clear();
+        committeeType.setCommiteemembers(committeeMembersList);
+        for (CommitteeMembers committeeMembers : existingCommitteeMembersList) {
+            if(!committeeType.getCommiteemembers().contains(committeeMembers)){
+                committeeType.getCommiteemembers().remove(committeeMembers);
+            }
         }
         committeeTypeService.update(committeeType);
         redirectAttrs.addFlashAttribute("message",
@@ -103,6 +169,7 @@ public class CouncilCommitteeTypeController {
     public String result(@PathVariable("id") final Long id, Model model) {
         CommitteeType committeeType = committeeTypeService.findOne(id);
         model.addAttribute("committeeType", committeeType);
+        model.addAttribute("committeeMembers", councilCommitteeMemberService.findAllByCommitteType(committeeType));
         return COUNCILCOMMITTEETYPE_RESULT;
     }
 

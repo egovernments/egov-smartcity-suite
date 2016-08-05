@@ -46,7 +46,7 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Council Committee</div>
+					<div class="panel-title">Council CommitteeType</div>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
@@ -65,8 +65,8 @@
 							<form:errors path="isActive" cssClass="error-msg" />
 						</div>
 					</div>
-					<input type="hidden" name="committeeType" value="${committeeType.id}" />
-					<form:hidden path="code" id="code" value="${committeeType.code}" />
+					 <input type="hidden" name="committeeType" value="${committeeType.id}" /> 
+					<form:hidden path="code" id="code" value="${committeeType.code}" /> 
 				</div>
 			</div>
 		</div>
