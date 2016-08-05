@@ -175,6 +175,7 @@ public class LegalCaseService {
 		final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
 		List<BipartisanDetails> biparttionerList = legalCaseRepository.getBipartitionDetList(legalcase.getId());
 		legalcase.getBipartisanDetails().addAll(biparttionerList);
+		final List<Pwr> pwrListtemp = new ArrayList<Pwr>();
 		legalcase.getBipartisanDetails().clear();
 		// legalCaseRepository.save(legalcase);
 		// bipartisanDetailsRepository.delete(legalcase.getBipartisanDetails());
@@ -220,6 +221,15 @@ public class LegalCaseService {
 			}
 		legalcase.getBipartisanDetails().clear();
 		legalcase.getBipartisanDetails().addAll(partitionDetails);
+		if(!legalcase.getEglcPwrs().isEmpty() ){
+		for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
+			legalpwr.setLegalCase(legalcase);
+			legalpwr.setCaFilingdate(new Date());
+			pwrListtemp.add(legalpwr);
+		}
+		legalcase.getEglcPwrs().clear();
+		legalcase.setEglcPwrs(pwrListtemp);
+		}
 	}
 
 	@Transactional

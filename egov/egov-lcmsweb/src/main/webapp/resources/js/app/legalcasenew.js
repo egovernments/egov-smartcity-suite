@@ -40,6 +40,7 @@
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
 	
+		
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
@@ -76,7 +77,9 @@ $(document).ready(function(){
 				return false;
 			}
 		}
-			document.forms[0].submit;
+		$('#newlegalcaseForm :not([type=submit])').prop('disabled',false);
+		$(".btn-primary").prop('disabled',false);
+		document.forms[0].submit;
 			return true;
 			event.preventDefault();
 		

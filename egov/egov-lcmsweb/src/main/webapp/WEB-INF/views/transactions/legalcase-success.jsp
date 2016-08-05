@@ -212,12 +212,22 @@
 								<form:input type="hidden"
 									id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
 									path="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment" />
-
-									<input type="text"
+									<c:choose>
+							<c:when test="${bipartisanPetitionDetailsList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanPetitionDetailsList.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox"
 										id="table_isRespondentGovernment${status.index}"
 										class="form-control" readonly="readonly" style="text-align: center"
 										value="${bipartisanPetitionDetailsList.isRespondentGovernment}" />
-								</td>
+								</c:otherwise>
+								</c:choose>
+												</td>
 								<td>
 								 <form:input type="hidden"
 											id="bipartisanPetitionDetailsList[${status.index}].name"
@@ -286,12 +296,23 @@
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
-
-								<input type="text"
+									<c:choose>
+							<c:when test="${bipartisanDetailsBeanList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
 								id="table_isRespondentGovernment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose>
 								</td>
 								
 								<td>

@@ -204,11 +204,11 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.caDue.date" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="caDueDate" class="form-control datepicker"
+		<form:input path="eglcPwrs[0].caDueDate" class="form-control datepicker"
 			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-			data-date-end-date="-1d" id="caDueDate"
+		 id="caDueDate"
 			data-inputmask="'mask': 'd/m/y'" />
-		<form:errors path="caDueDate" cssClass="add-margin error-msg" />
+		<form:errors path="eglcPwrs[0].caDueDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
 <div class="form-group">

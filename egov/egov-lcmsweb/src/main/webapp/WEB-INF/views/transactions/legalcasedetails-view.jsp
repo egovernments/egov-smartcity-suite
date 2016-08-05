@@ -209,12 +209,23 @@
 							<td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
-
-								<input type="text"
+									<c:choose>
+					<c:when test="${bipartisanDetails.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
 								id="table_isRespondentGovernment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.isRespondentGovernment}" /></td>
+								value="${bipartisanDetails.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose></td>
 							<td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].name"
 									path="bipartisanDetails[${status.index}].name" /> <input
@@ -238,13 +249,14 @@
 								value="${bipartisanDetails.contactNumber}" /></td>
 
 							<td><form:input type="hidden"
-									id="bipartisanDetails[${status.index}].governmentDepartment.name"
-									path="bipartisanDetails[${status.index}].governmentDepartment.name" />
+									id="bipartisanDetails[${status.index}].governmentDepartment"
+									path="bipartisanDetails[${status.index}].governmentDepartment" />
 								<input type="text"
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment.name}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" />
+								</td>
 
 						</tr>
 					</c:forEach>
@@ -272,51 +284,75 @@
 			<tbody>
 
 				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
-					varStatus="status">
-					<tr>
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
-								path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
+						varStatus="status">
+						<tr>
+							<td>
+							<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
+									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
+									<c:choose>
+							<c:when test="${bipartisanDetailsBeanList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose>
+								</td>
+								
+								<td>
+								<form:input
+									type="hidden" id="bipartisanDetailsBeanList[${status.index}].name"
+									path="bipartisanDetailsBeanList[${status.index}].name" /> 
+									
+									<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${bipartisanDetailsBeanList.name}" /> 
+								</td>
+								
+								<td>
+								<form:input
+									type="hidden" id="bipartisanDetailsBeanList[${status.index}].address"
+									path="bipartisanDetailsBeanList[${status.index}].address" /> <input
+								type="text" id="table_address${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.address}" /> 
+								</td>
+								
+								<td>
+								<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].contactNumber"
+									path="bipartisanDetailsBeanList[${status.index}].contactNumber" /> 
+									<input
+								type="text" id="table_contactNumber${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.contactNumber}" /> 
+								</td>
+								
+								<td>
+								<form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
+									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
+								<input type="text"
+								id="table_governmentDepartment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.governmentDepartment.name}" />
+								</td>
 
-							<input type="text"
-							id="table_isRespondentGovernment${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.isRespondentGovernment}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].name"
-								path="bipartisanDetailsBeanList[${status.index}].name" /> <input
-							type="text" id="table_name${status.index}" class="form-control"
-							readonly="readonly" style="text-align: center"
-							value="${bipartisanDetailsBeanList.name}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].address"
-								path="bipartisanDetailsBeanList[${status.index}].address" /> <input
-							type="text" id="table_address${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.address}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].contactNumber"
-								path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
-							<input type="text" id="table_contactNumber${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
-
-						<td><form:input type="hidden"
-								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name"
-								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment.name" />
-							<input type="text" id="table_governmentDepartment${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
-
-					</tr>
-				</c:forEach>
+						</tr>
+					</c:forEach>
 			</tbody>
 		</table>
 	</div>

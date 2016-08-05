@@ -48,7 +48,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form method="post" action="" modelAttribute="legalCase"
-			id="egalcaseForm" class="form-horizontal form-groups-bordered"
+			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden id="mode" path="" value="${mode}" />
 			<input type="hidden" name="legalCase" value="${legalCase.id}" />
