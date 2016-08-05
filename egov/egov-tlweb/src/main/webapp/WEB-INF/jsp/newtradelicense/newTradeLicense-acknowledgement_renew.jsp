@@ -163,6 +163,6 @@
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 			</div>
-			<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 	</body>
 </html>
