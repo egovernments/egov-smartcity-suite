@@ -103,7 +103,7 @@ function validateMiscReceipt()
         newdate.setDate(newdate.getDate() - 1);
         var formatedCutOff=new Date(newdate);
         formatedCutOff=formatedCutOff.getDate()+"/"+(formatedCutOff.getMonth()+1)+"/"+formatedCutOff.getFullYear();
-    	if(process(receiptDate) > process(cutOffDate)) {
+    	if(process(receiptDate) >= process(cutOffDate)) {
     		 var r = confirm('Please enter the date less than the cut-off date ' + formatedCutOff + '. If the date entered is greater than the cut-off date , then it is considered as live transactions and it would go through approval workflow. Do you wish to continue?');
     		 if (r != true) {
     			 document.getElementById("receipt_error_area").style.display="none";
