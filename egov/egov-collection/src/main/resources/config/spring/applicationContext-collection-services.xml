@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -39,29 +40,26 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
-	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-	 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
-	   default-lazy-init="true">
-	
-	<context:component-scan base-package="org.egov.collection.config" />
-	<context:component-scan base-package="org.egov.collection.integration.pgi"/>
-	<context:component-scan base-package="org.egov.collection.autonumber" />
-	
-	
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+	<context:component-scan base-package="org.egov.collection" />
+
 	<bean id="collectionsUtil" class="org.egov.collection.utils.CollectionsUtil" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="userService" ref="userService" />
 		<property name="reportService" ref="reportService" />
 	</bean>
-	
+
 	<bean class="org.egov.collection.utils.CollectionsNumberGenerator"
-		id="collectionsNumberGenerator" scope="prototype">
+		  id="collectionsNumberGenerator" scope="prototype">
 	</bean>
 
 	<bean class="org.egov.collection.service.ReceiptHeaderService"
-		id="receiptHeaderService" parent="persistenceService" scope="prototype">
+		  id="receiptHeaderService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="challanService" ref="challanService" />
@@ -71,7 +69,7 @@
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl" />
 		<property name="contraWorkflowService" ref="contraWorkflowService" /> -->
 	</bean>
-	
+
 	<bean id="remittanceService" class="org.egov.collection.service.RemittanceServiceImpl" scope="prototype">
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="financialsUtil" ref="financialsUtil" />
@@ -80,7 +78,7 @@
 		<property name="collectionsNumberGenerator" ref="collectionsNumberGenerator" />
 		<property name="remittancePersistService" ref="remittancePersistService" />
 	</bean>
-	
+
 	<bean id="collectionCommon" class="org.egov.collection.utils.CollectionCommon" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl" /> -->
@@ -90,106 +88,111 @@
 		<property name="financialsUtil" ref="financialsUtil" />
 		<property name="egovCommon" ref="egovCommon" />
 	</bean>
-	
+
 	<bean id="financialsUtil" class="org.egov.collection.utils.FinancialsUtil" scope="prototype">
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="contraService" ref="contraService" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<property name="instrumentHeaderService" ref="instrumentHeaderService" />
-		<!-- <property name="voucherCreator" ref="voucherCreator" /> --> 
+		<!-- <property name="voucherCreator" ref="voucherCreator" /> -->
 	</bean>
-	
-	<bean id="collectionIntegrationService" 
-			class="org.egov.collection.integration.services.CollectionIntegrationServiceImpl" 
-			parent="persistenceService" scope="prototype">
+
+	<bean id="collectionIntegrationService"
+		  class="org.egov.collection.integration.services.CollectionIntegrationServiceImpl"
+		  parent="persistenceService" scope="prototype">
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl"/> -->
 		<property name="collectionCommon" ref="collectionCommon"/>
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="collectionsUtil" ref="collectionsUtil"/>
 		<property name="receiptHeaderService" ref="receiptHeaderService"/>
 	</bean>
-	
-    <bean id="CLCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
-    </bean>
+
+	<bean id="CLCollectionsInterface" class="org.egov.collection.integration.services.BillingIntegrationServiceStub" scope="prototype">
+	</bean>
 
 	<bean id="PTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
-    </bean>
-    
-    <bean id="VLTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
+	</bean>
+
+	<bean id="VLTCollectionsInterface" class="org.egov.ptis.service.collection.PropertyTaxCollection" scope="prototype">
 		<property name="persistenceService" ref="persistenceService"/>
 		<property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
-    </bean>
-    
+	</bean>
+
 	<bean id="PTMFCollectionsInterface" class="org.egov.ptis.service.collection.MutationFeeCollection" scope="prototype"/>
 
-    <bean id="receiptHeaderPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.collection.entity.ReceiptHeader" />
-    </bean>
-    
-    <bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
-         <constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
-   </bean>
-   
-    <bean id="ChallanInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-         <constructor-arg index="0" ref="challanPersistenceService"/>
-   </bean>
-   
-   <bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
+	<bean id="receiptHeaderPersistenceService" parent="persistenceService">
+		<property name="type" value="org.egov.collection.entity.ReceiptHeader" />
+	</bean>
+
+	<bean id="ReceiptHeaderInboxRenderService" class="org.egov.collection.workflow.renderer.CollectionsWorkflowRenderService">
+		<constructor-arg index="0" ref="receiptHeaderPersistenceService"/>
+	</bean>
+
+	<bean id="ChallanInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0" ref="challanPersistenceService"/>
+	</bean>
+
+	<bean class="org.egov.collection.service.ChallanService" id="challanService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Challan" />
 		<property name="collectionsUtil" ref="collectionsUtil" />
 		<!-- <property name="challanWorkflowService" ref="challanWorkflowService" /> -->
 	</bean>
-	
+
 	<bean id="serviceCategoryService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.ServiceCategory" />
 	</bean>
-	
+
 	<bean id="serviceDetailsService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.infstr.models.ServiceDetails" />
 	</bean>
-	
+
 	<bean id="remittancePersistService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.collection.entity.Remittance" />
 	</bean>
-	
+
 	<bean id="bankAccountMappingService" parent="persistenceService" scope="prototype">
 		<property name="type" value="org.egov.commons.entity.BankAccountServiceMap" />
 	</bean>
-	
+
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
 	</bean>
-	   
-   <bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
-   </bean>
-   
-   <bean id="WESCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
-   </bean>
+
+	<bean id="WTCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
+	</bean>
+
+	<bean id="WESCollectionsInterface" class="org.egov.wtms.application.service.collection.WaterTaxCollection" scope="prototype">
+	</bean>
 
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor"/>
-	
+
 	<bean class="org.egov.collection.integration.services.ReconciliationService" id="reconciliationService" scope="prototype">
 		<property name="receiptHeaderService" ref="receiptHeaderService"/>
 		<property name="collectionCommon" ref="collectionCommon"/>
 		<property name="collectionsUtil" ref="collectionsUtil"/>
 		<property name="persistenceService" ref="persistenceService"/>
 	</bean>
-	
+
 	<bean class="org.egov.collection.integration.services.SchedularService" id="schedularService" scope="prototype">
-	   <property name="persistenceService" ref="persistenceService" />
-	   <property name="reconciliationService" ref="reconciliationService" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="reconciliationService" ref="reconciliationService" />
 	</bean>
 
 	<bean class="org.egov.collection.integration.services.DishonorChequeService" id="dishonorChequeService" scope="prototype">
-	   <property name="persistenceService" ref="persistenceService" />
-	   <property name="receiptHeaderService" ref="receiptHeaderService" />
-	   <property name="collectionsUtil" ref="collectionsUtil" />
-	   <property name="financialsUtil" ref="financialsUtil" />
+		<property name="persistenceService" ref="persistenceService" />
+		<property name="receiptHeaderService" ref="receiptHeaderService" />
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="financialsUtil" ref="financialsUtil" />
 	</bean>
-	
+
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">
-       <constructor-arg index="0" value="org.egov.collection.entity.Challan"/>
+		<constructor-arg index="0" value="org.egov.collection.entity.Challan"/>
+	</bean>
+
+    <bean id="challanWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="challanPersistenceService"/>
+        <property name="actionPersistenceService" ref="actionPersistenceService"/> 
     </bean>
-	
+   
 </beans>

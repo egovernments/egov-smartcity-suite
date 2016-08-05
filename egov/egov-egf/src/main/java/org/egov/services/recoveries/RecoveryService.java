@@ -50,12 +50,14 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.utils.Constants;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+@Service("recoveryPersistenceService")
 public class RecoveryService extends PersistenceService<Recovery, Long> {
 
     private EgDeductionDetailsHibernateDAO egDeductionDetHibernateDao;

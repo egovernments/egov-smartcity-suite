@@ -75,9 +75,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 
@@ -90,8 +89,8 @@ import java.util.Map;
 import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
-@Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@Service
+@Transactional
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);

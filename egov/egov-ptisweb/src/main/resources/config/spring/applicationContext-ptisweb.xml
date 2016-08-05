@@ -44,7 +44,6 @@
  
     <import resource="applicationSecurityContext-ptis.xml"/>
     <import resource="applicationQuartzContext-ptis.xml"/>
-    <import resource="classpath*:config/spring/applicationContext-ptis.xml"/>
     <import resource="classpath*:config/spring/applicationQuartzContext-ptis*.xml"/>
     
     

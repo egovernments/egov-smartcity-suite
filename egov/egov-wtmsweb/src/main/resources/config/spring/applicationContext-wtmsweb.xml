@@ -45,7 +45,6 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="classpath*:config/spring/applicationContext-wtms.xml"/>    
 	<import resource="applicationSecurityContext-wtms.xml"/>
 	<import resource="applicationQuartzContext-wtms.xml"/>
 		<context:property-placeholder />

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -40,16 +41,32 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
-       default-lazy-init="true">
+    <context:component-scan base-package="org.egov.tl" />
 
-    <context:component-scan base-package="org.egov.lcms" />
-    
+    <bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
+
+    <bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
+
+    <bean id="licenseReportService" class="org.egov.tl.service.LicenseReportService" scope="prototype"/>
+
+    <bean id="tradeLicenseService" class="org.egov.tl.service.TradeLicenseService" parent="baseLicenseService">
+        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
+    </bean>
+
+    <bean id="licenseBill" class="org.egov.tl.service.integration.LicenseBill" scope="prototype">
+        <property name="moduleName" value="Trade License" />
+        <property name="serviceCode" value="TL" />
+    </bean>
+
+    <bean id="licenseDocumentTypeService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
+    </bean>
+
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="parentMessageSource" ref="parentMessageSource" />
         <property name="basenames">
@@ -62,5 +79,27 @@
         <!-- Disabling caching since on development-->
         <property name="cacheSeconds" value="0"/>
     </bean>
+
+	<bean id="tradeLicensePersistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type" value="org.egov.tl.entity.TradeLicense"/>
+    </bean>
+
+    <bean id="tradeLicenseWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="tradeLicensePersistenceService"/>
+    </bean>
+
+    <bean id="TradeLicenseInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+         <constructor-arg index="0" ref="tradeLicensePersistenceService"/>
+    </bean>
+
+    <bean id="TLCollectionsInterface" class="org.egov.tl.service.integration.LicenseBillService" scope="prototype" />
+
+    <bean id="licenseUtils" class="org.egov.tl.utils.LicenseUtils"/>
+
+    <bean id="updateIndexService" class="org.egov.tl.service.TradeLicenseUpdateIndexService"/>
+
+    <bean id="tradeLicenseSmsAndEmailService" class="org.egov.tl.service.TradeLicenseSmsAndEmailService"/>
+
+    <bean id="tradeLicenseNumberGenerator" class="org.egov.tl.service.TradeLicenseNumberGenerator"/>
     
 </beans>

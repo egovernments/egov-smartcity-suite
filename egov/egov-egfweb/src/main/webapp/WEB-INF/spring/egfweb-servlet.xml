@@ -100,14 +100,14 @@
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
-    <bean id="messageSource"
+    <bean id="infraMessageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="parentMessageSource" ref="parentMessageSource" />
         <property name="basenames">
             <list>
-                <value>messages/labels</value>
-                <value>messages/errors</value>
-                <value>messages/message</value>
+                <value>classpath:messages/labels</value>
+                <value>classpath:messages/errors</value>
+                <value>classpath:messages/message</value>
             </list>
         </property>
         <!-- Disabling caching since on development -->

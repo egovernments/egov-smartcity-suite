@@ -44,6 +44,5 @@
  
     <import resource="applicationSecurityContext-tl.xml"/>
     <import resource="applicationQuartzContext-tl.xml"/>
-    <import resource="classpath*:config/spring/applicationContext-tl.xml"/>
-    
+
 </beans>

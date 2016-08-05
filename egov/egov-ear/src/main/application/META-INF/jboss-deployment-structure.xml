@@ -8,7 +8,7 @@
             <module name="org.slf4j" export="TRUE"/>
             <module name="org.javassist" export="TRUE"/>
             <module name="javax.jcr" export="TRUE"/>
-	    <module name="javax.servlet.jstl.api" export="true"/>
+	        <module name="javax.servlet.jstl.api" export="true"/>
             <module name="org.hibernate" export="TRUE"/>
             <module name="org.infinispan" export="TRUE"/>
             <module name="org.apache.xerces" export="TRUE"/>

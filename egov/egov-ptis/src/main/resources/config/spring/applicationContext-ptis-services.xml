@@ -46,7 +46,81 @@
        default-lazy-init="true">
 	
 	<context:component-scan base-package="org.egov.ptis" />
-	
+
+    <bean id="floorService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
+    </bean>
+
+    <bean id="ActionsBaseWFFilter" class="org.egov.ptis.workflow.filter.ActionsBasedOnWorkFlowFilter" scope="prototype">
+        <property name="actionDao" ref="actionDao" />
+        <property name="workFlowPerService" ref="persistenceService"/>
+    </bean>
+
+    <bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
+
+    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
+
+    <bean id="objectionService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+    </bean>
+
+    <bean id="recoveryService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
+    </bean>
+
+    <bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">
+        <property name="basicPropertyService" ref="basicPropertyService"/>
+    </bean>
+
+    <bean id="billService" class="org.egov.ptis.domain.service.bill.BillService" scope="prototype">
+        <property name="reportService" ref="reportService"/>
+        <property name="noticeService" ref="noticeService"/>
+        <property name="propertyTaxUtil" ref="propertyTaxUtil"/>
+        <property name="ptBillServiceImpl" ref="ptBillServiceImpl"/>
+        <property name="propertyTaxNumberGenerator" ref="propertyTaxNumberGenerator"/>
+        <property name="persistenceService" ref="persistenceService"/>
+    </bean>
+
+    <bean id="floorDemandCalcService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" />
+    </bean>
+
+    <bean id="migratedPropFloorService" parent="persistenceService" scope="prototype">
+        <property name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
+    </bean>
+
+    <bean id="sMSEmailService" class="org.egov.ptis.domain.service.property.SMSEmailService" scope="prototype" >
+    </bean>
+
+    <bean id="propertyService" class="org.egov.ptis.domain.service.report.ReportService" scope="prototype" >
+        <property name="propPerServ" ref="persistenceService"/>
+    </bean>
+
+    <bean id="dashboardSQLSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:dashboard/ptis-dashboard-sql</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="1"/>
+    </bean>
+
+    <bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" scope="prototype" />
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+
+    <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>
+
     <bean id="propertyImplPersistenceService" parent="persistenceService" scope="prototype">
         <property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
     </bean>

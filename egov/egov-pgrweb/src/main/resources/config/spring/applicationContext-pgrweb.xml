@@ -47,7 +47,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <import resource="applicationQuartzContext-pgr.xml"/>
-    <import resource="classpath*:config/spring/applicationContext-pgr.xml"/>
 	<import resource="applicationSecurityContext-pgr.xml"/>
 	<context:property-placeholder />
     <context:component-scan base-package="org.egov.pgr.web">

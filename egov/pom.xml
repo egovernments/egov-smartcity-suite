@@ -160,8 +160,8 @@
 		<httpclient-version>4.5</httpclient-version>
 		<sitemesh-version>2.4.2</sitemesh-version>
 		<ehcache-web-version>2.0.4</ehcache-web-version>
-		<cglib-version>3.1</cglib-version>
-		<asm-all-version>3.3.1</asm-all-version>
+		<cglib-version>3.2.4</cglib-version>
+		<asm-all-version>5.1</asm-all-version>
 		<joda-time-version>2.7</joda-time-version>
 		<joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
 		<jsoup-version>1.7.3</jsoup-version>
@@ -417,6 +417,17 @@
 				<groupId>org.apache.struts</groupId>
 				<artifactId>struts2-jasperreports-plugin</artifactId>
 				<version>${struts2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.struts</groupId>
+				<artifactId>struts2-java8-support-plugin</artifactId>
+				<version>${struts2-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>*</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.jgeppert.struts2.jquery</groupId>
@@ -747,7 +758,7 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>asm</groupId>
+				<groupId>org.ow2.asm</groupId>
 				<artifactId>asm-all</artifactId>
 				<version>${asm-all-version}</version>
 			</dependency>
@@ -978,6 +989,14 @@
         </dependency>
 		<!-- COMMONS END -->
 
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-java8-support-plugin</artifactId>
+		</dependency>
 		<!-- SPRING DEPENDENCIES START -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -1074,7 +1093,7 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>asm</groupId>
+			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-all</artifactId>
 		</dependency>
 		<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
@@ -1333,16 +1352,16 @@
 				<version>2.19.1</version>
 			</plugin>
 			<plugin>
-                                <groupId>org.flywaydb</groupId>
-                                <artifactId>flyway-maven-plugin</artifactId>
-                                <version>${flyway-core-version}</version>
-                                <configuration>
-                                        <driver>${db.driver}</driver>
-                                        <url>${db.url}</url>
-                                        <user>${db.user}</user>
-                                        <password>${db.password}</password>
-                                </configuration>
-                        </plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-core-version}</version>
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <user>${db.user}</user>
+                    <password>${db.password}</password>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>

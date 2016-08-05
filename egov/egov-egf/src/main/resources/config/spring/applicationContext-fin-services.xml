@@ -39,22 +39,45 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
-	<context:component-scan
-		base-package="org.egov.billsaccounting.* , org.egov.dao.* ,org.egov.egf.*, org.egov.deduction.* ,  org.egov.masters.* ,  org.egov.payment.* , org.egov.services.* , org.egov.utils.* , org.egov.egf.web.* ,org.egov.report.* ,org.egov.commons, com.exilant.*, org.egov.egf.formatters.*" />
+
+	<context:component-scan base-package="org.egov.egf"/>
+	<context:component-scan base-package="org.egov.dao"/>
+	<context:component-scan base-package="org.egov.model"/>
+	<context:component-scan base-package="org.egov.billsaccounting"/>
+	<context:component-scan base-package="org.egov.deduction"/>
+	<context:component-scan base-package="org.egov.masters"/>
+	<context:component-scan base-package="org.egov.payment"/>
+	<context:component-scan base-package="org.egov.services"/>
+	<context:component-scan base-package="org.egov.utils"/>
+	<context:component-scan base-package="com.exilant"/>
+
+	<bean id="balanceSheetScheduleService" class="org.egov.services.report.BalanceSheetScheduleService"
+		  scope="prototype">
+		<property name="balanceSheetService" ref="balanceSheetService" />
+	</bean>
+
+	<bean id="incomeExpenditureScheduleService"
+		  class="org.egov.services.report.IncomeExpenditureScheduleService">
+		<property name="incomeExpenditureService" ref="incomeExpenditureService" />
+	</bean>
+	<bean id="dishonorChequeService" class="org.egov.services.instrument.DishonorChequeService">
+		<constructor-arg index="0"
+						 value="org.egov.model.instrument.DishonorCheque" />
+		<property name="eisService" ref="eisService" />
+	</bean>
 
 
 	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
 		<constructor-arg index="0" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 
-	
-	
 	<bean id="bankEntriesService" class="org.egov.services.instrument.BankEntriesService"
 		scope="prototype" autowire-candidate="default">
 		<property name="type" value="org.egov.model.brs.BrsEntries" />
@@ -148,9 +171,6 @@
 			ref="billRegisterPersistenceService" />
 	</bean>
 
-
-
-	
 	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService">
 		<constructor-arg index="0"
 			value="org.egov.model.budget.BudgetDetail">
@@ -263,10 +283,6 @@
 		scope="prototype">
 	</bean>
 
-	
-
-	
-
 	<bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService"
 		scope="prototype" />
 
@@ -309,7 +325,6 @@
 		scope="prototype">
 	</bean>
 
-	
 	<bean id="receiptService" class="org.egov.services.receipt.ReceiptService">
 		<constructor-arg index="0"
 			value="org.egov.model.receipt.ReceiptVoucher" />
@@ -322,14 +337,11 @@
 			value="org.egov.model.cheque.AccountCheques" />
 	</bean>
 
-
 	<bean id="sharedFundSourceService" class="org.egov.commons.service.SharedFundSourceService">
 		<constructor-arg index="0"
 			value="org.egov.commons.SharedFundSource" />
 	</bean>
 
-
-	
 	<bean id="accountChequesService" class="org.egov.services.cheque.AccountChequesService">
 		<constructor-arg index="0"
 			value="org.egov.model.cheque.AccountCheques" />
@@ -394,7 +406,6 @@
 
 	</bean>
 
-	
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">
 		<constructor-arg index="0" value="org.egov.commons.Scheme" />
 	</bean>
@@ -402,7 +413,5 @@
 	<bean id="subSchemeService" class="org.egov.services.masters.SubSchemeService">
 		<constructor-arg index="0" value="org.egov.commons.SubScheme" />
 	</bean>
-	<bean id="baseForm" class="org.egov.infra.web.struts.actions.BaseFormAction">
-	</bean>
-	
+
 </beans>

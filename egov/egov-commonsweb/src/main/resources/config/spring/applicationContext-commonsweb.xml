@@ -42,10 +42,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
        default-lazy-init="true">
 	  
-    <import resource="classpath*:config/spring/applicationContext-commons.xml"/>
 	<import resource="applicationSecurityContext-commons.xml"/>
 
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-    </bean>  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
      
 </beans>

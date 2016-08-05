@@ -41,17 +41,30 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:aop="http://www.springframework.org/schema/aop"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
+	   
+	<context:component-scan base-package="org.egov.commons" />
+	<context:component-scan base-package="org.egov.lib"/>
 
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
-    <bean id="challanWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
-        <constructor-arg name="stateAwarePersistenceService" ref="challanPersistenceService"/>
-        <property name="actionPersistenceService" ref="actionPersistenceService"/> 
-    </bean>
-   
+	<bean id="authRuleService" parent="persistenceService" autowire-candidate="true">
+		<property name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>
+	</bean>
+
+	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
+		<property name="userService" ref="userService" />
+		<property name="daoService" ref="persistenceService" />
+		<property name="authRuleService" ref="authRuleService" />
+	</bean>
+
+	<bean id="bankAccountDao" class="org.egov.commons.dao.BankaccountDAO"/>
+
+	<bean id="financialYearDAO" class="org.egov.commons.dao.FinancialYearHibernateDAO"/>
+
+	<bean id="bankBranchDao" class="org.egov.commons.dao.BankbranchDAO"/>
+
+	<bean id="bankDao" class="org.egov.commons.dao.BankDAO"/>
+
 </beans>

@@ -80,7 +80,7 @@ public class RecoveryController {
     private final static String RECOVERY_VIEW = "recovery-view";
     private final static String RECOVERY_SEARCH = "recovery-search";
     @Autowired
-    @Qualifier("recoveryService")
+    @Qualifier("finRecoveryService")
     private RecoveryService recoveryService;
     @Autowired
     private MessageSource messageSource;

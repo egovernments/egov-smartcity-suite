@@ -47,9 +47,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
 	   default-lazy-init="true">
 
-    	<context:component-scan base-package="org.egov.collection" />
-		<aop:aspectj-autoproxy proxy-target-class="true"/>
+    	<context:component-scan base-package="org.egov.collection.web" />
 		<import resource="applicationSecurityContext-collection.xml"/>
 	    <import resource="applicationQuartzContext-collection.xml"/>
-	    <import resource="classpath*:config/spring/applicationContext-collection.xml"/>
 </beans>
