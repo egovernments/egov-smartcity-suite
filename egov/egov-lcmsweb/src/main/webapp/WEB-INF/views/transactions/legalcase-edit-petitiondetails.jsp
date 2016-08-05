@@ -49,6 +49,7 @@
 <table class="table table-striped table-bordered" id="petitionDetails">
 	<thead>
 		<tr>
+		<!-- <th class="text-center">SI NO</th> -->
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
@@ -63,6 +64,11 @@
 		<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.getPetitioners()}"
 			varStatus="status">
 				<tr class="">
+			<%-- 	<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td> --%>
 				<td class="text-center"><input type="checkbox" id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
 				name="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
 			value="${bipartisanPetitionDetailsList.isRespondentGovernment}"
@@ -121,6 +127,7 @@
 <table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
+	<!-- 	<th class="text-center">SI NO</th> -->
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
@@ -136,6 +143,11 @@
 		<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 			varStatus="status">
 			<tr>
+		<%-- 	<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td> --%>
 				<td class="text-center"><input type="checkbox" id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 				name="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 			value="${bipartisanDetailsBeanList.isRespondentGovernment}"

@@ -193,6 +193,7 @@
 				id="petitionDetails">
 				<thead>
 					<tr>
+						<th class="text-center">SI No</th>
 						<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
 						<th class="text-center"><spring:message code="lbl.name" /><span
 							class="mandatory"></span></th>
@@ -208,6 +209,11 @@
 					<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
+						<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
 							<td>
 								<form:input type="hidden"
 									id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
@@ -280,6 +286,7 @@
 <table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
+		<th class="text-center">SI No</th>
 			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
@@ -292,6 +299,11 @@
 				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 						varStatus="status">
 						<tr>
+						<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
 							<td>
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
@@ -412,3 +424,4 @@
 				</div>
 			</div>
 </form:form>
+
