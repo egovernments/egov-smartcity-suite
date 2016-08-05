@@ -86,12 +86,28 @@ function addRow(tableObj,rowObj)
     tbody.appendChild(rowObj);
 }
 
+function process(date){
+   var parts = date.split("/");
+   return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
 function validateMiscReceipt()
 {
     if(!validateMiscDetails()){
+    	document.getElementById("receipt_error_area").style.display="block";
         return false;
+    }else{
+    	var receiptDate = document.getElementById("voucherDate").value;
+        var cutOffDate = document.getElementById("cutOffDate").value;
+    	if(process(receiptDate) > process(cutOffDate)) {
+    		 var r = confirm('Please enter the date less than the cut-off date ' + cutOffDate + '. If the date entered is greater than the cut-off date , then it is considered as live transactions and it would go through approval workflow. Do you wish to continue?');
+    		 if (r != true) {
+    			 document.getElementById("receipt_error_area").style.display="none";
+ 				return false;
+    		 } 
+    		}
     }
-    return true;
+	return true;
 }
 
 jQuery(document).ready(function(){
@@ -697,10 +713,6 @@ var totaldbamt=0,totalcramt=0;
             </s:iterator>
         
     }
-    
-    
-   
-
 </script>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" >
 
@@ -771,6 +783,8 @@ var totaldbamt=0,totalcramt=0;
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
+         <s:date name="cutOffDate" var="cutOffDateFormat" format="dd/MM/yyyy"/>
+         <s:hidden label="cutOffDate" id="cutOffDate"  name="cutOffDate" value="%{cutOffDateFormat}"/>
           </td>
           </s:if>
            <s:else>
@@ -888,6 +902,3 @@ var totaldbamt=0,totalcramt=0;
         <td colspan="5"></td>
       </tr>
     </table>
-    
-
-    

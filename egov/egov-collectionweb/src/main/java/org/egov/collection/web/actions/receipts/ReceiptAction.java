@@ -101,6 +101,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -125,19 +127,22 @@ public class ReceiptAction extends BaseFormAction {
     private String reportId;
 
     /**
-     * A <code>String</code> representing the input xml coming from the billing system
+     * A <code>String</code> representing the input xml coming from the billing
+     * system
      */
     private String collectXML;
     private BillCollectXmlHandler xmlHandler;
     private FinancialsUtil financialsUtil;
 
     /**
-     * A <code>Long</code> array of receipt header ids , which have to be displayed for view/print/cancel purposes
+     * A <code>Long</code> array of receipt header ids , which have to be
+     * displayed for view/print/cancel purposes
      */
     private Long[] selectedReceipts;
 
     /**
-     * An array of <code>ReceiptHeader</code> instances which have to be displayed for view/print/cancel purposes
+     * An array of <code>ReceiptHeader</code> instances which have to be
+     * displayed for view/print/cancel purposes
      */
     private ReceiptHeader[] receipts;
 
@@ -160,7 +165,8 @@ public class ReceiptAction extends BaseFormAction {
     private ReceiptHeader receiptHeader = new ReceiptHeader();
 
     /**
-     * A <code>Long</code> value representing the receipt header id captured from the front end, which has to be cancelled.
+     * A <code>Long</code> value representing the receipt header id captured
+     * from the front end, which has to be cancelled.
      */
     private Long oldReceiptId;
 
@@ -176,20 +182,20 @@ public class ReceiptAction extends BaseFormAction {
     private Boolean bankAllowed = Boolean.TRUE;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
-     * creation
+     * An instance of <code>InstrumentHeader</code> representing the cash
+     * instrument details entered by the user during receipt creation
      */
     private InstrumentHeader instrHeaderCash;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the card instrument details entered by the user during receipt
-     * creation
+     * An instance of <code>InstrumentHeader</code> representing the card
+     * instrument details entered by the user during receipt creation
      */
     private InstrumentHeader instrHeaderCard;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the 'bank' instrument details entered by the user during receipt
-     * creation
+     * An instance of <code>InstrumentHeader</code> representing the 'bank'
+     * instrument details entered by the user during receipt creation
      */
     private InstrumentHeader instrHeaderBank;
 
@@ -210,18 +216,21 @@ public class ReceiptAction extends BaseFormAction {
     private String serviceName;
 
     /**
-     * A <code>List</code> of <code>String</code> informations sent by the billing system indicating which are the modes of
-     * payment that are not allowed during receipt creation
+     * A <code>List</code> of <code>String</code> informations sent by the
+     * billing system indicating which are the modes of payment that are not
+     * allowed during receipt creation
      */
     private List<String> collectionModesNotAllowed = new ArrayList<String>(0);
 
     /**
-     * The <code>User</code> representing the counter operator who has created the receipt
+     * The <code>User</code> representing the counter operator who has created
+     * the receipt
      */
     private User receiptCreatedByCounterOperator;
 
     /**
-     * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the model for the action.
+     * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the
+     * model for the action.
      */
 
     private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>(0);
@@ -286,6 +295,8 @@ public class ReceiptAction extends BaseFormAction {
     private List<CChartOfAccounts> bankCOAList;
     private Long functionId;
 
+    private Date cutOffDate;
+
     @Override
     public void prepare() {
         super.prepare();
@@ -338,6 +349,14 @@ public class ReceiptAction extends BaseFormAction {
                 LOGGER.error(getText("billreceipt.error.improperbilldata") + e.getMessage());
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                    CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+        } catch (ParseException e) {
+            LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
         }
         addDropdownData("serviceCategoryList",
                 serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
@@ -631,8 +650,8 @@ public class ReceiptAction extends BaseFormAction {
                         totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
                     if (totalCreditAmount.intValue() == 0)
                         throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: "
-                                + receiptHeader.getService().getCode()
-                                + ", for bill number: " + receiptHeader.getReferencenumber());
+                                + receiptHeader.getService().getCode() + ", for bill number: "
+                                + receiptHeader.getReferencenumber());
                     else
                         receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
                 }
@@ -682,8 +701,8 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
                 receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
                 receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
-                        CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                        CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
+                            CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                            CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
                 receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
                 receiptHeader.setSource(Source.SYSTEM.toString());
 
@@ -706,8 +725,7 @@ public class ReceiptAction extends BaseFormAction {
                     for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
                         if (creditChangeReceiptDetail.getReceiptHeader().getReferencenumber()
                                 .equals(receiptDetail.getReceiptHeader().getReferencenumber())
-                                && receiptDetail.getOrdernumber()
-                                        .equals(creditChangeReceiptDetail.getOrdernumber())) {
+                                && receiptDetail.getOrdernumber().equals(creditChangeReceiptDetail.getOrdernumber())) {
 
                             receiptDetail.setCramount(creditChangeReceiptDetail.getCramount());
                             receiptDetail.setDramount(creditChangeReceiptDetail.getDramount());
@@ -725,12 +743,10 @@ public class ReceiptAction extends BaseFormAction {
                     receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
                 if (isBillSourcemisc())
                     receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(totalDebitAmount,
-                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
-                            instrumentTypeCashOrCard));
+                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal, instrumentTypeCashOrCard));
                 else
                     receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount,
-                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
-                            instrumentTypeCashOrCard));
+                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal, instrumentTypeCashOrCard));
 
             }
             // }// end of looping through receipt headers
@@ -739,7 +755,11 @@ public class ReceiptAction extends BaseFormAction {
             LOGGER.info("Call back for apportioning is completed");
             // billing system
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
-
+                   
+            if (isBillSourcemisc() && voucherDate.before(cutOffDate)) {
+                receiptHeaderService.performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
+                        "Legacy data Approval based on cutoff date");
+            }
             // populate all receipt header ids except the cancelled receipt
             // (in effect the newly created receipts)
             selectedReceipts = new Long[noOfNewlyCreatedReceipts];
@@ -825,10 +845,13 @@ public class ReceiptAction extends BaseFormAction {
         setMandatoryFields(mandatoryFields);
         // this.paidBy = payeename;
         /*
-         * if (null != service && null != service.getId() && service.getId() != -1)
-         * setServiceName(serviceDetailsService.findById(service.getId(), false).getName()); else { final ServiceDetails service =
-         * (ServiceDetails) getPersistenceService().findByNamedQuery( CollectionConstants.QUERY_SERVICE_BY_CODE,
-         * CollectionConstants.SERVICE_CODE_COLLECTIONS); setServiceName(service.getName()); }
+         * if (null != service && null != service.getId() && service.getId() !=
+         * -1) setServiceName(serviceDetailsService.findById(service.getId(),
+         * false).getName()); else { final ServiceDetails service =
+         * (ServiceDetails) getPersistenceService().findByNamedQuery(
+         * CollectionConstants.QUERY_SERVICE_BY_CODE,
+         * CollectionConstants.SERVICE_CODE_COLLECTIONS);
+         * setServiceName(service.getName()); }
          */
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
         if (getDeptId() == null)
@@ -864,7 +887,9 @@ public class ReceiptAction extends BaseFormAction {
                 mandatoryFields.add(header);
         }
         /*
-         * if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) { headerFields.add("vouchernumber");
+         * if (!"Auto".equalsIgnoreCase(new
+         * VoucherTypeForULB().readVoucherTypes("Receipt"))) {
+         * headerFields.add("vouchernumber");
          * mandatoryFields.add("vouchernumber"); }
          */
         mandatoryFields.add("voucherdate");
@@ -932,11 +957,15 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
+     * This instrument creates instrument header instances for the receipt, when
+     * the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
      *
-     * @param k an int value representing the index of the instrument type as chosen from the front end
-     * @return an <code>InstrumentHeader</code> instance populated with the instrument details
+     * @param k
+     *            an int value representing the index of the instrument type as
+     *            chosen from the front end
+     * @return an <code>InstrumentHeader</code> instance populated with the
+     *         instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
@@ -963,10 +992,14 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method create a new receipt header object with details contained in given receipt header object. Both the receipt
-     * header objects are added to the same parent <code>ReceiptPayeeDetail</code> object which in turn is added to the model.
+     * This method create a new receipt header object with details contained in
+     * given receipt header object. Both the receipt header objects are added to
+     * the same parent <code>ReceiptPayeeDetail</code> object which in turn is
+     * added to the model.
      *
-     * @param oldReceiptHeader the instance of <code>ReceiptHeader</code> whose data is to be copied
+     * @param oldReceiptHeader
+     *            the instance of <code>ReceiptHeader</code> whose data is to be
+     *            copied
      */
     private void populateReceiptModelWithExistingReceiptInfo(final ReceiptHeader oldReceiptHeader) {
         totalAmountToBeCollected = BigDecimal.valueOf(0);
@@ -995,7 +1028,8 @@ public class ReceiptAction extends BaseFormAction {
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-                    && !FinancialsUtil.isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
+                    && !FinancialsUtil
+                            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -1038,10 +1072,12 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * Same method handles both view and print modes. If print receipts flag is passed as true, the PDF receipt will be generated
-     * in such a way that it will show the print dialog box whenever it is opened.
+     * Same method handles both view and print modes. If print receipts flag is
+     * passed as true, the PDF receipt will be generated in such a way that it
+     * will show the print dialog box whenever it is opened.
      *
-     * @param printReceipts Flag indicating whether the receipts are to be printed
+     * @param printReceipts
+     *            Flag indicating whether the receipts are to be printed
      * @return Result page ("view")
      */
     private String viewReceipts(final boolean printReceipts) {
@@ -1172,7 +1208,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptHeaderValues the receiptHeaderValues to set
+     * @param receiptHeaderValues
+     *            the receiptHeaderValues to set
      */
     public void setReceiptHeaderValues(final List<ReceiptHeader> receiptHeaderValues) {
         this.receiptHeaderValues = receiptHeaderValues;
@@ -1201,7 +1238,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param paidBy the paidBy to set
+     * @param paidBy
+     *            the paidBy to set
      */
     public void setPaidBy(final String paidBy) {
         this.paidBy = paidBy;
@@ -1215,7 +1253,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param oldReceiptId the oldReceiptId to set
+     * @param oldReceiptId
+     *            the oldReceiptId to set
      */
     public void setOldReceiptId(final Long oldReceiptId) {
         this.oldReceiptId = oldReceiptId;
@@ -1294,8 +1333,9 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total number of bill accounts that are present in the XML
-     * arriving from the billing system
+     * This getter will be invoked by framework from UI. It returns the total
+     * number of bill accounts that are present in the XML arriving from the
+     * billing system
      *
      * @return
      */
@@ -1306,7 +1346,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. This value will be used during bill apportioning.
+     * This getter will be invoked by framework from UI. This value will be used
+     * during bill apportioning.
      *
      * @return
      */
@@ -1406,7 +1447,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherDate the voucherDate to set
+     * @param voucherDate
+     *            the voucherDate to set
      */
     public void setVoucherDate(final Date voucherDate) {
         this.voucherDate = voucherDate;
@@ -1420,14 +1462,16 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherNumber the voucherNumber to set
+     * @param voucherNumber
+     *            the voucherNumber to set
      */
     public void setVoucherNum(final String voucherNum) {
         this.voucherNum = voucherNum;
     }
 
     /**
-     * This getter will be invoked by framework from UI. This value will be used during misc receipts for account details
+     * This getter will be invoked by framework from UI. This value will be used
+     * during misc receipts for account details
      *
      * @return
      */
@@ -1680,14 +1724,16 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionCommon the collectionCommon to set
+     * @param collectionCommon
+     *            the collectionCommon to set
      */
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
 
     /**
-     * @param receiptHeaderService The receipt header service to set
+     * @param receiptHeaderService
+     *            The receipt header service to set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -1782,7 +1828,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param manualReceiptNumber the manualReceiptNumber to set
+     * @param manualReceiptNumber
+     *            the manualReceiptNumber to set
      */
     public void setManualReceiptNumber(final String manualReceiptNumber) {
         this.manualReceiptNumber = manualReceiptNumber;
@@ -1796,7 +1843,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param manualReceiptNumberAndDateReq the manualReceiptNumberAndDateReq to set
+     * @param manualReceiptNumberAndDateReq
+     *            the manualReceiptNumberAndDateReq to set
      */
     public void setManualReceiptNumberAndDateReq(final Boolean manualReceiptNumberAndDateReq) {
         this.manualReceiptNumberAndDateReq = manualReceiptNumberAndDateReq;
@@ -1828,5 +1876,13 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public Date getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(Date cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 }

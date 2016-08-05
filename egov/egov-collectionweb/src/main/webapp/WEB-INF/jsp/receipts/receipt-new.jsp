@@ -98,6 +98,8 @@ jQuery(document).ready(function() {
 			  validateManualReceiptDate(this);
 		  }
 	  }).data('datepicker');
+
+     
  });
 
 jQuery(window).load(function () {
@@ -740,8 +742,7 @@ function validate()
 	<s:if test="%{isBillSourcemisc()}"> 
 		if(validateMiscReceipt){
 			if(!validateMiscReceipt()){
-				validation = false;
-				document.getElementById("receipt_error_area").style.display="block";
+				return false;
 			}
 		}
 	</s:if>
@@ -984,10 +985,9 @@ function validate()
 		return false;
 	}
 	else {
+		document.getElementById("receipt_error_area").style.display="block";
 		document.collDetails.action="receipt-save.action";
-  		
 		return validation;
-  		
 	}
 }//end of function 'validate'
 
