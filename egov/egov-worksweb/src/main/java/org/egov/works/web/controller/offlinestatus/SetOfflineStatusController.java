@@ -82,7 +82,7 @@ public class SetOfflineStatusController {
 
     @Autowired
     private ResourceBundleMessageSource messageSource;
-    
+
     @Autowired
     private EstimateService estimateService;
 
@@ -110,15 +110,17 @@ public class SetOfflineStatusController {
 
         for (final WorkOrder.OfflineStatuses status : WorkOrder.OfflineStatuses.values())
             offlineStatuses.add(status.toString().toUpperCase());
-        
-        for (final AbstractEstimate.OfflineStatusesForAbstractEstimate status : AbstractEstimate.OfflineStatusesForAbstractEstimate.values())
-        	offlineStatusesForAE.add(status.toString().toUpperCase());
+
+        for (final AbstractEstimate.OfflineStatusesForAbstractEstimate status : AbstractEstimate.OfflineStatusesForAbstractEstimate
+                .values())
+            offlineStatusesForAE.add(status.toString().toUpperCase());
 
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorksConstants.WORKORDER,
                 offlineStatuses);
-        
-        final List<EgwStatus> abstractEstimateStatusses = egwStatusHibernateDAO.getStatusListByModuleAndCodeList(WorksConstants.ABSTRACTESTIMATE,
-        		offlineStatusesForAE);
+
+        final List<EgwStatus> abstractEstimateStatusses = egwStatusHibernateDAO.getStatusListByModuleAndCodeList(
+                WorksConstants.ABSTRACTESTIMATE,
+                offlineStatusesForAE);
         model.addAttribute("egwStatus", egwStatuses);
         model.addAttribute("abstractEstimateStatusses", abstractEstimateStatusses);
     }
@@ -180,13 +182,14 @@ public class SetOfflineStatusController {
                 new String[] { workOrder.getWorkOrderNumber() }, null));
         return "setstatus-success";
     }
-    
+
     @RequestMapping(value = "/setstatus-abstractestimate/{abstractEstimateId}", method = RequestMethod.GET)
     public String setOffLineStatusForAbstractEstimate(final Model model, @PathVariable final Long abstractEstimateId,
             final HttpServletRequest request)
             throws ApplicationException {
-    	final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(abstractEstimateId);
-        final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(abstractEstimate.getId(),
+        final AbstractEstimate abstractEstimate = estimateService.getAbstractEstimateById(abstractEstimateId);
+        final List<OfflineStatus> offlineStatuses = offlineStatusService.getOfflineStatusByObjectIdAndType(
+                abstractEstimate.getId(),
                 WorksConstants.ABSTRACTESTIMATE);
         final int offlineStatusSize = offlineStatuses.size();
         abstractEstimate.setOfflineStatuses(offlineStatuses);

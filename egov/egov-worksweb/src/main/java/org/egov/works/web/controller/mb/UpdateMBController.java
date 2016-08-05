@@ -112,7 +112,7 @@ public class UpdateMBController extends GenericWorkFlowController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
@@ -134,7 +134,8 @@ public class UpdateMBController extends GenericWorkFlowController {
             for (final WorkOrderMeasurementSheet woms : details.getWorkOrderActivity().getWorkOrderMeasurementSheets()) {
                 final Double prevMBMSCumulativeQuantity = mbHeaderService.getMeasurementsPreviousCumulativeQuantity(
                         details.getMbHeader().getId(), woms.getId());
-                woms.setCumulativeQuantity(prevMBMSCumulativeQuantity != null ? new BigDecimal(prevCumulativeQuantity) : new BigDecimal(0));
+                woms.setCumulativeQuantity(
+                        prevMBMSCumulativeQuantity != null ? new BigDecimal(prevCumulativeQuantity) : new BigDecimal(0));
             }
         }
 
@@ -341,16 +342,16 @@ public class UpdateMBController extends GenericWorkFlowController {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
         if (totalMBAmountOfMBs != null)
             model.addAttribute("totalMBAmountOfMBs", totalMBAmountOfMBs - updatedMBHeader.getMbAmount().doubleValue());
-        
+
         final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(mbHeader.getId(),
                 mbHeader.getWorkOrderEstimate().getId());
-        
-        if (!previousMBHeaders.isEmpty()) {
+
+        if (!previousMBHeaders.isEmpty())
             model.addAttribute("previousMBDate",
                     sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
-        } else
+        else
             model.addAttribute("previousMBDate", "");
-        
+
         model.addAttribute("isMeasurementsExist",
                 measurementSheetService.existsByEstimate(mbHeader.getWorkOrderEstimate().getEstimate().getId()));
 

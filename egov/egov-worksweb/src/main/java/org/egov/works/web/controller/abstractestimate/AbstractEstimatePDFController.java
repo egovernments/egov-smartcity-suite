@@ -120,7 +120,7 @@ public class AbstractEstimatePDFController {
                 reportParams.put("workflowdetails",
                         worksUtils.getWorkFlowHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
 
-            List<MeasurementSheet> measurementSheets = measurementSheetService
+            final List<MeasurementSheet> measurementSheets = measurementSheetService
                     .findMeasurementForEstimateActivities(abstractEstimate.getId());
             if (measurementSheets != null && !measurementSheets.isEmpty()) {
                 reportParams.put("measurementExists", Boolean.TRUE);

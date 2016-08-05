@@ -41,10 +41,8 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -112,14 +110,14 @@ public class MeasurementBookPDFController {
                 reportParams.put("tenderFinalizedPerc",
                         "+" + mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage());
             else
-                reportParams.put("tenderFinalizedPerc",String.valueOf(mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage()));
-                
-          List<MBMeasurementSheet> measurements = mBMeasurementSheetService.findMeasurementsForMB(mBHeader.getId());
-          reportParams.put("measurementSize", measurements.size());
-          if(measurements != null && !measurements.isEmpty()) {
-              reportParams.put("measurementDetails", mBHeaderService.getMeasurementsForMB(mBHeader));
-          }  
-        } 
+                reportParams.put("tenderFinalizedPerc",
+                        String.valueOf(mBHeader.getWorkOrderEstimate().getWorkOrder().getTenderFinalizedPercentage()));
+
+            final List<MBMeasurementSheet> measurements = mBMeasurementSheetService.findMeasurementsForMB(mBHeader.getId());
+            reportParams.put("measurementSize", measurements.size());
+            if (measurements != null && !measurements.isEmpty())
+                reportParams.put("measurementDetails", mBHeaderService.getMeasurementsForMB(mBHeader));
+        }
         final String url = WebUtils.extractRequestDomainURL(request, false);
         reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                 .concat((String) request.getSession().getAttribute("citylogo")));

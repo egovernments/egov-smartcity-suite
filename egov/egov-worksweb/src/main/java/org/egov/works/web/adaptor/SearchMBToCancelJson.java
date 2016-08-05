@@ -59,7 +59,7 @@ import com.google.gson.JsonSerializer;
 public class SearchMBToCancelJson implements JsonSerializer<MBHeader> {
 
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    
+
     @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
 
@@ -97,15 +97,16 @@ public class SearchMBToCancelJson implements JsonSerializer<MBHeader> {
                 jsonObject.addProperty("mbDate", sdf.format(mbHeader.getMbDate()));
             else
                 jsonObject.addProperty("mbDate", "");
-            
+
             final ContractorBillRegister contractorBillRegister = contractorBillRegisterService
-                    .getContratorBillForWorkOrder(mbHeader.getWorkOrderEstimate(), ContractorBillRegister.BillStatus.CANCELLED.toString(),
+                    .getContratorBillForWorkOrder(mbHeader.getWorkOrderEstimate(),
+                            ContractorBillRegister.BillStatus.CANCELLED.toString(),
                             BillTypes.Final_Bill.toString());
             if (contractorBillRegister != null)
                 jsonObject.addProperty("billNumber", contractorBillRegister.getBillnumber());
             else
                 jsonObject.addProperty("billNumber", "");
-            
+
             jsonObject.addProperty("id", mbHeader.getId());
         }
         return jsonObject;

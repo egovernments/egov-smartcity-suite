@@ -50,7 +50,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.common.entity.UOM;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.service.UOMService;
 import org.egov.eis.service.AssignmentService;
@@ -98,7 +97,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Autowired
     private UOMService uomService;
-    
+
     public EstimateTemplateAction() {
         addRelatedEntity("workType", EgwTypeOfWork.class);
         addRelatedEntity("subType", EgwTypeOfWork.class);
@@ -121,7 +120,7 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     @Action(value = "/estimate/estimateTemplate-view")
     public String view() {
-    	mode = "view";
+        mode = "view";
         return SUCCESS;
     }
 

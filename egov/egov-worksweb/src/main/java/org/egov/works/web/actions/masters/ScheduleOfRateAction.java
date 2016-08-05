@@ -174,7 +174,8 @@ public class ScheduleOfRateAction extends SearchFormAction {
             getRateDetailsForSORIdForREValidation(true);
         }
         if (scheduleOfRate != null) {
-            final ScheduleOfRate newScheduleOfRate = scheduleOfRateService.getByCodeAndScheduleCategoryId(code, scheduleOfRate.getScheduleCategory().getId());
+            final ScheduleOfRate newScheduleOfRate = scheduleOfRateService.getByCodeAndScheduleCategoryId(code,
+                    scheduleOfRate.getScheduleCategory().getId());
             if (newScheduleOfRate != null && scheduleOfRate.getId() != newScheduleOfRate.getId()) {
                 addActionMessage(getText("sor.code.isunique"));
                 return NEW;
@@ -240,8 +241,8 @@ public class ScheduleOfRateAction extends SearchFormAction {
         addDropdownData("scheduleCategoryList", scheduleCategoryList);
         addDropdownData("uomlist", uomService.findAll());
         abstractEstimateList = scheduleOfRateService.getAllAbstractEstimateByScheduleOrRateId(scheduleOfRate.getId());
-        if(!abstractEstimateList.isEmpty() && mode.equals(WorksConstants.EDIT))
-        	displData="disable";
+        if (!abstractEstimateList.isEmpty() && mode.equals(WorksConstants.EDIT))
+            displData = "disable";
     }
 
     private void getPersistedRateDetails(final ScheduleOfRate sor) {
@@ -409,7 +410,7 @@ public class ScheduleOfRateAction extends SearchFormAction {
                         final String value = trackFlagMap.get(0);
                         if (value != null && !value.equalsIgnoreCase(flagValue))
                             deletFlagMap.put(rate.getId(), "no");
-                    } 
+                    }
                 }
             }
         }        // end of for abstractestimate

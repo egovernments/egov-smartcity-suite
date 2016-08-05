@@ -63,6 +63,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
 import org.egov.common.entity.UOM;
 import org.egov.commons.service.UOMService;
 import org.egov.infra.exception.ApplicationException;
@@ -104,9 +105,6 @@ public class UploadSORController {
     private static final int RATE_CELL_INDEX = 4;
     private static final int FROMDATE_CELL_INDEX = 5;
     private static final int TODATE_CELL_INDEX = 6;
-    private static final int MARKET_RATE_CELL_INDEX = 7;
-    private static final int MARKET_RATE_FROMDATE_CELL_INDEX = 8;
-    private static final int MARKET_RATE_TODATE_CELL_INDEX = 9;
     private boolean errorInMasterData = false;
     private String originalFileStoreId, outPutFileStoreId;
     private String loadSorRateOriginalFileName;
@@ -152,14 +150,14 @@ public class UploadSORController {
 
         try {
             errorInMasterData = false;
-            File convFile = new File(uploadSOR.getFile().getOriginalFilename());
+            final File convFile = new File(uploadSOR.getFile().getOriginalFilename());
             inputFile = convFile;
             uploadSOR.getFile().transferTo(convFile);
-            FileInputStream inputFile = new FileInputStream(convFile);
+            final FileInputStream inputFile = new FileInputStream(convFile);
             final POIFSFileSystem fs = new POIFSFileSystem(inputFile);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
             wb.getNumberOfSheets();
-            timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_");
+            timeStamp = new Timestamp(new Date().getTime()).toString().replace(".", "_");
             final HSSFSheet sheet = wb.getSheetAt(0);
 
             List<UploadScheduleOfRate> uploadSORRatesList = loadToList(sheet);
@@ -212,94 +210,87 @@ public class UploadSORController {
         return "uploadSor-result";
     }
 
-    private void prepareOriginalFileName(String originalFilename, BindingResult errors) {
-        if (originalFilename.contains("_sor_original_")) {
+    private void prepareOriginalFileName(final String originalFilename, final BindingResult errors) {
+        if (originalFilename.contains("_sor_original_"))
             loadSorRateOriginalFileName = originalFilename.split("_sor_original_")[0]
                     + "_sor_original_"
                     + timeStamp + "."
                     + originalFilename.split("\\.")[1];
-        } else if (originalFilename.contains("_sor_output_")) {
+        else if (originalFilename.contains("_sor_output_"))
             loadSorRateOriginalFileName = originalFilename.split("_sor_output_")[0]
                     + "_sor_original_"
                     + timeStamp + "."
                     + originalFilename.split("\\.")[1];
-        } else {
-            if (originalFilename.length() > 60) {
-                errors.reject("error.file.name.should.be.less.then.60.characters",
-                        "error.file.name.should.be.less.then.60.characters");
-            } else
-                loadSorRateOriginalFileName = originalFilename.split("\\.")[0]
-                        + "_sor_original_"
-                        + timeStamp + "."
-                        + originalFilename.split("\\.")[1];
-        }
+        else if (originalFilename.length() > 60)
+            errors.reject("error.file.name.should.be.less.then.60.characters",
+                    "error.file.name.should.be.less.then.60.characters");
+        else
+            loadSorRateOriginalFileName = originalFilename.split("\\.")[0]
+                    + "_sor_original_"
+                    + timeStamp + "."
+                    + originalFilename.split("\\.")[1];
 
     }
 
-    private void prepareOutPutFileName(String originalFilename, BindingResult errors) {
+    private void prepareOutPutFileName(final String originalFilename, final BindingResult errors) {
 
-        if (originalFilename.contains("_sor_original_")) {
+        if (originalFilename.contains("_sor_original_"))
             loadSorRateOutPutFileName = originalFilename.split("_sor_original_")[0]
                     + "_sor_output_"
                     + timeStamp + "."
                     + originalFilename.split("\\.")[1];
-        } else if (originalFilename.contains("_sor_output_")) {
+        else if (originalFilename.contains("_sor_output_"))
             loadSorRateOutPutFileName = originalFilename.split("_sor_output_")[0]
                     + "_sor_output_"
                     + timeStamp + "."
                     + originalFilename.split("\\.")[1];
-        } else {
-            if (originalFilename.length() > 60) {
-                errors.reject("error.file.name.should.be.less.then.60.characters",
-                        "error.file.name.should.be.less.then.60.characters");
-            } else
-                loadSorRateOutPutFileName = originalFilename.split("\\.")[0] + "_sor_output_"
-                        + timeStamp + "."
-                        + originalFilename.split("\\.")[1];
-        }
+        else if (originalFilename.length() > 60)
+            errors.reject("error.file.name.should.be.less.then.60.characters",
+                    "error.file.name.should.be.less.then.60.characters");
+        else
+            loadSorRateOutPutFileName = originalFilename.split("\\.")[0] + "_sor_output_"
+                    + timeStamp + "."
+                    + originalFilename.split("\\.")[1];
     }
 
-    private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
-        List<UploadScheduleOfRate> tempList = new ArrayList<>();
+    private void validateMandatoryFeilds(final List<UploadScheduleOfRate> uploadSORRatesList) {
+        final List<UploadScheduleOfRate> tempList = new ArrayList<>();
         try {
             String error = "";
-            Map<String, ScheduleOfRate> sorMap = new HashMap<String, ScheduleOfRate>();
-            Map<String, ScheduleCategory> sorCategoryMap = new HashMap<String, ScheduleCategory>();
-            Map<String, UOM> uomMap = new HashMap<String, UOM>();
-            List<ScheduleOfRate> sorList = scheduleOfRateService.getAllScheduleOfRates();
-            List<ScheduleCategory> sorCategoryList = scheduleCategoryService.getAllScheduleCategories();
-            List<UOM> uomList = uomService.findAll();
-            for (ScheduleOfRate sor : sorList)
+            final Map<String, ScheduleOfRate> sorMap = new HashMap<String, ScheduleOfRate>();
+            final Map<String, ScheduleCategory> sorCategoryMap = new HashMap<String, ScheduleCategory>();
+            final Map<String, UOM> uomMap = new HashMap<String, UOM>();
+            final List<ScheduleOfRate> sorList = scheduleOfRateService.getAllScheduleOfRates();
+            final List<ScheduleCategory> sorCategoryList = scheduleCategoryService.getAllScheduleCategories();
+            final List<UOM> uomList = uomService.findAll();
+            for (final ScheduleOfRate sor : sorList)
                 sorMap.put(sor.getCode().toLowerCase(), sor);
-            for (ScheduleCategory scheduleCategory : sorCategoryList)
+            for (final ScheduleCategory scheduleCategory : sorCategoryList)
                 sorCategoryMap.put(scheduleCategory.getCode().toLowerCase(), scheduleCategory);
-            for (UOM uom : uomList)
+            for (final UOM uom : uomList)
                 uomMap.put(uom.getUom().toLowerCase(), uom);
 
-            for (UploadScheduleOfRate obj : uploadSORRatesList) {
+            for (final UploadScheduleOfRate obj : uploadSORRatesList) {
                 error = "";
 
                 // Validating SOR code
                 if (obj.getSorCode() != null && !obj.getSorCode().equalsIgnoreCase("")) {
                     if (sorMap.get(obj.getSorCode().toLowerCase()) == null)
-                        if (isContainsWhitespace(obj.getSorCode())) {
+                        if (isContainsWhitespace(obj.getSorCode()))
                             error = error + " "
                                     + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null)
                                     + obj.getSorCode() + ",";
-                        } else
+                        else
                             obj.setCreateSor(true);
                     else {
                         obj.setScheduleOfRate(sorMap.get(obj.getSorCode().toLowerCase()));
                         obj.setCreateSor(false);
                     }
-                } else {
+                } else
                     error = error + " " + messageSource.getMessage("error.sorcode.is.required", null, null) + ",";
 
-                }
-
-                if (obj.getSorCode() != null && obj.getSorCode().length() > 255) {
+                if (obj.getSorCode() != null && obj.getSorCode().length() > 255)
                     error = error + " " + messageSource.getMessage("error.sor.code.length", null, null) + ",";
-                }
 
                 // Validating SOR Category Code
                 if (obj.getSorCategoryCode() == null || obj.getSorCategoryCode().equalsIgnoreCase(""))
@@ -322,9 +313,8 @@ public class UploadSORController {
                             + messageSource.getMessage("error.special.characters.is.not.allowed.in.sor.description", null, null)
                             + ",";
 
-                if (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000) {
+                if (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000)
                     error = error + " " + messageSource.getMessage("error.sor.description.length", null, null) + ",";
-                }
 
                 // Validating uom code
                 if (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase(""))
@@ -343,7 +333,7 @@ public class UploadSORController {
                 else if (obj.getRate().compareTo(BigDecimal.ZERO) == -1 || obj.getRate().compareTo(BigDecimal.ZERO) == 0)
                     error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.rate", null, null)
                             + obj.getRate() + ",";
-                else if (!(obj.getRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")))
+                else if (!obj.getRate().toString().matches("[0-9]+([,.][0-9]{1,2})?"))
                     error = error + " "
                             + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.rate", null, null)
                             + obj.getRate() + ",";
@@ -352,11 +342,10 @@ public class UploadSORController {
                 if (obj.getFromDate() == null)
                     error = error + " " + messageSource.getMessage("error.fromdate.is.required", null, null) + ",";
 
-                if (obj.getFromDate() != null && obj.getToDate() != null) {
+                if (obj.getFromDate() != null && obj.getToDate() != null)
                     if (obj.getFromDate().compareTo(obj.getToDate()) > 0)
                         error = error + " " + messageSource.getMessage("error.fromdate.cannot.be.grater.then.todate", null, null)
                                 + ",";
-                }
 
                 // Validating market rate and from date
                 if (obj.getMarketRate() != null && (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1
@@ -364,37 +353,32 @@ public class UploadSORController {
                     error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
                             + obj.getMarketRate() + ",";
 
-                if (obj.getMarketRate() != null && obj.getMarketFromDate() == null) {
+                if (obj.getMarketRate() != null && obj.getMarketFromDate() == null)
                     error = error + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ",";
-                }
-                if (obj.getMarketRate() != null && !(obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")))
+                if (obj.getMarketRate() != null && !obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?"))
                     error = error + " "
                             + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null, null)
                             + obj.getRate() + ",";
 
-                if (obj.getMarketFromDate() != null && obj.getMarketRate() == null) {
+                if (obj.getMarketFromDate() != null && obj.getMarketRate() == null)
                     error = error + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ",";
-                }
 
-                if (obj.getMarketFromDate() != null && obj.getMarketToDate() != null) {
+                if (obj.getMarketFromDate() != null && obj.getMarketToDate() != null)
                     if (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0)
                         error = error + " " + messageSource
                                 .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";
-                }
 
                 // Validate duplicate (From Database)
                 if (obj.getCreateSor() != null && !obj.getCreateSor() && obj.getScheduleOfRate() != null
-                        && obj.getScheduleCategory() != null) {
+                        && obj.getScheduleCategory() != null)
                     if (obj.getScheduleOfRate().getScheduleCategory().getCode()
                             .equalsIgnoreCase(obj.getScheduleCategory().getCode()))
                         error = error + " " + messageSource
                                 .getMessage("error.sorcode.already.exists", null, null) + ",";
-                }
 
                 obj.setErrorReason(obj.getErrorReason() != null ? obj.getErrorReason() : "" + error);
-                if (!error.equalsIgnoreCase("")) {
+                if (!error.equalsIgnoreCase(""))
                     errorInMasterData = true;
-                }
                 tempList.add(obj);
             }
 
@@ -407,10 +391,10 @@ public class UploadSORController {
         }
     }
 
-    private void validateDuplicateData(List<UploadScheduleOfRate> uploadSORRatesList) {
+    private void validateDuplicateData(final List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
-            Map<String, UploadScheduleOfRate> uploadSORRateMap = new HashMap<String, UploadScheduleOfRate>();
-            for (UploadScheduleOfRate obj : uploadSORRatesList) {
+            final Map<String, UploadScheduleOfRate> uploadSORRateMap = new HashMap<String, UploadScheduleOfRate>();
+            for (final UploadScheduleOfRate obj : uploadSORRatesList)
                 if (obj.getSorCode() != null && obj.getSorCategoryCode() != null && !obj.getSorCode().equalsIgnoreCase("")
                         && !obj.getSorCategoryCode().equalsIgnoreCase(""))
                     if (uploadSORRateMap.get(obj.getSorCode() + "-" + obj.getSorCategoryCode()) == null)
@@ -425,10 +409,8 @@ public class UploadSORController {
                         && (obj.getSorDescription() == null || obj.getSorDescription().equalsIgnoreCase(""))
                         && (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase("")) && obj.getRate() == null
                         && obj.getFromDate() == null && obj.getToDate() == null && obj.getMarketRate() == null
-                        && obj.getMarketFromDate() == null && obj.getMarketToDate() == null) {
+                        && obj.getMarketFromDate() == null && obj.getMarketToDate() == null)
                     obj.setErrorReason(messageSource.getMessage("error.empty.record", null, null));
-                }
-            }
         } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
@@ -438,8 +420,8 @@ public class UploadSORController {
         }
     }
 
-    private List<UploadScheduleOfRate> loadToList(HSSFSheet sheet) {
-        List<UploadScheduleOfRate> uploadSORRatesList = new ArrayList<UploadScheduleOfRate>();
+    private List<UploadScheduleOfRate> loadToList(final HSSFSheet sheet) {
+        final List<UploadScheduleOfRate> uploadSORRatesList = new ArrayList<UploadScheduleOfRate>();
         try {
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= sheet.getLastRowNum(); i++)
@@ -455,9 +437,9 @@ public class UploadSORController {
 
     }
 
-    private UploadScheduleOfRate getRowData(HSSFRow row) {
-        UploadScheduleOfRate sorRate = new UploadScheduleOfRate();
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+    private UploadScheduleOfRate getRowData(final HSSFRow row) {
+        final UploadScheduleOfRate sorRate = new UploadScheduleOfRate();
+        final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         try {
             if (row != null) {
                 sorRate.setSorCode(getStrValue(row.getCell(SORCODE_CELL_INDEX)) == null ? null : getStrValue(row
@@ -518,36 +500,36 @@ public class UploadSORController {
         return sorRate;
     }
 
-    private void prepareOutPutFileWithErrors(List<UploadScheduleOfRate> uploadSORRatesList, UploadSOR uploadSOR,
-            BindingResult errors) {
+    private void prepareOutPutFileWithErrors(final List<UploadScheduleOfRate> uploadSORRatesList, final UploadSOR uploadSOR,
+            final BindingResult errors) {
         try {
-            FileInputStream fIS = new FileInputStream(inputFile);
+            final FileInputStream fIS = new FileInputStream(inputFile);
 
-            Map<String, String> errorsMap = new HashMap<String, String>();
+            final Map<String, String> errorsMap = new HashMap<String, String>();
             final POIFSFileSystem fs = new POIFSFileSystem(fIS);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
-            HSSFRow row = sheet.getRow(0);
-            HSSFCell cell = row.createCell(7);
+            final HSSFRow row = sheet.getRow(0);
+            final HSSFCell cell = row.createCell(7);
             cell.setCellValue("Error Reason");
 
-            for (UploadScheduleOfRate obj : uploadSORRatesList)
+            for (final UploadScheduleOfRate obj : uploadSORRatesList)
                 errorsMap.put(obj.getSorCode() + "-" + obj.getSorCategoryCode() + "-" + obj.getSorDescription() + "-"
                         + obj.getUomCode() + "-" + obj.getRate(), obj.getErrorReason());
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= uploadSORRatesList.size(); i++) {
-                HSSFRow errorRow = sheet.getRow(i);
-                HSSFCell errorCell = errorRow.createCell(7);
-                errorCell.setCellValue(errorsMap.get((getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
+                final HSSFRow errorRow = sheet.getRow(i);
+                final HSSFCell errorCell = errorRow.createCell(7);
+                errorCell.setCellValue(errorsMap.get(getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SORCATEGORY_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SOR_DESCRIPTION_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(UOM_CELL_INDEX)) + "-"
                         + (getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX)).compareTo(BigDecimal.ZERO) == 0 ? null
-                                : getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX))))));
+                                : getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX)))));
             }
 
-            FileOutputStream output_file = new FileOutputStream(inputFile);
+            final FileOutputStream output_file = new FileOutputStream(inputFile);
             wb.write(output_file);
             output_file.close();
 
@@ -559,44 +541,44 @@ public class UploadSORController {
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
     }
 
-    private void prepareOutPutFileWithFinalStatus(List<UploadScheduleOfRate> uploadSORRatesList, UploadSOR uploadSOR,
-            BindingResult errors) {
+    private void prepareOutPutFileWithFinalStatus(final List<UploadScheduleOfRate> uploadSORRatesList, final UploadSOR uploadSOR,
+            final BindingResult errors) {
         try {
-            FileInputStream fIS = new FileInputStream(inputFile);
+            final FileInputStream fIS = new FileInputStream(inputFile);
 
-            Map<String, String> finalStatusMap = new HashMap<String, String>();
+            final Map<String, String> finalStatusMap = new HashMap<String, String>();
             final POIFSFileSystem fs = new POIFSFileSystem(fIS);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
             wb.getNumberOfSheets();
             final HSSFSheet sheet = wb.getSheetAt(0);
-            HSSFRow row = sheet.getRow(0);
-            HSSFCell cell = row.createCell(7);
+            final HSSFRow row = sheet.getRow(0);
+            final HSSFCell cell = row.createCell(7);
             cell.setCellValue("Status");
 
-            for (UploadScheduleOfRate obj : uploadSORRatesList)
+            for (final UploadScheduleOfRate obj : uploadSORRatesList)
                 finalStatusMap.put(obj.getSorCode() + "-" + obj.getSorCategoryCode() + "-" + obj.getSorDescription() + "-"
                         + obj.getUomCode() + "-" + obj.getRate(), obj.getFinalStatus());
 
             for (int i = DATA_STARTING_ROW_INDEX; i <= uploadSORRatesList.size(); i++) {
-                HSSFRow errorRow = sheet.getRow(i);
-                HSSFCell errorCell = errorRow.createCell(7);
-                errorCell.setCellValue(finalStatusMap.get((getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
+                final HSSFRow errorRow = sheet.getRow(i);
+                final HSSFCell errorCell = errorRow.createCell(7);
+                errorCell.setCellValue(finalStatusMap.get(getStrValue(sheet.getRow(i).getCell(SORCODE_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SORCATEGORY_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(SOR_DESCRIPTION_CELL_INDEX)) + "-"
                         + getStrValue(sheet.getRow(i).getCell(UOM_CELL_INDEX)) + "-"
-                        + getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX)))));
+                        + getNumericValue(sheet.getRow(i).getCell(RATE_CELL_INDEX))));
             }
 
-            FileOutputStream output_file = new FileOutputStream(inputFile);
+            final FileOutputStream output_file = new FileOutputStream(inputFile);
             wb.write(output_file);
             output_file.close();
 
@@ -608,24 +590,22 @@ public class UploadSORController {
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
     }
 
-    private List<UploadScheduleOfRate> removeEmptyRows(List<UploadScheduleOfRate> uploadSORRatesList) {
-        List<UploadScheduleOfRate> tempList = new ArrayList<>();
-        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+    private List<UploadScheduleOfRate> removeEmptyRows(final List<UploadScheduleOfRate> uploadSORRatesList) {
+        final List<UploadScheduleOfRate> tempList = new ArrayList<>();
+        for (final UploadScheduleOfRate obj : uploadSORRatesList)
             if (obj.getErrorReason() != null && obj.getErrorReason().equalsIgnoreCase("Empty Record"))
                 continue;
             else
                 tempList.add(obj);
-
-        }
         return tempList;
     }
 
@@ -635,12 +615,12 @@ public class UploadSORController {
         double numericCellValue = 0d;
         String strValue = "";
         switch (cell.getCellType()) {
-        case HSSFCell.CELL_TYPE_NUMERIC:
+        case Cell.CELL_TYPE_NUMERIC:
             numericCellValue = cell.getNumericCellValue();
             final DecimalFormat decimalFormat = new DecimalFormat("#");
             strValue = decimalFormat.format(numericCellValue);
             break;
-        case HSSFCell.CELL_TYPE_STRING:
+        case Cell.CELL_TYPE_STRING:
             strValue = cell.getStringCellValue();
             break;
         }
@@ -656,11 +636,11 @@ public class UploadSORController {
         String strValue = "";
 
         switch (cell.getCellType()) {
-        case HSSFCell.CELL_TYPE_NUMERIC:
+        case Cell.CELL_TYPE_NUMERIC:
             numericCellValue = cell.getNumericCellValue();
             bigDecimalValue = BigDecimal.valueOf(numericCellValue);
             break;
-        case HSSFCell.CELL_TYPE_STRING:
+        case Cell.CELL_TYPE_STRING:
             strValue = cell.getStringCellValue();
             // strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
             if (strValue != null && strValue.contains("E+")) {
@@ -687,13 +667,13 @@ public class UploadSORController {
 
     }
 
-    private Boolean isContainsWhitespace(String name) {
-        Pattern pattern = Pattern.compile("\\s");
-        Matcher matcher = pattern.matcher(name);
+    private Boolean isContainsWhitespace(final String name) {
+        final Pattern pattern = Pattern.compile("\\s");
+        final Matcher matcher = pattern.matcher(name);
         return matcher.find();
     }
 
-    private boolean isSpecialCharacterExist(String name) {
+    private boolean isSpecialCharacterExist(final String name) {
         if (name.indexOf('\\') != -1 || name.indexOf('\'') != -1)
             return true;
         else
@@ -701,12 +681,12 @@ public class UploadSORController {
 
     }
 
-    private Boolean isNewLineOrTabExist(String name) {
-        Pattern pattern = Pattern.compile("\\n");
-        Matcher matcher = pattern.matcher(name);
+    private Boolean isNewLineOrTabExist(final String name) {
+        final Pattern pattern = Pattern.compile("\\n");
+        final Matcher matcher = pattern.matcher(name);
 
-        Pattern pattern1 = Pattern.compile("\\t");
-        Matcher matcher1 = pattern1.matcher(name);
+        final Pattern pattern1 = Pattern.compile("\\t");
+        final Matcher matcher1 = pattern1.matcher(name);
 
         return matcher.find() || matcher1.find();
     }

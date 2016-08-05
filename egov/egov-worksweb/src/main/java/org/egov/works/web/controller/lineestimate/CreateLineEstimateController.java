@@ -134,10 +134,10 @@ public class CreateLineEstimateController extends GenericWorkFlowController {
 
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
 

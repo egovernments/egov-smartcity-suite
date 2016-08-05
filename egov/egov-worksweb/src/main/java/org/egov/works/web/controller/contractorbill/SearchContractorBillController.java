@@ -48,7 +48,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.works.contractorbill.entity.ContractorBillRegister.BillStatus;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.lineestimate.service.LineEstimateService;
@@ -72,7 +71,7 @@ public class SearchContractorBillController {
 
     @Autowired
     private SecurityUtils securityUtils;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 

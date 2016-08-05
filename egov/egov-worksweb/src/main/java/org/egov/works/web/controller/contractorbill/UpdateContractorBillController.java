@@ -112,7 +112,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private MBHeaderService mbHeaderService;
-    
+
     @Autowired
     private MBForCancelledBillService mbForCancelledBillService;
 
@@ -121,7 +121,7 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
 
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Autowired
     private MBHeaderService mBHeaderService;
 
@@ -296,10 +296,10 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
                     .getMbDate().before(workOrderEstimate.getWorkOrder().getWorkOrderDate()))
 
                 resultBinder.rejectValue("mbHeader.mbDate", "error.validate.mbdate.lessthan.loadate");
-            
-            if (contractorBillRegister.getMbHeader().getMbDate() != null 
+
+            if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getBilldate()
-                    .before(contractorBillRegister.getMbHeader().getMbDate()))
+                            .before(contractorBillRegister.getMbHeader().getMbDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
         }
 
@@ -310,37 +310,33 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             resultBinder.reject("error.netpayable.amount.required", "error.netpayable.amount.required");
 
         if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
-                && contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() == null) {
+                && contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() == null)
             resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.required");
-        }
 
         final Date currentDate = new Date();
-        Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
+        final Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
         if (workCompletionDate != null) {
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-            if (workCompletionDate.after(currentDate)) {
+            if (workCompletionDate.after(currentDate))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.futuredate");
-            }
             if (offlineStatus != null) {
                 if (workCompletionDate.before(offlineStatus.getStatusDate()))
                     resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                             "error.workcompletiondate.workcommenceddate");
             } else if (workCompletionDate
-                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())) {
+                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                         "error.workcompletiondate.workorderdate");
-            }
-            if (workCompletionDate.after(contractorBillRegister.getBilldate())) {
+            if (workCompletionDate.after(contractorBillRegister.getBilldate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
-            }
         }
-        
-        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
-        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
+
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(
+                contractorBillRegister.getWorkOrderEstimate().getId(), contractorBillRegister.getBilldate());
+        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate()))
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
-        }
     }
 
     private void validateTotalDebitAndCreditAmount(final ContractorBillRegister contractorBillRegister,
@@ -426,12 +422,13 @@ public class UpdateContractorBillController extends GenericWorkFlowController {
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
         if (newcontractorBillRegister.getStatus() != null
                 && newcontractorBillRegister.getStatus().getCode().equalsIgnoreCase(WorksConstants.CANCELLED_STATUS))
-            model.addAttribute("mbDetails",   mbForCancelledBillService.getMBHeadersForCancelledBillListByContractorBillRegister(newcontractorBillRegister));
+            model.addAttribute("mbDetails", mbForCancelledBillService
+                    .getMBHeadersForCancelledBillListByContractorBillRegister(newcontractorBillRegister));
         else
             model.addAttribute("mbDetails", mbHeaders);
-        
-        //Set MBHeaders in edit
-        model.addAttribute("mbHeaders",mbHeaders);
+
+        // Set MBHeaders in edit
+        model.addAttribute("mbHeaders", mbHeaders);
         return "contractorBill-update";
     }
 

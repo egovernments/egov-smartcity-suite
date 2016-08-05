@@ -75,18 +75,18 @@ public class SearchLetterOfAcceptanceToMofifyJsonAdaptor implements JsonSerializ
                 jsonObject.addProperty("status", "");
             if (workOrderEstimate.getEstimate() != null)
                 jsonObject.addProperty("estimateNumber",
-                		workOrderEstimate.getEstimate().getEstimateNumber());
+                        workOrderEstimate.getEstimate().getEstimateNumber());
             else
                 jsonObject.addProperty("estimateNumber", "");
             if (workOrderEstimate.getEstimate() != null)
                 jsonObject.addProperty("nameOfWork",
-                		workOrderEstimate.getEstimate().getName());
+                        workOrderEstimate.getEstimate().getName());
             else
                 jsonObject.addProperty("nameOfWork", "");
 
             if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null)
                 jsonObject.addProperty("lineEstimateId",
-                		workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
+                        workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate()
                                 .getId());
             else
                 jsonObject.addProperty("lineEstimateId", "");

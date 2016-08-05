@@ -65,7 +65,7 @@ public class SearchContractorBillsToCancelJsonAdaptor implements JsonSerializer<
                 jsonObject.addProperty("billDate", contractorBillRegister.getBilldate().toString());
             else
                 jsonObject.addProperty("billDate", "");
-           
+
             jsonObject.addProperty("estimateNumber",
                     contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateNumber());
             jsonObject.addProperty("workIdentificationNumber",

@@ -104,7 +104,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
@@ -240,9 +240,9 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
             model.addAttribute("isServiceVATRequired", true);
         else
             model.addAttribute("isServiceVATRequired", false);
-        
+
         estimateService.loadLocationAppConfigValue(model);
-        
+
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());

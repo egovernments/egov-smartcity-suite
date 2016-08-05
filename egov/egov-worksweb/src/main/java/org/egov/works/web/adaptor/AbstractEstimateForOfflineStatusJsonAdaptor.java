@@ -58,43 +58,43 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class AbstractEstimateForOfflineStatusJsonAdaptor implements JsonSerializer<AbstractEstimate> {
-	
+
     @Autowired
     private OfflineStatusService offlineStatusService;
-    
+
     @Override
     public JsonElement serialize(final AbstractEstimate abstractEstimate, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         if (abstractEstimate != null) {
-        	if (abstractEstimate.getEstimateNumber() != null)
+            if (abstractEstimate.getEstimateNumber() != null)
                 jsonObject.addProperty("estimateNumber", abstractEstimate.getEstimateNumber());
             else
                 jsonObject.addProperty("estimateNumber", "");
-        	
-        	if (abstractEstimate.getEstimateDate() != null)
+
+            if (abstractEstimate.getEstimateDate() != null)
                 jsonObject.addProperty("estimateDate", formatter.format(
-            			abstractEstimate.getEstimateDate()));
+                        abstractEstimate.getEstimateDate()));
             else
                 jsonObject.addProperty("estimateDate", "");
-        	
-        	 if (abstractEstimate.getName() != null)
-                 jsonObject.addProperty("nameOfWork", abstractEstimate.getName());
-             else
-                 jsonObject.addProperty("nameOfWork", "");
-        	 if (abstractEstimate.getEstimateValue() != null)
-                 jsonObject.addProperty("estimateAmount", abstractEstimate.getEstimateValue());
-             else
-                 jsonObject.addProperty("estimateAmount", "");
-        	 if (abstractEstimate.getCreatedBy() != null)
-                 jsonObject.addProperty("createdBy", abstractEstimate.getCreatedBy().getName());
-             else
-                 jsonObject.addProperty("createdBy", "");
-        	 
-        	 final List<OfflineStatus> offlinestatusses = offlineStatusService
-                     .getOfflineStatusByObjectIdAndType(abstractEstimate.getId(), WorksConstants.ABSTRACTESTIMATE);
-        	
+
+            if (abstractEstimate.getName() != null)
+                jsonObject.addProperty("nameOfWork", abstractEstimate.getName());
+            else
+                jsonObject.addProperty("nameOfWork", "");
+            if (abstractEstimate.getEstimateValue() != null)
+                jsonObject.addProperty("estimateAmount", abstractEstimate.getEstimateValue());
+            else
+                jsonObject.addProperty("estimateAmount", "");
+            if (abstractEstimate.getCreatedBy() != null)
+                jsonObject.addProperty("createdBy", abstractEstimate.getCreatedBy().getName());
+            else
+                jsonObject.addProperty("createdBy", "");
+
+            final List<OfflineStatus> offlinestatusses = offlineStatusService
+                    .getOfflineStatusByObjectIdAndType(abstractEstimate.getId(), WorksConstants.ABSTRACTESTIMATE);
+
             jsonObject.addProperty("abstractEstimateId", abstractEstimate.getId());
             jsonObject.addProperty("statusSize", offlinestatusses.size());
         }

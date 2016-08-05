@@ -196,17 +196,16 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType,searchRequest);
+        return generateReportDepartmentWise(estimateAbstractReports, request, session, contentType, searchRequest);
     }
 
     private ResponseEntity<byte[]> generateReportDepartmentWise(final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType,EstimateAbstractReport searchRequest) {
+            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
         String dataRunDate = "";
-        
 
         if (estimateAbstractReports != null && !estimateAbstractReports.isEmpty())
             for (final EstimateAbstractReport eadwr : estimateAbstractReports) {
@@ -291,7 +290,7 @@ public class EstimateAbstractReportPDFController {
                 else
                     pdf.setBillValueInCrores("NA");
 
-             // Making value NA based on work status
+                // Making value NA based on work status
                 if (searchRequest.getWorkStatus() != null && !searchRequest.getWorkStatus().isEmpty()) {
 
                     if (searchRequest.getWorkStatus().equalsIgnoreCase(WorkStatus.LOA_Not_Created.toString())) {
@@ -445,12 +444,12 @@ public class EstimateAbstractReportPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType,searchRequest);
+        return generateReportTypeOfWorkWise(estimateAbstractReports, request, session, contentType, searchRequest);
     }
 
     private ResponseEntity<byte[]> generateReportTypeOfWorkWise(final List<EstimateAbstractReport> estimateAbstractReports,
             final HttpServletRequest request,
-            final HttpSession session, final String contentType,EstimateAbstractReport searchRequest) {
+            final HttpSession session, final String contentType, final EstimateAbstractReport searchRequest) {
         final List<EstimateAbstractReport> estimateAbstractReportPdfList = new ArrayList<EstimateAbstractReport>();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
 
@@ -580,7 +579,7 @@ public class EstimateAbstractReportPDFController {
                     }
 
                 }
-                
+
                 dataRunDate = formatter.format(workProgressRegisterService.getReportSchedulerRunDate());
 
                 estimateAbstractReportPdfList.add(pdf);

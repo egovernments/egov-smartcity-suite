@@ -244,15 +244,16 @@ public class AjaxMBController {
             return latestMBHeader.getMbRefNo();
         return "";
     }
-    
+
     @RequestMapping(value = "/measurementbook/ajax-loadmbbasedonbilldate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String loadMBBasedOnBillDate(@RequestParam final Long workOrderEstimateId,@RequestParam final Date billDate) {
-        List<MBHeader> mBHeaderList = mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimateId,billDate);
+    public @ResponseBody String loadMBBasedOnBillDate(@RequestParam final Long workOrderEstimateId,
+            @RequestParam final Date billDate) {
+        final List<MBHeader> mBHeaderList = mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimateId, billDate);
         final StringBuilder result = new StringBuilder(searchMBHeader(mBHeaderList).toString());
-        if(!mBHeaderList.isEmpty())
+        if (!mBHeaderList.isEmpty())
             return result.toString();
         else
-        return "";
+            return "";
     }
-  
+
 }

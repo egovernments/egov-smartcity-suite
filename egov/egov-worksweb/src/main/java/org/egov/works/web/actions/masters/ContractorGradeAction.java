@@ -94,10 +94,10 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-save")
     public String save() {
-    	if(!(contractorGrade.getMaxAmount().compareTo(contractorGrade.getMinAmount()) == 1)){
-    		addActionMessage(getText("contractor.grade.maxamount.invalid"));
+        if (!(contractorGrade.getMaxAmount().compareTo(contractorGrade.getMinAmount()) == 1)) {
+            addActionMessage(getText("contractor.grade.maxamount.invalid"));
             return NEW;
-    	}
+        }
         persistenceService.validate(contractorGrade);
         contractorGrade.validate();
         contractorGrade = contractorGradeService.save(contractorGrade);

@@ -75,7 +75,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,10 +111,10 @@ public class AjaxAbstractEstimateController {
 
     @Autowired
     private AbstractEstimateForOfflineStatusJsonAdaptor abstractEstimateForOfflineStatusJsonAdaptor;
-    
+
     @Autowired
     private EstimateTemplateJsonAdaptor estimateTemplateJsonAdaptor;
-    
+
     public Object toSearchAbstractEstimateForLOAResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, new AbstractEstimateForLOAJsonAdaptor())
@@ -161,20 +160,20 @@ public class AjaxAbstractEstimateController {
 
     @RequestMapping(value = "/ajaxgetestimatetemplatebyid", method = RequestMethod.GET)
     public @ResponseBody String populateMilestoneTemplateActivity(@RequestParam final String id,
-            final Model model,@RequestParam final Date estimateDate)
+            final Model model, @RequestParam final Date estimateDate)
             throws ApplicationException {
         final List<EstimateTemplateActivity> activities = estimateTemplateService.getEstimateTemplateById(Long.valueOf(id))
                 .getEstimateTemplateActivities();
         for (final EstimateTemplateActivity estimateTemplateActivitys : activities)
-        	estimateTemplateActivitys.setEstimateDate(estimateDate);
+            estimateTemplateActivitys.setEstimateDate(estimateDate);
         final String result = estimateTemplateToJson(activities);
         return result;
     }
-    
+
     public String estimateTemplateToJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(EstimateTemplateActivity.class, estimateTemplateJsonAdaptor)
-                        .create();
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -225,21 +224,22 @@ public class AjaxAbstractEstimateController {
     public Object toSearchEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, searchEstimatesToCancelJson)
-        		.create();
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
-    
+
     @RequestMapping(value = "/ajaxsearchabstractestimatesforofflinestatus", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxSearchAbstractEstimatesForOfflineStatus(final Model model,
             @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest) {
         final List<AbstractEstimate> searchResultList = estimateService
                 .searchAbstractEstimatesForOfflineStatus(abstractEstimateForLoaSearchRequest);
-        final String result = new StringBuilder("{ \"data\":").append(toSearchAbstractEstimateForOfflineStatusJson(searchResultList))
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchAbstractEstimateForOfflineStatusJson(searchResultList))
                 .append("}").toString();
         return result;
     }
-    
+
     public Object toSearchAbstractEstimateForOfflineStatusJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(AbstractEstimate.class, abstractEstimateForOfflineStatusJsonAdaptor)
@@ -252,25 +252,27 @@ public class AjaxAbstractEstimateController {
     public @ResponseBody List<String> findEstimateNumbersToCancelEstimate(@RequestParam final String code) {
         return estimateService.findEstimateNumbersToCancelEstimate(code);
     }
-    
+
     @RequestMapping(value = "/ajaxestimatenumbers-forofflinestatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> getAbstractEstimateNumbersToSetOfflineStatus(@RequestParam final String code) {
         return estimateService.getAbstractEstimateNumbersToSetOfflineStatus(code);
     }
-    
+
     @RequestMapping(value = "/ajaxestimatenumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findApprovedEstimateNumbersForCreateLOA(@RequestParam final String estimateNumber) {
         return estimateService.getApprovedEstimateNumbersForCreateLOA(estimateNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxadminsanctionnumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findApprovedAdminSanctionNumbersForCreateLOA(@RequestParam final String adminSanctionNumber) {
+    public @ResponseBody List<String> findApprovedAdminSanctionNumbersForCreateLOA(
+            @RequestParam final String adminSanctionNumber) {
         return estimateService.getApprovedAdminSanctionNumbersForCreateLOA(adminSanctionNumber);
     }
-    
+
     @RequestMapping(value = "/ajaxworkidentificationnumbers-tocreateloa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<String> findApprovedWorkIdentificationNumbersForCreateLOA(@RequestParam final String workIdentificationNumber) {
+    public @ResponseBody List<String> findApprovedWorkIdentificationNumbersForCreateLOA(
+            @RequestParam final String workIdentificationNumber) {
         return estimateService.getApprovedWorkIdentificationNumbersForCreateLOA(workIdentificationNumber);
     }
-    
+
 }

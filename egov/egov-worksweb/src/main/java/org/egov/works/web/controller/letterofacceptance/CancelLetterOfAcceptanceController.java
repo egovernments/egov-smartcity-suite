@@ -110,7 +110,7 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
         WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(letterOfAcceptanceId);
-        WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
+        final WorkOrderEstimate workOrderEstimate = workOrder.getWorkOrderEstimates().get(0);
         if (workOrderEstimate.getWorkOrderActivities().isEmpty()) {
             final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
             if (!billNumbers.equals("")) {

@@ -162,11 +162,11 @@ public class AjaxLineEstimateController {
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
             throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException,
             ApplicationException {
-    	if(schemeId!=null && !schemeId.equals("undefined"))
-    	{
-        final String jsonResponse = toJSONSubScheme(subSchemeService.getBySchemeId(Integer.parseInt(schemeId)));
-        return jsonResponse;
-    	}else return "";
+        if (schemeId != null && !schemeId.equals("undefined")) {
+            final String jsonResponse = toJSONSubScheme(subSchemeService.getBySchemeId(Integer.parseInt(schemeId)));
+            return jsonResponse;
+        } else
+            return "";
     }
 
     @RequestMapping(value = "/getfinancilyearbyid", method = RequestMethod.GET)
@@ -272,7 +272,6 @@ public class AjaxLineEstimateController {
         return lineEstimateService.findWorkIdentificationNumbersToSearchEstimatesForLoa(name);
     }
 
-
     @RequestMapping(value = "/workIdNumbersForEstimate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<String> findworkIdNumbersToSearchEstimates(@RequestParam final String name) {
         return lineEstimateService.findWorkIdentificationNumbersToSearchEstimates(name);
@@ -296,7 +295,7 @@ public class AjaxLineEstimateController {
         return jsonCreator.toJson(users, new TypeToken<Collection<User>>() {
         }.getType());
     }
-    
+
     @RequestMapping(value = "/ajaxsearchcreatedby", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getCreatedByDepartment(
             @RequestParam("department") final Long department)
@@ -330,10 +329,10 @@ public class AjaxLineEstimateController {
     public @ResponseBody String checkDependantObjectsCreated(@RequestParam final Long lineEstimateId) {
         final String estimateNumbers = lineEstimateService.checkAbstractEstimatesWithBOQForLineEstimate(lineEstimateId);
         String message = "";
-        if (!estimateNumbers.equals("")) {
+        if (!estimateNumbers.equals(""))
             message = messageSource.getMessage("error.lineestimate.abstractestimatewithboq.exists",
                     new String[] { estimateNumbers }, null);
-        } else {
+        else {
             final String loaEstimateNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimateId);
             if (!loaEstimateNumbers.equals(""))
                 message = messageSource.getMessage("error.lineestimate.loa.created",

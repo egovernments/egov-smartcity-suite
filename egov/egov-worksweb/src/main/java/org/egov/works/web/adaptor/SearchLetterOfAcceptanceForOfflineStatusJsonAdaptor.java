@@ -77,14 +77,14 @@ public class SearchLetterOfAcceptanceForOfflineStatusJsonAdaptor implements Json
                 jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
             else
                 jsonObject.addProperty("contractor", "");
-            if (workOrderEstimate.getWorkOrder().getEgwStatus() != null){
-            	OfflineStatus offlineStatusses = offlineStatusService.getLastOfflineStatusByObjectIdAndObjectType(workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
-            	if(offlineStatusses != null){
-            		jsonObject.addProperty("status", offlineStatusses.getEgwStatus().getDescription());
-            	} else
-            		jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getDescription());
-            }
-            else
+            if (workOrderEstimate.getWorkOrder().getEgwStatus() != null) {
+                final OfflineStatus offlineStatusses = offlineStatusService.getLastOfflineStatusByObjectIdAndObjectType(
+                        workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER);
+                if (offlineStatusses != null)
+                    jsonObject.addProperty("status", offlineStatusses.getEgwStatus().getDescription());
+                else
+                    jsonObject.addProperty("status", workOrderEstimate.getWorkOrder().getEgwStatus().getDescription());
+            } else
                 jsonObject.addProperty("status", "");
             if (workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0).getEstimate().getLineEstimateDetails() != null)
                 jsonObject.addProperty("estimateNumber", workOrderEstimate.getWorkOrder().getWorkOrderEstimates().get(0)

@@ -125,13 +125,13 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private LineEstimateDetailService lineEstimateDetailService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
-    
+
     @Autowired
     private WorksUtils worksUtils;
 
@@ -220,18 +220,17 @@ public class CreateSpillOverLineEstimateController {
                 errors.rejectValue("lineEstimateDetails[" + index + "].projectCode.code", "error.win.unique");
             index++;
         }
-		final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
-        
-        Date cuttOfdate = worksUtils.getCutOffDate();
-        
-        if (cuttOfdate != null && lineEstimate.getLineEstimateDate().after(cuttOfdate)) {
-        	errors.reject("error.spilloverle.cutoffdate",new String[] { dateformatter.format(cuttOfdate).toString() } ,"error.spilloverle.cutoffdate");
-        }
-        if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated()) {
-        	errors.reject("error.spilloverle.bills.checked","error.spilloverle.bills.checked");
-        }
+        final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+
+        final Date cuttOfdate = worksUtils.getCutOffDate();
+
+        if (cuttOfdate != null && lineEstimate.getLineEstimateDate().after(cuttOfdate))
+            errors.reject("error.spilloverle.cutoffdate", new String[] { dateformatter.format(cuttOfdate).toString() },
+                    "error.spilloverle.cutoffdate");
+        if (lineEstimate.getLineEstimateDate().after(currFinYearStartDate) && lineEstimate.isBillsCreated())
+            errors.reject("error.spilloverle.bills.checked", "error.spilloverle.bills.checked");
 
     }
 
@@ -274,9 +273,9 @@ public class CreateSpillOverLineEstimateController {
         for (final AppConfigValues value : configValues)
             designations.add(designationService.getDesignationByName(value.getValue()));
         model.addAttribute("designations", designations);
-        
-        model.addAttribute("cuttOffDate",worksUtils.getCutOffDate());
-		model.addAttribute("currFinDate",lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
+
+        model.addAttribute("cuttOffDate", worksUtils.getCutOffDate());
+        model.addAttribute("currFinDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
     }
 
     @RequestMapping(value = "/spillover-lineestimate-success", method = RequestMethod.GET)
@@ -332,5 +331,5 @@ public class CreateSpillOverLineEstimateController {
              */
         }
     }
-    
+
 }

@@ -73,15 +73,16 @@ public class CreateMilestoneController {
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
             final Model model, final HttpServletRequest request) throws ApplicationException {
-        
+
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        if(milestoneService.checkMilestoneCreated(workOrderEstimate.getWorkOrder().getId())){
-            String message = messageSource.getMessage("error.milestonecreated.validate", new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);
+        if (milestoneService.checkMilestoneCreated(workOrderEstimate.getWorkOrder().getId())) {
+            final String message = messageSource.getMessage("error.milestonecreated.validate",
+                    new String[] { workOrderEstimate.getWorkOrder().getWorkOrderNumber() }, null);
             model.addAttribute("errorMessage", message);
             return "milestone-success";
         }
-        
+
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("milestone", new Milestone());
         return "newMilestone-form";
@@ -90,14 +91,14 @@ public class CreateMilestoneController {
     @RequestMapping(value = "/milestone-save", method = RequestMethod.POST)
     public String create(@ModelAttribute("milestone") final Milestone milestone,
             final Model model, final BindingResult errors, final HttpServletRequest request, final BindingResult resultBinder)
-                    throws ApplicationException, IOException {
+            throws ApplicationException, IOException {
         final Long workOrderEstimateId = Long.valueOf(request.getParameter("workOrderEstimateId"));
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         milestone.setWorkOrderEstimate(workOrderEstimate);
         final Milestone newMilestone = milestoneService.create(milestone);
         model.addAttribute("milestone", newMilestone);
         model.addAttribute("message", messageSource.getMessage("msg.milestone.create.success",
-                new String[] { workOrderEstimate.getEstimate().getEstimateNumber() },null));
+                new String[] { workOrderEstimate.getEstimate().getEstimateNumber() }, null));
 
         return "milestone-success";
     }

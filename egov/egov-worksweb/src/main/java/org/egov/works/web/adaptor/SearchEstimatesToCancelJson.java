@@ -78,7 +78,7 @@ public class SearchEstimatesToCancelJson implements JsonSerializer<AbstractEstim
                         abstractEstimate.getLineEstimateDetails().getLineEstimate().getLineEstimateNumber());
                 jsonObject.addProperty("lineEstimateId", abstractEstimate.getLineEstimateDetails().getLineEstimate().getId());
             }
-            
+
             final List<WorkOrderEstimate> workOrderEstimates = workOrderEstimateService
                     .getWorkOrderEstimatesToCancelEstimates(abstractEstimate.getEstimateNumber());
             if (workOrderEstimates.isEmpty())

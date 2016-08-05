@@ -102,10 +102,10 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private ScheduleOfRateService scheduleOfRateService;
-    
+
     @Autowired
     private DesignationService designationService;
-    
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -123,7 +123,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
     private void loadViewData(final Model model, final AbstractEstimate abstractEstimate,
             final LineEstimateDetails lineEstimateDetails) {
         estimateService.setDropDownValues(model);
-        
+
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
             final List<Designation> designations = new ArrayList<Designation>();
@@ -134,7 +134,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             for (final AppConfigValues valuesFordesignation : configValues)
                 designations.add(designationService.getDesignationByName(valuesFordesignation.getValue()));
             model.addAttribute("designations", designations);
-            
+
             final List<AppConfigValues> configValuesForAdminSanctionAuthority = appConfigValuesService
                     .getConfigValuesByModuleAndKey(
                             WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_DESIGNATION_ADMINSANCTION_AUTHORITY);
@@ -145,20 +145,20 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
                 adminSanctionAuthority
                         .add(designationService.getDesignationByName(valuesForAdminSanctiondesignation.getValue()));
             model.addAttribute("adminSanctionAuthority", adminSanctionAuthority);
-        }else{
-            
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
-        prepareWorkflow(model, abstractEstimate, workflowContainer);
-        List<String> validActions = Collections.emptyList();
-        validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
-                workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
-                workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
-                abstractEstimate.getCreatedDate());
-        if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null)
-            model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
-        model.addAttribute("validActionList", validActions);
-        model.addAttribute("mode", null);
-        model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
+        } else {
+
+            final WorkflowContainer workflowContainer = new WorkflowContainer();
+            prepareWorkflow(model, abstractEstimate, workflowContainer);
+            List<String> validActions = Collections.emptyList();
+            validActions = customizedWorkFlowService.getNextValidActions(abstractEstimate.getStateType(),
+                    workflowContainer.getWorkFlowDepartment(), workflowContainer.getAmountRule(),
+                    workflowContainer.getAdditionalRule(), WorksConstants.NEW, workflowContainer.getPendingActions(),
+                    abstractEstimate.getCreatedDate());
+            if (abstractEstimate.getState() != null && abstractEstimate.getState().getNextAction() != null)
+                model.addAttribute("nextAction", abstractEstimate.getState().getNextAction());
+            model.addAttribute("validActionList", validActions);
+            model.addAttribute("mode", null);
+            model.addAttribute("stateType", abstractEstimate.getClass().getSimpleName());
         }
         model.addAttribute("documentDetails", abstractEstimate.getDocumentDetails());
     }
@@ -182,16 +182,16 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         estimateService.validateAssetDetails(abstractEstimate, bindErrors);
         estimateService.validateActivities(abstractEstimate, bindErrors);
         estimateService.validateOverheads(abstractEstimate, bindErrors);
-        
-        //Added server side validation for selected abstract estimate created flag
+
+        // Added server side validation for selected abstract estimate created flag
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
             estimateService.validateTechnicalSanctionDetail(abstractEstimate, bindErrors);
             estimateService.validateAdminSanctionDetail(abstractEstimate, bindErrors);
             estimateService.setTechnicalSanctionDetails(abstractEstimate);
-            
+
         }
-            
+
         if (!workFlowAction.equals(WorksConstants.SAVE_ACTION)) {
             if (abstractEstimate.getSorActivities().isEmpty() && abstractEstimate.getNonSorActivities().isEmpty())
                 bindErrors.reject("error.sor.nonsor.required", "error.sor.nonsor.required");
@@ -226,7 +226,7 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             if (abstractEstimate.getLineEstimateDetails() != null
                     && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
                 return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
-                    + "&approvalPosition=";
+                        + "&approvalPosition=";
             else
                 return "redirect:/abstractestimate/abstractestimate-success?estimate=" + savedAbstractEstimate.getId()
                         + "&approvalPosition=" + approvalPosition;
@@ -280,12 +280,10 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
             final String nextDesign) {
         String message = "";
         if (abstractEstimate.getLineEstimateDetails() != null
-                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated()) {
-                message = messageSource.getMessage("msg.estimate.spilladminsanctioned",
-                        new String[] { abstractEstimate.getEstimateNumber() }, null);
-            
-        }else{
-        if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isAbstractEstimateCreated())
+            message = messageSource.getMessage("msg.estimate.spilladminsanctioned",
+                    new String[] { abstractEstimate.getEstimateNumber() }, null);
+        else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString()))
             message = messageSource.getMessage("msg.estimate.saved",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CREATED.toString())
@@ -315,9 +313,8 @@ public class CreateAbstractEstimateController extends GenericWorkFlowController 
         else if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.CANCELLED.toString()))
             message = messageSource.getMessage("msg.estimate.cancelled",
                     new String[] { abstractEstimate.getEstimateNumber() }, null);
-        }
         return message;
-        
+
     }
 
     /**

@@ -64,7 +64,6 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -144,10 +143,10 @@ public class ContractorBillPDFController {
             reportParams.put("panNo",
                     !contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber().isEmpty()
                             ? contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getContractor().getPanNumber()
-                                    : "N/A");
+                            : "N/A");
             reportParams.put("billType", contractorBillRegister.getBilltype());
-            reportParams.put("workCommencedDate", (contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() != null) ? 
-                    formatter.format(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate()) : "");
+            reportParams.put("workCommencedDate", contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate() != null
+                    ? formatter.format(contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate()) : "");
             reportParams.put("win", contractorBillRegister.getWorkOrderEstimate().getEstimate().getProjectCode().getCode());
             reportParams.put("billNumber", contractorBillRegister.getBillnumber());
             reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
@@ -164,9 +163,9 @@ public class ContractorBillPDFController {
             reportParams.put("approverName", contractorBillRegister.getApprovedBy() != null
                     ? contractorBillRegister.getApprovedBy().getName() : "N/A");
             reportParams.put("mbAmountExists",
-                    (contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities() != null
+                    contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities() != null
                             && !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty() ? "Yes"
-                                    : "No"));
+                                    : "No");
             reportParams.put("mbDetails", mbHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister));
             reportInput = new ReportRequest(CONTRACTORBILLPDF, getBillDetailsMap(contractorBillRegister, reportParams),
                     reportParams);
@@ -189,7 +188,7 @@ public class ContractorBillPDFController {
         BigDecimal debitSum = BigDecimal.ZERO;
         final List<CChartOfAccounts> contractorPayableAccountList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurposeName(WorksConstants.CONTRACTOR_NETPAYABLE_PURPOSE);
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
             if (egBilldetails.getDebitamount() != null) {
                 billDetails = new HashMap<String, Object>();
                 final CChartOfAccounts coa = chartOfAccountsHibernateDAO.findById(egBilldetails.getGlcodeid().longValue(), false);
@@ -202,8 +201,7 @@ public class ContractorBillPDFController {
                 billDetails.put("isNetPayable", false);
                 billDetailsList.add(billDetails);
             }
-        }
-        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes()) {
+        for (final EgBilldetails egBilldetails : contractorBillRegister.getEgBilldetailes())
             if (egBilldetails.getCreditamount() != null) {
                 billDetails = new HashMap<String, Object>();
                 final CChartOfAccounts coa = chartOfAccountsHibernateDAO
@@ -222,7 +220,6 @@ public class ContractorBillPDFController {
                 }
                 billDetailsList.add(billDetails);
             }
-        }
         reportParams.put("debitSum", debitSum);
         reportParams.put("creditSum", creditSum);
         BigDecimal netpayable = BigDecimal.ZERO;

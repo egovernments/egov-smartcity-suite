@@ -41,7 +41,6 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -144,7 +143,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
         contractorBillRegister.setBilldate(new Date());
         model.addAttribute("mode", "new");
-        model.addAttribute("mbHeaders",mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),contractorBillRegister.getBilldate()));
+        model.addAttribute("mbHeaders",
+                mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(), contractorBillRegister.getBilldate()));
         // TODO: remove this condition to check if spillover
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
                 && !workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag())
@@ -157,7 +157,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 offlineStatus != null ? offlineStatus.getStatusDate() : "");
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
-        if(workOrderEstimate.getEstimate().getLineEstimateDetails() != null && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+        if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
+                && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
             model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : "");
             model.addAttribute("currFinYearStartDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
         }
@@ -201,9 +202,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         contractorBillRegisterService.mergeDeductionDetails(contractorBillRegister);
 
         validateInput(contractorBillRegister, workOrderEstimate, resultBinder, request);
-        if (StringUtils.isBlank(workFlowAction)) {
+        if (StringUtils.isBlank(workFlowAction))
             validateBillDateToSkipWorkflow(contractorBillRegister, resultBinder);
-        }
 
         contractorBillRegister = addBillDetails(contractorBillRegister, workOrderEstimate, resultBinder, request);
 
@@ -232,7 +232,8 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                     offlineStatus != null ? offlineStatus.getStatusDate() : "");
             model.addAttribute("workOrderEstimate", workOrderEstimate);
             model.addAttribute("contractorBillRegister", contractorBillRegister);
-            model.addAttribute("mbHeaders", mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(),contractorBillRegister.getBilldate()));
+            model.addAttribute("mbHeaders",
+                    mBHeaderService.getMBHeaderBasedOnBillDate(workOrderEstimate.getId(), contractorBillRegister.getBilldate()));
             return "contractorBill-form";
         } else {
 
@@ -388,7 +389,7 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
             if (contractorBillRegister.getMbHeader().getMbDate() != null
                     && contractorBillRegister.getBilldate()
-                    .before(contractorBillRegister.getMbHeader().getMbDate()))
+                            .before(contractorBillRegister.getMbHeader().getMbDate()))
                 resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
 
         }
@@ -406,32 +407,28 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                         .getEgBillregistermis().getPartyBillDate().after(contractorBillRegister.getBilldate()))
             resultBinder.rejectValue("egBillregistermis.partyBillDate", "error.partybilldate.billdate");
 
-        Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
+        final Date workCompletionDate = contractorBillRegister.getWorkOrderEstimate().getWorkCompletionDate();
         if (contractorBillRegister.getBilltype().equals(BillTypes.Final_Bill.toString())
-                && workCompletionDate == null) {
+                && workCompletionDate == null)
             resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.required");
-        }
 
         final Date currentDate = new Date();
         if (workCompletionDate != null) {
             final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
                     workOrderEstimate.getWorkOrder().getId(), WorksConstants.WORKORDER,
                     OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
-            if (workCompletionDate.after(currentDate)) {
+            if (workCompletionDate.after(currentDate))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.futuredate");
-            }
             if (offlineStatus != null) {
                 if (workCompletionDate.before(offlineStatus.getStatusDate()))
                     resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                             "error.workcompletiondate.workcommenceddate");
             } else if (workCompletionDate
-                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())) {
+                    .before(contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate",
                         "error.workcompletiondate.workorderdate");
-            }
-            if (workCompletionDate.after(contractorBillRegister.getBilldate())) {
+            if (workCompletionDate.after(contractorBillRegister.getBilldate()))
                 resultBinder.rejectValue("workOrderEstimate.workCompletionDate", "error.workcompletiondate.billdate");
-            }
         }
 
         if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
@@ -446,17 +443,17 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 resultBinder.rejectValue("billdate", "error.billdate.finyear");
         }
 
-        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
-        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate())) {
+        final MBHeader mBHeader = mBHeaderService.getLatestMBHeaderToValidateBillDate(
+                contractorBillRegister.getWorkOrderEstimate().getId(), contractorBillRegister.getBilldate());
+        if (mBHeader != null && contractorBillRegister.getBilldate().before(mBHeader.getMbDate()))
             resultBinder.rejectValue("mbHeader.mbDate", "error.billdate.mbdate");
-        }
 
         if (contractorBillRegister.getWorkOrderEstimate() != null
                 && !contractorBillRegister.getWorkOrderEstimate().getWorkOrderActivities().isEmpty()) {
-         final List<MBHeader> mbheaders = mBHeaderService.getMBHeaderBasedOnBillDate(contractorBillRegister.getWorkOrderEstimate().getId(),contractorBillRegister.getBilldate());
-            if (mbheaders != null && mbheaders.isEmpty()) {
+            final List<MBHeader> mbheaders = mBHeaderService.getMBHeaderBasedOnBillDate(
+                    contractorBillRegister.getWorkOrderEstimate().getId(), contractorBillRegister.getBilldate());
+            if (mbheaders != null && mbheaders.isEmpty())
                 resultBinder.reject("error.mbnotexists.tocreatebill", "error.mbnotexists.tocreatebill");
-            }
         }
 
     }
@@ -688,15 +685,14 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     private void validateBillDateToSkipWorkflow(final ContractorBillRegister contractorBillRegister,
             final BindingResult resultBinder) {
-        Date cutOffDate = worksUtils.getCutOffDate();
+        final Date cutOffDate = worksUtils.getCutOffDate();
         final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
-        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
         if (cutOffDate != null && (contractorBillRegister.getBilldate().before(currFinYearStartDate)
-                || contractorBillRegister.getBilldate().after(cutOffDate))) {
+                || contractorBillRegister.getBilldate().after(cutOffDate)))
             resultBinder.reject("error.billdate.cutoffdate",
                     new String[] { fmt.format(cutOffDate) },
                     null);
-        }
     }
 
 }

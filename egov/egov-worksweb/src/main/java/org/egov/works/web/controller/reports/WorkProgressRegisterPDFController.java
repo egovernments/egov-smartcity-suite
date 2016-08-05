@@ -156,7 +156,7 @@ public class WorkProgressRegisterPDFController {
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
 
         reportParams.put("queryParameters", queryParameters);
-        
+
         return generateReport(workProgressRegisters, request, session, contentType);
     }
 

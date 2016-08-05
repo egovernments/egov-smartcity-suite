@@ -74,7 +74,7 @@ public class SearchMBHeaderJsonAdaptor implements JsonSerializer<MBHeader> {
         jsonObject.addProperty("department", workOrderEstimate.getEstimate().getExecutingDepartment().getName());
         jsonObject.addProperty("contractor", workOrderEstimate.getWorkOrder().getContractor().getName());
         jsonObject.addProperty("agreemantAmount", workOrderEstimate.getWorkOrder().getWorkOrderAmount());
-        //mbRefNo and mbDate are used in reloading mb's while creating contractor bill
+        // mbRefNo and mbDate are used in reloading mb's while creating contractor bill
         jsonObject.addProperty("mbRefNo", mBHeader.getMbRefNo());
         jsonObject.addProperty("mbDate", sdf.format(mBHeader.getMbDate()));
         jsonObject.addProperty("mbrefnumberdate", mBHeader.getMbRefNo() + "--" + sdf.format(mBHeader.getMbDate()));

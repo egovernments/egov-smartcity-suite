@@ -127,12 +127,12 @@ public class EstimateAbstractReportJsonAdaptor implements JsonSerializer<Estimat
                 jsonObject.addProperty("loaCreated", "");
 
             if (estimateAbstractReport.getLoaNotCreated() != null)
-                jsonObject.addProperty("loaNotCreated",estimateAbstractReport.getLoaNotCreated());
+                jsonObject.addProperty("loaNotCreated", estimateAbstractReport.getLoaNotCreated());
             else
                 jsonObject.addProperty("loaNotCreated", "");
-            
+
             if (estimateAbstractReport.getWorkNotCommenced() != null)
-                jsonObject.addProperty("workNotCommenced",estimateAbstractReport.getWorkNotCommenced());
+                jsonObject.addProperty("workNotCommenced", estimateAbstractReport.getWorkNotCommenced());
             else
                 jsonObject.addProperty("workNotCommenced", "");
 

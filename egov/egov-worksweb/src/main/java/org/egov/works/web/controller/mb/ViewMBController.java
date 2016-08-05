@@ -61,7 +61,7 @@ public class ViewMBController {
 
     @Autowired
     private WorksUtils worksUtils;
-    
+
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -74,10 +74,10 @@ public class ViewMBController {
                         mBDetail.getWorkOrderActivity().getId());
                 if (prevCumulativeAmount != null)
                     mBDetail.setPrevCumlvQuantity(prevCumulativeAmount);
-            } 
+            }
         mBHeader.setDocumentDetails(worksUtils.findByObjectIdAndObjectType(mBHeader.getId(), WorksConstants.MBHEADER));
         model.addAttribute("mbHeader", mBHeader);
-        model.addAttribute("documentDetails",mBHeader.getDocumentDetails());
+        model.addAttribute("documentDetails", mBHeader.getDocumentDetails());
         model.addAttribute("mode", "view");
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(mBHeader.getState(), mBHeader.getStateHistory()));

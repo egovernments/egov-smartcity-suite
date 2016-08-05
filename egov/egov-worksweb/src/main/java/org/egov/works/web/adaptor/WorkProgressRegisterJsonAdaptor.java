@@ -94,7 +94,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("nameOfWork", "");
             if (workProgressRegister.getWinCode() != null)
-                jsonObject.addProperty("winCodeEstimateNumber", workProgressRegister.getWinCode() + ", " + workProgressRegister.getEstimateNumber());
+                jsonObject.addProperty("winCodeEstimateNumber",
+                        workProgressRegister.getWinCode() + ", " + workProgressRegister.getEstimateNumber());
             else
                 jsonObject.addProperty("winCodeEstimateNumber", "");
             if (workProgressRegister.getFund() != null)

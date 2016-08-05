@@ -95,13 +95,12 @@ public class SearchAbstractEstimateController {
 
     @Autowired
     private WorksUtils worksUtils;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    
+
     @Autowired
     private MeasurementSheetService measurementSheetService;
-
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchAbstractEstimate searchAbstractEstimate, final Model model)
@@ -110,12 +109,16 @@ public class SearchAbstractEstimateController {
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
         for (final EgwStatus egwStatus : egwStatuses)
-			if (!egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.COMMERCIAL_EVALUATION_DONE.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TECHNICAL_EVALUATION_DONE.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_DOCUMENT_RELEASED.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_OPENED.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.NOTICEINVITINGTENDERRELEASED.toString()))
+            if (!egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString())
+                    && !egwStatus.getCode()
+                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.COMMERCIAL_EVALUATION_DONE.toString())
+                    && !egwStatus.getCode()
+                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TECHNICAL_EVALUATION_DONE.toString())
+                    && !egwStatus.getCode()
+                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_DOCUMENT_RELEASED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(OfflineStatusesForAbstractEstimate.TENDER_OPENED.toString())
+                    && !egwStatus.getCode()
+                            .equalsIgnoreCase(OfflineStatusesForAbstractEstimate.NOTICEINVITINGTENDERRELEASED.toString()))
                 newEgwStatuses.add(egwStatus);
         model.addAttribute("abstractEstimateStatus", newEgwStatuses);
         model.addAttribute("searchAbstractEstimate", searchAbstractEstimate);
@@ -142,7 +145,7 @@ public class SearchAbstractEstimateController {
                 workOrderEstimateService.getWorkOrderEstimateByAbstractEstimateId(Long.valueOf(id)));
         model.addAttribute("paymentreleased",
                 estimateService.getPaymentsReleasedForLineEstimate(abstractEstimate.getLineEstimateDetails()));
-       
+
         model.addAttribute("adminsanctionbydesignation",
                 worksUtils.getUserDesignation(abstractEstimate.getApprovedBy()));
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
@@ -150,7 +153,7 @@ public class SearchAbstractEstimateController {
         String techSanctionBy = "";
         if (!abstractEstimate.getEstimateTechnicalSanctions().isEmpty())
             techSanctionBy = worksUtils.getUserDesignation(abstractEstimate.getEstimateTechnicalSanctions()
-                    .get(abstractEstimate.getEstimateTechnicalSanctions().size()-1).getTechnicalSanctionBy());
+                    .get(abstractEstimate.getEstimateTechnicalSanctions().size() - 1).getTechnicalSanctionBy());
         model.addAttribute("technicalsanctionbydesignation", techSanctionBy);
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(abstractEstimate.getState(), abstractEstimate.getStateHistory()));
@@ -188,7 +191,7 @@ public class SearchAbstractEstimateController {
                 WorksConstants.ABSTRACTESTIMATE);
         abstractEstimate.setDocumentDetails(documentDetailsList);
     }
-    
+
     @RequestMapping(value = "/searchabstractestimateforofflinestatus-form", method = RequestMethod.GET)
     public String searchAbstractEstimateToSetOfflineStatus(
             @ModelAttribute final AbstractEstimateForLoaSearchRequest abstractEstimateForLoaSearchRequest,
@@ -197,12 +200,12 @@ public class SearchAbstractEstimateController {
         final List<EgwStatus> egwStatuses = egwStatusHibernateDAO.getStatusByModule(WorksConstants.ABSTRACTESTIMATE);
         final List<EgwStatus> newEgwStatuses = new ArrayList<EgwStatus>();
         for (final EgwStatus egwStatus : egwStatuses)
-			if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW)
-					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
-					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
-					&& !egwStatus.getCode().equalsIgnoreCase(EstimateStatus.TECH_SANCTIONED.toString())
-					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
-					&& !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
+            if (!egwStatus.getCode().equalsIgnoreCase(WorksConstants.NEW)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.REJECTED)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CANCELLED)
+                    && !egwStatus.getCode().equalsIgnoreCase(EstimateStatus.TECH_SANCTIONED.toString())
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.CREATED_STATUS)
+                    && !egwStatus.getCode().equalsIgnoreCase(WorksConstants.RESUBMITTED_STATUS))
                 newEgwStatuses.add(egwStatus);
         final List<Department> departments = lineEstimateService.getUserDepartments(securityUtils.getCurrentUser());
         final List<Long> departmentIds = new ArrayList<Long>();

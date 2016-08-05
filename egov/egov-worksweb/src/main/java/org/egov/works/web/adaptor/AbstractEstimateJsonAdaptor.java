@@ -134,7 +134,7 @@ public class AbstractEstimateJsonAdaptor implements JsonSerializer<AbstractEstim
                             worksUtils.getApproverName(abstractEstimate.getState().getOwnerPosition().getId()));
             } else
                 jsonObject.addProperty("currentowner", "NA");
-            
+
             if (abstractEstimate.getName() != null)
                 jsonObject.addProperty("nameofwork", abstractEstimate.getName());
             else
