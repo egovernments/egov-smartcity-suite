@@ -203,12 +203,16 @@ public class MBHeaderService {
             if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.CREATED.toString()));
+            else if(StringUtils.isBlank(workFlowAction))
+                mbHeader.setEgwStatus(worksUtils
+                        .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.APPROVED.toString()));
             else
                 mbHeader.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.NEW.toString()));
         mergeSorAndNonSorMBDetails(mbHeader);
         MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
 
+        if(StringUtils.isNotBlank(workFlowAction)) 
         createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
                 workFlowAction);
 

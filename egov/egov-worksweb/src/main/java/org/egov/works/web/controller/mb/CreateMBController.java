@@ -2,13 +2,17 @@ package org.egov.works.web.controller.mb;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.utils.WorksConstants;
@@ -56,6 +60,9 @@ public class CreateMBController {
 
     @Autowired
     private WorksUtils worksUtils;
+    
+    @Autowired
+    private LineEstimateService lineEstimateService;
 
     public WorkOrderEstimate getWorkOrderEstimate(final Long workOrderEstimateId) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
@@ -106,7 +113,9 @@ public class CreateMBController {
         mbHeaderService.validateMBHeader(mbHeader, jsonObject, resultBinder, mode);
         workOrderEstimateService.getContratorBillForWorkOrderEstimateAndBillType(mbHeader.getWorkOrderEstimate().getId(),
                 jsonObject);
-
+        if(StringUtils.isBlank(workFlowAction)) {
+        validateMBDateToSkipWorkflow(mbHeader,jsonObject, errors);
+        }
         if (jsonObject.toString().length() > 2) {
             sendAJAXResponse(jsonObject.toString(), response);
             return "";
@@ -134,9 +143,13 @@ public class CreateMBController {
                     approverName = keyNameArray[1];
                     nextDesign = keyNameArray[3];
                 }
-
-            jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
-                    new String[] { approverName, nextDesign, mbHeader.getMbRefNo() },
+            if(StringUtils.isBlank(workFlowAction)) {
+                jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.createdandapprove",
+                        new String[] { mbHeader.getMbRefNo() },
+                        null));
+            } else 
+               jsonObject.addProperty("message", messageSource.getMessage("msg.mbheader.created",
+                    new String[] {approverName, nextDesign,mbHeader.getMbRefNo() },
                     null));
         }
 
@@ -222,5 +235,20 @@ public class CreateMBController {
                     new String[] { mbHeader.getMbRefNo() }, null);
 
         return message;
+    }
+    
+    private  void validateMBDateToSkipWorkflow(final MBHeader mBHeader, final JsonObject jsonObject, final BindingResult errors) {
+        Date cutOffDate = worksUtils.getCutOffDate();
+        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
+        Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
+        if (cutOffDate != null && (mBHeader.getMbDate().before(currFinYearStartDate)
+                || mBHeader.getMbDate().after(cutOffDate))) {
+            final String message = messageSource.getMessage("error.mbdate.cutoffdate",
+                    new String[] {fmt.format(cutOffDate)},null);
+            jsonObject.addProperty("cutoffdateerror", message);
+            if (errors != null)
+                errors.reject("cutoffdateerror", message);
+        }
+     
     }
 }

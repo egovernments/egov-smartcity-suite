@@ -43,17 +43,20 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -76,12 +79,19 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Autowired
     private MeasurementSheetService measurementSheetService;
 
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @Override
-    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type, final JsonSerializationContext jsc) {
+    public JsonElement serialize(final WorkOrderEstimate workOrderEstimate, final Type type,
+            final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         final DecimalFormat df = new DecimalFormat("0.00");
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,8 +116,9 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
                 jsonObject.addProperty("contractorName", workOrder.getContractor().getName());
                 jsonObject.addProperty("workOrderAssignedTo", workOrder.getEngineerIncharge().getName());
                 jsonObject.addProperty("tenderFinalisedPercentage", workOrder.getTenderFinalizedPercentage());
-                final OfflineStatus offlineStatus = offlineStatusService.getOfflineStatusByObjectIdAndObjectTypeAndStatus(
-                        workOrder.getId(), WorksConstants.WORKORDER, OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
+                final OfflineStatus offlineStatus = offlineStatusService
+                        .getOfflineStatusByObjectIdAndObjectTypeAndStatus(workOrder.getId(), WorksConstants.WORKORDER,
+                                OfflineStatuses.WORK_COMMENCED.toString().toUpperCase());
                 if (offlineStatus != null)
                     jsonObject.addProperty("workCommencedDate", sdf.format(offlineStatus.getStatusDate()));
                 else
@@ -134,18 +145,29 @@ public class MeasurementBookJsonAdaptor implements JsonSerializer<WorkOrderEstim
             final AppConfigValues value = values.get(0);
 
             jsonObject.addProperty("quantityTolerance", value.getValue());
-            
-            final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(-1L, workOrderEstimate.getId());
-            
-            if (!previousMBHeaders.isEmpty()) {
+
+            final List<MBHeader> previousMBHeaders = mbHeaderService.getPreviousMBHeaders(-1L,
+                    workOrderEstimate.getId());
+
+            if (!previousMBHeaders.isEmpty())
                 jsonObject.addProperty("previousMBDate",
                         sdf.format(previousMBHeaders.get(previousMBHeaders.size() - 1).getMbDate()));
-            } else
+            else
                 jsonObject.addProperty("previousMBDate", "");
 
             jsonObject.addProperty("isMeasurementsExist",
-                measurementSheetService.existsByEstimate(workOrderEstimate.getEstimate().getId()));
+                    measurementSheetService.existsByEstimate(workOrderEstimate.getEstimate().getId()));
             jsonObject.addProperty("workOrderEstimateId", workOrderEstimate.getId());
+            if (workOrderEstimate.getEstimate().getLineEstimateDetails() != null
+                    && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+                jsonObject.addProperty("cutOffDate",
+                        worksUtils.getCutOffDate() != null ? sdf.format(worksUtils.getCutOffDate()) : "");
+                final Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date())
+                        .getStartingDate();
+                jsonObject.addProperty("currFinYearStartDate", sdf.format(currFinYearStartDate));
+            }
+            jsonObject.addProperty("spillOverFlag",
+                    workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag());
         }
         return jsonObject;
     }

@@ -37,6 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+
+$(document).ready(function(){
+	sorTotal();
+	nonSorTotal();
+	$('#CreateAndApprove').prop('type',"hidden");
+	
+});
 function validateWorkFlowApprover(name) {
 	document.getElementById("workFlowAction").value = name;
 	var approverPosId = document.getElementById("approvalPosition");

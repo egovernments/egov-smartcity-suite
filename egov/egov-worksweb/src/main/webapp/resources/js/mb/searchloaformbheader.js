@@ -282,6 +282,10 @@ $('#btncreatemb').click(function(e) {
 					if($('#isMeasurementsExist').val() == 'false') {
 						$('.openCloseAll').hide();
 					}
+					 if($('#mbStatus').val() == '' && $('#spillOverFlag').val() == 'true') {
+							$('#CreateAndApprove').prop('value',"Create and Approve");
+						} else 
+							$('#CreateAndApprove').prop('type',"hidden"); 
 				});
 				$('.title2').html('Create Measurement Book');
 				$('#measurementBookDiv').removeAttr('hidden');

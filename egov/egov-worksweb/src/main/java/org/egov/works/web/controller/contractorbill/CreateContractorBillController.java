@@ -157,6 +157,10 @@ public class CreateContractorBillController extends GenericWorkFlowController {
                 offlineStatus != null ? offlineStatus.getStatusDate() : "");
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("contractorBillRegister", contractorBillRegister);
+        if(workOrderEstimate.getEstimate().getLineEstimateDetails() != null && workOrderEstimate.getEstimate().getLineEstimateDetails().getLineEstimate().isSpillOverFlag()) {
+            model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : "");
+            model.addAttribute("currFinYearStartDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
+        }
         return "contractorBill-form";
     }
 
@@ -176,19 +180,6 @@ public class CreateContractorBillController extends GenericWorkFlowController {
         final List<AppConfigValues> retentionMoneyPerForFinalBillApp = appConfigValuesService
                 .getConfigValuesByModuleAndKey(WorksConstants.WORKS_MODULE_NAME,
                         WorksConstants.APPCONFIG_KEY_RETENTION_MONEY_PER_FOR_FINAL_BILL);
-        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
-            final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
-            try {
-                model.addAttribute("cutOffDate",formatter.parse(appConfigValue.getValue()));
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        model.addAttribute("currFinYearStartDate", lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate());
         model.addAttribute("retentionMoneyPerForPartBill", retentionMoneyPerForPartBillApp.get(0).getValue());
         model.addAttribute("retentionMoneyPerForFinalBill", retentionMoneyPerForFinalBillApp.get(0).getValue());
     }
@@ -697,23 +688,11 @@ public class CreateContractorBillController extends GenericWorkFlowController {
 
     private void validateBillDateToSkipWorkflow(final ContractorBillRegister contractorBillRegister,
             final BindingResult resultBinder) {
-        Date cutOffDate = null;
-        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
-        if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
-            final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
-            try {
-                cutOffDate = formatter.parse(appConfigValue.getValue());
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+        Date cutOffDate = worksUtils.getCutOffDate();
+        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
         Date currFinYearStartDate = lineEstimateService.getCurrentFinancialYear(new Date()).getStartingDate();
-        if (contractorBillRegister.getBilldate().before(currFinYearStartDate)
-                || contractorBillRegister.getBilldate().after(cutOffDate)) {
+        if (cutOffDate != null && (contractorBillRegister.getBilldate().before(currFinYearStartDate)
+                || contractorBillRegister.getBilldate().after(cutOffDate))) {
             resultBinder.reject("error.billdate.cutoffdate",
                     new String[] { fmt.format(cutOffDate) },
                     null);

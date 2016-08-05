@@ -42,6 +42,7 @@ package org.egov.works.utils;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -326,6 +327,23 @@ public class WorksUtils {
         return (List<FileStoreMapper>) entityManager.unwrap(Session.class)
                 .createQuery("from FileStoreMapper where fileName like '%sor_output%' order by id desc ").setMaxResults(5)
                 .list();
+    }
+    
+    public Date getCutOffDate() {
+        Date cutOffDate = null;
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+        final List<AppConfigValues> cutOffDateAppConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY);
+        if (cutOffDateAppConfig != null && !cutOffDateAppConfig.isEmpty()) {
+            final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
+            try {
+                cutOffDate = formatter.parse(appConfigValue.getValue());
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return cutOffDate;
     }
 
 }

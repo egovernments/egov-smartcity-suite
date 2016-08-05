@@ -65,6 +65,45 @@ $('#Save').click(function() {
 	return false;
 });
 
+$('#CreateAndApprove').click(function() {
+	
+	var flag = true;
+
+	document.getElementById("workFlowAction").value = "";
+	
+	$('#approvalDepartment').removeAttr('required');
+	$('#approvalDesignation').removeAttr('required');
+	$('#approvalPosition').removeAttr('required');
+	$('#approvalComent').removeAttr('required');
+	
+	if($('#mbHeader').valid()) {
+		flag = validateFormData();
+		if(!flag)
+			return false;
+	}
+
+	var mbDate = $('#mbDate').data('datepicker').date;
+	var cutOffDate = $('#cutOffDate').val();
+	var finYearDate = $('#currFinYearStartDate').val();
+	if(cutOffDate != '' && finYearDate != '' && $('#mbDate').val() != '') {
+	if(mbDate.getTime() > new Date(cutOffDate).getTime() || mbDate.getTime() < new Date(finYearDate).getTime()) {
+		bootbox.alert($('#cuttoffdateerrormsg1').val() + ' ' +cutOffDate+ '.'+'</br>'+$('#cuttoffdateerrormsg2').val());
+		$('#mbDate').val('');
+		return false;
+	 }
+	}
+	
+	validateSORDetails();
+	
+	if($('#mbHeader').valid() && flag) {
+		submitForm("");
+	}
+	else
+		return false;
+	
+	return false;
+});
+
 $('#Forward').click(function() {
 	
 	var flag = true;
@@ -92,6 +131,7 @@ $('#Forward').click(function() {
 	
 	return false;
 });
+
 
 $('#Cancel').click(function() {
 	
@@ -193,6 +233,7 @@ function submitForm(workFlowAction) {
 				
 				$('#successMessage').html(json.message);
 				$('#Cancel').prop('type',"submit");
+				$('#CreateAndApprove').prop('type',"hidden");
 			} else {
 				$('#measurementBookDiv').remove();
 				$('#forwardMessage').html(json.message);
