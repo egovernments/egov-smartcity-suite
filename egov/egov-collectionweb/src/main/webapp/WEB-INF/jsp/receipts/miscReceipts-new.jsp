@@ -99,14 +99,27 @@ function validateMiscReceipt()
     }else{
     	var receiptDate = document.getElementById("voucherDate").value;
         var cutOffDate = document.getElementById("cutOffDate").value;
+        var newdate = process(cutOffDate);
+        newdate.setDate(newdate.getDate() - 1);
+        var formatedCutOff=new Date(newdate);
+        formatedCutOff=formatedCutOff.getDate()+"/"+(formatedCutOff.getMonth()+1)+"/"+formatedCutOff.getFullYear();
     	if(process(receiptDate) > process(cutOffDate)) {
-    		 var r = confirm('Please enter the date less than the cut-off date ' + cutOffDate + '. If the date entered is greater than the cut-off date , then it is considered as live transactions and it would go through approval workflow. Do you wish to continue?');
+    		 var r = confirm('Please enter the date less than the cut-off date ' + formatedCutOff + '. If the date entered is greater than the cut-off date , then it is considered as live transactions and it would go through approval workflow. Do you wish to continue?');
     		 if (r != true) {
     			 document.getElementById("receipt_error_area").style.display="none";
  				return false;
     		 } 
     		}
+        var financialYearDate = document.getElementById("financialYearDate").value;
+    	if(process(financialYearDate) > process(receiptDate)) {
+			 document.getElementById("receipt_error_area").style.display="block";
+    		document.getElementById("receipt_error_area").innerHTML+=
+				'<s:text name="challan.error.receiptdate.lessthan.financialyear" />'+ '<br>';   	
+			       window.scroll(0,0);
+				return false;
+   		}
     }
+    
 	return true;
 }
 
@@ -785,6 +798,9 @@ var totaldbamt=0,totalcramt=0;
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
          <s:date name="cutOffDate" var="cutOffDateFormat" format="dd/MM/yyyy"/>
          <s:hidden label="cutOffDate" id="cutOffDate"  name="cutOffDate" value="%{cutOffDateFormat}"/>
+                  <s:date name="financialYearDate" var="financialYearDateFormat" format="dd/MM/yyyy"/>
+         
+    	 <s:hidden label="financialYearDate" id="financialYearDate"  name="financialYearDate" value="%{financialYearDateFormat}"/>
           </td>
           </s:if>
            <s:else>

@@ -78,6 +78,7 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -296,7 +297,13 @@ public class ReceiptAction extends BaseFormAction {
     private Long functionId;
 
     private Date cutOffDate;
+    
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+    
+    private Date financialYearDate;
 
+    
     @Override
     public void prepare() {
         super.prepare();
@@ -365,6 +372,7 @@ public class ReceiptAction extends BaseFormAction {
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
+        financialYearDate=financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate();
     }
 
     private String decodeBillXML() {
@@ -1885,4 +1893,14 @@ public class ReceiptAction extends BaseFormAction {
     public void setCutOffDate(Date cutOffDate) {
         this.cutOffDate = cutOffDate;
     }
+
+    public Date getFinancialYearDate() {
+        return financialYearDate;
+    }
+
+    public void setFinancialYearDate(Date financialYearDate) {
+        this.financialYearDate = financialYearDate;
+    }
+    
+    
 }
