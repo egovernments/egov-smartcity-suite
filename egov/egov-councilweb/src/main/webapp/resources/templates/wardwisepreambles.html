@@ -50,7 +50,6 @@
 		
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap.css">
 		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/egov/custom.css">
-		<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css">
 		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/jquery/jquery.js"></script>
 		
 		<!--[if lt IE 9]><script src="resources/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -74,7 +73,7 @@
 								<img src="../../../../../../egov-egiweb/src/main/webapp/resources/global/images/chennai_logo.jpg" height="60">
 								<div>
 									
-									<span class="title2">Create MOM</span>
+									<span class="title2">Ward Wise Preambles</span>
 								</div>
 							</a>
 						</div>
@@ -98,120 +97,76 @@
 				<div class="row">
 						<div class="col-md-12">
 							<div class="panel panel-primary" data-collapsed="0">
-								
 								<div class="panel-heading">
 									<div class="panel-title">
-										MOM on 20/06/2016
 									</div>
 									
 								</div>
-								<div class="panel-body">
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Meeting Date
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											20/06/2016
-										</div>
-                                        <div class="col-xs-3 add-margin">
-											Meeting Type
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Council Meeting
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Mayor 
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Saketh
-										</div>
-                                        <div class="col-xs-3 add-margin">
-											Dy Mayor
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											Pradeep
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											Total Members in Council
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											60
-										</div>
-										<div class="col-xs-3 add-margin">
-											Members Attended
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											51
-										</div>
-									</div>
-									<div class="row add-border">
-										<div class="col-xs-3 add-margin">
-											No. of Items in Agenda
-										</div>
-										<div class="col-xs-3 add-margin view-content">
-											50
-										</div>
-									</div>
+								<div class="panel-body custom-form">
+									<form role="form" class="form-horizontal form-groups-bordered">
+										<div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Ward Number<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <select class="form-control"><option>Ward No. 2</option></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label text-right">Created Date From<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control datepicker" name="">
+                                            </div>
+                                            <label class="col-sm-2 control-label text-right">Created Date To<span class="mandatory"></span></label>
+                                            <div class="col-sm-3 add-margin">
+                                                <input type="text" class="form-control datepicker" name="">
+                                            </div>
+                                        </div>
+									</form>
 								</div>
-								
-							</div>					
-						</div>
+							</div>	
+
+							<div class="row">
+                                    <div class="text-center">
+                                        <!--a href="newconnectionack.html" class="btn btn-primary">Create Application</a-->
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                        <button class="btn btn-primary">Close</button>
+                                    </div>
+                            </div><br>
+
+                            <div class="table-header">
+								Search Result
+                            </div>
+
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>S.no</th>
+										<th>Ward No.</th>
+										<th>Meeting Type</th>
+										<th>Status</th>
+										<th>GIST of Preamble</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>1</td>
+										<td>3</td>
+										<td>Council</td>	
+										<td>Approved</td>
+										<td>Laying of repad from D.no 141 to 183</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>5</td>
+										<td>Standing Council</td>	
+										<td>Rejected</td>
+										<td>Flyover at Mahadevapura</td>
+									</tr>
+								</tbody>
+							</table>
+
+					</div>
+					
 				</div>
-
-				<div class="table-header">
-					List of Agenda
-				</div>
-
-				<table class="table table-bordered">
-					<thead>
-						<th>S.no</th>
-						<th>Agenda Item</th>
-						<th>Agenda Number</th>
-						<th>Department</th>
-						<th>Ward Number</th>
-						<th>Resolution Comments</th>
-						<th>Add in MOM</th>
-					</thead>
-					<tbody>
-						<tr>
-							<td>1</td>
-							<td>Costructing Drainage from D.no 10 to 40 in Ashok Nagar</td>
-							<td>333</td>
-							<td>Sewerage</td>
-							<td>2</td>	
-							<td><textarea class="form-control" name=""></textarea></td>
-							<td><button class="btn btn-secondary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button></td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>Laying Road from D.no 141 to 225 in Indira Nagar</td>
-							<td>154</td>
-							<td>Works</td>
-							<td>3</td>	
-							<td><textarea class="form-control" name=""></textarea></td>
-							<td><button class="btn btn-secondary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button></td>
-						</tr>
-						<tr>
-							<td>3</td>
-							<td>Street Light fixing at Sarjapur Road</td>
-							<td>330</td>
-							<td>Works</td>
-							<td>5</td>	
-							<td><textarea class="form-control" name=""></textarea></td>
-							<td><button class="btn btn-secondary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button></td>
-						</tr>
-					</tbody>
-				</table>
-
-				<div class="row text-center">
-					<button type="button" class="btn btn-primary approved">Submit</button>
-					<button type="button" class="btn btn-primary approved">Add Sumoto Resolution</button>
-                    <button type="button" class="btn btn-primary approved">Close</button>
-                </div>
 
 			</div>
 			<footer class="main">
@@ -220,12 +175,9 @@
 					
 			</footer> 
 		</div>
-	<script>
-		$('.approved').click(function(){
-			alert('Connection Closed successfully');
-		});
-	</script>
-	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap.js"></script>
+	<link rel="stylesheet" href="../../../../../../egov-egiweb/src/main/webapp/resources/global/css/bootstrap/bootstrap-datepicker.css">
+	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global//js/bootstrap/bootstrap.js"></script>
+		<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/bootstrap/bootstrap-datepicker.js"></script>
 	<script src="../../../../../../egov-egiweb/src/main/webapp/resources/global/js/egov/custom.js"></script>
 	</body>
 </html>
