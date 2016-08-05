@@ -271,6 +271,9 @@ $('#btntrackmilestone').click(function() {
 					});
 					try { $(".datepicker").inputmask(); }catch(e){}
 				}
+				for(var key = 0; key < rowcount; key++) {
+					$('#currentStatus_' + key).trigger('change');
+				}
 			});
 			$.each(json['trackMilestoneActivities'], function(key, value) {
 				$.each(value, function(id, val) {
