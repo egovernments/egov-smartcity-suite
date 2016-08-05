@@ -403,7 +403,7 @@
 	<div class="panel-heading">
 			<div class="panel-title">
 				<label class="col-sm-3 control-label text-right">Standing
-				Council Details:<span class="mandatory"></span>:
+				Council Details:
 			</label>
 			</div>
 		</div>
