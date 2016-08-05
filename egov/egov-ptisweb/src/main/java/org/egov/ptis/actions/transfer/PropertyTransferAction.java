@@ -68,7 +68,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REVENUE_OFFICER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVED;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -240,6 +240,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String actionType;
     private boolean digitalSignEnabled;
+    private boolean mutationFeePaid = Boolean.FALSE;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -341,6 +342,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             return EDIT;
         } else {
             mode = VIEW;
+            if(null != propertyMutation.getReceiptDate())
+                setMutationFeePaid(Boolean.TRUE);
             return VIEW;
         }
 
@@ -700,7 +703,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         && null != propertyMutation.getMutationFee() && null != propertyMutation.getReceiptDate()
                         && StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
                     propertyMutation.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
-                            .withComments(approverComments).withStateValue(TRANSFER_FEE_COLLECTED)
+                            .withComments(approverComments).withStateValue(propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER)
+                                    ?TRANSFER_FEE_COLLECTED : WF_STATE_UD_REVENUE_INSPECTOR_APPROVED)
                             .withDateInfo(currentDate.toDate()).withOwner(pos)
                             .withNextAction(WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING);
                 } else {
@@ -737,6 +741,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
+                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
+                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
+                } else {
+                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
+                }
+                argsForTransferee.add(propertyMutation.getMutationFee().toString());
                 smsMsgForTransferor = getText("msg.createtransferproperty.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.createtransferproperty.sms", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
@@ -748,17 +758,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferee.add(transferOwnerService.getCityName());
                 smsMsgForTransferor = getText("msg.rejecttransferproperty.sms", argsForTransferor);
                 smsMsgForTransferee = getText("msg.rejecttransferproperty.sms", argsForTransferee);
-            } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
-                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
-                } else {
-                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
-                }
-                argsForTransferee.add(propertyMutation.getMutationFee().toString());
-                transferorMobileNumber = "";
-                smsMsgForTransferee = getText("msg.paymenttransferproperty.sms", argsForTransferee);
-            } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
+            }  else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
                 argsForTransferor.add(propertyMutation.getFullTranfereeName());
                 argsForTransferor.add(propertyMutation.getBasicProperty().getUpicNo());
@@ -795,6 +795,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferee.add(propertyMutation.getFullTranfereeName());
                 argsForTransferee.add(propertyMutation.getBasicProperty().getUpicNo());
                 argsForTransferee.add(transferOwnerService.getCityName());
+                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
+                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
+                } else {
+                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
+                }
+                argsForTransferee.add(propertyMutation.getMutationFee().toString());
                 emailBodyTransferee = getText("body.createtransferproperty", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_REJECTED)) {
                 subject = getText("subject.rejecttransferproperty");
@@ -806,18 +812,6 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 argsForTransferee.add(transferOwnerService.getCityName());
                 emailBodyTransferor = getText("body.rejecttransferproperty", argsForTransferor);
                 emailBodyTransferee = getText("body.rejecttransferproperty", argsForTransferee);
-            } else if (mutationState.getNextAction().equals(WFLOW_ACTION_READY_FOR_PAYMENT)) {
-                subject = getText("subject.paymenttransferproperty");
-                argsForTransferee.add(propertyMutation.getFullTranfereeName());
-                if (propertyMutation.getPartyValue().compareTo(propertyMutation.getDepartmentValue()) > 0) {
-                    argsForTransferee.add(propertyMutation.getPartyValue().toString());
-                } else {
-                    argsForTransferee.add(propertyMutation.getDepartmentValue().toString());
-                }
-                argsForTransferee.add(propertyMutation.getMutationFee().toString());
-                argsForTransferee.add(transferOwnerService.getCityName());
-                transferorEmailId = "";
-                emailBodyTransferee = getText("body.paymenttransferproperty", argsForTransferee);
             } else if (mutationState.getValue().equals(WF_STATE_COMMISSIONER_APPROVED)) {
                 subject = getText("subject.approvetransferproperty");
                 argsForTransferor.add(propertyMutation.getFullTranferorName());
@@ -1074,4 +1068,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     public String getAdditionalRule() {
         return propertyMutation.getType();
     }
+
+    public boolean isMutationFeePaid() {
+        return mutationFeePaid;
+    }
+
+    public void setMutationFeePaid(boolean mutationFeePaid) {
+        this.mutationFeePaid = mutationFeePaid;
+    }
+
 }

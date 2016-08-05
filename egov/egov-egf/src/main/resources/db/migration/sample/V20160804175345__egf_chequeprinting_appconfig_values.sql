@@ -1,0 +1,3 @@
+Insert into eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='chequeprintingenabled' and module=(select id from eg_module where name='EGF')), 'now()', 'Y',0);
+
+Insert into eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='chequeprintavailableat' and module=(select id from eg_module where name='EGF')), 'now()', 'assignment',0);

@@ -61,9 +61,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
+import org.egov.tl.service.DocumentTypeService;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -103,13 +105,17 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
-
+    
     @Autowired
     protected InstallmentHibDao installmentDao;
 
     @Autowired
     protected LicenseNumberUtils licenseNumberUtils;
+   
+    @Autowired
+    protected DocumentTypeService documentTypeService;
 
+    
     @Autowired
     protected AssignmentService assignmentService;
 
@@ -476,10 +482,9 @@ public abstract class AbstractLicenseService<T extends License> {
             document.setLicense(license);
         });
     }
-
-    public List<LicenseDocumentType> getDocumentTypesByTransaction(String transaction) {
-        return this.entityQueryService.findAllBy("from LicenseDocumentType where applicationType = ?",
-                transaction);
+    
+    public List<LicenseDocumentType> getDocumentTypesByApplicationType(ApplicationType applicationType) {
+        return this.documentTypeService.getDocumentTypesByApplicationType(applicationType);
     }
 
     public List<NatureOfBusiness> getAllNatureOfBusinesses() {

@@ -68,44 +68,57 @@
 
 				</tr>
 			</thead>
-			<c:forEach var="legalCaseInterimOrder" items="${lcInterimOrderList}">
+			<c:forEach var="legalCaseInterimOrder" items="${lcInterimOrderList}" varStatus="status">
 				<tr>
 					<td colspan="1">
 						<div align="center">
-							<c:out value="${legalCaseInterimOrder.interimOrder.interimOrderType}" />
-						</div>
-					</td>
-
-					<td colspan="1" id="iodate">
+			<input 
+				id="legalCaseInterimOrder[${status.index}].interimOrder.interimOrderType"
+				name="legalCaseInterimOrder[${status.index}].interimOrder.interimOrderType"
+				value="${legalCaseInterimOrder.interimOrder.interimOrderType}"/>
+				</div></td>
+				
+				
+				<td colspan="1" id="iodate">
 						<div align="center">
-							<a style="cursor: pointer;" onclick="viewInterimorder();"> <c:out
-									value="${legalCaseInterimOrder.ioDate}" /> <input type="hidden"
-								value="${legalCaseInterimOrder.id}" name="legalCaseInterimOrder" />
-						</div>
-					</td>
+			
+				<a href="javascript:void(0);" style="cursor: pointer; font-style: Bold;text-decoration: underline;"
+				onclick="viewInterimorder('<c:out value="${legalCaseInterimOrder.id}" />');">
+				<c:out value="${legalCaseInterimOrder.ioDate}" /></a>
+				 
+				</div></td>
+		
+		
+		
+		<td colspan="1">
+						<div align="center">
+			<input 
+				id="legalCaseInterimOrder[${status.index}].mpNumber"
+				name="legalCaseInterimOrder[${status.index}].mpNumber"
+				value="${legalCaseInterimOrder.mpNumber}"/></div></td>
+				
+				<td colspan="1">
+						<div align="center">
+			<input
+				id="legalCaseInterimOrder[${status.index}].notes"
+				name="legalCaseInterimOrder[${status.index}].notes"
+				value="${legalCaseInterimOrder.notes}"/></div></td>
+				
+					
 					<td colspan="1">
 						<div align="center">
-							<c:out value="${legalCaseInterimOrder.mpNumber}" />
-						</div>
-					</td>
-					<td colspan="1">
-						<div align="center">
-							<c:out value="${legalCaseInterimOrder.notes}" />
-						</div>
-					</td>
-					<td colspan="1">
-						<div align="center">
-							<a href="javascript:void(0);"
+							<a href="javascript:void(0);" style="cursor: pointer; font-style: Bold;text-decoration: underline;"
 								onclick="edit('<c:out value="${legalCaseInterimOrder.id}" />');">Edit</a>
-								<input type="hidden" id="lcInterimOrderId" name="lcInterimOrderId"
+								<input type="hidden" id="legalCaseInterimOrder.id" name="legalCaseInterimOrder.id"
 		value="${legalCaseInterimOrder.id}" /> 
 						</div>
 					</td>
 					
+					
 					<td colspan="1">
 						<div align="center">
 						<c:if test="${(legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay')||(legalCaseInterimOrder.interimOrder.interimOrderType == 'Stay on Condition')}">
-							<a href="javascript:void(0);"
+							<a href="javascript:void(0);" style="cursor: pointer; font-style: Bold;text-decoration: underline;"
 								onclick="vacatestay('<c:out value="${legalCaseInterimOrder.id}" />');"><spring:message
 							code="lbl.vacatestay" /></a>
 			</c:if>

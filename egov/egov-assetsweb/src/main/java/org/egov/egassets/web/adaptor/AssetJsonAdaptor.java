@@ -37,10 +37,10 @@ public class AssetJsonAdaptor implements JsonSerializer<Asset> {
 						.getDescription());
 			else
 				jsonObject.addProperty("status", "");
-			if (asset.getDescription() != null)
-				jsonObject.addProperty("description", asset.getDescription());
+			if (asset.getAssetDetails() != null)
+				jsonObject.addProperty("assetDetails", asset.getAssetDetails());
 			else
-				jsonObject.addProperty("description", "");
+				jsonObject.addProperty("assetDetails", "");
 			jsonObject.addProperty("id", asset.getId());
 		}
 		return jsonObject;

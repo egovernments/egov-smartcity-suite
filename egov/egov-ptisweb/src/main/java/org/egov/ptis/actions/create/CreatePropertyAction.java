@@ -573,7 +573,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
                     .getPropertyDetail());
         property.setBasicProperty(basicProp);
-
+        propService.updateReferenceBasicProperty(basicProp, getParentIndex());
     }
 
     private void updatePropertyId(final BasicProperty basicProperty) {
@@ -607,9 +607,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final PropertyStatus propStatus = (PropertyStatus) getPersistenceService().find(
                 "from PropertyStatus where statusCode=?", PROPERTY_STATUS_APPROVED);
         basicProp.setStatus(propStatus);
-        if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
-	        basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROP_CREATE_RSN, null, null,
-	                null, null, getParentIndex()));
+        final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
+                "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, basicProp.getPropertyMutationMaster().getId());
+        if (!propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+            if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
+                basicProp.addPropertyStatusValues(propService.createPropStatVal(basicProp, PROP_CREATE_RSN, null, null,
+                        null, null, getParentIndex()));
         approved = true;
         setWardId(basicProp.getPropertyID().getWard().getId());
         basicPropertyService.applyAuditing(property.getState());
@@ -656,13 +659,18 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         approverName = "";
         buildEmailandSms(property, APPLICATION_TYPE_NEW_ASSESSENT);
         Assignment assignment;
-        if (propService.isEmployee(property.getCreatedBy())) {
-            assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-            propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
-                    .concat(assignment.getPosition().getName());
-        } else {
-            propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        	propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
+        } else {
+        	if (propService.isEmployee(property.getCreatedBy())) {
+                assignment = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+                propertyInitiatedBy = assignment.getEmployee().getName().concat("~")
+                        .concat(assignment.getPosition().getName());
+            } else {
+                propertyInitiatedBy = propertyTaxUtil.getApproverUserName(property.getStateHistory().get(0)
+                        .getOwnerPosition().getId());
+            }
         }
         if (property.getState().getValue().equals("Closed")) {
             assignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
@@ -855,6 +863,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         final PropertyMutationMaster propertyMutationMaster = (PropertyMutationMaster) getPersistenceService().find(
                 "from PropertyMutationMaster pmm where pmm.type=? AND pmm.id=?", PROP_CREATE_RSN, mutationId);
         basicProperty.setPropertyMutationMaster(propertyMutationMaster);
+        if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+        basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null, null,
+                null, null, getParentIndex()));
         basicProperty.setBoundary(boundaryService.getBoundaryById(getElectionWardId()));
         basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
         basicPropertyService.createOwners(property, basicProperty, ownerAddress);
@@ -1227,6 +1238,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                     "From TaxExeptionReason where id = ?", Long.valueOf(taxExemptionId));
             property.setTaxExemptedReason(taxExemptionReason);
             property.setIsExemptedFromTax(Boolean.TRUE);
+        }
+        if (StringUtils.isBlank(taxExemptionId)) {
+            property.setTaxExemptedReason(null);
+            property.setIsExemptedFromTax(Boolean.FALSE);
         }
         
     	propService.updateFloorDetails(property,getFloorDetails());

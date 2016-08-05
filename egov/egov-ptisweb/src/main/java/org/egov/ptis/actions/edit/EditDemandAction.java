@@ -307,6 +307,16 @@ public class EditDemandAction extends BaseFormAction {
                         addActionError(getText("error.editDemand.collectionForUpdatedDemand", errorParams));
                     }
                 }
+                if (null != dd.getRevisedAmount() && null != dd.getActualCollection()) {
+                    if (dd.getRevisedAmount().intValue() < dd.getActualCollection().intValue()) {
+                        addActionError(getText("error.collection.greaterThan.revisedAmount"));
+                    }
+                }
+                if (null != dd.getRevisedAmount() && null != dd.getRevisedCollection()) {
+                    if (dd.getRevisedAmount().intValue() < dd.getRevisedCollection().intValue()) {
+                        addActionError(getText("error.revisedCollecion.greaterThan.revisedAmount"));
+                    }
+                }
             }
 
         }
@@ -560,9 +570,10 @@ public class EditDemandAction extends BaseFormAction {
                     egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
                             dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
                     totalDmd = totalDmd.add(egDemandDtls.getAmount());
-                    logAudit(dmdDetail);
+                    
 
                 }
+                logAudit(dmdDetail);
                 List<EgDemandDetails> dmdDtl = new ArrayList<EgDemandDetails>();
                 if (demandDetails.get(dmdDetail.getInstallment()) == null) {
 
@@ -575,8 +586,7 @@ public class EditDemandAction extends BaseFormAction {
             }
 
         }
-        if (demandAudit.getDemandAuditDetails() != null && demandAudit.getDemandAuditDetails().size() > 0)
-            demandAuditService.saveDetails(demandAudit);
+        
         
         for (EgDemandDetails ddFromDB : demandDetailsFromDB) {
 
@@ -622,6 +632,7 @@ public class EditDemandAction extends BaseFormAction {
 
                     if (isUpdateAmount || isUpdateCollection) {
                         ddFromDB.setModifiedDate(new Date());
+                        logAudit(dmdDetail);
                         getPersistenceService().setType(EgDemandDetails.class);
                         getPersistenceService().update(ddFromDB);
 
@@ -632,6 +643,8 @@ public class EditDemandAction extends BaseFormAction {
             }
 
         }
+        if (demandAudit.getDemandAuditDetails() != null && demandAudit.getDemandAuditDetails().size() > 0)
+            demandAuditService.saveDetails(demandAudit);
 
         List<EgDemandDetails> currentInstdemandDetailsFromDB = getPersistenceService().findAllBy(
                 queryInstallmentDemandDetails, basicProperty, propertyTaxCommonUtils.getCurrentInstallment());

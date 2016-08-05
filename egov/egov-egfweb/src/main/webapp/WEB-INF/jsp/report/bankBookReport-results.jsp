@@ -178,6 +178,5 @@
 	</table>
 </s:if>
 <s:else>
-	<h5 style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No
-		data found</h5>
+	<span class="mandatory1">No records found</span>
 </s:else>

@@ -53,11 +53,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table(name = "EGLC_PAPERBOOK")
 @SequenceGenerator(name = PaperBook.SEQ_EGLC_PAPERBOOK, sequenceName = PaperBook.SEQ_EGLC_PAPERBOOK, allocationSize = 1)
-public class PaperBook extends AbstractAuditable {
+public class PaperBook extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_PAPERBOOK = "SEQ_EGLC_PAPERBOOK";

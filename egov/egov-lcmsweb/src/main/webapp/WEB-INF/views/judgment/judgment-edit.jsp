@@ -11,6 +11,7 @@
 	<%@ include file="judgment-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 			<input type="hidden" name="legalCase" value="${legalCase.id}" />
+			<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
 
 	</div>
 	</div>
@@ -35,4 +36,3 @@
 	src="<c:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
-

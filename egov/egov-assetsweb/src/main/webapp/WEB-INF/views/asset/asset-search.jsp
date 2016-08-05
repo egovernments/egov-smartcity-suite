@@ -140,7 +140,7 @@
 					<th><spring:message code="lbl.assetcategory" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.description" /></th>
+					<th><spring:message code="lbl.assetdetails" /></th>
 				</tr>
 			</thead>
 		</table>

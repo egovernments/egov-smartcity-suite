@@ -61,17 +61,17 @@
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.zonenumber" /> </label>
+						code="lbl.electionwardnumber" /> </label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="locationDetails.zone" id="zoneId" cssClass="form-control"
+					<form:select path="locationDetails.electionWard" id="electionwardId" cssClass="form-control"
 						cssErrorClass="form-control error">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${zones}" itemValue="id"
+						<form:options items="${electionWards}" itemValue="id"
 									itemLabel="name" />
 					</form:select>
-					<form:errors path="locationDetails.zone" cssClass="error-msg" />
+					<form:errors path="locationDetails.electionWard" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.revenuewardnumber" /></label>
@@ -86,7 +86,20 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
+			<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.zonenumber" /> </label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="locationDetails.zone" id="zoneId" cssClass="form-control"
+						cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${zones}" itemValue="id"
+									itemLabel="name" />
+					</form:select>
+					<form:errors path="locationDetails.zone" cssClass="error-msg" />
+				</div>
+				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.blocknumber" /> </label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="locationDetails.block" id="blockId" cssClass="form-control"
@@ -97,7 +110,10 @@
 					</form:select>
 					<form:errors path="locationDetails.block" cssClass="error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
+				
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label text-right"><spring:message
 						code="lbl.street" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="locationDetails.street" id="streetId" cssClass="form-control"
@@ -107,21 +123,6 @@
 						</form:option>
 					</form:select>
 					<form:errors path="locationDetails.street" cssClass="error-msg" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.electionwardnumber" /> </label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="locationDetails.electionWard" id="electionwardId" cssClass="form-control"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${electionWards}" itemValue="id"
-									itemLabel="name" />
-					</form:select>
-					<form:errors path="locationDetails.electionWard" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.doornumber" /></label>
@@ -133,6 +134,7 @@
 				</div>
 			</div>
 			<div class="form-group">
+			
 				<label class="col-sm-3 control-label text-right"><spring:message
 						code="lbl.pincode" /></label>
 				<div class="col-sm-3 add-margin">

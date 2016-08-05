@@ -3,6 +3,15 @@ jQuery('#btnsearch').click(function(e) {
 	callAjaxSearch();
 });
 
+function  validateStatus(obj)
+{
+	console.log($(obj).find(":selected").text());
+if($(obj).find(":selected").text()=='Capitalized')
+	$('#grossValue').attr("required","required");
+else
+	$('#grossValue').removeAttr("required");
+}
+
 function getFormData($form) {
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
@@ -167,7 +176,7 @@ function callAjaxSearch() {
 			"data" : "status",
 			"sClass" : "text-left"
 		}, {
-			"data" : "description",
+			"data" : "assetDetails",
 			"sClass" : "text-left"
 		} ]
 	});
@@ -234,11 +243,11 @@ function makeAutoCompleteFields() {
 		autoclose: true 
 	}); 
 	
-	$('.datetimepicker').datetimepicker({
+	/*$('.datetimepicker').datetimepicker({
 		useStrict:true,
 		format: "DD/MM/YYYY hh:mm a"
 	});
-	
+	*/
 	try { 
 		    $(".datepicker").inputmask(); 
 		

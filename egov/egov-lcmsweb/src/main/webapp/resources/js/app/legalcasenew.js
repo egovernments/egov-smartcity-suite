@@ -111,9 +111,10 @@ function addPetRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
 			jQuery(rowObj).find("input, select").each(
 					function() {
-
+					
 					jQuery(this).attr({
 								'id' : function(_, id) {
 									return id.replace('[0]', '['
@@ -122,12 +123,22 @@ function addPetRow()
 								'name' : function(_, name) {
 									return name.replace('[0]', '['
 											+ nextIdx + ']');
+									
 								}
 					});  
 		   });
-
-		   tbody.appendChild(rowObj);
+			tbody.appendChild(rowObj);
+			
+			 $('#petitionDetails tbody tr:last').find('input').val('');
+			 generateSno(".petitionDetails");
 		   
+}
+
+function generateSno(tablenameclass)
+{
+	$(tablenameclass+'.spansno').each(function(idx){
+		$(this).html(""+(idx+1));
+	});
 }
 
 function addResRow()
@@ -139,9 +150,10 @@ function addResRow()
 			var rowObj = tableObj.rows[1].cloneNode(true);
 			
 			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
 			jQuery(rowObj).find("input, select").each(
 					function() {
-
+					
 					jQuery(this).attr({
 								'id' : function(_, id) {
 									return id.replace('[0]', '['
@@ -150,14 +162,79 @@ function addResRow()
 								'name' : function(_, name) {
 									return name.replace('[0]', '['
 											+ nextIdx + ']');
+									
 								}
 					});  
 		   });
 
+
 		   tbody.appendChild(rowObj);
+		   $('#respodantDetails tbody tr:last').find('input').val('');
+		   generateSno(".respodantDetails");
 		
  }
+function addPetEditRow()
+{     
+			var tableObj=document.getElementById('petitionDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx-1;
+			jQuery(rowObj).find("input, select").each(
+					function() {
+					
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('['+ currentROwIndex +']', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[' + currentROwIndex + ']', '['
+											+ nextIdx + ']');
+									
+								}
+					});  
+		   });
+			tbody.appendChild(rowObj);
+		   
+			generateSno(".petitionDetails");
+			
+}
 
+function addResEditRow()
+{     
+	var index=document.getElementById('respodantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respodantDetails');
+			var tbody=tableObj.tBodies[0];
+			var lastRow = tableObj.rows.length;
+			var rowObj = tableObj.rows[1].cloneNode(true);
+			
+			nextIdx=(lastRow-1);
+			var currentROwIndex=nextIdx;
+			nextIdx=nextIdx+1;
+			jQuery(rowObj).find("input, select").each(
+					function() {
+					
+					jQuery(this).attr({
+								'id' : function(_, id) {
+									return id.replace('['+ currentROwIndex +']', '['
+											+ nextIdx + ']');
+								},
+								'name' : function(_, name) {
+									return name.replace('[' + currentROwIndex + ']', '['
+											+ nextIdx + ']');
+									
+								}
+					});  
+		   });
+
+
+		   tbody.appendChild(rowObj);
+		   generateSno(".respodantDetails");
+		
+ }
 $(document).on('click',"#pet_delete_row",function (){
 	var table = document.getElementById('petitionDetails');
     var rowCount = table.rows.length;
@@ -192,37 +269,22 @@ $(document).on('click',"#pet_delete_row",function (){
 			idx++;
 		});
 		
+		generateSno(".petitionDetails");
+		
 		return true;
 	}
 });
 
-function onChangeofPetitioncheck()
+function onChangeofPetitioncheck(obj)
 {
-	 $("#petitionDetails tbody tr").each(function( index ) {
-		 var $this = $(this);
-	        
-	        if ( $('#activeid').val() == "true") {
-	        	$this.find("select, button").prop("disabled", false);
-	        }
-	        if ( !($('#activeid').val()) == "false") {
-	        	$this.find("select, button").prop("disabled", true);
-	        }
-
-	    });	
-}
-function onChangeofRespodantcheck()
-{
-	 $("#respodantDetails tbody tr").each(function( index ) {
-		 var $this = $(this);
-	        
-	        if ( $('#activeid').val() == "true") {
-	        	$this.find("select, button").prop("disabled", false);
-	        }
-	        if ( !($('#activeid').val()) == "false") {
-	        	$this.find("select, button").prop("disabled", true);
-	        }
-
-	    });	
+		if ( $(obj).is(':checked')) {
+	    	console.log('Checkbox checked');
+	    	$(obj).closest('tr').find("select").removeAttr("disabled");
+	    }else{
+	    	console.log('Checkbox not checked');
+	    	$(obj).closest('tr').find("select").attr("disabled", "disabled");
+	    }
+		
 }
 
 $(document).on('click',"#res_delete_row",function (){
@@ -260,6 +322,8 @@ $(document).on('click',"#res_delete_row",function (){
 		    });
 			idx++;
 		});
+		
+		generateSno(".respodantDetails");
 		
 		return true;
 	}

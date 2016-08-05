@@ -62,6 +62,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
+import org.egov.commons.ChequeFormat;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -117,6 +118,10 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    private boolean chequePrintingEnabled;
+    private String chequePrintAvailableAt;
+    private boolean chequeFormatExists;
+    private String chequeFormat ="";
     
     public ChequeIssueRegisterReportAction() {
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
@@ -147,19 +152,32 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     public void generateReport() throws JRException, IOException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----Inside generateReport---- ");
+       
         accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        if( accountNumber.getChequeformat()!=null &&  !accountNumber.getChequeformat().equals("")){
+            chequeFormat=accountNumber.getChequeformat().getId().toString();
+        }
+      
         validateDates(fromDate, toDate);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
                     + getFormattedDate(getNextDate(toDate)));
         //persistenceService.setType(InstrumentHeader.class);
+        final List<AppConfigValues> printAvailConfig = appConfigValuesService.
+                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
+        
+        chequePrintingEnabled = isChequePrintEnabled();
+        
+        for (final AppConfigValues appConfigVal : printAvailConfig)
+            chequePrintAvailableAt = appConfigVal.getValue();
+        
         final Query query = persistenceService.getSession()
                 .createSQLQuery(
                         "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
                                 +
                                 "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
                                 +
-                                "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
+                                "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
                                 +
                                 "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
                                 + getFormattedDate(getNextDate(toDate))
@@ -185,6 +203,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                                 .addScalar("vhId",BigDecimalType.INSTANCE)
                                 .addScalar("serialNo",LongType.INSTANCE)
                                 .addScalar("chequeStatus")
+                                .addScalar("instrumentHeaderId",LongType.INSTANCE)
                                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search query" + query.getQueryString());
@@ -200,6 +219,20 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             LOGGER.debug("--End  generateReport--");
     }
 
+   public boolean isChequePrintEnabled() {
+        
+        String chequePrintEnabled = null;
+        final List<AppConfigValues> enablePrintConfig = appConfigValuesService.
+                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
+        for (final AppConfigValues appConfigVal : enablePrintConfig)
+            chequePrintEnabled = appConfigVal.getValue();
+        
+        if (chequePrintEnabled.equalsIgnoreCase("Y"))
+            return true;
+        else
+            return false;
+    }
+   
     private void removeDuplicates() {
         final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
         for (final Iterator<ChequeIssueRegisterDisplay> row = chequeIssueRegisterList.iterator(); row.hasNext();) {
@@ -442,5 +475,39 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 			AppConfigValueService appConfigValuesService) {
 		this.appConfigValuesService = appConfigValuesService;
 	}
+
+    public boolean isChequePrintingEnabled() {
+        return chequePrintingEnabled;
+    }
+
+    public String getChequePrintAvailableAt() {
+        return chequePrintAvailableAt;
+    }
+
+    public boolean isChequeFormatExists() {
+        return chequeFormatExists;
+    }
+
+    public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
+        this.chequePrintingEnabled = chequePrintingEnabled;
+    }
+
+    public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
+        this.chequePrintAvailableAt = chequePrintAvailableAt;
+    }
+
+    public void setChequeFormatExists(boolean chequeFormatExists) {
+        this.chequeFormatExists = chequeFormatExists;
+    }
+
+    public String getChequeFormat() {
+        return chequeFormat;
+    }
+
+    public void setChequeFormat(String chequeFormat) {
+        this.chequeFormat = chequeFormat;
+    }
+
+
     
 }

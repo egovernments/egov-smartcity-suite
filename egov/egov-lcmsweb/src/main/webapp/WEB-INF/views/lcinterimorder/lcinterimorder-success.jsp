@@ -155,6 +155,8 @@
 				</div>
 			</div>
 		</div>
+			<jsp:include page="lcinterimorderdocuments-view.jsp"></jsp:include>
+			 <input type="hidden" name="lcInterimOrderDocList" value="${lcInterimOrderDocList}" />
 		<div class="row text-center">
 			<div class="add-margin">
 			<button type="button" class="btn btn-default" id="buttonBack"

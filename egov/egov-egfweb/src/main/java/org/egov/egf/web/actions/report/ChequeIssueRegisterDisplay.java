@@ -60,6 +60,7 @@ public class ChequeIssueRegisterDisplay {
     private String type = "";
     private BigDecimal vhId;
     private Long serialNo;
+    private Long instrumentHeaderId;
     private List<Long> voucherheaderId = new ArrayList<Long>();
 
     public String getChequeDate() {
@@ -189,5 +190,13 @@ public class ChequeIssueRegisterDisplay {
 	public void setSerialNo(Long serialNo) {
 		this.serialNo = serialNo;
 	}
+
+    public Long getInstrumentHeaderId() {
+        return instrumentHeaderId;
+    }
+
+    public void setInstrumentHeaderId(Long instrumentHeaderId) {
+        this.instrumentHeaderId = instrumentHeaderId;
+    }
 
 }

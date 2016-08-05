@@ -63,10 +63,4 @@ $('#btnclose').click(function(){
 	});
 });
 
-/*$('#buttonBack').click(function() {
-	var lcNumber = $('#lcNumber').val();
-	var url = '/lcms/lcinterimorder/list/?lcNumber='+lcNumber;
-	window.location = url;
-});*/
-	
 

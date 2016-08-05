@@ -124,6 +124,11 @@
 			jQuery('.loader-class').modal('show', {backdrop: 'static'});
 		});
 		
+		//fade out success message
+		jQuery(".alert-success").fadeTo(2000, 300).slideUp(300, function(){
+			jQuery(".alert-success").alert('close');
+    	});
+		
 		jQuery('form').preventDoubleSubmission();
 
 		try { 

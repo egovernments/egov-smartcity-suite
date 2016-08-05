@@ -105,6 +105,8 @@ public class JudgmentController {
         judgmentService.persist(judgment);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("judgment", judgment);
+        model.addAttribute("judgmentDocList",
+                judgmentService.getJudgmentDocList(judgment));
         model.addAttribute("message", "Judgment Created successfully.");
         return "judgment-success";
 

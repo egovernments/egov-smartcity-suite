@@ -44,7 +44,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,28 +57,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.lcms.masters.entity.enums.ImplementationFailure;
+import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.validator.constraints.Length;
 
-/**
- * Judgmentimpl entity.
- *
- * @author MyEclipse Persistence Tools
- */
 @Entity
 @Table(name = "EGLC_JUDGMENTIMPL")
 @SequenceGenerator(name = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, sequenceName = JudgmentImpl.SEQ_EGLC_JUDGMENTIMPL, allocationSize = 1)
 public class JudgmentImpl extends AbstractAuditable {
-    /**
-     * Serial version uid
-     */
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_JUDGMENTIMPL = "SEQ_EGLC_JUDGMENTIMPL";
@@ -84,23 +82,48 @@ public class JudgmentImpl extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENTIMPL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @NotNull
-    @JoinColumn(name = "JUDGEMENT", nullable = false)
+    @JoinColumn(name = "judgment", nullable = false)
     private Judgment judgment;
-    private Long isCompiled;
-    @DateFormat(message = "invalid.fieldvalue.model.dateofcompliance")
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "iscompiled")
+    private JudgmentImplIsComplied judgmentImplIsComplied;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dateofcompliance")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
     private Date dateOfCompliance;
-    @Length(max = 1024, message = "compliancereport.maxlength")
+
+    @Length(max = 1024)
+    @Column(name = "compliancereport")
     private String complianceReport;
-    private String reason;
-    @Length(max = 128, message = "details.maxlength")
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reason")
+    private ImplementationFailure implementationFailure;
+
+   @Length(max = 128)
+   @Column(name = "implementationdetails")
     private String details;
+
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contempt> contempt = new ArrayList<Contempt>(0);
+
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appeal> appeal = new ArrayList<Appeal>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public List<Contempt> getContempt() {
         return contempt;
@@ -122,30 +145,48 @@ public class JudgmentImpl extends AbstractAuditable {
         return judgment;
     }
 
-    public void setJudgment(final Judgment eglcJudgment) {
-        judgment = eglcJudgment;
+    public void setJudgment(final Judgment judgment) {
+        this.judgment = judgment;
     }
 
-    public Long getIsCompiled() {
-        return isCompiled;
+    public JudgmentImplIsComplied getJudgmentImplIsComplied() {
+        return judgmentImplIsComplied;
     }
 
-    public void setIsCompiled(final Long isCompiled) {
-        this.isCompiled = isCompiled;
+    public void setJudgmentImplIsComplied(final JudgmentImplIsComplied judgmentImplIsComplied) {
+        this.judgmentImplIsComplied = judgmentImplIsComplied;
     }
 
-    /**
-     * @return the reason
-     */
-    public String getReason() {
-        return reason;
+    public ImplementationFailure getImplementationFailure() {
+        return implementationFailure;
     }
 
-    /**
-     * @param reason the reason to set
-     */
-    public void setReason(final String reason) {
-        this.reason = reason;
+    public void setImplementationFailure(final ImplementationFailure implementationFailure) {
+        this.implementationFailure = implementationFailure;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(final String details) {
+        this.details = details;
+    }
+
+    public Date getDateOfCompliance() {
+        return dateOfCompliance;
+    }
+
+    public void setDateOfCompliance(final Date dateOfCompliance) {
+        this.dateOfCompliance = dateOfCompliance;
+    }
+
+    public String getComplianceReport() {
+        return complianceReport;
+    }
+
+    public void setComplianceReport(final String complianceReport) {
+        this.complianceReport = complianceReport;
     }
 
     public List<ValidationError> validate() {
@@ -157,45 +198,6 @@ public class JudgmentImpl extends AbstractAuditable {
         for (final Appeal appeal : getAppeal())
             errors.addAll(appeal.validate());
         return errors;
-    }
-
-    /*
-     * public String getImplementationdetails() { return implementationdetails; } public void setImplementationdetails(String
-     * implementationdetails) { this.implementationdetails = implementationdetails; }
-     */
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(final String details) {
-        this.details = details;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Date getDateOfCompliance() {
-        return dateOfCompliance;
-    }
-
-    public void setDateOfCompliance(Date dateOfCompliance) {
-        this.dateOfCompliance = dateOfCompliance;
-    }
-
-    public String getComplianceReport() {
-        return complianceReport;
-    }
-
-    public void setComplianceReport(String complianceReport) {
-        this.complianceReport = complianceReport;
     }
 
 }

@@ -63,6 +63,7 @@
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-edit-petitiondetails.jsp"%>
+				<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 
 				</div>
 			</div>

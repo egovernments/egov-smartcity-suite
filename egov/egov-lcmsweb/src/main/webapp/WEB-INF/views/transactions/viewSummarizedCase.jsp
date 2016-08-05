@@ -227,7 +227,7 @@
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" /></td>
 
 						</tr>
 					</c:forEach>
@@ -296,7 +296,7 @@
 							<input type="text" id="table_governmentDepartment${status.index}"
 							class="form-control" readonly="readonly"
 							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
+							value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
 
 					</tr>
 				</c:forEach>

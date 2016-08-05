@@ -85,13 +85,14 @@
 				<s:actionerror />
 			</div>
 		</s:if>
-		<s:if
-			test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT)}">
+		<%-- <s:if
+			test="%{!mutationFeePaid && 
+			model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING)}">
 			<div id="mutationFeeError" style="color: red; font-size: 15px;"
 				align="center">
 				<s:text name="error.mutation.feeNotPaid"></s:text>
 			</div>
-		</s:if>
+		</s:if> --%>
 		<s:form action="" name="transferform" theme="simple">
 			<s:push value="model">
 				<s:hidden name="mode" id="mode" value="%{mode}"></s:hidden>
@@ -103,11 +104,28 @@
 				</div>
 				<s:if
 					test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type)}">
-					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+					<s:if
+						test="%{!mutationFeePaid && 
+			model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING)}">
+						<div id="mutationFeeError" style="color: red; font-size: 15px;"
+							align="center">
+							<s:text name="error.mutation.feeNotPaid"></s:text>
+						</div>
+					</s:if>
+					<span class="bold"
+						style="margin: auto; display: table; color: maroon;"><s:property
 							value="%{@org.egov.ptis.constants.PropertyTaxConstants@ALL_READY_REGISTER}" /></span>
 				</s:if>
 				<s:else>
-					<span class="bold" style="margin:auto; display:table; color:maroon;"><s:property
+					<s:if
+						test="%{model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT)}">
+						<div id="mutationFeeError" style="color: red; font-size: 15px;"
+							align="center">
+							<s:text name="error.mutation.feeNotPaid"></s:text>
+						</div>
+					</s:if>
+					<span class="bold"
+						style="margin: auto; display: table; color: maroon;"><s:property
 							value="%{@org.egov.ptis.constants.PropertyTaxConstants@FULLTT}" /></span>
 				</s:else>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -351,9 +369,9 @@
 						test="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) ||
 						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
 						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
-						
-							<%@ include file="transferProperty-registrationDetails-view.jsp"%>
-						
+
+						<%@ include file="transferProperty-registrationDetails-view.jsp"%>
+
 					</s:if>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<s:if
@@ -365,7 +383,7 @@
 								<td class="bluebox"><span class="bold"><s:property
 											value="%{mutationReason.mutationName}" /></span></td>
 								<td class="bluebox"><s:text name="saleDetls" /> :</td>
-								<td class="bluebox"><span class="bold">  <s:if
+								<td class="bluebox"><span class="bold"> <s:if
 											test="%{saleDetail == ''}">N/A</s:if> <s:else>
 											<s:property value="%{saleDetail}" default="N/A" />
 										</s:else>
@@ -393,29 +411,31 @@
 										value="%{departmentValue}" default="N/A" /></span></td>
 						</tr>
 						<tr>
-								<td class="bluebox2">&nbsp;</td>
-								<td class="bluebox"><s:text name="docValue" /> :</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{marketValue}" default="N/A" /></span></td>
-								<td class="bluebox"><s:text name="payablefee" />:</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{mutationFee}" default="N/A" /></span></td>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docValue" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{marketValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="payablefee" />:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{mutationFee}" default="N/A" /></span></td>
 						</tr>
 						<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) &&
+							test="%{!@org.egov.ptis.constants.PropertyTaxConstants@MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(type) &&
 						(!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED) &&  
 						!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_PENDING))}">
 							<tr>
 								<td class="greybox2">&nbsp;</td>
-								<td class="greybox"><s:text name="regst.details.titledeed" /> :</td>
-								<td class="greybox">
-									<s:if test="%{mutationRegistrationDetails.documentLink != null}">
-										<input type="button" value="Download" class="buttonsubmit" onclick="javascript:window.open('<s:property value="%{mutationRegistrationDetails.documentLink}"/>','window','scrollbars=yes,resizable=no,height=400,width=400,status=yes');"/>
-									</s:if>
-									<s:else>
-										<span class="bold"><s:property value="%{mutationRegistrationDetails.documentLink}" default="N/A"/></span>
-									</s:else>
-								</td>
+								<td class="greybox"><s:text name="regst.details.titledeed" />
+									:</td>
+								<td class="greybox"><s:if
+										test="%{mutationRegistrationDetails.documentLink != null}">
+										<input type="button" value="Download" class="buttonsubmit"
+											onclick="javascript:window.open('<s:property value="%{mutationRegistrationDetails.documentLink}"/>','window','scrollbars=yes,resizable=no,height=400,width=400,status=yes');" />
+									</s:if> <s:else>
+										<span class="bold"><s:property
+												value="%{mutationRegistrationDetails.documentLink}"
+												default="N/A" /></span>
+									</s:else></td>
 								<td class="greybox2" colspan="2">&nbsp;</td>
 							</tr>
 						</s:if>
@@ -433,7 +453,9 @@
 				</s:if>
 				<br />
 				<s:if
-					test="%{!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) && 
+					test="%{!(!mutationFeePaid && 
+				 model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING)) &&
+				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_READY_FOR_PAYMENT) &&
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
 				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&
