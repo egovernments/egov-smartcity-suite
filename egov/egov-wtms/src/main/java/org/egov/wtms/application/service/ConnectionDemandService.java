@@ -611,7 +611,11 @@ public class ConnectionDemandService {
             }
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
-        demandObj.setEgInstallmentMaster(currenticnstallment);
+        final int listlength = demandObj.getEgDemandDetails().size() - 1;
+        final Installment installObj = waterConnectionDetailsRepository.findInstallmentByDescription(
+                WaterTaxConstants.PROPERTY_MODULE_NAME,
+                waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
+        demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
         if (demandObj.getIsHistory() == null)
             demandObj.setIsHistory("N");
