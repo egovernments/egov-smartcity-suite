@@ -212,7 +212,7 @@
     </definition>
     
     <definition name="milestone-view" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.view.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-view.jsp"/>
 	</definition>
 

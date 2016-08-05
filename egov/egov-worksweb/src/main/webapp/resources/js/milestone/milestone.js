@@ -185,6 +185,7 @@ function daydiff(first, second) {
 }
 
 function addMilestone() {
+	if($('#milestone').valid()){
 	var rowcount = $("#tblmilestone tbody tr").length;
 	var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
 	if (rowcount < 30) {
@@ -253,6 +254,8 @@ function addMilestone() {
 	} else {
 		  bootbox.alert('limit reached!');
 	}
+	}
+	return false;
 }
 
 function calculatePercentageTotal(){
@@ -428,24 +431,24 @@ function openLetterOfAcceptance() {
 
 $('#save').click(function() {
 	if($('#milestone').valid()){
-	var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
-	if (rowcounthidden == 1) {
-		var message = document.getElementById('errorMilestoneDeatail').value;
-		bootbox.alert(message);
-		return false;
-	}
-	var totalPercentage = parseFloat($('#totalPercentage').html());
-	if (totalPercentage != 100) {
-		var message = document.getElementById('errorTotalPercentage').value;
-		bootbox.alert(message);
-		return false;
-	}
-	if (validateScheduleStartDate()) {
-		return validateScheduleEndDate();
-	} else {
-		return false;
-	}
-	return true;
+		var rowcounthidden = $("#tblmilestone tbody tr:hidden[id='milestoneRow']").length;
+		if (rowcounthidden == 1) {
+			var message = document.getElementById('errorMilestoneDeatail').value;
+			bootbox.alert(message);
+			return false;
+		}
+		var totalPercentage = parseFloat($('#totalPercentage').html());
+		if (totalPercentage != 100) {
+			var message = document.getElementById('errorTotalPercentage').value;
+			bootbox.alert(message);
+			return false;
+		}
+		if (validateScheduleStartDate()) {
+			return validateScheduleEndDate();
+		} else {
+			return false;
+		}
+		return true;
 	}
 	return false;
 });
