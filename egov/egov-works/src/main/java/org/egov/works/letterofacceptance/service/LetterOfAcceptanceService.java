@@ -873,7 +873,7 @@ public class LetterOfAcceptanceService {
         queryStr.append("select distinct(wo) from WorkOrder wo where wo.egwStatus.code =:workOrderStatus");
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                queryStr.append(" and wo.workOrderNumber =:workOrderNumber");
+                queryStr.append(" and upper(wo.workOrderNumber) like upper(:workOrderNumber)");
             if (searchRequestLetterOfAcceptance.getContractor() != null)
                 queryStr.append(
                         " and upper(wo.contractor.name) like upper(:contractorName) or upper(wo.contractor.code) like upper(:contractorCode) ");
@@ -898,7 +898,7 @@ public class LetterOfAcceptanceService {
         final Query qry = entityManager.createQuery(queryStr.toString());
         if (searchRequestLetterOfAcceptance != null) {
             if (searchRequestLetterOfAcceptance.getWorkOrderNumber() != null)
-                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptance.getWorkOrderNumber());
+                qry.setParameter("workOrderNumber", "%" + searchRequestLetterOfAcceptance.getWorkOrderNumber() + "%");
             if (searchRequestLetterOfAcceptance.getContractor() != null) {
                 qry.setParameter("contractorName", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
                 qry.setParameter("contractorCode", "%" + searchRequestLetterOfAcceptance.getContractor() + "%");
