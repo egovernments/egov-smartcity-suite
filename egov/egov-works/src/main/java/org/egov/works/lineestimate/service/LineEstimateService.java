@@ -213,7 +213,7 @@ public class LineEstimateService {
                 workFlowAction);
 
         lineEstimateRepository.save(newLineEstimate);
-        
+
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newLineEstimate,
                 WorksConstants.MODULE_NAME_LINEESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -618,7 +618,7 @@ public class LineEstimateService {
 
         createLineEstimateWorkflowTransition(updatedLineEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
-        
+
         updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
 
         return updatedLineEstimate;
@@ -669,9 +669,9 @@ public class LineEstimateService {
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
                         LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.RESUBMITTED.toString())
-                && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
-            lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
-                    LineEstimateStatus.CHECKED.toString()));
+                    && lineEstimate.getState() != null && workFlowAction.equals(WorksConstants.SUBMIT_ACTION))
+                lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
+                        LineEstimateStatus.CHECKED.toString()));
             else if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                     && !workFlowAction.equals(WorksConstants.REJECT_ACTION))
                 lineEstimate.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.MODULETYPE,
@@ -874,9 +874,9 @@ public class LineEstimateService {
 
         for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
             lineEstimateDetailService.setProjectCode(led);
-        
-        LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
-        
+
+        final LineEstimate newLineEstimate = lineEstimateRepository.save(lineEstimate);
+
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
         final AppConfigValues value = values.get(0);

@@ -278,14 +278,14 @@ public class WorksUtils {
         final List<Hashtable<String, Object>> historyTable = new ArrayList<Hashtable<String, Object>>();
         final Hashtable<String, Object> map = new Hashtable<String, Object>(0);
         if (null != state) {
-            for (final StateHistory stateHistory : history) {
+            for (final StateHistory stateHistory : history)
                 if (!stateHistory.getValue().equals(WorksConstants.NEW)) {
                     final Hashtable<String, Object> HistoryMap = new Hashtable<String, Object>(0);
                     HistoryMap.put("date", sdf.format(stateHistory.getDateInfo()));
                     HistoryMap.put("comments", stateHistory.getComments());
-                    if (StringUtils.isNotBlank(stateHistory.getNextAction())) {
+                    if (StringUtils.isNotBlank(stateHistory.getNextAction()))
                         HistoryMap.put("status", stateHistory.getValue() + "-" + stateHistory.getNextAction());
-                    } else
+                    else
                         HistoryMap.put("status", stateHistory.getValue());
                     user = stateHistory.getLastModifiedBy();
                     if (null != user) {
@@ -295,13 +295,12 @@ public class WorksUtils {
                     }
                     historyTable.add(HistoryMap);
                 }
-            }
             if (!state.getValue().equals(WorksConstants.NEW)) {
                 map.put("date", sdf.format(state.getDateInfo()));
                 map.put("comments", state.getComments() != null ? state.getComments() : "");
-                if (StringUtils.isNotBlank(state.getNextAction())) {
+                if (StringUtils.isNotBlank(state.getNextAction()))
                     map.put("status", state.getValue() + "-" + state.getNextAction());
-                } else
+                else
                     map.put("status", state.getValue());
                 user = state.getLastModifiedBy();
                 if (null != user) {
@@ -317,18 +316,18 @@ public class WorksUtils {
 
     @SuppressWarnings("unchecked")
     public List<FileStoreMapper> getLatestSorRateUploadOriginalFiles() {
-        return (List<FileStoreMapper>) entityManager.unwrap(Session.class)
+        return entityManager.unwrap(Session.class)
                 .createQuery("from FileStoreMapper where fileName like '%sor_original%' order by id desc ").setMaxResults(5)
                 .list();
     }
 
     @SuppressWarnings("unchecked")
     public List<FileStoreMapper> getLatestSorRateUploadOutPutFiles() {
-        return (List<FileStoreMapper>) entityManager.unwrap(Session.class)
+        return entityManager.unwrap(Session.class)
                 .createQuery("from FileStoreMapper where fileName like '%sor_output%' order by id desc ").setMaxResults(5)
                 .list();
     }
-    
+
     public Date getCutOffDate() {
         Date cutOffDate = null;
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
@@ -338,7 +337,7 @@ public class WorksUtils {
             final AppConfigValues appConfigValue = cutOffDateAppConfig.get(0);
             try {
                 cutOffDate = formatter.parse(appConfigValue.getValue());
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }

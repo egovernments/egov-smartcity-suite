@@ -121,7 +121,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
             return name().toLowerCase();
         }
     }
-    
+
     public enum OfflineStatusesForAbstractEstimate {
         NOTICEINVITINGTENDERRELEASED, TENDER_DOCUMENT_RELEASED, TENDER_OPENED, TECHNICAL_EVALUATION_DONE, COMMERCIAL_EVALUATION_DONE, L1_TENDER_FINALIZED;
 
@@ -254,7 +254,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
 
     @Transient
     private List<OverheadValue> tempOverheadValues = new ArrayList<OverheadValue>(0);
-    
+
     @Transient
     private List<AssetsForEstimate> tempAssetValues = new ArrayList<AssetsForEstimate>(0);
 
@@ -295,7 +295,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     private List<EstimateTechnicalSanction> estimateTechnicalSanctions = new ArrayList<EstimateTechnicalSanction>(0);
 
     private final transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
-    
+
     @JsonIgnore
     @Transient
     private List<OfflineStatus> offlineStatuses = new ArrayList<OfflineStatus>();
@@ -815,7 +815,7 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setTempOverheadValues(final List<OverheadValue> tempOverheadValues) {
         this.tempOverheadValues = tempOverheadValues;
     }
-    
+
     public List<OfflineStatus> getOfflineStatuses() {
         return offlineStatuses;
     }
@@ -847,6 +847,5 @@ public class AbstractEstimate extends StateAware implements Auditable {
     public void setTempAssetValues(final List<AssetsForEstimate> tempAssetValues) {
         this.tempAssetValues = tempAssetValues;
     }
-    
-    
+
 }

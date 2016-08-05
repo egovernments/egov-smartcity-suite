@@ -150,7 +150,6 @@ public class WorkProgressRegister extends AbstractAuditable {
     @JoinColumn(name = "technicalSanctionBy")
     private User technicalSanctionBy;
 
-
     private String modeOfAllotment;
 
     @SafeHtml

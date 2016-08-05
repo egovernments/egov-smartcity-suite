@@ -76,10 +76,10 @@ public class MilestoneTemplate extends AbstractAuditable {
     private Long id;
 
     private String code;
-    
+
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.name.alphaNumeric")
     private String name;
-    
+
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "milestonetemplate.description.alphaNumeric")
     private String description;
 

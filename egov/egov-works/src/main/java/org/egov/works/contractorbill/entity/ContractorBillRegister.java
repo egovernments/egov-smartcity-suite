@@ -121,7 +121,7 @@ public class ContractorBillRegister extends EgBillregister {
 
     @Transient
     private MBHeader mbHeader;
-    
+
     @Transient
     private Long[] mbHeaderIds;
 
@@ -308,7 +308,7 @@ public class ContractorBillRegister extends EgBillregister {
         return mbHeaderIds;
     }
 
-    public void setMbHeaderIds(Long[] mbHeaderIds) {
+    public void setMbHeaderIds(final Long[] mbHeaderIds) {
         this.mbHeaderIds = mbHeaderIds;
     }
 

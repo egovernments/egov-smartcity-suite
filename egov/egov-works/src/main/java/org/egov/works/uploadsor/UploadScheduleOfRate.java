@@ -92,7 +92,7 @@ public class UploadScheduleOfRate {
         return sorCode;
     }
 
-    public void setSorCode(String sorCode) {
+    public void setSorCode(final String sorCode) {
         this.sorCode = sorCode;
     }
 
@@ -100,7 +100,7 @@ public class UploadScheduleOfRate {
         return sorCategoryCode;
     }
 
-    public void setSorCategoryCode(String sorCategoryCode) {
+    public void setSorCategoryCode(final String sorCategoryCode) {
         this.sorCategoryCode = sorCategoryCode;
     }
 
@@ -108,7 +108,7 @@ public class UploadScheduleOfRate {
         return sorDescription;
     }
 
-    public void setSorDescription(String sorDescription) {
+    public void setSorDescription(final String sorDescription) {
         this.sorDescription = sorDescription;
     }
 
@@ -116,7 +116,7 @@ public class UploadScheduleOfRate {
         return uomCode;
     }
 
-    public void setUomCode(String uomCode) {
+    public void setUomCode(final String uomCode) {
         this.uomCode = uomCode;
     }
 
@@ -124,7 +124,7 @@ public class UploadScheduleOfRate {
         return rate;
     }
 
-    public void setRate(BigDecimal rate) {
+    public void setRate(final BigDecimal rate) {
         this.rate = rate;
     }
 
@@ -132,7 +132,7 @@ public class UploadScheduleOfRate {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -140,7 +140,7 @@ public class UploadScheduleOfRate {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -148,7 +148,7 @@ public class UploadScheduleOfRate {
         return marketRate;
     }
 
-    public void setMarketRate(BigDecimal marketRate) {
+    public void setMarketRate(final BigDecimal marketRate) {
         this.marketRate = marketRate;
     }
 
@@ -156,7 +156,7 @@ public class UploadScheduleOfRate {
         return marketFromDate;
     }
 
-    public void setMarketFromDate(Date marketFromDate) {
+    public void setMarketFromDate(final Date marketFromDate) {
         this.marketFromDate = marketFromDate;
     }
 
@@ -164,7 +164,7 @@ public class UploadScheduleOfRate {
         return marketToDate;
     }
 
-    public void setMarketToDate(Date marketToDate) {
+    public void setMarketToDate(final Date marketToDate) {
         this.marketToDate = marketToDate;
     }
 
@@ -172,7 +172,7 @@ public class UploadScheduleOfRate {
         return finalStatus;
     }
 
-    public void setFinalStatus(String finalStatus) {
+    public void setFinalStatus(final String finalStatus) {
         this.finalStatus = finalStatus;
     }
 
@@ -180,7 +180,7 @@ public class UploadScheduleOfRate {
         return scheduleOfRate;
     }
 
-    public void setScheduleOfRate(ScheduleOfRate scheduleOfRate) {
+    public void setScheduleOfRate(final ScheduleOfRate scheduleOfRate) {
         this.scheduleOfRate = scheduleOfRate;
     }
 
@@ -188,7 +188,7 @@ public class UploadScheduleOfRate {
         return scheduleCategory;
     }
 
-    public void setScheduleCategory(ScheduleCategory scheduleCategory) {
+    public void setScheduleCategory(final ScheduleCategory scheduleCategory) {
         this.scheduleCategory = scheduleCategory;
     }
 
@@ -196,7 +196,7 @@ public class UploadScheduleOfRate {
         return uom;
     }
 
-    public void setUom(UOM uom) {
+    public void setUom(final UOM uom) {
         this.uom = uom;
     }
 
@@ -204,7 +204,7 @@ public class UploadScheduleOfRate {
         return errorReason;
     }
 
-    public void setErrorReason(String errorReason) {
+    public void setErrorReason(final String errorReason) {
         this.errorReason = errorReason;
     }
 
@@ -212,7 +212,7 @@ public class UploadScheduleOfRate {
         return createSor;
     }
 
-    public void setCreateSor(Boolean createSor) {
+    public void setCreateSor(final Boolean createSor) {
         this.createSor = createSor;
     }
 
@@ -220,7 +220,7 @@ public class UploadScheduleOfRate {
         return tempFromDate;
     }
 
-    public void setTempFromDate(String tempFromDate) {
+    public void setTempFromDate(final String tempFromDate) {
         this.tempFromDate = tempFromDate;
     }
 
@@ -228,7 +228,7 @@ public class UploadScheduleOfRate {
         return tempToDate;
     }
 
-    public void setTempToDate(String tempToDate) {
+    public void setTempToDate(final String tempToDate) {
         this.tempToDate = tempToDate;
     }
 
@@ -236,7 +236,7 @@ public class UploadScheduleOfRate {
         return tempMarketFromDate;
     }
 
-    public void setTempMarketFromDate(String tempMarketFromDate) {
+    public void setTempMarketFromDate(final String tempMarketFromDate) {
         this.tempMarketFromDate = tempMarketFromDate;
     }
 
@@ -244,7 +244,7 @@ public class UploadScheduleOfRate {
         return tempMarketToDate;
     }
 
-    public void setTempMarketToDate(String tempMarketToDate) {
+    public void setTempMarketToDate(final String tempMarketToDate) {
         this.tempMarketToDate = tempMarketToDate;
     }
 

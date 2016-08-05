@@ -242,9 +242,9 @@ public class EstimateService {
         else
             createAbstractEstimateWorkflowTransition(newAbstractEstimate, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
-        
+
         abstractEstimateRepository.save(newAbstractEstimate);
-        
+
         final List<DocumentDetails> documentDetails = worksUtils.getDocumentDetails(files, newAbstractEstimate,
                 WorksConstants.ABSTRACTESTIMATE);
         if (!documentDetails.isEmpty()) {
@@ -287,47 +287,31 @@ public class EstimateService {
                     if (oldActivity.getId().equals(activity.getId()))
                         updateActivity(oldActivity, activity);
         if (LOG.isDebugEnabled())
-        {
-        for(Activity ac:abstractEstimate.getActivities())
-        {
-        	LOG.debug(ac.getMeasurementSheetList().size()+"    "+ac.getQuantity());
-        }
-        }
-        
-        for(Activity ac:abstractEstimate.getSorActivities())
-        {
-        	for(MeasurementSheet ms:ac.getMeasurementSheetList())
-        	{
+            for (final Activity ac : abstractEstimate.getActivities())
+                LOG.debug(ac.getMeasurementSheetList().size() + "    " + ac.getQuantity());
+
+        for (final Activity ac : abstractEstimate.getSorActivities())
+            for (final MeasurementSheet ms : ac.getMeasurementSheetList())
                 if (ms.getActivity() == null)
                     ms.setActivity(ac);
 
-            }
-        }
-
-        for (Activity ac : abstractEstimate.getNonSorActivities()) {
-            for (MeasurementSheet ms : ac.getMeasurementSheetList()) {
+        for (final Activity ac : abstractEstimate.getNonSorActivities())
+            for (final MeasurementSheet ms : ac.getMeasurementSheetList())
                 if (ms.getActivity() == null)
                     ms.setActivity(ac);
-
-            }
-        }
     }
 
-    private List<MeasurementSheet> mergeMeasurementSheet(Activity oldActivity, Activity activity) {
-        List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
-        for (MeasurementSheet msnew : activity.getMeasurementSheetList()) {
+    private List<MeasurementSheet> mergeMeasurementSheet(final Activity oldActivity, final Activity activity) {
+        final List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
+        for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
             if (msnew.getId() == null) {
                 msnew.setActivity(oldActivity);
                 oldActivity.getMeasurementSheetList().add(msnew);
                 continue;
             }
 
-
-    		for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
-			 {
-				
-				 if(msnew.getId().longValue()==msold.getId().longValue())
-				 {
+            for (final MeasurementSheet msold : oldActivity.getMeasurementSheetList())
+                if (msnew.getId().longValue() == msold.getId().longValue()) {
                     msold.setLength(msnew.getLength());
                     msold.setWidth(msnew.getWidth());
                     msold.setDepthOrHeight(msnew.getDepthOrHeight());
@@ -341,52 +325,37 @@ public class EstimateService {
 
                 }
 
+        }
+        final List<MeasurementSheet> toRemove = new LinkedList<MeasurementSheet>();
+        for (final MeasurementSheet msold : oldActivity.getMeasurementSheetList()) {
+            Boolean found = false;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(oldActivity.getMeasurementSheetList().size() + "activity.getMeasurementSheetList()");
+                LOG.debug(msold.getId() + "------msold.getId()");
             }
+            if (msold.getId() == null)
+                continue;
+
+            for (final MeasurementSheet msnew : activity.getMeasurementSheetList())
+                if (msnew.getId() == null) {
+                    // found=true;
+                } else if (msnew.getId().longValue() == msold.getId().longValue()) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(msnew.getId() + "------msnew.getId()");
+                        LOG.debug(msnew.getRemarks() + "------remarks");
+                    }
+
+                    found = true;
+                }
+
+            if (!found)
+                toRemove.add(msold);
 
         }
-        List<MeasurementSheet> toRemove = new LinkedList<MeasurementSheet>();
-    	for(MeasurementSheet msold:oldActivity.getMeasurementSheetList())
-    	{
-    		Boolean found = false;
-    		if(LOG.isDebugEnabled())
-    		{
-    		LOG.debug(oldActivity.getMeasurementSheetList().size()+"activity.getMeasurementSheetList()");  
-    		LOG.debug(msold.getId()+"------msold.getId()");
-    		}
-    		if(msold.getId()==null)
-    		{
-    			continue;
-    		}
-    		
-    		for(MeasurementSheet msnew:activity.getMeasurementSheetList())
-    		{
 
-    			if(msnew.getId()==null)
-    			{
-    				//found=true;
-    			}else if(msnew.getId().longValue()==msold.getId().longValue())
-    			{
-    				if(LOG.isDebugEnabled()){
-    				LOG.debug(msnew.getId()+"------msnew.getId()");
-    				LOG.debug(msnew.getRemarks()+"------remarks");
-    				}
-
-    				found = true;
-    			}
-
-    		}
-
-    		if(!found)
-    		{
-    			toRemove.add(msold);
-    		}
-
-    	}
-
-    	for(MeasurementSheet msremove:toRemove)
-    	{
-    	    if(LOG.isInfoEnabled())
-    		LOG.info("...........Removing rows....................Of MeasurementSheet"+msremove.getId());
+        for (final MeasurementSheet msremove : toRemove) {
+            if (LOG.isInfoEnabled())
+                LOG.info("...........Removing rows....................Of MeasurementSheet" + msremove.getId());
             oldActivity.getMeasurementSheetList().remove(msremove);
         }
 
@@ -466,7 +435,7 @@ public class EstimateService {
             newOverheadValue.setAbstractEstimate(abstractEstimateFromDB);
             abstractEstimateFromDB.getOverheadValues().add(newOverheadValue);
         }
-        
+
         abstractEstimateFromDB.getEstimateTechnicalSanctions().clear();
         for (final EstimateTechnicalSanction ets : newAbstractEstimate.getEstimateTechnicalSanctions()) {
             ets.setAbstractEstimate(abstractEstimateFromDB);
@@ -594,24 +563,20 @@ public class EstimateService {
             if (value.getValue().equalsIgnoreCase("Yes") && abstractEstimate.getTempAssetValues() != null
                     && abstractEstimate.getTempAssetValues().isEmpty())
                 bindErrors.reject("error.assetdetails.required", "error.assetdetails.required");
-            
+
             Asset asset = null;
             Integer index = 0;
-            for(AssetsForEstimate assetsForEstimate : abstractEstimate.getTempAssetValues()) {
-                if(assetsForEstimate != null) {
-                    if(StringUtils.isBlank(assetsForEstimate.getAsset().getCode())) {
+            for (final AssetsForEstimate assetsForEstimate : abstractEstimate.getTempAssetValues())
+                if (assetsForEstimate != null) {
+                    if (StringUtils.isBlank(assetsForEstimate.getAsset().getCode()))
                         bindErrors.rejectValue("tempAssetValues[" + index + "].asset.code", "error.assetcode.required");
-                    }
-                    if(StringUtils.isBlank(assetsForEstimate.getAsset().getName())) {
+                    if (StringUtils.isBlank(assetsForEstimate.getAsset().getName()))
                         bindErrors.rejectValue("tempAssetValues[" + index + "].asset.name", "error.assetname.required");
-                    }
-                    if(asset != null && asset.getCode().equals(assetsForEstimate.getAsset().getCode())) {
+                    if (asset != null && asset.getCode().equals(assetsForEstimate.getAsset().getCode()))
                         bindErrors.rejectValue("tempAssetValues[" + index + "].asset.code", "error.asset.not.unique");
-                    }
                     asset = assetsForEstimate.getAsset();
                     index++;
                 }
-            }
         }
     }
 
@@ -702,11 +667,11 @@ public class EstimateService {
             abstractEstimate.getOverheadValues().add(newOverheadValue);
         }
     }
-    
+
     private void createAssetValues(final AbstractEstimate abstractEstimate) {
         AssetsForEstimate assetForEstimate = null;
         abstractEstimate.getAssetValues().clear();
-        for(final AssetsForEstimate assetEstimate : abstractEstimate.getTempAssetValues()) {
+        for (final AssetsForEstimate assetEstimate : abstractEstimate.getTempAssetValues()) {
             assetForEstimate = new AssetsForEstimate();
             assetForEstimate.setAbstractEstimate(abstractEstimate);
             assetForEstimate.setAsset(assetService.findByCode(assetEstimate.getAsset().getCode()));
@@ -996,20 +961,18 @@ public class EstimateService {
                 errors.reject("error.rates.zero", "error.rates.zero");
         }
     }
-    
+
     public void validateOverheads(final AbstractEstimate abstractEstimate, final BindingResult errors) {
-        for (final OverheadValue value : abstractEstimate.getTempOverheadValues()) {
+        for (final OverheadValue value : abstractEstimate.getTempOverheadValues())
             if (value.getOverhead().getId() == null) {
                 errors.reject("error.overhead.null", "error.overhead.null");
                 break;
             }
-        }
-        for (final OverheadValue value : abstractEstimate.getTempOverheadValues()) {
+        for (final OverheadValue value : abstractEstimate.getTempOverheadValues())
             if (value.getAmount() <= 0) {
                 errors.reject("error.overhead.amount", "error.overhead.amount");
                 break;
             }
-        }
     }
 
     public void validateMultiYearEstimates(final AbstractEstimate abstractEstimate, final BindingResult bindErrors) {
@@ -1104,7 +1067,7 @@ public class EstimateService {
             errors.reject("errors.abbstractestimate.estimatedate", "errors.abbstractestimate.estimatedate");
         if (abstractEstimate.getLineEstimateDetails() != null
                 && abstractEstimate.getEstimateDate() != null && abstractEstimate.getEstimateDate()
-                .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
+                        .before(abstractEstimate.getLineEstimateDetails().getLineEstimate().getAdminSanctionDate()))
             errors.reject("error.abstractadminsanctiondatele", "error.abstractadminsanctiondatele");
     }
 
@@ -1261,8 +1224,9 @@ public class EstimateService {
             final List<AppConfigValues> appConfigvalues = appConfigValuesService.getConfigValuesByModuleAndKey(
                     WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_GIS_INTEGRATION);
             final AppConfigValues value = appConfigvalues.get(0);
-            if (value.getValue().equalsIgnoreCase("Yes") && (StringUtils.isBlank(abstractEstimate.getLocation()) || abstractEstimate.getLatitude() == null ||
-                    abstractEstimate.getLongitude() == null))
+            if (value.getValue().equalsIgnoreCase("Yes")
+                    && (StringUtils.isBlank(abstractEstimate.getLocation()) || abstractEstimate.getLatitude() == null ||
+                            abstractEstimate.getLongitude() == null))
                 bindErrors.reject("error.locationdetails.required", "error.locationdetails.required");
         }
     }
@@ -1291,7 +1255,7 @@ public class EstimateService {
                 .findAdminSanctionNumbersToCreateLOA("%" + adminSanctionNumber + "%",
                         EstimateStatus.ADMIN_SANCTIONED.toString(), WorksConstants.CANCELLED_STATUS,
                         WorksConstants.ABSTRACTESTIMATE,
-                OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
+                        OfflineStatusesForAbstractEstimate.L1_TENDER_FINALIZED.toString());
         return adminSanctionNumbers;
     }
 
@@ -1308,15 +1272,14 @@ public class EstimateService {
         final List<Hashtable<String, Object>> measurementSheetList = new ArrayList<Hashtable<String, Object>>();
         int slno = 1;
         Hashtable<String, Object> measurementSheetMap = null;
-        List<String> characters = new ArrayList<String>(26);
-        for (char c = 'a'; c <= 'z'; c++) {
+        final List<String> characters = new ArrayList<String>(26);
+        for (char c = 'a'; c <= 'z'; c++)
             characters.add(String.valueOf(c));
-        }
-        for (Activity activity : abstractEstimate.getActivities()) {
+        for (final Activity activity : abstractEstimate.getActivities())
             if (activity.getMeasurementSheetList().size() != 0) {
                 measurementSheetList.add(addActivityName(activity, slno));
                 int measurementSNo = 1;
-                for (MeasurementSheet ms : activity.getMeasurementSheetList()) {
+                for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
                     measurementSheetMap = new Hashtable<String, Object>(0);
                     measurementSheetMap.put("sNo", String.valueOf(slno) + characters.get((measurementSNo - 1) % 26));
                     measurementSheetMap.put("no", ms.getNo() != null ? ms.getNo() : "");
@@ -1355,12 +1318,11 @@ public class EstimateService {
                 slno++;
             } else
                 measurementSheetList.add(addActivityName(activity, slno++));
-        }
 
         return measurementSheetList;
     }
 
-    private Hashtable<String, Object> addActivityName(Activity activity, int slNo) {
+    private Hashtable<String, Object> addActivityName(final Activity activity, final int slNo) {
         final Hashtable<String, Object> measurementSheetMap = new Hashtable<String, Object>(0);
         measurementSheetMap.put("sNo", slNo);
         measurementSheetMap.put("no", "");

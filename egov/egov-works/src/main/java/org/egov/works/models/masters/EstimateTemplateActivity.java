@@ -65,7 +65,7 @@ public class EstimateTemplateActivity extends BaseModel {
     private UOM uom;
 
     private Money rate = new Money(0.0);
-    
+
     private transient Date estimateDate;
 
     public EstimateTemplate getEstimateTemplate() {
@@ -121,7 +121,7 @@ public class EstimateTemplateActivity extends BaseModel {
                     "estimateTemplateActivity.nonsor.invalid"));
         return validationErrors;
     }
-    
+
     public Date getEstimateDate() {
         return estimateDate;
     }

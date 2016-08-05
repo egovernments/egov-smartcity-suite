@@ -91,7 +91,7 @@ public class OfflineStatusService {
             final String statusCode) {
         return offlineStatusRepository.findByObjectIdAndObjectTypeAndEgwStatus_code(objectId, objectType, statusCode);
     }
-    
+
     public OfflineStatus getLastOfflineStatusByObjectIdAndObjectType(final Long objectId, final String objectType) {
         return offlineStatusRepository.getLastOfflineStatusByObjectIdAndObjectType(objectId, objectType);
     }

@@ -63,7 +63,7 @@ public class ScheduleCategory extends BaseModel {
     private static final long serialVersionUID = -9168726999209110086L;
     @Length(max = 150, message = "ScheCategory.description.length")
     private String description;
-    
+
     @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHARWITHOUTSPACE, message = "schedulecategory.code.alphaNumeric")
     @Length(max = 15, message = "ScheCategory.code.length")
     @Required(message = "contractor.code.null")

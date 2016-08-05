@@ -109,17 +109,15 @@ public class WorkOrderMeasurementSheet extends AbstractAuditable {
         this.id = id;
     }
 
-  
-
     public BigDecimal getNo() {
-		return no;
-	}
+        return no;
+    }
 
-	public void setNo(BigDecimal no) {
-		this.no = no;
-	}
+    public void setNo(final BigDecimal no) {
+        this.no = no;
+    }
 
-	public void setLength(final BigDecimal length) {
+    public void setLength(final BigDecimal length) {
         this.length = length;
     }
 

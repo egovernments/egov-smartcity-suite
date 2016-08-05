@@ -120,7 +120,7 @@ public class AbstractEstimateForLoaSearchRequest {
     public void setSpillOverFlag(final boolean spillOverFlag) {
         this.spillOverFlag = spillOverFlag;
     }
-    
+
     public String getAbstractEstimateNumber() {
         return abstractEstimateNumber;
     }
@@ -128,15 +128,15 @@ public class AbstractEstimateForLoaSearchRequest {
     public void setAbstractEstimateNumber(final String abstractEstimateNumber) {
         this.abstractEstimateNumber = abstractEstimateNumber;
     }
-    
+
     public Date getEstimateDate() {
         return estimateDate;
     }
 
-    public void setEstimateDate(Date estimateDate) {
+    public void setEstimateDate(final Date estimateDate) {
         this.estimateDate = estimateDate;
     }
-    
+
     public String getEgwStatus() {
         return egwStatus;
     }

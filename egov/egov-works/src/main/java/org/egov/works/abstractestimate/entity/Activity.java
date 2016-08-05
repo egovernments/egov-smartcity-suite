@@ -133,18 +133,17 @@ public class Activity extends AbstractAuditable {
 
     @Transient
     private String signValue;
-    
-    @Valid
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="activity",targetEntity=MeasurementSheet.class )
-    @OrderBy("slNo ASC")     
-    private List<MeasurementSheet> measurementSheetList = new LinkedList<MeasurementSheet>();
 
+    @Valid
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "activity", targetEntity = MeasurementSheet.class)
+    @OrderBy("slNo ASC")
+    private List<MeasurementSheet> measurementSheetList = new LinkedList<MeasurementSheet>();
 
     public List<MeasurementSheet> getMeasurementSheetList() {
         return measurementSheetList;
     }
 
-    public void setMeasurementSheetList(List<MeasurementSheet> measurementSheetList) {
+    public void setMeasurementSheetList(final List<MeasurementSheet> measurementSheetList) {
         this.measurementSheetList = measurementSheetList;
     }
 

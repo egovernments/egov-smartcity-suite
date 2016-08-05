@@ -53,8 +53,8 @@ import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,8 +119,7 @@ public class WorkOrderEstimateService {
         List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
         final StringBuilder queryStr = new StringBuilder(500);
         /*
-         * This block will get LOA's where BOQ is created and final bill is not
-         * created
+         * This block will get LOA's where BOQ is created and final bill is not created
          */
         getWorkOrdersWhereBoqIsCreated(searchRequestLetterOfAcceptance, queryStr);
         final Query query = setParameterForLetterOfAcceptanceToCreateMB(searchRequestLetterOfAcceptance, queryStr);
@@ -207,12 +206,12 @@ public class WorkOrderEstimateService {
 
     public List<String> getApprovedAndWorkCommencedWorkOrderNumbers(final String workOrderNo) {
         return workOrderEstimateRepository.findWordOrderByStatus("%" + workOrderNo + "%", WorksConstants.APPROVED,
-                OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
+                OfflineStatuses.WORK_COMMENCED.toString(), WorksConstants.WORKORDER);
     }
 
     public List<String> getEstimateNumbersByApprovedAndWorkCommencedWorkOrders(final String EstimateNumber) {
         return workOrderEstimateRepository.findEstimatesByWorkOrderStatus("%" + EstimateNumber + "%",
-                WorksConstants.APPROVED, OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
+                WorksConstants.APPROVED, OfflineStatuses.WORK_COMMENCED.toString(), WorksConstants.WORKORDER);
     }
 
     public List<String> getEstimateNumbersForApprovedLoa(final String estimateNumber) {
@@ -224,10 +223,10 @@ public class WorkOrderEstimateService {
             results.add(details.getEstimate().getEstimateNumber());
         return results;
     }
-    
+
     public List<Contractor> getContractorsByWorkOrderStatus(final String contractorNameCode) {
         return workOrderEstimateRepository.findContractorByWorkOrderStatus("%" + contractorNameCode + "%",
-                WorksConstants.APPROVED,OfflineStatuses.WORK_COMMENCED.toString(),WorksConstants.WORKORDER);
+                WorksConstants.APPROVED, OfflineStatuses.WORK_COMMENCED.toString(), WorksConstants.WORKORDER);
     }
 
     public List<WorkOrderEstimate> getWorkOrderEstimatesToCancelEstimates(final String estimateNumber) {

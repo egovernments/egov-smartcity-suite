@@ -203,7 +203,7 @@ public class MBHeaderService {
             if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 mbHeader.setEgwStatus(worksUtils.getStatusByModuleAndCode(
                         WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.CREATED.toString()));
-            else if(StringUtils.isBlank(workFlowAction))
+            else if (StringUtils.isBlank(workFlowAction))
                 mbHeader.setEgwStatus(worksUtils
                         .getStatusByModuleAndCode(WorksConstants.MBHEADER, MBHeader.MeasurementBookStatus.APPROVED.toString()));
             else
@@ -212,9 +212,9 @@ public class MBHeaderService {
         mergeSorAndNonSorMBDetails(mbHeader);
         MBHeader savedMBHeader = mbHeaderRepository.save(mbHeader);
 
-        if(StringUtils.isNotBlank(workFlowAction)) 
-        createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
-                workFlowAction);
+        if (StringUtils.isNotBlank(workFlowAction))
+            createMBHeaderWorkflowTransition(savedMBHeader, approvalPosition, approvalComent, null,
+                    workFlowAction);
 
         savedMBHeader = mbHeaderRepository.save(savedMBHeader);
 
@@ -607,7 +607,8 @@ public class MBHeaderService {
 
     public void validateMBHeader(final MBHeader mbHeader, final JsonObject jsonObject, final BindingResult errors,
             final String mode) {
-        final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId() == null ? -1L : mbHeader.getId(), mbHeader.getWorkOrderEstimate().getId(),
+        final Double totalMBAmountOfMBs = getTotalMBAmountOfMBs(mbHeader.getId() == null ? -1L : mbHeader.getId(),
+                mbHeader.getWorkOrderEstimate().getId(),
                 MBHeader.MeasurementBookStatus.CANCELLED.toString());
         String message = "";
         final DecimalFormat df = new DecimalFormat("#.##");
@@ -652,7 +653,7 @@ public class MBHeaderService {
         if (offlineStatus != null) {
             if (offlineStatus.getStatusDate().after(mbHeader.getMbDate())) {
                 message = messageSource.getMessage("error.mb.entry.date.commenced.date",
-                        new String[] { mbHeader.getMbDate().toString(), offlineStatus.getStatusDate().toString()},
+                        new String[] { mbHeader.getMbDate().toString(), offlineStatus.getStatusDate().toString() },
                         null);
                 jsonObject.addProperty("errorEntryCommencedDate", message);
                 errors.reject("errorEntryCommencedDate", message);
@@ -826,7 +827,8 @@ public class MBHeaderService {
                     measurementSheetMap.put("scheduleCode", "");
                     measurementSheetMap.put("scheduleCategory", "");
                     measurementSheetMap.put("description",
-                            mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() != null  ? mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() : "" );
+                            mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() != null
+                                    ? mBMeasurement.getWoMeasurementSheet().getMeasurementSheet().getRemarks() : "");
                     measurementSheetMap.put("woNo", mBMeasurement.getWoMeasurementSheet().getNo() != null
                             ? mBMeasurement.getWoMeasurementSheet().getNo() : "");
                     measurementSheetMap.put("woLength", mBMeasurement.getWoMeasurementSheet().getLength() != null
@@ -919,7 +921,8 @@ public class MBHeaderService {
     }
 
     public Double getMeasurementsPreviousCumulativeQuantity(final Long mbHeaderId, final Long woMeasurementSheetId) {
-        return mbHeaderRepository.getMeasurementsPreviousCumulativeQuantity(mbHeaderId, MBHeader.MeasurementBookStatus.CANCELLED.toString(),
+        return mbHeaderRepository.getMeasurementsPreviousCumulativeQuantity(mbHeaderId,
+                MBHeader.MeasurementBookStatus.CANCELLED.toString(),
                 woMeasurementSheetId);
     }
 }

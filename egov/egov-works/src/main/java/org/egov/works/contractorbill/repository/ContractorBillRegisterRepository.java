@@ -43,7 +43,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.models.masters.Contractor;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -96,5 +95,5 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status,
             @Param("billtype") final String billtype);
-    
+
 }

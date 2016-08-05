@@ -49,10 +49,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasurementSheetRepository extends JpaRepository<MeasurementSheet, Long> {
-    
+
     @Query("select ms from MeasurementSheet ms where ms.activity.abstractEstimate.id = :abstractEstimateId")
     List<MeasurementSheet> getMeasurementsForActivites(@Param("abstractEstimateId") final Long abstractEstimateId);
-    
+
     @Query("SELECT CASE WHEN COUNT(ms) > 0 THEN true ELSE false END from MeasurementSheet ms where ms.activity.abstractEstimate.id = :abstractEstimateId")
     Boolean existsByEstimate(@Param("abstractEstimateId") final Long abstractEstimateId);
 

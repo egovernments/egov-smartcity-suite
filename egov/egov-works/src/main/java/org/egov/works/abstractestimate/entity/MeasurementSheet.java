@@ -60,19 +60,23 @@ import org.hibernate.validator.constraints.Length;
  * Created by mani on 16/6/16.
  */
 @Entity
-@Table(name="EGW_MEASUREMENTSHEET")
+@Table(name = "EGW_MEASUREMENTSHEET")
 @SequenceGenerator(name = MeasurementSheet.SEQ, sequenceName = MeasurementSheet.SEQ, allocationSize = 1)
 
 public class MeasurementSheet extends AbstractAuditable {
-    public static final String SEQ = "SEQ_EGW_MEASUREMENTSHEET";
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4863093339787656131L;
 
+    public static final String SEQ = "SEQ_EGW_MEASUREMENTSHEET";
 
     @Id
     @GeneratedValue(generator = MeasurementSheet.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
     private Integer slNo;
     private char identifier;
-    
+
     @Length(max = 1024, message = "estimate.measurementSheet.remarks.length")
     private String remarks;
 
@@ -87,18 +91,17 @@ public class MeasurementSheet extends AbstractAuditable {
     @JoinColumn(name = "activityid")
     private Activity activity;
 
-
     @Override
     public Long getId() {
         return id;
     }
 
     public BigDecimal getLength() {
-		return length;
-	}
+        return length;
+    }
 
-	@Override
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -106,7 +109,7 @@ public class MeasurementSheet extends AbstractAuditable {
         return slNo;
     }
 
-    public void setSlNo(Integer slNo) {
+    public void setSlNo(final Integer slNo) {
         this.slNo = slNo;
     }
 
@@ -114,20 +117,19 @@ public class MeasurementSheet extends AbstractAuditable {
         return identifier;
     }
 
-    public void setIdentifier(char identifier) {
+    public void setIdentifier(final char identifier) {
         this.identifier = identifier;
     }
 
-  
     public BigDecimal getNo() {
-		return no;
-	}
+        return no;
+    }
 
-	public void setNo(BigDecimal no) {
-		this.no = no;
-	}
+    public void setNo(final BigDecimal no) {
+        this.no = no;
+    }
 
-	public void setLength(BigDecimal length) {
+    public void setLength(final BigDecimal length) {
         this.length = length;
     }
 
@@ -135,7 +137,7 @@ public class MeasurementSheet extends AbstractAuditable {
         return width;
     }
 
-    public void setWidth(BigDecimal width) {
+    public void setWidth(final BigDecimal width) {
         this.width = width;
     }
 
@@ -143,7 +145,7 @@ public class MeasurementSheet extends AbstractAuditable {
         return depthOrHeight;
     }
 
-    public void setDepthOrHeight(BigDecimal depthOrHeight) {
+    public void setDepthOrHeight(final BigDecimal depthOrHeight) {
         this.depthOrHeight = depthOrHeight;
     }
 
@@ -151,7 +153,7 @@ public class MeasurementSheet extends AbstractAuditable {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
     }
 
@@ -159,7 +161,7 @@ public class MeasurementSheet extends AbstractAuditable {
         return quantity;
     }
 
-    public void setQuantity(BigDecimal quantity) {
+    public void setQuantity(final BigDecimal quantity) {
         this.quantity = quantity;
     }
 
@@ -167,12 +169,8 @@ public class MeasurementSheet extends AbstractAuditable {
         return activity;
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(final Activity activity) {
         this.activity = activity;
     }
-
-
-
-
 
 }

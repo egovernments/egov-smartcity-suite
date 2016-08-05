@@ -198,48 +198,48 @@ public class ScheduleOfRateService {
     }
 
     @Transactional
-    public List<UploadScheduleOfRate> createScheduleOfRate(List<UploadScheduleOfRate> uploadSORRatesList) {
-        Date currentDate = new Date();
-        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+    public List<UploadScheduleOfRate> createScheduleOfRate(final List<UploadScheduleOfRate> uploadSORRatesList) {
+        final Date currentDate = new Date();
+        for (final UploadScheduleOfRate obj : uploadSORRatesList) {
 
             if (obj.getCreateSor()) {
-                ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
-                SORRate sorRate = new SORRate();
-                MarketRate marketRate = new MarketRate();
+                final ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
+                final SORRate sorRate = new SORRate();
+                final MarketRate marketRate = new MarketRate();
                 scheduleOfRate.setCode(obj.getSorCode());
                 scheduleOfRate.setScheduleCategory(obj.getScheduleCategory());
                 scheduleOfRate.setUom(obj.getUom());
                 scheduleOfRate.setDescription(obj.getSorDescription());
                 sorRate.setRate(new Money(obj.getRate().doubleValue()));
-                sorRate.setValidity(new Period(obj.getFromDate(), (obj.getToDate() != null ? obj.getToDate() : null)));
+                sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
                 sorRate.setScheduleOfRate(scheduleOfRate);
                 sorRate.setCreatedBy(
-                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 sorRate.setCreatedDate(currentDate);
                 sorRate.setModifiedBy(
-                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 sorRate.setModifiedDate(currentDate);
                 scheduleOfRate.getSorRates().add(sorRate);
                 if (obj.getMarketRate() != null) {
 
                     marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
                     marketRate.setValidity(
-                            new Period(obj.getMarketFromDate(), (obj.getMarketToDate() != null ? obj.getMarketToDate() : null)));
+                            new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
                     marketRate.setCreatedBy(
-                            (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                            entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                     marketRate.setCreatedDate(currentDate);
                     marketRate.setModifiedBy(
-                            (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                            entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                     marketRate.setModifiedDate(currentDate);
                     marketRate.setScheduleOfRate(scheduleOfRate);
                     scheduleOfRate.getMarketRates().add(marketRate);
                 }
-                
+
                 scheduleOfRate.setCreatedBy(
-                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 scheduleOfRate.setCreatedDate(currentDate);
                 scheduleOfRate.setModifiedBy(
-                        (User) entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 scheduleOfRate.setModifiedDate(currentDate);
                 save(scheduleOfRate);
             }
