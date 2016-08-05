@@ -191,15 +191,15 @@
 				id="petitionDetails">
 				<thead>
 					<tr>
-					<th class="text-center">SI No</th>
-						<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+					<th class="text-center"><spring:message code="lbl.slno" />
+						<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 						<th class="text-center"><spring:message code="lbl.name" /><span
 							class="mandatory"></span></th>
 						<th class="text-center"><spring:message
 								code="lbl.discription" /></th>
 						<th class="text-center"><spring:message
 								code="lbl.contactnumber" /></th>
-						<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 					</tr>
 				</thead>
 				<tbody>
@@ -212,7 +212,7 @@
 								readonly="readonly" style="text-align: center"
 								value="${status.index+1}" /> 
 								</td>
-							<td><form:input type="hidden"
+							<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
 									<c:choose>
@@ -231,7 +231,7 @@
 								value="${bipartisanDetails.isRespondentGovernment}" /> 
 								
 								</c:otherwise>
-								</c:choose></td>
+								</c:choose></td> --%>
 							<td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].name"
 									path="bipartisanDetails[${status.index}].name" /> <input
@@ -254,7 +254,7 @@
 								style="text-align: center"
 								value="${bipartisanDetails.contactNumber}" /></td>
 
-							<td><form:input type="hidden"
+							<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].governmentDepartment"
 									path="bipartisanDetails[${status.index}].governmentDepartment" />
 								<input type="text"
@@ -262,7 +262,7 @@
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanDetails.governmentDepartment.name}" />
-								</td>
+								</td> --%>
 
 						</tr>
 					</c:forEach>
@@ -278,14 +278,14 @@
 			id="respodantDetails">
 			<thead>
 				<tr>
-				<th class="text-center">SI No</th>
-					<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+				<th class="text-center"><spring:message code="lbl.slno" />
+					<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 					<th class="text-center"><spring:message code="lbl.name" /><span
 						class="mandatory"></span></th>
 					<th class="text-center"><spring:message code="lbl.discription" /></th>
 					<th class="text-center"><spring:message
 							code="lbl.contactnumber" /></th>
-					<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+					<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 				</tr>
 			</thead>
 			<tbody>
@@ -298,7 +298,7 @@
 								readonly="readonly" style="text-align: center"
 								value="${status.index+1}" /> 
 								</td>
-							<td>
+							<%-- <td>
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
@@ -319,7 +319,7 @@
 								
 								</c:otherwise>
 								</c:choose>
-								</td>
+								</td> --%>
 								
 								<td>
 								<form:input
@@ -352,7 +352,7 @@
 								value="${bipartisanDetailsBeanList.contactNumber}" /> 
 								</td>
 								
-								<td>
+								<%-- <td>
 								<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
@@ -361,7 +361,7 @@
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanDetailsBeanList.governmentDepartment.name}" />
-								</td>
+								</td> --%>
 
 						</tr>
 					</c:forEach>
@@ -505,21 +505,3 @@
 		</div>
 	</div>
 </form:form>
-<script>
-$(document).ready(function(){
-function generateSno(".respodantDetails")
-{
-	$(tablenameclass+'.spansno').each(function(idx){
-		$(this).html(""+(idx+1));
-	});
-}
-
-function generateSnopet(".petitionDetails")
-{
-	$(tablenameclass+'.spansno').each(function(idx){
-		$(this).html(""+(idx+1));
-	});
-}
-});
-
-</script>
