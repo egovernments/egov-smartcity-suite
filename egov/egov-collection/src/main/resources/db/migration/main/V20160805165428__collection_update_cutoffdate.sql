@@ -1,0 +1,1 @@
+update eg_appconfig_values set value='01/08/2016' where key_id in(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='COLLECTIONDATAENTRYCUTOFFDATE');
