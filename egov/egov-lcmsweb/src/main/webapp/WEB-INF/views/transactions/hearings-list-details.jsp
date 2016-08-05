@@ -37,37 +37,80 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ include file="/includes/taglibs.jsp"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form id="hearingsform"
-	class="form-horizontal form-groups-bordered" modelAttribute="hearings"
-	role="form" method="post" enctype="multipart/form-data">
-	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
-	 <input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />  
-	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
-	<%@ include file="hearings-form.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
-	<div class="form-group">
-		<div class="text-center">
-			<form:button type="button" name="button" id="buttonid"
-				class="btn btn-primary" value="Save">
-				<spring:message code="lbl.save" />
-			</form:button>
-			<form:button type="button" class="btn btn-default" id="btnclose">
-				<spring:message code="lbl.close" />
-			</form:button>
-		</div>
-	</div>
-</form:form>
+<div class="panel-heading">
+	<div class="panel-title">View Past Hearings</div>
+</div>
+<c:choose>
+	<c:when test="${hearingsList.isEmpty()}">
+		<div class="form-group" align="center">Hearing details is not
+			present.</div>
+	</c:when>
+	<c:otherwise>
+		<table width="100%" border="1" align="center" cellpadding="0"
+			cellspacing="0" class="table table-bordered datatable"
+			id="hearingsTbl">
+			<thead>
+				<tr>
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.hearingdate" /></th>
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.purposeofhearing" /></th>
+					<th align="center" colspan="1" class="text-center"><spring:message
+							code="lbl.outcomeofhearing" /></th>
+					<th align="center" colspan="1" class="text-center"><spring:message
+							code="lbl.additionallawyer" /></th>
+					<th align="center" colspan="1" class="text-center"><spring:message
+							code="lbl.standingcounsel" /></th>
+					<th colspan="1" class="text-center"><spring:message
+							code="lbl.edit" /></th>
+				</tr>
+			</thead>
+			<c:forEach var="hearings" items="${hearingsList}">
+				<tr>
+					<td colspan="1">
+						<div align="center">
+							<fmt:formatDate value="${hearings.hearingDate}" var="HD"
+								pattern="dd/MM/yyyy" />
+							<c:out value="${HD}" />
+						</div>
+					</td>
+
+					<td colspan="1" id="iodate">
+						<div align="center">
+							<c:out value="${hearings.purposeofHearings}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${hearings.hearingOutcome}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${hearings.additionalLawyers}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<c:out value="${hearings.isStandingCounselPresent}" />
+						</div>
+					</td>
+					<td colspan="1">
+						<div align="center">
+							<a href="javascript:void(0);"
+								onclick="edit('<c:out value="${hearings.id}" />');">Edit</a> <input
+								type="hidden" id="hearingsId" name="hearingsId"
+								value="${hearings.id}" />
+						</div>
+					</td>
+
+				</tr>
+			</c:forEach>
+		</table>
+	</c:otherwise>
+</c:choose>
+
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"

@@ -220,7 +220,7 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			
 		}
 		if (this.value == 6) {
-			var url = '/lcms/hearing/new/?lcNumber='+lcNumber;
+			var url = '/lcms/hearing/list/?lcNumber='+lcNumber;
 			$('#searchlegalcaseForm1').attr('method', 'get');
 			$('#searchlegalcaseForm1').attr('action', url);
 			window.location = url;

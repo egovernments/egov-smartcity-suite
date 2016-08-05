@@ -60,23 +60,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/hearing")
-public class HearingsController {
-
+public class EditHearingsController {
     @Autowired
     private HearingsService hearingsService;
 
     @Autowired
     private LegalCaseService legalCaseService;
-
-    @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute("hearings") final Hearings hearings, final Model model,
-            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("hearings", hearings);
-        model.addAttribute("mode", "create");
-        return "hearings-new";
-    }
 
     @ModelAttribute
     private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
@@ -84,36 +73,35 @@ public class HearingsController {
         return legalCase;
     }
 
-    @RequestMapping(value = "/new/", method = RequestMethod.POST)
-    public String create(@ModelAttribute final Hearings hearings, final BindingResult errors,
-            @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
-            final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
-        if (errors.hasErrors()) {
-            model.addAttribute("legalCase", legalCase);
-            return "hearings-new";
-        }
-        hearings.setLegalCase(legalCase);
+    @RequestMapping(value = "/edit/", method = RequestMethod.GET)
+    public String edit(@RequestParam("lcNumber") final String lcNumber, final Model model) {
+        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+        final List<Hearings> hearingsList = legalcase.getHearings();
+        final Hearings hearingsObj = hearingsList.get(0);
 
-        hearingsService.persist(hearings);
-        redirectAttrs.addFlashAttribute("hearings", hearings);
-        model.addAttribute("message", "Hearing created successfully.");
-        model.addAttribute("mode", "create");
-        return "hearings-success";
+        model.addAttribute("legalCase", legalcase);
+        model.addAttribute("hearings", hearingsObj);
+        model.addAttribute("mode", "edit");
+        return "hearings-edit";
     }
 
-    @RequestMapping(value = "/list/", method = RequestMethod.GET)
-    public String getHearingsList(final Model model, @RequestParam("lcNumber") final String lcNumber,
-            @Valid @ModelAttribute final Hearings hearings, final HttpServletRequest request) {
-        final LegalCase legalCase = getLegalCase(lcNumber, request);
-        final List<Hearings> hearingsList = hearingsService.findBYLcNumber(lcNumber);
-        model.addAttribute("legalCase", legalCase);
-        model.addAttribute("lcNumber", legalCase.getLcNumber());
-        model.addAttribute("hearingsId", legalCase.getHearings());
-        model.addAttribute("hearings", hearings);
-        model.addAttribute("hearingsList", hearingsList);
-        return "hearings-list";
+    @RequestMapping(value = "/edit/", method = RequestMethod.POST)
+    public String update(@Valid @ModelAttribute final Hearings hearings,
+            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs) {
 
+        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+        hearings.setLegalCase(legalcase);
+        if (errors.hasErrors()) {
+            model.addAttribute("legalCase", legalcase);
+            model.addAttribute("hearings", hearings);
+            return "hearings-edit";
+        }
+        hearingsService.persist(hearings);
+        redirectAttrs.addFlashAttribute("hearings", hearings);
+        model.addAttribute("mode", "edit");
+        model.addAttribute("message", "Hearing updated successfully.");
+        return "hearings-success";
     }
 
 }

@@ -60,9 +60,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -83,8 +81,7 @@ public class Hearings extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_HEARINGS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @DateFormat(message = "invalid.fieldvalue.model.hearingDate")
-    @Required(message = "hearing.date.null")
+
     private Date hearingDate;
     @ManyToOne
     @Valid

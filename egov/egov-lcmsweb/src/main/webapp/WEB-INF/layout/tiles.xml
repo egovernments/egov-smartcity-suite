@@ -377,4 +377,14 @@
 	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/vacatestay-success.jsp"/>
 </definition>
 
+<definition name="hearings-list" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-list.jsp"/>
+</definition>
+
+<definition name="hearings-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.editcase" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-edit.jsp"/>
+</definition>
+
 </tiles-definitions>
