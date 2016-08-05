@@ -39,8 +39,6 @@
  */
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
-	
-		
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
