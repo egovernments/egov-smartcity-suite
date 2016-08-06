@@ -272,11 +272,6 @@
 		</dependency>
 		<!-- COMMONS END -->
 
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-		</dependency>
-
 		<!-- GIS START -->
 
 		<dependency>

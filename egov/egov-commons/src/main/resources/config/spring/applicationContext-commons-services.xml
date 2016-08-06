@@ -44,7 +44,7 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+	   default-lazy-init="false">
 	   
 	<context:component-scan base-package="org.egov.commons" />
 	<context:component-scan base-package="org.egov.lib"/>
@@ -54,7 +54,6 @@
 	</bean>
 
 	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
-		<property name="userService" ref="userService" />
 		<property name="daoService" ref="persistenceService" />
 		<property name="authRuleService" ref="authRuleService" />
 	</bean>

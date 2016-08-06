@@ -43,15 +43,12 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+	   default-lazy-init="false">
 
 	<context:component-scan base-package="org.egov.pims"/>
 	<context:component-scan base-package="org.egov.eis"/>
 	
-	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService">
-		<property name="commonsService" ref="commonsService"/>
-	</bean>
+	<bean id="personalInformationServiceOld" class="org.egov.pims.service.PersonalInformationService"/>
 	
-	<bean id="employeeServiceOld" class="org.egov.pims.service.EmployeeServiceImpl">
-	</bean>
+	<bean id="employeeServiceOld" class="org.egov.pims.service.EmployeeServiceImpl"/>
 </beans>

@@ -43,17 +43,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
+       default-lazy-init="false">
 
     <context:component-scan base-package="org.egov.works" />
-
-    <bean id="recoveryService" class="org.egov.services.recoveries.RecoveryService"
-          parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.model.recoveries.Recovery" />
-        <property name="egDeductionDetHibernateDao" ref="egDeductionDetHibernateDao" />
-        <property name="tdsHibernateDAO" ref="tdsHibernateDAO" />
-    </bean>
-
 
     <bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
         <constructor-arg index="0"

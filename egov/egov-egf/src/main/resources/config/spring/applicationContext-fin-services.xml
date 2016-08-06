@@ -45,18 +45,9 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+	   default-lazy-init="false">
 
-	<context:component-scan base-package="org.egov.egf"/>
-	<context:component-scan base-package="org.egov.dao"/>
-	<context:component-scan base-package="org.egov.model"/>
-	<context:component-scan base-package="org.egov.billsaccounting"/>
-	<context:component-scan base-package="org.egov.deduction"/>
-	<context:component-scan base-package="org.egov.masters"/>
-	<context:component-scan base-package="org.egov.payment"/>
-	<context:component-scan base-package="org.egov.services"/>
-	<context:component-scan base-package="org.egov.utils"/>
-	<context:component-scan base-package="com.exilant"/>
+	<context:component-scan base-package="org.egov.egf, org.egov.dao, org.egov.model, org.egov.billsaccounting, org.egov.deduction, org.egov.masters, org.egov.payment, org.egov.services, org.egov.utils, com.exilant"/>
 
 	<bean id="balanceSheetScheduleService" class="org.egov.services.report.BalanceSheetScheduleService"
 		  scope="prototype">
@@ -67,9 +58,7 @@
 		  class="org.egov.services.report.IncomeExpenditureScheduleService">
 		<property name="incomeExpenditureService" ref="incomeExpenditureService" />
 	</bean>
-	<bean id="dishonorChequeService" class="org.egov.services.instrument.DishonorChequeService">
-		<constructor-arg index="0"
-						 value="org.egov.model.instrument.DishonorCheque" />
+	<bean id="finDishonorChequeService" class="org.egov.services.instrument.DishonorChequeService">
 		<property name="eisService" ref="eisService" />
 	</bean>
 
@@ -390,20 +379,14 @@
 			value="org.egov.model.recoveries.RemittanceSchedulerLog" />
 	</bean>
 
-	<bean id="remittancePersistenceService"
-		class="org.egov.services.deduction.RemittancePersistenceService">
-		<property name="type" value="org.egov.deduction.model.EgRemittance" />
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-	<bean id="scheduledRemittanceService" class="org.egov.services.deduction.ScheduledRemittanceService"
-		scope="prototype">
+	<bean id="remittancePersistenceService" class="org.egov.services.deduction.RemittancePersistenceService"/>
+
+	<bean id="scheduledRemittanceService" class="org.egov.services.deduction.ScheduledRemittanceService" scope="prototype">
 		<property name="remittancePersistenceService" ref="remittancePersistenceService" />
 		<property name="paymentService" ref="paymentService" />
-		<property name="recoveryService" ref="recoveryService" />
 		<property name="remittanceSchedulerLogService" ref="remittanceSchedulerLogService" />
 		<property name="egRemittancegldtlService" ref="egRemittancegldtlService" />
 		<property name="paymentWorkflowService" ref="paymentWorkflowService" />
-
 	</bean>
 
 	<bean id="schemeService" class="org.egov.services.masters.SchemeService">

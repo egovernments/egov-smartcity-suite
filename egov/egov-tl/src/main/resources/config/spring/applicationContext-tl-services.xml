@@ -44,11 +44,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="false">
 
     <context:component-scan base-package="org.egov.tl" />
-
-    <bean id="workflowBean" class="org.egov.tl.entity.WorkflowBean" scope="prototype" />
 
     <bean id="baseLicenseService" class="org.egov.tl.service.AbstractLicenseService" scope="prototype" abstract="true"/>
 
@@ -67,20 +65,7 @@
         <constructor-arg name="type" value="org.egov.tl.entity.LicenseDocumentType"/>
     </bean>
 
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
-        <property name="basenames">
-            <list>
-                <value>messages/labels</value>
-                <value>messages/errors</value>
-                <value>messages/message</value>
-            </list>
-        </property>
-        <!-- Disabling caching since on development-->
-        <property name="cacheSeconds" value="0"/>
-    </bean>
-
-	<bean id="tradeLicensePersistenceService" class="org.egov.infstr.services.PersistenceService">
+    <bean id="tradeLicensePersistenceService" class="org.egov.infstr.services.PersistenceService">
         <constructor-arg name="type" value="org.egov.tl.entity.TradeLicense"/>
     </bean>
 

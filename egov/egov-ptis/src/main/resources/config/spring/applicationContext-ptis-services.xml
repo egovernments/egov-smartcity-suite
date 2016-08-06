@@ -43,7 +43,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
+       default-lazy-init="false">
 	
 	<context:component-scan base-package="org.egov.ptis" />
 
@@ -58,13 +58,11 @@
 
     <bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 
-    <bean id="workflowBean" class="org.egov.ptis.domain.entity.property.WorkflowBean" scope="prototype" />
-
     <bean id="objectionService" parent="persistenceService" scope="prototype">
         <property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
     </bean>
 
-    <bean id="recoveryService" parent="persistenceService" scope="prototype">
+    <bean id="ptRecoveryPeristenceService" parent="persistenceService" scope="prototype">
         <property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
     </bean>
 
@@ -106,18 +104,6 @@
     </bean>
 
     <bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" scope="prototype" />
-
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
-        <property name="basenames">
-            <list>
-                <value>messages/labels</value>
-                <value>messages/errors</value>
-                <value>messages/message</value>
-            </list>
-        </property>
-        <property name="cacheSeconds" value="0"/>
-    </bean>
 
     <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>
 

@@ -44,11 +44,10 @@
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-	   default-lazy-init="true">
+	   default-lazy-init="false">
 		
-	<context:component-scan base-package="org.egov.infra"/>
-	<context:component-scan base-package="org.egov.infstr"/>
-	
+	<context:component-scan base-package="org.egov.infra, org.egov.infstr"/>
+
 	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
 	
 	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype"/>

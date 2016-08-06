@@ -136,6 +136,7 @@
 		<quartz-version>2.2.2</quartz-version>
 		<jasper-report-version>6.1.0</jasper-report-version>
 		<json-simple-version>1.1.1</json-simple-version>
+        <json-version>2.4</json-version>
 		<jackson-version>2.7.2</jackson-version>
 		<jackson-datatype-joda-version>2.7.2</jackson-datatype-joda-version>
 		<jackson-datatype-hib-version>2.7.2</jackson-datatype-hib-version>
@@ -151,6 +152,7 @@
 		<commons-beanutils-version>1.8.3</commons-beanutils-version>
 		<commons-config-version>1.10</commons-config-version>
 		<commons-lang-version>2.5</commons-lang-version>
+		<commons-lang3-version>3.4</commons-lang3-version>
 		<commons-email-version>1.4</commons-email-version>
 		<commons-collections-version>3.2.2</commons-collections-version>
 		<commons-codec-version>1.10</commons-codec-version>
@@ -373,7 +375,7 @@
 				<version>${struts2-version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>javassist</groupId>
+						<groupId>org.javassist</groupId>
 						<artifactId>javassist</artifactId>
 					</exclusion>
 					<exclusion>
@@ -452,7 +454,7 @@
 				<artifactId>json-simple</artifactId>
 				<version>${json-simple-version}</version>
 			</dependency>
-			<dependency>
+            <dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson-version}</version>
@@ -486,7 +488,7 @@
 				<version>${spring-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
+            </dependency>
 			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-jpa</artifactId>
@@ -496,6 +498,16 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-envers</artifactId>
 				<version>${spring-data-jpa-envers-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>cglib</artifactId>
+                        <groupId>cglib</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>asm</artifactId>
+                        <groupId>org.ow2.asm</groupId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.session</groupId>
@@ -689,6 +701,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-email</artifactId>
 				<version>${commons-email-version}</version>
 				<exclusions>
@@ -748,14 +765,8 @@
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>
-				<artifactId>cglib</artifactId>
+				<artifactId>cglib-nodep</artifactId>
 				<version>${cglib-version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.ow2.asm</groupId>
@@ -830,7 +841,7 @@
 				<artifactId>easymock</artifactId>
 				<version>${easymock-version}</version>
 				<scope>test</scope>
-			</dependency>
+            </dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymockclassextension</artifactId>
@@ -991,12 +1002,32 @@
 
 		<dependency>
 			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
+			<artifactId>cglib-nodep</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-java8-support-plugin</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${json-version}</version>
+            <classifier>jdk15</classifier>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<!-- SPRING DEPENDENCIES START -->
 		<dependency>
 			<groupId>org.springframework</groupId>

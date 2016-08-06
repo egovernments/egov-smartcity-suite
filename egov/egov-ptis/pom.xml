@@ -304,12 +304,7 @@
 		</dependency>
 		<!-- COMMONS END -->
 
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-		</dependency>
-		
-		<!-- Jasper Report Compiler Dep 
+		<!-- Jasper Report Compiler Dep
        	<dependency>
 			<groupId>com.alexnederlof</groupId>
 			<artifactId>jasperreports-plugin</artifactId>

@@ -80,6 +80,8 @@
 	<constant name="struts.convention.action.name.lowercase" value="true"/>
 	<!-- <constant name="struts.convention.action.alwaysMapExecute" value="false"/> -->
 	<constant name="struts.action.excludePattern" value="/rest/.*" />
+	<constant name="struts.objectFactory" value="spring" />
+    <constant name="struts.objectFactory.spring.autoWire" value="auto"/>
 	<package name="egov" extends="struts-default">
 		<interceptors>
 			<interceptor name="egov-validator" class="org.egov.infra.web.struts.interceptors.ValidationInterceptor" />

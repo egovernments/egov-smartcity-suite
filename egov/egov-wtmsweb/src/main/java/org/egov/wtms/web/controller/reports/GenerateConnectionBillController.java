@@ -47,18 +47,15 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.application.service.GenerateConnectionBillService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -66,7 +63,6 @@ import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.PropertyType;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
-import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,11 +75,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -124,22 +118,10 @@ public class GenerateConnectionBillController {
     private GenerateConnectionBillService generateConnectionBillService;
 
     @Autowired
-    private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    @Autowired
-    ServletContext context;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;

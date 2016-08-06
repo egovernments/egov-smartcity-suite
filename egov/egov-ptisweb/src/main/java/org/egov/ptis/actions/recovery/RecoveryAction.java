@@ -70,7 +70,8 @@ import org.egov.ptis.domain.entity.recovery.WarrantFee;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -97,12 +98,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAV
 @ParentPackage("egov")
 @Results({ @Result(name = "invalidUser", location = "workflow", params = { "namespace", "/workflow", "method",
 		"inboxItemViewErrorUserInvalid" }) })
-@Transactional(readOnly = true)
 public class RecoveryAction extends BaseRecoveryAction {
 
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(RecoveryAction.class);
 	private Recovery recovery = new Recovery();
+	@Autowired
+	@Qualifier("ptRecoveryPeristenceService")
 	private PersistenceService<Recovery, Long> recoveryService;
 	protected WorkflowService<Recovery> recoveryWorkflowService;
 	private static String MESSAGE = "message";
