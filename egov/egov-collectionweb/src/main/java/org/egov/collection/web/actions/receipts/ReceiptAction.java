@@ -357,14 +357,6 @@ public class ReceiptAction extends BaseFormAction {
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
-                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                    CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
-        } catch (ParseException e) {
-            LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
-        }
         addDropdownData("serviceCategoryList",
                 serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
         addDropdownData("serviceList", Collections.EMPTY_LIST);
@@ -764,7 +756,16 @@ public class ReceiptAction extends BaseFormAction {
             // billing system
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
                    
-            if (isBillSourcemisc() && voucherDate.before(cutOffDate)) {
+            if (isBillSourcemisc()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                            CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                            CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+                } catch (ParseException e) {
+                    LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
+                }
+                if(voucherDate.before(cutOffDate))
                 receiptHeaderService.performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
                         "Legacy data Approval based on cutoff date");
             }
