@@ -55,6 +55,14 @@ public class WorkFlowAdditionalDetailsService extends PersistenceService<WorkFlo
 	private PersistenceService persistenceService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkFlowAdditionalDetailsService.class);
 
+	public WorkFlowAdditionalDetailsService() {
+		super(WorkFlowAdditionalRule.class);
+	}
+
+	public WorkFlowAdditionalDetailsService(Class<WorkFlowAdditionalRule> type) {
+		super(type);
+	}
+
 	public PersistenceService getPersistenceService() {
 		return this.persistenceService;
 	}

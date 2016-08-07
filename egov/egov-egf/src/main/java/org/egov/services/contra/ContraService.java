@@ -125,11 +125,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     private @Autowired EgovCommon egovCommon;
 
-    public ContraService() throws Exception {
+    public ContraService()  {
+        super(ContraJournalVoucher.class);
     }
 
-    public ContraService(final Class<ContraJournalVoucher> contraJournalVoucher) {
-        this.type = contraJournalVoucher;
+    public ContraService(Class<ContraJournalVoucher> type) {
+        super(type);
     }
 
     public Position getPositionForWfItem(final ContraJournalVoucher rv)

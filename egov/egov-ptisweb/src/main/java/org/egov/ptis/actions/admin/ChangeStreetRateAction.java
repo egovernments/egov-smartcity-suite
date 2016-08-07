@@ -74,7 +74,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Namespace("/admin")
 @ResultPath("/WEB-INF/jsp/")
 public class ChangeStreetRateAction extends BaseFormAction {
@@ -91,6 +90,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 	private String searchValue;
 	private String saveAction;
 	private Boundary boundary;
+
 	@Autowired
 	private BoundaryCategoryDao boundaryCategoryDAO;
 
@@ -291,8 +291,7 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 		if (bc != null) {
 			bc.setCategory(catRevised);
-			getPersistenceService().setType(BoundaryCategory.class);
-			getPersistenceService().update(bc);
+            boundaryCategoryDAO.update(bc);
 		}
 		LOGGER.debug("saveData : BoundaryCategory after changing Category: " + bc);
 		LOGGER.debug("Exit from saveData");

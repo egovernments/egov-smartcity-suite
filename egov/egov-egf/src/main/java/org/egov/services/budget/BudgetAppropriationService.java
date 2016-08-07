@@ -74,6 +74,10 @@ public class BudgetAppropriationService extends PersistenceService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    public BudgetAppropriationService() {
+        super(null);
+    }
+
     // private GenericDaoFactory genericDao;
 
     public void setBudgetDetailsDAO(final BudgetDetailsDAO budgetDetailsDAO) {

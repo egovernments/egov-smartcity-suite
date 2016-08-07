@@ -73,7 +73,11 @@ public class RecoveryService extends PersistenceService<Recovery, Long> {
     private TdsHibernateDAO tdsHibernateDAO;
 
     public RecoveryService() {
-        this.type = Recovery.class;
+        super(Recovery.class);
+    }
+
+    public RecoveryService(Class<Recovery> type) {
+        super(type);
     }
     
     public Recovery getTdsById(final Long tdsId)

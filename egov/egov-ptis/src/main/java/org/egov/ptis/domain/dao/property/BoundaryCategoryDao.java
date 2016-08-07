@@ -67,13 +67,13 @@ public interface BoundaryCategoryDao {
 
 	public List<Category> getCategoriesByBoundry(Boundary bndry);
 
-	public Category findById(Integer id, boolean lock);
+	public BoundaryCategory findById(Integer id, boolean lock);
 
-	public List<Category> findAll();
+	public List<BoundaryCategory> findAll();
 
-	public Category create(Category category);
+	public BoundaryCategory create(BoundaryCategory category);
 
-	public void delete(Category category);
+	public void delete(BoundaryCategory category);
 
-	public Category update(Category category);
+	public BoundaryCategory update(BoundaryCategory category);
 }

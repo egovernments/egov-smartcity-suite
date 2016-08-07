@@ -45,7 +45,11 @@ import org.egov.infstr.services.PersistenceService;
 public class RemittancePersistenceService extends PersistenceService<EgRemittance, Long> {
 
     public RemittancePersistenceService() {
-        this.type = EgRemittance.class;
+        super(EgRemittance.class);
+    }
+
+    public RemittancePersistenceService(Class<EgRemittance> type) {
+        super(type);
     }
 
 }

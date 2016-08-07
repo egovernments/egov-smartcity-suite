@@ -63,6 +63,7 @@ import org.egov.ptis.client.util.FinancialUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyMutationMasterDAO;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
+import org.egov.ptis.domain.dao.property.PropertyStatusValuesDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -137,6 +138,9 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 	private PropertyMutationMasterDAO propertyMutationMasterDAO;
 	@Autowired
 	private PropertyStatusDAO propertyStatusDAO;
+
+	@Autowired
+	private PropertyStatusValuesDAO propertyStatusValuesDAO;
 
 	public DeactivatePropertyAction() {
 	}
@@ -301,8 +305,7 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 					propStatVal.setReferenceNo(propStatusVal.getReferenceNo());
 					propStatVal.setReferenceDate(propStatusVal.getReferenceDate());
 					propStatVal.setRemarks(propStatusVal.getRemarks());
-					getPersistenceService().setType(PropertyStatusValues.class);
-					getPersistenceService().update(propStatVal);
+                    propertyStatusValuesDAO.update(propStatVal);
 				} else {
 					property = (PropertyImpl) basicProp.getProperty().createPropertyclone();
 					property.setStatus(STATUS_WORKFLOW);

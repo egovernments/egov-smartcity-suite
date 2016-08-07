@@ -54,8 +54,8 @@
 
     <bean id="ADTAXCollectionsInterface" class="org.egov.adtax.service.collection.AdvertisementTaxCollection" />
 
-    <bean id="AdvertisementPermitDetailPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.adtax.entity.AdvertisementPermitDetail" />
+    <bean id="AdvertisementPermitDetailPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.adtax.entity.AdvertisementPermitDetail" />
     </bean>
 
     <bean id="AdvertisementPermitDetailInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">

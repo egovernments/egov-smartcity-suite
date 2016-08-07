@@ -50,9 +50,14 @@ import java.util.Date;
 @Transactional(readOnly = true)
 public class InstrumentOtherDetailsService extends PersistenceService<InstrumentOtherDetails, Long> {
 
-    public InstrumentOtherDetailsService(final Class<InstrumentOtherDetails> instrumentOtherDetails) {
-        this.type = instrumentOtherDetails;
+    public InstrumentOtherDetailsService() {
+        super(InstrumentOtherDetails.class);
     }
+
+    public InstrumentOtherDetailsService(final Class<InstrumentOtherDetails> type) {
+        super(type);
+    }
+
     @Transactional
     public void reconcile(Date recociledOn,Long ihId,BigDecimal instrumentAmount)
     {

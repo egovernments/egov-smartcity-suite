@@ -100,6 +100,15 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
 
+
+    public RevisionPetitionService() {
+        super(RevisionPetition.class);
+    }
+
+    public RevisionPetitionService(Class<RevisionPetition> type) {
+        super(type);
+    }
+
     /**
      * Create revision petition
      *

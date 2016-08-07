@@ -62,6 +62,13 @@ public class ChallanService extends PersistenceService<Challan, Long> {
     @Autowired
     private CollectionsUtil collectionsUtil;
 
+    public ChallanService() {
+        super(Challan.class);
+    }
+
+    public ChallanService(Class<Challan> type) {
+        super(type);
+    }
     /**
      * This method performs the Challan workflow transition. The challan status
      * is updated and transitioned to the next state. At the end of the

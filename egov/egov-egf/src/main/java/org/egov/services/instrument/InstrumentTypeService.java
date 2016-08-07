@@ -47,7 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class InstrumentTypeService extends PersistenceService<InstrumentType, Long> {
 
-    public InstrumentTypeService(final Class<InstrumentType> instrumentType) {
-        this.type = instrumentType;
+    public InstrumentTypeService() {
+        super(InstrumentType.class);
+    }
+
+    public InstrumentTypeService(final Class<InstrumentType> type) {
+        super(type);
     }
 }

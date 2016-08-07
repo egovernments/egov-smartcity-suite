@@ -222,31 +222,31 @@ public class BoundaryCategoryHibDao implements BoundaryCategoryDao {
 	}
 
 	@Override
-	public Category findById(Integer id, boolean lock) {
+	public BoundaryCategory findById(Integer id, boolean lock) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Category create(Category category) {
+	public BoundaryCategory create(BoundaryCategory category) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void delete(Category category) {
+	public void delete(BoundaryCategory category) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public Category update(Category category) {
-		// TODO Auto-generated method stub
-		return null;
+	@Transactional
+	public BoundaryCategory update(BoundaryCategory category) {
+		entityManager.persist(category);
+		return category;
 	}
 
 	@Override
-	public List<Category> findAll() {
+	public List<BoundaryCategory> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

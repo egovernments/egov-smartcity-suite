@@ -82,6 +82,14 @@ public class WorkFlowMatrixService extends PersistenceService<WorkFlowMatrix, Lo
 	public static final String REJECTED = "Rejected";
 	private Boolean isworkFlowCorrect;
 
+	public WorkFlowMatrixService() {
+		super(WorkFlowMatrix.class);
+	}
+
+	public WorkFlowMatrixService(Class<WorkFlowMatrix> type) {
+		super(type);
+	}
+
 	public Boolean getIsworkFlowCorrect() {
 		return this.isworkFlowCorrect;
 	}

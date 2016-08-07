@@ -49,7 +49,11 @@ import org.egov.works.milestone.entity.TrackMilestone;
 public class TrackMilestoneWFService extends PersistenceService<TrackMilestone, Long> {
 
     public TrackMilestoneWFService() {
-        setType(TrackMilestone.class);
+        super(TrackMilestone.class);
+    }
+
+    public TrackMilestoneWFService(Class<TrackMilestone> type) {
+        super(type);
     }
 
 }

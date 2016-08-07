@@ -50,7 +50,13 @@
 
 	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
 	
-	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService" scope="prototype"/>
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="abstractPersistenceService" class="org.egov.infstr.services.PersistenceService" abstract="true"/>
 
 	<!-- Bean for report service. constructor arguments: arg0 => Report Template
 		Cache minimum size arg1 => Report Template Cache maximum size -->
@@ -59,9 +65,6 @@
 		<constructor-arg value="30" />
 	</bean>
 
-	<bean id="userPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infra.admin.master.entity.User"/>
-	</bean>
 
 	<bean id="customizedWorkFlowService" class="org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -73,13 +76,11 @@
 	
 	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
 	
-	<bean id="workFlowMatrixService" class="org.egov.infra.workflow.matrix.service.WorkFlowMatrixService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowMatrix"/>
+	<bean id="workFlowMatrixService" class="org.egov.infra.workflow.matrix.service.WorkFlowMatrixService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 
-	<bean id="workFlowAdditionalDetailsService" class="org.egov.infra.workflow.matrix.service.WorkFlowAdditionalDetailsService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule"/>
+	<bean id="workFlowAdditionalDetailsService" class="org.egov.infra.workflow.matrix.service.WorkFlowAdditionalDetailsService" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	
@@ -87,24 +88,28 @@
 	
 	
 	<!-- Use this only for generic hibernate query -->
-	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService"/>
+	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">
+		<constructor-arg name="type" >
+			<null/>
+		</constructor-arg>
+	</bean>
 	
 	<!-- NEW WORKFLOW ADDITIONS -->
 	
-	<bean id="statePersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infra.workflow.entity.State" />
+	<bean id="statePersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.infra.workflow.entity.State" />
 	</bean>
 	
-	<bean id="stateAwarePersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infra.workflow.entity.StateAware" />
+	<bean id="stateAwarePersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.infra.workflow.entity.StateAware" />
 	</bean>
 	
-	<bean id="actionPersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infra.workflow.entity.WorkflowAction" />
+	<bean id="actionPersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.infra.workflow.entity.WorkflowAction" />
 	</bean>
 	
-	<bean id="workflowTypePersistenceService" parent="persistenceService">
-		<property name="type" value="org.egov.infra.workflow.entity.WorkflowTypes" />
+	<bean id="workflowTypePersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.infra.workflow.entity.WorkflowTypes" />
 	</bean>
 	
 	<!-- 

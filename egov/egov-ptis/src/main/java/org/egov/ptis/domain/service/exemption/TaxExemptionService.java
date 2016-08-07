@@ -142,6 +142,14 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     
     Property property = null;
 
+    public TaxExemptionService() {
+        super(PropertyImpl.class);
+    }
+
+    public TaxExemptionService(Class<PropertyImpl> type) {
+        super(type);
+    }
+
     @Transactional
     public BasicProperty saveProperty(final Property newProperty, final Property oldProperty, final Character status,
             final String approvalComment, final String workFlowAction, final Long approvalPosition,

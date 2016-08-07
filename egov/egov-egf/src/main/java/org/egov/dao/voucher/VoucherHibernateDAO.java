@@ -82,6 +82,14 @@ public class VoucherHibernateDAO extends PersistenceService<CVoucherHeader, Long
     private AppConfigValueService appConfigValuesService;
     private PersistenceService persistenceService;
 
+    public VoucherHibernateDAO() {
+        super(CVoucherHeader.class);
+    }
+
+    public VoucherHibernateDAO(Class<CVoucherHeader> type) {
+        super(type);
+    }
+
     public List<CVoucherHeader> getVoucherList(final CVoucherHeader voucherHeader,
             final Map<String, Object> searchFilterMap) throws ApplicationException, ParseException {
 

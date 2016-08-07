@@ -129,6 +129,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
 
+    public ReceiptHeaderService() {
+        super(ReceiptHeader.class);
+    }
+
+    public ReceiptHeaderService(Class<ReceiptHeader> type) {
+        super(type);
+    }
     /**
      * @param statusCode
      *            Status code of receipts to be fetched. If null or ALL, then

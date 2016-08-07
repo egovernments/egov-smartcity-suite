@@ -44,8 +44,12 @@ import org.egov.infstr.services.PersistenceService;
 
 public class BankAccountService extends PersistenceService<Bankaccount, Long>
 {
-    public BankAccountService(final Class<Bankaccount> bankAccount) {
-        this.type = bankAccount;
+    public BankAccountService() {
+       super(Bankaccount.class);
+    }
+
+    public BankAccountService(final Class<Bankaccount> type) {
+        super(type);
     }
 
 }

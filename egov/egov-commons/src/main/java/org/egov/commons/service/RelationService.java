@@ -56,6 +56,16 @@ import java.util.List;
  */
 @Service
 public class RelationService extends PersistenceService<Relation, Integer> implements EntityTypeService {
+
+
+	public RelationService() {
+		super(Relation.class);
+	}
+
+	public RelationService(Class<Relation> type) {
+		super(type);
+	}
+
 	/**
 	 * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
 	 */

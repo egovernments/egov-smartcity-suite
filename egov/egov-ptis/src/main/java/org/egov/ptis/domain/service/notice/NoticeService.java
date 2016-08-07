@@ -73,6 +73,14 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
+    public NoticeService() {
+        super(PtNotice.class);
+    }
+
+    public NoticeService(Class<PtNotice> type) {
+        super(type);
+    }
+
     /**
      * This method populates the <code>PtNotice</code> object along with notice input stream
      *
@@ -137,14 +145,6 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?", noticeType,
                 applicationNo);
-    }
-
-    public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
-        return basicPropertyService;
-    }
-
-    public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
-        this.basicPropertyService = basicPropertyService;
     }
 
 }

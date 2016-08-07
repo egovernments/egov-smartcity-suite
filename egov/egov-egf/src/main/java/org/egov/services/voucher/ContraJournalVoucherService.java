@@ -44,8 +44,12 @@ import org.egov.model.contra.ContraJournalVoucher;
 
 public class ContraJournalVoucherService extends PersistenceService<ContraJournalVoucher, Long>
 {
-    public ContraJournalVoucherService(final Class<ContraJournalVoucher> contraJournalVoucher) {
-        this.type = contraJournalVoucher;
+    public ContraJournalVoucherService() {
+        super(ContraJournalVoucher.class);
+    }
+
+    public ContraJournalVoucherService(final Class<ContraJournalVoucher> type) {
+        super(type);
     }
 
 }

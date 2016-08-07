@@ -44,8 +44,12 @@ import org.egov.infstr.services.PersistenceService;
 
 public class SharedFundSourceService extends PersistenceService<SharedFundSource, Long>
 {
-    public SharedFundSourceService(final Class<SharedFundSource> sharedFundSource) {
-        this.type = sharedFundSource;
+    public SharedFundSourceService() {
+        super(SharedFundSource.class);
+    }
+
+    public SharedFundSourceService(final Class<SharedFundSource> type) {
+        super(type);
     }
 
 }

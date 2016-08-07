@@ -49,8 +49,8 @@
     <bean id="waterConnectionBillable" class="org.egov.wtms.application.service.collection.WaterConnectionBillable" scope="prototype" />
     <bean id="waterTaxExternalService" class="org.egov.wtms.application.service.collection.WaterTaxExternalService" scope="prototype"/>
 
-    <bean id="WaterConnectionDetailsPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.wtms.application.entity.WaterConnectionDetails" />
+    <bean id="WaterConnectionDetailsPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.wtms.application.entity.WaterConnectionDetails" />
     </bean>
         
     <bean id="WaterConnectionDetailsInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">

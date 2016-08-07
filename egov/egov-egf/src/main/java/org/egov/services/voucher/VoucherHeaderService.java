@@ -44,8 +44,12 @@ import org.egov.infstr.services.PersistenceService;
 
 public class VoucherHeaderService extends PersistenceService<CVoucherHeader, Long>
 {
-    public VoucherHeaderService(final Class<CVoucherHeader> voucherHeader) {
-        this.type = voucherHeader;
+    public VoucherHeaderService() {
+        super(CVoucherHeader.class);
+    }
+
+    public VoucherHeaderService(final Class<CVoucherHeader> type) {
+        super(type);
     }
 
 }

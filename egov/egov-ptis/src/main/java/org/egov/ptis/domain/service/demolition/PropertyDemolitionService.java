@@ -139,6 +139,14 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
+    public PropertyDemolitionService() {
+        super(PropertyImpl.class);
+    }
+
+    public PropertyDemolitionService(Class<PropertyImpl> type) {
+        super(type);
+    }
+
     @Transactional
     public void saveProperty(Property oldProperty, Property newProperty, Character status, String comments,
             String workFlowAction, Long approverPosition, String additionalRule) throws TaxCalculatorExeption {

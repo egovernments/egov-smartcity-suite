@@ -112,8 +112,7 @@ public class BigBuildingRecoveryReportAction extends ReportFormAction {
 		ReportInfo reportInfo = new ReportInfo();
 		Integer totalNoProps = 0;
 		
-		getPersistenceService().setType(InstDmdCollMaterializeView.class);
-		List<InstDmdCollMaterializeView> instDmdCollList = getPersistenceService()
+		List<InstDmdCollMaterializeView> instDmdCollList = (List<InstDmdCollMaterializeView>) getPersistenceService()
 				.getSession()
 				.createQuery(
 						"from InstDmdCollMaterializeView instDmdColl left join fetch instDmdColl.installment where instDmdColl.createdDate between ? and ? and instDmdColl.bigBldgTaxColl != 0 ")

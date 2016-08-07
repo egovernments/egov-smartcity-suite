@@ -54,6 +54,14 @@ public class ScheduleCategoryService extends PersistenceService<ScheduleCategory
     @PersistenceContext
     private EntityManager entityManager;
 
+    public ScheduleCategoryService() {
+        super(ScheduleCategory.class);
+    }
+
+    public ScheduleCategoryService(Class<ScheduleCategory> type) {
+        super(type);
+    }
+
     public ScheduleCategory getScheduleCategoryById(final Long scheduleCategoryId) {
         final ScheduleCategory scheduleCategory = entityManager.find(ScheduleCategory.class,
                 scheduleCategoryId);

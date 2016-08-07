@@ -59,6 +59,14 @@ public class CustomizedWorkFlowService extends PersistenceService<WorkFlowMatrix
 	private PersistenceService persistenceService;
 	private WorkflowService<? extends StateAware> workflowService;
 
+	public CustomizedWorkFlowService() {
+		super(WorkFlowMatrix.class);
+	}
+
+    public CustomizedWorkFlowService(Class<WorkFlowMatrix> type) {
+        super(type);
+    }
+
 	public List<Designation> getNextDesignations(final String type, final String department, final BigDecimal businessRule, final String additionalRule, final String currentState, final String pendingAction, final Date date) {
 
 		final WorkFlowMatrix wfMatrix = this.workflowService.getWfMatrix(type, department, businessRule, additionalRule, currentState, pendingAction, date);

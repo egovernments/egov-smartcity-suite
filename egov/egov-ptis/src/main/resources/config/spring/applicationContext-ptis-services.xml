@@ -47,28 +47,25 @@
 	
 	<context:component-scan base-package="org.egov.ptis" />
 
-    <bean id="floorService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.property.Floor" />
+    <bean id="floorService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.Floor" />
     </bean>
 
     <bean id="ActionsBaseWFFilter" class="org.egov.ptis.workflow.filter.ActionsBasedOnWorkFlowFilter" scope="prototype">
-        <property name="actionDao" ref="actionDao" />
         <property name="workFlowPerService" ref="persistenceService"/>
     </bean>
 
     <bean id="dcbService" class="org.egov.dcb.service.DCBServiceImpl"  scope="prototype" />
 
-    <bean id="objectionService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+    <bean id="objectionService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
     </bean>
 
-    <bean id="ptRecoveryPeristenceService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
+    <bean id="ptRecoveryPeristenceService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.recovery.Recovery" />
     </bean>
 
-    <bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype">
-        <property name="basicPropertyService" ref="basicPropertyService"/>
-    </bean>
+    <bean id="noticeService" class="org.egov.ptis.domain.service.notice.NoticeService" scope="prototype"/>
 
     <bean id="billService" class="org.egov.ptis.domain.service.bill.BillService" scope="prototype">
         <property name="reportService" ref="reportService"/>
@@ -79,12 +76,12 @@
         <property name="persistenceService" ref="persistenceService"/>
     </bean>
 
-    <bean id="floorDemandCalcService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" />
+    <bean id="floorDemandCalcService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations" />
     </bean>
 
-    <bean id="migratedPropFloorService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
+    <bean id="migratedPropFloorService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.MigratedPropertyFloor" />
     </bean>
 
     <bean id="sMSEmailService" class="org.egov.ptis.domain.service.property.SMSEmailService" scope="prototype" >
@@ -107,40 +104,40 @@
 
     <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>
 
-    <bean id="propertyImplPersistenceService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
+    <bean id="propertyImplPersistenceService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
     </bean>
         
     <bean id="PropertyImplInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
          <constructor-arg index="0" ref="propertyImplPersistenceService"/>
     </bean>
     
-    <bean id="vacancyRemissionPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.ptis.domain.entity.property.VacancyRemission" />
+    <bean id="vacancyRemissionPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.VacancyRemission" />
     </bean>
     
     <bean id="VacancyRemissionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="vacancyRemissionPersistenceService"/>
     </bean>
     
-    <bean id="vacancyRemissionApprovalPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.ptis.domain.entity.property.VacancyRemissionApproval" />
+    <bean id="vacancyRemissionApprovalPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.VacancyRemissionApproval" />
     </bean>
     
     <bean id="VacancyRemissionApprovalInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="vacancyRemissionApprovalPersistenceService"/>
     </bean>
     
-    <bean id="revisionPetitionPersistenceService" parent="persistenceService">
-        <property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
+    <bean id="revisionPetitionPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
     </bean>
     
     <bean id="RevisionPetitionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
          <constructor-arg index="0" ref="revisionPetitionPersistenceService"/>
     </bean>
     
-    <bean id="propertyMutationPersistenceService" parent="persistenceService" scope="prototype">
-        <property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+    <bean id="propertyMutationPersistenceService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
     </bean>
     
     <bean id="PropertyMutationInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl" scope="prototype">
@@ -157,24 +154,22 @@
     
     <bean id="transferOwnerService" class="org.egov.ptis.domain.service.transfer.PropertyTransferService"  scope="prototype"/>
      
-     <bean id="propertyMutationService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
+     <bean id="propertyMutationService" parent="abstractPersistenceService" scope="prototype">
+         <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.PropertyMutation" />
 	</bean>
 	
-	<bean id="ptaxApplicationTypeService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.PtApplicationType" />
+	<bean id="ptaxApplicationTypeService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.PtApplicationType" />
 	</bean>
 	
-	<bean id="documentTypePersistenceService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.DocumentType" />
+	<bean id="documentTypePersistenceService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.DocumentType" />
 	</bean>
 
-	<bean id="basicPropertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.BasicPropertyImpl" />
-	</bean>
+	<bean id="basicPropertyService" class="org.egov.ptis.domain.service.property.PropertyPersistenceService" scope="prototype"/>
 	
-	<bean id="propertyImplService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
+	<bean id="propertyImplService" parent="abstractPersistenceService" scope="prototype">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.property.PropertyImpl" />
 	</bean>
 	
 	 <bean id="ptBillServiceImpl" class="org.egov.ptis.client.bill.PTBillServiceImpl" scope="prototype" lazy-init="false">
@@ -191,9 +186,8 @@
 		<property name="persistenceService" ref="persistenceService" />
     </bean>
     
-    <bean id="revisionPetitionService" class="org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.objection.RevisionPetition" />
-    </bean>
+    <bean id="revisionPetitionService" class="org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService" scope="prototype"/>
+
     <bean id="taxCalculator" class="org.egov.ptis.client.service.calculator.APTaxCalculator" scope="prototype"/>
     <bean id="propService" class="org.egov.ptis.domain.service.property.PropertyService" scope="prototype" >
 		<property name="propPerServ" ref="persistenceService"/>
@@ -205,7 +199,11 @@
 	<bean id="taxExemptionService" class="org.egov.ptis.domain.service.exemption.TaxExemptionService" scope="prototype" />
 	<bean id="vacancyRemissionService" class="org.egov.ptis.domain.service.property.VacancyRemissionService" scope="prototype" autowire-candidate="true" />
 	<bean id="financialUtil" class="org.egov.ptis.client.util.FinancialUtil" scope="prototype" autowire-candidate="true" />
-	<bean id="mutationRegistrationService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" />
+	<bean id="mutationRegistrationService" parent="abstractPersistenceService" scope="prototype">
+		<constructor-arg name="type" value="org.egov.ptis.domain.entity.property.MutationRegistrationDetails" />
 	</bean>
+
+    <bean id="bulkBillGenerationPersistenceService" parent="abstractPersistenceService">
+        <constructor-arg name="type" value="org.egov.ptis.domain.entity.demand.BulkBillGeneration"/>
+    </bean>
 </beans>

@@ -48,8 +48,8 @@
 	   
 	<context:component-scan base-package="org.egov.commons, org.egov.common, org.egov.lib" />
 
-	<bean id="authRuleService" parent="persistenceService" autowire-candidate="true">
-		<property name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>
+	<bean id="authRuleService" parent="abstractPersistenceService" autowire-candidate="true">
+        <constructor-arg name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>
 	</bean>
 
 	<bean id="RuleInterceptorFilter" class="org.egov.lib.rrbac.filter.RuleInterceptorFilter">
