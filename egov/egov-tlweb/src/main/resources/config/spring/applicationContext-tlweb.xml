@@ -40,13 +40,20 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
- 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
     <import resource="applicationSecurityContext-tl.xml"/>
     <import resource="applicationQuartzContext-tl.xml"/>
 
+    <context:component-scan base-package="org.egov.tl.web">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="parentMessageSource" ref="parentMessageSource"/>
         <property name="basenames">
             <list>
                 <value>messages/labels</value>

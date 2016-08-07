@@ -38,10 +38,31 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
-       default-lazy-init="false">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	  
 	<import resource="applicationSecurityContext-assets.xml"/>
-	
+
+	<context:component-scan base-package="org.egov.assets.web">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <!-- Disabling caching since on development -->
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+
 </beans>

@@ -46,8 +46,24 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<import resource="applicationSecurityContext-dashboard.xml"/>
-	<context:property-placeholder />
+
+    <context:property-placeholder />
+
     <context:component-scan base-package="org.egov.dashboard">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource" />
+        <property name="basenames">
+            <list>
+                <value>messages/labels</value>
+                <value>messages/errors</value>
+                <value>messages/message</value>
+            </list>
+        </property>
+        <property name="cacheSeconds" value="0"/>
+    </bean>
+
 </beans>
