@@ -55,7 +55,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Unique(fields = { "code" }, id = "id", tableName = "EGCL_SERVICEDETAILS", columnName = { "CODE" }, message = "masters.serviceDetailsCode.isunique")
+@Unique(fields = { "code","name" }, id = "id", tableName = "EGCL_SERVICEDETAILS", columnName = { "CODE","NAME" }, message = "masters.serviceDetailsCodeOrName.isunique")
 public class ServiceDetails extends BaseModel {
     /**
      * Serial version uid

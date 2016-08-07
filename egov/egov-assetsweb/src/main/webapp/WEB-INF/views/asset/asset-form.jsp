@@ -95,44 +95,10 @@
 							<form:errors path="department" cssClass="error-msg" />
 						</div>
 					</div>
-					<%-- <div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.area" /> <span class="mandatory"></span> </label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="area" id="area" cssClass="form-control"
-								cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${boundarys}" itemValue="id"
-									itemLabel="name" />
-							</form:select>
-							<form:errors path="area" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.location" /> </label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="location" id="location"
-								cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${boundarys}" itemValue="id"
-									itemLabel="name" />
-							</form:select>
-							<form:errors path="location" cssClass="error-msg" />
-						</div> --%>
+				
 
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.assetdetails" /> </label>
-					<div class="col-sm-3 add-margin">
-						<form:textarea path="assetDetails"
-							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="256" />
-						<form:errors path="assetDetails" cssClass="error-msg" />
-					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.modeofacquisition" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -146,58 +112,28 @@
 						</form:select>
 						<form:errors path="modeOfAcquisition" cssClass="error-msg" />
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.status" /> <span class="mandatory"></span> </label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="status.id" id="status" cssClass="form-control"
-							required="required" cssErrorClass="form-control error">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${egwStatus}" itemValue="id"
-								itemLabel="code" />
-						</form:select>
-						<form:errors path="status" cssClass="error-msg" />
-					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.description" /> </label>
-					<div class="col-sm-3 add-margin">
-						<form:textarea path="description"
-							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="256" />
-						<form:errors path="description" cssClass="error-msg" />
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.dateofcreation" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="dateOfCreation" class="form-control datepicker"
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" />
 						<form:errors path="dateOfCreation" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.remarks" /> </label>
-					<div class="col-sm-3 add-margin">
-						<form:textarea path="remarks"
-							class="form-control text-left patternvalidation"
-							data-pattern="alphanumeric" maxlength="1024" />
-						<form:errors path="remarks" cssClass="error-msg" />
-					</div>
 				</div>
-
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.accdepreciation" /> </label>
-					<div class="col-sm-3 add-margin">
-						<form:input path="accDepreciation"
-							class="form-control text-right patternvalidation"
-							data-pattern="number" />
-						<form:errors path="accDepreciation" cssClass="error-msg" />
+							code="lbl.assetdetails" /> </label>
+					<div class="col-sm-8 add-margin">
+						<form:textarea path="assetDetails"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumeric" maxlength="256" />
+						<form:errors path="assetDetails" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
+					</div>
+				
+				<div class="form-group">
+					
+					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.length" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="length"
@@ -205,9 +141,7 @@
 							data-pattern="number" />
 						<form:errors path="length" cssClass="error-msg" />
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.width" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="width"
@@ -215,13 +149,19 @@
 							data-pattern="number" />
 						<form:errors path="width" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
+				</div>
+				<div class="form-group">
+				
+					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.totalarea" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="totalArea"
 							class="form-control text-right patternvalidation"
 							data-pattern="number" />
 						<form:errors path="totalArea" cssClass="error-msg" />
+					</div>
+					<div>
+						 
 					</div>
 					<input type="hidden" name="asset" value="${asset.id}" /> 
 				    <input type="hidden" id="selectedblock" value="${blockId}" /> 
@@ -234,3 +174,41 @@
 						<%@ include file="asset-edit-assetcategory-properties.jsp"%>
 					</div>
 					</div>
+				<div class="panel-heading">
+			<div class="panel-title" id="summary">${title.valuesummary}</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.status" /> <span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:select path="status" id="status" cssClass="form-control"
+							required="required" onchange="validateStatus(this);" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${egwStatus}" itemValue="id"
+								itemLabel="code" />
+						</form:select>
+						<form:errors path="status" cssClass="error-msg" />
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.grossvalue" /> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="grossValue"
+							class="form-control text-right patternvalidation"
+							data-pattern="decimalvalue" maxlength="16" />
+						<form:errors path="grossValue" cssClass="error-msg" />
+					</div>
+					
+				</div>	
+				<div class="form-group">
+				<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.remarks" /> </label>
+					<div class="col-sm-5 add-margin">
+						<form:textarea path="remarks"
+							class="form-control text-left patternvalidation"
+							data-pattern="alphanumeric" maxlength="1024" />
+						<form:errors path="remarks" cssClass="error-msg" />
+					</div>
+					</div>
+					

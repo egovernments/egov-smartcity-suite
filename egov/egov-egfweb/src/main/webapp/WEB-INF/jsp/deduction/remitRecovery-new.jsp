@@ -93,7 +93,7 @@ function loadBank(obj)
 					<td class="bluebox"><s:text
 							name="remit.recovery.search.fromdate" /></td>
 					<td class="bluebox"><s:date name="remittanceBean.fromVhDate"
-							id="fromVhDateId" format="dd/MM/yyyy" /> <s:textfield
+							var="fromVhDateId" format="dd/MM/yyyy" /> <s:textfield
 							name="remittanceBean.fromVhDate" id="fromVhDate"
 							value="%{remittanceBean.fromVhDateId}" maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
@@ -104,7 +104,7 @@ function loadBank(obj)
 					<td class="bluebox"><s:text
 							name="remit.recovery.search.todate" /><span class="mandatory"></span></td>
 					<td class="bluebox"><s:date name="voucherDate"
-							id="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
+							var="voucherDateId" format="dd/MM/yyyy" /> <s:textfield
 							name="voucherDate" id="voucherDate" value="%{voucherDateId}"
 							maxlength="10"
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a

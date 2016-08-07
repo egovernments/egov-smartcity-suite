@@ -65,12 +65,14 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     Boundary findByName(String name);
 
     List<Boundary> findByNameContainingIgnoreCase(String name);
-
+     
+    
     List<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId);
 
-    Page<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId, Pageable page);
-
-    Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
+    
+    Page<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId,Pageable page);
+    
+       Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
             @Param("boundaryNum") Long boundaryNum);
 
     @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType = :boundaryType AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.boundaryNum")
@@ -122,8 +124,8 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     Boundary findBoundaryByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
             @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select b from Boundary b where b.isHistory=false and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.localName asc")
-    List<Boundary> findByNameAndBoundaryType(@Param("boundaryName") String boundaryName,
+    @Query("select b from Boundary b where b.isHistory=false and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.boundaryNum asc")
+    List<Boundary> findByNameAndBoundaryTypeOrderByBoundaryNumAsc(@Param("boundaryName") String boundaryName,
             @Param("boundaryTypeId") Long boundaryTypeId);
 
     @Query("select b from Boundary b where b.boundaryType.name=:boundaryType and b.boundaryType.hierarchyType.name=:hierarchyType and b.boundaryType.hierarchy=:hierarchyLevel")
@@ -145,4 +147,9 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     @Query("from Boundary BND where BND.parent is null")
     List<Boundary> findAllParents();
-}
+    
+    List<Boundary> findByBoundaryTypeOrderByBoundaryNumAsc(BoundaryType boundaryType);
+    
+    
+
+  }

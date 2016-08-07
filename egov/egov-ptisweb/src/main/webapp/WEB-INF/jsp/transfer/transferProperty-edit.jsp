@@ -275,30 +275,24 @@
 						</tr>
 					</s:if>
 					<tr>
-						<td class="greybox2">&nbsp;</td>
-						<td class="greybox"><s:text name="label.parties.value" /> :</td>
-						<td class="greybox"><s:textfield name="partyValue"
-								value="%{partyValue}" id="partyValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
-						<td class="greybox"><s:text name="label.department.value" />:</td>
-						<td class="greybox"><s:textfield name="departmentValue"
-								value="%{departmentValue}" id="departmentValue" maxlength="16"
-								onblur="validNumber(this);checkZero(this);" /></td>
-					</tr>
-					<tr>
-						<s:if
-							test="%{!userDesignationList.contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN)}">
-							<tr>
-								<td class="bluebox2">&nbsp;</td>
-								<td class="bluebox"><s:text name="docValue" /> :</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{marketValue}" default="N/A" /></span></td>
-								<td class="bluebox"><s:text name="payablefee" />:</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{mutationFee}" default="N/A" /></span></td>
-							</tr>
-						</s:if>
-					</tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="label.parties.value" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{partyValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="label.department.value" />
+								:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{departmentValue}" default="N/A" /></span></td>
+						</tr>
+						<tr>
+							<td class="bluebox2">&nbsp;</td>
+							<td class="bluebox"><s:text name="docValue" /> :</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{marketValue}" default="N/A" /></span></td>
+							<td class="bluebox"><s:text name="payablefee" />:</td>
+							<td class="bluebox"><span class="bold"><s:property
+										value="%{mutationFee}" default="N/A" /></span></td>
+						</tr>
 					</table>
 				</table>
 				<s:if test="%{!documentTypes.isEmpty()}">
@@ -393,7 +387,6 @@
 			}
 		}
 	</script>
-	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </body>
 </html>

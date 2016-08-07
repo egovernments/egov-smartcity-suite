@@ -45,7 +45,6 @@
 <html>
 <head>
 <title><s:text name="generalLedger.search.title" /></title>
-<sx:head />
 <style type="text/css">
 #codescontainer {
 	position: absolute;
@@ -103,7 +102,6 @@
 	<link rel="stylesheet" type="text/css" href="/EGF/resources/css/jquery-ui/css/ui-lightness/jquery-ui-1.8.4.custom.css" type="text/css"/>
 	
 	 <script type="text/javascript" src="/EGF/resources/javascript/autocomplete-debug.js"></script> 
-	<script type="text/javascript" src="/EGF/resources/javascript/jquery-ui-1.8.22.custom.min.js"></script>
 <div id="loading"
 	style="position: absolute; left: 25%; top: 70%; padding: 2px; z-index: 20001; height: auto; width: 500px; display: none;">
 	<div class="loading-indicator"
@@ -159,20 +157,24 @@
 					<tr>
 						<td class="bluebox"><s:text name="generalLedger.startDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield name="startDate"
-								id="startDate" cssStyle="width:100px" value='%{startDate}'
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('generalLedgerForm.startDate');"
-							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="bluebox"><s:date name="startDate" var="startDate"
+								format="dd/MM/yyyy" /> <s:textfield id="startDate"
+								name="startDate" value="%{startDate}" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 						<td class="bluebox"><s:text name="generalLedger.endDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield name="endDate" id="endDate"
-								cssStyle="width:100px" value='%{endDate}'
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('generalLedgerForm.endDate');"
-							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="bluebox"><s:date name="endDate" var="endDate"
+								format="dd/MM/yyyy" /> <s:textfield id="endDate" name="endDate"
+								value="%{endDate}" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 					</tr>
 					<tr>
 						<td class="bluebox"><s:text name="generalLedger.function" /></td>

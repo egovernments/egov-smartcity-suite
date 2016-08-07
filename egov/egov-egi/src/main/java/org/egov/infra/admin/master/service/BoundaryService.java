@@ -59,6 +59,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,7 +113,10 @@ public class BoundaryService {
     public List<Boundary> getAllBoundaries() {
         return boundaryRepository.findAll();
     }
-
+   public List<Boundary> getAllBoundariesOrderByBoundaryNumAsc(BoundaryType boundaryType) {
+        return boundaryRepository.findByBoundaryTypeOrderByBoundaryNumAsc(boundaryType);
+    }
+   
     public List<Boundary> getBoundaryByNameLike(final String name) {
         return boundaryRepository.findByNameContainingIgnoreCase(name);
     }
@@ -120,11 +124,10 @@ public class BoundaryService {
     public List<Boundary> getAllBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
-
     public List<Boundary> getPageOfBoundaries(final Long boundaryTypeId) {
+          
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
-
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {
         return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
     }
@@ -203,8 +206,8 @@ public class BoundaryService {
         return boundaryRepository.findBoundaryByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
     }
 
-    public List<Boundary> getBondariesByNameAndType(final String boundaryName, final Long boundaryTypeId) {
-        return boundaryRepository.findByNameAndBoundaryType(boundaryName, boundaryTypeId);
+    public List<Boundary> getBondariesByNameAndTypeOrderByBoundaryNumAsc(final String boundaryName, final Long boundaryTypeId) {
+        return boundaryRepository.findByNameAndBoundaryTypeOrderByBoundaryNumAsc(boundaryName, boundaryTypeId);
     }
 
     public Boolean validateBoundary(final BoundaryType boundaryType) {

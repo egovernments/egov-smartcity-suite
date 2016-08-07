@@ -50,6 +50,8 @@ import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
 import org.json.simple.JSONObject;
@@ -88,7 +90,7 @@ public class CommonController extends ApiController {
     
     @Autowired
     private UserService userservice;
-
+    
     // -----------------------------------------------------------------
     /**
      * This will create a new citizen along with it will capture their device also.
@@ -104,13 +106,16 @@ public class CommonController extends ApiController {
             citizenCreate.setUsername(citizen.get("mobileNumber").toString());
             citizenCreate.setMobileNumber(citizen.get("mobileNumber").toString());
             citizenCreate.setName(citizen.get("name").toString());
+            
+            if(citizen.get("emailId")!=null)
             citizenCreate.setEmailId(citizen.get("emailId").toString());
+            
             citizenCreate.setPassword(citizen.get("password").toString());
             Device device = deviceRepository.findByDeviceUId(citizen.get("deviceId").toString());
             if (device == null) {
                 device = new Device();
                 device.setDeviceId(citizen.get("deviceId").toString());
-                device.setType(citizen.get("deviceType").toString());
+                device.setType(citizen.get("deviceType").toString());	
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
             
@@ -192,18 +197,58 @@ public class CommonController extends ApiController {
 	        String identity = request.getParameter("identity");
 	        String redirectURL = request.getParameter("redirectURL");
 	
-	        if (identity == null || !identity.matches("\\d{10}")) {
-	            return res.error("Invalid mobile number");
-	        } 
+	        String token=request.getParameter("token");
+	        String newPassword,confirmPassword;
+	        
+	        if(StringUtils.isEmpty(identity))
+	        {
+	        	return res.error(getMessage("msg.invalid.request"));
+	        }
+	        
+	        //for reset password with otp
+	        if(!StringUtils.isEmpty(token))
+	        {
+	        	
+	        	newPassword=request.getParameter("newPassword");
+	        	confirmPassword=request.getParameter("confirmPassword");
+	        	
+	        	if(StringUtils.isEmpty(newPassword))
+		        {
+		        	return res.error(getMessage("msg.invalid.request"));
+		        }
+	        	else if(!newPassword.equals(confirmPassword))
+	        	{
+	        		return res.error(getMessage("msg.pwd.not.match"));
+	        	}
+	        	else if(identityRecoveryService.validateAndResetPassword(token, newPassword)){
+	        		return res.success("", getMessage("msg.pwd.reset.success"));
+	        	}
+	        	else
+	        	{
+	        		return res.error(getMessage("msg.pwd.otp.invalid"));
+	        	}
+	        	
+	        }
+	        
+	        if(identity.matches("\\d+")){
+	        	if (!identity.matches("\\d{10}")) {
+		            return res.error(getMessage("msg.invalid.mobileno"));
+		        } 
+	        }
+	        else if(!identity.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+        	{
+        		return res.error(getMessage("msg.invalid.mail"));
+        	}
 	
 	        Citizen citizen = citizenService.getCitizenByUserName(identity);
+	        
 	        if (citizen == null) {
 	            return res.error(getMessage("user.not.found"));
 	        }
 	       
 	        if (identityRecoveryService.generateAndSendUserPasswordRecovery(
-	                identity, redirectURL + "/egi/login/password/reset?token=")) {
-	            return res.success("", "Password has been sent to mail");
+	                identity, redirectURL + "/egi/login/password/reset?token=", true)) {
+	            return res.success("", "OTP for recovering password has been sent to your mobile"+(StringUtils.isEmpty(citizen.getEmailId())?"":" and mail"));
 	        }
 	
 	        return res.error("Password send failed");

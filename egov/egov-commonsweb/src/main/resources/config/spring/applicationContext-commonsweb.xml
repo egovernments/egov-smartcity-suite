@@ -45,5 +45,7 @@
     <import resource="classpath*:config/spring/applicationContext-commons.xml"/>
 	<import resource="applicationSecurityContext-commons.xml"/>
 
-	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    </bean>  
+     
 </beans>

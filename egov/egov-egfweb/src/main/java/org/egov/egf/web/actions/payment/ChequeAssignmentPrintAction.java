@@ -41,10 +41,9 @@ package org.egov.egf.web.actions.payment;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,10 +55,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.ChequeFormat;
 import org.egov.infra.utils.NumberToWord;
-import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.instrument.InstrumentService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results(value = {
@@ -71,15 +73,15 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
 
     String jasperpath = "/reports/templates/ChequeFormat.jasper";
     ChequeFormat chequeFormat = new ChequeFormat();
-    private String payee;
-    private String chequeNo;
-    String amount;
-    private Date chequeDate;
+    @Autowired
+    @Qualifier("instrumentService")
+    private InstrumentService instrumentService;
     private InputStream inputStream;
     private ReportHelper reportHelper;
     private List chequeFormatList = new ArrayList<ChequeFormat>();
     private final SimpleDateFormat DDMMYYYFORMAT = new SimpleDateFormat("ddMMYYYY");
     private final SimpleDateFormat DD_MON_YYYYFORMAT = Constants.DD_MON_YYYYFORMAT;
+    private String instrumentHeader ;
 
     @Override
     public Object getModel() {
@@ -89,33 +91,44 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/payment/chequeAssignmentPrint-generateChequeFormat")
     public String generateChequeFormat() throws IOException {
-
         final Map<String, Object> paramMap = getParamMap();
         inputStream = reportHelper.exportHtml(inputStream, jasperpath, paramMap, getDataForChequeFormat(), "pt");
         return "chequeFormat-HTML";
     }
+    
+    public boolean chequeFormatExists(){
+        
+        return true;
+    }
 
     protected List<Object> getDataForChequeFormat() {
-
+        
         return chequeFormatList;
     }
 
     protected String numberFormate(String amountToFormat)
     {
-        String formatedAmount = NumberUtil.formatNumber(BigDecimal.valueOf(Double.valueOf(amountToFormat)));
+        DecimalFormat df = new DecimalFormat();
+        String formatedAmount = df.format( Double.parseDouble(amountToFormat));
         return formatedAmount;
     }
 
     protected Map<String, Object> getParamMap() {
+        InstrumentHeader instrumentDetails = new InstrumentHeader();
+        if(instrumentHeader!=null){
+            instrumentDetails = instrumentService.getInstrumentHeaderById(Long.valueOf(instrumentHeader));
+        }
+        
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("payee", payee);
-        String totalAmount = numberFormate(amount);
-        String amountInWords = NumberToWord.convertToWord(amount).replaceAll("Rupees", "").replaceAll("Only", "")
-                .replaceAll(" and", " Rupees and");
-        final String chqDate = DDMMYYYFORMAT.format(chequeDate);
+        if(instrumentDetails!=null){
+        paramMap.put("payee", instrumentDetails.getPayTo());
+        String totalAmount = numberFormate(instrumentDetails.getInstrumentAmount().toString());
+        String amountInWords = NumberToWord.convertToWord(instrumentDetails.getInstrumentAmount().toString());
+        final String chqDate = DDMMYYYFORMAT.format(instrumentDetails.getInstrumentDate());
         paramMap.put("totalAmount", totalAmount);
         paramMap.put("amountInWords", amountInWords);
         paramMap.put("chqDate", chqDate);
+        }
         return paramMap;
 
     }
@@ -124,41 +137,13 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
         return chequeFormat;
     }
 
-    public String getPayee() {
-        return payee;
-    }
-
-    public String getChequeNo() {
-        return chequeNo;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    public Date getChequeDate() {
-        return chequeDate;
-    }
+   
 
     public void setChequeFormat(ChequeFormat chequeFormat) {
         this.chequeFormat = chequeFormat;
     }
 
-    public void setPayee(String payee) {
-        this.payee = payee;
-    }
-
-    public void setChequeNo(String chequeNo) {
-        this.chequeNo = chequeNo;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
-    public void setChequeDate(Date chequeDate) {
-        this.chequeDate = chequeDate;
-    }
+    
 
     public InputStream getInputStream() {
         return inputStream;
@@ -174,6 +159,14 @@ public class ChequeAssignmentPrintAction extends BaseFormAction {
 
     public void setReportHelper(ReportHelper reportHelper) {
         this.reportHelper = reportHelper;
+    }
+
+    public String getInstrumentHeader() {
+        return instrumentHeader;
+    }
+
+    public void setInstrumentHeader(String instrumentHeader) {
+        this.instrumentHeader = instrumentHeader;
     }
 
 }

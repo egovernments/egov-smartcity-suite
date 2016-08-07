@@ -200,7 +200,7 @@ $(document).ready(function(){
 	$("#btn-add").click(function() {
 		if(validateAssignment()) {
 			if(!edit){
-				rowCount = $("#assignmentTable tr").length-1;
+				rowCount = $("#assignmentTable tr").length;
 				addRow(rowCount);
 				rowCount++;
 			}
@@ -251,7 +251,7 @@ $(document).ready(function(){
 			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
 		}
 		var del="";
-		  del='<span class="add-padding"><i id="delete_row" class="fa fa-remove"></i></span>';
+		  del='<span class="add-padding"><i id="delete_row" class="fa fa-remove"  value="'+index+'"></i></span>';
 		var text = 
 					'<tr>'+
 						'<td>'+
@@ -306,7 +306,9 @@ $(document).ready(function(){
 		if(!$("#removedassignIds").val()==""){
 			$("#removedassignIds").val($("#removedassignIds").val()+",");
 		}
-		$("#removedassignIds").val($("#removedassignIds").val()+$("#table_assignid"+$(this).attr("value")+"").val());
+		if($("#table_assignid"+$(this).attr("value")+"").val()!=undefined){
+		 $("#removedassignIds").val($("#removedassignIds").val()+$("#table_assignid"+$(this).attr("value")+"").val());
+		}
 		$(this).closest('tr').remove();
 	});
 	
@@ -433,7 +435,7 @@ $(document).ready(function(){
 	$("#btn-addJurdctn").click(function() {
 		if(validateJurisdiction()) {
 			if(!jurdctnedit){
-				jurdctnrowCount = $("#jurisdictionTable tr").length-1;
+				jurdctnrowCount = $("#jurisdictionTable tr").length;
 				jurdctnaddRow(jurdctnrowCount);
 				jurdctnrowCount++;
 			}
@@ -479,7 +481,9 @@ $(document).ready(function(){
 		if(!$("#removedJurisdictionIds").val()==""){
 			$("#removedJurisdictionIds").val($("#removedJurisdictionIds").val()+",");
 		}
-		$("#removedJurisdictionIds").val($("#removedJurisdictionIds").val()+$("#table_jurisdictionid"+$(this).attr("value")+"").val());
+		if($("#table_jurisdictionid"+$(this).attr("value")+"").val()!=undefined){
+		 $("#removedJurisdictionIds").val($("#removedJurisdictionIds").val()+$("#table_jurisdictionid"+$(this).attr("value")+"").val());
+		}
 		$(this).closest('tr').remove();
 	});
 

@@ -226,7 +226,6 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.setOrderNo(orderNo);
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
-                    basicProp.addPropertyOwners(ownerInfo);
                 } else {
                     // If existing user, then update the address
                 	user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
@@ -240,7 +239,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.setBasicProperty(basicProp);
                 }
             }
-            
+            basicProp.addPropertyOwners(ownerInfo);
         }
 	}
 }

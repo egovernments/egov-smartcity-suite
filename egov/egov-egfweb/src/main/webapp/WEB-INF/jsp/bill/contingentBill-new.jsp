@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title><s:text name="contingent.bill" /></title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -58,6 +57,8 @@
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/autocomplete-debug.js"></script>
+<link rel="stylesheet" href="/EGF/struts/xhtml/styles.css"
+	type="text/css" />
 
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
@@ -517,7 +518,7 @@ document.getElementById(tab+"["+idx+"]."+field).options[<s:property value="#stat
 								</s:if>
 								<td class="bluebox"><s:text name="bill.Date" /><span
 									class="mandatory1">*</span></td>
-								<s:date name='commonBean.billDate' id="commonBean.billDateId"
+								<s:date name='commonBean.billDate' var="commonBean.billDateId"
 									format='dd/MM/yyyy' />
 								<td class="bluebox"><s:textfield id="billDate"
 										name="commonBean.billDate" value="%{commonBean.billDateId}"
@@ -648,12 +649,22 @@ function onSubmit()
 		return false;
 	}
 }
-function approveSubmit()
+function validateCutOff()
 {
-	if(validate()){
-		document.cbill.action='${pageContext.request.contextPath}/bill/contingentBill-approveOnCreate.action';
-    	return true;
-	}else{
+var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
+var billDatePart=document.getElementById("billDate").value.split("/");
+var cutOffDate = new Date(cutOffDatePart[1] + "/" + cutOffDatePart[0] + "/"
+		+ cutOffDatePart[2]);
+var billDate = new Date(billDatePart[1] + "/" + billDatePart[0] + "/"
+		+ billDatePart[2]);
+if(billDate<=cutOffDate)
+{
+	return true;
+}
+else{
+	var msg1='<s:text name="wf.cutoffdate.message"/>';
+	var msg2='<s:text name="wf.cutoffdate.msg"/>';
+	bootbox.alert(msg1+" "+document.getElementById("cutOffDate").value+" "+msg2);
 		return false;
 	}
 }

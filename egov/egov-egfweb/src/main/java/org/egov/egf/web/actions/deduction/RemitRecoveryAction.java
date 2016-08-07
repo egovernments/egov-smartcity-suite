@@ -72,6 +72,7 @@ import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.payment.BasePaymentAction;
 import org.egov.egf.web.actions.voucher.CommonAction;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.script.entity.Script;
@@ -98,11 +99,13 @@ import org.egov.pims.commons.Designation;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -172,6 +175,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private String remittedTo = "";
     private final boolean remit = false;
     private List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
+    private String cutOffDate;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
+    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+    DateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
+
+    Date date;
     private ScriptService scriptService;
     @Autowired
     private PaymentActionHelper paymentActionHelper;
@@ -261,6 +271,17 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/deduction/remitRecovery-remit")
     public String remit() {
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            try {
+                date = df.parse(cutOffDateconfigValue.get(0).getValue());
+                setCutOffDate(formatter.format(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | start");
@@ -286,6 +307,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     public String create()
     {
         try {
+            String vdate = parameters.get("voucherDate")[0];
+            Date date1 = sdf1.parse(vdate);
+            String voucherDate = formatter1.format(date1);
+            String cutOffDate1 = null;
             validateFields();
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
@@ -295,10 +320,29 @@ public class RemitRecoveryAction extends BasePaymentAction {
             paymentheader = paymentActionHelper.createRemittancePayment(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(), remittanceBean.getTotalAmount(),
                     listRemitBean, recovery, remittanceBean, remittedTo, workflowBean, headerDetails, commonBean);
-            addActionMessage(getText("remittancepayment.transaction.success")
-                    + paymentheader.getVoucherheader().getVoucherNumber());
-            addActionMessage(getText("payment.voucher.approved",
-                    new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+
+            if (!cutOffDate.isEmpty() && cutOffDate != null)
+            {
+                try {
+                    date = sdf1.parse(cutOffDate);
+                    cutOffDate1 = formatter1.format(date);
+                } catch (ParseException e) {
+                    // e.printStackTrace();
+                }
+            }
+            if (cutOffDate1 != null && voucherDate.compareTo(cutOffDate1) <= 0
+                    && FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            {
+                addActionMessage(getText("remittancepayment.transaction.success")
+                        + paymentheader.getVoucherheader().getVoucherNumber());
+            }
+            else
+            {
+                addActionMessage(getText("remittancepayment.transaction.success")
+                        + paymentheader.getVoucherheader().getVoucherNumber());
+                addActionMessage(getText("payment.voucher.approved",
+                        new String[] { paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
+            }
 
         } catch (final ValidationException e) {
             loadAjaxedDropDowns();
@@ -786,7 +830,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     {
         Bankaccount bankaccount = null;
 
-        if (paymentheader != null)
+        if (paymentheader != null && paymentheader.getBankaccount() != null)
         {
             bankaccount = paymentheader.getBankaccount();
             common.setBranchId(bankaccount.getBankbranch().getId());
@@ -832,14 +876,34 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
-        if (null == paymentheader || null == paymentheader.getId() || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
-            validActions = Arrays.asList("Forward");
-        } else {
-            if (paymentheader.getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
-                        .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), paymentheader.getCurrentState().getValue(),
-                        getPendingActions(), paymentheader.getCreatedDate());
+        List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "DataEntryCutOffDate");
+        if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
+            }
+        }
+        else
+        {
+            if (null == paymentheader || null == paymentheader.getId()
+                    || paymentheader.getCurrentState().getValue().endsWith("NEW")) {
+                validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD);
+            } else {
+                if (paymentheader.getCurrentState() != null) {
+                    validActions = this.customizedWorkFlowService.getNextValidActions(paymentheader
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                            getAdditionalRule(), paymentheader.getCurrentState().getValue(),
+                            getPendingActions(), paymentheader.getCreatedDate());
+                }
             }
         }
         return validActions;
@@ -1031,6 +1095,14 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public String getCurrentState() {
         return paymentheader.getState().getValue();
+    }
+
+    public String getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(String cutOffDate) {
+        this.cutOffDate = cutOffDate;
     }
 
 }

@@ -110,6 +110,17 @@ function viewVoucher(vid){
 	var url = '../voucher/preApprovedVoucher-loadvoucherview.action?vhid='+vid;
 	window.open(url,'Search','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700');
 }
+
+function printCheque(id)
+{
+	var chequeFormat=document.getElementById('chequeFormatId').value;
+	if(chequeFormat == "" || chequeFormat == null){
+		bootbox.alert("This bank account is not attached to any cheque formats");
+		return false;
+	} 
+	window.open('/EGF/payment/chequeAssignmentPrint-generateChequeFormat.action?instrumentHeader='+id,'Search','resizable=yes,scrollbars=yes,left=300,top=40,width=900, height=700');
+}
+
 </script>
 <body>
 	<div class="formmainbox">
@@ -147,7 +158,7 @@ function viewVoucher(vid){
 					<td class="greybox" width="10%">Cheque From Date:<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="fromDate" id="fromDate"
+					<td class="greybox"><s:date name="fromDate" var="fromDate"
 							format="dd/MM/yyyy" /> <s:textfield id="fromDate"
 							name="fromDate" value="%{fromDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -159,7 +170,7 @@ function viewVoucher(vid){
 					<td class="greybox" width="10%">Cheque To Date:<span
 						class="mandatory1">*</span></td>
 
-					<td class="greybox"><s:date name="toDate" id="toDate"
+					<td class="greybox"><s:date name="toDate" var="toDate"
 							format="dd/MM/yyyy" /> <s:textfield id="toDate" name="toDate"
 							value="%{toDate}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

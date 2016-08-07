@@ -55,7 +55,6 @@
 		<s:text name='GenRevPetition.title' />
 	</s:elseif>
 </title>
-<sx:head />
 
 <link href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 <script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>

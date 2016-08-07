@@ -753,7 +753,7 @@ function onLoad(){
 									style="color: red">Please wait....</span>
 							</div>
 							<div class="bottombuttonholder" align="middle">
-								<s:submit align="center" type="submit" cssClass="buttonsubmit"
+								<s:submit type="submit" cssClass="buttonsubmit"
 									id="button2" value="Pay Online" onclick="return validateOnlineReceipt();" />
 							</div>
 						</div>

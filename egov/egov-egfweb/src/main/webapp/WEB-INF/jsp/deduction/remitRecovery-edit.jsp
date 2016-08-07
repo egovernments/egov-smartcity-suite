@@ -324,7 +324,7 @@ function printVoucher(){
 																			name="voucher.date" /> <span class="mandatory">*</span>
 																	</td>
 																	<td class="bluebox" width="34%"><s:date
-																			name='voucherDate' id="voucherDateId"
+																			name='voucherDate' var="voucherDateId"
 																			format='dd/MM/yyyy' /> <s:textfield
 																			name="voucherDate" id="voucherDate"
 																			value='%{voucherDateId}'

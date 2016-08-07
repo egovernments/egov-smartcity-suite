@@ -317,9 +317,9 @@ public class PropertyExternalService {
     }
 
     private void loadPrimaryMobileAndEmail() {
-        final PropertyOwnerInfo propOwnerInfo = basicProperty.getPropertyOwnerInfo().get(0);
-        assessmentDetail.setPrimaryEmail(propOwnerInfo.getOwner().getEmailId());
-        assessmentDetail.setPrimaryMobileNo(propOwnerInfo.getOwner().getMobileNumber());
+        final User primaryOwner = basicProperty.getPrimaryOwner();
+        assessmentDetail.setPrimaryEmail(primaryOwner.getEmailId());
+        assessmentDetail.setPrimaryMobileNo(primaryOwner.getMobileNumber());
     }
 
     private void loadPropertyDues() {
@@ -428,7 +428,7 @@ public class PropertyExternalService {
                     propertyTaxDetails.setErrorDetails(errorDetails);
         	} else {
 	            propertyTaxDetails = getPropertyTaxDetails(basicProperty, category);
-	            if (propertyTaxDetails.getErrorDetails().getErrorCode() == null) {
+	            if (propertyTaxDetails.getErrorDetails() == null) {
 	                errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
 	                errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
 	                propertyTaxDetails.setErrorDetails(errorDetails);
@@ -516,7 +516,6 @@ public class PropertyExternalService {
                             errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_CODE);
                             errorDetails.setErrorMessage(PropertyTaxConstants.PROPERTY_MARK_DEACTIVATE_ERR_MSG);
                         }
-                propertyTaxDetails.setErrorDetails(errorDetails);
             }
             final Property property = basicProperty.getProperty();
             ptDemandDAO.getDemandCollMap(property);
@@ -1829,7 +1828,7 @@ public class PropertyExternalService {
      * @param assessmentNo
      * @return
      */
-    public RestAssessmentDetails loadAssessmentDetails(final String assessmentNo) {
+    public RestAssessmentDetails fetchAssessmentDetails(final String assessmentNo) {
         assessmentDetails = new RestAssessmentDetails();
         basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
         if(basicProperty != null){
@@ -1874,6 +1873,53 @@ public class PropertyExternalService {
     		assessmentDetails.setFeeReceipt("");
     		assessmentDetails.setFeeReceiptDate("");
     		assessmentDetails.setApplicationNo("");
+    	}
+        return assessmentDetails;
+    }
+    
+    /**
+     * Fetches Assessment Details - owner details, tax dues, plinth area, mutation fee related information - used in MeeSeva 
+     * @param applicationNo
+     * @return RestAssessmentDetails
+     */
+    public RestAssessmentDetails loadAssessmentDetails(final String applicationNo) {
+        assessmentDetails = new RestAssessmentDetails();
+        PropertyMutation propertyMutation = getPropertyMutationByAssesmentNoAndApplicationNo(null, applicationNo);
+        if(propertyMutation != null){
+        	basicProperty = propertyMutation.getBasicProperty();
+        	if (basicProperty != null) {
+        		assessmentDetails.setAssessmentNo(basicProperty.getUpicNo());
+        		assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+                property = (PropertyImpl) basicProperty.getProperty();
+                assessmentDetails.setLocalityName(basicProperty.getPropertyID().getLocality().getName());
+                if (property != null) {
+                	assessmentDetails.setOwnerDetails(prepareOwnerInfo(property));
+                	if(property.getPropertyDetail().getTotalBuiltupArea() != null && property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
+                		assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
+                	Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
+                	BigDecimal totalTaxDue = BigDecimal.ZERO;
+                	if(currentPtdemand != null){
+                		for(EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()){
+                			if(demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0){
+                				totalTaxDue = totalTaxDue.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
+                			}
+                		}
+                	}
+                	assessmentDetails.setTotalTaxDue(totalTaxDue);
+                }
+        	}
+        	if(StringUtils.isNotBlank(propertyMutation.getReceiptNum())){
+	        	assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+	        	assessmentDetails.setIsMutationFeePaid("Y");
+	        	assessmentDetails.setMutationFee(BigDecimal.ZERO);
+        	}else{
+        		assessmentDetails.setIsMutationFeePaid("N");
+        		assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
+        	}
+        	
+    		assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+        }else{
+    		assessmentDetails.setIsMutationFeePaid("N");
     	}
         return assessmentDetails;
     }

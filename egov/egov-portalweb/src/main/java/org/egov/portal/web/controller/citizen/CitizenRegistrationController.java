@@ -101,8 +101,8 @@ public class CitizenRegistrationController {
     }
 
     @RequestMapping(value = "/activation/resendotp", method = RequestMethod.POST)
-    public String resendOTP(@RequestParam final String email, final RedirectAttributes redirectAttrib) {
-        Citizen citizen = citizenService.getCitizenByEmailId(email);
+    public String resendOTP(@RequestParam final String mobile, final RedirectAttributes redirectAttrib) {
+        Citizen citizen = citizenService.getCitizenByUserName(mobile);
         if (citizen == null)
             return "redirect:../register?activation=true&otprss=false";
         citizenService.resendActivationCode(citizen);

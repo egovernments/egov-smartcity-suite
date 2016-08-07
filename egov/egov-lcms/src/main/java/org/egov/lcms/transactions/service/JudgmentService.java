@@ -39,13 +39,11 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
@@ -71,8 +69,6 @@ public class JudgmentService {
 
     @Autowired
     private final JudgmentRepository judgmentRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private LegalCaseRepository legalCaseRepository;
@@ -100,8 +96,15 @@ public class JudgmentService {
 
     }
 
+    public List<JudgmentDocuments> getJudgmentDocList(final Judgment judgment) {
+        final List<JudgmentDocuments> judgmentDOc = new ArrayList<JudgmentDocuments>();
+        for (final JudgmentDocuments judgmentDoc : judgment.getJudgmentDocuments())
+            judgmentDOc.add(judgmentDoc);
+        return judgmentDOc;
+    }
+
     public List<Judgment> findAll() {
-        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, "orderDate"));
+        return judgmentRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
 
     public Judgment findById(final Long id) {

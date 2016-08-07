@@ -43,7 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -146,8 +146,4 @@
     </div>
 </div>
 
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-
-<script src="<c:url value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/boundary.js?rnd=${app_release_no}'/>"></script>

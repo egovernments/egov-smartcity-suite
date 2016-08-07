@@ -98,4 +98,13 @@ public class CollectionApplicationProperties {
     public String axisSecureSecret() {
         return environment.getProperty("axis.secure.secret", String.class);
     }
+    
+    public String getEmailSubject() {
+        return environment.getProperty("email.subject.message", String.class);
+    }
+    
+    public String getEmailBody() {
+        return environment.getProperty("email.body.message", String.class);
+    }
+    
 }

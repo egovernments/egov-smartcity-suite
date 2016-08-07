@@ -56,6 +56,7 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeMatrixService;
 import org.egov.tl.service.TradeLicenseService;
@@ -113,7 +114,7 @@ public class EditTradeLicenseAction extends BaseLicenseAction {
 
     public void prepareBeforeEdit() {
         this.prepareNewForm();
-        this.setDocumentTypes(this.tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));        
         Long id = null;
         if (this.tradeLicense.getId() == null)
             if (this.getSession().get("model.id") != null) {

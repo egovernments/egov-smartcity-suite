@@ -41,10 +41,8 @@
 package org.egov.infra.utils;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.json.simple.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -98,11 +96,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 	}
 
 	public static String encodeString(String string) {
-		try {
-			return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new ApplicationRuntimeException("Exception occured -----> " + e.getMessage());
-		}
+		return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
 	}
 
 }

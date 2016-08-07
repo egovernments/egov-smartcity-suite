@@ -189,11 +189,7 @@
 				onclick="window.close()" />
 			</label>
 		</div>
-
-
-		<logic:notEmpty name="results">
-		</logic:notEmpty>
-		<logic:empty name="results">
+      <s:if test="%{results.isEmpty()}">
 			<s:if test="target=='searchresult'">
 				<table width="90%" border="0" align="center" cellpadding="0"
 					cellspacing="0" class="tablebottom">
@@ -205,9 +201,7 @@
 					</tr>
 				</table>
 			</s:if>
-		</logic:empty>
-
-
+		</s:if>
 	</s:form>
 </body>
 </html>

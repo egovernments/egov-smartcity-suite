@@ -67,7 +67,11 @@
 			bootbox.alert("Invalid Date! Start date is greater than current date");
 			return false;
 		}
-		if (fromDate > toDate) {
+		var fdateParts=	fromDate.split("/");
+		var tdateParts=	toDate.split("/");
+		var fdate=new Date(fdateParts[1]+"/"+fdateParts[0]+"/"+fdateParts[2]);
+		var tdate=new Date(tdateParts[1]+"/"+tdateParts[0]+"/"+tdateParts[2]);
+		if (fdate > tdate) {
 			bootbox.alert("Invalid Date Range! Start Date should be less than End Date!")
 			return false;
 			} 
@@ -122,7 +126,7 @@
 				<tr>
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /></td>
-					<td class="greybox"><s:date name="validfrom" id="validfromId"
+					<td class="greybox"><s:date name="validfrom" var="validfromId"
 							format="dd/MM/yyyy" />
 						<s:textfield id="validfromId" name="validfrom"
 							value="%{validfromId}"
@@ -131,7 +135,7 @@
 							data-inputmask="'mask': 'd/m/y'" /></td>
 
 					<td class="greybox"><s:text name="scheme.endDate" /></td>
-					<td class="greybox"><s:date name="validto" id="validtoId"
+					<td class="greybox"><s:date name="validto" var="validtoId"
 							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
 							name="validto" value="%{validtoId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

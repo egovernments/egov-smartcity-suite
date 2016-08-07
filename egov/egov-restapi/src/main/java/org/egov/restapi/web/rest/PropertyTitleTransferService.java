@@ -172,7 +172,7 @@ public class PropertyTitleTransferService {
             responseJson = getJSONResponse(errorDetails);
         } else {
             RestAssessmentDetails assessmentDetails = propertyExternalService
-                    .loadAssessmentDetails(assessmentReq.getAssessmentNo());
+                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo());
             responseJson = getJSONResponse(assessmentDetails);
         }
         return responseJson;

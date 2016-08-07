@@ -39,9 +39,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>
-<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/helper.js'/>"></script>
 <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0"> 
@@ -52,8 +52,7 @@
         	<form:form role="form" action="feematrix/create" modelAttribute="feeMatrix" id="feematrix-new" name="feematrix-new"
             cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	            <div class="form-group">
-	            	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /> <span
-		              class="mandatory"></span> </label>
+	            	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.licensecategory" /></label>
 		            <div class="col-sm-3 add-margin">
 		              <form:select path="licenseCategory" id="licenseCategory" cssClass="form-control" cssErrorClass="form-control error">
 		                <form:option value="">
@@ -62,8 +61,7 @@
 		                <form:options items="${licenseCategorys}" itemValue="id" itemLabel="name" />
 		              </form:select>
 		            </div>
-		            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory" /> <span
-		                class="mandatory"></span> </label>
+		            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.subcategory" /></label>
 		              <div class="col-sm-3 add-margin">
 		                <form:select path="subCategory" id="subCategory" cssClass="form-control" cssErrorClass="form-control error">
 		                  <form:option value="">
@@ -164,11 +162,7 @@ function callAjaxSearch() {
 			});
 }
 </script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-  src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>

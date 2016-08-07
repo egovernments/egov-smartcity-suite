@@ -345,7 +345,7 @@ public abstract class TaxCollection implements BillingIntegrationService {
             for (final EgBillDetails billDet : billList) {
                 final BigDecimal balanceAmt = getEgBillDetailCollection(billDet);
                 Boolean glCodeExist = false;
-                for (final ReceiptAccountInfo acctDet : bri.getAccountDetails())
+                for (final ReceiptAccountInfo acctDet :bri.getAccountDetails())
                     if (billDet.getGlcode().equals(acctDet.getGlCode())) {
                         glCodeExist = true;
                         billDet.setCollectedAmount(acctDet.getCrAmount().subtract(balanceAmt));
@@ -380,15 +380,25 @@ public abstract class TaxCollection implements BillingIntegrationService {
         if (bri != null) {
             for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
                 Boolean glCodeExist = false;
-                for (final ReceiptAccountInfo acctDet : bri.getAccountDetails())
-                    if (billDet.getGlcode().equals(acctDet.getGlCode())) {
+                for (final ReceiptAccountInfo acctDet : bri.getAccountDetails()){
+                    if(billDet.getGlcode().equals(acctDet.getGlCode()))
                         glCodeExist = true;
+                   if (billDet.getOrderNo()!=null && acctDet.getOrderNumber()!=null && (billDet.getOrderNo().equals(acctDet.getOrderNumber().intValue())) &&  
+                           acctDet.getCrAmount() !=null && acctDet.getCrAmount().compareTo(BigDecimal.ZERO)>0) {
                         BigDecimal amtCollected = billDet.getCollectedAmount();
                         if (amtCollected == null)
                             amtCollected = BigDecimal.ZERO;
                         billDet.setCollectedAmount(acctDet.getCrAmount().subtract(amtCollected));
                         egBillDetailsDAO.update(billDet);
+                        break;
                     }
+                    else
+                    {
+                        billDet.setCollectedAmount(BigDecimal.ZERO);
+                        egBillDetailsDAO.update(billDet);
+                       
+                    }
+                }
                 if (!glCodeExist)
                     throw new InvalidAccountHeadException("GlCode does not exist for "
                             + billDet.getGlcode());

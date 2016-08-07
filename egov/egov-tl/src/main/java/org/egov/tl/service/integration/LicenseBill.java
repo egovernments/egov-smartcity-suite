@@ -114,6 +114,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     public String getBillPayee() {
         return license.getLicensee().getApplicantName();
     }
+    
+    @Override
+    public String getEmailId() {
+        return "";
+    }
 
     @Override
     public String getBillAddress() {

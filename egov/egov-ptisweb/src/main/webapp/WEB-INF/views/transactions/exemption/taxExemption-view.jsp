@@ -43,6 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ include file="/includes/taglibs.jsp"%>
 <style>
 body
 {
@@ -78,7 +79,7 @@ body
 				</div>
 			</div>
 			 <c:choose>
-            <c:when test="${!fn:contains(userDesignationList, designation)}">
+            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>

@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 	<head>
 		<title>Acknowledgement Slip for Renewal of Trade License</title>
@@ -61,7 +62,9 @@
 						<table width="100%" border="0" style="margin-left: 25px">
 							<tr class="add-margin">
 								<td colspan="4" align="center">
-									<img src="<c:url value='${sessionScope.citylogo}' context='/egi'/>" height="60">
+									<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
+										<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
+									</c:if>
 								</td>
 							</tr>
 
@@ -160,6 +163,6 @@
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 			</div>
-			<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 	</body>
 </html>

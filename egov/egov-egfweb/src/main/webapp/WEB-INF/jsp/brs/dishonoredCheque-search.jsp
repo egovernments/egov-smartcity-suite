@@ -214,7 +214,7 @@ function resetForm()
 
 					<td class="greybox"><s:text name="dishnrChq.chqDDDate.title" />:<span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:date name="chqDDDate" id="chqDDDate"
+					<td class="greybox"><s:date name="chqDDDate" var="chqDDDate"
 							format="dd/MM/yyyy" /> <s:textfield name="chqDDDate"
 							value="%{chqDDDate}" id="chqDDDate" cssClass="selectboldwk"
 							onfocus="javascript:vDateType='3';" maxlength="10"

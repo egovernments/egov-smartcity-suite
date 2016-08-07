@@ -76,7 +76,11 @@
 	    	bootbox.alert("Please Select the Approver ");
 			return false;
 	    }
-	    
+	    if((name=="Create And Approve")) {
+
+		    if(!validateCutOff())
+	    		return false;
+	    }
 	    </s:if>
 	    return  onSubmit();
 	}
@@ -87,8 +91,8 @@
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="validAction">
 					<s:if test="%{validAction!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{validAction}"
-							id="%{validAction}" name="%{validAction}"
+						<s:submit type="submit" cssClass="buttonsubmit"
+							value="%{validAction}" id="%{validAction}" name="%{validAction}"
 							onclick="return validateWorkFlowApprover('%{validAction}','jsValidationErrors');" />
 					</s:if>
 				</s:iterator> <input type="button" name="button2" id="button2" value="Close"

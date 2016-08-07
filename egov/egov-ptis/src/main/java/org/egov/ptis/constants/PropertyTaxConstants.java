@@ -626,6 +626,7 @@ public interface PropertyTaxConstants {
     public static final String WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING = "Revenue Officer Approval Pending";
     public static final String WF_STATE_REGISTRATION_PENDING = "Registration Pending";
     public static final String WF_STATE_REGISTRATION_COMPLETED = "Registration Completed";
+    public static final String WF_STATE_BILL_COLLECTOR_APPROVAL_PENDING = "Bill Collector Approval Pending";
 
     public static final String REPORT_TEMPLATENAME_BILL_GENERATION = "propertybill";
 
@@ -1274,6 +1275,7 @@ public interface PropertyTaxConstants {
     public static final String APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP = "Meeseva_Transfer_of_Ownership";
     public static final String APPLICATION_TYPE_GRP = "General_Revision_Petition";
     public static final String APPLICATION_TYPE_EDIT_DEMAND = "Edit_demand";
+    public static final String APPLICATION_TYPE_ADD_DEMAND = "Add_demand";
     public static final String APPLICATION_TYPE_EDIT_OWNER = "Edit_owner";
     public static final String APPLICATION_TYPE_EDIT_COLLECTION = "Edit_Collection";
     public static final String APPLICATION_TYPE_MODIFY_DATA_ENTRY = "Edit_Data_Entry";
@@ -1302,6 +1304,7 @@ public interface PropertyTaxConstants {
     public static final Character SOURCEOFDATA_MIGRATION = 'M';
     public static final Character SOURCEOFDATA_DATAENTRY = 'D';
     public static final Character SOURCEOFDATA_MEESEWA = 'T';
+    public static final Character SOURCEOFDATA_ONLINE = 'O';
 
     public static final String ALTERATION_OF_ASSESSMENT = "Alteration of Assessment";
     public static final String BIFURCATION_OF_ASSESSMENT = "Bifurcation of Assessment";
@@ -1446,7 +1449,8 @@ public interface PropertyTaxConstants {
     public static final String FULLTT="Transfer of ownership of entire property which needs to be registered in Registration and Stamps Office";
     public static final String ALL_READY_REGISTER ="Transfer of ownership of property which is already registered in Registration and Stamps Office";
     
-    public static final String TTTEXT=" of the registration is completed in Registration and Stamps Office";
+    public static final String TTTEXT=" of the registration is completed";
+    public static final String TTTEXTEND= " in Registration and Stamps Office";
     
     public static final String REG_DEPT_WEBSERVICE_USERNAME = "CMDAService1";
     public static final String REG_DEPT_WEBSERVICE_PASSWORD = "CMDAService1";

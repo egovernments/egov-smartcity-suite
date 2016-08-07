@@ -40,7 +40,6 @@
 
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-
 <s:if test="%{chequeIssueRegisterList.size()>0}">
 	<table width="99%" border="0" cellspacing="0" cellpadding="0">
 		<tr>
@@ -81,6 +80,9 @@
 											&amp; Date</th>
 										<th class="bluebgheadtd" width="15%">Bank Payment Voucher
 											No. &amp; Date</th>
+										<s:if test="%{chequePrintingEnabled && chequePrintAvailableAt=='assignment'}">
+										<th class="bluebgheadtd" width="8%"></th>
+									    </s:if>
 									</tr>
 									<s:iterator value="chequeIssueRegisterList" status="stat">
 										<tr>
@@ -121,8 +123,21 @@
 														onclick='viewVoucher(<s:property value="vhId"/>);'><s:property
 															value="voucherNumberAndDate" /></a>&nbsp;
 												</div></td>
+												 <s:if test="%{chequePrintingEnabled && chequePrintAvailableAt=='assignment' && chequeStatus=='New'}"> 
+												<td class="blueborderfortd"><div align="center">
+												<input type="button" value="Print"
+					                             onclick="return printCheque(<s:property
+						                           value="%{instrumentHeaderId}" />);" class="button" /></div>
+												</td>
+												 </s:if> 
+												 <s:else>
+												    <td class="blueborderfortd"></td>
+												 </s:else>
 										</tr>
 									</s:iterator>
+									
+			                         <input type="hidden" name='chequeFormatId' id="chequeFormatId"
+						                value="<s:property value="chequeFormat"/>"/>
 								</table>
 							</div>
 						</td>

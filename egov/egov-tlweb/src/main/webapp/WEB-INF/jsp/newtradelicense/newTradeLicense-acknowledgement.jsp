@@ -42,18 +42,10 @@
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-<title>Acknowledgement Slip for Trade License</title>
-<script>
-	function printDiv(divName) {
-	    var printContents = document.getElementById(divName).innerHTML;
-	    var originalContents = document.body.innerHTML;
-	    document.body.innerHTML = printContents;
-	    window.print();
-	    document.body.innerHTML = originalContents;
-	}
-</script>
+	<title>Acknowledgement Slip for Trade License</title>
 </head>
 <body onload="refreshInbox()">
 	<div id="main" class="printable">
@@ -80,7 +72,8 @@
 								<s:text name="license.applicationdate" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:date name="applicationDate" id="formattedApplicationDate" format="dd-MMM-yyyy" /><s:property value="%{formattedApplicationDate}" />
+								<s:date name="applicationDate" format="dd-MMM-yyyy" var="applicationDateFrmttd"/>
+								<s:property value="%{applicationDateFrmttd}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -134,7 +127,8 @@
 								<s:text name="license.startdate" />
 							</div>
 							<div class="col-sm-3 col-xs-6 add-margin view-content">
-								<s:date name="commencementDate" id="startdate" format="dd-MMM-yyyy" /><s:property value="%{startdate}" />
+								<s:date name="commencementDate" format="dd-MMM-yyyy" var="commencementDateFrmttd"/>
+								<s:property value="%{commencementDateFrmttd}" />
 							</div>
 						</div>
 						
@@ -145,12 +139,12 @@
 			</div>
 		</div>
 	</div>	
-		<div align="center" id="printDiv">
+		<div align="center">
 			<input type="button" id="print" class="button printbtn" value="Print"
 				/> &nbsp;&nbsp; <input
 				type="button" id="close" value="Close" class="button"
 				onclick="javascript:window.close();" />
 		</div>
-		<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.printelement.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 </body>
 </html>

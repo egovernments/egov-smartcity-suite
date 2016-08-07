@@ -352,7 +352,7 @@ var makeContractorDataTable = function() {
 				<div id="contractorTable"></div>
 <script type="text/javascript">
             makeContractorDataTable();
-         <s:iterator id="detailsIterator" value="model.contractorDetails" status="row_status">
+         <s:iterator value="model.contractorDetails" status="row_status">
 	       <s:if test="#row_status.count == 1">
 	             contractorDataTable.updateRow(0,
 	                                {department:'<s:property value="department.id"/>',

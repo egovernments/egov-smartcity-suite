@@ -41,7 +41,7 @@
   -->
  <!DOCTYPE struts PUBLIC
 	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-	"http://struts.apache.org/dtds/struts-2.3.dtd">
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
 
 <struts>
 	<!-- Production Performance Environment Setting, Change to inverse value of the same in Development Environment -->
@@ -59,14 +59,14 @@
 	<constant name="struts.convention.exclude.parentClassLoader" value="true" />
 	<constant name="struts.convention.action.fileProtocols" value="jar,vfsfile,vfszip,vfs,zip" />
 	<constant name="struts.convention.result.path" value="/WEB-INF/jsp/" />
-	<constant name="struts.custom.i18n.resources" value="InfraApplicationResources,custom" />
+	<constant name="struts.custom.i18n.resources" value="messages/common-errors,custom" />
 	<constant name="struts.locale" value="en_IN" />
 	<constant name="struts.multipart.maxSize" value="10485760" />
 	<constant name="struts.multipart.parser" value="jakarta" />
 	<constant name="struts.convention.action.mapAllMatches" value="true" />
 	<constant name="struts.convention.default.parent.package" value="egov" />
 	<!-- Comma separated list of regular expressions of jar URLs to be scanned -->
-	<constant name="struts.convention.action.includeJars" value=".*egov-.*" />
+	<!--<constant name="struts.convention.action.includeJars" value=".*egov-.*" />-->
 	<!-- For REST support -->
 	<constant name="struts.action.extension" value="action"/>
 	<constant name="struts.mapper.class" value="org.apache.struts2.dispatcher.mapper.PrefixBasedActionMapper" />
@@ -97,9 +97,7 @@
 					<param name="logLevel">ERROR</param>
 				</interceptor-ref>
 				<interceptor-ref name="alias" />
-				<interceptor-ref name="params">
-					<param name="excludeParams">(^|\\%\\{)((#?)(top(\\.|\\['|\\[\")|\\[\\d\\]\\.)?)(dojo|struts|session|request|response|application|servlet(Request|Response|Context)|parameters|context|_memberAccess)(\\.|\\[).*","^(action|method):.*</param>
-				</interceptor-ref>
+				<interceptor-ref name="params"/>
 				<interceptor-ref name="servletConfig" />
 				<interceptor-ref name="prepare" />
 				<interceptor-ref name="i18n" />
@@ -111,9 +109,7 @@
 				<interceptor-ref name="actionMappingParams" />
 				<interceptor-ref name="egov-trim" />
 				<interceptor-ref name="fileUpload" />
-				<interceptor-ref name="params">
-					<param name="excludeParams">(^|\\%\\{)((#?)(top(\\.|\\['|\\[\")|\\[\\d\\]\\.)?)(dojo|struts|session|request|response|application|servlet(Request|Response|Context)|parameters|context|_memberAccess)(\\.|\\[).*","^(action|method):.*</param>
-				</interceptor-ref>
+				<interceptor-ref name="params"/>
 				<interceptor-ref name="conversionError" />
 				<interceptor-ref name="validation">
 					<param name="excludeMethods">input,back,cancel,browse</param>

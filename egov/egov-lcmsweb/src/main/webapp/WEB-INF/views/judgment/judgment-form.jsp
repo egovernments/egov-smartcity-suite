@@ -194,6 +194,7 @@
 							<form:errors path="setasidePetitionDetails" cssClass="error-msg" />
 						</div>
 					</div>
+					<div>
 
 					<input type="hidden" name="judgment" value="${judgment.id}" />
 			

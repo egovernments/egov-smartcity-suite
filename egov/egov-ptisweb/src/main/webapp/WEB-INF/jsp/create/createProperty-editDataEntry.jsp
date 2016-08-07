@@ -46,7 +46,6 @@
 <title>
 		<s:text name='editdataentry.title' />
 </title>
-<sx:head />
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"

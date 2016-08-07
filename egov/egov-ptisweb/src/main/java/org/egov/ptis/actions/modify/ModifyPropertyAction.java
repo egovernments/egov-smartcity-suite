@@ -601,13 +601,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
             if (propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR))
                 addActionError(getText("error.nonVacantToVacant"));
         if (hasErrors())
-            if (userDesignationList.contains(JUNIOR_ASSISTANT)
-                    || userDesignationList.contains(SENIOR_ASSISTANT)
+            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
+                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
                     || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)) || !propertyByEmployee)
                 return NEW;
-            else if (userDesignationList.contains(BILL_COLLECTOR_DESGN) || userDesignationList.contains(COMMISSIONER_DESGN)
-                    || userDesignationList.contains(REVENUE_OFFICER_DESGN))
+            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN) || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
+                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
                 return VIEW;
         try {
             modifyBasicProp(getDocNumber());
@@ -658,13 +658,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("Entered into forwardView");
         validateApproverDetails();
         if (hasErrors())
-            if (userDesignationList.contains(JUNIOR_ASSISTANT)
-                    || userDesignationList.contains(SENIOR_ASSISTANT)
+            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
+                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
                     || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
-            else if (userDesignationList.contains(BILL_COLLECTOR_DESGN) || userDesignationList.contains(COMMISSIONER_DESGN)
-                    || userDesignationList.contains(REVENUE_OFFICER_DESGN))
+            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN) || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
+                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
                 return VIEW;
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                 Long.valueOf(getModelId()));
@@ -770,13 +770,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
         LOGGER.debug("reject: Property rejection started");
         if (isBlank(approverComments)) {
             addActionError(getText("property.workflow.remarks"));
-            if (userDesignationList.contains(JUNIOR_ASSISTANT)
-                    || userDesignationList.contains(SENIOR_ASSISTANT)
+            if (StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
+                    || StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT)
                     || (getModel().getState().getNextAction() != null && getModel().getState().getNextAction()
                             .equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)))
                 return NEW;
-            else if (userDesignationList.contains(BILL_COLLECTOR_DESGN) || userDesignationList.contains(COMMISSIONER_DESGN)
-                    || userDesignationList.contains(REVENUE_OFFICER_DESGN))
+            else if (StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN) || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
+                    || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN))
                 return VIEW;
         }
         propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,

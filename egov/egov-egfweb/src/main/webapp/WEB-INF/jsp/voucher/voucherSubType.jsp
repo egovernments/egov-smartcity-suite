@@ -77,7 +77,7 @@
 	<td style="width: 5%"></td>
 	<td class="greybox"><s:text name="jv.partyBillDate" /></td>
 	<td class="bluebox"><s:date name="voucherTypeBean.partyBillDate"
-			id="partyBillDateId" format="dd/MM/yyyy" /> <s:textfield
+			var="partyBillDateId" format="dd/MM/yyyy" /> <s:textfield
 			name="voucherTypeBean.partyBillDate" id="partyBillDate"
 			value="%{partyBillDateId}" maxlength="10" size="15"
 			onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
@@ -86,7 +86,7 @@
 			src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
 	<td class="bluebox"><s:text name="jv.billDate" /></td>
 	<td class="bluebox"><s:date name="voucherTypeBean.billDate"
-			id="billDateId" format="dd/MM/yyyy" /> <s:textfield
+			var="billDateId" format="dd/MM/yyyy" /> <s:textfield
 			name="voucherTypeBean.billDate" id="billDate" value="%{billDateId}"
 			maxlength="10" size="15"
 			onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a

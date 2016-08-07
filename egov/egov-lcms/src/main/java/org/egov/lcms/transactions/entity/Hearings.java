@@ -60,9 +60,7 @@ import javax.validation.Valid;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -83,8 +81,7 @@ public class Hearings extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_HEARINGS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @DateFormat(message = "invalid.fieldvalue.model.hearingDate")
-    @Required(message = "hearing.date.null")
+
     private Date hearingDate;
     @ManyToOne
     @Valid
@@ -95,16 +92,18 @@ public class Hearings extends AbstractAuditable {
     @Length(max = 128, message = "hearing.additionalLawyer.length")
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "hearing.additionalLawyerName.text")
     private String additionalLawyers;
-    
+
     @OneToMany(mappedBy = "hearing", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<EmployeeHearing>employeeHearingList=new ArrayList<EmployeeHearing>();
-   @Transient
-    List<Position>positionTemplList=new ArrayList<Position>(0);
+    List<EmployeeHearing> employeeHearingList = new ArrayList<EmployeeHearing>();
+    @Transient
+    List<Position> positionTemplList = new ArrayList<Position>(0);
     /*
-     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
-     * Set<PersonalInformation> eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to check
+     * @OneToMany(mappedBy = "EMPLOYEE", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL, orphanRemoval = true) private Set<PersonalInformation>
+     * eglcEmployeehearings = new HashSet<PersonalInformation>(0);* need to
+     * check
      */
-    
+
     @Length(max = 1024, message = "hearing.outcome.length")
     private String hearingOutcome;
     private boolean isSeniorStandingCounselPresent;
@@ -120,7 +119,8 @@ public class Hearings extends AbstractAuditable {
     private String referenceNumber;
 
     /*
-     * public void addEmployee(final PersonalInformation empObj) { eglcEmployeehearings.add(empObj); }
+     * public void addEmployee(final PersonalInformation empObj) {
+     * eglcEmployeehearings.add(empObj); }
      */
 
     public Date getHearingDate() {
@@ -148,9 +148,10 @@ public class Hearings extends AbstractAuditable {
     }
 
     /*
-     * public Set<PersonalInformation> getEglcEmployeehearings() { return eglcEmployeehearings; } public void
-     * setEglcEmployeehearings(final Set<PersonalInformation> eglcEmployeehearings) { this.eglcEmployeehearings =
-     * eglcEmployeehearings; }
+     * public Set<PersonalInformation> getEglcEmployeehearings() { return
+     * eglcEmployeehearings; } public void setEglcEmployeehearings(final
+     * Set<PersonalInformation> eglcEmployeehearings) {
+     * this.eglcEmployeehearings = eglcEmployeehearings; }
      */
 
     public String getHearingOutcome() {
@@ -216,13 +217,6 @@ public class Hearings extends AbstractAuditable {
         this.referenceNumber = referenceNumber;
     }
 
-    public Boolean getReplytoTI() {
-        if (getStatus().getCode().equals(LcmsConstants.LEGALCASE_STATUS_HEARING_REPLYTOTI))
-            return Boolean.TRUE;
-        else
-            return Boolean.FALSE;
-    }
-
     @Override
     public Long getId() {
         return id;
@@ -233,27 +227,19 @@ public class Hearings extends AbstractAuditable {
         this.id = id;
     }
 
-    public boolean getisStandingCounselPresent() {
+    public boolean getIsStandingCounselPresent() {
         return isStandingCounselPresent;
     }
 
-    public void setisStandingCounselPresent(final boolean isStandingCounselPresent) {
+    public void setIsStandingCounselPresent(final boolean isStandingCounselPresent) {
         this.isStandingCounselPresent = isStandingCounselPresent;
-    }
-
-    public boolean isSeniorStandingCounselPresent() {
-        return isSeniorStandingCounselPresent;
     }
 
     public void setSeniorStandingCounselPresent(final boolean isSeniorStandingCounselPresent) {
         this.isSeniorStandingCounselPresent = isSeniorStandingCounselPresent;
     }
 
-    public boolean isStandingCounselPresent() {
-        return isStandingCounselPresent;
-    }
-
-    public void setStandingCounselPresent(boolean isStandingCounselPresent) {
+    public void setStandingCounselPresent(final boolean isStandingCounselPresent) {
         this.isStandingCounselPresent = isStandingCounselPresent;
     }
 
@@ -261,7 +247,7 @@ public class Hearings extends AbstractAuditable {
         return employeeHearingList;
     }
 
-    public void setEmployeeHearingList(List<EmployeeHearing> employeeHearingList) {
+    public void setEmployeeHearingList(final List<EmployeeHearing> employeeHearingList) {
         this.employeeHearingList = employeeHearingList;
     }
 
@@ -269,9 +255,8 @@ public class Hearings extends AbstractAuditable {
         return positionTemplList;
     }
 
-    public void setPositionTemplList(List<Position> positionTemplList) {
+    public void setPositionTemplList(final List<Position> positionTemplList) {
         this.positionTemplList = positionTemplList;
     }
-    
 
 }

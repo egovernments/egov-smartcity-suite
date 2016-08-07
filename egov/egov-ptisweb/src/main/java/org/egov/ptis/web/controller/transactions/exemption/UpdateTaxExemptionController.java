@@ -189,7 +189,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                 if (taxExemptionService.isPropertyByEmployee(property)) {
                     successMessage = "Property Exemption approved successfully and forwarded to  "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with assessment number "
+                            + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName()) + " with assessment number "
                             + property.getBasicProperty().getUpicNo();
                 } else {
                     successMessage = "Property Exemption approved successfully and forwarded to  "

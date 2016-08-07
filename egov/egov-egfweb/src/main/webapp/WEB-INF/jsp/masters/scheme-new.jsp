@@ -45,7 +45,6 @@
 <html>
 <head>
 <title><s:text name="scheme.create.title" /></title>
-<sx:head />
 <SCRIPT type="text/javascript">
     function checkuniquenesscode(){
     	document.getElementById('codeuniquecode').style.display ='none';
@@ -176,7 +175,7 @@
 					<td style="width: 10%"></td>
 					<td class="greybox"><s:text name="scheme.startDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="scheme.validfrom" id="validfromId" 
+					<td class="greybox"><s:date name="scheme.validfrom" var="validfromId" 
 							format="dd/MM/yyyy" /> <s:textfield id="validfromId"
 							name="validfrom" value="%{validfromId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
@@ -185,7 +184,7 @@
 
 					<td class="greybox"><s:text name="scheme.endDate" /><span
 						class="mandatory1"> *</span></td>
-					<td class="greybox"><s:date name="scheme.validto" id="validtoId"
+					<td class="greybox"><s:date name="scheme.validto" var="validtoId"
 							format="dd/MM/yyyy" /> <s:textfield id="validtoId"
 							name="validto" value="%{validtoId}"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"

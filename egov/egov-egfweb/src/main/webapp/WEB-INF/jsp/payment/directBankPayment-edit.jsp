@@ -44,7 +44,6 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
 <head>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
@@ -348,7 +347,7 @@
 					<td class="bluebox" width="18%%"><s:text name="voucher.date" />
 						<span class="mandatory">*</span></td>
 					<td class="bluebox" width="34%"><s:date name='voucherDate'
-							id="voucherDateId" format='dd/MM/yyyy' /> <s:textfield
+							var="voucherDateId" format='dd/MM/yyyy' /> <s:textfield
 							name="voucherDate" id="voucherDate" value='%{voucherDateId}'
 							onkeyup="DateFormat(this,this.value,event,false,'3')" /> <a
 						href="javascript:show_calendar('dbpform.voucherDate');"

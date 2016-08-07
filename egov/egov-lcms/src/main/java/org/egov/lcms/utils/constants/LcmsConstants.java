@@ -118,14 +118,14 @@ public class LcmsConstants {
     public static final String LEGALCASE_STATUS_CODE_REPLYCUMWRITTENSTATEMENT = "REPLY_CUM_WRITTEN_STATEMENT";
     public static final String LEGALCASE_STATUS_CODE_FILINGOFDOCUMENTS = "FILING_OF_DOCUMENTS";
     public static final String LEGALCASE_STATUS_ORDER = "ORDER";
-    public static final String LEGALCASE_STATUS_HEARING = "IN PROGRESS";
     public static final String LEGALCASE_STATUS_CREATED = "LCCREATED";
     public static final String LEGALCASE_STATUS_JUDGMENT = "JUDGMENT";
-    public static final String LEGALCASE_STATUS_CLOSE = "Close Case";
+    public static final String LEGALCASE_STATUS_CLOSE = "CLOSE_CASE";
     public static final String LEGALCASE_STATUS_HEARING_REPLYTOTI = "HEARING_REPLY_TO_TI";
     public static final String LEGALCASE_STATUS_ORDER_REPLYTOTI = "ORDER_REPLY_TO_TI";
     public static final String ADVOCATEBILL_REJECTED_STATUS = "PROSECUTOR_REJECTED";
     public static final String ADVOCATEBILL_EDITED_STATUS = "BILL_EDITTED";
+    public static final String LEGALCASE_STATUS_IN_PROGRESS = "IN_PROGRESS";
     /**
      * Time series report action constants
      */
@@ -190,7 +190,8 @@ public class LcmsConstants {
     public static final String lengthCheckForMobileNo = "^((\\+)?(\\d{2}[-]))?(\\d{10}){1}?$";
     public static final String numericiValForPhoneNo = "[0-9-,()OR]+";
     public static final String orderNumberFormat = "[0-9a-zA-Z-&/(){}\\[\\]]+";
-    //public static final String dateFormat = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
+    // public static final String dateFormat = "(0[1-9]|[12][0-9]|3[01])[-
+    // /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
     public static final String searchMixedCharType1 = "[0-9a-zA-Z-&/*]+";
     public static final String mixedCharType1withComma = "^[a-z|A-Z|]+[a-z|A-Z|0-9|&/() .,]*";
     public static final String referenceNumberTIRegx = "[0-9a-zA-Z-&/() .]+";

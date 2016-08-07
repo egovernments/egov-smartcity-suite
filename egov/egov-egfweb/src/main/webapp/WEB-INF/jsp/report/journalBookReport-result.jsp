@@ -52,9 +52,9 @@
 		cellpadding="0" cellspacing="0" export="true"
 		requestURI="journalBookReport-ajaxSearch.action">
 		<display:caption>
-			<table  width="100%" >
+			<table width="100%">
 				<tr>
-					<th class="bluebgheadtd"  width="100%" colspan="8"><strong
+					<th class="bluebgheadtd" width="100%" colspan="8"><strong
 						style="font-size: 15px;"><s:property value="%{heading}" />
 					</strong></th>
 				</tr>
@@ -118,3 +118,4 @@
 	</display:table>
 
 </s:if>
+<s:else>No records found</s:else>

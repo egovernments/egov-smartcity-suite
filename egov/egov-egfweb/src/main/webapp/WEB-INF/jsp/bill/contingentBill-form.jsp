@@ -139,7 +139,7 @@
 											id="commonBean.partyBillNumber" /></td>
 									<td class="bluebox"><s:text name="party.bill.date" /></td>
 									<s:date name='commonBean.partyBillDate'
-										id="commonBean.partyBillDateId" format='dd/MM/yyyy' />
+										var="commonBean.partyBillDateId" format='dd/MM/yyyy' />
 									<td class="bluebox"><s:textfield id="partyBillDate"
 											name="commonBean.partyBillDate"
 											value="%{commonBean.partyBillDateId}" data-date-end-date="0d"

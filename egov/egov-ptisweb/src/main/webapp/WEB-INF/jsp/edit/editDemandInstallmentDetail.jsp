@@ -78,7 +78,7 @@
 						id="revisedTax" size="10" maxlength="10"
 						onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
 						value="%{demandDetailBeanList[#demandInfoStatus.index].actualAmount}"													
-						style="text-align: right" />
+						style="text-align: right" class="form-control" />
 				</s:if>
 				<s:else>									
 					<s:property
@@ -93,12 +93,19 @@
 				<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 					N/A
 				</s:if>
+				<s:elseif test="%{demandDetailBeanList[#demandInfoStatus.index].actualCollection==0}">
+					<s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
+						id="revisedTax" size="10" maxlength="10"
+						onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Tax');"
+						value="%{demandDetailBeanList[#demandInfoStatus.index].revisedAmount}" class="form-control"
+						style="text-align: right" />
+				</s:elseif>
 				<s:else>
-					<%-- <s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
+				<s:textfield name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedAmount"
 						id="revisedTax" size="10" maxlength="10"
 						onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Tax');"
 						value="%{demandDetailBeanList[#demandInfoStatus.index].revisedAmount}"
-						style="text-align: right" readonly="true" /> --%>
+						style="text-align: right" class="form-control" readonly="true" />
 				</s:else>
 			</div>
 		</td>		
@@ -126,16 +133,25 @@
 			<s:if test="%{demandDetailBeanList[#demandInfoStatus.index].reasonMaster == @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_CHQ_BOUNCE_PENALTY && demandDetailBeanList[#demandInfoStatus.index].isNew == true}" >
 				N/A
 			</s:if>
+			<s:elseif test="%{demandDetailBeanList[#demandInfoStatus.index].actualCollection==0}">
+				<s:textfield
+					name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedCollection"
+					id="revisedCollection" size="10" maxlength="10"
+					onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Collection');"
+					style="text-align: right" class="form-control" 
+					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}" />
+				<s:hidden
+						value="%{demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable}"
+						name="demandDetailBeanList[%{#demandInfoStatus.index}].isCollectionEditable" />
+			</s:elseif>
 			<s:else>
-				<%-- <s:textfield
+					<s:textfield
 					name="demandDetailBeanList[%{#demandInfoStatus.index}].revisedCollection"
 					id="revisedCollection" size="10" maxlength="10"
 					onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Revised Collection');"
 					style="text-align: right" 
-					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}"/> --%> 
-				<s:hidden
-						value="%{demandDetailBeanList[#demandInfoStatus.index].isCollectionEditable}"
-						name="demandDetailBeanList[%{#demandInfoStatus.index}].isCollectionEditable" />
+					value="%{demandDetailBeanList[#demandInfoStatus.index].revisedCollection}" cssClass="form-control" readonly="true" />
+					
 			</s:else>
 		</div>
 		</td>

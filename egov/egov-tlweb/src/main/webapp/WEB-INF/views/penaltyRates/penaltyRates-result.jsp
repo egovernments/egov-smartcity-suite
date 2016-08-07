@@ -39,7 +39,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row">
   <div class="col-sm-12">
     <input type="hidden"  name="licenseAppTypeId"  value="${penaltyForm.licenseAppType.id}"  />
@@ -90,5 +90,5 @@
     <button type="button" id="save" class="btn btn-primary"><spring:message code="lbl.save"/></button>
   </div>
 </div>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/app/js/penaltyRates.js?rnd=${app_release_no}'/>"></script>

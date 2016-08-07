@@ -60,12 +60,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
+
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
 
     public static final String LOGO_IMAGE_PATH = "/resources/global/images/";
-    public static final String CITY_LOGO_KEY = "citylogo";
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -87,7 +89,7 @@ public class FileDownloadController {
                 this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
             }
         }
-
+        session.setAttribute(CITY_LOGO_PATH_KEY, logoPath);
         return "forward:"+logoPath;
     }
 

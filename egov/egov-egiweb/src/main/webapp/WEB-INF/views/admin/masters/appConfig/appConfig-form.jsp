@@ -42,11 +42,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="errorstyle" id="egi_error_area" style="display: none;"></div>
 
@@ -159,14 +157,7 @@
 				</form:form>
 			</div>
 </div>
-<script	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script	src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<script	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script	src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script	src="<c:url value='/resources/js/app/appconfig.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>
 
 <script>
 			var cmdaindex=0;

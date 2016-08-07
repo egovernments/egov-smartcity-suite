@@ -38,6 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	
+	
 var department = new Bloodhound({
 							datumTokenizer : function(datum) {
 									return Bloodhound.tokenizers
@@ -48,7 +50,7 @@ var department = new Bloodhound({
 									url : '/lcms/legalcase/ajax/departments?departmentName=%QUERY',
 									filter : function(data) {
 										return $.map(data,function(department) {
-													return {
+											return {
 														name : department.name,
 														value : department.id
 
@@ -160,10 +162,11 @@ var department = new Bloodhound({
 
 							},
 							filter : function(data) {
-								return $.map(data, function(position) {
+								return $.map(data, function(advocate) {
 									return {
-										name : position.name,
-										value : position.id
+										name : advocate.name,
+										value : advocate.id
+										
 
 									};
 								});
@@ -180,4 +183,10 @@ var department = new Bloodhound({
 						source : assignPosition.ttAdapter()
 					});
 
+					
+					
+					
+					
+					
+					
 				});

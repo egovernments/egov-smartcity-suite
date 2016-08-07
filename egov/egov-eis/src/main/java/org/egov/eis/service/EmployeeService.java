@@ -39,6 +39,16 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -74,15 +84,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -120,7 +121,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Autowired
     private AssignmentService assignmentService;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -131,8 +132,8 @@ public class EmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
-        return getCurrentSession().createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)")
-                .list();
+        return getCurrentSession()
+                .createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -142,8 +143,8 @@ public class EmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
-        return getCurrentSession().createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)")
-                .list();
+        return getCurrentSession()
+                .createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -248,28 +249,28 @@ public class EmployeeService implements EntityTypeService {
     @Transactional
     public void addOrRemoveUserRole() {
         final List<Employee> employee = getAllEmployees();
-        
+
         for (final Employee emp : employee) {
-          final Set<Role> userRole = userService.getRolesByUsername(emp.getUsername());
-          
-          //List Of Expired Roles
-          final Set<Role> expiredRoleList = assignmentService.getRolesForExpiredAssignmentsByEmpId(emp.getId());
-          //List Of Active Roles
-          final Set<Role> activeRoleList = assignmentService.getRolesForActiveAssignmentsByEmpId(emp.getId());
-         
-          //Remove activeRoles from ExpiredRoles List
-          expiredRoleList.removeAll(activeRoleList);
-          
-          //Remove Expired Roles 
-          userRole.removeAll(expiredRoleList);
-          
-          //Add Roles
-          userRole.addAll(activeRoleList);
-          
-          emp.setRoles(userRole);
-          employeeRepository.save(emp);
+            final Set<Role> userRole = userService.getRolesByUsername(emp.getUsername());
+
+            // List Of Expired Roles
+            final Set<Role> expiredRoleList = assignmentService.getRolesForExpiredAssignmentsByEmpId(emp.getId());
+            // List Of Active Roles
+            final Set<Role> activeRoleList = assignmentService.getRolesForActiveAssignmentsByEmpId(emp.getId());
+
+            // Remove activeRoles from ExpiredRoles List
+            expiredRoleList.removeAll(activeRoleList);
+
+            // Remove Expired Roles
+            userRole.removeAll(expiredRoleList);
+
+            // Add Roles
+            userRole.addAll(activeRoleList);
+
+            emp.setRoles(userRole);
+            employeeRepository.save(emp);
         }
-          
+
     }
 
     public List<Employee> searchEmployees(final EmployeeSearchDTO searchParams) {
@@ -455,6 +456,10 @@ public class EmployeeService implements EntityTypeService {
         String name = department.getCode() + designation.getCode();
         name += userRepository.getUserSerialNumberByName(name) + 1;
         return name;
+    }
+
+    public List<Employee> findEmployeeByCodeLike(final String code) {
+        return employeeRepository.findEmployeeByCodeLike(code);
     }
 
 }

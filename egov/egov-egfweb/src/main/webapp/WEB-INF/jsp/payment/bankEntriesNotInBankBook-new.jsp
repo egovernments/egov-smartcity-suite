@@ -44,7 +44,6 @@
 <%@ page language="java"%>
 <head>
 <title>Bank Entries Not In Bank Book</title>
-<sx:head />
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"

@@ -115,7 +115,6 @@
 				'scrollbars=yes,resizable=no,height=200,width=400,status=yes');
 	}
 </script>
-<sx:head />
 </head>
 <body>
 	<div align="left" class="errortext">

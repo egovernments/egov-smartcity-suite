@@ -54,6 +54,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.Licensee;
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
@@ -164,7 +165,7 @@ public class EnterTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         else if (!license().isNew())
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
         super.prepareNewForm();
-        setDocumentTypes(tradeLicenseService.getDocumentTypesByTransaction(TRANSACTIONTYPE_CREATE_LICENSE));
+        setDocumentTypes(tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.NEW));
         setOwnerShipTypeMap(Constants.OWNERSHIP_TYPE);
         addDropdownData("localityList", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 LOCALITY, LOCATION_HIERARCHY_TYPE));

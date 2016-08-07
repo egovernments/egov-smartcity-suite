@@ -44,7 +44,6 @@
 <html>
   <head>
     <title><s:text name="ChBaseRateArea.title"></s:text> </title>
-	<sx:head/>
 	<script type="text/javascript">
 
 		function populateWard() {

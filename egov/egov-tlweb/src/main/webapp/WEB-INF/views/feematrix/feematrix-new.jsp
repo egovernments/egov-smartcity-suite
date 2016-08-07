@@ -39,9 +39,10 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<script src="<c:url value='/resources/js/app/feematrix.js?rnd=${app_release_no}' context='/tl'/>"></script>
-<script src="<c:url value='/resources/js/app/helper.js' context='/tl'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/helper.js'/>"></script>
 
 <div class="row">
     <div class="col-md-12">

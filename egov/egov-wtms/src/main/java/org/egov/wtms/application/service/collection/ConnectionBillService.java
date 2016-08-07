@@ -193,7 +193,9 @@ public class ConnectionBillService extends BillServiceInterface {
                         billdetail.setPurpose(PURPOSE.CURRENT_AMOUNT.toString());
                     else
                         billdetail.setPurpose(PURPOSE.OTHERS.toString());
-
+                if (waterConnectionDetails != null
+                        && waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED))
+                    billdetail.setPurpose(PURPOSE.OTHERS.toString());
                 if (currInstallment != null && installment.getFromDate().before(currInstallment.getToDate()))
                     billdetail.setAdditionalFlag(1);
                 else

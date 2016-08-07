@@ -41,12 +41,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css'/>">
 <div class="row" id="page-content">
 	<div class="errorstyle" id="egi_error_area" style="display: none;"></div>
 	
@@ -122,7 +120,7 @@
 											
 										</td>
 											<td id="rowadddelete">
-										 <input type="button" class="btn btn-primary"  value="Add" name="Add" id="add" onclick="javascript:addRow1(); return false;">
+										 <input type="button" class="btn btn-primary"  value="Add" name="Add" id="add" onclick="addRow1(); return false;">
 								<!-- 	<input type="button" class="btn btn-primary"  name="Delete"  value="Delete" id="delete" onclick="javascript:delFloor(this);return false;">
 									 -->  <input type="hidden"
 														id="appDataValues[${counter.index}].id" value="${var1.id}" /></td>
@@ -153,16 +151,8 @@
 					</form:form>
 				</div>
 			</div>	
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>	
-<script src="<c:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
-<script src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-<script src="<c:url value='/commonjs/ajaxCommonFunctions.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
-
-<script src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js'/>"></script>
 			<script>
 			var cmdaindex=0;
 	var moduleid = '${appConfig.module.id}';

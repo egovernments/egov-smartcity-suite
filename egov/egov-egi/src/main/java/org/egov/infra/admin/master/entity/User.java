@@ -85,6 +85,7 @@ public class User extends AbstractAuditable {
     private Long id;
 
     @Column(name = "username", unique = true)
+    @NotNull
     @Length(min = 2, max = 64)
     private String username;
 

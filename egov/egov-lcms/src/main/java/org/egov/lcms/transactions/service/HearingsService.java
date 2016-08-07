@@ -56,14 +56,14 @@ public class HearingsService {
 
     @Autowired
     private HearingsRepository hearingsRepository;
-    
+
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
     @Transactional
     public Hearings persist(final Hearings hearings) {
         final EgwStatus statusObj = legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
-                LcmsConstants.LEGALCASE_STATUS_HEARING);
+                LcmsConstants.LEGALCASE_STATUS_IN_PROGRESS);
         hearings.setStatus(statusObj);
         hearings.getLegalCase().setStatus(statusObj);
         return hearingsRepository.save(hearings);
@@ -73,8 +73,12 @@ public class HearingsService {
         return hearingsRepository.findAll(new Sort(Sort.Direction.ASC, ""));
     }
 
-    public Hearings findBy(final Long hearings) {
-        return hearingsRepository.findOne(hearings);
+    public Hearings findById(final Long id) {
+        return hearingsRepository.findOne(id);
+    }
+
+    public List<Hearings> findBYLcNumber(final String lcNumber) {
+        return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
 }

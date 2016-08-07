@@ -47,7 +47,6 @@
 <html>
 <head>
 <title><s:text name="dayBook.search.title" /></title>
-<sx:head />
 <style type="text/css">
 #codescontainer {
 	position: absolute;
@@ -183,15 +182,15 @@
 					</table>
 				</div>
 			</s:push>
-
-			<span class="mandatory1">
-				<div id="resultDiv" style="display: none;">
-					<jsp:include page="dayBookReport-result.jsp" />
-				</div>
-
-			</span>
-			<div id="codescontainer" />
 		</div>
+		<span class="mandatory1">
+			<div id="resultDiv" style="display: none;">
+				<jsp:include page="dayBookReport-result.jsp" />
+			</div>
+
+		</span>
+		<div id="codescontainer" />
+
 	</s:form>
 </body>
 </html>

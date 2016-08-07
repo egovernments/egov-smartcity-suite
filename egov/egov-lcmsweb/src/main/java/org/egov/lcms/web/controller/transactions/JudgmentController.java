@@ -52,9 +52,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -74,8 +74,8 @@ public class JudgmentController {
         model.addAttribute("judgmentTypes", judgmentTypeService.findAll());
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @PathVariable final String lcNumber,
+    @RequestMapping(value = "/new/", method = RequestMethod.GET)
+    public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @RequestParam("lcNumber")  final String lcNumber,
             final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);
@@ -86,14 +86,14 @@ public class JudgmentController {
     }
 
     @ModelAttribute
-    private LegalCase getLegalCase(@PathVariable final String lcNumber, final HttpServletRequest request) {
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request) {
         final LegalCase legalCase = legalcaseService.findByLcNumber(lcNumber);
         return legalCase;
     }
 
-    @RequestMapping(value = "/new/{lcNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/new/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute("judgment") final Judgment judgment, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, @PathVariable final String lcNumber,
+            final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
             final HttpServletRequest request, final Model model) {
         final LegalCase legalcase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
@@ -105,6 +105,8 @@ public class JudgmentController {
         judgmentService.persist(judgment);
         model.addAttribute("mode", "create");
         redirectAttrs.addFlashAttribute("judgment", judgment);
+        model.addAttribute("judgmentDocList",
+                judgmentService.getJudgmentDocList(judgment));
         model.addAttribute("message", "Judgment Created successfully.");
         return "judgment-success";
 

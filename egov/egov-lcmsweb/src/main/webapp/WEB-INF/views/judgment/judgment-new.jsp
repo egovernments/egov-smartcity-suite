@@ -49,8 +49,9 @@
 		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
 	<%-- <form:hidden name="lcNumber" id="lcNumber" value="${judgment.legalcase.lcNumber}"/>  --%>
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
-	 <jsp:include page="../application/viewSummarizedCase.jsp"/>  
+	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
+	  
 	 <input id="confirm" type="hidden" value='<spring:message code="msg.cancel.judgment.confirm" />' />
 	</div>
 	</div>

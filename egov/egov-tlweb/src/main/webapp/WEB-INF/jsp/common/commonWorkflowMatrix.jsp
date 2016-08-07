@@ -156,7 +156,22 @@ function populateApprover() {
          <div class="form-group">
              <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/><span class="mandatory"></span></label>
              <div class="col-sm-8 add-margin">
-                 <textarea id="approverComments" name="approverComments" class="form-control" ></textarea>  
+                 <s:textarea id="approverComments" name="approverComments" class="form-control" ></s:textarea>
              </div>
          </div>
-  </div>       
+  </div>
+<script>
+    var designationId = '${approverDesignation}';
+    var positionId = '${approverPositionId}';
+    if(jQuery("#approverDepartment").val() != "-1") {
+        jQuery("#approverDepartment").trigger("change");
+        window.setTimeout(function() {
+            jQuery("#approverDesignation").val(designationId);
+            jQuery("#approverDesignation").trigger("change");
+            window.setTimeout(function() {
+                jQuery("#approverPositionId").val(positionId);
+            }, 2000);
+        }, 1000);
+
+    }
+</script>
