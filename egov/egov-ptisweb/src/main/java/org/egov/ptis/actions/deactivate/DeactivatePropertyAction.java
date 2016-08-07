@@ -250,7 +250,6 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 	}
 
 	@ValidationErrorPage(value = "new")
-	@Transactional
 	@Action(value = "/deActivateProperty-save", results = { @Result(name = ACK, location = "/deActivateProperty-ack.jsp") })
 	public String save() {
 		LOGGER.debug("Entered into the save method");
@@ -281,7 +280,6 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 	}
 
 	@SkipValidation
-	@Transactional
 	@Action(value = "/deActivateProperty-forward", results = { @Result(name = ACK, location = "/deActivateProperty-ack.jsp") })
 	public String forward() {
 		LOGGER.debug("Entered into forward method");
@@ -388,7 +386,6 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 	}
 
 	@SkipValidation
-	@Transactional
 	@Action(value = "/deActivateProperty-reject", results = { @Result(name = FORWARD_ACK, location = "/deActivateProperty-forwardAck.jsp") })
 	public String reject() {
 		LOGGER.debug("reject: Property rejection started");
@@ -463,7 +460,6 @@ public class DeactivatePropertyAction extends PropertyTaxBaseAction {
 		LOGGER.debug("Exit from validate method");
 	}
 
-	@Transactional
 	private void transitionWorkFlow() {
 
 		LOGGER.debug("Entered method : transitionWorkFlow");

@@ -91,7 +91,6 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 public class BaseRecoveryAction extends PropertyTaxBaseAction {
 
 	private static final long serialVersionUID = 1L;

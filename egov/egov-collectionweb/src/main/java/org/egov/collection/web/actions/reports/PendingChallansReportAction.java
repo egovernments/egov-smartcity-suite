@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Action class for pending challans report action
  */
-@Transactional(readOnly = true)
 public class PendingChallansReportAction extends ReportFormAction {
     private static final long serialVersionUID = 1L;
     // Report parameter names

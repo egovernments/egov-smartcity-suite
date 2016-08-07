@@ -82,7 +82,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFSTATUS;
 @ParentPackage("egov")
 @Results({ @Result(name = "workFlowError", location = "workflow", params = { "namespace",
 		"/workflow", "method", "workFlowError" }) })
-@Transactional(readOnly = true)
 @Namespace("/modify")
 public class ChangePropertyAddressAction extends PropertyTaxBaseAction {
 

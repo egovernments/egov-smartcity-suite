@@ -64,7 +64,6 @@ import java.util.Map;
 import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_TEMPLATENAME_BIGBUILDINGRECOVERY;
 
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class BigBuildingRecoveryReportAction extends ReportFormAction {
 	private final Logger LOGGER = Logger.getLogger(getClass());
 	private Date fromDate;

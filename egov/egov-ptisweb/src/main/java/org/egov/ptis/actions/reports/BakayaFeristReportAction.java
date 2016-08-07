@@ -82,7 +82,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class BakayaFeristReportAction extends ReportFormAction {
 
     private static final String RESULT_NEW = "new";

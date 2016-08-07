@@ -258,7 +258,6 @@ public class ChangeStreetRateAction extends BaseFormAction {
 
 	@SuppressWarnings("unchecked")
 	@ValidationErrorPage(value = "edit")
-	@Transactional
 	@Action(value="/changeStreetRate-saveData",results = { @Result(name = ACK, location="admin/changeStreetRate-ack.jsp") })
 	public String saveData() {
 
