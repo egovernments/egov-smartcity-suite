@@ -50,12 +50,12 @@
 	<thead>
 		<tr>
 		 	<th class="text-center"><spring:message code="lbl.slno" />
-			 <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> 
+			 <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>  --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			 <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> 
+			<%--  <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>  --%>
 			<th class="text-center"><spring:message
 					code="lbl.add/delete_pet" /></th>
 		</tr>
@@ -66,10 +66,10 @@
 					<span class="petitionDetails spansno">1</span>
 					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
 							</td>
-			<td class="text-center"><input type="checkbox" id="activeid"
+			<!-- <td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanPetitionDetailsList[0].isRespondentGovernment"
 				id="bipartisanPetitionDetailsList[0].isRespondentGovernment"
-				onblur="onChangeofPetitioncheck(this)" /></td>
+				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
@@ -82,7 +82,7 @@
 				class="form-control table-input text-right patternvalidation"
 				data-pattern="number" name="bipartisanPetitionDetailsList[0].contactNumber"
 				id="bipartisanPetitionDetailsList[0].contactNumber" maxlength="10"></td>
-			<td class="text-right"><form:select path=""
+			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionDetailsList[0].governmentDepartment"
 					id="bipartisanPetitionDetailsList[0].governmentDepartment"
@@ -93,7 +93,7 @@
 					</form:option>
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
-				</form:select></td>
+				</form:select></td> --%>
 			<td class="text-center">
 			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
@@ -111,12 +111,12 @@
 	<thead>
 		<tr>
 		<th class="text-center"><spring:message code="lbl.slno" />
-			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+			<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 			<th class="text-center"><spring:message
 					code="lbl.add/delete_Res" /></th>
 		</tr>
@@ -127,10 +127,10 @@
 					<span class="respodantDetails spansno">1</span>
 					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
 							</td>
-			<td class="text-center"><input type="checkbox" id="activeid"
+			<!-- <td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
 				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
-				onblur="onChangeofPetitioncheck(this)" /></td>
+				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
@@ -146,7 +146,7 @@
 				data-pattern="number"
 				name="bipartisanDetailsBeanList[0].contactNumber"
 				id="bipartisanDetailsBeanList[0].contactNumber" maxlength="10"></td>
-			<td class="text-right"><form:select path=""
+		<%-- 	<td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanDetailsBeanList[0].governmentDepartment"
 					id="bipartisanDetailsBeanList[0].governmentDepartment"
@@ -157,7 +157,7 @@
 					</form:option>
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
-				</form:select></td>
+				</form:select></td> --%>
 				<input type="hidden" 
 						id="bipartisanDetailsBeanList[0].isRepondent"
 						name="bipartisanDetailsBeanList[0].isRepondent" 

@@ -48,10 +48,8 @@
 		name="seniourAdvisRequired" value="${legalCase.isSenioradvrequired}" />
 	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
 	<%@ include file="legalcase-standingCouncil.jsp"%>
-	</div>
-	</div>
-	</div>
-	</div>
+
+	
 	<div class="form-group">
 		<div class="text-center">
 			<button type="submit" name="submit" id="save" class="btn btn-primary"
@@ -70,9 +68,7 @@
 
 <script
 	src="<c:url value='/resources/js/app/standingCouncil.js?rnd=${app_release_no}'/>"></script>
-	<script>
-<script
-	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	<script src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script>
 	$('#btnclose').click(function(){
 		bootbox.confirm({

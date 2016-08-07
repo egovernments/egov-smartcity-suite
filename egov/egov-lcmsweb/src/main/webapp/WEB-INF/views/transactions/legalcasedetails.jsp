@@ -234,7 +234,7 @@
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.fieldbycarp" />?:</label>
+			code="lbl.fieldbycarp" /> ?:</label>
 	<div class="col-sm-3 add-margin">
 		<form:checkbox id="activeid" path="isfiledbycorporation"
 			value="isfiledbycorporation" />
