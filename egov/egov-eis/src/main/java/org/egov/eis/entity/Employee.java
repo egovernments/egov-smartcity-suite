@@ -75,7 +75,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "egeis_employee")
-@Unique(id = "id", tableName = "egeis_employee", columnName = { "code" }, fields = { "code" }, enableDfltMsg = true)
+@Unique(fields = { "code" }, enableDfltMsg = true)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @AuditOverrides( {
         @AuditOverride(forClass=User.class, name="name"),
