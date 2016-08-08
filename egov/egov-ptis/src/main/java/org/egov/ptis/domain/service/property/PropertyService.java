@@ -2558,7 +2558,7 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getCreatedDate());
                         HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());
