@@ -184,6 +184,12 @@ public class LegalCase extends AbstractAuditable {
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
+    
+    
+   
+    
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<CounterAffidavit> eglcCounterAffidavit = new ArrayList<CounterAffidavit>();
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
@@ -243,6 +249,8 @@ public class LegalCase extends AbstractAuditable {
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
+    
+    
 
     @DateFormat(message = "invalid.fieldvalue.model.previousDate")
     @Column(name = "previousDate")
@@ -718,7 +726,6 @@ public class LegalCase extends AbstractAuditable {
         if (eglcPwrs != null)
             this.eglcPwrs.addAll(eglcPwrs);
     }
-
     public void addEglcPwrs(final Pwr eglcPwrs) {
         this.eglcPwrs.add(eglcPwrs);
     }
@@ -726,6 +733,16 @@ public class LegalCase extends AbstractAuditable {
     public void removeEglcPwrs(final Pwr eglcPwrs) {
         this.eglcPwrs.remove(eglcPwrs);
     }
+    public List<CounterAffidavit> getEglcCounterAffidavit() {
+        return eglcCounterAffidavit;
+    }
+
+    public void setEglcCounterAffidavit(final List<CounterAffidavit> eglcCa) {
+        this.eglcCounterAffidavit.clear();
+        if (eglcCounterAffidavit != null)
+            this.eglcCounterAffidavit.addAll(eglcCa);
+    }
+   
 
     public Date getCaseDate() {
         return caseDate;
@@ -895,4 +912,7 @@ public class LegalCase extends AbstractAuditable {
     public void setIsfiledbycorporation(Boolean isfiledbycorporation) {
         this.isfiledbycorporation = isfiledbycorporation;
     }
+
+	
+    
 }

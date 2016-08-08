@@ -74,7 +74,7 @@ public class PwrDocuments  implements Serializable {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pwrId", nullable = false)
+    @JoinColumn(name = "pwrid", nullable = false)
     private Pwr pwr;
     
     @NotNull
@@ -82,7 +82,7 @@ public class PwrDocuments  implements Serializable {
     private String documentName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "eglc_pwr_filestore", joinColumns = @JoinColumn(name = "pwrDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "eglc_pwr_filestore", joinColumns = @JoinColumn(name = "pwrdocid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;

@@ -56,6 +56,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
+import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalCaseDepartment;
@@ -64,6 +65,7 @@ import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
 import org.egov.lcms.transactions.repository.BipartisanDetailsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,9 @@ public class LegalCaseService {
 
 	@Autowired
 	private DepartmentService departmentService;
+	
+	@Autowired
+	private PwrDocumentsRepository pwrDocumentsRepository;
 
 	@Autowired
 	private PositionMasterService positionMasterService;
@@ -130,11 +135,7 @@ public class LegalCaseService {
 	@Transactional
 	public LegalCase update(final LegalCase legalcase) {
 		updateLegalCaseDeptAndPwr(legalcase, legalcase.getEglcPwrs(), legalcase.getLegalCaseDepartment());
-		List<PwrDocuments> legalDoc = null;
-		if (!legalcase.getEglcPwrs().isEmpty()) {
-			legalDoc = legalCaseRepository.getPwrDocumentList(legalcase.getEglcPwrs().get(0).getId());
-		}
-		processAndStorePwrDocuments(legalcase, legalDoc);
+		processAndStorePwrDocuments(legalcase);
 		return legalCaseRepository.save(legalcase);
 	}
 
@@ -143,6 +144,7 @@ public class LegalCaseService {
 			List<LegalCaseDepartment> legalDept) {
 		final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
 		final List<Pwr> pwrListtemp = new ArrayList<Pwr>();
+		final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>();
 		for (final Pwr legalpwr : pwrList) {
 			legalpwr.setLegalCase(legalcase);
 			legalpwr.setCaFilingdate(new Date());
@@ -150,6 +152,12 @@ public class LegalCaseService {
 		}
 		legalcase.getEglcPwrs().clear();
 		legalcase.setEglcPwrs(pwrListtemp);
+		for (final CounterAffidavit legalpwr : legalcase.getEglcCounterAffidavit()) {
+			legalpwr.setLegalCase(legalcase);
+			caListtemp.add(legalpwr);
+		}
+		legalcase.getEglcCounterAffidavit().clear();
+		legalcase.setEglcCounterAffidavit(caListtemp);
 		for (final LegalCaseDepartment legaldeptObj : legalDept) {
 			legaldeptObj.setLegalCase(legalcase);
 			legaldeptObj.setPosition(positionMasterService.getPositionByName(legaldeptObj.getPosition().getName()));
@@ -169,6 +177,15 @@ public class LegalCaseService {
 		legalDOc = new ArrayList<LegalCaseDocuments>(legalDOcSet);
 		return legalDOc;
 	}
+	public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
+	
+		List<PwrDocuments> legalPwrDOc = null;
+		final Set<PwrDocuments> legalDOcSet = new HashSet<PwrDocuments>();
+		for (final PwrDocuments legalDoc1 : legalCase.getEglcPwrs().get(0).getPwrDocuments())
+			legalDOcSet.add(legalDoc1);
+		legalPwrDOc = new ArrayList<PwrDocuments>(legalDOcSet);
+		return legalPwrDOc;
+	}
 
 	@Transactional
 	public void prepareChildEntities(final LegalCase legalcase) {
@@ -177,8 +194,6 @@ public class LegalCaseService {
 		legalcase.getBipartisanDetails().addAll(biparttionerList);
 		final List<Pwr> pwrListtemp = new ArrayList<Pwr>();
 		legalcase.getBipartisanDetails().clear();
-		// legalCaseRepository.save(legalcase);
-		// bipartisanDetailsRepository.delete(legalcase.getBipartisanDetails());
 		for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetails()) {
 			bipartisanDetailsRepository.delete(bipartObjtemp);
 		}
@@ -293,25 +308,20 @@ public class LegalCaseService {
 	}
 
 	@Transactional
-	public void processAndStorePwrDocuments(final LegalCase legalcase, final List<PwrDocuments> pwrDoc) {
-		if (legalcase.getId() == null) {
+	public void processAndStorePwrDocuments(final LegalCase legalcase) {
+		List<PwrDocuments>pwrDocList=new ArrayList<PwrDocuments>();
 			if (!legalcase.getEglcPwrs().get(0).getPwrDocuments().isEmpty())
 				for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments()) {
+					if(pwr!=null && pwr.getId()==null){
 					pwr.setPwr(legalcase.getEglcPwrs().get(0));
 					pwr.setDocumentName("Pwr");
 					pwr.setSupportDocs(addToFileStore(pwr.getFiles()));
-				}
-		} else {
-			for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments()) {
-				pwr.setPwr(legalcase.getEglcPwrs().get(0));
-				pwr.setDocumentName("Pwr");
-				pwr.getSupportDocs().addAll(addToFileStore(pwr.getFiles()));
-				legalcase.getEglcPwrs().get(0).getPwrDocuments().clear();
-				legalcase.getEglcPwrs().get(0).getPwrDocuments().add(pwr);
-			}
-			legalcase.getEglcPwrs().get(0).getPwrDocuments().addAll(pwrDoc);
-
-		}
+					pwrDocList.add(pwr);
+					pwrDocumentsRepository.save(pwr);
+					}
+					
+		} 
+			
 	}
 
 	protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

@@ -56,7 +56,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
@@ -79,16 +78,15 @@ public class Pwr  implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    
-    @Transient
-    private String uploadPwr;
+   
     
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
     @Column(name = "cafilingdate")
     private Date caFilingdate;
     
-   
+    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
     
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
     @Column(name = "caduedate")
@@ -102,16 +100,7 @@ public class Pwr  implements Serializable {
     @Column(name = "pwrapprovaldate")
     private Date pwrApprovalDate;
     
-    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
-
-    public String getUploadPwr() {
-        return uploadPwr;
-    }
-
-    public void setUploadPwr(final String uploadPwr) {
-        this.uploadPwr = uploadPwr;
-    }
+   
 
     public Date getCaFilingdate() {
         return caFilingdate;
@@ -185,4 +174,5 @@ public class Pwr  implements Serializable {
 		this.pwrDocuments = pwrDocuments;
 	}
 
+	
 }
