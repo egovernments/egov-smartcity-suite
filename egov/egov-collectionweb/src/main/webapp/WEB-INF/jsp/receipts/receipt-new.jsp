@@ -1061,7 +1061,7 @@ function verifyChequeDetails(table,len1)
     			checkForCurrentDate(instrDate);
 	    		}
 	    	}
-	    	} 
+	    	}
 	    	checkForCurrentDate(instrDate);
 	    }
 	    </s:if>
@@ -1076,6 +1076,14 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
+	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	 	    	var instDate = getControlInBranch(table.rows[j],'instrumentDate').value; 
+	 	 	    	if(process(instDate) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.receiptdate.lessthan.instrumentdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
 	    		     checkForCurrentDate(instrDate);
 	    		   } 	               
 	    }
