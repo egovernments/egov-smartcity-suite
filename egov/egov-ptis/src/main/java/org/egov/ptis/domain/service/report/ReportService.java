@@ -69,8 +69,10 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BaseRegisterResult;
 import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.entity.property.CurrentInstDCBReportResult;
@@ -121,7 +123,8 @@ public class ReportService {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
+    @Autowired
+    private BasicPropertyDAO basicPropertyDAO;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -926,6 +929,7 @@ public class ReportService {
         	BigDecimal currFirstHalfLibCess=BigDecimal.ZERO;
         	BigDecimal currSecondHalfLibCess=BigDecimal.ZERO;
         	BigDecimal arrLibCess=BigDecimal.ZERO;
+        	BasicProperty basicProperty = null;
         			BaseRegisterVLTResult baseRegisterVLTResultObj = null;
                     baseRegisterVLTResultObj = new BaseRegisterVLTResult();
                     baseRegisterVLTResultObj.setAssessmentNo(propMatView.getPropertyId());
@@ -937,6 +941,9 @@ public class ReportService {
                     baseRegisterVLTResultObj.setTaxationRate(taxRate);
                     baseRegisterVLTResultObj.setMarketValue(propMatView.getMarketValue());
                     baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue());
+                    basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propMatView.getPropertyId());
+                    baseRegisterVLTResultObj.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
+                    baseRegisterVLTResultObj.setSitalArea((propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP));
                     if(propMatView.getMarketValue()!=null && propMatView.getCapitalValue()!=null )
                     	baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue())>0?propMatView.getMarketValue():propMatView.getCapitalValue());
                     
