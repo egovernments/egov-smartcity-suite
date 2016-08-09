@@ -41,18 +41,25 @@
 package org.egov.tl.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.search.annotations.DocumentId;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import org.egov.tl.entity.enums.ApplicationType;
 
 @Entity
 @Table(name = "egtl_document_type")
 @SequenceGenerator(name = LicenseDocumentType.SEQUENCE, sequenceName = LicenseDocumentType.SEQUENCE, allocationSize = 1)
+@CompositeUnique(fields = { "name",
+"applicationType" }, enableDfltMsg = true, checkForNull = true, message = "{license.document.exist}")
 public class LicenseDocumentType extends AbstractPersistable<Long> {
     private static final long serialVersionUID = -4917193602014054096L;
     public static final String SEQUENCE = "seq_egtl_document_type";
@@ -61,9 +68,16 @@ public class LicenseDocumentType extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
     @DocumentId
     private Long id;
+    
+    @NotNull
     private String name;
     private boolean mandatory;
-    private String applicationType;
+    private boolean enabled;
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ApplicationType applicationType;
+
 
     @Override
     public Long getId() {
@@ -90,12 +104,18 @@ public class LicenseDocumentType extends AbstractPersistable<Long> {
     public void setMandatory(final boolean mandatory) {
         this.mandatory = mandatory;
     }
+    public boolean isEnabled() {
+		return enabled;
+	}
 
-    public String getApplicationType() {
+	public void setEnabled(final boolean enabled) {
+		this.enabled = enabled;
+	}
+    public ApplicationType getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(final String applicationType) {
+    public void setApplicationType(final ApplicationType applicationType) {
         this.applicationType = applicationType;
     }
 }

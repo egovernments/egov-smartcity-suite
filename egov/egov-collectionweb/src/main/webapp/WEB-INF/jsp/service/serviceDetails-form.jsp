@@ -325,6 +325,7 @@ function enableUrl(obj) {
         </s:if>
 		<s:hidden name="serviceCategory.id" id="serviceCategory.id"></s:hidden>
 		<s:hidden name="id"></s:hidden>
+		<s:hidden name="serviceCategory.name" id="serviceCategory.name"></s:hidden>
 	</table>
 	<jsp:include page="finAccountsTable.jsp"/>
 

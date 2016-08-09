@@ -38,6 +38,42 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-jQuery(document).ready(function($)
-{
+$(document).ready(function(){
+	tableContainer1 = $("#document-Table"); 
+	$("#searchbtn").click(function (){
+		tableContainer1.dataTable({
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"ajax": {
+				type:"POST",
+				url:"search?"+$("#searchdocumentform").serialize(),
+				dataSrc: function ( json ) {
+	                //Make your callback here.
+	                $('.report-section').removeClass('display-hide');
+	                return json.data;
+	            }       
+			},
+			"columns": [
+						{ "data": "name"},
+						{ "data": "applicationType"},
+						{ "data": "mandatory"},
+						{ "data" : null, 'sClass':"text-center","target":-1,"defaultContent": 
+							
+		                   '<button type="button" class="btn btn-xs btn-secondary edit add-margin"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>'}
+									,
+									{ "data": "id", "visible":false }
+									]
+								});
+	                     });
+
+	$("#document-Table").on('click','tbody tr td .edit',function(event) {
+		var id = tableContainer1.fnGetData($(this).parent().parent(),4);
+		var url = '/tl/documenttype/edit/'+id ;
+		window.open(url,id,'width=900, height=700, top=300, left=260,scrollbars=yes');
+		
 	});
+
+});

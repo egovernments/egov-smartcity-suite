@@ -44,10 +44,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<form:form id="hearingsForm"
+<form:form id="hearingsform"
 	class="form-horizontal form-groups-bordered" modelAttribute="hearings"
 	role="form" method="post" enctype="multipart/form-data">
-	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
+	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
+	 <input type="hidden" id="lcNumber" name="lcNumber"
+		value="${legalCase.lcNumber}" />  
 	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
 	</div>
@@ -56,7 +58,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<form:button type="submit" name="submit" id="buttonid"
+			<form:button type="button" name="button" id="buttonid"
 				class="btn btn-primary" value="Save">
 				<spring:message code="lbl.save" />
 			</form:button>
@@ -66,7 +68,6 @@
 		</div>
 	</div>
 </form:form>
-
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"

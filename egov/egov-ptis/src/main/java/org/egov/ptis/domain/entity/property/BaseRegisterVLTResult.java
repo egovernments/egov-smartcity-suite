@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 public class BaseRegisterVLTResult {
 	
 	   	private String assessmentNo;
+	   	private String oldAssessmentNo;
+	   	private BigDecimal sitalArea;
 	    private String ward;
 	   	private String ownerName;
 	   	private String surveyNo;
@@ -138,5 +140,17 @@ public class BaseRegisterVLTResult {
 		public void setArrearTotal(BigDecimal arrearTotal) {
 			this.arrearTotal = arrearTotal;
 		}
-	    
+		public String getOldAssessmentNo() {
+			return oldAssessmentNo;
+		}
+		public void setOldAssessmentNo(String oldAssessmentNo) {
+			this.oldAssessmentNo = oldAssessmentNo;
+		}
+		public BigDecimal getSitalArea() {
+			return sitalArea;
+		}
+		public void setSitalArea(BigDecimal sitalArea) {
+			this.sitalArea = sitalArea;
+		}
+
 }

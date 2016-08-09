@@ -119,3 +119,4 @@
 	</display:table>
 
 </s:if>
+<s:else> No records found </s:else>

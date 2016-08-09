@@ -58,8 +58,6 @@ public class AssetService {
 			String serialize = assetCommonUtil.serialize(asset.getCategoryProperties());
 			asset.setProperties(serialize);
 		}
-		EgwStatus status = egwStatusHibernateDAO.findById(asset.getStatus().getId(), false);
-		asset.setStatus(status);
 		return assetRepository.save(asset);
 	}
 

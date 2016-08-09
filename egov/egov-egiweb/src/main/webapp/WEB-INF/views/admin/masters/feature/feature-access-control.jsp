@@ -64,14 +64,27 @@
 	                            </div>
 	                            <input type="hidden" id="role" value="${role.id}">
                             </div><br>
-                            <div class="col-md-3 col-md-offset-9 col-xs-3 col-xs-offset-9">
+                            <div class="col-md-4 col-md-offset-5 col-xs-4 col-xs-offset-5 text-right">
+							    <div class="dropdown">
+								  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    All (Granted & Non-Granted)
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+								    <li><a href="#">All</a></li>
+								    <li><a href="#">Granted</a></li>
+								    <li><a href="#">Non-Granted</a></li>
+								  </ul>
+								</div>
+                            </div>
+                            <div class="col-md-3 col-xs-3 ">
 								<div class="input-group">
-								  <input type="text" class="form-control input-sm search-table" id="search-table">
+								  <input type="text" class="form-control input-sm search-table">
 								  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
 								</div>
 							</div>
                             <div class="col-sm-12 add-margin">
-                                <table class="table table-bordered paginated">
+                                <table class="table table-bordered paginated role-table">
                                     <thead>
                                         <tr>
                                             <th><spring:message code="lbl.feature.name"/></th>
@@ -106,9 +119,22 @@
 	                            </div>
 	                            <input type="hidden" id="feature" value="${feature.id}">
                             </div><br>
-							<div class="col-md-3 col-md-offset-9 col-xs-3 col-xs-offset-9">
+							<div class="col-md-4 col-md-offset-5 col-xs-4 col-xs-offset-5 text-right">
+							    <div class="dropdown">
+								  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    All (Granted & Non-Granted)
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
+								    <li><a href="#">All</a></li>
+								    <li><a href="#">Granted</a></li>
+								    <li><a href="#">Non-Granted</a></li>
+								  </ul>
+								</div>
+                            </div>
+                            <div class="col-md-3 col-xs-3 ">
 								<div class="input-group">
-								  <input type="text" class="form-control input-sm search-table" id="search-table">
+								  <input type="text" class="form-control input-sm search-table">
 								  <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
 								</div>
 							</div>
@@ -142,7 +168,13 @@
             </div>
             <div class="row">
                 <div class="text-center">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();"><spring:message code="lbl.close"/></button>
+                	<c:if test="${not empty features}">
+                		<button type="button" class="btn btn-primary" onclick="redirect('/egi/feature/access-control/by-role')"><spring:message code="lbl.back"/></button>
+                	</c:if>
+                	<c:if test="${not empty roles}">
+                		<button type="button" class="btn btn-primary" onclick="redirect('/egi/feature/access-control/by-feature')"><spring:message code="lbl.back"/></button>
+                	</c:if>
+                    <button type="button" class="btn btn-default" onclick="window.close();"><spring:message code="lbl.close"/></button>
                 </div>
             </div>
         </form:form>
@@ -207,16 +239,47 @@
 	        }
 	    });
 
-	    tableContainer = $('.paginated')
-	    tableContainer.dataTable({
-	    		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+	    var table = $('.paginated').DataTable({
+	    	"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>"
 	    });
 
-	    $('.search-table').keyup(function(){
-			tableContainer.fnFilter(this.value);
+		$('.search-table').keyup(function(){
+			table.search( this.value ).draw();
 		});
+
+		//Handled Access change
+	    $('.dropdown ul.dropdown-menu li a').click(function() {
+			$('.dropdown .btn').html($(this).text()+' <span class="caret"></span>');
+			if($(this).text() == 'Granted'){
+				$.fn.dataTable.ext.search.pop();
+				$.fn.dataTable.ext.search.push(
+			      function(settings, data, dataIndex) {
+				      return $(table.row(dataIndex).child(2).node()).find('input[type="checkbox"]').is(':checked');
+			      }
+			    );
+			}else if($(this).text() == 'Non-Granted'){
+				$.fn.dataTable.ext.search.pop();
+				$.fn.dataTable.ext.search.push(
+			      function(settings, data, dataIndex) {
+				      return !$(table.row(dataIndex).child(2).node()).find('input[type="checkbox"]').is(':checked');
+			      }
+			    );
+			}else if($(this).text() == 'All'){
+				$.fn.dataTable.ext.search.pop();
+			}
+			table.draw();
+	    });
 	    
 	});
+
+	//Back button
+	function redirect(href){
+		window.location.href = href;
+	} 
+
+	
+
+	
     
 </script>
 <style>

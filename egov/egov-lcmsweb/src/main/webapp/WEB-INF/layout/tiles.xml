@@ -362,6 +362,10 @@
 	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing_newForm.jsp"/>
 </definition>
+  <definition name="legalcase-caaffidavit" extends="base_layout">
+	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit_Form.jsp"/>
+</definition>
 
 <definition name="vacatestay-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.vacatestay.new" cascade="true"/>
@@ -371,6 +375,16 @@
 <definition name="vacatestay-success" extends="base_layout">
 	<put-attribute name="page-title" value="title.vacatestay.success" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/lcinterimorder/vacatestay-success.jsp"/>
+</definition>
+
+<definition name="hearings-list" extends="base_layout">
+	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-list.jsp"/>
+</definition>
+
+<definition name="hearings-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.editcase" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-edit.jsp"/>
 </definition>
 
 </tiles-definitions>

@@ -95,6 +95,9 @@
 		<property name="is_History" type="java.lang.String">
 			<column name="IS_HISTORY" not-null="true" />
 		</property>
+		<property name="emailId" type="java.lang.String">
+			<column name="emailid"  />
+		</property>
 
 		<property name="is_Cancelled" type="java.lang.String">
 			<column name="IS_CANCELLED" not-null="true" />

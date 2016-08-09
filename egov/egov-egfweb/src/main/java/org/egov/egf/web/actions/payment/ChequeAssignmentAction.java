@@ -251,6 +251,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private boolean containsRTGS = false;
     private List<CFinancialYear> yearCodeList;
     private Long departmentId;
+    private boolean chequePrintingEnabled;
+    private String chequePrintAvailableAt;
+    private String instrumentHeader ;
+    private String chequeFormat;
 
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
@@ -1069,6 +1073,22 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     public String create() throws ApplicationException
 
     {
+        final List<AppConfigValues> printAvailConfig = appConfigValuesService.
+                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
+        
+        chequePrintingEnabled = isChequePrintEnabled();
+        
+        for (final AppConfigValues appConfigVal : printAvailConfig)
+            chequePrintAvailableAt = appConfigVal.getValue();
+        if(chequePrintAvailableAt==null)
+            chequePrintAvailableAt="";
+        Bankaccount bankAccount = new Bankaccount();
+        if(bankaccount!=null && bankaccount.equals("") ){
+        bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
+        if( bankAccount.getChequeformat()!=null &&  !bankAccount.getChequeformat().equals("")){
+            chequeFormat=bankAccount.getChequeformat().getId().toString();
+        }
+        }
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting createInstrument...");
@@ -2126,6 +2146,22 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             LOGGER.debug("Completed generateAdviceXls.");
         return "bankAdvice-XLS";
     }
+    
+    public boolean isChequePrintEnabled() {
+        
+        String chequePrintEnabled = null;
+        final List<AppConfigValues> enablePrintConfig = appConfigValuesService.
+                getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
+        for (final AppConfigValues appConfigVal : enablePrintConfig)
+            chequePrintEnabled = appConfigVal.getValue();
+        if(chequePrintEnabled==null)
+            return false;
+            
+        if (chequePrintEnabled.equalsIgnoreCase("Y"))
+            return true;
+        else
+            return false;
+    }
 
     protected String getMessage(final String key) {
         return getText(key);
@@ -2621,6 +2657,38 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public boolean isChequePrintingEnabled() {
+        return chequePrintingEnabled;
+    }
+
+    public String getChequePrintAvailableAt() {
+        return chequePrintAvailableAt;
+    }
+
+    public String getInstrumentHeader() {
+        return instrumentHeader;
+    }
+
+    public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
+        this.chequePrintingEnabled = chequePrintingEnabled;
+    }
+
+    public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
+        this.chequePrintAvailableAt = chequePrintAvailableAt;
+    }
+
+    public void setInstrumentHeader(String instrumentHeader) {
+        this.instrumentHeader = instrumentHeader;
+    }
+
+    public String getChequeFormat() {
+        return chequeFormat;
+    }
+
+    public void setChequeFormat(String chequeFormat) {
+        this.chequeFormat = chequeFormat;
     }
 
 }

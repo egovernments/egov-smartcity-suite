@@ -123,6 +123,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public EgDemand getCurrentDemand() {
         return waterTaxUtils.getCurrentDemand(getWaterConnectionDetails()).getDemand();
     }
+    
+    @Override
+    public String getEmailId() {
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_MOBILE_EMAIL,BasicPropertyStatus.ACTIVE);
+        return assessmentDetails.getPrimaryEmail();
+    }
 
     @Override
     public List<EgDemand> getAllDemands() {

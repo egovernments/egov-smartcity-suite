@@ -887,6 +887,11 @@ public class InstrumentService {
                         bankaccountId, instrumentNo, payTo, Long.valueOf(serialNo));
     }
 
+    public InstrumentHeader getInstrumentHeaderById(final Long id) {
+        return instrumentHeaderService
+                .find(" from InstrumentHeader where id=?",id);
+    }
+    
     @Transactional
     public InstrumentType createInstrumentType(final InstrumentType iType) {
         instrumentTypeService.persist(iType);

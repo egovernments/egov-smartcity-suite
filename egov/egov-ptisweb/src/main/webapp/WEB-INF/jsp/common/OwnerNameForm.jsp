@@ -196,7 +196,7 @@
     	   console.log('calling :) ->'+rowidx + ' ->'+ mobileNo);
     	   jQuery.ajax({
 				type: "GET",
-				url: "/ptis/common/ajaxCommon-getUserByMobileNo.action",
+				url: "/ptis/public/common/ajaxCommon-getUserByMobileNo.action",
 				cache: true,
 				dataType: "json",
 				data:{"mobileNumber" : mobileNo},

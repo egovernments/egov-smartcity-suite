@@ -51,5 +51,11 @@
 			<s:fielderror />
 		</div> <s:actionmessage />
 	</span>
+	</br>
+	</br>
+	<div align="center">
+		<input type="button" id="closeButton" value="Close"
+			onclick="javascript:window.close()" class="button" />
+	</div>
 </body>
 </html>

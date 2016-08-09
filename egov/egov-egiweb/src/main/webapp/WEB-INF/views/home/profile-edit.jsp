@@ -55,9 +55,9 @@
 			<div class="panel-body custom-form">
 				<form:form role="form" action="edit" modelAttribute="user" commandName="user" id="user" cssClass="form-horizontal form-groups-bordered" >
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.fullname"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.fullname"/><span class="mandatory set-mandatory"></span></label>
 						<div class="col-sm-2 col-md-1 add-margin">
-							<form:select class="form-control" id="salutation" path="salutation">
+							<form:select class="form-control" id="salutation" path="salutation" required="required">
 								<form:option value=""></form:option>
 								<form:option value="Mr"><spring:message code="lbl.mr"/></form:option>
 								<form:option value="Mrs"><spring:message code="lbl.mrs"/></form:option>
@@ -65,24 +65,24 @@
 							</form:select>
 						</div>
 						<div class="col-sm-4 col-md-5 add-margin">
-							<form:input path="name" cssClass="form-control" placeholder="Name" maxlength="100"/>
+							<form:input path="name" cssClass="form-control" placeholder="Name" maxlength="100" required="required"/>
 						</div>
 					</div>
 					
 					<div class="form-group">
 						
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.gender"/></label>
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.gender"/><span class="mandatory set-mandatory"></span></label>
 						<div class="col-sm-6 col-xs-12 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="gender" element="span"/>
+							<form:radiobuttons path="gender" element="span" required="required"/>
 						</div>
 					</div>
 					
 					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/></label>
+						<label class="col-sm-3 control-label"><spring:message code="lbl.mobile"/><span class="mandatory set-mandatory"></span></label>
 						<div class="col-sm-2 add-margin">
 							<div class="input-group">
 								<span class="input-group-addon">+91</span>
-								  	<form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10"/>
+                                <form:input path="mobileNumber" cssClass="form-control" data-inputmask="'mask': '9999999999'" id="mobileNumber" placeholder="Mobile Number" maxlength="10" disabled="true" required="required"/>
 							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg"/>
 						</div>

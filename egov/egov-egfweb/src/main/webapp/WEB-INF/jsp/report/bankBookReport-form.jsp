@@ -254,31 +254,23 @@ function showChequeDetails(voucherId){
 							headerValue="----Choose----" onclick="validateBank()" /></td>
 				</tr>
 				<tr>
-				<td style="width: 5%"></td>
+					<td style="width: 5%"></td>
 					<td class="greybox" width="10%">Start Date:<span
 						class="mandatory1">*</span></td>
-						<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate" />
-					<td class="greybox"><s:textfield name="startDate"
-							id="startDate" cssStyle="width:100px"
-							
-							onkeyup="DateFormat(this,this.value,event,false,'3')" value="%{tempFromDate}"
-							 /><a
-						href="javascript:show_calendar('bankBookReport.startDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-					</td>
+					<s:date name="startDate" format="dd/MM/yyyy" var="tempFromDate" />
+					<td class="greybox"><s:textfield id="startDate"
+							name="startDate" value="%{tempFromDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 					<td class="greybox" width="10%">End Date:<span
 						class="mandatory1">*</span></td>
-					<td class="greybox"><s:textfield name="endDate" id="endDate"
-							cssStyle="width:100px" value='%{getFormattedDate(endDate)}'
-							onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-						href="javascript:show_calendar('bankBookReport.endDate');"
-						style="text-decoration: none">&nbsp;<img
-							src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)<br />
-					</td>
+					<td class="greybox"><s:textfield id="endDate" name="endDate"
+							value="%{endDate}"
+							onkeyup="DateFormat(this,this.value,event,false,'3')"
+							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
-				
-
 			</table>
 			<br />
 			<br />

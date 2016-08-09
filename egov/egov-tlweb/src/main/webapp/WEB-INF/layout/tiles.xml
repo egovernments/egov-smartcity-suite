@@ -166,4 +166,20 @@
 		<put-attribute name="page-title" value="title.demandGeneation" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/demandgeneration/demand-generate.jsp" />
 	</definition>
+    <definition name="document-new" extends="base_layout">
+	     <put-attribute name="page-title" value="title.create.document" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-new.jsp"/>
+	</definition>
+	<definition name="document-search" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.search" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-search.jsp"/>
+	</definition>
+	<definition name="document-edit" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.edit" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-edit.jsp"/>
+	</definition>
+	<definition name="document-view" extends="base_layout">
+	     <put-attribute name="page-title" value="title.document.view" cascade="true"/>
+	     <put-attribute name="body" value="/WEB-INF/views/documenttype/document-view.jsp"/>
+	</definition>
 </tiles-definitions>

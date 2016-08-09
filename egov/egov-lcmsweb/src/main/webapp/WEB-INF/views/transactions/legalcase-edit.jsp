@@ -48,7 +48,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form method="post" action="" modelAttribute="legalCase"
-			id="egalcaseForm" class="form-horizontal form-groups-bordered"
+			id="newlegalcaseForm" class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<form:hidden id="mode" path="" value="${mode}" />
 			<input type="hidden" name="legalCase" value="${legalCase.id}" />
@@ -63,6 +63,7 @@
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-edit-petitiondetails.jsp"%>
+				<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 
 				</div>
 			</div>
@@ -89,9 +90,10 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script
 	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	<script
+	src="<c:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+
 

@@ -85,13 +85,10 @@ public abstract class ReportService {
     AppConfigValueService appConfigValuesService;
     int minorCodeLength;
     List<Character> coaType = new ArrayList<Character>();
+    @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
     String voucherStatusToExclude;
     final static Logger LOGGER = Logger.getLogger(ReportService.class);
-
-    public void setFinancialYearDAO(final FinancialYearHibernateDAO financialYearDAO) {
-        this.financialYearDAO = financialYearDAO;
-    }
 
     public Date getPreviousYearFor(final Date date) {
         final GregorianCalendar previousYearToDate = new GregorianCalendar();

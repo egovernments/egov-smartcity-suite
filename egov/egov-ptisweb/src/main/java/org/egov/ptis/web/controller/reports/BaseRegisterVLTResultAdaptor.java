@@ -56,6 +56,8 @@ public class BaseRegisterVLTResultAdaptor implements JsonSerializer<BaseRegister
 	    public JsonElement serialize(BaseRegisterVLTResult baseRegisterResultObj, Type type, JsonSerializationContext jsc) {
 	        JsonObject jsonObject = new JsonObject();
 	        jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getAssessmentNo());
+	        jsonObject.addProperty("oldAssessmentNo", baseRegisterResultObj.getOldAssessmentNo());
+	        jsonObject.addProperty("sitalArea", baseRegisterResultObj.getSitalArea());
 	        jsonObject.addProperty("ward", baseRegisterResultObj.getWard());
 	        jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
 	        jsonObject.addProperty("surveyNo", (null != baseRegisterResultObj.getSurveyNo() ? baseRegisterResultObj

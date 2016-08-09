@@ -42,7 +42,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<form:form method="post" action="create"
+<div class="row">
+	<div class="col-md-12">
+<form:form method="" action=""
 	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
 	id="legalCaseForm">
 	<input type="hidden" name="mode" value="${mode}" />
@@ -164,9 +166,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="row form-group">
+		
 			<div class="panel-heading">
-				<div class="panel-title">
+				<div class="panel-title" style="font-weight: bold">
 					<spring:message code="lbl.bipartisanDetails.details" />
 				</div>
 			</div>
@@ -174,14 +176,15 @@
 				id="petitionDetails">
 				<thead>
 					<tr>
-						<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+					<th class="text-center"><spring:message code="lbl.slno" />
+						<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 						<th class="text-center"><spring:message code="lbl.name" /><span
 							class="mandatory"></span></th>
 						<th class="text-center"><spring:message
 								code="lbl.discription" /></th>
 						<th class="text-center"><spring:message
 								code="lbl.contactnumber" /></th>
-						<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 					</tr>
 				</thead>
 				<tbody>
@@ -189,15 +192,33 @@
 						items="${legalCase.getPetitioners()}" varStatus="status">
 
 						<tr>
-							<td><form:input type="hidden"
+						<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
+							
+					<%-- 		<td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
-
-								<input type="text"
+							<c:choose>
+								<c:when test="${bipartisanDetails.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
 								id="table_isRespondentGovernment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.isRespondentGovernment}" /></td>
+								value="${bipartisanDetails.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetails.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose>
+								</td> --%>
 							<td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].name"
 									path="bipartisanDetails[${status.index}].name" /> <input
@@ -220,36 +241,36 @@
 								style="text-align: center"
 								value="${bipartisanDetails.contactNumber}" /></td>
 
-							<td><form:input type="hidden"
+							<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].governmentDepartment"
 									path="bipartisanDetails[${status.index}].governmentDepartment" />
 								<input type="text"
 								id="table_governmentDepartment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetails.governmentDepartment}" /></td>
+								value="${bipartisanDetails.governmentDepartment.name}" /></td> --%>
 
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="lbl.bipartisanDetails.respondant" />
-			</div>
+		
+	
+		<div class="panel-heading ">
+		<div class="panel-title"  style="font-weight: bold"><spring:message code="lbl.bipartisanDetails.respondant" /></div>
 		</div>
 		<table class="table table-striped table-bordered"
 			id="respodantDetails">
 			<thead>
 				<tr>
-					<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+				<th class="text-center"><spring:message code="lbl.slno" />
+					<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 					<th class="text-center"><spring:message code="lbl.name" /><span
 						class="mandatory"></span></th>
 					<th class="text-center"><spring:message code="lbl.discription" /></th>
 					<th class="text-center"><spring:message
 							code="lbl.contactnumber" /></th>
-					<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+					<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 				</tr>
 			</thead>
 			<tbody>
@@ -257,15 +278,33 @@
 				<c:forEach var="bipartisanDetailsBeanList"
 					items="${legalCase.getRespondents()}" varStatus="status">
 					<tr>
-						<td><form:input type="hidden"
+					<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
+							
+						<%-- <td><form:input type="hidden"
 								id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 								path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
 
-							<input type="text"
-							id="table_isRespondentGovernment${status.index}"
-							class="form-control" readonly="readonly"
-							style="text-align: center"
-							value="${bipartisanDetailsBeanList.isRespondentGovernment}" /></td>
+							<c:choose>
+								<c:when test="${bipartisanDetailsBeanList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose></td> --%>
 
 						<td><form:input type="hidden"
 								id="bipartisanDetailsBeanList[${status.index}].name"
@@ -290,20 +329,22 @@
 							style="text-align: center"
 							value="${bipartisanDetailsBeanList.contactNumber}" /></td>
 
-						<td><form:input type="hidden"
+						<%-- <td><form:input type="hidden"
 								id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 								path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
 							<input type="text" id="table_governmentDepartment${status.index}"
 							class="form-control" readonly="readonly"
 							style="text-align: center"
-							value="${bipartisanDetailsBeanList.governmentDepartment}" /></td>
-
+							value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
+ --%>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 	</div>
 	</form:form>
+	</div>
+	</div>
 	<link rel="stylesheet"
 		href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 	<link rel="stylesheet"

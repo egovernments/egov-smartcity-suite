@@ -309,6 +309,7 @@
 					bootbox.alert('Please select the payment voucher');
 					return false;
 				}
+				<s:if test="%{paymentMode=='cheque'}">
 				var chequeSize='<s:property value ="%{chequeAssignmentList.size()}"/>';
 				for(var index=0;index<chequeSize;index++){
 					//console.log(document.getElementsByName("chequeAssignmentList["+index+"].serialNo")[0].value);
@@ -319,10 +320,16 @@
 					return false;
 				}
 				}
+				</s:if>  
 				<s:if test="%{paymentMode=='rtgs'}">
 					result= validateForRtgsMode();  
 				</s:if>    
 				<s:if test="%{paymentMode=='cash'}">
+				if( document.getElementById('serialNo')==null || document.getElementById('serialNo').value=='' )
+				{
+					bootbox.alert('Year code should not be empty');
+					return false;
+				}
 					result= validateChequeDateForNonChequeMode();  
 				</s:if> 
 				<s:if test="%{paymentMode=='cheque'}">

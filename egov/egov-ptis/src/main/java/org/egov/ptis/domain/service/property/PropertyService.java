@@ -2507,15 +2507,21 @@ public class PropertyService {
     }
 
     public Assignment getWorkflowInitiator(final PropertyImpl property) {
-        Assignment wfInitiator;
-        if (isEmployee(property.getCreatedBy()))
-            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
-        else if (!property.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+        Assignment wfInitiator = null;
+        if(property.getBasicProperty().getSource().equals(PropertyTaxConstants.SOURCEOFDATA_ONLINE)){
+        	if(!property.getStateHistory().isEmpty())
+        		wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
                     .getOwnerPosition().getId());
-        else
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
-                    .getId());
+        } else{
+	        if (isEmployee(property.getCreatedBy()))
+	            wfInitiator = assignmentService.getPrimaryAssignmentForUser(property.getCreatedBy().getId());
+	        else if (!property.getStateHistory().isEmpty())
+	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getStateHistory().get(0)
+	                    .getOwnerPosition().getId());
+	        else
+	            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(property.getState().getOwnerPosition()
+	                    .getId());
+        }
         return wfInitiator;
     }
 
@@ -2552,7 +2558,7 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getCreatedDate());
                         HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());
@@ -2730,7 +2736,10 @@ public class PropertyService {
 			taxValues.put(PropertyTaxConstants.CURR_BAL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
 					.subtract((propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
 		}
-		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX));
+		if(propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX)!= null)
+		    taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX));
+		else
+		    taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY));
@@ -3086,9 +3095,23 @@ public class PropertyService {
      * @return
      */
     public List<Assignment> getAssignmentsForDesignation(String designationName){
-    	List<Assignment> assignmentsList = new ArrayList<Assignment>();
-    	assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
-    	return assignmentsList;
+        List<Assignment> assignmentsList = new ArrayList<Assignment>();
+        assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
+        return assignmentsList;
+    }
+    
+    /**
+     * Update Reference Basic Property in Property Status values (Bifurcation workflow)
+     * @param basicProperty, parentPropId
+     */
+    public void updateReferenceBasicProperty(final BasicProperty basicProperty, final String parentPropId ){
+        
+        PropertyStatusValues propStatVal= (PropertyStatusValues) propPerServ.find("from PropertyStatusValues psv where psv.basicProperty=? order by createdDate desc", basicProperty);
+        final BasicProperty referenceBasicProperty = (BasicProperty) propPerServ.find(
+                "from BasicPropertyImpl bp where bp.upicNo=?", parentPropId);
+        if(referenceBasicProperty != null)
+        	propStatVal.setReferenceBasicProperty(referenceBasicProperty);
+        
     }
     
     public Map<Installment, Map<String, BigDecimal>> getExcessCollAmtMap() {

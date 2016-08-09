@@ -118,6 +118,7 @@
 									
 										<div class="col-sm-2 add-margin">
 											<form:input path="code" id="code" type="text" required="required" cssClass="form-control is_valid_alphanumeric"/>
+											<form:hidden path="username"/>
 											<form:errors path="code" cssClass="add-margin error-msg"/>
 										</div>
 										

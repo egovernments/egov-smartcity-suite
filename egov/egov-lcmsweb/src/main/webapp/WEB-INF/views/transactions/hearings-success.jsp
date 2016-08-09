@@ -45,6 +45,8 @@
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered" modelAttribute="hearings"
 	id="hearingform">
+	<input type="hidden" id="lcNumber" name="lcNumber"
+		value="${hearings.legalCase.lcNumber}" />
 	<div class="row">
 		<div class="col-md-12">
 			<c:if test="${not empty message}">

@@ -131,20 +131,23 @@
 					<tr>
 						<td class="bluebox"><s:text name="journalBook.startDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield name="startDate"
-								id="startDate" cssStyle="width:100px" value='%{startDate}'
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('journalBookForm.startDate');"
-							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="bluebox"><s:date name="startDate" var="startDate"
+								format="dd/MM/yyyy" /> <s:textfield id="startDate"
+								name="startDate" value="%{startDate}" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+
+
 						<td class="bluebox"><s:text name="journalBook.endDate" /><span
 							class="mandatory1">*</span></td>
-						<td class="bluebox"><s:textfield name="endDate" id="endDate"
-								cssStyle="width:100px" value='%{endDate}'
-								onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-							href="javascript:show_calendar('journalBookForm.endDate');"
-							style="text-decoration: none"><img
-								src="/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+						<td class="bluebox"><s:date name="endDate" var="endDate"
+								format="dd/MM/yyyy" /> <s:textfield id="endDate" name="endDate"
+								value="%{endDate}" data-date-end-date="0d"
+								onkeyup="DateFormat(this,this.value,event,false,'3')"
+								placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
+								data-inputmask="'mask': 'd/m/y'" /></td>
+
 					</tr>
 					<tr>
 						<td class="greybox"><s:text name="journalBook.fund" /><span
@@ -160,32 +163,31 @@
 					</tr>
 
 					<tr>
-						<td class="bluebox"><s:text
-								name="journalBook.function" /></td>
+						<td class="bluebox"><s:text name="journalBook.function" /></td>
 						<td class="bluebox"><s:select name="functionId"
-								id="functionId" list="dropdownData.functionList"
-								listKey="id" listValue="name" headerKey=""
-								headerValue="----Choose----" /></td>
+								id="functionId" list="dropdownData.functionList" listKey="id"
+								listValue="name" headerKey="" headerValue="----Choose----" /></td>
 						<td class="bluebox"><s:text name="journalBook.department" /></td>
 						<td class="bluebox"><s:select name="dept_name" id="dept_name"
-								list="dropdownData.departmentList" listKey="id"
-								listValue="name" headerKey="" headerValue="----Choose----" /></td>
+								list="dropdownData.departmentList" listKey="id" listValue="name"
+								headerKey="" headerValue="----Choose----" /></td>
 					</tr>
 
 				</table>
 				<br />
-			</div>
-			<div class="buttonbottom">
-				<table align="center">
-					<tr>
-						<td><input type="button" value="Search" class="buttonsubmit"
-							onclick="return validate()" /></td>
-						<td><input type="button" id="Close" value="Close"
-							onclick="javascript:window.close()" class="button" /></td>
-					</tr>
-				</table>
-			</div>
+
+				<div class="buttonbottom">
+					<table align="center">
+						<tr>
+							<td><input type="button" value="Search" class="buttonsubmit"
+								onclick="return validate()" /></td>
+							<td><input type="button" id="Close" value="Close"
+								onclick="javascript:window.close()" class="button" /></td>
+						</tr>
+					</table>
+				</div>
 		</s:push>
+		</div>
 		<span class="mandatory1">
 			<div id="resultDiv" style="display: none;">
 				<jsp:include page="journalBookReport-result.jsp" />

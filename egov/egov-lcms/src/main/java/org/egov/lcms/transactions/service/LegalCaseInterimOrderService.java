@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -40,13 +39,11 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
@@ -72,9 +69,6 @@ public class LegalCaseInterimOrderService {
 
     private final LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
@@ -98,6 +92,13 @@ public class LegalCaseInterimOrderService {
         legalCaseRepository.save(legalCaseInterimOrder.getLegalCase());
         processAndStoreApplicationDocuments(legalCaseInterimOrder);
         return legalCaseInterimOrderRepository.save(legalCaseInterimOrder);
+    }
+
+    public List<LcInterimOrderDocuments> getLcInterimOrderDocList(final LegalCaseInterimOrder legalCaseInterimOrder) {
+        final List<LcInterimOrderDocuments> lcInterimOrderDOc = new ArrayList<LcInterimOrderDocuments>();
+        for (final LcInterimOrderDocuments lcInterimOrderDoc : legalCaseInterimOrder.getLcInterimOrderDocuments())
+            lcInterimOrderDOc.add(lcInterimOrderDoc);
+        return lcInterimOrderDOc;
     }
 
     public List<LegalCaseInterimOrder> findAll() {

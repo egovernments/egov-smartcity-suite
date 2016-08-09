@@ -49,46 +49,51 @@
 <table class="table table-striped table-bordered" id="petitionDetails">
 	<thead>
 		<tr>
-			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+		 	<th class="text-center"><spring:message code="lbl.slno" />
+			 <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>  --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			<%--  <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>  --%>
 			<th class="text-center"><spring:message
 					code="lbl.add/delete_pet" /></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="">
-			<td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanDetails[0].isRespondentGovernment"
-				id="bipartisanDetails[0].isRespondentGovernment"
-				onblur="onChangeofPetitioncheck()" /></td>
+			<td>
+					<span class="petitionDetails spansno">1</span>
+					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+							</td>
+			<!-- <td class="text-center"><input type="checkbox" id="activeid"
+				name="bipartisanPetitionDetailsList[0].isRespondentGovernment"
+				id="bipartisanPetitionDetailsList[0].isRespondentGovernment"
+				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
-				name="bipartisanDetails[0].name" id="bipartisanDetails[0].name"
+				name="bipartisanPetitionDetailsList[0].name" id="bipartisanPetitionDetailsList[0].name"
 				maxlength="50" required="required"></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input" name="bipartisanDetails[0].address"
-				id="bipartisanDetails[0].address" maxlength="256"></td>
+				class="form-control table-input" name="bipartisanPetitionDetailsList[0].address"
+				id="bipartisanPetitionDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right patternvalidation"
-				data-pattern="number" name="bipartisanDetails[0].contactNumber"
-				id="bipartisanDetails[0].contactNumber" maxlength="10"></td>
-			<td class="text-right"><form:select path=""
+				data-pattern="number" name="bipartisanPetitionDetailsList[0].contactNumber"
+				id="bipartisanPetitionDetailsList[0].contactNumber" maxlength="10"></td>
+			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
-					name="bipartisanDetails[0].governmentDepartment"
-					id="bipartisanDetails[0].governmentDepartment"
-					cssClass="form-control" onfocus="callAlertForDepartment();"
+					name="bipartisanPetitionDetailsList[0].governmentDepartment"
+					id="bipartisanPetitionDetailsList[0].governmentDepartment"
+					cssClass="form-control" 
 					cssErrorClass="form-control error">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
-				</form:select></td>
+				</form:select></td> --%>
 			<td class="text-center">
 			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
@@ -105,22 +110,27 @@
 <table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
-			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+		<th class="text-center"><spring:message code="lbl.slno" />
+			<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 			<th class="text-center"><spring:message
-					code="lbl.add/delete_pet" /></th>
+					code="lbl.add/delete_Res" /></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="">
-			<td class="text-center"><input type="checkbox" id="activeid"
+		<td>
+					<span class="respodantDetails spansno">1</span>
+					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+							</td>
+			<!-- <td class="text-center"><input type="checkbox" id="activeid"
 				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
 				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
-				onblur="onChangeofRespodantcheck()" /></td>
+				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
@@ -136,18 +146,23 @@
 				data-pattern="number"
 				name="bipartisanDetailsBeanList[0].contactNumber"
 				id="bipartisanDetailsBeanList[0].contactNumber" maxlength="10"></td>
-			<td class="text-right"><form:select path=""
+		<%-- 	<td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanDetailsBeanList[0].governmentDepartment"
 					id="bipartisanDetailsBeanList[0].governmentDepartment"
-					cssClass="form-control" onfocus="callAlertForDepartment();"
+					cssClass="form-control"
 					cssErrorClass="form-control error">
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
-				</form:select></td>
+				</form:select></td> --%>
+				<input type="hidden" 
+						id="bipartisanDetailsBeanList[0].isRepondent"
+						name="bipartisanDetailsBeanList[0].isRepondent" 
+					class="form-control table-input text-right" style="text-align: center"
+					value="${true}" />
 				
 			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><i class="fa fa-trash"></i></a></td>

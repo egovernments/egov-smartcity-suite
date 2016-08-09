@@ -384,7 +384,7 @@
 								<spring:message code="help.city.recaptcha.pvt.key"/>
 								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-										<form:input path="recaptchaPK" id="recaptchaPK" type="text"
+										<form:input path="recaptchaPK" id="recaptchaPK" type="password"
 											data-toggle="popover" data-trigger="focus" data-placement="right" 
 											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"
@@ -400,7 +400,7 @@
 								<spring:message code="help.city.recaptcha.pub.key"/>
 								</c:set>
 								<div class="col-sm-6" style="padding-top: 7px">
-										<form:input path="recaptchaPub" id="recaptchaPub" type="text"
+										<form:input path="recaptchaPub" id="recaptchaPub" type="password"
 											data-toggle="popover" data-trigger="focus" data-placement="right" 
 											data-content="${helptext}"
 											class="form-control" placeholder="" autocomplete="off"

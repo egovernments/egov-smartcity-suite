@@ -39,12 +39,13 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,10 +54,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.GovernmentDepartment;
@@ -71,33 +70,40 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_BIPARTISANDETAILS")
 @SequenceGenerator(name = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, sequenceName = BipartisanDetails.SEQ_EGLC_BIPARTISANDETAILS, allocationSize = 1)
-public class BipartisanDetails extends AbstractPersistable<Long> {
+public class BipartisanDetails implements Serializable {
 
-    private static final long serialVersionUID = 1517694643078084884L;
+    private static final long serialVersionUID = 845357231248646624L;
     public static final String SEQ_EGLC_BIPARTISANDETAILS = "SEQ_EGLC_BIPARTISANDETAILS";
 
     @Id
     @GeneratedValue(generator = SEQ_EGLC_BIPARTISANDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "legalcase")
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
+    
     @Length(max = 128, message = "petitionerName.length")
     @OptionalPattern(regex = LcmsConstants.mixedCharType1, message = "petitionerName.name.mixedChar")
     private String name;
+    
     @Length(max = 256, message = "address.length")
     private String address;
+    
     @OptionalPattern(regex = LcmsConstants.numericiValForPhoneNo, message = "contactNumber.numeric")
     private Long contactNumber;
+    
     @Column(name = "isrespondent")
     private Boolean isRepondent = false;
+    
     @ManyToOne
     @Valid
     @JoinColumn(name = "respondentgovtdept")
     private GovernmentDepartment governmentDepartment;
+    
     @Column(name = "isrespondentgovernment", nullable = false)
     private Boolean isRespondentGovernment = false;
+    
     @Column(name = "serialnumber")
     private Long serialNumber;
 
@@ -133,12 +139,12 @@ public class BipartisanDetails extends AbstractPersistable<Long> {
         this.contactNumber = contactNumber;
     }
 
-    @Override
+    
     public Long getId() {
         return id;
     }
 
-    @Override
+    
     public void setId(final Long id) {
         this.id = id;
     }

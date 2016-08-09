@@ -204,18 +204,37 @@
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.caDue.date" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="caDueDate" class="form-control datepicker"
+		<form:input path="eglcPwrs[0].caDueDate" class="form-control datepicker"
 			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-			data-date-end-date="-1d" id="caDueDate"
+		 id="caDueDate"
 			data-inputmask="'mask': 'd/m/y'" />
-		<form:errors path="caDueDate" cssClass="add-margin error-msg" />
+		<form:errors path="eglcPwrs[0].caDueDate" cssClass="add-margin error-msg" />
+	</div>
+</div>
+<div class="form-group">
+
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.officerincharge" />:</label>
+	<div class="col-sm-3 add-margin" >
+		<form:input class="form-control" maxlength="50" id="officerIncharge"
+			path="officerIncharge" />
+		<form:errors path="officerIncharge" cssClass="add-margin error-msg" />
+	</div>
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.noticedate" /><span class="mandatory">:</span></label>
+	<div class="col-sm-3 add-margin">
+		<form:input path="noticeDate" class="form-control datepicker"
+			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
+			data-date-end-date="-1d" id="noticeDate"
+			data-inputmask="'mask': 'd/m/y'" />
+		<form:errors path="noticeDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
 
 
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
-			code="lbl.fieldbycarp" />:</label>
+			code="lbl.fieldbycarp" /> ?:</label>
 	<div class="col-sm-3 add-margin">
 		<form:checkbox id="activeid" path="isfiledbycorporation"
 			value="isfiledbycorporation" />

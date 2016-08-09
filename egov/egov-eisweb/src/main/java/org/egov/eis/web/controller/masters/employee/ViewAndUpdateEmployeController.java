@@ -39,6 +39,12 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
@@ -60,10 +66,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Arrays;
 
 @Controller
 @RequestMapping(value = "/employee")
@@ -109,6 +111,19 @@ public class ViewAndUpdateEmployeController {
     public String update(@Valid @ModelAttribute Employee employee, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @RequestParam final MultipartFile file,
             @RequestParam final String removedJurisdictionIds, @RequestParam final String removedassignIds) {
+
+        final String employeeCode = employee.getCode().replaceFirst("^0+(?!$)", "");
+
+        final List<Employee> employeeList = employeeService.findEmployeeByCodeLike(employeeCode);
+
+        if (employeeList.size() != 0 && !employeeList.isEmpty())
+            for (final Employee emp : employeeList) {
+                final String empCode = emp.getCode().replaceFirst("^0+(?!$)", "");
+                if (!emp.getCode().equals(employee.getCode()))
+                    if (employeeCode.equals(empCode) && !emp.getId().equals(employee.getId()))
+                        errors.rejectValue("code", "Unique.employee.code");
+            }
+
         if (errors.hasErrors()) {
             setDropDownValues(model);
             model.addAttribute("mode", "update");

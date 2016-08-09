@@ -140,8 +140,18 @@ $(document).ready(function() {
 	  
 	  $('#employeeDetails tbody tr:last').find('input').val($("#positionName").val());
 	}	
-		
-	
+});
+function edit(hearings){    
+	var lcNumber = $('#lcNumber').val();
+	var url = '/lcms/hearing/edit/?lcNumber='+lcNumber;
+	window.location = url;
+   }
+$('#createnewhearings').click(function() {
+	var lcNumber = $('#lcNumber').val();
+	var url = '/lcms/hearing/new/?lcNumber='+lcNumber;
+	$('#hearingsform').attr('method', 'get');
+	$('#hearingsform').attr('action', url);
+	window.location = url;
 });
 
 			

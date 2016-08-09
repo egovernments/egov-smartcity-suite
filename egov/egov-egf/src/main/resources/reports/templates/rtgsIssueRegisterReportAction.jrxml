@@ -39,8 +39,9 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-06-16T10:54:24 -->
+<!-- 2016-08-01T17:21:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rtgsIssueRegisterReportAction" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3b4d04c4-5bf8-4c15-b368-96c9b64a7a08">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="fundAndBankHeading" class="java.lang.String"/>
 	<parameter name="reportRundate" class="java.lang.String"/>
@@ -87,7 +88,7 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[BPV Number And Date]]></text>
@@ -101,13 +102,13 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Seq No.]]></text>
+					<text><![CDATA[Sl No.]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="18" y="24" width="50" height="20" uuid="7987b27e-4d35-42c3-80fb-4fb74e83ce85"/>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="18" y="24" width="59" height="20" printWhenGroupChanges="rtgsRegisterRtgsDateGroup" uuid="7987b27e-4d35-42c3-80fb-4fb74e83ce85"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -115,13 +116,13 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[RTGS Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="68" y="24" width="59" height="20" uuid="89ad19eb-9a88-4ff0-a893-791f4c609ffe"/>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="77" y="24" width="67" height="20" printWhenGroupChanges="rtgsRegisterRtgsDateGroup" uuid="89ad19eb-9a88-4ff0-a893-791f4c609ffe"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -129,13 +130,13 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[RTGS Number]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="127" y="24" width="92" height="20" uuid="949f1a21-2a09-4bf0-8432-5d806f0e7212"/>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="145" y="24" width="85" height="20" uuid="949f1a21-2a09-4bf0-8432-5d806f0e7212"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -143,13 +144,13 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Department]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="219" y="24" width="77" height="20" uuid="290d75d4-a866-45fa-a282-9e693491e81e"/>
+					<reportElement key="staticText" stretchType="RelativeToBandHeight" x="231" y="24" width="65" height="20" uuid="290d75d4-a866-45fa-a282-9e693491e81e"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0"/>
@@ -157,7 +158,7 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Party Name]]></text>
@@ -171,7 +172,7 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Amount (Rs.)]]></text>
@@ -185,7 +186,7 @@
 						<bottomPen lineWidth="0.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Status]]></text>
@@ -217,7 +218,7 @@
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{GrandTotal}]]></textFieldExpression>
@@ -249,7 +250,7 @@
 	<title>
 		<band height="69">
 			<staticText>
-				<reportElement key="staticText" stretchType="RelativeToBandHeight" x="414" y="54" width="75" height="15" uuid="ce09781c-df08-4667-bd30-8eee9de1cd79"/>
+				<reportElement key="staticText" stretchType="RelativeToBandHeight" x="390" y="54" width="98" height="15" uuid="ce09781c-df08-4667-bd30-8eee9de1cd79"/>
 				<box>
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -257,7 +258,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Report Run date:]]></text>
@@ -271,8 +272,8 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center">
-					<font size="9" isBold="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{reportRundate}]]></textFieldExpression>
 			</textField>
@@ -286,13 +287,13 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
+					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fundAndBankHeading}+" "+ $P{dateRange}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="staticText" x="101" y="0" width="355" height="24" uuid="52998206-a115-4424-ab68-d6794b4e8913"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="15" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
@@ -310,8 +311,8 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="7" isBold="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{paymentNumber}+" - "+ $F{paymentDate}]]></textFieldExpression>
 			</textField>
@@ -324,7 +325,7 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
@@ -338,8 +339,8 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="9" isBold="false"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{paymentAmount}]]></textFieldExpression>
 			</textField>
@@ -353,12 +354,12 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center">
-					<font size="9" isBold="false"/>
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{rtgsRegisterAccountNumberGroup_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="18" y="0" width="49" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsDateGroup" uuid="fed39720-0c7c-4e50-af74-1af907cfb404">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="18" y="0" width="58" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsDateGroup" uuid="fed39720-0c7c-4e50-af74-1af907cfb404">
 					<printWhenExpression><![CDATA[$V{rtgsRegisterRtgsDateGroup_COUNT} == 1]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="1" bottomPadding="1" rightPadding="0">
@@ -368,13 +369,13 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="7" isBold="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rtgsDate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="127" y="0" width="91" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterDepartmentGroup" uuid="e0bee454-f363-4c7f-a0e4-a11d40ea40e8">
+				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="145" y="0" width="84" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterDepartmentGroup" uuid="e0bee454-f363-4c7f-a0e4-a11d40ea40e8">
 					<printWhenExpression><![CDATA[$V{rtgsRegisterDepartmentGroup_COUNT} == 1]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="0">
@@ -384,13 +385,13 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9" isBold="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{department}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="219" y="0" width="76" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterPartyNameGroup" uuid="086be6f8-6fa2-4928-a87d-8ffebf88bd62">
+				<reportElement key="" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="231" y="0" width="64" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterPartyNameGroup" uuid="086be6f8-6fa2-4928-a87d-8ffebf88bd62">
 					<printWhenExpression><![CDATA[$V{rtgsRegisterPartyNameGroup_COUNT} == 1]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="0">
@@ -400,13 +401,13 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="7" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{partyName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="68" y="0" width="58" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsNumberGroup" uuid="a85eda5c-5dc1-498d-92e0-4a277258aaf5">
+				<reportElement key="textField" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="77" y="0" width="67" height="21" isPrintWhenDetailOverflows="true" printWhenGroupChanges="rtgsRegisterRtgsDateGroup" uuid="a85eda5c-5dc1-498d-92e0-4a277258aaf5">
 					<printWhenExpression><![CDATA[$V{rtgsRegisterRtgsNumberGroup_COUNT} == 1]]></printWhenExpression>
 				</reportElement>
 				<box rightPadding="0">
@@ -416,8 +417,8 @@
 					<bottomPen lineWidth="0.0"/>
 					<rightPen lineWidth="0.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="9" isBold="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rtgsNumber}]]></textFieldExpression>
 			</textField>
@@ -425,13 +426,13 @@
 				<reportElement x="295" y="0" width="1" height="21" uuid="ea917be7-8462-4064-8ab2-26b53316dddc"/>
 			</line>
 			<line>
-				<reportElement x="218" y="0" width="1" height="21" uuid="f599d267-90c3-4684-82ad-3396a17b5d72"/>
+				<reportElement x="230" y="0" width="1" height="21" uuid="f599d267-90c3-4684-82ad-3396a17b5d72"/>
 			</line>
 			<line>
-				<reportElement x="126" y="0" width="1" height="21" uuid="8847aa9f-e9cd-4759-9beb-668a5d65f8fd"/>
+				<reportElement x="144" y="0" width="1" height="21" uuid="8847aa9f-e9cd-4759-9beb-668a5d65f8fd"/>
 			</line>
 			<line>
-				<reportElement x="67" y="0" width="1" height="21" uuid="2e8bf2ba-60a4-40e1-baa3-bd7041ee03ee"/>
+				<reportElement x="76" y="0" width="1" height="21" uuid="2e8bf2ba-60a4-40e1-baa3-bd7041ee03ee"/>
 			</line>
 		</band>
 	</detail>

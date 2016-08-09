@@ -60,6 +60,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -174,6 +176,11 @@ public class HomeController {
         setUserLocale(user, request, response);
         redirAttrib.addFlashAttribute("message", "msg.profile.update.success");
         return "redirect:/home/profile/edit";
+    }
+
+    @InitBinder
+    public void initBinder(final WebDataBinder binder) {
+        binder.setDisallowedFields("id", "username");
     }
 
     private void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {

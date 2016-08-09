@@ -56,7 +56,7 @@ public class HearingsService {
 
     @Autowired
     private HearingsRepository hearingsRepository;
-    
+
     @Autowired
     private LegalCaseUtil legalCaseUtil;
 
@@ -75,6 +75,10 @@ public class HearingsService {
 
     public Hearings findById(final Long id) {
         return hearingsRepository.findOne(id);
+    }
+
+    public List<Hearings> findBYLcNumber(final String lcNumber) {
+        return hearingsRepository.findByLegalCase_lcNumber(lcNumber);
     }
 
 }

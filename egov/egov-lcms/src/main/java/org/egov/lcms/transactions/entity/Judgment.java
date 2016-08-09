@@ -59,7 +59,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -86,11 +85,13 @@ public class Judgment extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_JUDGMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @NotNull
     @JoinColumn(name = "judgmenttype", nullable = false)
     private JudgmentType judgmentType;
 
@@ -150,7 +151,7 @@ public class Judgment extends AbstractAuditable {
     @Column(name = "issapaccepted")
     private boolean sapAccepted;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parent")
     @Fetch(value = FetchMode.SELECT)
     private Judgment parent;
@@ -159,7 +160,7 @@ public class Judgment extends AbstractAuditable {
     private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
 
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<JudgmentImpl> eglcJudgmentimpls = new HashSet<JudgmentImpl>(0);
+    private Set<JudgmentImpl> judgmentImpl = new HashSet<JudgmentImpl>(0);
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent")
@@ -172,6 +173,16 @@ public class Judgment extends AbstractAuditable {
 
     @Column(name = "certifiedmemofwddate")
     private Date certifiedMemoFwdDate;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public List<JudgmentDocuments> getJudgmentDocuments() {
         return judgmentDocuments;
@@ -289,15 +300,6 @@ public class Judgment extends AbstractAuditable {
         this.setasidePetitionDetails = setasidePetitionDetails;
     }
 
-    public void addJudgmentimpl(final JudgmentImpl judgmentimpl) {
-        getEglcJudgmentimpls().add(judgmentimpl);
-    }
-
-    @Valid
-    public Set<JudgmentImpl> getEglcJudgmentimpls() {
-        return eglcJudgmentimpls;
-    }
-
     public Date getSapHearingDate() {
         return sapHearingDate;
     }
@@ -314,29 +316,16 @@ public class Judgment extends AbstractAuditable {
         this.sapAccepted = sapAccepted;
     }
 
-    public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (legalCase != null && !DateUtils.compareDates(getOrderDate(), legalCase.getCasedate()))
-            errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
-        if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
-            errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));
-        if (!DateUtils.compareDates(getSentToDeptOn(), getOrderDate()))
-            errors.add(new ValidationError("sentToDeptOn", "sentToDeptOn.less.orderDate"));
-        if (!DateUtils.compareDates(getEnquiryDate(), getOrderDate()))
-            errors.add(new ValidationError("enquirydate", "enquirydate.less.orderDate"));
-        if (!DateUtils.compareDates(getSapHearingDate(), getOrderDate()))
-            errors.add(new ValidationError("sapHearingDate", "sapHearingDate.less.orderDate"));
-        if (!DateUtils.compareDates(getSetasidePetitionDate(), getOrderDate()))
-            errors.add(new ValidationError("setasidePetitionDate", "setasidePetitionDate.less.orderDate"));
-        for (final JudgmentImpl judgmentimpl : getEglcJudgmentimpls()) {
-            final JudgmentImpl element = judgmentimpl;
-            errors.addAll(element.validate());
-        }
-        return errors;
+    public Set<JudgmentImpl> getJudgmentImpl() {
+        return judgmentImpl;
     }
 
-    public void setEglcJudgmentimpls(final Set<JudgmentImpl> eglcJudgmentimpls) {
-        this.eglcJudgmentimpls = eglcJudgmentimpls;
+    public void setJudgmentImpl(final Set<JudgmentImpl> judgmentImpl) {
+        this.judgmentImpl = judgmentImpl;
+    }
+
+    public void addJudgmentimpl(final JudgmentImpl judgmentimpl) {
+        getJudgmentImpl().add(judgmentimpl);
     }
 
     public Judgment getParent() {
@@ -363,16 +352,6 @@ public class Judgment extends AbstractAuditable {
         this.certifiedMemoFwdDate = certifiedMemoFwdDate;
     }
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getEnquiryDetails() {
         return enquiryDetails;
     }
@@ -387,6 +366,27 @@ public class Judgment extends AbstractAuditable {
 
     public void setEnquiryDate(final Date enquiryDate) {
         this.enquiryDate = enquiryDate;
+    }
+
+    public List<ValidationError> validate() {
+        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (legalCase != null && !DateUtils.compareDates(getOrderDate(), legalCase.getCasedate()))
+            errors.add(new ValidationError("orderDate", "orderdate.less.casedate"));
+        if (!DateUtils.compareDates(getImplementByDate(), getOrderDate()))
+            errors.add(new ValidationError("implementByDate", "implementByDate.less.orderDate"));
+        if (!DateUtils.compareDates(getSentToDeptOn(), getOrderDate()))
+            errors.add(new ValidationError("sentToDeptOn", "sentToDeptOn.less.orderDate"));
+        if (!DateUtils.compareDates(getEnquiryDate(), getOrderDate()))
+            errors.add(new ValidationError("enquirydate", "enquirydate.less.orderDate"));
+        if (!DateUtils.compareDates(getSapHearingDate(), getOrderDate()))
+            errors.add(new ValidationError("sapHearingDate", "sapHearingDate.less.orderDate"));
+        if (!DateUtils.compareDates(getSetasidePetitionDate(), getOrderDate()))
+            errors.add(new ValidationError("setasidePetitionDate", "setasidePetitionDate.less.orderDate"));
+        for (final JudgmentImpl judgmentimpl : getJudgmentImpl()) {
+            final JudgmentImpl element = judgmentimpl;
+            errors.addAll(element.validate());
+        }
+        return errors;
     }
 
 }

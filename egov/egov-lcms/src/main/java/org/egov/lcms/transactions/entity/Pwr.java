@@ -39,6 +39,7 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,16 +47,16 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -65,7 +66,7 @@ import org.egov.lcms.utils.constants.LcmsConstants;
 @Entity
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
-public class Pwr extends AbstractPersistable<Long> {
+public class Pwr  implements Serializable {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_PWR = "seq_eglc_pwr";
@@ -73,31 +74,33 @@ public class Pwr extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_PWR, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "LEGALCASE", nullable = false)
+    
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
-    @Transient
-    private String uploadPwr;
+   
+    
     @DateFormat(message = "invalid.fieldvalue.caFilingdate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.cafiling.date")
     @Column(name = "cafilingdate")
     private Date caFilingdate;
-    @Transient
-    private String uploadCa;
+    
+    @OneToMany(mappedBy = "pwr", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PwrDocuments> pwrDocuments = new ArrayList<PwrDocuments>(0);
+    
     @DateFormat(message = "invalid.fieldvalue.caDueDate")
     @Column(name = "caduedate")
     private Date caDueDate;
+    
     @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
     @Column(name = "pwrduedate")
     private Date pwrDueDate;
-
-    public String getUploadPwr() {
-        return uploadPwr;
-    }
-
-    public void setUploadPwr(final String uploadPwr) {
-        this.uploadPwr = uploadPwr;
-    }
+    
+    @DateFormat(message = "invalid.fieldvalue.pwrDueDate")
+    @Column(name = "pwrapprovaldate")
+    private Date pwrApprovalDate;
+    
+   
 
     public Date getCaFilingdate() {
         return caFilingdate;
@@ -107,20 +110,21 @@ public class Pwr extends AbstractPersistable<Long> {
         this.caFilingdate = caFilingdate;
     }
 
-    public String getUploadCa() {
-        return uploadCa;
-    }
 
-    public void setUploadCa(final String uploadCa) {
-        this.uploadCa = uploadCa;
-    }
+    public Date getPwrApprovalDate() {
+		return pwrApprovalDate;
+	}
 
-    @Override
+	public void setPwrApprovalDate(Date pwrApprovalDate) {
+		this.pwrApprovalDate = pwrApprovalDate;
+	}
+
+	
     public Long getId() {
         return id;
     }
 
-    @Override
+    
     public void setId(final Long id) {
         this.id = id;
     }
@@ -162,4 +166,13 @@ public class Pwr extends AbstractPersistable<Long> {
         this.legalCase = legalCase;
     }
 
+	public List<PwrDocuments> getPwrDocuments() {
+		return pwrDocuments;
+	}
+
+	public void setPwrDocuments(List<PwrDocuments> pwrDocuments) {
+		this.pwrDocuments = pwrDocuments;
+	}
+
+	
 }

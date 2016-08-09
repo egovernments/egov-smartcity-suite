@@ -193,7 +193,7 @@
 									</div>
 								</div>
 								<c:if test="${param.error}">
-									<div class="text-center error-msg font-12 add-margin">
+									<div class="text-center error-msg add-margin">
                                         <c:set var="security_message" value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
 										<c:choose>
 										<c:when test="${security_message == 'Maximum sessions of {0} for this principal exceeded'}">
@@ -226,47 +226,16 @@
 											<spring:message code="msg.acc.toomany.attempt" arguments="${attempts}"/>
 										</c:when>
 										<c:otherwise>
-											<spring:message code="msg.cred.invalid"/>
+											<div class="form-group"><div><spring:message code="msg.cred.invalid"/></div></div>
 										</c:otherwise>
 										</c:choose>
 									</div>
-								</c:if>
-								<c:if test="${not empty param.recovered}">
-								<div class="form-group">
-									<c:choose>
-										<c:when test="${param.recovered}">
-                                            <div class="alert alert-info" role="alert">
-                                                <div class="text-center font-green font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
-                                                <c:if test="${param.byOTP}">
-                                                    <div class="input-group">
-                                                        <div class="input-group-addon style-label">
-                                                            <i class="fa fa-key theme-color style-color"></i>
-                                                        </div>
-                                                        <input style="display:none" type="password">
-                                                        <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="off" required="required"/>
-                                                        <span class="mandatory set-mandatory"></span>
-                                                    </div>
-                                                    <div class="form-group text-right">
-                                                        <button type="button" class="btn btn-custom recovrbtn" id="otprecoverybtn">
-                                                            <spring:message code="title.reset.password"/>
-                                                        </button>
-                                                    </div>
-                                                </c:if>
-                                            </div>
-										</c:when>
-										<c:otherwise>
-                                            <div class="alert alert-danger">
-											    <div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.recov"/></div>
-                                            </div>
-										</c:otherwise>
-									</c:choose>
-								</div>
 								</c:if>
 								<c:if test="${not empty param.reset}">
 								<div class="form-group">
 									<c:choose>
 										<c:when test="${param.reset}">
-											<div class="text-center  font-green font-12"><spring:message code="msg.success.pwd.reset"/></div>
+											<div class="text-center success-msg font-12"><spring:message code="msg.success.pwd.reset"/></div>
 										</c:when>
 										<c:otherwise>
 											<div class="text-center  error-msg font-12"><spring:message code="msg.fail.pwd.reset"/></div>
@@ -337,23 +306,25 @@
 						</button>
 						<h4 class="modal-title" id="myModalLabel"><spring:message code="lbl.recover.pwd"/></h4>
 					</div>
-					<div class="modal-body">
-						<form method="post" role="form" id="forgotPasswordForm">
+					<form method="post" role="form" id="forgotPasswordForm">
+						<div class="modal-body">
 							<div class="form-group">
-								<div class="input-group">
+								<div class="input-group" style="margin:0;">
 									<div class="input-group-addon style-label">
 										<i class="fa fa-user style-color"></i>
 									</div>
 									<input type="text" class="form-control style-form"
 										name="identity" id="emailOrMobileNum"
-										required="required" placeholder="Your Username"
+										required="required" placeholder="Username"
 										autocomplete="off" />
 										<input type="hidden" name="originURL" id="originURL">
                                         <input type="hidden" name="byOTP" id="byOtp">
 								</div>
-								<div id="emailOrMobileNoReq" class="error-msg display-hide"><spring:message code="lbl.pwd.recover.un.req"/></div>
-								<div id="" style="font-size: 12px;margin-left: 47px;color: #6b4f2c;"><spring:message code="lbl.pwd.reset.link"/></div>
+								<div id="emailOrMobileNoReq" class="text-right error-msg display-hide"><spring:message code="lbl.pwd.recover.un.req"/></div>
+								<div class="text-right" style="font-size: 12px;color: #6b4f2c;"><spring:message code="lbl.pwd.reset.link"/></div>
 							</div>
+						</div>	
+						<div class="modal-footer">
 							<div class="form-group text-right">
 								<button type="button" class="btn btn-primary recovrbtn">
 									<spring:message code="btn.lbl.recover.link"/>
@@ -364,8 +335,8 @@
 								<button type="button" class="btn btn-default"
 									data-dismiss="modal"><spring:message code="lbl.close"/></button>
 							</div>
-						</form>
-					</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -381,6 +352,65 @@
 				</div>
 			</div>
 		</div>
+		<c:if test="${not empty param.recovered}">
+			<div class="modal fade" data-backdrop="static" id="resetpwd">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title"><spring:message code="lbl.recover.pwd"/></h4>
+					</div>
+					<form method="post" role="form">
+						<c:choose>
+							<c:when test="${param.recovered}">
+                                        <c:if test="${param.byOTP}">
+                                        	<div class="modal-body">
+	                                    		<div class="form-group">
+		                                            <div class="input-group" style="margin:0;">
+		                                                <div class="input-group-addon style-label">
+		                                                    <i class="fa fa-key theme-color style-color"></i>
+		                                                </div>
+		                                                <input style="display:none" type="password">
+		                                                <input type="password" class="form-control style-form" name="token" id="token" placeholder="Enter your OTP" autocomplete="new-password" required="required"/>
+		                                                <span class="mandatory set-mandatory"></span>
+		                                            </div>
+	                                            	<div class="text-right font-12">OTP sent to your registered mobile / email</div>
+			                                   </div>
+		                                   </div>
+		                                   <div class="modal-footer">
+		                                       <button type="button" class="btn btn-custom recovrbtn text-right" id="otprecoverybtn">
+		                                           <spring:message code="title.reset.password"/>
+		                                       </button>
+		                                   </div>
+                                        </c:if>
+                                        <c:if test="${not param.byOTP}">
+                                        	<div class="modal-body">
+										    	<div class="text-center font-12"><spring:message code="msg.success.pwd.recov.otp.${param.byOTP}"/></div>
+		                                    </div>
+		                                    <div class="modal-footer">
+		                                         <button type="button" class="btn btn-default text-right" data-dismiss="modal">Close</button>
+		                                    </div>
+                                        </c:if>
+							</c:when>
+							<c:otherwise>
+                                    <div class="modal-body">
+								    	<div class="text-center error-msg"><spring:message code="msg.fail.pwd.recov"/></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                         <button type="button" class="btn btn-default text-right" data-dismiss="modal">Close</button>
+                                    </div>
+							</c:otherwise>
+						</c:choose>
+					</form>
+				</div>
+			</div>
+		</div>
+		<script>
+		$(document).ready(function(){
+				$('#resetpwd').modal('show', {backdrop: 'static'});
+		});
+		</script>
+		</c:if>
+		
 		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
 		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
 		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>

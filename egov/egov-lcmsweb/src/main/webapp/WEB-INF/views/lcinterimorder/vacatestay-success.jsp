@@ -108,8 +108,7 @@
 		</div>
 		<div class="row text-center">
 			<div class="add-margin">
-				<button type="button" class="btn btn-default" id="buttonBack"
-					onclick="goback()">
+				<button type="button" class="btn btn-default" id="buttonBack">
 					<spring:message code="lbl.back" />
 				</button>
 				<a href="javascript:void(0)" class="btn btn-default"
