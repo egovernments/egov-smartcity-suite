@@ -88,7 +88,7 @@ class UpdateRouterController {
         return "router-update";
     }
 
-    @RequestMapping(value = "/update-search/{id}", method = GET)
+    @RequestMapping(value = "/search/update/{id}", method = GET)
     public String updatefromSearchRouterForm(final Model model, @PathVariable final Long id) {
         return "router-updateSearch";
     }
@@ -111,7 +111,7 @@ class UpdateRouterController {
         return "router-success";
     }
 
-    @RequestMapping(value = "/update-search/{id}", method = POST)
+    @RequestMapping(value = "/search/update/{id}", method = POST)
     public String searchupdate(@Valid @ModelAttribute final ComplaintRouter complaintRouter,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())

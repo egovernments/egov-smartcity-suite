@@ -61,7 +61,7 @@ $(document).ready(function() {
 				"render" : function(data, type, row) {
 					return '<a href="javascript:void(0);" onclick="window.open(\'/pgr/complaint/update/'
 							+ data
-							+ '\',\'\', \'width=800, height=600\');" data-hiddenele="selecteduserid" data-eleval="'
+							+ '\',\'\', \'width=800, height=600,scrollbars=yes\');" data-hiddenele="selecteduserid" data-eleval="'
 							+ data + '">' + data + '</a>';
 				}
 			}, {
