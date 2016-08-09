@@ -76,7 +76,7 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate,
             @Param("billStatus") final String billStatus, @Param("id") Long id);
 
-    @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.workOrderNumber) like upper(:workOrderNumber) and upper(cbr.billstatus) != :status")
+    @Query("select distinct(cbr.workOrderEstimate.workOrder.workOrderNumber) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.workOrder.workOrderNumber) like upper(:workOrderNumber) and upper(cbr.billstatus) = :status")
     List<String> findWorkOrderNumbersToCancel(@Param("workOrderNumber") String workOrderNumber, @Param("status") String status);
 
     @Query("select distinct(cbr.workOrderEstimate.estimate.projectCode.code) from ContractorBillRegister as cbr where upper(cbr.workOrderEstimate.estimate.projectCode.code) like upper(:code) and billstatus = :status ")
