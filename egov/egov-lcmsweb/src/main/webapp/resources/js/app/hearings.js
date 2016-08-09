@@ -39,9 +39,6 @@
  */
 $(document).ready(function() {
 	
-	$("#buttonid").click(function() {
-	document.forms[0].submit();
-	});
 	var assignPosition = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers
