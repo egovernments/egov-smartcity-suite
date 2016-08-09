@@ -78,7 +78,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -125,7 +125,8 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private PtDemandDao ptDemandDAO;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource ptisMessageSource;
 
     @Autowired
     private MessagingService messagingService;
@@ -372,7 +373,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             /*smsMsg = messageSource.getMessage("demolition.ack.sms",
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
-            smsMsg = messageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("demolition.rejection.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
         	Installment effectiveInstallment = null;
@@ -398,7 +399,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
             totalTax = demandMap.get(DEMANDRSN_STR_VACANT_TAX) == null ? BigDecimal.ZERO : demandMap.get(DEMANDRSN_STR_VACANT_TAX)
                     .add(demandMap.get(DEMANDRSN_STR_LIBRARY_CESS) == null ? BigDecimal.ZERO
                             : demandMap.get(DEMANDRSN_STR_LIBRARY_CESS));
-            smsMsg = messageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("demolition.approval.sms", new String[] { applicantName, assessmentNo,
             		totalTax.toString(),new SimpleDateFormat("dd/MM/yyyy").format(effectiveInstallment.getFromDate()), ApplicationThreadLocals.getMunicipalityName() },
                     null);
         }

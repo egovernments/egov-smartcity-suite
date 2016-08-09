@@ -50,17 +50,4 @@
 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
-	<bean id="messageSource"
-		  class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="parentMessageSource" ref="parentMessageSource" />
-		<property name="basenames">
-			<list>
-				<value>messages/labels</value>
-				<value>messages/errors</value>
-				<value>messages/message</value>
-			</list>
-		</property>
-		<!-- Disabling caching since on development -->
-		<property name="cacheSeconds" value="0" />
-	</bean>
 </beans>

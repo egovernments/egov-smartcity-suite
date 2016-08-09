@@ -49,15 +49,4 @@
 
 	<context:component-scan base-package="org.egov.collection.web" />
 
-	<bean id="messageSource"
-		  class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="parentMessageSource" ref="parentMessageSource" />
-		<property name="basenames">
-			<list>
-				<value>messages/labels</value>
-			</list>
-		</property>
-		<!-- Disabling caching since on development-->
-		<property name="cacheSeconds" value="0"/>
-	</bean>
 </beans>

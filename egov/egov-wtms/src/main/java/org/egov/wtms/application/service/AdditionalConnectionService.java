@@ -48,7 +48,8 @@ import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +63,8 @@ public class AdditionalConnectionService {
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -83,16 +85,16 @@ public class AdditionalConnectionService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
-            validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
-            validationMessage = messageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (null != assessmentDetails.getErrorDetails()
                 && null != assessmentDetails.getErrorDetails().getErrorCode())
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
         else if (null != inWorkflow)
-            validationMessage = messageSource.getMessage(
+            validationMessage = wcmsMessageSource.getMessage(
                     "err.validate.addconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
@@ -102,26 +104,26 @@ public class AdditionalConnectionService {
                     && null != assessmentDetails.getPropertyDetails().getTaxDue()
                     && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
                 if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                    validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                    validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
                             assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                             parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "additional" }, null);
             if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(ADDCONNALLOWEDIFWTDUE)) {
                 final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
                 if (waterTaxDueforParent.doubleValue() > 0)
                     if (validationMessage.equalsIgnoreCase(""))
-                        validationMessage = messageSource
+                        validationMessage = wcmsMessageSource
                                 .getMessage("err.validate.primary.connection.watertax.due", null, null);
                     else
-                        validationMessage = validationMessage + " and " + messageSource
+                        validationMessage = validationMessage + " and " + wcmsMessageSource
                                 .getMessage("err.validate.primary.connection.watertax.due", null, null);
                 if (parentWaterConnectionDetail.getConnection().getId() != null)
                     if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
                         if (validationMessage.equalsIgnoreCase(""))
-                            validationMessage = messageSource.getMessage("err.validate.additional.connection.watertax.due",
+                            validationMessage = wcmsMessageSource.getMessage("err.validate.additional.connection.watertax.due",
                                     null, null);
                         else
                             validationMessage = validationMessage + " and "
-                                    + messageSource.getMessage("err.validate.additional.connection.watertax.due",
+                                    + wcmsMessageSource.getMessage("err.validate.additional.connection.watertax.due",
                                             null, null);
             }
         }

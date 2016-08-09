@@ -101,7 +101,6 @@ import org.egov.demand.model.EgDemandReasonMaster;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.utils.MoneyUtils;
@@ -114,7 +113,6 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -140,12 +138,6 @@ public class PropertyTaxCollection extends TaxCollection {
 
     @Autowired
     private PersistenceService<Property, Long> propertyImplService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ResourceBundleMessageSource messageSource;
 
     @Autowired
     private MessagingService messagingService;

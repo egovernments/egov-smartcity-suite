@@ -44,7 +44,6 @@ import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -73,7 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -100,8 +99,6 @@ public class VacancyRemissionService {
 
     @Autowired
     private VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
-    @Autowired
-    private EisCommonService eisCommonService;
 
     @Autowired
     private AssignmentService assignmentService;
@@ -129,7 +126,8 @@ public class VacancyRemissionService {
     private ApplicationNumberGenerator applicationNumberGenerator;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource ptisMessageSource;
 
     @Autowired
     private MessagingService messagingService;
@@ -469,10 +467,10 @@ public class VacancyRemissionService {
             /*smsMsg = messageSource.getMessage("vacancyremission.ack.sms",
                     new String[] { applicantName, assessmentNo }, null);*/
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)) {
-            smsMsg = messageSource.getMessage("vacancyremission.rejection.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("vacancyremission.rejection.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() }, null);
         } else if (workFlowAction.equals(WFLOW_ACTION_STEP_APPROVE)) {
-            smsMsg = messageSource.getMessage("vacancyremission.approval.sms", new String[] { applicantName, assessmentNo,
+            smsMsg = ptisMessageSource.getMessage("vacancyremission.approval.sms", new String[] { applicantName, assessmentNo,
                     ApplicationThreadLocals.getMunicipalityName() },null);
         }
 

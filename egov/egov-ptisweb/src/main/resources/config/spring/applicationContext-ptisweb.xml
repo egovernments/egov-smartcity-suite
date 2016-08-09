@@ -58,15 +58,4 @@
 		<property name="maxInMemorySize" value="1048576"/>
     </bean>
 
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
-        <property name="basenames">
-            <list>
-                <value>messages/labels</value>
-                <value>messages/errors</value>
-                <value>messages/message</value>
-            </list>
-        </property>
-        <property name="cacheSeconds" value="0"/>
-    </bean>
 </beans>

@@ -45,7 +45,7 @@
 	<!-- Context Configuration locations for Spring XML files -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:config/spring/applicationContext-eisweb.xml</param-value>
+		<param-value>classpath*:config/spring/applicationContext-eisweb.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>
