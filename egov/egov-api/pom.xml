@@ -115,6 +115,13 @@
 		</dependency>
 		<!-- HIBERNATE END -->
 		
+		<!-- IMAGE PROCESSING API START-->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+		</dependency>
+		<!-- IMAGE PROCESSING API END -->
+
 	</dependencies>
 
 	<!--  

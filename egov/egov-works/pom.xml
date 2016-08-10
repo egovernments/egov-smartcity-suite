@@ -88,6 +88,10 @@
             <scope>test</scope>
         </dependency>
         
+      <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -171,7 +175,7 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -242,13 +246,17 @@
 		    <groupId>net.sourceforge.jexcelapi</groupId>
 		    <artifactId>jxl</artifactId>
 		</dependency>
-		
+
 		<!-- REPORTS END -->
 
 		<!-- COMMONS START -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -267,6 +275,11 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<!-- COMMONS END -->
+
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
 
 		<!-- Jasper Report Compiler Dep -->
      <!--  <dependency>

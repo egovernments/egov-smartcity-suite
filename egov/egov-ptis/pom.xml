@@ -106,14 +106,18 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency> 
-	    <dependency>
-            <groupId>org.egov</groupId>
-            <artifactId>egov-eis</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-	    </dependency>
-	
+	 <dependency>
+	    <groupId>org.egov</groupId>
+	    <artifactId>egov-eis</artifactId>
+	    <version>2.0.0-SNAPSHOT</version>
+	    <classifier>tests</classifier>
+	    <scope>test</scope>
+	</dependency>
+
+		<dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -197,7 +201,7 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -279,6 +283,10 @@
 			<artifactId>commons-configuration</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-email</artifactId>
 		</dependency>
@@ -295,6 +303,11 @@
 			<artifactId>commons-dbcp</artifactId>
 		</dependency>
 		<!-- COMMONS END -->
+
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
 
 		<!-- Jasper Report Compiler Dep
        	<dependency>

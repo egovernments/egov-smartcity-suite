@@ -136,7 +136,6 @@
 		<quartz-version>2.2.2</quartz-version>
 		<jasper-report-version>6.1.0</jasper-report-version>
 		<json-simple-version>1.1.1</json-simple-version>
-        <json-version>2.4</json-version>
 		<jackson-version>2.7.2</jackson-version>
 		<jackson-datatype-joda-version>2.7.2</jackson-datatype-joda-version>
 		<jackson-datatype-hib-version>2.7.2</jackson-datatype-hib-version>
@@ -152,7 +151,6 @@
 		<commons-beanutils-version>1.8.3</commons-beanutils-version>
 		<commons-config-version>1.10</commons-config-version>
 		<commons-lang-version>2.5</commons-lang-version>
-		<commons-lang3-version>3.4</commons-lang3-version>
 		<commons-email-version>1.4</commons-email-version>
 		<commons-collections-version>3.2.2</commons-collections-version>
 		<commons-codec-version>1.10</commons-codec-version>
@@ -162,8 +160,8 @@
 		<httpclient-version>4.5</httpclient-version>
 		<sitemesh-version>2.4.2</sitemesh-version>
 		<ehcache-web-version>2.0.4</ehcache-web-version>
-		<cglib-version>3.2.4</cglib-version>
-		<asm-all-version>5.1</asm-all-version>
+		<cglib-version>3.1</cglib-version>
+		<asm-all-version>3.3.1</asm-all-version>
 		<joda-time-version>2.7</joda-time-version>
 		<joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
 		<jsoup-version>1.7.3</jsoup-version>
@@ -198,7 +196,7 @@
 		<module>egov-ptis</module>
 		<module>egov-adtax</module>
 		<module>egov-wtms</module>
-		<module>egov-tl</module> 
+		<module>egov-tl</module>
 		<module>egov-commonsweb</module>
 		<module>egov-eisweb</module>
 		<module>egov-egiweb</module>
@@ -214,7 +212,7 @@
 		<module>egov-adtaxweb</module>
 		<module>egov-wtmsweb</module>
 		<module>egov-dashboardweb</module>
-		 <module>egov-tlweb</module> 
+		 <module>egov-tlweb</module>
 		<module>egov-ear</module>
 		<module>egov-restapi</module>
     <module>egov-council</module>
@@ -324,8 +322,8 @@
 				<version>${javax-validation-version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
-				<version>4.0.0.GA</version> </dependency> <dependency> <groupId>org.jadira.usertype</groupId> 
+			<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
+				<version>4.0.0.GA</version> </dependency> <dependency> <groupId>org.jadira.usertype</groupId>
 				<artifactId>usertype.spi</artifactId> <version>4.0.0.GA</version> </dependency> -->
 			<!-- HIBERNATE DEPENDENCIES END -->
 
@@ -375,7 +373,7 @@
 				<version>${struts2-version}</version>
 				<exclusions>
 					<exclusion>
-						<groupId>org.javassist</groupId>
+						<groupId>javassist</groupId>
 						<artifactId>javassist</artifactId>
 					</exclusion>
 					<exclusion>
@@ -421,17 +419,6 @@
 				<version>${struts2-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-java8-support-plugin</artifactId>
-				<version>${struts2-version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
 				<groupId>com.jgeppert.struts2.jquery</groupId>
 				<artifactId>struts2-jquery-plugin</artifactId>
 				<version>${struts2-jquery-version}</version>
@@ -454,7 +441,7 @@
 				<artifactId>json-simple</artifactId>
 				<version>${json-simple-version}</version>
 			</dependency>
-            <dependency>
+			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson-version}</version>
@@ -488,7 +475,7 @@
 				<version>${spring-version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-            </dependency>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-jpa</artifactId>
@@ -498,16 +485,6 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-envers</artifactId>
 				<version>${spring-data-jpa-envers-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>cglib</artifactId>
-                        <groupId>cglib</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>asm</artifactId>
-                        <groupId>org.ow2.asm</groupId>
-                    </exclusion>
-                </exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.session</groupId>
@@ -701,11 +678,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-email</artifactId>
 				<version>${commons-email-version}</version>
 				<exclusions>
@@ -765,11 +737,17 @@
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>
-				<artifactId>cglib-nodep</artifactId>
+				<artifactId>cglib</artifactId>
 				<version>${cglib-version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.ow2.asm</groupId>
+						<artifactId>asm</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.ow2.asm</groupId>
+				<groupId>asm</groupId>
 				<artifactId>asm-all</artifactId>
 				<version>${asm-all-version}</version>
 			</dependency>
@@ -841,7 +819,7 @@
 				<artifactId>easymock</artifactId>
 				<version>${easymock-version}</version>
 				<scope>test</scope>
-            </dependency>
+			</dependency>
 			<dependency>
 				<groupId>org.easymock</groupId>
 				<artifactId>easymockclassextension</artifactId>
@@ -1000,34 +978,6 @@
         </dependency>
 		<!-- COMMONS END -->
 
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-java8-support-plugin</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib</artifactId>
-            <version>${json-version}</version>
-            <classifier>jdk15</classifier>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 		<!-- SPRING DEPENDENCIES START -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -1084,10 +1034,6 @@
 			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-envers</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-data-redis</artifactId>
 		</dependency>
@@ -1128,11 +1074,11 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
+			<groupId>asm</groupId>
 			<artifactId>asm-all</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId> 
-			</dependency> <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.spi</artifactId> 
+		<!-- <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.core</artifactId>
+			</dependency> <dependency> <groupId>org.jadira.usertype</groupId> <artifactId>usertype.spi</artifactId>
 			</dependency> -->
 		<dependency>
 			<groupId>org.jasypt</groupId>
@@ -1228,7 +1174,7 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.7.1</version>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -1387,16 +1333,16 @@
 				<version>2.19.1</version>
 			</plugin>
 			<plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway-core-version}</version>
-                <configuration>
-                    <driver>${db.driver}</driver>
-                    <url>${db.url}</url>
-                    <user>${db.user}</user>
-                    <password>${db.password}</password>
-                </configuration>
-            </plugin>
+                                <groupId>org.flywaydb</groupId>
+                                <artifactId>flyway-maven-plugin</artifactId>
+                                <version>${flyway-core-version}</version>
+                                <configuration>
+                                        <driver>${db.driver}</driver>
+                                        <url>${db.url}</url>
+                                        <user>${db.user}</user>
+                                        <password>${db.password}</password>
+                                </configuration>
+                        </plugin>
 		</plugins>
 	</build>
 </project>
