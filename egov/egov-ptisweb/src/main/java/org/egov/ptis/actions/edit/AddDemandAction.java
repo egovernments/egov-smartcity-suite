@@ -131,13 +131,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ParentPackage("egov")
 @Namespace("/edit")
 @ResultPath("/WEB-INF/jsp/")
-@Results({ @Result(name = EditDemandAction.RESULT_NEW, location = "edit/editDemand-editForm.jsp"),
-        @Result(name = EditDemandAction.RESULT_ERROR, location = "edit/editDemand-error.jsp"),
-        @Result(name = EditDemandAction.RESULT_ACK, location = "edit/editDemand-ack.jsp") })
-public class EditDemandAction extends BaseFormAction {
+@Results({ @Result(name = AddDemandAction.RESULT_NEW, location = "edit/addDemand-addForm.jsp"),
+        @Result(name = AddDemandAction.RESULT_ERROR, location = "edit/addDemand-error.jsp"),
+        @Result(name = AddDemandAction.RESULT_ACK, location = "edit/addDemand-ack.jsp") })
+public class AddDemandAction extends BaseFormAction {
 
-    private static final Logger LOGGER = Logger.getLogger(EditDemandAction.class);
-    protected static final String RESULT_NEW = "editForm";
+    private static final Logger LOGGER = Logger.getLogger(AddDemandAction.class);
+    protected static final String RESULT_NEW = "addForm";
     protected static final String RESULT_ERROR = "error";
     protected static final String RESULT_ACK = "ack";
     private static final String MSG_ERROR_NOT_MIGRATED_PROPERTY = " This is not a migrated property ";
@@ -152,16 +152,14 @@ public class EditDemandAction extends BaseFormAction {
             + "where bp.active = true and (p.status = 'A' or p.status = 'I' or p.status = 'W') "
             + "and bp = ? and ptd.egInstallmentMaster = ? ";
 
-    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + " AND dd.amount >= 0 ";
+    private static final String QUERY_NONZERO_DEMAND_DETAILS = QUERY_DEMAND_DETAILS + "AND dd.amount >= 0 ";
 
     private static final String queryInstallmentDemandDetails = QUERY_NONZERO_DEMAND_DETAILS
             + " AND ptd.egInstallmentMaster = ? ";
 
-    private static final String EDIT_TYPE_DEMAND = "Demand";
-    private static final String EDIT_TYPE_COLLECTION = "Collection";
-    private static final String EDIT_DEMAND = "Edit Demand";
-    private static final String EDIT_TYPE_DMD_COLLECTION = "Demand and Collection";
-    private static final String EDIT_TYPE_POSTFIX = "-";
+   
+    private static final String ADD_DEMAND = "Add Demand";
+    private static final String ADD_TYPE_POSTFIX = "-";
 
     private String propertyId;
     private String ownerName;
@@ -287,7 +285,7 @@ public class EditDemandAction extends BaseFormAction {
                             addActionError(getText("error.editDemand.selectInstallment"));
                         } else {
                             newInstallments.add(dd.getInstallment());
-                            String instRsn = dd.getInstallment().toString().concat(EDIT_TYPE_POSTFIX)
+                            String instRsn = dd.getInstallment().toString().concat(ADD_TYPE_POSTFIX)
                                     .concat(dd.getReasonMaster());
                             if (instDmdRsnMaster.add(instRsn) == false) {
                                 instString.add(dd.getInstallment().toString());
@@ -371,10 +369,10 @@ public class EditDemandAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @SkipValidation
-    @Action(value = "/editDemand-newEditForm")
-    public String newEditForm() {
+    @Action(value = "/addDemand-newAddForm")
+    public String newAddForm() {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Entered into newEditForm");
+            LOGGER.debug("Entered into newAddForm");
         String resultPage = "";
 
         if (basicProperty != null && !basicProperty.getSource().equals(PropertyTaxConstants.SOURCEOFDATA_DATAENTRY)
@@ -400,129 +398,25 @@ public class EditDemandAction extends BaseFormAction {
             billable.setBasicProperty(basicProperty);
             Boolean isInstallmentExists = false;
             Map<Installment, List<String>> installmentDemandReason = new HashMap<Installment, List<String>>();
-            Installment prevInstallment = null;
-            String propType = basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode();
-            //Map<String,String> existingReasons = new HashMap<String, String>();
-            
-            List<String> allDemandReasons = new ArrayList<String>(demandReasonMap.values());
-            //Map<Installment, Map<String,String>> newDDMap = new HashMap<Installment,Map<String,String>>();
-            Map<Installment,List<String>> newDDMap = new HashMap<Installment,List<String>>();
-            boolean newInst = false;
-            String reason = null;
-            Installment existingInst = null;
-            if(!demandDetails.isEmpty()){
-                for(EgDemandDetails dd : demandDetails){
-                    List<String> existingReasons = new ArrayList<String>();
-                    reason = dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
-                    existingInst = dd.getEgDemandReason().getEgInstallmentMaster();
-                    //newDDMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), dd.getEgDemandReason().getEgDemandReasonMaster().getCode());
-                    //newDDMap.put(key, value)
-                    if(newDDMap.get(existingInst) == null){
-                        //existingReasons.put("demandRsn", dd.getEgDemandReason().getEgDemandReasonMaster().getCode());
-                        existingReasons = new ArrayList<String>();
-                        existingReasons.add(reason);
-                        //existingReasons.add(dd.getEgDemandReason().getEgDemandReasonMaster().getCode());
-                        newDDMap.put(existingInst,existingReasons );
-                    }else if(newDDMap.get(existingInst) != null){
-                        /*installmentWiseDemandDetailsByReason.get(installmentDesc).put(
-                                dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);*/
-                        existingReasons.add(reason);
-                        newDDMap.get(existingInst).addAll(existingReasons);
-                    }else{
-                        existingReasons = new ArrayList<String>();
-                        existingReasons.add(reason);
-                        newDDMap.get(existingInst).addAll(existingReasons);
-                    }
-                    
-               }
-            }
-            
-            Map<Installment, Map<String,Map<String, Object>>> newMap = new LinkedHashMap<Installment,Map<String,Map<String, Object>>>(); 
-            Map<String,Map<String, Object>> rsnList = new LinkedHashMap<String,Map<String, Object>>();
-           
-            Map<Installment,String> tempList = new HashMap<Installment,String>();
-            
+
             if (!demandDetails.isEmpty()) {
-                  for(EgDemandDetails dd : demandDetails){
-                    
-                   // Installment inst = newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()).;
-                    if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
-                        Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-                        Map<String, Object> dtls = new HashMap<String, Object>();
-                        dtls.put("amount", dd.getAmount());
-                        dtls.put("collection", dd.getAmtCollected());
-                        dtls.put("isNew", false);
-                        rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
-                        newMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), rsns);
-                    } else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
-                            && dd.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-
-                        // if(dd.getEgDemandReason().getEgDemandReasonMaster().getCode())
-                        // tempList = rsnList;
-                        // tempList.add(rsn);
-                        Map<String, Object> dtls = new HashMap<String, Object>();
-                        dtls.put("amount", BigDecimal.ZERO);
-                        dtls.put("collection", BigDecimal.ZERO);
-                        dtls.put("isNew", false);
-                        newMap.get(dd.getEgDemandReason().getEgInstallmentMaster())
-                                .put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
-
-                    } else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
-                            && dd.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-                        Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-                        Map<String, Object> dtls = new HashMap<String, Object>();
-                        dtls.put("amount", dd.getAmount());
-                        dtls.put("collection", dd.getAmtCollected());
-                        dtls.put("isNew", false);
-                        rsns.put(dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), dtls);
-                        newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()).putAll(rsns);
+                for (EgDemandDetails demandDetail : demandDetails) {
+                    Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
+                    String reasonMaster = demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
+                    propertyInstallments.add(installment);
+                    if (installmentDemandReason.get(installment) == null) {
+                        List<String> rsns = new ArrayList<String>();
+                        rsns.add(reasonMaster);
+                        installmentDemandReason.put(installment, rsns);
+                    } else {
+                        installmentDemandReason.get(installment).add(reasonMaster);
                     }
 
+                    DemandDetail dmdDtl = createDemandDetailBean(installment, reasonMaster, demandDetail.getAmount(),
+                            demandDetail.getAmtCollected(), false);
+                    demandDetailBeanList.add(dmdDtl);
                 }
-               
-            
-                
-                for(String rsn : demandReasonMap.keySet()){
-                    for(Installment inst : newDDMap.keySet()){
-                        //rsnList = new ArrayList<String>();
-                        /*for(String rsn : newDDMap.get(inst)){
-                            
-                        }*/
-                        if(!newDDMap.get(inst).contains(rsn)){
-                            if(newMap.get(inst) == null){
-                                //rsnList = new ArrayList<String>();
-                                Map<String, Object> dtls = new HashMap<String, Object>();
-                                dtls.put("amount", BigDecimal.ZERO);
-                                dtls.put("collection", BigDecimal.ZERO);
-                                dtls.put("isNew", true);
-                                rsnList.put(rsn,dtls);
-                                newMap.put(inst, rsnList);
-                            } else if(newMap.get(inst) != null){
-                                //tempList = rsnList;
-                                //tempList.add(rsn);
-                                Map<String, Object> dtls = new HashMap<String, Object>();
-                                dtls.put("amount", BigDecimal.ZERO);
-                                dtls.put("collection", BigDecimal.ZERO);
-                                dtls.put("isNew", true);
-                                rsnList.put(rsn,dtls);
-                                newMap.get(inst).put(rsn,dtls);
-                            }
-                           
-                        }
-                    }
-                }
-                for(Installment inst1 : newMap.keySet()){
-                   for( String rsn : newMap.get(inst1).keySet()){
-                       Map<String,Map<String, Object>> amtMap = newMap.get(inst1);
-                       Map<String, Object> dtls = amtMap.get(rsn);
-                       DemandDetail dmdDtl2 = createDemandDetailBean(inst1, rsn,(BigDecimal)dtls.get("amount"),
-                               (BigDecimal)dtls.get("collection"),(Boolean)dtls.get("isNew"));
-                        demandDetailBeanList.add(dmdDtl2);
-                    
-                }
-               } 
-            }
-                else{
+            } else {
                 for (Map.Entry<String, String> entry : demandReasonMap.entrySet()) {
                     DemandDetail dmdDtl = createDemandDetailBean(null, entry.getKey(), null, null, true);
                     demandDetailBeanList.add(dmdDtl);
@@ -537,7 +431,7 @@ public class EditDemandAction extends BaseFormAction {
         addDropdownData("allInstallments", allInstallments);
 
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Exiting from newEditForm");
+            LOGGER.debug("Exiting from newAddForm");
 
         return resultPage;
     }
@@ -590,7 +484,7 @@ public class EditDemandAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = RESULT_NEW)
-    @Action(value = "/editDemand-update")
+    @Action(value = "/addDemand-update")
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.info("Entered into update, basicProperty=" + basicProperty);
@@ -640,7 +534,7 @@ public class EditDemandAction extends BaseFormAction {
         EgDemandDetails egDemandDtls = null;
 
         demandAudit.setBasicproperty(basicProperty.getUpicNo());
-        demandAudit.setTransaction(EDIT_DEMAND);
+        demandAudit.setTransaction(ADD_DEMAND);
         demandAudit.setRemarks(remarks);
         demandAudit.setLastModifiedDate(new Date());
 
@@ -663,18 +557,23 @@ public class EditDemandAction extends BaseFormAction {
                                 : dmdDetail.getActualCollection());
                         egDemandDtls = details;
 
-                    } else  {
-                                              
-                        egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
-                                dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                        totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                    } else {
+                        if(dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO)!=0 && dmdDetail.getIsNew()){
+                            egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
+                                    dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
+                            totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                        }
+                        
                     }
                 }
 
                 if (dmdDtlsWithZeroAmt.isEmpty()) {
-                    egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
-                            dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
-                    totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                    if(dmdDetail.getActualAmount().compareTo(BigDecimal.ZERO)!=0 && dmdDetail.getIsNew()){
+                        egDemandDtls = propService.createDemandDetails(dmdDetail.getActualAmount(),
+                                dmdDetail.getActualCollection(), egDmdRsn, dmdDetail.getInstallment());
+                        totalDmd = totalDmd.add(egDemandDtls.getAmount());
+                    }
+                    
                     
 
                 }

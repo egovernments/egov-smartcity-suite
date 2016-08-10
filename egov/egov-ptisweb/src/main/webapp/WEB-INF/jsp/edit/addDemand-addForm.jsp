@@ -46,7 +46,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title><s:text name="editDemand" /> </title>
+	<title><s:text name="AddDemand" /> </title>
 <link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 	<script type="text/javascript">
 		jQuery.noConflict();
@@ -270,8 +270,8 @@
 		</div>
 	</s:if>
 	<div class="formmainbox">
-		<div class="headingbg"><s:text name="editDemand"/></div>
-		<s:form name="editDemandForm" action="editDemand-update" theme="simple">
+		<div class="headingbg"><s:text name="Add Demand"/></div>
+		<s:form name="addDemandForm" action="addDemand-update" theme="simple">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 						<td class="bluebox" ></td>
@@ -330,7 +330,7 @@
 											<s:text name="revisedCollection" />
 										</th>								 
 									</tr>
-									<!-- <tr id="actionoptions">										
+									<tr id="actionoptions">										
 										<td colspan="8" align="right" style="border-right: 1px solid #E9E9E9;padding: 3px;border-left: 1px solid #E9E9E9;background: #fcf8e3;">
 										   <span style="vertical-align: top;">Add/Remove Installment</span>
 										   &nbsp;
@@ -343,13 +343,13 @@
 										  </span>
 											
 										</td>
-									</tr> 		 -->
+									</tr> 		
 									<%-- <s:if test="%{hasActionErrors() == false}"> --%>
 									<%-- <s:set
 										value="{@org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_WARRANT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_NOTICE_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_COURT_FEE, @org.egov.ptis.constants.PropertyTaxConstants@DEMANDRSN_STR_PENALTY_FINES}"
 										var="demandRsnToExclude" /> --%>
-									<%-- <s:iterator value="demandReasonMap" status="itrStatus" var="rsn">
-											<s:if test="%{#demandRsnToExclude.contains(key) == false}" >
+									<s:iterator value="demandReasonMap" status="itrStatus" var="rsn">
+											<%-- <s:if test="%{#demandRsnToExclude.contains(key) == false}" > --%>
 											<tr id="newInstallmentRow">
 												<s:if test="%{#itrStatus.count == 1}" >												
 												<td class="blueborderfortd">												
@@ -419,8 +419,8 @@
 													</div>
 												</td>
 											</tr>
-											</s:if>
-										</s:iterator> --%>
+											<%-- </s:if> --%>
+										</s:iterator>
 										<script type="text/javascript">
 											 if (isFirstInstVisible == true) {
 												isFirstInstVisible = false;
@@ -530,7 +530,7 @@
 											</tr>
 										</s:if>
 										<s:else>
-										<%@ include file="editDemandInstallmentDetail.jsp"%>
+										<%@ include file="addDemandInstallmentDetail.jsp"%>
 										</s:else>
 										<s:if test="%{#count == demandDetailBeanList.size}" >
 												<s:set value="0" var="count" />
