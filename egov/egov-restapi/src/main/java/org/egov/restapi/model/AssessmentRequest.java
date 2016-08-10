@@ -48,6 +48,7 @@ public class AssessmentRequest {
     private String ulbCode;
     private String applicationNo;
     private String category;
+    private String doorNo;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -103,5 +104,13 @@ public class AssessmentRequest {
     public void setCategory(String category) {
         this.category = category;
     }
+
+	public String getDoorNo() {
+		return doorNo;
+	}
+
+	public void setDoorNo(String doorNo) {
+		this.doorNo = doorNo;
+	}
 
 }
