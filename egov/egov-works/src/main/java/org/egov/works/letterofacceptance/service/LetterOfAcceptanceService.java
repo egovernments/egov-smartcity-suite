@@ -216,7 +216,7 @@ public class LetterOfAcceptanceService {
         final List<AppConfigValues> configList = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION);
         for (final AppConfigValues value : configList) {
-            designationNames.add(value.getValue());
+            designationNames.add(value.getValue().toUpperCase());
         }
         final List<Designation> designations = designationService.getDesignationsByNames(designationNames);
         for (final Designation designation : designations) {
