@@ -66,6 +66,6 @@ public interface DesignationRepository extends JpaRepository<Designation, Long>,
     Set<Role> getRolesByDesignation(@Param("designationName") String designationName);
     
     @Query("select d from Designation d where d.name in :designationnames")
-    List<Designation> getDesignationsByNames(@Param("designationnames") String[] designationNames);
+    List<Designation> getDesignationsByNames(@Param("designationnames") List<String> designationNames);
 
 }

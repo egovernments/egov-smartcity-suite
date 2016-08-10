@@ -104,7 +104,7 @@ public class DesignationService {
         return designationRepository.getRolesByDesignation(designationName);
     }
     
-    public List<Designation> getDesignationsByNames(final String[] names) {
+    public List<Designation> getDesignationsByNames(final List<String> names) {
         return designationRepository.getDesignationsByNames(names);
     }
 }
