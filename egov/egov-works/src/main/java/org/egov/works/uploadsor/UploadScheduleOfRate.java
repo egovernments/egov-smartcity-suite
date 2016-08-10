@@ -88,6 +88,8 @@ public class UploadScheduleOfRate {
 
     private Boolean createSor;
 
+    private Boolean isToDateNull;
+
     public String getSorCode() {
         return sorCode;
     }
@@ -246,6 +248,14 @@ public class UploadScheduleOfRate {
 
     public void setTempMarketToDate(final String tempMarketToDate) {
         this.tempMarketToDate = tempMarketToDate;
+    }
+
+    public Boolean getIsToDateNull() {
+        return isToDateNull;
+    }
+
+    public void setIsToDateNull(Boolean isToDateNull) {
+        this.isToDateNull = isToDateNull;
     }
 
 }

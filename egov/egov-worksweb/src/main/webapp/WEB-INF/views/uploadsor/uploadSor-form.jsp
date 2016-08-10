@@ -63,16 +63,86 @@
 					<spring:message code="title.upload.sor" />
 			</div>
 		</div>
+		<input type="hidden"  id="documentsSize">
 			<div>
 				<table width="100%">
 					<tbody>
 						<tr>
-						<td width="30%"></td>
-						<td><input type="radio" name="uploadsor" value="uploadsor" /> <spring:message code="lbl.first.time.data.loading" /></td>
-						<td><input type="radio" name="uploadsor" value="uploadexistingsor" /> <spring:message code="lbl.existing.data.loading" /></td>
+							<td width="50%">
+								<table width="100%">
+									<tbody>
+										<tr>
+											<td valign="top">
+											 	<table id="uploadertbl" width="100%"><tbody>
+											 		<tr id="row1" align="center">			 				
+														<td>
+															<input type="file" name="file" id="file" onchange="isValidFile(this.id)" class="padding-10" required="required">										
+														</td>		
+													</tr>									 										
+											 	</tbody></table>						 								
+												<%-- <div class="add-margin error-msg text-center padding-10"><font size="2"><spring:message code="msg.documents.maxsize" /></font></div> --%>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+							<td>
+								<table width="100%">
+									<thead>
+										<tr>
+											<th style="text-align: center"><spring:message code="lbl.original.files" /></th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach items="${originalFiles}" var="originalFile" varStatus="item">
+											<tr>
+												<td style="text-align: center" align="center">
+													<a href="#" onclick="urlLoad('${originalFile.fileStoreId}');" id="originalFileId" /> ${originalFile.fileName} </a>
+												</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</td>
+							<td>
+								<table width="100%">
+									<thead>
+										<tr>
+											<th style="text-align: center"><spring:message code="lbl.output.files" /></th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach items="${outPutFiles}" var="outPutFile" varStatus="item">
+											<tr>
+												<td style="text-align: center" align="center">
+													<a href="#" onclick="urlLoad('${outPutFile.fileStoreId}');" id="originalFileId" /> ${outPutFile.fileName} </a>
+												</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</td>
 						</tr>
 					</tbody>	
 				</table>
+				<table>
+					<tr>
+						 <td>
+								&nbsp&nbsp&nbsp <a href="/egworks/resources/app/formats/Upload_Schedule_Of_Rate_Template.xls"><spring:message code="lbl.download.template" /></a>
+						 </td>
+					</tr>
+				</table>
 			</div>
 	</div>
+	
+			<table width="100%">
+					<tbody>
+						<tr>
+							<td align="center">
+								<input type="submit" id="uploadButton" class="btn btn-primary" value="Upload" >
+								<input type="button" name="close" id="closeButton" value="Close" class="btn btn-default" onclick="window.close();" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
 </form:form>

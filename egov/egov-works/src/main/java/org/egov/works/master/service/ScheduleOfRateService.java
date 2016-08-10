@@ -249,4 +249,47 @@ public class ScheduleOfRateService {
         return uploadSORRatesList;
     }
 
+    @Transactional
+    public List<UploadScheduleOfRate> createSORRate(final List<UploadScheduleOfRate> uploadSORRatesList) {
+        final Date currentDate = new Date();
+        for (final UploadScheduleOfRate obj : uploadSORRatesList) {
+
+            final ScheduleOfRate scheduleOfRate = obj.getScheduleOfRate();
+            final SORRate sorRate = new SORRate();
+            final MarketRate marketRate = new MarketRate();
+            sorRate.setRate(new Money(obj.getRate().doubleValue()));
+            sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
+            sorRate.setScheduleOfRate(scheduleOfRate);
+            sorRate.setCreatedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            sorRate.setCreatedDate(currentDate);
+            sorRate.setModifiedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            sorRate.setModifiedDate(currentDate);
+            scheduleOfRate.getSorRates().add(sorRate);
+            if (obj.getMarketRate() != null) {
+
+                marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
+                marketRate.setValidity(
+                        new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
+                marketRate.setCreatedBy(
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                marketRate.setCreatedDate(currentDate);
+                marketRate.setModifiedBy(
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                marketRate.setModifiedDate(currentDate);
+                marketRate.setScheduleOfRate(scheduleOfRate);
+                scheduleOfRate.getMarketRates().add(marketRate);
+            }
+
+            scheduleOfRate.setModifiedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            scheduleOfRate.setModifiedDate(currentDate);
+            save(scheduleOfRate);
+            obj.setFinalStatus("Success");
+        }
+
+        return uploadSORRatesList;
+    }
+
 }

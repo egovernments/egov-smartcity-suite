@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
@@ -89,9 +90,9 @@ public class ScheduleOfRate extends BaseModel {
         this.code = code;
         this.description = description;
     }
-
+    @OrderBy("id DESC")
     private List<SORRate> sorRates = new LinkedList<SORRate>();
-
+    @OrderBy("id DESC")
     private List<MarketRate> marketRates = new LinkedList<MarketRate>();
 
     @Transient

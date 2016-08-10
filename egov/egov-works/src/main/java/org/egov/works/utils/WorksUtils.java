@@ -315,16 +315,10 @@ public class WorksUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public List<FileStoreMapper> getLatestSorRateUploadOriginalFiles() {
+    public List<FileStoreMapper> getLatestSorRateUploadFiles(String name) {
         return entityManager.unwrap(Session.class)
-                .createQuery("from FileStoreMapper where fileName like '%sor_original%' order by id desc ").setMaxResults(5)
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<FileStoreMapper> getLatestSorRateUploadOutPutFiles() {
-        return entityManager.unwrap(Session.class)
-                .createQuery("from FileStoreMapper where fileName like '%sor_output%' order by id desc ").setMaxResults(5)
+                .createQuery("from FileStoreMapper where fileName like :name order by id desc ").setString("name", "%"+name+"%")
+                .setMaxResults(5)
                 .list();
     }
 

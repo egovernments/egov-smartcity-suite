@@ -39,6 +39,7 @@
  */
 package org.egov.works.abstractestimate.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
@@ -103,5 +104,9 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
             @Param("abstractEstimateStatus") final String abstractEstimateStatus,
             @Param("workOrderStatus") final String workOrderStatus, @Param("objectType") final String objectType,
             @Param("offlineStatus") final String offlineStatus);
+
+    @Query("select estimate from AbstractEstimate estimate where exists (select a.abstractEstimate from Activity a where a.abstractEstimate.id = estimate.id and a.schedule.id=:sorId) and estimate.estimateDate>=:estimateDate and estimate.egwStatus.code !=:abstractEstimateStatus ")
+    List<AbstractEstimate> findBySorIdAndEstimateDate(@Param("sorId") final Long sorId,
+            @Param("estimateDate") final Date estimateDate, @Param("abstractEstimateStatus") final String abstractEstimateStatus);
 
 }

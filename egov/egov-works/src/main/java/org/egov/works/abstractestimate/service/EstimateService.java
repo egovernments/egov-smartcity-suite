@@ -1352,4 +1352,9 @@ public class EstimateService {
         return measurementSheetMap;
     }
 
+    public List<AbstractEstimate> getBySorIdAndEstimateDate(Long sorId, Date estimateDate) {
+
+        return abstractEstimateRepository.findBySorIdAndEstimateDate(sorId, estimateDate, WorksConstants.CANCELLED_STATUS);
+    }
+
 }

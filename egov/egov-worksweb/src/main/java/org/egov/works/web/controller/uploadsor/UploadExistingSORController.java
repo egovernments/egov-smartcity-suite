@@ -44,8 +44,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,18 +59,23 @@ import org.egov.commons.service.UOMService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.master.service.ScheduleOfRateService;
 import org.egov.works.master.service.UploadSORService;
+import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleCategory;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.uploadsor.UploadSOR;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -83,8 +88,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/uploadsor")
-public class UploadSORController {
+@RequestMapping(value = "/uploadexistingsor/form")
+public class UploadExistingSORController {
+
     private boolean errorInMasterData = false;
     private String originalFileStoreId, outPutFileStoreId;
     private String loadSorRateOriginalFileName;
@@ -115,20 +121,18 @@ public class UploadSORController {
 
     @Autowired
     protected UploadSORService uploadSORService;
-    
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value="/common-form",method = RequestMethod.GET)
-    public String showCommonForm(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
-            final Model model) throws ApplicationException {
-        return "uploadSor";
-    }
+
+    @Autowired
+    protected EstimateService estimateService;
 
     @SuppressWarnings("unchecked")
-    @RequestMapping(value="/form",method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String showForm(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
             final Model model) throws ApplicationException {
-        model.addAttribute("originalFiles", worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY));
-        model.addAttribute("outPutFiles", worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_OUTPUT_FILE_NAME_KEY));
+        model.addAttribute("originalFiles",
+                worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY));
+        model.addAttribute("outPutFiles",
+                worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY));
         return "uploadSor-form";
     }
 
@@ -158,8 +162,14 @@ public class UploadSORController {
 
             validateMandatoryFeilds(uploadSORRatesList);
 
-            loadSorRateOriginalFileName = uploadSORService.prepareOriginalFileName(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY,
-                    WorksConstants.SOR_OUTPUT_FILE_NAME_KEY, timeStamp, uploadSOR.getFile().getOriginalFilename(), errors);
+            validateRates(uploadSORRatesList);
+
+            validateEstimateData(uploadSORRatesList);
+
+            loadSorRateOriginalFileName = uploadSORService.prepareOriginalFileName(
+                    WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
+                    WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY, timeStamp, uploadSOR.getFile().getOriginalFilename(),
+                    errors);
 
             final FileStoreMapper originalFileStore = fileStoreService.store(uploadSOR.getFile().getInputStream(),
                     loadSorRateOriginalFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
@@ -169,33 +179,37 @@ public class UploadSORController {
 
             if (errorInMasterData) {
                 inputFile.close();
-                outPutFileStoreId = uploadSORService.prepareOutPutFileWithErrors(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY,
-                        WorksConstants.SOR_OUTPUT_FILE_NAME_KEY, this.inputFile, uploadSORRatesList, uploadSOR, errors);
+                outPutFileStoreId = uploadSORService.prepareOutPutFileWithErrors(
+                        WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
+                        WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY, this.inputFile, uploadSORRatesList, uploadSOR, errors);
                 errors.reject("error.while.validating.data", "error.while.validating.data");
                 model.addAttribute("originalFileStoreId", originalFileStoreId);
                 model.addAttribute("outPutFileStoreId", outPutFileStoreId);
                 return "uploadSor-result";
             }
 
-            uploadSORRatesList = scheduleOfRateService.createScheduleOfRate(uploadSORRatesList);
+            uploadSORRatesList = scheduleOfRateService.createSORRate(uploadSORRatesList);
 
             inputFile.close();
 
-            outPutFileStoreId = uploadSORService.prepareOutPutFileWithFinalStatus(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY,
-                    WorksConstants.SOR_OUTPUT_FILE_NAME_KEY, this.inputFile, uploadSORRatesList, uploadSOR, errors);
+            outPutFileStoreId = uploadSORService.prepareOutPutFileWithFinalStatus(
+                    WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
+                    WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY, this.inputFile, uploadSORRatesList, uploadSOR, errors);
 
             model.addAttribute("message", messageSource.getMessage("msg.load.sor.rates.sucessful", null, null));
 
         } catch (final ValidationException e) {
             model.addAttribute("originalFiles",
-                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY));
-            model.addAttribute("outPutFiles", worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_OUTPUT_FILE_NAME_KEY));
+                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY));
+            model.addAttribute("outPutFiles",
+                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY));
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
         } catch (final Exception e) {
             model.addAttribute("originalFiles",
-                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY));
-            model.addAttribute("outPutFiles", worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_OUTPUT_FILE_NAME_KEY));
+                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY));
+            model.addAttribute("outPutFiles",
+                    worksUtils.getLatestSorRateUploadFiles(WorksConstants.EXISTING_SOR_OUTPUT_FILE_NAME_KEY));
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
 
@@ -205,18 +219,173 @@ public class UploadSORController {
         return "uploadSor-result";
     }
 
-    private void validateMandatoryFeilds(final List<UploadScheduleOfRate> uploadSORRatesList) {
-        final List<UploadScheduleOfRate> tempList = new ArrayList<>();
+    private void validateEstimateData(List<UploadScheduleOfRate> uploadSORRatesList) {
+        String error = "";
+        List<AbstractEstimate> estimates = null;
+        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+            error = "";
+            if (obj.getIsToDateNull() != null && obj.getIsToDateNull())
+                estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(), obj.getFromDate());
+
+            if (estimates != null && !estimates.isEmpty())
+                error = error + " " + messageSource.getMessage("error.active.estimates.exist.for.given.date.range", null, null)
+                        + ",";
+
+            if (obj.getErrorReason() != null)
+                error = obj.getErrorReason() + error;
+            obj.setErrorReason(error);
+        }
+
+        if (!error.equalsIgnoreCase(""))
+            errorInMasterData = true;
+
+    }
+
+    private void validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
+        List<AbstractEstimate> estimates = null;
+        Period checkPeriod = null;
+        String error = "";
+        LocalDate existingStartDate = null;
+        LocalDate existingEndDate = null;
+        LocalDate checkStartDate = null;
+        LocalDate checkEndDate = null;
+        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+            checkPeriod = new Period(obj.getFromDate(), obj.getToDate());
+            error = "";
+            if (obj.getScheduleOfRate() != null)
+                for (SORRate rate : obj.getScheduleOfRate().getSorRates()) {
+                    if (rate.getValidity().getEndDate() == null)
+                        obj.setIsToDateNull(true);
+                    break;
+                }
+
+            if (obj.getScheduleOfRate() != null)
+                for (SORRate rate : obj.getScheduleOfRate().getSorRates()) {
+
+                    existingStartDate = new LocalDate(rate.getValidity().getStartDate());
+                    if (rate.getValidity().getEndDate() != null)
+                        existingEndDate = new LocalDate(rate.getValidity().getEndDate());
+                    checkStartDate = new LocalDate(obj.getFromDate());
+                    if (obj.getToDate() != null)
+                        checkEndDate = new LocalDate(obj.getToDate());
+                    /**
+                     * If latest existing SOR Rate to date is null
+                     * 
+                     * then
+                     * 
+                     * Check any active estimates is exist after new SOR from date
+                     * 
+                     * if exist
+                     * 
+                     * throw error
+                     * 
+                     * else
+                     * 
+                     * update to date of existing SOR to before date of new SOR from date
+                     * 
+                     * And check overlap issue for from dates ,to dates of existing and new SOR rates both
+                     * 
+                     */
+                    if (obj.getIsToDateNull() != null && obj.getIsToDateNull()) {
+
+                        estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
+                                obj.getFromDate());
+
+                        if (estimates != null && !estimates.isEmpty())
+                            error = error + " " + messageSource
+                                    .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
+                                    + ",";
+                        else {
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(obj.getFromDate());
+                            cal.add(Calendar.DAY_OF_YEAR, -1);
+                            Date oneDayBefore = cal.getTime();
+                            rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                        }
+
+                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
+                                || (obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
+                                || (rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            if (obj.getErrorReason() != null)
+                                error = obj.getErrorReason() + error;
+                            obj.setErrorReason(error);
+                        }
+
+                    } else {
+
+                        /**
+                         * If latest existing SOR Rate to date is present and to date is grater then new SOR rate from date
+                         * 
+                         * then Check any active estimates is exist after new SOR from date
+                         * 
+                         * if exist
+                         * 
+                         * throw error
+                         * 
+                         * else
+                         * 
+                         * update to date of existing SOR to before date of new SOR from date
+                         * 
+                         * And check overlap issue for from dates ,to dates of existing and new SOR rates both
+                         * 
+                         */
+
+                        if (existingEndDate.compareTo(checkStartDate) > 0) {
+
+                            estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
+                                    obj.getFromDate());
+
+                            if (estimates != null && !estimates.isEmpty())
+                                error = error + " " + messageSource
+                                        .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
+                                        + ",";
+                            else {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(obj.getFromDate());
+                                cal.add(Calendar.DAY_OF_YEAR, -1);
+                                Date oneDayBefore = cal.getTime();
+                                rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                            }
+                        }
+
+                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
+                                || (obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
+                                || (rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            if (obj.getErrorReason() != null)
+                                error = obj.getErrorReason() + error;
+                            obj.setErrorReason(error);
+                        }
+                    }
+
+                }
+
+        }
+
+        if (!error.equalsIgnoreCase(""))
+            errorInMasterData = true;
+
+    }
+
+    private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
             String error = "";
-            final Map<String, ScheduleOfRate> sorMap = new HashMap<String, ScheduleOfRate>();
             final Map<String, ScheduleCategory> sorCategoryMap = new HashMap<String, ScheduleCategory>();
+            final Map<String, ScheduleOfRate> sor_sorCategory_Map = new HashMap<String, ScheduleOfRate>();
             final Map<String, UOM> uomMap = new HashMap<String, UOM>();
             final List<ScheduleOfRate> sorList = scheduleOfRateService.getAllScheduleOfRates();
             final List<ScheduleCategory> sorCategoryList = scheduleCategoryService.getAllScheduleCategories();
             final List<UOM> uomList = uomService.findAll();
             for (final ScheduleOfRate sor : sorList)
-                sorMap.put(sor.getCode().toLowerCase(), sor);
+                sor_sorCategory_Map.put(sor.getCode().toLowerCase() + "-" + sor.getScheduleCategory().getCode().toLowerCase(),
+                        sor);
             for (final ScheduleCategory scheduleCategory : sorCategoryList)
                 sorCategoryMap.put(scheduleCategory.getCode().toLowerCase(), scheduleCategory);
             for (final UOM uom : uomList)
@@ -225,60 +394,41 @@ public class UploadSORController {
             for (final UploadScheduleOfRate obj : uploadSORRatesList) {
                 error = "";
 
-                // Validating SOR code
+                // Validating row by SOR code and SOR Category Code
                 if (obj.getSorCode() != null && !obj.getSorCode().equalsIgnoreCase("")) {
-                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null)
-                        if (uploadSORService.isContainsWhitespace(obj.getSorCode()))
+                    if (obj.getSorCategoryCode() != null && !obj.getSorCategoryCode().equalsIgnoreCase("")) {
+                        if (sor_sorCategory_Map
+                                .get(obj.getSorCode().toLowerCase() + "-" + obj.getSorCategoryCode().toLowerCase()) == null)
                             error = error + " "
-                                    + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null)
+                                    + messageSource.getMessage("error.sor.is.not.exist", null, null)
                                     + obj.getSorCode() + ",";
                         else
-                            obj.setCreateSor(true);
-                    else {
-                        obj.setScheduleOfRate(sorMap.get(obj.getSorCode().toLowerCase()));
-                        obj.setCreateSor(false);
-                    }
+                            obj.setScheduleOfRate(sor_sorCategory_Map
+                                    .get(obj.getSorCode().toLowerCase() + "-" + obj.getSorCategoryCode().toLowerCase()));
+                    } else
+                        error = error + " " + messageSource.getMessage("error.schedulecategory.code.is.required", null, null)
+                                + ",";
                 } else
                     error = error + " " + messageSource.getMessage("error.sorcode.is.required", null, null) + ",";
 
                 if (obj.getSorCode() != null && obj.getSorCode().length() > 255)
                     error = error + " " + messageSource.getMessage("error.sor.code.length", null, null) + ",";
 
-                // Validating SOR Category Code
-                if (obj.getSorCategoryCode() == null || obj.getSorCategoryCode().equalsIgnoreCase(""))
-                    error = error + " " + messageSource.getMessage("error.schedulecategory.code.is.required", null, null) + ",";
-
-                else if (obj.getSorCategoryCode() != null && !obj.getSorCategoryCode().equalsIgnoreCase("")
-                        && sorCategoryMap.get(obj.getSorCategoryCode().toLowerCase()) == null)
-                    error = error + " " + messageSource.getMessage("error.schedulecategory.is.not.exist", null, null)
-                            + obj.getSorCategoryCode() + ",";
-                else
-
-                    obj.setScheduleCategory(sorCategoryMap.get(obj.getSorCategoryCode().toLowerCase()));
-
-                // Validating SOR description
-                if (obj.getSorDescription() == null || obj.getSorDescription().equalsIgnoreCase(""))
-                    error = error + " " + messageSource.getMessage("error.sordescription.is.required", null, null) + ",";
-
-                if (uploadSORService.isSpecialCharacterExist(obj.getSorDescription())
-                        || uploadSORService.isNewLineOrTabExist(obj.getSorDescription()))
-                    error = error + " "
-                            + messageSource.getMessage("error.special.characters.is.not.allowed.in.sor.description", null, null)
-                            + ",";
-
-                if (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000)
-                    error = error + " " + messageSource.getMessage("error.sor.description.length", null, null) + ",";
-
-                // Validating uom code
-                if (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase(""))
-                    error = error + " " + messageSource.getMessage("error.uom.is.required", null, null) + ",";
-
-                else if (obj.getUomCode() != null && !obj.getUomCode().equalsIgnoreCase("")
-                        && uomMap.get(obj.getUomCode().toLowerCase()) == null)
-                    error = error + " " + messageSource.getMessage("error.uom.is.not.exist", null, null)
-                            + obj.getUomCode() + ",";
-                else
-                    obj.setUom(uomMap.get(obj.getUomCode().toLowerCase()));
+                /*
+                 * // Validating SOR description if (obj.getSorDescription() == null ||
+                 * obj.getSorDescription().equalsIgnoreCase("")) error = error + " " +
+                 * messageSource.getMessage("error.sordescription.is.required", null, null) + ","; if
+                 * (uploadSORService.isSpecialCharacterExist(obj.getSorDescription()) ||
+                 * uploadSORService.isNewLineOrTabExist(obj.getSorDescription())) error = error + " " +
+                 * messageSource.getMessage("error.special.characters.is.not.allowed.in.sor.description", null, null) + ","; if
+                 * (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000) error = error + " " +
+                 * messageSource.getMessage("error.sor.description.length", null, null) + ","; // Validating uom code if
+                 * (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase("")) error = error + " " +
+                 * messageSource.getMessage("error.uom.is.required", null, null) + ","; else if (obj.getUomCode() != null &&
+                 * !obj.getUomCode().equalsIgnoreCase("") && uomMap.get(obj.getUomCode().toLowerCase()) == null) error = error +
+                 * " " + messageSource.getMessage("error.uom.is.not.exist", null, null) + obj.getUomCode() + ","; else
+                 * obj.setUom(uomMap.get(obj.getUomCode().toLowerCase()));
+                 */
 
                 // Validating rate
                 if (obj.getRate() == null)
@@ -321,18 +471,11 @@ public class UploadSORController {
                         error = error + " " + messageSource
                                 .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";
 
-                // Validate duplicate (From Database)
-                if (obj.getCreateSor() != null && !obj.getCreateSor() && obj.getScheduleOfRate() != null
-                        && obj.getScheduleCategory() != null)
-                    if (obj.getScheduleOfRate().getScheduleCategory().getCode()
-                            .equalsIgnoreCase(obj.getScheduleCategory().getCode()))
-                        error = error + " " + messageSource
-                                .getMessage("error.sorcode.already.exists", null, null) + ",";
-
-                obj.setErrorReason(obj.getErrorReason() != null ? obj.getErrorReason() : "" + error);
+                if (obj.getErrorReason() != null)
+                    error = obj.getErrorReason() + error;
+                obj.setErrorReason(error);
                 if (!error.equalsIgnoreCase(""))
                     errorInMasterData = true;
-                tempList.add(obj);
             }
 
         } catch (final ValidationException e) {

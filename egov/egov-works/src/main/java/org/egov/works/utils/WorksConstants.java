@@ -336,5 +336,13 @@ public class WorksConstants {
     public static final String APPCONFIG_KEY_GIS_INTEGRATION = "GIS_INTEGRATION";
 
     public static final String APPCONFIG_KEY_CUTOFFDATEFORLEGACYDATAENTRY = "CUTOFFDATEFORLEGACYDATAENTRY";
+    
+    public static final String SOR_ORIGINAL_FILE_NAME_KEY = "sor_original";
+
+    public static final String SOR_OUTPUT_FILE_NAME_KEY = "sor_output";
+    
+    public static final String EXISTING_SOR_ORIGINAL_FILE_NAME_KEY = "existingsor_original";
+    
+    public static final String EXISTING_SOR_OUTPUT_FILE_NAME_KEY = "existingsor_output";
 
 }

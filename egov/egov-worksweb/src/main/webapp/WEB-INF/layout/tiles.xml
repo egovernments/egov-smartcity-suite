@@ -371,6 +371,11 @@
         <put-attribute name="body" value="/WEB-INF/views/uploadsor/uploadSor.jsp"/>
     </definition>
     
+    <definition name="uploadSor-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.upload.sor" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uploadsor/uploadSor-form.jsp"/>
+    </definition>
+    
     <definition name="uploadSor-result" extends="base_layout">
         <put-attribute name="page-title" value="title.upload.sor.result" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/uploadsor/uploadSor-result.jsp"/>

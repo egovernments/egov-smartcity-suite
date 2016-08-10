@@ -77,3 +77,10 @@ function urlLoad(fileStoreId) {
 			'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
 
 }
+$(document).ready(function(){
+	
+	$( "input[type=radio]" ).on( "click", function() {
+		var sUrl = "/egworks/"+$( "input[type=radio]:checked" ).val()+"/form";
+		window.open(sUrl, "_self",'scrollbars=yes,resizable=no,height=400,width=400,status=yes');
+	});
+});
