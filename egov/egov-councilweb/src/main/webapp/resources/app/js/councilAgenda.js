@@ -50,12 +50,13 @@ String.prototype.compose = (function (){
 var tbody = $('#agendaTable').children('tbody');
 var table = tbody.length ? tbody : $('#agendaTable');
 var row = '<tr>'+
-   '<td><span class="sno">{{sno}}</span></td>'+
-   '<td><input type="text" class="form-control" data-unique name="councilAgenda.agendaNumber[{{idx}}]" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="councilAgenda.department[{{idx}}]" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="councilAgenda.agendaDetails.preamble.gistOfPreamble[{{idx}}]" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
-   '<td><input type="text" class="form-control" name="councilAgenda.agendaDetails.preamble.sanctionedAmt[{{idx}}]" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
-   '<td><input type="hidden" class="form-control" name="councilAgenda.agendaDetails.preamble.id[{{idx}}]" {{readonly}} value="{{preamableId}}"/> <button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
+  /* '<td><span class="sno">{{sno}}</span></td>'+*/
+   '<td><input type="text" class="form-control" data-unique name="agendaDetails[{{idx}}].preamble.preambleNumber" {{readonly}} value="{{pnoTextBoxValue}}"/></td>'+
+   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.department.name" {{readonly}} value="{{deptTextBoxValue}}"/></td>'+
+   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.gistOfPreamble" {{readonly}} value="{{gistTextBoxValue}}"/></td>'+
+   '<td><input type="text" class="form-control" name="agendaDetails[{{idx}}].preamble.sanctionAmount" {{readonly}} value="{{amountTextBoxValue}}"/></td>'+
+ //  '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.department.id" {{readonly}} value="{{departmentId}}"/>'+
+   '<td><input type="hidden" class="form-control" name="agendaDetails[{{idx}}].preamble.id" {{readonly}} value="{{preamableId}}"/> <button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
 
@@ -71,10 +72,11 @@ jQuery('#add-agenda').click(function(){
 	   };
 	addRowFromObject(row);
    
-})
+});
 
 function addRowFromObject(rowJsonObj)
 {
+	console.log("Row composed", row.compose(rowJsonObj));
 	table.append(row.compose(rowJsonObj));
 }
 
@@ -140,12 +142,13 @@ function addReadOnlyRow(btn)
 	
 	//Add row
 	var row={
-		   'sno':sno,
+		  /* 'sno':sno,*/
 		   'idx':idx,
 	       'pnoTextBoxValue': data.preambleNumber,
 	       'deptTextBoxValue': data.department,
 	       'gistTextBoxValue': data.gistOfPreamble,
 	       'amountTextBoxValue': data.sanctionAmount,
+	      // 'departmentId' :data.id,
 	       'preamableId':data.id,
 	       'readonly':'readonly="readonly"'
 	   };
@@ -197,8 +200,9 @@ function callAjaxSearch() {
 					"data" : "preambleNumber",'sTitle': "Preamble Number"} ,{ 
 					"data" : "department",'sTitle': "Department"} ,{ 
 					"data" : "gistOfPreamble",'sTitle': "Gist of Preamble"},{ 
-					"data" : "sanctionAmount", "sClass" : "text-right",'sTitle': "Amount"},{ 
-					"data" : "id","visible" :false, "searchable": false}
+					"data" : "sanctionAmount", "sClass" : "text-right",'sTitle': "Amount"},/*{ 
+					"data" : "department","visible" :false, "searchable": false},*/{
+					"data" : "id","visible" : false, "searchable" : false} ,
 					,{ "data" : null, "target":-1,"sortable": false,'sTitle': "Action",
 					    "render": function ( data, type, full, meta ) {
 					       	 return '<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''+ JSON.stringify(full) +'\' onclick="addReadOnlyRow(this)"><span class="glyphicon glyphicon-edit"></span>&nbsp;Add</button>';

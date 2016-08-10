@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -95,6 +95,10 @@ public class CouncilAgendaService {
         final Criteria criteria = getCurrentSession().createCriteria(CouncilAgenda.class);
         if (null != councilAgenda.getAgendaNumber())
             criteria.add(Restrictions.ilike("agendaNumber", councilAgenda.getAgendaNumber(), MatchMode.ANYWHERE));
+        if(null != councilAgenda.getStatus())
+        	criteria.add(Restrictions.eq("status", councilAgenda.getStatus().getCode()));
+        if(null != councilAgenda.getCommitteeType())
+        	criteria.add(Restrictions.eq("committeeType", councilAgenda.getCommitteeType().getName()));
         return criteria.list();
     }
 

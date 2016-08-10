@@ -248,6 +248,27 @@
 	<put-attribute name="page-title" value="title.councilagenda.create" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/agenda/create-agenda.jsp"/>
 </definition>
+
+<definition name="agenda-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-result.jsp"/>
+</definition>
+
+<definition name="agenda-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-view.jsp"/>
+</definition>
+
+<definition name="agenda-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-search.jsp"/>
+</definition>
+
+<definition name="agenda-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-edit.jsp"/>
+</definition>
+
 <definition name="councilmeeting-new" extends="base_layout">
 	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-new.jsp"/>
@@ -265,4 +286,5 @@
 	<put-attribute name="page-title" value="title.common.error.page" cascade="true" />
 	<put-attribute name="body"	value="/WEB-INF/views/common/common-error.jsp" />
 </definition>
+
 </tiles-definitions>
