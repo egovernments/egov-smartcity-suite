@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
@@ -1694,7 +1695,7 @@ var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank()
 {
-	var url = "<c:url value='/voucher/common-ajaxGetAllBankName.action' context='/EGF'/>";
+	var url = "<cdn:url cdn='${applicationScope.cdn}' value='/voucher/common-ajaxGetAllBankName.action' context='/EGF'/>";
 	var req2 = initiateRequest();
 	req2.onreadystatechange = function()
 	{
@@ -2255,7 +2256,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>
