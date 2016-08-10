@@ -72,7 +72,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
@@ -81,15 +80,14 @@ import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
+import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE")
-// @CompareDates(fromDate = "caseReceivingDate", toDate = "caseDate", dateFormat
-// = "dd/MM/yyyy", message = "fgfgf ggffg date")
-@Unique(fields = { "caseNumber", "lcNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "CASENUMBER",
-        "LCNUMBER" }, message = "casenumber.name.isunique")
+//@Unique(fields = { "caseNumber" }, id = "id", tableName = "EGLC_LEGALCASE", columnName = { "casenumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = LegalCase.SEQ_LEGALCASE_TYPE, sequenceName = LegalCase.SEQ_LEGALCASE_TYPE, allocationSize = 1)
+@Searchable
 public class LegalCase extends AbstractAuditable {
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_LEGALCASE_TYPE = "SEQ_EGLC_LEGALCASE";
@@ -126,8 +124,6 @@ public class LegalCase extends AbstractAuditable {
 
     @Required(message = "case.casedate.null")
     @DateFormat(message = "invalid.fieldvalue.model.casedate")
-    // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
-    // message = "invalid.case.date")
     @Column(name = "casedate")
     private Date caseDate;
 
@@ -166,50 +162,7 @@ public class LegalCase extends AbstractAuditable {
 
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
-
-    @Transient
-    private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
-
-    @Transient
-    private List<BipartisanDetails> bipartisanPetitionDetailsList = new ArrayList<BipartisanDetails>(0);
-
-    @Transient
-    private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Judgment> judgment = new ArrayList<Judgment>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
     
-    
-   
-    
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<CounterAffidavit> eglcCounterAffidavit = new ArrayList<CounterAffidavit>();
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
-
-    @Transient
-    private String wpYear;
-
-    @Transient
-    private String finwpYear;
-
-    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
-
-    @OrderBy("id")
-    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<LegalCaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
-
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Hearings> hearings = new ArrayList<Hearings>(0);
-
     @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
     @Length(max = 128, message = "oppPartyAdvocate.length")
     @Column(name = "oppPartyAdvocate")
@@ -223,6 +176,60 @@ public class LegalCase extends AbstractAuditable {
     @Column(name = "lcNumberType")
     @Enumerated(EnumType.STRING)
     private LCNumberType lcNumberType;
+
+    @DateFormat(message = "invalid.fieldvalue.model.previousDate")
+    @Column(name = "previousDate")
+    private Date previousDate;
+
+    @Length(max = 50, message = "stampNumber.length")
+    @Column(name = "stampNumber")
+    private String stampNumber;
+
+    @Length(max = 50)
+    @Column(name = "officerincharge")
+    private String officerIncharge;
+
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @Column(name = "noticedate")
+    private Date noticeDate;
+    
+    @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
+    private Date casefirstappearancedate;
+
+    @Transient
+    private String functionaryCode;
+    
+    @Transient
+    private String wpYear;
+
+    @Transient
+    private String finwpYear;
+    
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Judgment> judgment = new ArrayList<Judgment>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Pwr> eglcPwrs = new ArrayList<Pwr>(0);
+   
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<CounterAffidavit> eglcCounterAffidavit = new ArrayList<CounterAffidavit>();
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
+
+    @OrderBy("id")
+    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<LegalCaseAdvocate> eglcLegalcaseAdvocates = new ArrayList<LegalCaseAdvocate>(0);
+
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Hearings> hearings = new ArrayList<Hearings>(0);
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseDisposal> legalCaseDisposal = new ArrayList<LegalCaseDisposal>(0);
@@ -244,34 +251,18 @@ public class LegalCase extends AbstractAuditable {
      * processRegisterSet = new ArrayList<ProcessRegister>(0);
      */
 
-    @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
-    private Date casefirstappearancedate;
-
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LegalCaseMiscDetails> legalCaseMiscDetails = new ArrayList<LegalCaseMiscDetails>(0);
     
-    
-
-    @DateFormat(message = "invalid.fieldvalue.model.previousDate")
-    @Column(name = "previousDate")
-    private Date previousDate;
-
-    @Length(max = 50, message = "stampNumber.length")
-    @Column(name = "stampNumber")
-    private String stampNumber;
-
-    @Length(max = 50)
-    @Column(name = "officerincharge")
-    private String officerIncharge;
-
-    @NotNull
-    @Temporal(TemporalType.DATE)
-    @Column(name = "noticedate")
-    private Date noticeDate;
+    @Transient
+    private List<BipartisanDetails> bipartisanDetailsBeanList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
-    private String functionaryCode;
+    private List<BipartisanDetails> bipartisanPetitionDetailsList = new ArrayList<BipartisanDetails>(0);
 
+    @Transient
+    private List<Judgment> judgmentsBeanList = new ArrayList<Judgment>(0);
+    
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
         if (getIsfiledbycorporation() == true && getStampNumber().length() == 0)

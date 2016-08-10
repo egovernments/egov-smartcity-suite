@@ -57,6 +57,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
@@ -66,7 +67,7 @@ import org.egov.lcms.utils.constants.LcmsConstants;
 @Entity
 @Table(name = "EGLC_PWR")
 @SequenceGenerator(name = Pwr.SEQ_EGLC_PWR, sequenceName = Pwr.SEQ_EGLC_PWR, allocationSize = 1)
-public class Pwr  implements Serializable {
+public class Pwr extends AbstractPersistable<Long>  {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_PWR = "seq_eglc_pwr";
