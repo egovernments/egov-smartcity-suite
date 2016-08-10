@@ -37,7 +37,8 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.collection.config.properties;
+
+package org.egov.ptis.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -45,70 +46,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(name = "collectionApplicationProperties", 
-value = { "classpath:config/payment-gateway.properties",
-        "classpath:config/egov-erp-${user.name}.properties",
-        "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
-public class CollectionApplicationProperties {
+@PropertySource(value = {"classpath:dashboard/ptis-dashboard-sql.properties"},
+        ignoreResourceNotFound = true)
+public class PTISApplicationProperties {
 
     @Autowired
     private Environment environment;
 
-    public String axisTransactionMessage() {
-        return environment.getProperty("AXIS.transactionmessage");
-    }
-
-    public Integer axisVersion() {
-        return environment.getProperty("axis.version", Integer.class);
-    }
-
-    public String axisCommand() {
-        return environment.getProperty("axis.command");
-    }
-
-    public String axisCommandQuery() {
-        return environment.getProperty("axis.command.query");
-    }
-
-    public String axisAccessCode() {
-        return environment.getProperty("axis.access.code");
-    }
-
-    public String axisMerchant() {
-        return environment.getProperty("axis.merchant");
-    }
-
-    public String axisLocale() {
-        return environment.getProperty("axis.locale");
-    }
-
-    public String axisOperator() {
-        return environment.getProperty("axis.operator.id");
-    }
-
-    public String axisPassword() {
-        return environment.getProperty("axis.password");
-    }
-
-    public String axisReconcileUrl() {
-        return environment.getProperty("axis.reconcile.url");
-    }
-
-    public String axisSecureSecret() {
-        return environment.getProperty("axis.secure.secret");
-    }
-    
-    public String getEmailSubject() {
-        return environment.getProperty("email.subject.message");
-    }
-    
-    public String getEmailBody() {
-        return environment.getProperty("email.body.message");
-    }
-    
     public String getValue(String key) {
         return environment.getProperty(key);
     }
-    
 }

@@ -91,15 +91,6 @@
         <property name="propPerServ" ref="persistenceService"/>
     </bean>
 
-    <bean id="dashboardSQLSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames">
-            <list>
-                <value>classpath:dashboard/ptis-dashboard-sql</value>
-            </list>
-        </property>
-        <property name="cacheSeconds" value="1"/>
-    </bean>
-
     <bean id="demolitionService" class="org.egov.ptis.domain.service.demolition.PropertyDemolitionService" scope="prototype" />
 
     <bean class="org.egov.ptis.client.integration.utils.SpringBeanUtil" lazy-init="false"/>

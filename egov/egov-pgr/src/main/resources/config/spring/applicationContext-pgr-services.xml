@@ -48,15 +48,6 @@
 
 	<context:component-scan base-package="org.egov.pgr" />
 
-	<bean id="dashboardSQLSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="basenames">
-      		<list>
-        		<value>classpath:dashboard/pgr-dashboard-sql</value>        
-      		</list>
-    	</property>
-     	<property name="cacheSeconds" value="1"/> 
-	</bean>
-
 	<bean id="complaintPersistenceService" class="org.egov.infstr.services.PersistenceService">
 		<constructor-arg name="type" value="org.egov.pgr.entity.Complaint"/>
 	</bean>
