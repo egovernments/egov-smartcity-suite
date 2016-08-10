@@ -49,7 +49,9 @@
 	role="form" method="post" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
 	 <input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />  
+		value="${legalCase.lcNumber}" /> 
+	<input type="hidden" id="caseDate" name="caseDate"
+		value="${legalCase.caseDate}" <fmt pattern="dd/MM/yyyy"/>  />	 
 	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
 	</div>

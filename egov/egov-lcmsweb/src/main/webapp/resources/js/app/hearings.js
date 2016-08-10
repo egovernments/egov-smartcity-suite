@@ -38,7 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function() {
-	
+	$('#buttonid').click(function(){
+	if(!validateHearingDate())
+	{
+	return false;
+	}else{
+		document.forms["hearingsform"].submit();
+	}
+	});
 	var assignPosition = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers
@@ -151,6 +158,33 @@ $('#createnewhearings').click(function() {
 	window.location = url;
 });
 
+function validateHearingDate() {
+var hearingdate = $('#hearingDate').val();
+var casedate = $('#caseDate').val();
+var casedate1 = new Date(casedate);
+var casedate=( casedate1.getDate()+ '/' + (casedate1.getMonth() + 1) + '/' + casedate1.getFullYear());
+if (compareDate(hearingdate, casedate) == 1) {
+bootbox.alert("Hearing date should be greater than case date.");
+$(this).val("");
+return false;
+} else {
+return true;
+}
+}
+
+function compareDate(dt1, dt2) {
+	var d1, m1, y1, d2, m2, y2, ret;
+	dt1 = dt1.split('/');
+	dt2 = dt2.split('/');
+	ret = (eval(dt2[2]) > eval(dt1[2])) ? 1
+	: (eval(dt2[2]) < eval(dt1[2])) ? -1
+	: (eval(dt2[1]) > eval(dt1[1])) ? 1
+	: (eval(dt2[1]) < eval(dt1[1])) ? -1	// decimal points
+	: (eval(dt2[0]) > eval(dt1[0])) ? 1
+	: (eval(dt2[0]) < eval(dt1[0])) ? -1
+	: 0;
+	return ret;
+	}
 			
 	
 				
