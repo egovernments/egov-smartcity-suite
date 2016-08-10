@@ -261,10 +261,13 @@ public class AssignmentService {
         return new ArrayList<Assignment>();
 
     }
-    public List<Assignment> getAllPositionsByDepartmentAndPositionNameForGivenRange(final Long departmentId,final String positionName)
-    {
-    	return assignmentRepository.getAllAssignmentForDepartmentAndPositionNameLike(departmentId,new Date(),positionName);
+
+    public List<Assignment> getAllPositionsByDepartmentAndPositionNameForGivenRange(final Long departmentId,
+            final String positionName) {
+        return assignmentRepository.getAllAssignmentForDepartmentAndPositionNameLike(departmentId, new Date(),
+                positionName);
     }
+
     /**
      * Get list of primary assignments for deparment,designation,fromdate and
      * todate
@@ -362,17 +365,21 @@ public class AssignmentService {
                 employee.getAssignments().remove(assignmentRepository.findOne(Long.valueOf(id)));
         return employee;
     }
-    
-    public Set<User> getUsersByDesignations(final String [] designationNames){
+
+    public Set<User> getUsersByDesignations(final String[] designationNames) {
         return assignmentRepository.getUsersByDesignations(designationNames);
     }
-    
-    public Set<Role> getRolesForExpiredAssignmentsByEmpId(final Long empId){
+
+    public Set<Role> getRolesForExpiredAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getRolesForExpiredAssignmentsByEmpId(empId);
     }
-    
-    
-    public Set<Role> getRolesForActiveAssignmentsByEmpId(final Long empId){
+
+    public Set<Role> getRolesForActiveAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getRolesForActiveAssignmentsByEmpId(empId);
+    }
+
+    public List<Assignment> findByDepartmentDesignationsAndGivenDate(final Long deptId, final List<Long> desigIds,
+            final Date givenDate) {
+        return assignmentRepository.findByDepartmentDesignationsAndGivenDate(deptId, desigIds, givenDate);
     }
 }
