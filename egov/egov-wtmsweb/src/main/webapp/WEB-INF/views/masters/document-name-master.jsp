@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <form:form method="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="documentNames" id="documentNamesform"
 	cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -88,11 +89,11 @@
 	</div>
 </div>
 </form:form>
-<link rel="stylesheet" href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+                <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	            type="text/javascript"></script>
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+                <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
 	            type="text/javascript"></script>
-                <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+                <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	            type="text/javascript"></script>
-	            <script src="<c:url value='/resources/js/app/document-name-master.js?rnd=${app_release_no}'/>"></script>
+	            <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/document-name-master.js?rnd=${app_release_no}'/>"></script>

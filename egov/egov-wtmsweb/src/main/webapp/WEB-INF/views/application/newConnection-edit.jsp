@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <form:form role="form" method="post" modelAttribute="waterConnectionDetails" 
 id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
@@ -119,6 +120,6 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 	
 </form:form>
-<script src="<c:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
