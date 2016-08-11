@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -75,21 +76,26 @@ public class Contempt extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "JUDGMENTIMPL")
+    @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
 
-    @NotNull
+  
     @Length(max = 50)
+    @NotNull
+    @Column(name = "canumber")
     private String caNumber;
 
-    @NotNull
+   
     @Temporal(TemporalType.DATE)
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
+    @Column(name = "receivingdate")
     private Date receivingDate;
 
+    @Column(name = "iscommapprrequired")
     private Boolean iscommapprRequired = false;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "commappdate")
     private Date commappDate;
 
     @Override

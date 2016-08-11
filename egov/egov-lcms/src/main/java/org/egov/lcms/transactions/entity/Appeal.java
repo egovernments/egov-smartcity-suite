@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -79,20 +80,24 @@ public class Appeal extends AbstractAuditable {
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "JUDGMENTIMPL")
+    @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
 
-    @NotNull
+  
     @Length(max = 50)
+    @NotNull
+    @Column(name = "srnumber")
     private String srNumber;
 
-    @NotNull
+   
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
     @Temporal(TemporalType.DATE)
+    @Column(name = "appealfiledon")
     private Date appealFiledOn;
 
-    @NotNull
+   
     @Length(max = 100)
+    @Column(name = "appealfiledby")
     private String appealFiledBy;
 
     @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

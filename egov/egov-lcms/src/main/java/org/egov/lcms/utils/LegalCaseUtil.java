@@ -66,18 +66,18 @@ public class LegalCaseUtil {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    
+
     @Autowired
     private LegalCaseRepository legalCaseRepository;
 
     @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
-    
+
     @Autowired
-	private PositionMasterService positionMasterService;
-    
-	@Autowired
-	private DepartmentService departmentService;
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @Autowired
     private CityService cityService;
@@ -86,7 +86,8 @@ public class LegalCaseUtil {
         final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
         return funcObj;
     }
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
@@ -95,27 +96,25 @@ public class LegalCaseUtil {
     public String getCityCode() {
         return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
     }
-    
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
-    public Position getPositionByName(final String name)
-    {
-    	return positionMasterService.getPositionByName(name);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Position getPositionByName(final String name) {
+        return positionMasterService.getPositionByName(name);
     }
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
-    public Department getDepartmentByName(final String name)
-    {
-    	return departmentService.getDepartmentByName(name);
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Department getDepartmentByName(final String name) {
+        return departmentService.getDepartmentByName(name);
     }
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
-    public List<BipartisanDetails> getBipartitionList(LegalCase  legalcase)
-    {
-    	return  legalCaseRepository.getBipartitionDetList(legalcase.getId());
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<BipartisanDetails> getBipartitionList(final LegalCase legalcase) {
+        return legalCaseRepository.getBipartitionDetList(legalcase.getId());
     }
-   
-    @Transactional(propagation=Propagation.REQUIRES_NEW,readOnly=true)
-    public  List<LegalCaseDocuments> getLegalCaseDocumentList(LegalCase  legalcase)
-    {
-    	final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
-    	return legalDoc;
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
+        final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
+        return legalDoc;
     }
 }

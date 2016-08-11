@@ -308,4 +308,11 @@ public class LegalCaseService {
 		else
 			return null;
 	}
+
+
+
+@Transactional
+public LegalCase save(LegalCase legalcase){
+    return legalCaseRepository.save(legalcase);  
+}
 }

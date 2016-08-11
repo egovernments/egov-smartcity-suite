@@ -39,13 +39,19 @@
  */
 package org.egov.lcms.transactions.repository;
 
-import org.egov.lcms.transactions.entity.Judgment;
+import java.util.List;
+
+import org.egov.lcms.transactions.entity.AppealDocuments;
+import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface JudgmentRepository extends JpaRepository<Judgment, Long> {
+public interface JudgmentImplRepository extends JpaRepository<JudgmentImpl, Long> {
 
-    Judgment findByLegalCase_lcNumber(final String lcNumber);
+   /* @Query("select jd from AppealDocuments jd where jd.appeal.id=:appealId order by jd.id desc")
+    List<AppealDocuments> getAppealDocumentList(@Param("appealId") Long appealId);*/
 
 }

@@ -42,28 +42,27 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<form:form  method="post" action="" modelAttribute="judgment"
-	id="judgmentform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" method="post" modelAttribute="judgmentImpl"
+	id="judgmentImplform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	
 	 <jsp:include page="../transactions/viewSummarizedCase.jsp"/>  
-	<%@ include file="judgment-form.jsp"%>
+	<%@ include file="judgmentimpl-form.jsp"%>
 	<input type="hidden" name="judgment" value="${judgment.id}" />
 			<input type="hidden" name="legalCase" value="${legalCase.id}" />
-			<jsp:include page="judgmentdocuments-view.jsp"></jsp:include>
-
+			<jsp:include page="appealdocuments-view.jsp"></jsp:include>
+			
+	<input type="hidden" name="judgmentImpl" value="${judgmentImpl.id}" />
 	</div>
 	</div>
 	</div>
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" class='btn btn-primary' id="buttonSubmit">
+			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.update' />
 			</button>
-			<button type="button" class="btn btn-default" id="btnclose">
-				<spring:message code="lbl.close" />
-			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 </form:form>
@@ -72,6 +71,6 @@
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/judgmentHelper.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/js/app/judgmentImpl.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
