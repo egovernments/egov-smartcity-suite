@@ -93,7 +93,7 @@ public class ApplicationIndexService {
 
     public ApplicationIndex findByApplicationNumber(final String applicationNumber) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        return applicationIndexRepository.findByApplicationNumberAndUlbName(applicationNumber, cityWebsite.getName());
+        return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber, cityWebsite.getName());
     }
 
 }
