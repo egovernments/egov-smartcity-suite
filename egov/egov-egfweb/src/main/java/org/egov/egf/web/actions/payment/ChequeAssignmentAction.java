@@ -1080,6 +1080,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         
         for (final AppConfigValues appConfigVal : printAvailConfig)
             chequePrintAvailableAt = appConfigVal.getValue();
+        if(chequePrintAvailableAt==null)
+            chequePrintAvailableAt="";
         Bankaccount bankAccount = new Bankaccount();
         if(bankaccount!=null && bankaccount.equals("") ){
         bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
@@ -2152,7 +2154,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
         for (final AppConfigValues appConfigVal : enablePrintConfig)
             chequePrintEnabled = appConfigVal.getValue();
-        
+        if(chequePrintEnabled==null)
+            return false;
+            
         if (chequePrintEnabled.equalsIgnoreCase("Y"))
             return true;
         else

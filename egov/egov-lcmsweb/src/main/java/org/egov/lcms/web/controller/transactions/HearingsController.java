@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -83,7 +85,7 @@ public class HearingsController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final Hearings hearings, final BindingResult errors,
+    public String create(@ModelAttribute final Hearings hearings, final BindingResult errors,
             @RequestParam("lcNumber") final String lcNumber, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
@@ -98,6 +100,20 @@ public class HearingsController {
         model.addAttribute("message", "Hearing created successfully.");
         model.addAttribute("mode", "create");
         return "hearings-success";
+    }
+
+    @RequestMapping(value = "/list/", method = RequestMethod.GET)
+    public String getHearingsList(final Model model, @RequestParam("lcNumber") final String lcNumber,
+            @Valid @ModelAttribute final Hearings hearings, final HttpServletRequest request) {
+        final LegalCase legalCase = getLegalCase(lcNumber, request);
+        final List<Hearings> hearingsList = hearingsService.findBYLcNumber(lcNumber);
+        model.addAttribute("legalCase", legalCase);
+        model.addAttribute("lcNumber", legalCase.getLcNumber());
+        model.addAttribute("hearingsId", legalCase.getHearings());
+        model.addAttribute("hearings", hearings);
+        model.addAttribute("hearingsList", hearingsList);
+        return "hearings-list";
+
     }
 
 }

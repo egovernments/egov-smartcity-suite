@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -103,6 +104,6 @@
 	</div>
 </s:push>
 </s:form>
-<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

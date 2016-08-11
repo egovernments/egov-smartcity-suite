@@ -45,4 +45,5 @@
         <!-- Prevents caching at the Proxy Server -->
         <meta http-equiv="Expires" content="0"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<link rel="icon" href="<c:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+        <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">

@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
@@ -98,6 +99,8 @@ jQuery(document).ready(function() {
 			  validateManualReceiptDate(this);
 		  }
 	  }).data('datepicker');
+
+     
  });
 
 jQuery(window).load(function () {
@@ -740,8 +743,7 @@ function validate()
 	<s:if test="%{isBillSourcemisc()}"> 
 		if(validateMiscReceipt){
 			if(!validateMiscReceipt()){
-				validation = false;
-				document.getElementById("receipt_error_area").style.display="block";
+				return false;
 			}
 		}
 	</s:if>
@@ -984,10 +986,9 @@ function validate()
 		return false;
 	}
 	else {
+		document.getElementById("receipt_error_area").style.display="block";
 		document.collDetails.action="receipt-save.action";
-  		
 		return validation;
-  		
 	}
 }//end of function 'validate'
 
@@ -1061,7 +1062,7 @@ function verifyChequeDetails(table,len1)
     			checkForCurrentDate(instrDate);
 	    		}
 	    	}
-	    	} 
+	    	}
 	    	checkForCurrentDate(instrDate);
 	    }
 	    </s:if>
@@ -1076,6 +1077,14 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
+	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	 	    	var instDate = getControlInBranch(table.rows[j],'instrumentDate').value; 
+	 	 	    	if(process(instDate) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.receiptdate.lessthan.instrumentdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
 	    		     checkForCurrentDate(instrDate);
 	    		   } 	               
 	    }
@@ -2247,7 +2256,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>

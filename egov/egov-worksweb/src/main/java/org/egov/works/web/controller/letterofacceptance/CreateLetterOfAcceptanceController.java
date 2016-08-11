@@ -156,8 +156,9 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
 
     private void setDropDownValues(final Model model, final AbstractEstimate abstractEstimate) {
         model.addAttribute("engineerInchargeList",
-                letterOfAcceptanceService.getEngineerInchargeList(abstractEstimate.getExecutingDepartment().getId(),
-                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
+                letterOfAcceptanceService.getEngineerInchargeList(
+                        abstractEstimate.getExecutingDepartment().getId(),
+                        letterOfAcceptanceService.getEngineerInchargeDesignationIds()));
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)

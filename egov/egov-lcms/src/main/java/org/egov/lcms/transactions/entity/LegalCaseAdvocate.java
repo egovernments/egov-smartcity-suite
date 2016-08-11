@@ -45,7 +45,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -84,10 +83,12 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_EGLC_LEGALCASE_ADVOCATE, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @ManyToOne
     @NotNull
     @JoinColumn(name = "legalcase", nullable = false)
     private LegalCase legalCase;
+    
     @ManyToOne
     @JoinColumn(name = "advocatemaster")
     private AdvocateMaster advocateMaster;
@@ -95,42 +96,55 @@ public class LegalCaseAdvocate extends AbstractPersistable<Long> {
     @DateFormat(message = "invalid.fieldvalue.assignedOnDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.assignedtodate.date")
     private Date assignedtodate;
+    
     @DateFormat(message = "invalid.fieldvalue.assignedOnForSeniorAdv")
-    // @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT,
-    // message = "invalid.assignedtodateForsenior.date")
-    @Column(name = "seniorassignedtodate")
+     @Column(name = "seniorassignedtodate")
     private Date assignedtodateForsenior;
+    
     @DateFormat(message = "invalid.fieldvalue.vakalaatDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.vakalatdate.date")
     private Date vakalatdate;
+    
     private Boolean isActive;
+    
     @Length(max = 32, message = "ordernumber.length")
     @OptionalPattern(regex = LcmsConstants.orderNumberFormat, message = "orderNumber.format")
     private String ordernumber;
+    
     @DateFormat(message = "invalid.fieldvalue.orderDate")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.orderdate.date")
     private Date orderdate;
+    
     @ManyToOne
     @JoinColumn(name = "senioradvocate")
     private AdvocateMaster eglcSeniorAdvocateMaster;
+    
     @Length(max = 32, message = "ordernumberJunior.length")
     @JoinColumn(name = "ordernumberjunior")
     private String ordernumberJunior;
+    
     @DateFormat(message = "invalid.fieldvalue.juniororderDate")
     @Column(name = "orderdatejunior")
     private Date orderdateJunior;
+    
     @ManyToOne
     @JoinColumn(name = "JUNIORSTAGE")
     private CaseStage juniorStage;
+    
     @ManyToOne
     @JoinColumn(name = "SENIORSTAGE")
     private CaseStage seniorStage;
+    
     @Length(max = 256, message = "reassignmentJunior.length")
     private String reassignmentreasonjunior;
+    
     @Length(max = 256, message = "reassignmentSenior.length")
     private String reassignmentreasonsenior;
+    
     private Boolean changeAdvocate = Boolean.FALSE;
+    
     private Boolean changeSeniorAdvocate = Boolean.FALSE;
+    
     @Transient
     private Boolean isSeniorAdvocate=Boolean.FALSE;
     

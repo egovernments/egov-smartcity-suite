@@ -87,11 +87,12 @@ public class JudgmentImpl extends AbstractAuditable {
     @JoinColumn(name = "judgment", nullable = false)
     private Judgment judgment;
 
-    @NotNull
+   
     @Enumerated(EnumType.STRING)
     @Column(name = "iscompiled")
     private JudgmentImplIsComplied judgmentImplIsComplied;
 
+  
     @Temporal(TemporalType.DATE)
     @Column(name = "dateofcompliance")
     @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.compliance.date")
@@ -105,8 +106,8 @@ public class JudgmentImpl extends AbstractAuditable {
     @Column(name = "reason")
     private ImplementationFailure implementationFailure;
 
-   @Length(max = 128)
-   @Column(name = "implementationdetails")
+    @Length(max = 128)
+    @Column(name = "implementationdetails")
     private String details;
 
     @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

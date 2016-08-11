@@ -41,6 +41,7 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
         model.addAttribute("mode", "view");
         model.addAttribute("legalCaseDocList",
                 legalCaseService.getLegalCaseDocList(legalCase));
+		model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
         return "legalcasedetails-view";
     }
 

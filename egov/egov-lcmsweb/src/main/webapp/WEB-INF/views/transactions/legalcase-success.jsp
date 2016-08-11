@@ -193,14 +193,15 @@
 				id="petitionDetails">
 				<thead>
 					<tr>
-						<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+						<th class="text-center"><spring:message code="lbl.slno" />
+						<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 						<th class="text-center"><spring:message code="lbl.name" /><span
 							class="mandatory"></span></th>
 						<th class="text-center"><spring:message
 								code="lbl.discription" /></th>
 						<th class="text-center"><spring:message
 								code="lbl.contactnumber" /></th>
-						<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 					</tr>
 				</thead>
 				<tbody>
@@ -208,16 +209,31 @@
 					<c:forEach var="bipartisanPetitionDetailsList" items="${legalCase.getPetitioners()}"
 						varStatus="status">
 						<tr>
-							<td>
+						<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
+							<%-- <td>
 								<form:input type="hidden"
 									id="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment"
 									path="bipartisanPetitionDetailsList[${status.index}].isRespondentGovernment" />
-
-									<input type="text"
+									<c:choose>
+							<c:when test="${bipartisanPetitionDetailsList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanPetitionDetailsList.isRespondentGovernment}" /> 
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox"
 										id="table_isRespondentGovernment${status.index}"
 										class="form-control" readonly="readonly" style="text-align: center"
 										value="${bipartisanPetitionDetailsList.isRespondentGovernment}" />
-								</td>
+								</c:otherwise>
+								</c:choose>
+												</td> --%>
 								<td>
 								 <form:input type="hidden"
 											id="bipartisanPetitionDetailsList[${status.index}].name"
@@ -246,7 +262,7 @@
 								value="${bipartisanPetitionDetailsList.contactNumber}" /> 
 								</td>
 								
-								<td>
+								<%-- <td>
 								<form:input
 									type="hidden"
 									id="bipartisanPetitionDetailsList[${status.index}].governmentDepartment"
@@ -256,7 +272,7 @@
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanPetitionDetailsList.governmentDepartment.name}" /></td>
-
+ --%>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -270,29 +286,46 @@
 <table class="table table-striped table-bordered" id="respodantDetails">
 	<thead>
 		<tr>
-			<th class="text-center"><spring:message code="lbl.IsGovtDept" /></th>
+		<th class="text-center"><spring:message code="lbl.slno" />
+			<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-			<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th>
+			<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
 		</tr>
 	</thead>
 				<tbody>
 				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
 						varStatus="status">
 						<tr>
-							<td>
+						<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td>
+							<%-- <td>
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
 									path="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment" />
-
-								<input type="text"
+									<c:choose>
+							<c:when test="${bipartisanDetailsBeanList.isRespondentGovernment}">
+							<input type="checkbox" checked="true"
 								id="table_isRespondentGovernment${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
-								</td>
+								</c:when>
+								<c:otherwise>
+								<input type="checkbox" 
+								id="table_isRespondentGovernment${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center"
+								value="${bipartisanDetailsBeanList.isRespondentGovernment}" /> 
+								
+								</c:otherwise>
+								</c:choose>
+								</td> --%>
 								
 								<td>
 								<form:input
@@ -325,7 +358,7 @@
 								value="${bipartisanDetailsBeanList.contactNumber}" /> 
 								</td>
 								
-								<td>
+								<%-- <td>
 								<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
@@ -334,7 +367,7 @@
 								class="form-control" readonly="readonly"
 								style="text-align: center"
 								value="${bipartisanDetailsBeanList.governmentDepartment.name}" /></td>
-
+ --%>
 						</tr>
 					</c:forEach>
 				</tbody>

@@ -43,27 +43,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
+import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
 import org.egov.lcms.transactions.entity.LegalCaseDepartment;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
-import org.egov.lcms.transactions.repository.BipartisanDetailsRepository;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +83,7 @@ public class LegalCaseService {
 	protected FileStoreService fileStoreService;
 
 	@Autowired
-	private DepartmentService departmentService;
-
-	@Autowired
-	private PositionMasterService positionMasterService;
+	private PwrDocumentsRepository pwrDocumentsRepository;
 
 	@Autowired
 	private AdvocateMasterService advocateMasterService;
@@ -94,8 +91,6 @@ public class LegalCaseService {
 	@Autowired
 	private LegalCaseUtil legalCaseUtil;
 
-	@Autowired
-	private BipartisanDetailsRepository bipartisanDetailsRepository;
 
 	@Autowired
 	public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -116,13 +111,13 @@ public class LegalCaseService {
 	}
 
 	@Transactional
-	public LegalCase persist(final LegalCase legalcase) {
+	public LegalCase persist(LegalCase legalcase) {
 		legalcase.setCaseNumber(
 				legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
 		legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
 				LcmsConstants.LEGALCASE_STATUS_CREATED));
-		final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
-		prepareChildEntities(legalcase);
+		final List<LegalCaseDocuments> legalDoc = legalCaseUtil.getLegalCaseDocumentList(legalcase);
+		legalcase = prepareChildEntities(legalcase);
 		processAndStoreApplicationDocuments(legalcase, legalDoc);
 		return legalCaseRepository.save(legalcase);
 	}
@@ -130,11 +125,7 @@ public class LegalCaseService {
 	@Transactional
 	public LegalCase update(final LegalCase legalcase) {
 		updateLegalCaseDeptAndPwr(legalcase, legalcase.getEglcPwrs(), legalcase.getLegalCaseDepartment());
-		List<PwrDocuments> legalDoc = null;
-		if (!legalcase.getEglcPwrs().isEmpty()) {
-			legalDoc = legalCaseRepository.getPwrDocumentList(legalcase.getEglcPwrs().get(0).getId());
-		}
-		processAndStorePwrDocuments(legalcase, legalDoc);
+		processAndStorePwrDocuments(legalcase);
 		return legalCaseRepository.save(legalcase);
 	}
 
@@ -143,6 +134,7 @@ public class LegalCaseService {
 			List<LegalCaseDepartment> legalDept) {
 		final List<LegalCaseDepartment> legalcaseDetails = new ArrayList<LegalCaseDepartment>();
 		final List<Pwr> pwrListtemp = new ArrayList<Pwr>();
+		final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>();
 		for (final Pwr legalpwr : pwrList) {
 			legalpwr.setLegalCase(legalcase);
 			legalpwr.setCaFilingdate(new Date());
@@ -150,10 +142,16 @@ public class LegalCaseService {
 		}
 		legalcase.getEglcPwrs().clear();
 		legalcase.setEglcPwrs(pwrListtemp);
+		for (final CounterAffidavit legalpwr : legalcase.getEglcCounterAffidavit()) {
+			legalpwr.setLegalCase(legalcase);
+			caListtemp.add(legalpwr);
+		}
+		legalcase.getEglcCounterAffidavit().clear();
+		legalcase.setEglcCounterAffidavit(caListtemp);
 		for (final LegalCaseDepartment legaldeptObj : legalDept) {
 			legaldeptObj.setLegalCase(legalcase);
-			legaldeptObj.setPosition(positionMasterService.getPositionByName(legaldeptObj.getPosition().getName()));
-			legaldeptObj.setDepartment(departmentService.getDepartmentByName(legaldeptObj.getDepartment().getName()));
+			legaldeptObj.setPosition(legalCaseUtil.getPositionByName(legaldeptObj.getPosition().getName()));
+			legaldeptObj.setDepartment(legalCaseUtil.getDepartmentByName(legaldeptObj.getDepartment().getName()));
 			legalcaseDetails.add(legaldeptObj);
 		}
 		legalcase.getLegalCaseDepartment().clear();
@@ -170,18 +168,20 @@ public class LegalCaseService {
 		return legalDOc;
 	}
 
-	@Transactional
-	public void prepareChildEntities(final LegalCase legalcase) {
-		final List<BipartisanDetails> partitionDetails = new ArrayList<BipartisanDetails>();
-		List<BipartisanDetails> biparttionerList = legalCaseRepository.getBipartitionDetList(legalcase.getId());
-		legalcase.getBipartisanDetails().addAll(biparttionerList);
+	public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
+
+		List<PwrDocuments> legalPwrDOc = null;
+		final Set<PwrDocuments> legalDOcSet = new HashSet<PwrDocuments>();
+		for (final PwrDocuments legalDoc1 : legalCase.getEglcPwrs().get(0).getPwrDocuments())
+			legalDOcSet.add(legalDoc1);
+		legalPwrDOc = new ArrayList<PwrDocuments>(legalDOcSet);
+		return legalPwrDOc;
+	}
+
+	public LegalCase prepareChildEntities(final LegalCase legalcase) {
+		final List<Pwr> pwrListtemp = new ArrayList<Pwr>();
 		legalcase.getBipartisanDetails().clear();
-		// legalCaseRepository.save(legalcase);
-		// bipartisanDetailsRepository.delete(legalcase.getBipartisanDetails());
-		for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetails()) {
-			bipartisanDetailsRepository.delete(bipartObjtemp);
-		}
-		if (legalcase != null && legalcase.getId() != null) {
+		if (legalcase != null) {
 			for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList())
 				if (bipartObj.getName() != null && !"".equals(bipartObj.getName())) {
 					bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
@@ -190,24 +190,13 @@ public class LegalCaseService {
 						bipartObj.setIsRespondentGovernment(Boolean.FALSE);
 					}
 					bipartObj.setLegalCase(legalcase);
-					partitionDetails.add(bipartObj);
-				}
-		} else {
-			for (final BipartisanDetails bipartObj : legalcase.getBipartisanPetitionDetailsList())
-				if (bipartObj.getName() != null && bipartObj.getIsRepondent().equals(Boolean.FALSE)
-						&& !"".equals(bipartObj.getName())) {
-					bipartObj.setSerialNumber(bipartObj.getSerialNumber() != null ? bipartObj.getSerialNumber() : 111l);
-					bipartObj.setIsRepondent(Boolean.FALSE);
-					if (bipartObj.getIsRespondentGovernment() == null) {
-						bipartObj.setIsRespondentGovernment(Boolean.FALSE);
-					}
-					bipartObj.setLegalCase(legalcase);
-					partitionDetails.add(bipartObj);
+					legalcase.getBipartisanDetails().add(bipartObj);
 				}
 		}
 		for (final BipartisanDetails bipartObjtemp : legalcase.getBipartisanDetailsBeanList())
 			if ((bipartObjtemp.getId() == null || bipartObjtemp.getId() != null)
 					&& (bipartObjtemp.getName() != null && !"".equals(bipartObjtemp.getName()))) {
+
 				bipartObjtemp.setSerialNumber(
 						bipartObjtemp.getSerialNumber() != null ? bipartObjtemp.getSerialNumber() : 111l);
 				bipartObjtemp.setLegalCase(legalcase);
@@ -215,11 +204,21 @@ public class LegalCaseService {
 					bipartObjtemp.setIsRespondentGovernment(Boolean.FALSE);
 				}
 				bipartObjtemp.setIsRepondent(Boolean.TRUE);
-				partitionDetails.add(bipartObjtemp);
-
+				legalcase.getBipartisanDetails().add(bipartObjtemp);
 			}
+		Set<BipartisanDetails> uniqueSet = new LinkedHashSet<BipartisanDetails>(legalcase.getBipartisanDetails());
 		legalcase.getBipartisanDetails().clear();
-		legalcase.getBipartisanDetails().addAll(partitionDetails);
+		legalcase.getBipartisanDetails().addAll(uniqueSet);
+		if (!legalcase.getEglcPwrs().isEmpty()) {
+			for (final Pwr legalpwr : legalcase.getEglcPwrs()) {
+				legalpwr.setLegalCase(legalcase);
+				legalpwr.setCaFilingdate(new Date());
+				pwrListtemp.add(legalpwr);
+			}
+			legalcase.getEglcPwrs().clear();
+			legalcase.setEglcPwrs(pwrListtemp);
+		}
+		return legalcase;
 	}
 
 	@Transactional
@@ -259,7 +258,6 @@ public class LegalCaseService {
 
 	}
 
-	@Transactional
 	public void processAndStoreApplicationDocuments(final LegalCase legalcase,
 			final List<LegalCaseDocuments> legalDoc) {
 		if (legalcase.getId() == null) {
@@ -283,25 +281,18 @@ public class LegalCaseService {
 	}
 
 	@Transactional
-	public void processAndStorePwrDocuments(final LegalCase legalcase, final List<PwrDocuments> pwrDoc) {
-		if (legalcase.getId() == null) {
-			if (!legalcase.getEglcPwrs().get(0).getPwrDocuments().isEmpty())
-				for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments()) {
+	public void processAndStorePwrDocuments(final LegalCase legalcase) {
+		List<PwrDocuments> pwrDocList = new ArrayList<PwrDocuments>();
+		if (!legalcase.getEglcPwrs().get(0).getPwrDocuments().isEmpty())
+			for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments()) {
+				if (pwr != null && pwr.getId() == null) {
 					pwr.setPwr(legalcase.getEglcPwrs().get(0));
 					pwr.setDocumentName("Pwr");
 					pwr.setSupportDocs(addToFileStore(pwr.getFiles()));
+					pwrDocList.add(pwr);
+					pwrDocumentsRepository.save(pwr);
 				}
-		} else {
-			for (final PwrDocuments pwr : legalcase.getEglcPwrs().get(0).getPwrDocuments()) {
-				pwr.setPwr(legalcase.getEglcPwrs().get(0));
-				pwr.setDocumentName("Pwr");
-				pwr.getSupportDocs().addAll(addToFileStore(pwr.getFiles()));
-				legalcase.getEglcPwrs().get(0).getPwrDocuments().clear();
-				legalcase.getEglcPwrs().get(0).getPwrDocuments().add(pwr);
 			}
-			legalcase.getEglcPwrs().get(0).getPwrDocuments().addAll(pwrDoc);
-
-		}
 	}
 
 	protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
@@ -317,4 +308,11 @@ public class LegalCaseService {
 		else
 			return null;
 	}
+
+
+
+@Transactional
+public LegalCase save(LegalCase legalcase){
+    return legalCaseRepository.save(legalcase);  
+}
 }

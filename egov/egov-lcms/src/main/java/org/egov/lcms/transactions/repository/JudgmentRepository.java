@@ -46,4 +46,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JudgmentRepository extends JpaRepository<Judgment, Long> {
 
+    Judgment findByLegalCase_lcNumber(final String lcNumber);
+
 }

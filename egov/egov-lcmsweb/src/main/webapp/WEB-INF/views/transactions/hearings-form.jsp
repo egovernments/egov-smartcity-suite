@@ -41,15 +41,22 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
+			<c:if test="${mode == 'create'}">
 				<div class="panel-heading">
 					<div class="panel-title">Hearing Details</div>
 				</div>
+				</c:if>
+				<c:if test="${mode == 'edit'}">
+				<div class="panel-heading">
+					<div class="panel-title">Edit Hearing Details</div>
+				</div>
+				</c:if>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-left"><spring:message
 								code="lbl.hearingdate" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="hearingDate" class="form-control datepicker"
+							<form:input path="hearingDate" class="form-control datepicker" id="hearingDate"
 								data-date-end-date="" data-inputmask="'mask': 'd/m/y'"
 								required="required" />
 							<form:errors path="hearingDate" cssClass="error-msg" />

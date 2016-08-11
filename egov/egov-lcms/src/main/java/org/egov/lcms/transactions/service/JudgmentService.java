@@ -134,4 +134,8 @@ public class JudgmentService {
             return null;
     }
 
+    public Judgment findByLcNumber(final String lcNumber) {
+        return judgmentRepository.findByLegalCase_lcNumber(lcNumber);
+    }
+
 }

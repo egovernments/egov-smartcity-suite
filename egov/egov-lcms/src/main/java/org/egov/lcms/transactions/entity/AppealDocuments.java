@@ -62,7 +62,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "eglc_appeal_document")
+@Table(name = "eglc_appeal_documents")
 @SequenceGenerator(name = AppealDocuments.SEQ_APPEALDOCUMENTS, sequenceName = AppealDocuments.SEQ_APPEALDOCUMENTS, allocationSize = 1)
 public class AppealDocuments extends AbstractPersistable<Long> {
 
@@ -75,7 +75,7 @@ public class AppealDocuments extends AbstractPersistable<Long> {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "appeal", nullable = false)
+    @JoinColumn(name = "appeal")
     private Appeal appeal;
 
     @NotNull

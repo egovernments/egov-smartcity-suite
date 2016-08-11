@@ -609,8 +609,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                     : BigDecimal.ZERO);
             floorInfo.setYearlyRentalValue(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getAlv()
                     : BigDecimal.ZERO);
-            floorInfo.setTaxPayableForCurrYear(floor.getFloorDmdCalc().getTotalTaxPayble());
-            floorInfo.setRate(floor.getFloorDmdCalc().getCategoryAmt());
+            floorInfo.setTaxPayableForCurrYear(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getTotalTaxPayble()
+            		: BigDecimal.ZERO);
+            floorInfo.setRate(floor.getFloorDmdCalc() != null ? floor.getFloorDmdCalc().getCategoryAmt()
+            		: BigDecimal.ZERO);
             floorInfo.setBldngFloorNo(FLOOR_MAP.get(floor.getFloorNo()));
             floorDetailsList.add(floorInfo);
         }
