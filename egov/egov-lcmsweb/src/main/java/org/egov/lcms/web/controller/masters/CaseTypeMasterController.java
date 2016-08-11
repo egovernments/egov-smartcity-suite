@@ -78,7 +78,7 @@ public class CaseTypeMasterController {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newForm(final Model model) {
 		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", new CaseTypeMaster());
+		model.addAttribute("caseTypeMaster", new CaseTypeMaster());
 		return CASETYPEMASTER_NEW;
 	}
 
