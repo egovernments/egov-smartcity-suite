@@ -50,6 +50,7 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
@@ -233,5 +234,72 @@ public class WorkOrderEstimateService {
         return workOrderEstimateRepository
                 .findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeNotLike(estimateNumber,
                         WorksConstants.CANCELLED_STATUS);
+    }
+
+    public List<String> findWorkOrderForRE(final String workOrderNo) {
+        final List<String> workOrderNumbers = workOrderEstimateRepository.findWorkOrderNumbersToCreateRE(
+                "%" + workOrderNo + "%", WorksConstants.APPROVED,
+                ContractorBillRegister.BillStatus.CANCELLED.toString(), BillTypes.Final_Bill.toString());
+        return workOrderNumbers;
+    }
+
+    public List<WorkOrderEstimate> searchWorkOrderToCreateRE(
+            final SearchRequestLetterOfAcceptanceForRE searchRequestLetterOfAcceptanceForRE) {
+
+        List<WorkOrderEstimate> workOrderEstimateList = new ArrayList<WorkOrderEstimate>();
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append(
+                " select distinct woe from WorkOrderEstimate woe where woe.workOrder.egwStatus.code = :woStatus and  not exists (select distinct(cbr.workOrderEstimate) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) !=:billStatus and cbr.billtype =:billType and cbr.workOrderEstimate.id is not null) ");
+        queryStr.append(
+                " and exists (select workOrderEstimate  from WorkOrderActivity where woe.id =workOrderEstimate.id ) ");
+        if (searchRequestLetterOfAcceptanceForRE != null)
+            getSubQueryForRE(searchRequestLetterOfAcceptanceForRE, queryStr);
+        final Query query = setParameterForLetterOfAcceptanceToCreateRE(searchRequestLetterOfAcceptanceForRE, queryStr);
+        workOrderEstimateList = query.getResultList();
+        return workOrderEstimateList;
+    }
+
+    private Query setParameterForLetterOfAcceptanceToCreateRE(
+            final SearchRequestLetterOfAcceptanceForRE searchRequestLetterOfAcceptanceForRE, final StringBuilder queryStr) {
+        final Query qry = entityManager.createQuery(queryStr.toString());
+
+        qry.setParameter("billStatus", ContractorBillRegister.BillStatus.CANCELLED.toString());
+        qry.setParameter("billType", BillTypes.Final_Bill.toString());
+        if (searchRequestLetterOfAcceptanceForRE != null) {
+            if (searchRequestLetterOfAcceptanceForRE.getWorkOrderNumber() != null)
+                qry.setParameter("workOrderNumber", searchRequestLetterOfAcceptanceForRE.getWorkOrderNumber());
+            if (searchRequestLetterOfAcceptanceForRE.getFromDate() != null)
+                qry.setParameter("fromWorkOrderDate", searchRequestLetterOfAcceptanceForRE.getFromDate());
+            if (searchRequestLetterOfAcceptanceForRE.getToDate() != null)
+                qry.setParameter("toWorkOrderDate", searchRequestLetterOfAcceptanceForRE.getToDate());
+            if (searchRequestLetterOfAcceptanceForRE.getContractor() != null)
+                qry.setParameter("contractorName", searchRequestLetterOfAcceptanceForRE.getContractor().toUpperCase());
+            if (searchRequestLetterOfAcceptanceForRE.getEstimateNumber() != null)
+                qry.setParameter("estimateNumber",
+                        "%" + searchRequestLetterOfAcceptanceForRE.getEstimateNumber().toUpperCase() + "%");
+            if (searchRequestLetterOfAcceptanceForRE.getEgwStatus() != null)
+                qry.setParameter("woStatus", WorksConstants.APPROVED);
+            if (searchRequestLetterOfAcceptanceForRE.getWorkAssignedTo() != null)
+                qry.setParameter("workAssignedTo", searchRequestLetterOfAcceptanceForRE.getWorkAssignedTo());
+        }
+        return qry;
+    }
+
+    private void getSubQueryForRE(final SearchRequestLetterOfAcceptanceForRE searchRequestLetterOfAcceptanceForRE,
+            final StringBuilder queryStr) {
+        if (searchRequestLetterOfAcceptanceForRE.getWorkOrderNumber() != null)
+            queryStr.append(" and woe.workOrder.workOrderNumber =:workOrderNumber ");
+        if (searchRequestLetterOfAcceptanceForRE.getFromDate() != null)
+            queryStr.append(" and woe.workOrder.workOrderDate >=:fromWorkOrderDate ");
+        if (searchRequestLetterOfAcceptanceForRE.getToDate() != null)
+            queryStr.append(" and woe.workOrder.workOrderDate <=:toWorkOrderDate ");
+        if (searchRequestLetterOfAcceptanceForRE.getContractor() != null)
+            queryStr.append(
+                    " and upper(woe.workOrder.contractor.name) =:contractorName ");
+        if (searchRequestLetterOfAcceptanceForRE.getEstimateNumber() != null)
+            queryStr.append(" and upper(woe.estimate.estimateNumber) like :estimateNumber ");
+        if (searchRequestLetterOfAcceptanceForRE.getWorkAssignedTo() != null)
+            queryStr.append(" and woe.workOrder.engineerIncharge.id =:workAssignedTo ");
+
     }
 }

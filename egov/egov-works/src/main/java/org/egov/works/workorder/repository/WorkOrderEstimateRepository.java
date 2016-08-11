@@ -87,4 +87,8 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
     List<WorkOrderEstimate> findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeNotLike(
             final String estimateNumber, final String statusCode);
 
+    @Query("select distinct(woe.workOrder.workOrderNumber) from WorkOrderEstimate as woe where upper(woe.workOrder.workOrderNumber) like upper(:workOrderNumber) and  woe.workOrder.egwStatus.code =:workOrderStatus and not exists (select distinct(cbr.workOrderEstimate.workOrder) from ContractorBillRegister as cbr where woe.id = cbr.workOrderEstimate.id and upper(cbr.billstatus) != :billStatus and cbr.billtype = :billtype)")
+    List<String> findWorkOrderNumbersToCreateRE(@Param("workOrderNumber") String workOrderNumber,
+            @Param("workOrderStatus") String workOrderStatus, @Param("billStatus") String billStatus,
+            @Param("billtype") String billtype);
 }

@@ -41,6 +41,7 @@ package org.egov.works.letterofacceptance.repository;
 
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -156,4 +157,9 @@ public interface LetterOfAcceptanceRepository extends JpaRepository<WorkOrder, L
     List<String> findContractorToModifyLOA(@Param("contractorName") String contractorName,
             @Param("workOrderStatus") String workOrderStatus);
 
+    @Query("select distinct(wo.engineerIncharge) from WorkOrder as wo where wo.egwStatus.code = :workOrderStatus")
+    List<User> getWorkAssignedUsers(@Param("workOrderStatus") String workOrderStatus);
+
+    @Query("select distinct(woe.workOrder.contractor.name) from WorkOrderEstimate as woe where (upper(woe.workOrder.contractor.name) like upper(:code) or upper(woe.workOrder.contractor.code) like upper(:code)) and woe.workOrder.egwStatus.code = :status")
+    List<String> findContractorsToSearchLOAToCreateRE(@Param("code") String code, @Param("status") String status);
 }

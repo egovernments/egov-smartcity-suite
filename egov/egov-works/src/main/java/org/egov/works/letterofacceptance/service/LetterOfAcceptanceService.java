@@ -1111,4 +1111,13 @@ public class LetterOfAcceptanceService {
         return contractorNames;
     }
 
+    public List<User> getWorkAssignedUsers() {
+        return letterOfAcceptanceRepository.getWorkAssignedUsers(WorksConstants.APPROVED.toString());
+    }
+
+    public List<String> findContractorsToSearchLOAToCreateRE(final String code) {
+        final List<String> contractors = letterOfAcceptanceRepository
+                .findContractorsToSearchLOAToCreateRE("%" + code + "%", WorksConstants.APPROVED.toString());
+        return contractors;
+    }
 }

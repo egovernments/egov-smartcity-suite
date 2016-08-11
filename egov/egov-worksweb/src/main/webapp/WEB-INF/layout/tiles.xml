@@ -385,5 +385,10 @@
 		<put-attribute name="page-title" value="lbl.setofflinestatusforae" cascade="true"/>
 		<put-attribute name="body" value="/WEB-INF/views/offlinestatus/setStatus-success.jsp"/>
 	</definition>
+	
+	<definition name="loatocreatere-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/revisionestimate/searchWorkorderForRE-search.jsp"/>
+    </definition>
 
 </tiles-definitions>  

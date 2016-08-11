@@ -50,6 +50,8 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
+import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptanceForRE;
+import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
@@ -78,6 +80,9 @@ public class LetterOfAcceptanceSearchController {
 
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
+
+    @Autowired
+    private LetterOfAcceptanceService letterOfAcceptanceService;
 
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
@@ -157,4 +162,12 @@ public class LetterOfAcceptanceSearchController {
         return "setofflinestatus-search";
     }
 
+    @RequestMapping(value = "/searchloare-form", method = RequestMethod.GET)
+    public String showSearchLOAForREForm(
+            @ModelAttribute final SearchRequestLetterOfAcceptanceForRE searchRequestLetterOfAcceptanceForRE,
+            final Model model) throws ApplicationException {
+        model.addAttribute("searchRequestLetterOfAcceptanceForRE", searchRequestLetterOfAcceptanceForRE);
+        model.addAttribute("workAssignedUsers", letterOfAcceptanceService.getWorkAssignedUsers());
+        return "loatocreatere-search";
+    }
 }
