@@ -251,7 +251,7 @@
 		<property name="contractorAdvanceService" ref="contractorAdvanceService" />
 	</bean>
 
-	<bean class="org.egov.works.services.impl.RevisionEstimateServiceImpl"
+	<!-- <bean class="org.egov.works.services.impl.RevisionEstimateServiceImpl"
 		id="revisionEstimateService" scope="prototype">
 		<constructor-arg>
 			<bean parent="persistenceService">
@@ -265,7 +265,7 @@
 		<property name="depositWorksUsageService" ref="depositWorksUsageService" />
 		<property name="estimateAppropriationService" ref="estimateAppropriationService" />
 		<property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
-	</bean>
+	</bean> -->
 
 	 
 	
