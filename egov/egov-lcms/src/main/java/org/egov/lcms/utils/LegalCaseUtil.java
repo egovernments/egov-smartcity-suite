@@ -39,18 +39,14 @@
  */
 package org.egov.lcms.utils;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseDocuments;
@@ -79,22 +75,10 @@ public class LegalCaseUtil {
     @Autowired
     private DepartmentService departmentService;
 
-    @Autowired
-    private CityService cityService;
-
-    public Functionary getFunctionaryByCode(final String[] funcString) {
-        final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
-        return funcObj;
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
-    }
-
-    public String getCityCode() {
-        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)

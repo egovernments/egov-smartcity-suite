@@ -54,8 +54,8 @@ public class ViewAndEditLegalCaseController extends GenericLegalCaseController {
 	   legalCase.setCaseNumber(casenumberyear[0]);
 	   if(casenumberyear.length > 1)
 	   legalCase.setWpYear(casenumberyear[1]);
-	   legalCase.getBipartisanPetitionDetailsList().addAll(legalCase.getPetitioners());
-	   legalCase.getBipartisanDetailsBeanList().addAll(legalCase.getRespondents());
+	   legalCase.getBipartisanPetitionerDetailsList().addAll(legalCase.getPetitioners());
+	   legalCase.getBipartisanRespondentDetailsList().addAll(legalCase.getRespondents());
 	   model.addAttribute("legalCaseDocList",
 	           legalCaseService.getLegalCaseDocList(legalCase));
         model.addAttribute("mode", "edit");

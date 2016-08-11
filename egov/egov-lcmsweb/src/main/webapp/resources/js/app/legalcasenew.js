@@ -43,7 +43,7 @@ $(document).ready(function(){
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
     });
-    $("#respodantDetails tbody tr").each(function( index ) {
+    $("#respondantDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
     });
@@ -144,8 +144,8 @@ function generateSno(tablenameclass)
 
 function addResRow()
 {     
-	var index=document.getElementById('respodantDetails').rows.length-1;
-	    	var tableObj=document.getElementById('respodantDetails');
+	var index=document.getElementById('respondantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respondantDetails');
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
@@ -170,8 +170,8 @@ function addResRow()
 
 
 		   tbody.appendChild(rowObj);
-		   $('#respodantDetails tbody tr:last').find('input').val('');
-		   generateSno(".respodantDetails");
+		   $('#respondantDetails tbody tr:last').find('input').val('');
+		   generateSno(".respondantDetails");
 		
  }
 function addPetEditRow()
@@ -206,8 +206,8 @@ function addPetEditRow()
 
 function addResEditRow()
 {     
-	var index=document.getElementById('respodantDetails').rows.length-1;
-	    	var tableObj=document.getElementById('respodantDetails');
+	var index=document.getElementById('respondantDetails').rows.length-1;
+	    	var tableObj=document.getElementById('respondantDetails');
 			var tbody=tableObj.tBodies[0];
 			var lastRow = tableObj.rows.length;
 			var rowObj = tableObj.rows[1].cloneNode(true);
@@ -233,7 +233,7 @@ function addResEditRow()
 
 
 		   tbody.appendChild(rowObj);
-		   generateSno(".respodantDetails");
+		   generateSno(".respondantDetails");
 		
  }
 $(document).on('click',"#pet_delete_row",function (){
@@ -289,7 +289,7 @@ function onChangeofPetitioncheck(obj)
 }
 
 $(document).on('click',"#res_delete_row",function (){
-	var table = document.getElementById('respodantDetails');
+	var table = document.getElementById('respondantDetails');
     var rowCount = table.rows.length;
     var counts = rowCount - 1;
     var j = 2;
@@ -302,12 +302,12 @@ $(document).on('click',"#res_delete_row",function (){
 
 		$(this).closest('tr').remove();		
 		
-		jQuery("#respodantDetails tr:eq(1) td span[alt='AddF']").show();
+		jQuery("#respondantDetails tr:eq(1) td span[alt='AddF']").show();
 		//starting index for table fields
 		var idx=0;
 		
 		//regenerate index existing inputs in table row
-		jQuery("#respodantDetails tr:not(:first)").each(function() {
+		jQuery("#respondantDetails tr:not(:first)").each(function() {
 			jQuery(this).find("input, select").each(function() {
 			   jQuery(this).attr({
 			      'id': function(_, id) {  
@@ -324,7 +324,7 @@ $(document).on('click',"#res_delete_row",function (){
 			idx++;
 		});
 		
-		generateSno(".respodantDetails");
+		generateSno(".respondantDetails");
 		
 		return true;
 	}

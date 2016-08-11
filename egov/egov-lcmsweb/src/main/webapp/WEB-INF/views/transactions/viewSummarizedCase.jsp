@@ -260,7 +260,7 @@
 		<div class="panel-title"  style="font-weight: bold"><spring:message code="lbl.bipartisanDetails.respondant" /></div>
 		</div>
 		<table class="table table-striped table-bordered"
-			id="respodantDetails">
+			id="respondantDetails">
 			<thead>
 				<tr>
 				<th class="text-center"><spring:message code="lbl.slno" />
