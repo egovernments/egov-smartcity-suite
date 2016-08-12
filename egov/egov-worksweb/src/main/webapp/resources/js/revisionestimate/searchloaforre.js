@@ -186,6 +186,6 @@ $('#btncreatere').click(function(e) {
 		bootbox.alert("Please select a Letter of Acceptance to create Revision Estimate");
 	}
 	else {
-		
+		window.location = "/egworks/revisionestimate/create?workOrderEstimateId="+workOrderEstimateId;
 	}
 });

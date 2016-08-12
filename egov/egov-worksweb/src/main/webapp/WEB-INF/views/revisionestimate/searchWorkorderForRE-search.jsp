@@ -40,6 +40,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <form:form name="loaForm" role="form" modelAttribute="searchRequestLetterOfAcceptanceForRE"
@@ -62,4 +63,4 @@
 	</div>
 </form:form>
 <jsp:include page="searchWorkorderForRE-searchResult.jsp" />
-<script src="<c:url value='/resources/js/revisionestimate/searchloaforre.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/revisionestimate/searchloaforre.js?rnd=${app_release_no}'/>"></script>

@@ -37,37 +37,3 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.web.controller.revisionestimate;
-
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
-import org.egov.works.revisionestimate.service.RevisionEstimateService;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
-import org.egov.works.workorder.service.WorkOrderEstimateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-@Controller
-@RequestMapping(value = "/revisionestimate")
-public class CreateRevisionEstimateController extends GenericWorkFlowController {
-    
-    @Autowired
-    private RevisionEstimateService revisionEstimateService;
-    
-    @Autowired
-    private WorkOrderEstimateService workOrderEstimateService;
-    
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showAbstractEstimateForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
-            @RequestParam final Long workOrderEstimateId, final Model model) {
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        revisionEstimate.setParent(workOrderEstimate.getEstimate());;
-
-        return "revisionEstimate-form";
-    }
-}

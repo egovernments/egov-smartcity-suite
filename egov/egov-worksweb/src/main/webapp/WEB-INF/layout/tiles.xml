@@ -390,5 +390,10 @@
         <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/revisionestimate/searchWorkorderForRE-search.jsp"/>
     </definition>
+    
+    <definition name="revisionEstimate-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createre" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-form.jsp"/>
+    </definition>
 
 </tiles-definitions>  
