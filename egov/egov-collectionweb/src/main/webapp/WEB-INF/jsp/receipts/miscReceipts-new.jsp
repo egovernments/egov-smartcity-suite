@@ -214,9 +214,6 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
-    if(document.getElementById("deptId")!=null){
-        document.getElementById("deptId").disabled=true;
-    }
     document.getElementById("rebateDetails").style.display="none";
     loadDropDownCodes();
     loadDropDownRebateCodes();
