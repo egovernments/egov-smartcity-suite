@@ -395,5 +395,10 @@
         <put-attribute name="page-title" value="lbl.createre" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-form.jsp"/>
     </definition>
+    
+	<definition name="contractorWiseAbstract-search" extends="base_layout">
+		<put-attribute name="page-title" value="title.contractorabstractreport" cascade="true"/>
+		<put-attribute name="body" value="/WEB-INF/views/reports/contractorWiseAbstract-search.jsp"/>
+	</definition>
 
-</tiles-definitions>  
+</tiles-definitions>   

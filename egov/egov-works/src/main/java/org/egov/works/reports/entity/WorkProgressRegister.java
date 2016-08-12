@@ -245,6 +245,17 @@ public class WorkProgressRegister extends AbstractAuditable {
     private Double workvalue;
 
     private String estimateNumber;
+    
+    @Length(max = 50)
+    private String woOfflineStatusCode;
+    
+    @Length(max = 100)
+    private String contractorName;
+    
+    @Length(max = 50)
+    private String contractorCode;
+    
+    private Long boundaryNum;
 
     @Override
     protected void setId(final Long id) {
@@ -662,6 +673,38 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setEstimateNumber(final String estimateNumber) {
         this.estimateNumber = estimateNumber;
+    }
+
+    public String getWoOfflineStatusCode() {
+        return woOfflineStatusCode;
+    }
+
+    public void setWoOfflineStatusCode(final String woOfflineStatusCode) {
+        this.woOfflineStatusCode = woOfflineStatusCode;
+    }
+
+    public String getContractorName() {
+        return contractorName;
+    }
+
+    public void setContractorName(final String contractorName) {
+        this.contractorName = contractorName;
+    }
+
+    public String getContractorCode() {
+        return contractorCode;
+    }
+
+    public void setContractorCode(final String contractorCode) {
+        this.contractorCode = contractorCode;
+    }
+
+    public Long getBoundaryNum() {
+        return boundaryNum;
+    }
+
+    public void setBoundaryNum(Long boundaryNum) {
+        this.boundaryNum = boundaryNum;
     }
 
 }

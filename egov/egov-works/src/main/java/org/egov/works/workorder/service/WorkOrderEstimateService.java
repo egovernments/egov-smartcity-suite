@@ -302,4 +302,9 @@ public class WorkOrderEstimateService {
             queryStr.append(" and woe.workOrder.engineerIncharge.id =:workAssignedTo ");
 
     }
+    
+    public List<Contractor> findContractorsByWorkOrderStatus(final String code) {
+        return workOrderEstimateRepository.findContractorsByWorkOrderStatus(
+                "%" + code + "%", WorksConstants.APPROVED,WorksConstants.WORKORDER);
+    }
 }

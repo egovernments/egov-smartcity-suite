@@ -38,44 +38,50 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contractorwiseAbstractReport" language="groovy" pageWidth="1000" pageHeight="595" orientation="Landscape" columnWidth="920" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" resourceBundle="org.egov.works.web.actions.package">
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2016-08-12T16:46:27 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contractorwiseAbstractReport" pageWidth="1080" pageHeight="595" orientation="Landscape" columnWidth="920" leftMargin="20" rightMargin="40" topMargin="40" bottomMargin="40" uuid="59ffa221-2434-4ff3-83b3-9bef4e768390">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.utils.NumberUtil"/>
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="subHeader" class="java.lang.String"/>
-	<parameter name="finYearRange" class="java.lang.String"/>
+	<parameter name="reportRunDate" class="java.lang.String"/>
+	<parameter name="dataRunDate" class="java.lang.String"/>
+	<field name="electionWard" class="java.lang.String"/>
 	<field name="contractorName" class="java.lang.String"/>
 	<field name="contractorCode" class="java.lang.String"/>
 	<field name="contractorClass" class="java.lang.String"/>
-	<field name="takenUpEstimateCount" class="java.lang.Integer"/>
-	<field name="takenUpWOAmount" class="java.math.BigDecimal"/>
-	<field name="completedEstimateCount" class="java.lang.Integer"/>
-	<field name="completedWOAmount" class="java.math.BigDecimal"/>
-	<field name="inProgressEstimateCount" class="java.lang.Integer"/>
-	<field name="inProgressTenderNegotiatedAmt" class="java.math.BigDecimal"/>
-	<field name="inProgressPaymentReleasedAmt" class="java.math.BigDecimal"/>
-	<field name="inProgressBalanceAmount" class="java.math.BigDecimal"/>
-	<field name="notYetStartedEstimateCount" class="java.lang.Integer"/>
-	<field name="notYetStartedWOAmount" class="java.math.BigDecimal"/>
-	<field name="balanceEstimateCount" class="java.lang.Integer"/>
-	<field name="balanceAmount" class="java.math.BigDecimal"/>
+	<field name="approvedEstimates" class="java.lang.Integer"/>
+	<field name="approvedAmount" class="java.math.BigDecimal"/>
+	<field name="siteNotHandedOverEstimates" class="java.lang.Integer"/>
+	<field name="siteNotHandedOverAmount" class="java.math.BigDecimal"/>
+	<field name="notWorkCommencedEstimates" class="java.lang.Integer"/>
+	<field name="notWorkCommencedAmount" class="java.math.BigDecimal"/>
+	<field name="workCommencedEstimates" class="java.lang.Integer"/>
+	<field name="workCommencedAmount" class="java.math.BigDecimal"/>
+	<field name="workCompletedEstimates" class="java.lang.Integer"/>
+	<field name="workCompletedAmount" class="java.math.BigDecimal"/>
+	<field name="balanceWorkEstimates" class="java.lang.Integer"/>
+	<field name="balanceWorkAmount" class="java.math.BigDecimal"/>
+	<field name="liableAmount" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="40" splitType="Stretch">
-			<textField>
-				<reportElement x="0" y="0" width="920" height="22"/>
+		<band height="66" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="0" width="870" height="22" uuid="3f397c76-f6fc-4f74-beca-1ebbcff4e05c"/>
 				<textElement textAlignment="Center">
 					<font fontName="Times New Roman" size="14" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{reportTitle}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="22" width="920" height="18"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="FixRelativeToBottom" x="70" y="27" width="870" height="15" uuid="51a9e41d-9d4e-48b6-acbf-9582f4130497"/>
 				<textElement textAlignment="Center">
-					<font fontName="Times New Roman" size="12" isBold="true" pdfFontName="Times-Bold"/>
+					<font size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{subHeader}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["The information in this report is not real time, it provides information of the transactions that happened till " + $P{dataRunDate}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -83,9 +89,10 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="73" splitType="Stretch">
+		<band height="85" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="28" y="0" width="146" height="73"/>
+				<reportElement x="80" y="0" width="133" height="85" uuid="7cc070e7-5618-47ca-8fe7-d81ea5554f0a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -99,7 +106,7 @@
 				<text><![CDATA[Contractor Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="28" height="73"/>
+				<reportElement x="0" y="0" width="28" height="85" uuid="5f6b5573-bd7f-4559-a9d8-9c8e5d26fa0a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -113,7 +120,7 @@
 				<text><![CDATA[Sl No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="590" y="35" width="58" height="38"/>
+				<reportElement x="629" y="47" width="58" height="38" uuid="b7eee79f-7843-4e2e-876a-7cbdf92376ec"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -124,10 +131,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Payment Released (Cr)]]></text>
+				<text><![CDATA[No. of Estimates]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="706" y="35" width="48" height="38"/>
+				<reportElement x="745" y="47" width="48" height="38" uuid="10e07a02-a2a1-48b9-9f71-e619d0e6f359"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -138,10 +145,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Total No. of Estimates]]></text>
+				<text><![CDATA[No. of Estimates]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="754" y="35" width="58" height="38"/>
+				<reportElement x="793" y="47" width="58" height="38" uuid="370f946e-9b23-431f-9bf8-6550f12da568"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -155,7 +162,7 @@
 				<text><![CDATA[Amount (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="174" y="0" width="50" height="73"/>
+				<reportElement x="213" y="0" width="50" height="85" uuid="5fb18ce9-2feb-4aec-946a-2d5650e54c48"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -169,7 +176,7 @@
 				<text><![CDATA[Contractor Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="224" y="0" width="48" height="73"/>
+				<reportElement x="263" y="0" width="48" height="85" uuid="fbb57f30-abff-4016-a411-8801f58c4670"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -183,7 +190,7 @@
 				<text><![CDATA[Class]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="648" y="35" width="58" height="38"/>
+				<reportElement x="687" y="47" width="58" height="38" uuid="9b438636-81bc-4cad-9815-10e85ecf3d49"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -197,7 +204,7 @@
 				<text><![CDATA[Balance (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="484" y="35" width="48" height="38"/>
+				<reportElement x="523" y="47" width="48" height="38" uuid="7fb71597-ec74-4055-ac47-5e68ab0aaf73"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -208,52 +215,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Total No. of Estimates]]></text>
+				<text><![CDATA[No. of Estimates]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="35" width="58" height="38"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<text><![CDATA[Amount (Cr)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="272" y="35" width="48" height="38"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<text><![CDATA[Total No. of Estimates]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="378" y="35" width="48" height="38"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
-				</textElement>
-				<text><![CDATA[Total No. of Estimates]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="426" y="35" width="58" height="38"/>
+				<reportElement x="359" y="47" width="58" height="38" uuid="34bc7572-c01b-40ba-b69c-0885834e96e7"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -267,7 +232,35 @@
 				<text><![CDATA[Amount (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="532" y="35" width="58" height="38"/>
+				<reportElement x="311" y="47" width="48" height="38" uuid="e9941bd4-eb94-4621-b45a-68d0948ef2a0"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[No. of Estimates]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="47" width="48" height="38" uuid="c8eff7c9-47b4-42e7-b2b8-73d1ffb4d5fa"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[No. of Estimates]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="47" width="58" height="38" uuid="df41fbef-026f-4bd7-b123-e7549b3ada08"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -281,7 +274,7 @@
 				<text><![CDATA[Amount (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="860" y="35" width="60" height="38"/>
+				<reportElement x="571" y="47" width="58" height="38" uuid="f6de0452-e65f-4f5f-b7f6-b33e54d712b7"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -295,7 +288,7 @@
 				<text><![CDATA[Amount (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="812" y="35" width="48" height="38"/>
+				<reportElement x="899" y="47" width="60" height="38" uuid="57c01dff-008a-4919-b946-ae584c05cc4a"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -306,10 +299,24 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Total No. of Estimates]]></text>
+				<text><![CDATA[Amount (Cr)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="272" y="0" width="648" height="20"/>
+				<reportElement x="851" y="47" width="48" height="38" uuid="a3fbd2c3-1ece-4c51-8d57-f5749ac54e64"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[No. of Estimates]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="311" y="0" width="710" height="20" uuid="8f4c1c68-7935-4461-8205-1289cad8fde9"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -323,7 +330,7 @@
 				<text><![CDATA[Project status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="272" y="20" width="106" height="15"/>
+				<reportElement x="311" y="20" width="106" height="27" uuid="293bb870-97b7-4634-b1f3-6ab3c8db544c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -334,10 +341,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Taken Up]]></text>
+				<text><![CDATA[LOA Created]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="378" y="20" width="106" height="15"/>
+				<reportElement x="417" y="20" width="106" height="27" uuid="60281a7f-645a-4e73-90fd-91e8080296a1"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -348,10 +355,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Completed]]></text>
+				<text><![CDATA[Site Not handed over]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="484" y="20" width="222" height="15"/>
+				<reportElement x="523" y="20" width="106" height="27" uuid="a7de1a02-d5b0-4876-b22f-414bc35dcfc2"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -362,10 +369,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[In Progress]]></text>
+				<text><![CDATA[Site handed over and work not commenced]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="706" y="20" width="106" height="15"/>
+				<reportElement x="629" y="20" width="116" height="27" uuid="e64410eb-4b14-48d0-8da3-3fab0b26e269"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -376,10 +383,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Not Yet Started]]></text>
+				<text><![CDATA[Work commenced and in progress]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="812" y="20" width="108" height="15"/>
+				<reportElement x="745" y="20" width="106" height="27" uuid="3269ea32-3aa0-43b5-af84-9f8eeb8cc441"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -390,14 +397,58 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<text><![CDATA[Balance]]></text>
+				<text><![CDATA[Work completed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="851" y="20" width="108" height="27" uuid="bc87748e-1488-4959-ab68-f949a2e7b2d4"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Balance works]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="959" y="20" width="62" height="65" uuid="4a75608e-63e6-4269-8b9c-b2ff19393c06">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Amount liable to pay(Rs)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="0" width="52" height="85" uuid="f54e9f19-53a7-45fd-9f0d-113fc24673c4"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+				</textElement>
+				<text><![CDATA[Election Ward]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="40" splitType="Prevent">
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="590" y="0" width="58" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="629" y="0" width="58" height="40" isPrintWhenDetailOverflows="true" uuid="43e3d4c8-5bf2-4a68-8470-2a7c90f4f915"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -408,10 +459,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{inProgressPaymentReleasedAmt}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workCommencedEstimates}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="28" height="40" isPrintWhenDetailOverflows="true"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="28" height="40" isPrintWhenDetailOverflows="true" uuid="e464f5ec-fb02-4d25-9c91-bec1fa95aef8"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -422,10 +473,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractorName}=="Total"?"":$V{REPORT_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="28" y="0" width="146" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="133" height="40" isPrintWhenDetailOverflows="true" uuid="71515927-e34b-4d8c-aa35-fcc487fe1a40"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -436,10 +487,10 @@
 				<textElement verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractorName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contractorName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="174" y="0" width="50" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="213" y="0" width="50" height="40" isPrintWhenDetailOverflows="true" uuid="be999ea5-7317-4d81-af05-df9c9cb73a49"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -450,10 +501,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractorCode}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contractorCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="754" y="0" width="58" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="793" y="0" width="58" height="40" isPrintWhenDetailOverflows="true" uuid="07e1c99a-c857-4de6-89ca-a35063db2767"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -464,10 +515,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{notYetStartedWOAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workCompletedAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="706" y="0" width="48" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="745" y="0" width="48" height="40" isPrintWhenDetailOverflows="true" uuid="cd591c20-a00a-47a1-a5c8-6b9e1a3b454f"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -478,10 +529,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{notYetStartedEstimateCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workCompletedEstimates}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="224" y="0" width="48" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="263" y="0" width="48" height="40" isPrintWhenDetailOverflows="true" uuid="3be3f72e-0bf7-4eef-b120-44e87bd134b4"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -492,10 +543,10 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<font fontName="Times New Roman" size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{contractorClass}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{contractorClass}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="648" y="0" width="58" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="687" y="0" width="58" height="40" isPrintWhenDetailOverflows="true" uuid="c94dc91d-5f52-4ba4-a0b3-d4924a280d42"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -506,10 +557,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{inProgressBalanceAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workCommencedAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="272" y="0" width="48" height="40"/>
+				<reportElement stretchType="RelativeToTallestObject" x="311" y="0" width="48" height="40" uuid="c7a853d3-823e-4e60-9632-903063545f4b"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -520,10 +571,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{takenUpEstimateCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{approvedEstimates}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="484" y="0" width="48" height="40"/>
+				<reportElement stretchType="RelativeToTallestObject" x="523" y="0" width="48" height="40" uuid="c08de1c2-5b9a-418e-88f1-23b6cd4ed63f"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -534,10 +585,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{inProgressEstimateCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{notWorkCommencedEstimates}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="532" y="0" width="58" height="40"/>
+				<reportElement stretchType="RelativeToTallestObject" x="571" y="0" width="58" height="40" uuid="17974172-2b1f-454e-bd1e-a42c83bfc54b"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -548,10 +599,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{inProgressTenderNegotiatedAmt}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{notWorkCommencedAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="320" y="0" width="58" height="40" isPrintWhenDetailOverflows="true"/>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="359" y="0" width="58" height="40" isPrintWhenDetailOverflows="true" uuid="1dbec68c-ff4a-4ae0-ab9b-ca9e1a6c61fd"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -562,10 +613,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{takenUpWOAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{approvedAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="378" y="0" width="48" height="40"/>
+				<reportElement stretchType="RelativeToTallestObject" x="417" y="0" width="48" height="40" uuid="2e9cc7b8-853d-428a-8fab-174e33375595"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -576,10 +627,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{completedEstimateCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{siteNotHandedOverEstimates}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="426" y="0" width="58" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="58" height="40" isPrintWhenDetailOverflows="true" uuid="a0be259d-e892-4c94-bcea-9e15bf98b8ea"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -590,10 +641,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{completedWOAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{siteNotHandedOverAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="860" y="0" width="60" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="899" y="0" width="60" height="40" isPrintWhenDetailOverflows="true" uuid="7ebc7c82-1e2c-441b-8536-3f92cde547d2"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -604,10 +655,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{balanceAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{balanceWorkAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="812" y="0" width="48" height="40" isPrintWhenDetailOverflows="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="851" y="0" width="48" height="40" isPrintWhenDetailOverflows="true" uuid="d17d4206-a923-4572-a752-34b5a4045933"/>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -618,7 +669,37 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{balanceEstimateCount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{balanceWorkEstimates}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.0000" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="959" y="0" width="62" height="40" isPrintWhenDetailOverflows="true" uuid="be849179-676c-4731-b351-9c325a3935ec">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{liableAmount}.setScale(2, BigDecimal.ROUND_HALF_EVEN)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="28" y="0" width="52" height="40" isPrintWhenDetailOverflows="true" uuid="14284dad-7ccd-4037-93df-475ca33bd0ef"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{electionWard}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -628,19 +709,21 @@
 	<pageFooter>
 		<band height="20">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="797" y="0" width="123" height="20"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="740" y="0" width="240" height="20" uuid="19f5e76e-0d2a-4e28-8522-cd55135f0223"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Report Run Date: " + $P{reportRunDate} + " "]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="697" y="0" width="100" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="10" isBold="true" pdfFontName="Times-Bold"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="483" y="0" width="76" height="20" uuid="c0e1dd43-9bc8-40d6-84b1-1b831b7a0c15"/>
+				<box bottomPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="10"/>
 				</textElement>
-				<text><![CDATA[Report Run Date :  ]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA["Page : "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>

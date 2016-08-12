@@ -46,16 +46,22 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
+import org.egov.works.reports.entity.ContractorWiseAbstractReport;
+import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
 import org.egov.works.reports.entity.enums.WorkStatus;
 import org.egov.works.reports.repository.WorkProgressRegisterRepository;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrder.OfflineStatuses;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -63,6 +69,8 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +84,9 @@ public class WorkProgressRegisterService {
 
     @Autowired
     private WorkProgressRegisterRepository workProgressRegisterRepository;
+    
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -871,6 +882,203 @@ public class WorkProgressRegisterService {
 
     public WorkProgressRegister getWorkProgressRegisterByLineEstimateDetailsId(final LineEstimateDetails led) {
         return workProgressRegisterRepository.findByLineEstimateDetails(led);
+    }
+    
+    public List<ContractorWiseAbstractSearchResult> searchContractorWiseAbstractReport(final ContractorWiseAbstractReport contractorWiseAbstractReport) {
+        Query query = null;
+        query = entityManager.unwrap(Session.class).createSQLQuery(getContractorListWithAllstatus(contractorWiseAbstractReport))
+                .addScalar("contractorName", StringType.INSTANCE)
+                .addScalar("contractorCode", StringType.INSTANCE)
+                .addScalar("contractorClass", StringType.INSTANCE) 
+                .addScalar("electionWard", StringType.INSTANCE)
+                .addScalar("approvedEstimates", IntegerType.INSTANCE)
+                .addScalar("approvedAmount", BigDecimalType.INSTANCE)
+                .addScalar("siteNotHandedOverEstimates", IntegerType.INSTANCE)
+                .addScalar("siteNotHandedOverAmount", BigDecimalType.INSTANCE)
+                .addScalar("notWorkCommencedEstimates", IntegerType.INSTANCE)
+                .addScalar("notWorkCommencedAmount", BigDecimalType.INSTANCE)
+                .addScalar("workCommencedEstimates", IntegerType.INSTANCE)
+                .addScalar("workCommencedAmount", BigDecimalType.INSTANCE)
+                .addScalar("workCompletedEstimates", IntegerType.INSTANCE)
+                .addScalar("workCompletedAmount", BigDecimalType.INSTANCE)
+                .addScalar("balanceWorkEstimates", IntegerType.INSTANCE)
+                .addScalar("balanceWorkAmount", BigDecimalType.INSTANCE)
+                .addScalar("liableAmount", BigDecimalType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(ContractorWiseAbstractSearchResult.class));
+        query = setQueryParametersForContractorWiseReport(contractorWiseAbstractReport, query);
+        return query.list();
+    }
+    
+    private String getContractorListWithAllstatus(final ContractorWiseAbstractReport contractorWiseAbstractReport) {
+        final StringBuilder filterConditions = new StringBuilder();
+        if(contractorWiseAbstractReport != null){
+        if(contractorWiseAbstractReport.getFinancialYearId() != null) {
+            filterConditions.append(" AND details.adminSanctionDate >= :fromDate");
+            filterConditions.append(" AND details.adminSanctionDate <= :toDate ");
+        }
+        if(contractorWiseAbstractReport.getNatureOfWork() != null)
+            filterConditions.append(" AND details.natureOfWork =:natureOfWork");
+        if(StringUtils.isNotBlank(contractorWiseAbstractReport.getWorkStatus()))
+                filterConditions.append(" AND details.workstatus =:workstatus ");
+        if(StringUtils.isNotBlank(contractorWiseAbstractReport.getContractor()))
+                filterConditions.append(" AND (details.contractorname like (:contractor) OR details.contractorcode like (:contractor))");
+        if(contractorWiseAbstractReport.getElectionWardId() != null)
+            filterConditions.append(" AND details.ward =:ward ");
+        }
+        final String getLOACreatedQuery = getLOACreatedQuery(filterConditions.toString());
+        return getLOACreatedQuery;
+    }
+    
+    private Query setQueryParametersForContractorWiseReport(final ContractorWiseAbstractReport contractorWiseAbstractReport,final Query query) {
+        if(contractorWiseAbstractReport != null) {
+            if(contractorWiseAbstractReport.getFinancialYearId() != null) {
+                CFinancialYear finYear = cFinancialYearService.findOne(contractorWiseAbstractReport.getFinancialYearId());
+                query.setParameter("fromDate", finYear.getStartingDate());
+                query.setParameter("toDate",finYear.getEndingDate());
+            }
+            if(contractorWiseAbstractReport.getElectionWardId() != null)
+                query.setParameter("ward",contractorWiseAbstractReport.getElectionWardId() );
+            if(contractorWiseAbstractReport.getNatureOfWork() != null)
+                query.setParameter("natureOfWork", contractorWiseAbstractReport.getNatureOfWork());
+            if(StringUtils.isNotBlank(contractorWiseAbstractReport.getWorkStatus()))
+                query.setParameter("workstatus",contractorWiseAbstractReport.getWorkStatus());
+             if(StringUtils.isNotBlank(contractorWiseAbstractReport.getContractor()))
+                 query.setParameter("contractor",contractorWiseAbstractReport.getContractor());
+        }
+        
+        return query;
+    }
+    
+    private String getLOACreatedQuery(final String commonFilterConditions) {
+        final StringBuilder query = new StringBuilder();
+        final StringBuilder groupByFilter = new StringBuilder();
+        groupByFilter.append(" GROUP BY details.boundaryNum ,details.contractorName ,details.contractorCode,cg.grade ");
+        final StringBuilder selectQuery = new StringBuilder();
+        selectQuery.append("SELECT details.boundaryNum AS electionWard,details.contractorName as contractorName,details.contractorCode as contractorCode,cg.grade as contractorClass,");
+        query.append(" SELECT electionWard,contractorName,contractorCode,contractorClass,");
+        query.append(" SUM(approvedEstimates)                 AS approvedEstimates ,  ");
+        query.append(" SUM(approvedAmount)                    AS approvedAmount ,  ");
+        query.append(" SUM(siteNotHandedOverEstimates)        AS siteNotHandedOverEstimates,  ");
+        query.append(" SUM(siteNotHandedOverAmount)           AS siteNotHandedOverAmount,  ");
+        query.append(" SUM(notWorkCommencedEstimates)         AS notWorkCommencedEstimates,  ");
+        query.append(" SUM(notWorkCommencedAmount)            AS notWorkCommencedAmount, ");
+        query.append(" SUM(workCommencedEstimates)            AS workCommencedEstimates,  ");
+        query.append(" SUM(workCommencedAmount)               AS workCommencedAmount,  ");
+        query.append(" SUM(workCompletedEstimates)            AS workCompletedEstimates,  ");
+        query.append(" SUM(workCompletedAmount)               AS workCompletedAmount, ");
+        query.append(" SUM(balanceWorkEstimates)              AS balanceWorkEstimates, ");
+        query.append(" SUM(balanceWorkAmount)                 AS balanceWorkAmount,  ");
+        query.append(" SUM(liableAmount)                      AS liableAmount   ");
+        query.append(" FROM  ");
+        query.append(" (  ");
+        query.append(selectQuery.toString());
+        query.append("COUNT(DISTINCT details.ledid)       AS approvedEstimates,");
+        query.append("SUM(details.billamount)/10000000    AS approvedAmount,");
+        query.append("0                                   AS siteNotHandedOverEstimates,");
+        query.append("0                                   AS siteNotHandedOverAmount,");
+        query.append("0                                   AS notWorkCommencedEstimates,");
+        query.append("0                                   AS notWorkCommencedAmount,");
+        query.append("0                                   AS workCommencedEstimates,");
+        query.append("0                                   AS workCommencedAmount,");
+        query.append("0                                   AS workCompletedEstimates,");
+        query.append("0                                   AS workCompletedAmount,");
+        query.append("0                                   AS balanceWorkEstimates,");
+        query.append("0                                   AS balanceWorkAmount, ");
+        query.append("sum(details.balanceValueOfWorkToBill)                              AS liableAmount ");
+        query.append(" FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join ");
+        query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
+        query.append(" WHERE  details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
+        query.append(commonFilterConditions.toString());
+        query.append(groupByFilter.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append("0                                                 AS approvedEstimates,");
+        query.append("0                                                 AS approvedAmount,");
+        query.append("COUNT(DISTINCT details.ledid)                     AS siteNotHandedOverEstimates,");
+        query.append("SUM(details.billamount)/10000000                  AS siteNotHandedOverAmount,");
+        query.append("0                                                 AS notWorkCommencedEstimates,");
+        query.append("0                                                 AS notWorkCommencedAmount,");
+        query.append("0                                                 AS workCommencedEstimates,");
+        query.append("0                                                 AS workCommencedAmount,");
+        query.append("0                                                 AS workCompletedEstimates,");
+        query.append("0                                                 AS workCompletedAmount,");
+        query.append("0                                                 AS balanceWorkEstimates,");
+        query.append("0                                                 AS balanceWorkAmount, ");
+        query.append("sum(details.balanceValueOfWorkToBill)             AS liableAmount ");
+        query.append(" FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join ");
+        query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
+        query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
+        query.append(" AND details.woOfflineStatusCode not in ('" + OfflineStatuses.SITE_HANDED_OVER.toString() + "','" + OfflineStatuses.WORK_COMMENCED.toString() + "') ");
+        query.append(commonFilterConditions.toString());
+        query.append(groupByFilter.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append("0                                                 AS approvedEstimates,");
+        query.append("0                                                 AS approvedAmount,");
+        query.append("0                                                 AS siteNotHandedOverEstimates,");
+        query.append("0                                                 AS siteNotHandedOverAmount,");
+        query.append("COUNT(DISTINCT details.ledid)                     AS notWorkCommencedEstimates,");
+        query.append("SUM(details.billamount)/10000000                  AS notWorkCommencedAmount,");
+        query.append("0                                                 AS workCommencedEstimates,");
+        query.append("0                                                 AS workCommencedAmount,");
+        query.append("0                                                 AS workCompletedEstimates,");
+        query.append("0                                                 AS workCompletedAmount,");
+        query.append("0                                                 AS balanceWorkEstimates,");
+        query.append("0                                                 AS balanceWorkAmount, ");
+        query.append("sum(details.balanceValueOfWorkToBill)             AS liableAmount ");
+        query.append(" FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join ");
+        query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
+        query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
+        query.append(" AND details.woOfflineStatusCode = '" + OfflineStatuses.SITE_HANDED_OVER.toString() + "' ");
+        query.append(commonFilterConditions.toString());
+        query.append(groupByFilter.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append("0                                                 AS approvedEstimates,");
+        query.append("0                                                 AS approvedAmount,");
+        query.append("0                                                 AS siteNotHandedOverEstimates,");
+        query.append("0                                                 AS siteNotHandedOverAmount,");
+        query.append("0                                                 AS notWorkCommencedEstimates,");
+        query.append("0                                                 AS notWorkCommencedAmount,");
+        query.append("COUNT(DISTINCT details.ledid)                     AS workCommencedEstimates,");
+        query.append("SUM(details.billamount)/10000000                  AS workCommencedAmount,");
+        query.append("0                                                 AS workCompletedEstimates,");
+        query.append("0                                                 AS workCompletedAmount,");
+        query.append("0                                                 AS balanceWorkEstimates,");
+        query.append("0                                                 AS balanceWorkAmount, ");
+        query.append("sum(details.balanceValueOfWorkToBill)             AS liableAmount ");
+        query.append(" FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join ");
+        query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
+        query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
+        query.append(" AND details.woOfflineStatusCode ='" + OfflineStatuses.WORK_COMMENCED.toString() + "' ");
+        query.append(" AND details.billtype != '" + WorksConstants.FINAL_BILL + "' ");
+        query.append(commonFilterConditions.toString());
+        query.append(groupByFilter.toString());
+        query.append(" UNION ");
+        query.append(selectQuery.toString());
+        query.append("0                                                 AS approvedEstimates,");
+        query.append("0                                                 AS approvedAmount,");
+        query.append("0                                                 AS siteNotHandedOverEstimates,");
+        query.append("0                                                 AS siteNotHandedOverAmount,");
+        query.append("0                                                 AS notWorkCommencedEstimates,");
+        query.append("0                                                 AS notWorkCommencedAmount,");
+        query.append("0                                                 AS workCommencedEstimates,");
+        query.append("0                                                 AS workCommencedAmount,");
+        query.append("COUNT(DISTINCT details.ledid)                     AS workCompletedEstimates,");
+        query.append("SUM(details.billamount)/10000000                  AS workCompletedAmount,");
+        query.append("0                                                 AS balanceWorkEstimates,");
+        query.append("0                                                 AS balanceWorkAmount, ");
+        query.append("sum(details.balanceValueOfWorkToBill)             AS liableAmount ");
+        query.append(" FROM egw_mv_work_progress_register details left join egw_contractor_detail cd on cd.contractor_id = details.contractor left join ");
+        query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
+        query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
+        query.append(" AND details.woOfflineStatusCode ='" + OfflineStatuses.WORK_COMMENCED.toString() + "' ");
+        query.append(" AND details.billtype = '" + WorksConstants.FINAL_BILL + "' ");
+        query.append(commonFilterConditions.toString());
+        query.append(groupByFilter.toString());
+        query.append(" ) final ");
+        query.append(" GROUP BY electionWard,contractorName,contractorCode,contractorClass");
+        return query.toString();
     }
 
 }
