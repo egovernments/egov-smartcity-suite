@@ -237,7 +237,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
             model.addAttribute(
                     "successMessage",
                     "Property exemption data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(approvalPosition) + " with application number "
+                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
+                                    .getOwnerPosition().getId()) + " with application number "
                             + property.getApplicationNo());
             if (loggedUserIsMeesevaUser)
                 target = "redirect:/exemption/generate-meesevareceipt/"
