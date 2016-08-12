@@ -219,7 +219,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     String billType;
     Map<String, String> bankAccountMap = Collections.EMPTY_MAP;
     @Autowired
-    @Qualifier("recoveryService")
+    @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
     Map<String, String> surrendarReasonMap = Collections.EMPTY_MAP;
     private boolean reassignSurrenderChq = false;

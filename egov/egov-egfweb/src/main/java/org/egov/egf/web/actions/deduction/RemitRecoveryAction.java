@@ -142,6 +142,8 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private RemitRecoveryService remitRecoveryService;
     private VoucherService voucherService;
     private List<RemittanceBean> listRemitBean;
+    @Autowired
+    @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
     private CommonAction common;
     private Map<String, String> modeOfCollectionMap = new HashMap<String, String>();
@@ -957,9 +959,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         this.listRemitBean = listRemitBean;
     }
 
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
-    }
+   
 
     public void setCommon(final CommonAction common) {
         this.common = common;
