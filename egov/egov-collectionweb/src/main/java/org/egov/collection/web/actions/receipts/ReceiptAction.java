@@ -296,8 +296,6 @@ public class ReceiptAction extends BaseFormAction {
     private List<CChartOfAccounts> bankCOAList;
     private Long functionId;
 
-    private Date cutOffDate;
-
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -755,17 +753,6 @@ public class ReceiptAction extends BaseFormAction {
             // billing system
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
-                        CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                        CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
-            } catch (ParseException e) {
-                LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
-            }
-            if (receiptHeader.getReceiptdate().before(cutOffDate))
-                receiptHeaderService.performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
-                        "Legacy data Approval based on cutoff date");
             // populate all receipt header ids except the cancelled receipt
             // (in effect the newly created receipts)
             selectedReceipts = new Long[noOfNewlyCreatedReceipts];
@@ -1882,14 +1869,6 @@ public class ReceiptAction extends BaseFormAction {
 
     public void setServiceId(Long serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public Date getCutOffDate() {
-        return cutOffDate;
-    }
-
-    public void setCutOffDate(Date cutOffDate) {
-        this.cutOffDate = cutOffDate;
     }
 
     public Date getFinancialYearDate() {

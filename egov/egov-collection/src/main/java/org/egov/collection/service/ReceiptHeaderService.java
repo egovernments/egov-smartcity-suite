@@ -1080,6 +1080,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             // create voucher also, based on configuration.
             startWorkflow(receiptHeader);
             LOGGER.info("Workflow started for newly created receipts");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date cutOffDate = null;
+            try {
+                cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                        CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+            } catch (ParseException e) {
+                LOGGER.error("Error parsing Cut Off Date" + e.getMessage());
+            }
+            if (cutOffDate!=null && receiptHeader.getReceiptdate().before(cutOffDate))
+                performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
+                        "Legacy data Receipt Approval based on cutoff date");
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
