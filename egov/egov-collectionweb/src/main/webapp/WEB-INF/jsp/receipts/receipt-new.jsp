@@ -1080,7 +1080,7 @@ function verifyChequeDetails(table,len1)
 	    	else if (document.getElementById('manualreceiptinfo').checked==true){
 	    		var receiptDate = document.getElementById("manualReceiptDate").value;
 		    	 if(receiptDate !=null && receiptDate != '' && instrDate.value != null && instrDate.value!= '' && check==true ){
-	    			if(process(instDate) > process(receiptDate)){
+	    			if(process(instrDate.value) > process(receiptDate)){
 	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
 	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
 	 	 				window.scroll(0,0);
