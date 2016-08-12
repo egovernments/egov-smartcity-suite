@@ -16,13 +16,13 @@ INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_featu
 INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Change Penalty Rates','Change Penalty Rates',(select id from eg_module  where name = 'Advertisement Tax Penalty Rates'));
 
 ------------------------ Category -----------------------------
-INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Create Category','Create Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
+INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Advertisement Create Category','Advertisement Create Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
 
-INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Search Category','Search Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
+INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Advertisement Search Category','Advertisement Search Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
 
-INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Modify Category','Modify Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
+INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Advertisement Modify Category','Advertisement Modify Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
 
-INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'View Category','View Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
+INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Advertisement View Category','Advertisement View Category',(select id from eg_module  where name = 'Advertisement Tax Category'));
 
 ------------------------ Agency -----------------------------
 INSERT INTO eg_feature(ID,NAME,DESCRIPTION,MODULE) VALUES (NEXTVAL('seq_eg_feature'),'Create Agency','Create Agency',(select id from eg_module  where name = 'Advertisement Tax Agency'));
@@ -111,27 +111,27 @@ VALUES
 ------------------------ Category -----------------------------
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'Createcategory') ,(select id FROM eg_feature WHERE name = 'Create Category'));
+((select id FROM eg_action  WHERE name = 'Createcategory') ,(select id FROM eg_feature WHERE name = 'Advertisement Create Category'));
 
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'Create Category'));
+((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'Advertisement Create Category'));
 
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'Searchcategory') ,(select id FROM eg_feature WHERE name = 'Search Category'));
+((select id FROM eg_action  WHERE name = 'Searchcategory') ,(select id FROM eg_feature WHERE name = 'Advertisement Search Category'));
 
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'categoryUpdate') ,(select id FROM eg_feature WHERE name = 'Modify Category'));
+((select id FROM eg_action  WHERE name = 'categoryUpdate') ,(select id FROM eg_feature WHERE name = 'Advertisement Modify Category'));
 
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'Modify Category'));
+((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'Advertisement Modify Category'));
 
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
 VALUES 
-((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'View Category'));
+((select id FROM eg_action  WHERE name = 'categorySuccess') ,(select id FROM eg_feature WHERE name = 'Advertisement View Category'));
 
 ------------------------ Agency -----------------------------
 INSERT INTO eg_feature_action (ACTION, FEATURE) 
@@ -306,21 +306,21 @@ INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role whe
 INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Change Penalty Rates'));
 
 ------------------------ Category -----------------------------
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Create Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Advertisement Create Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Search Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Advertisement Search Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Modify Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Advertisement Modify Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='View Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Advertisement View Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Create Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Advertisement Create Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Search Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Advertisement Search Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Modify Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Advertisement Modify Category'));
 
-INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='View Category'));
+INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Advertisement Tax Admin') ,(select id FROM eg_feature WHERE name ='Advertisement View Category'));
 
 ------------------------ Agency -----------------------------
 INSERT INTO eg_feature_role (ROLE, FEATURE)  VALUES ((select id from eg_role where name = 'Super User') ,(select id FROM eg_feature WHERE name ='Create Agency'));
