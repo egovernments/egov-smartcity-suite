@@ -110,10 +110,10 @@ public class JudgmentImpl extends AbstractAuditable {
     @Column(name = "implementationdetails")
     private String details;
 
-    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Contempt> contempt = new ArrayList<Contempt>(0);
 
-    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "judgmentImpl", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Appeal> appeal = new ArrayList<Appeal>(0);
 
     @Override

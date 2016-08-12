@@ -68,21 +68,21 @@
 						<form:errors path="judgmentImplIsComplied" cssClass="error-msg" />
 					</div>
 
-					<div class="form-group" id="dateofcomp1" style="display: none">
+					<div class="form-group" id="dateofcomp1" style="display: none" class="ss-item-required">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.dateofcompliance" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="dateOfCompliance"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance" />
+								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance"  />
 							<form:errors path="dateOfCompliance" cssClass="error-msg " />
 						</div>
 					</div>
-					<div class="form-group" id="dateofcomp2" style="display: none">
+					<div class="form-group" id="dateofcomp2" style="display: none"  class="ss-item-required">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.compliancereport" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="complianceReport"
+							<form:textarea path="complianceReport" id="complianceReport"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
 								maxlength="1024" />
@@ -143,15 +143,9 @@
 							<form:errors path="appeal[0].appealFiledBy" cssClass="error-msg" />
 							</div>
 			
-							<label class="col-sm-3 control-label text-right"><font
-								size="2"><spring:message code="lbl.uploaddocuments" />:</font></label>
-							<div class="col-sm-3 add-margin">
-								<input type="file" id="file"
-									name="appeal[0].appealDocuments[0].files"
-									class="file-ellipsis upload-file">
-								<form:errors path="appeal[0].appealDocuments[0].files"
-									cssClass="add-margin error-msg" />
-							</div>
+							
+							<input
+							type="hidden" name="judgmentImpl.appeal" value="${appeal[0].id}" />
 						</div>
 
 						<div class="form-group" id="contempFields1" style="display: none">
@@ -190,12 +184,16 @@
 								<form:errors path="contempt[0].commappDate"
 									cssClass="error-msg" />
 							</div>
+							<input
+							type="hidden" name="judgmentImpl.contempt" value="${contempt[0].id}" />
 						</div>
 
 
 
 						<input type="hidden" name="judgmentImpl"
-							value="${judgmentImpl.id}" /> <input type="hidden"
-							name="judgmentImpl.appeal" value="${judgmentImpl.appeal}" /> <input
-							type="hidden" name="judgmentImpl.contempt" value="${judgmentImpl.contempt}" />
+							value="${judgmentImpl.id}" /> 
+							<%-- <input type="hidden"
+							name="judgmentImpl.appeal" value="${judgmentImpl.appeal.id}" /> 
+							<input
+							type="hidden" name="judgmentImpl.contempt" value="${judgmentImpl.contempt.id}" /> --%>
 							

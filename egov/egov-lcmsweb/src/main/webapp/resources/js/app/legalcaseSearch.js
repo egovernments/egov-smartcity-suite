@@ -256,5 +256,11 @@ $("#legalCaseResults").on('change','tbody tr td .dropchange',
 			window.location = url;
 			
 		}
-		
+		if (this.value == 12) {
+			var url = '/lcms/judgmentimpl/new/?lcNumber='+ lcNumber;
+			$('#searchlegalcaseForm1').attr('method', 'get');
+			$('#searchlegalcaseForm1').attr('action', url);
+			window.location = url;
+			
+		}
 		});

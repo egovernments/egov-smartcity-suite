@@ -39,7 +39,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" method="post" modelAttribute="judgmentImpl"
+<form:form  method="post" modelAttribute="judgmentImpl"
 	id="judgmentImplform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />  
@@ -53,7 +53,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" id="buttonid" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
+			<button type="submit" name="submit" id="buttonid" class="btn btn-primary" value="Save"  ><spring:message code="lbl.submit"/></button>
 			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
 		</div>
 	</div>

@@ -44,9 +44,12 @@ $(document).ready(function(){
 	
 	$('#dateofcomp1').show();
 	$('#dateofcomp2').show();
+
 	$("#IsCompliedYes").click(function () {
 		$('#dateofcomp1').show();
 		$('#dateofcomp2').show();
+		$("#dateOfCompliance").attr('required');
+		$("#complianceReport").attr('required');
 		$('#reason').hide();
 		$('#details').hide();
 		$("#apealFields1").hide();
@@ -70,6 +73,8 @@ $(document).ready(function(){
 		$('#details').show();
 		$('#dateofcomp1').hide();
 		$('#dateofcomp2').hide();
+		$("#dateOfCompliance").removeAttr('required');
+		$("#complianceReport").removeAttr('required');
 		$('#reason').hide();
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
@@ -82,10 +87,11 @@ $(document).ready(function(){
 
 });
 
-$('#buttonid').click(function() {
-	 alert("hiiii");
-validateAssignment();
-});
+/*$('#btn btn-primary').click(function() {
+	// alert("hiiii");
+	validatecheck();
+
+});*/
 
 loadAppealAndContemptFields();
 $('#implementationFailure').change(function(){
@@ -112,33 +118,7 @@ function loadAppealAndContemptFields(){
 	
 }
 
-function validateAssignment() {
-	alert($("#srnumber").val());
-	var srnumber = $("#srnumber").val();
-	var toDate = $("#toDate").val();
-	var validate = true;
-	if(null==deptId || ''==deptId){
-		$('.departmenterror').html('Department is required').show();
-		validate = false;
-	}
-	if(null==desigId || ''==desigId) {
-		$('.designationerror').html('Designation is required').show();
-		validate = false;
-	}
-	if(null==fromDate || ''==fromDate) {
-		$('.fromdateerror').html('From Date is required').show();
-		validate = false;
-	}
-	if(null==toDate || ''==toDate) {
-		$('.todateerror').html('To Date is required').show();
-		validate = false;
-	}
-	if(null==posId || ''==posId){
-		$('.positionerror').html('Position is required').show();
-		validate = false;
-	}
-	return validate;
-}
+
 
 $('#btnclose').click(function(){
 	bootbox.confirm({
@@ -161,3 +141,14 @@ $('#btnclose').click(function(){
 	});
 	
 });
+
+function validatecheck() {
+	  var fields = $(".ss-item-required")
+	        .find("select, textarea, input").serializeArray();
+	  
+	  $.each(fields, function(i, field) {
+	    if (!field.value)
+	      alert(field.name + ' is required');
+	   }); 
+	  console.log(fields);
+	}

@@ -397,5 +397,4 @@
 	<put-attribute name="body" value="/WEB-INF/views/judgmentimpl/judgmentimpl-success.jsp"/>
 </definition>
 
-
 </tiles-definitions>
