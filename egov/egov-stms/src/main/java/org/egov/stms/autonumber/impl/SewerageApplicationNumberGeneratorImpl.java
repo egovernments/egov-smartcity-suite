@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,13 +38,23 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.config.search;
+package org.egov.stms.autonumber.impl;
 
-public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS, SEWARAGE;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SewerageApplicationNumberGeneratorImpl implements SewerageApplicationNumberGenerator {
+
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Override
-    public String toString() {
-        return name().toLowerCase();
+    public String generateNextApplicationNumber(SewerageApplicationDetails sewerageApplicationDetails) {
+        return applicationNumberGenerator.generate();
     }
+
 }

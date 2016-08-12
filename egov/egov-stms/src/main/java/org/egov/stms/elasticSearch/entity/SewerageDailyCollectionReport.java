@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -38,13 +38,25 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.config.search;
+package org.egov.stms.elasticSearch.entity;
 
-public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS, SEWARAGE;
+import org.egov.search.domain.Document;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
+public class SewerageDailyCollectionReport {
+    
+    private Document collectionDocument;
+    private Document sewerageSearchDocument;
+    public Document getCollectionDocument() {
+        return collectionDocument;
     }
+    public void setCollectionDocument(Document collectionDocument) {
+        this.collectionDocument = collectionDocument;
+    }
+    public Document getSewerageSearchDocument() {
+        return sewerageSearchDocument;
+    }
+    public void setSewerageSearchDocument(Document sewerageSearchDocument) {
+        this.sewerageSearchDocument = sewerageSearchDocument;
+    }
+
 }

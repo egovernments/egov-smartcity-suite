@@ -37,14 +37,69 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.stms.transactions.entity;
 
-package org.egov.config.search;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS, SEWARAGE;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
+@Entity
+@Table(name = "egswtax_demand_connection")
+@SequenceGenerator(name = SewerageDemandConnection.SEQ_DEMAND_CONNECTION, sequenceName = SewerageDemandConnection.SEQ_DEMAND_CONNECTION, allocationSize = 1)
+public class SewerageDemandConnection extends AbstractAuditable {
+
+    private static final long serialVersionUID = 5488326559188403250L;
+
+    public static final String SEQ_DEMAND_CONNECTION = "seq_egswtax_demand_connection";
+
+    @Id
+    @GeneratedValue(generator = SEQ_DEMAND_CONNECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "applicationdetail")
+    private SewerageApplicationDetails applicationDetails;
 
     @Override
-    public String toString() {
-        return name().toLowerCase();
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
+
+    public EgDemand getDemand() {
+        return demand;
+    }
+
+    public void setDemand(final EgDemand demand) {
+        this.demand = demand;
+    }
+
+    public SewerageApplicationDetails getApplicationDetails() {
+        return applicationDetails;
+    }
+
+    public void setApplicationDetails(SewerageApplicationDetails applicationDetails) {
+        this.applicationDetails = applicationDetails;
     }
 }

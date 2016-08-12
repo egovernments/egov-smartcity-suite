@@ -1,0 +1,5 @@
+INSERT INTO EG_ACTION (ID,NAME,URL,QUERYPARAMS,PARENTMODULE,ORDERNUMBER,DISPLAYNAME,ENABLED,CONTEXTROOT,VERSION,CREATEDBY,CREATEDDATE,LASTMODIFIEDBY,LASTMODIFIEDDATE,APPLICATION) values (NEXTVAL('SEQ_EG_ACTION'),'SewerageConnectionChangeInClosetsValidation','/ajaxconnection/check-application-inworkflow',null,(select id from EG_MODULE where name = 'Sewerage Tax Management'),1,'Change In Closets Validation','false','stms',0,1,now(),1,now(),(select id from eg_module where name = 'Sewerage Tax Management'));
+INSERT INTO EG_ROLEACTION (roleid, actionid) values ((select id from eg_role where name = 'Sewerage Tax Creator'),(select id from eg_action where name ='SewerageConnectionChangeInClosetsValidation' and contextroot = 'stms'));
+
+--rollback delete from eg_roleaction where actionid = (select id from eg_action where name = 'SewerageConnectionChangeInClosetsValidation' and contextroot = 'stms');
+--rollback delete from eg_action where name = 'SewerageConnectionChangeInClosetsValidation' and contextroot = 'stms';

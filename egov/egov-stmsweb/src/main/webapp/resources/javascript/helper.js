@@ -38,13 +38,67 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.config.search;
+function getControlInBranch(obj,controlName)
+{
+	if (!obj || !(obj.getAttribute)) return null;
+	// check if the object itself has the name
+	if (obj.getAttribute('id') == controlName) return obj;
 
-public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS, SEWARAGE;
+	// try its children
+	var children = obj.childNodes;
+	var child;
+	if (children && children.length > 0){
+		for(var i=0; i<children.length; i++){
+			child=this.getControlInBranch(children[i],controlName);
+			if(child) return child;
+		}
+	}
+	return null;
+}
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
+// this is to get the current row
+function getRow(obj)    
+{
+ if(!obj)return null;
+ tag = obj.nodeName.toUpperCase();
+ while(tag != 'BODY'){
+  if (tag == 'TR') return obj;
+  obj=obj.parentNode ;
+  tag = obj.nodeName.toUpperCase();
+ }
+ return null;
+}
+
+function amountConverter(amt) {
+	var formattedAmt = amt.toFixed(2);
+	return formattedAmt;
+}
+
+//to get todays date
+
+function getTodayDate() {
+	var date;
+	var d = new Date();
+	var curr_date = d.getDate();
+	var curr_month = d.getMonth();
+	curr_month++;
+	var curr_year = d.getFullYear();
+	date = curr_date + "/" + curr_month + "/" + curr_year;
+	return date;
+}
+
+// to compare two dates
+
+function compareDate(dt1, dt2) {
+	var d1, m1, y1, d2, m2, y2, ret;
+	dt1 = dt1.split('/');
+	dt2 = dt2.split('/');
+	ret = (eval(dt2[2]) > eval(dt1[2])) ? 1
+			: (eval(dt2[2]) < eval(dt1[2])) ? -1
+					: (eval(dt2[1]) > eval(dt1[1])) ? 1
+							: (eval(dt2[1]) < eval(dt1[1])) ? -1															// decimal points
+									: (eval(dt2[0]) > eval(dt1[0])) ? 1
+											: (eval(dt2[0]) < eval(dt1[0])) ? -1
+													: 0;
+	return ret;
 }

@@ -38,13 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.config.search;
+package org.egov.stms.autonumber;
 
-public enum Index {
-    PGR, APPLICATION, WATERCHARGES, COLLECTION, ADVERTISEMENT, APPTIS, SEWARAGE;
+import org.springframework.stereotype.Service;
 
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
+@Service
+public interface SewerageEstimationNumberGenerator {
+
+    public String generateEstimationNumber();
 }
