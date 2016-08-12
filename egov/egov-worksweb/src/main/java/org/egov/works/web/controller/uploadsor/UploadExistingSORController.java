@@ -164,7 +164,6 @@ public class UploadExistingSORController {
 
             validateRates(uploadSORRatesList);
 
-            validateEstimateData(uploadSORRatesList);
 
             loadSorRateOriginalFileName = uploadSORService.prepareOriginalFileName(
                     WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
@@ -219,27 +218,6 @@ public class UploadExistingSORController {
         return "uploadSor-result";
     }
 
-    private void validateEstimateData(List<UploadScheduleOfRate> uploadSORRatesList) {
-        String error = "";
-        List<AbstractEstimate> estimates = null;
-        for (UploadScheduleOfRate obj : uploadSORRatesList) {
-            error = "";
-            if (obj.getIsToDateNull() != null && obj.getIsToDateNull())
-                estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(), obj.getFromDate());
-
-            if (estimates != null && !estimates.isEmpty())
-                error = error + " " + messageSource.getMessage("error.active.estimates.exist.for.given.date.range", null, null)
-                        + ",";
-
-            if (obj.getErrorReason() != null)
-                error = obj.getErrorReason() + error;
-            obj.setErrorReason(error);
-        }
-
-        if (!error.equalsIgnoreCase(""))
-            errorInMasterData = true;
-
-    }
 
     private void validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
         List<AbstractEstimate> estimates = null;
@@ -298,7 +276,7 @@ public class UploadExistingSORController {
                         else {
                             Calendar cal = Calendar.getInstance();
                             cal.setTime(obj.getFromDate());
-                            cal.add(Calendar.DAY_OF_YEAR, -1);
+                            cal.add(Calendar.DATE, -1);
                             Date oneDayBefore = cal.getTime();
                             rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
                         }
@@ -346,7 +324,7 @@ public class UploadExistingSORController {
                             else {
                                 Calendar cal = Calendar.getInstance();
                                 cal.setTime(obj.getFromDate());
-                                cal.add(Calendar.DAY_OF_YEAR, -1);
+                                cal.add(Calendar.DATE, -1);
                                 Date oneDayBefore = cal.getTime();
                                 rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
                             }
@@ -411,24 +389,32 @@ public class UploadExistingSORController {
                 } else
                     error = error + " " + messageSource.getMessage("error.sorcode.is.required", null, null) + ",";
 
+                // To-Do When ever there is a change in length of code in POJO we need to change this condition.
                 if (obj.getSorCode() != null && obj.getSorCode().length() > 255)
                     error = error + " " + messageSource.getMessage("error.sor.code.length", null, null) + ",";
 
                 /*
-                 * // Validating SOR description if (obj.getSorDescription() == null ||
-                 * obj.getSorDescription().equalsIgnoreCase("")) error = error + " " +
+                 * // Validating SOR description if (obj.getSorDescription() == null || if
+                 * (obj.getSorDescription().equalsIgnoreCase("")) error = error + " " +
                  * messageSource.getMessage("error.sordescription.is.required", null, null) + ","; if
                  * (uploadSORService.isSpecialCharacterExist(obj.getSorDescription()) ||
                  * uploadSORService.isNewLineOrTabExist(obj.getSorDescription())) error = error + " " +
                  * messageSource.getMessage("error.special.characters.is.not.allowed.in.sor.description", null, null) + ","; if
                  * (obj.getSorDescription() != null && obj.getSorDescription().length() > 4000) error = error + " " +
-                 * messageSource.getMessage("error.sor.description.length", null, null) + ","; // Validating uom code if
-                 * (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase("")) error = error + " " +
-                 * messageSource.getMessage("error.uom.is.required", null, null) + ","; else if (obj.getUomCode() != null &&
-                 * !obj.getUomCode().equalsIgnoreCase("") && uomMap.get(obj.getUomCode().toLowerCase()) == null) error = error +
-                 * " " + messageSource.getMessage("error.uom.is.not.exist", null, null) + obj.getUomCode() + ","; else
-                 * obj.setUom(uomMap.get(obj.getUomCode().toLowerCase()));
+                 * messageSource.getMessage("error.sor.description.length", null, null) + ",";
                  */
+
+                // Validating uom code
+                if (obj.getUomCode() == null || obj.getUomCode().equalsIgnoreCase(""))
+                    error = error + " " +
+                            messageSource.getMessage("error.uom.is.required", null, null) + ",";
+                else if (obj.getUomCode() != null && obj.getScheduleOfRate() != null &&
+                        !obj.getUomCode().equalsIgnoreCase("")
+                        && !obj.getScheduleOfRate().getUom().getUom().equalsIgnoreCase(obj.getUomCode()))
+                    error = error +
+                            " " + messageSource.getMessage("error.uom.is.not.matching", null, null) + obj.getUomCode() + ",";
+                else
+                    obj.setUom(uomMap.get(obj.getUomCode().toLowerCase()));
 
                 // Validating rate
                 if (obj.getRate() == null)
@@ -450,7 +436,7 @@ public class UploadExistingSORController {
                         error = error + " " + messageSource.getMessage("error.fromdate.cannot.be.grater.then.todate", null, null)
                                 + ",";
 
-                // Validating market rate and from date
+              /*  // Validating market rate and from date
                 if (obj.getMarketRate() != null && (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1
                         || obj.getMarketRate().compareTo(BigDecimal.ZERO) == 0))
                     error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
@@ -469,7 +455,7 @@ public class UploadExistingSORController {
                 if (obj.getMarketFromDate() != null && obj.getMarketToDate() != null)
                     if (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0)
                         error = error + " " + messageSource
-                                .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";
+                                .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";*/
 
                 if (obj.getErrorReason() != null)
                     error = obj.getErrorReason() + error;

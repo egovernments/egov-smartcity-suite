@@ -453,17 +453,4 @@ public class UploadSORService {
         return matcher.find() || matcher1.find();
     }
     
-    public boolean isWithin(final Period period, final Date dateTime) {
-        final LocalDate start = new LocalDate(period.getStartDate());
-        LocalDate end = null;
-        if (period.getEndDate() != null)
-            end = new LocalDate(period.getEndDate());
-        final LocalDate date = new LocalDate(dateTime);
-
-        if (end == null)
-            return start.compareTo(date) >= 0;
-        else
-            return start.compareTo(date) >= 0 && end.compareTo(date) <= 0;
-
-    }
 }

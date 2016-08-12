@@ -202,7 +202,6 @@ public class ScheduleOfRateService {
         final Date currentDate = new Date();
         for (final UploadScheduleOfRate obj : uploadSORRatesList) {
 
-            if (obj.getCreateSor()) {
                 final ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
                 final SORRate sorRate = new SORRate();
                 final MarketRate marketRate = new MarketRate();
@@ -242,7 +241,6 @@ public class ScheduleOfRateService {
                         entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
                 scheduleOfRate.setModifiedDate(currentDate);
                 save(scheduleOfRate);
-            }
             obj.setFinalStatus("Success");
         }
 
