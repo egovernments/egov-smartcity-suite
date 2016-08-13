@@ -43,8 +43,8 @@ package org.egov.infra.admin.master.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.search.domain.Searchable;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.hibernate.annotations.Fetch;
@@ -73,7 +73,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Unique(id = "id", tableName = "eg_boundary", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+@CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
 @Table(name = "EG_BOUNDARY")
 @Searchable
 @NamedQuery(name = "Boundary.findBoundariesByBoundaryType", query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
@@ -108,9 +108,9 @@ public class Boundary extends AbstractAuditable {
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent")
-    @Fetch(value = FetchMode.SELECT)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonIgnore
-    private Set<Boundary> children = new HashSet<Boundary>();
+    private Set<Boundary> children = new HashSet<>();
 
     @DateFormat
     @DateTimeFormat(pattern = "dd-MM-yyyy")
@@ -131,15 +131,6 @@ public class Boundary extends AbstractAuditable {
 
     @Length(max = 32)
     private String materializedPath;
-
-    @Transient
-    private Long parentBoundaryNum;
-
-    @Transient
-    private Long hierarchyTypeId;
-
-    @Transient
-    private Long boundaryTypeId;
 
     @Transient
     private City city = new City();
@@ -197,26 +188,8 @@ public class Boundary extends AbstractAuditable {
         return boundaryNum;
     }
 
-    public void addChild(final Boundary boundary) {
-        boundary.setParent(this);
-        children.add(boundary);
-    }
-
-    public void deleteChild(final Boundary boundary) {
-        children.remove(boundary);
-    }
-
-    public void addChildren(final Set<Boundary> boundaries) {
-        children.addAll(boundaries);
-
-    }
-
-    public void deleteChildren(final Set<Boundary> boundaries) {
-        children.removeAll(boundaries);
-    }
-
     public boolean isRoot() {
-        return getParent() == null ? true : false;
+        return getParent() == null;
     }
 
     public void setBoundaryType(final BoundaryType boundaryType) {
@@ -231,30 +204,6 @@ public class Boundary extends AbstractAuditable {
     public void setChildren(final Set<Boundary> boundaries) {
         children = boundaries;
 
-    }
-
-    public Long getParentBoundaryNum() {
-        return parentBoundaryNum;
-    }
-
-    public void setParentBoundaryNum(final Long parentBoundaryNum) {
-        this.parentBoundaryNum = parentBoundaryNum;
-    }
-
-    public Long getHierarchyTypeId() {
-        return hierarchyTypeId;
-    }
-
-    public void setHierarchyTypeId(final Long hierarchyTypeId) {
-        this.hierarchyTypeId = hierarchyTypeId;
-    }
-
-    public Long getBoundaryTypeId() {
-        return boundaryTypeId;
-    }
-
-    public void setBoundaryTypeId(final Long boundaryTypeId) {
-        this.boundaryTypeId = boundaryTypeId;
     }
 
     public Date getFromDate() {

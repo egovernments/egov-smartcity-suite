@@ -64,8 +64,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Unique(id = "id", tableName = "eg_hierarchy_type", fields = { "name", "code" }, columnName = { "name",
-        "code" }, enableDfltMsg = true)
+@Unique(fields = { "name", "code" }, enableDfltMsg = true)
 @Table(name = "eg_hierarchy_type")
 @SequenceGenerator(name = HierarchyType.SEQ_HIERARCHY_TYPE, sequenceName = HierarchyType.SEQ_HIERARCHY_TYPE, allocationSize = 1)
 public class HierarchyType extends AbstractAuditable {
