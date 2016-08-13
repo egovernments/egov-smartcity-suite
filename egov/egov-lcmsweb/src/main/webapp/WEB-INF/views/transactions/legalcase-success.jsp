@@ -283,7 +283,7 @@
 		<spring:message code="lbl.bipartisanDetails.respondant" />
 	</div>
 </div>
-<table class="table table-striped table-bordered" id="respodantDetails">
+<table class="table table-striped table-bordered" id="respondantDetails">
 	<thead>
 		<tr>
 		<th class="text-center"><spring:message code="lbl.slno" />

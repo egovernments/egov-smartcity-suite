@@ -37,14 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
+$bankBranchId=0;
 $(document).ready(function(){
-	
+	$("#buttonid").click(function() {
+		document.forms[0].submit();
+	});
+	$('#bankId').trigger('blur');
+	$bankBranchId=$('#bankBranchId').val();
 	callbankdetails();
 	$('#paymentmode').change(function(){
 	callbankdetails();
-	});
 	
+	});
+});
 jQuery('#btnsearch').click(function(e) {
 		callAjaxSearch();
 	});
@@ -78,6 +83,7 @@ function callAjaxSearch() {
 				 },
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
+				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
@@ -116,8 +122,6 @@ function callbankdetails(){
 	}
 }
 
-});
-
 
 $('#bankId').blur(function(){
 	 if ($('#bankId').val() === '') {
@@ -138,7 +142,16 @@ $('#bankId').blur(function(){
 					$('#bankBranch').empty();
 					$('#bankBranch').append($("<option value=''>Select from below</option>"));
 					$.each(response, function(index, value) {
-					$('#bankBranch').append($('<option>').text(value.branchname).attr('value', value.id))
+						var selected="";
+						if($bankBranchId)
+						{
+							if($bankBranchId==value.id)
+							{
+								selected="selected";
+							}
+						}
+//					$('#bankBranch').append($('<option>').text(value.branchname).attr('value', value.id))
+					$('#bankBranch').append($('<option '+ selected +'>').text(value.branchname).attr('value', value.id));
 					});
 				}, 
 				error: function (response) {

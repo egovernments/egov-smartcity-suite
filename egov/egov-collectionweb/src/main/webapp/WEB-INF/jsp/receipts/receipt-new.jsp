@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <head>
 <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> -->
@@ -861,6 +862,21 @@ function validate()
 				document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingbankchallandate.errormessage" />'+ '<br>';
 				validation = false;
 			}
+			else {
+				var receiptDate;
+				 <s:if test="%{!isBillSourcemisc()}">
+				 receiptDate = document.getElementById("manualReceiptDate").value;
+				</s:if>
+				<s:else>
+				receiptDate = document.getElementById("voucherDate").value;
+				</s:else>
+				if(receiptDate!=null && process(bankChallanDate) > process(receiptDate)){
+ 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+ 	 					'<s:text name="miscreceipt.error.transactiondate.greaterthan.receiptdate" />'+ '<br>';   	
+ 	 				window.scroll(0,0);
+ 	 				validation=false;
+ 		 	   	}
+			}
 		}
 		if(document.getElementById("instrHeaderBank.instrumentAmount")!=null){
 			bankamount=document.getElementById("instrHeaderBank.instrumentAmount").value;
@@ -991,6 +1007,12 @@ function validate()
 	}
 }//end of function 'validate'
 
+
+function process(date){
+   var parts = date.split("/");
+   return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
 function verifyChequeDetails(table,len1)
 {
 	var check=true;
@@ -1044,9 +1066,9 @@ function verifyChequeDetails(table,len1)
 	    	}
 	    }
 	    //validate if valid date has been entered
-	    <s:if test="%{!isBillSourcemisc()}">
 	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
-	    	var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
+	    var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
+	    <s:if test="%{!isBillSourcemisc()}">
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -1056,19 +1078,20 @@ function verifyChequeDetails(table,len1)
 	    		
 	    	} 
 	    	else if (document.getElementById('manualreceiptinfo').checked==true){
-		    	 if(document.getElementById("manualReceiptDate").value !=null && document.getElementById("manualReceiptDate").value != '' ){
-	    		if(getControlInBranch(table.rows[j],'instrumentDate') != null && getControlInBranch(table.rows[j],'instrumentDate')!= '' && check==true) {
-    			checkForCurrentDate(instrDate);
-	    		}
+	    		var receiptDate = document.getElementById("manualReceiptDate").value;
+		    	 if(receiptDate !=null && receiptDate != '' && instrDate.value != null && instrDate.value!= '' && check==true ){
+	    			if(process(instrDate.value) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
+    				checkForCurrentDate(instrDate);
 	    	}
-	    	} 
-	    	checkForCurrentDate(instrDate);
-	    }
+	    	}
 	    </s:if>
 
 	    <s:else>
-	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
-	    	var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -1076,10 +1099,17 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
+	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	 	    	if(instrDate.value != null && instrDate.value!= '' && check==true && process(instrDate.value) > process(receiptDate)){
+	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
+	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+	 	 				window.scroll(0,0);
+	 	 				check=false;
+	 		 	   	}
 	    		     checkForCurrentDate(instrDate);
 	    		   } 	               
-	    }
 	    </s:else>
+	    }
 
 	    if(getControlInBranch(table.rows[j],'instrumentChequeAmount')!=null)
 		{
@@ -2247,7 +2277,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>

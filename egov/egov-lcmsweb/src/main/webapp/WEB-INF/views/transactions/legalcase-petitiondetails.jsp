@@ -64,28 +64,28 @@
 		<tr class="">
 			<td>
 					<span class="petitionDetails spansno">1</span>
-					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+					<form:hidden path="bipartisanPetitionerDetailsList[0].id" name="bipartisanPetitionerDetailsList[0].id" value="${bipartisanPetitionerDetailsList[0].id}" class="form-control table-input hidden-input"/>
 							</td>
 			<!-- <td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanPetitionDetailsList[0].isRespondentGovernment"
-				id="bipartisanPetitionDetailsList[0].isRespondentGovernment"
+				name="bipartisanPetitionerDetailsList[0].isRespondentGovernment"
+				id="bipartisanPetitionerDetailsList[0].isRespondentGovernment"
 				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
-				name="bipartisanPetitionDetailsList[0].name" id="bipartisanPetitionDetailsList[0].name"
+				name="bipartisanPetitionerDetailsList[0].name" id="bipartisanPetitionerDetailsList[0].name"
 				maxlength="50" required="required"></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input" name="bipartisanPetitionDetailsList[0].address"
-				id="bipartisanPetitionDetailsList[0].address" maxlength="256"></td>
+				class="form-control table-input" name="bipartisanPetitionerDetailsList[0].address"
+				id="bipartisanPetitionerDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right patternvalidation"
-				data-pattern="number" name="bipartisanPetitionDetailsList[0].contactNumber"
-				id="bipartisanPetitionDetailsList[0].contactNumber" maxlength="10"></td>
+				data-pattern="number" name="bipartisanPetitionerDetailsList[0].contactNumber"
+				id="bipartisanPetitionerDetailsList[0].contactNumber" maxlength="10"></td>
 			<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
-					name="bipartisanPetitionDetailsList[0].governmentDepartment"
-					id="bipartisanPetitionDetailsList[0].governmentDepartment"
+					name="bipartisanPetitionerDetailsList[0].governmentDepartment"
+					id="bipartisanPetitionerDetailsList[0].governmentDepartment"
 					cssClass="form-control" 
 					cssErrorClass="form-control error">
 					<form:option value="">
@@ -107,7 +107,7 @@
 		<spring:message code="lbl.bipartisanDetails.respondant" />
 	</div>
 </div>
-<table class="table table-striped table-bordered" id="respodantDetails">
+<table class="table table-striped table-bordered" id="respondantDetails">
 	<thead>
 		<tr>
 		<th class="text-center"><spring:message code="lbl.slno" />
@@ -124,32 +124,32 @@
 	<tbody>
 		<tr class="">
 		<td>
-					<span class="respodantDetails spansno">1</span>
-					<form:hidden path="bipartisanPetitionDetailsList[0].id" name="bipartisanPetitionDetailsList[0].id" value="${bipartisanPetitionDetailsList[0].id}" class="form-control table-input hidden-input"/>
+					<span class="respondantDetails spansno">1</span>
+					<form:hidden path="bipartisanRespondentDetailsList[0].id" name="bipartisanRespondentDetailsList[0].id" value="${bipartisanRespondentDetailsList[0].id}" class="form-control table-input hidden-input"/>
 							</td>
 			<!-- <td class="text-center"><input type="checkbox" id="activeid"
-				name="bipartisanDetailsBeanList[0].isRespondentGovernment"
-				id="bipartisanDetailsBeanList[0].isRespondentGovernment"
+				name="bipartisanRespondentDetailsList[0].isRespondentGovernment"
+				id="bipartisanRespondentDetailsList[0].isRespondentGovernment"
 				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right"
 				data-pattern="alphanumerichyphenbackslash"
-				name="bipartisanDetailsBeanList[0].name"
-				id="bipartisanDetailsBeanList[0].name" maxlength="50"
+				name="bipartisanRespondentDetailsList[0].name"
+				id="bipartisanRespondentDetailsList[0].name" maxlength="50"
 				required="required"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input"
-				name="bipartisanDetailsBeanList[0].address"
-				id="bipartisanDetailsBeanList[0].address" maxlength="256"></td>
+				name="bipartisanRespondentDetailsList[0].address"
+				id="bipartisanRespondentDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
 				class="form-control table-input text-right patternvalidation"
 				data-pattern="number"
-				name="bipartisanDetailsBeanList[0].contactNumber"
-				id="bipartisanDetailsBeanList[0].contactNumber" maxlength="10"></td>
+				name="bipartisanRespondentDetailsList[0].contactNumber"
+				id="bipartisanRespondentDetailsList[0].contactNumber" maxlength="10"></td>
 		<%-- 	<td class="text-right"><form:select path=""
 					data-first-option="false"
-					name="bipartisanDetailsBeanList[0].governmentDepartment"
-					id="bipartisanDetailsBeanList[0].governmentDepartment"
+					name="bipartisanRespondentDetailsList[0].governmentDepartment"
+					id="bipartisanRespondentDetailsList[0].governmentDepartment"
 					cssClass="form-control"
 					cssErrorClass="form-control error">
 					<form:option value="">
@@ -159,8 +159,8 @@
 						itemLabel="code" />
 				</form:select></td> --%>
 				<input type="hidden" 
-						id="bipartisanDetailsBeanList[0].isRepondent"
-						name="bipartisanDetailsBeanList[0].isRepondent" 
+						id="bipartisanRespondentDetailsList[0].isRepondent"
+						name="bipartisanRespondentDetailsList[0].isRepondent" 
 					class="form-control table-input text-right" style="text-align: center"
 					value="${true}" />
 				

@@ -174,4 +174,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     
     @Query(" select distinct A.designation.roles from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and A.employee.id =:empId")
     public Set<Role> getRolesForActiveAssignmentsByEmpId(@Param("empId") Long empId);
+    
+    @Query(" select A from Assignment A where A.department.id=:deptId and A.designation.id in :desigIds and A.fromDate<=:givenDate and A.toDate>=:givenDate")
+    public List<Assignment> findByDepartmentDesignationsAndGivenDate(@Param("deptId") Long deptId, @Param("desigIds") final List<Long> desigIds,
+            @Param("givenDate") Date givenDate);
 }

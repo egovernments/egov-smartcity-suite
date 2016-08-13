@@ -209,6 +209,7 @@ public class AssessmentService {
             String ownerName = assessmentReq.getOwnerName();
             String mobileNumber = assessmentReq.getMobileNumber();
             String category = assessmentReq.getCategory();
+            String doorNo = assessmentReq.getDoorNo();
             if (!StringUtils.isBlank(category)) {
                 if (!(PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX.equals(category)
                         || PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX.equals(category))) {
@@ -220,8 +221,8 @@ public class AssessmentService {
                     return JsonConvertor.convert(errors);
                 }
             }
-            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber)) {
-                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category);
+            if (!StringUtils.isBlank(assessmentNo) || !StringUtils.isBlank(ownerName) || !StringUtils.isBlank(mobileNumber) || !StringUtils.isBlank(doorNo)) {
+                propertyTaxDetailsList = propertyExternalService.getPropertyTaxDetails(assessmentNo, ownerName, mobileNumber, category, doorNo);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();

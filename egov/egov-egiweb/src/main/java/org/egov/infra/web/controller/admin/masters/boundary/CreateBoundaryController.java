@@ -43,7 +43,6 @@ package org.egov.infra.web.controller.admin.masters.boundary;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -68,34 +67,25 @@ public class CreateBoundaryController {
     private static final String REDIRECT_URL_VIEW = "redirect:/view-boundary/";
 
     private final BoundaryService boundaryService;
-    private final BoundaryTypeService boundaryTypeService;
 
     @Autowired
-    public CreateBoundaryController(final BoundaryService boundaryService, final BoundaryTypeService boundaryTypeService) {
+    public CreateBoundaryController(final BoundaryService boundaryService) {
         this.boundaryService = boundaryService;
-        this.boundaryTypeService = boundaryTypeService;
     }
 
     @RequestMapping(value = "/boundary/create", method = RequestMethod.POST)
     public String createOrUpdateBoundary(@Valid @ModelAttribute final Boundary boundary, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final Model model) {
-        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
-        model.addAttribute("boundaryType", boundaryType);
-        if (errors.hasErrors())
+            final RedirectAttributes redirectAttributes, Model model) {
+        BoundaryType boundaryType = boundary.getBoundaryType();
+        if (errors.hasErrors()) {
+            model.addAttribute("boundaryType", boundaryType);
+            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
             return "boundary-create";
-
-        boundary.setBoundaryType(boundaryType);
-        boundary.setHistory(false);
-        boundary.setMaterializedPath(boundaryService.getMaterializedPath(null, boundary.getParent()));
-
+        }
         boundaryService.createBoundary(boundary);
-
         redirectAttributes.addFlashAttribute("boundary", boundary);
         redirectAttributes.addFlashAttribute("message", "msg.bndry.create.success");
-
-        final String pathVars = boundaryType.getHierarchyType().getId() + "," + boundaryType.getId();
-
-        return REDIRECT_URL_VIEW + pathVars;
+        return REDIRECT_URL_VIEW + boundaryType.getHierarchyType().getId() + "," + boundaryType.getId();
     }
 
     @RequestMapping(value = "/wards-by-zone", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)

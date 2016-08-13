@@ -445,9 +445,9 @@ public class PropertyExternalService {
     }
     
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
-            final String mobileNumber, final String category) {
+            final String mobileNumber, final String category, final String doorNo) {
         final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo, ownerName,
-                mobileNumber, category);
+                mobileNumber, category, doorNo);
         List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
         if (null != basicProperties && !basicProperties.isEmpty()) {
             for (final BasicProperty basicProperty : basicProperties) {

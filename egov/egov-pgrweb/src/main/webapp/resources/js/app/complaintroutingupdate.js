@@ -43,7 +43,7 @@ $(document).ready(function()
 {
 	$('#routerUpdateBtn').click(function() {
 		if($('#positionId').val() != ""){
-			var url = '/pgr/router/update-search/'+ $('#routerId').val();
+			var url = '/pgr/router/search/update/'+ $('#routerId').val();
 			$('#updateRouter').attr('method', 'post');
 			$('#updateRouter').attr('action', url);
 		}else{
