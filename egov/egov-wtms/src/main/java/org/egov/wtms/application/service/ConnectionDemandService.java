@@ -102,6 +102,8 @@ import org.egov.wtms.masters.service.WaterRatesHeaderService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +171,11 @@ public class ConnectionDemandService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+    
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+    
+    
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -590,8 +597,8 @@ public class ConnectionDemandService {
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
         EgDemand demandObj = null;
-       Installment currenticnstallment = getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-
+         Installment currenticnstallment = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
             demandObj = new EgDemand();
         else

@@ -508,7 +508,14 @@
 				document.getElementById("loadingMask").style.display = "none";
 		    });
 			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
-			jQuery(document).on("keydown", disableRefreshAndBack);
+			$(document).on("keydown", disableRefreshAndBack);
+
+			window.location.hash = "no-back-button";
+	        window.location.hash = "Again-No-back-button";//again because google chrome does not insert first hash into history
+	        window.onhashchange = function() {
+	            window.location.hash = "no-back-button";
+	        }
+	        
 		</script>
 	</body>
 </html>																						

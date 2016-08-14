@@ -2558,7 +2558,7 @@ public class PropertyService {
                     ownerPosition = historyState.getOwnerPosition();
                     user = historyState.getOwnerUser();
                     if (null != ownerPosition) {
-                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                         User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(), historyState.getCreatedDate());
                         HistoryMap.put("user", null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
                     } else if (null != user)
                         HistoryMap.put("user", user.getUsername() + "::" + user.getName());
@@ -2736,7 +2736,10 @@ public class PropertyService {
 			taxValues.put(PropertyTaxConstants.CURR_BAL_STR, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)
 					.subtract((propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
 		}
-		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX));
+		if(propertyTaxDetails.get(installmentHalf).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX)!= null)
+		    taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX));
+		else
+		    taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS));
 		taxValues.put(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY, (propertyTaxDetails.get(installmentHalf)).get(PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY));

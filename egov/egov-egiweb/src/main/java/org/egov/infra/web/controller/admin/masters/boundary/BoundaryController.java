@@ -96,9 +96,8 @@ public class BoundaryController {
     public String showCreateBoundaryForm(final Model model, final RedirectAttributes redirectAttributes) {
         model.addAttribute("isUpdate", false);
         final BoundaryType boundaryType = (BoundaryType) model.asMap().get("boundaryType");
-
         if (boundaryService.validateBoundary(boundaryType)) {
-            redirectAttributes.addFlashAttribute("warning", "msg.root.bndry.exists");
+            redirectAttributes.addFlashAttribute("warning", "err.root.bndry.exists");
             return "redirect:/search-boundary";
         } else {
             if (boundaryType != null && boundaryType.getParent() != null)
@@ -119,30 +118,22 @@ public class BoundaryController {
     }
 
     @RequestMapping(value = "/list-boundaries/{ids}", method = RequestMethod.POST)
-    public String showPaginationForm(final Model model) {
+    public String showPaginationForm() {
         return "view-boundaries";
     }
 
     @RequestMapping(value = "/update-boundary/{ids}", method = RequestMethod.POST)
-    public String UpdateBoundary(@Valid @ModelAttribute final Boundary boundary, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
-
-        if (errors.hasErrors())
+    public String UpdateBoundary(@Valid @ModelAttribute final Boundary boundary, final BindingResult errors,
+                                 final RedirectAttributes redirectAttributes, Model model) {
+        if (errors.hasErrors()) {
+            model.addAttribute("isUpdate", true);
+            model.addAttribute("boundaryType", boundary.getBoundaryType());
+            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundary.getBoundaryType().getParent().getId()));
             return "boundary-create";
-
-        final BoundaryType boundaryTypeObj = boundaryTypeService.getBoundaryTypeById(boundary.getBoundaryTypeId());
-
-        boundary.setBoundaryType(boundaryTypeObj);
-        boundary.setHistory(false);
-        boundary.setMaterializedPath(boundaryService.getMaterializedPath(boundary, boundary.getParent()));
-
+        }
         boundaryService.updateBoundary(boundary);
-
         redirectAttributes.addFlashAttribute("boundary", boundary);
         redirectAttributes.addFlashAttribute("message", "msg.bndry.update.success");
-
-        final String pathVars = boundaryTypeObj.getHierarchyType().getId() + "," + boundaryTypeObj.getId();
-
-        return REDIRECT_URL_VIEW + pathVars;
+        return REDIRECT_URL_VIEW + boundary.getBoundaryType().getHierarchyType().getId() + "," + boundary.getBoundaryType().getId();
     }
 }

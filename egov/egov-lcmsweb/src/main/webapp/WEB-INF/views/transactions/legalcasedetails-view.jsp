@@ -54,7 +54,7 @@
 						<div class=role="alert">${message}</div>
 					</c:if>
 					<div class="panel-heading">
-						<div class="panel-title">
+						<div class="panel-title" align="center">
 							<spring:message code="title.legalCase.view" />
 						</div>
 					</div>
@@ -154,10 +154,10 @@
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.officerincharge" />
 							</div>
-								<div class="col-xs-3 add-margin view-content">
+							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${legalCase.officerIncharge}" />
 							</div>
-						
+
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.noticedate" />
 							</div>
@@ -183,7 +183,7 @@
 		</div>
 		<div class="row form-group">
 			<div class="panel-heading">
-				<div class="panel-title">
+				<div class="panel-title" align="center" style="font-weight: bold">
 					<spring:message code="lbl.bipartisanDetails.details" />
 				</div>
 			</div>
@@ -191,8 +191,7 @@
 				id="petitionDetails">
 				<thead>
 					<tr>
-					<th class="text-center"><spring:message code="lbl.slno" />
-						<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
+						<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 						<th class="text-center"><spring:message code="lbl.name" /><span
 							class="mandatory"></span></th>
 						<th class="text-center"><spring:message
@@ -204,14 +203,12 @@
 				</thead>
 				<tbody>
 
-					<c:forEach var="bipartisanDetails" items="${legalCase.getPetitioners()}"
-						varStatus="status">
+					<c:forEach var="bipartisanDetails"
+						items="${legalCase.getPetitioners()}" varStatus="status">
 						<tr>
-						<td>
-								<input type="text" id="table_name${status.index}" class="form-control"
-								readonly="readonly" style="text-align: center"
-								value="${status.index+1}" /> 
-								</td>
+							<td><input type="text" id="table_name${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center" value="${status.index+1}" /></td>
 							<%-- <td><form:input type="hidden"
 									id="bipartisanDetails[${status.index}].isRespondentGovernment"
 									path="bipartisanDetails[${status.index}].isRespondentGovernment" />
@@ -269,35 +266,34 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="lbl.bipartisanDetails.respondant" />
+		<div class="row form-group">
+			<div class="panel-heading">
+				<div class="panel-title" style="font-weight: bold" align="center">
+					<spring:message code="lbl.bipartisanDetails.respondant" />
+				</div>
 			</div>
-		</div>
-		<table class="table table-striped table-bordered"
-			id="respodantDetails">
-			<thead>
-				<tr>
-				<th class="text-center"><spring:message code="lbl.slno" />
-					<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
-					<th class="text-center"><spring:message code="lbl.name" /><span
-						class="mandatory"></span></th>
-					<th class="text-center"><spring:message code="lbl.discription" /></th>
-					<th class="text-center"><spring:message
-							code="lbl.contactnumber" /></th>
-					<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
-				</tr>
-			</thead>
-			<tbody>
+			<table class="table table-striped table-bordered"
+				id="respondantDetails">
+				<thead>
+					<tr>
+						<th class="text-center"><spring:message code="lbl.slno" /> <%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
+						<th class="text-center"><spring:message code="lbl.name" /><span
+							class="mandatory"></span></th>
+						<th class="text-center"><spring:message
+								code="lbl.discription" /></th>
+						<th class="text-center"><spring:message
+								code="lbl.contactnumber" /></th>
+						<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
+					</tr>
+				</thead>
+				<tbody>
 
-				<c:forEach var="bipartisanDetailsBeanList" items="${legalCase.getRespondents()}"
-						varStatus="status">
+					<c:forEach var="bipartisanDetailsBeanList"
+						items="${legalCase.getRespondents()}" varStatus="status">
 						<tr>
-						<td>
-								<input type="text" id="table_name${status.index}" class="form-control"
-								readonly="readonly" style="text-align: center"
-								value="${status.index+1}" /> 
-								</td>
+							<td><input type="text" id="table_name${status.index}"
+								class="form-control" readonly="readonly"
+								style="text-align: center" value="${status.index+1}" /></td>
 							<%-- <td>
 							<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].isRespondentGovernment"
@@ -320,39 +316,31 @@
 								</c:otherwise>
 								</c:choose>
 								</td> --%>
-								
-								<td>
-								<form:input
-									type="hidden" id="bipartisanDetailsBeanList[${status.index}].name"
-									path="bipartisanDetailsBeanList[${status.index}].name" /> 
-									
-									<input type="text" id="table_name${status.index}" class="form-control"
+
+							<td><form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].name"
+									path="bipartisanDetailsBeanList[${status.index}].name" /> <input
+								type="text" id="table_name${status.index}" class="form-control"
 								readonly="readonly" style="text-align: center"
-								value="${bipartisanDetailsBeanList.name}" /> 
-								</td>
-								
-								<td>
-								<form:input
-									type="hidden" id="bipartisanDetailsBeanList[${status.index}].address"
+								value="${bipartisanDetailsBeanList.name}" /></td>
+
+							<td><form:input type="hidden"
+									id="bipartisanDetailsBeanList[${status.index}].address"
 									path="bipartisanDetailsBeanList[${status.index}].address" /> <input
 								type="text" id="table_address${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetailsBeanList.address}" /> 
-								</td>
-								
-								<td>
-								<form:input type="hidden"
+								value="${bipartisanDetailsBeanList.address}" /></td>
+
+							<td><form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].contactNumber"
-									path="bipartisanDetailsBeanList[${status.index}].contactNumber" /> 
-									<input
-								type="text" id="table_contactNumber${status.index}"
+									path="bipartisanDetailsBeanList[${status.index}].contactNumber" />
+								<input type="text" id="table_contactNumber${status.index}"
 								class="form-control" readonly="readonly"
 								style="text-align: center"
-								value="${bipartisanDetailsBeanList.contactNumber}" /> 
-								</td>
-								
-								<%-- <td>
+								value="${bipartisanDetailsBeanList.contactNumber}" /></td>
+
+							<%-- <td>
 								<form:input type="hidden"
 									id="bipartisanDetailsBeanList[${status.index}].governmentDepartment"
 									path="bipartisanDetailsBeanList[${status.index}].governmentDepartment" />
@@ -365,143 +353,151 @@
 
 						</tr>
 					</c:forEach>
-			</tbody>
-		</table>
-	</div>
-	<div class="main-content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-body">
-						<div class="form-group">
-							<div class="row add-border">
-								<div class="col-xs-2 add-margin">
-									<spring:message code="lbl.representedby" />
-								</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.representedby}" />
-								</div>
-								<div class="col-xs-2 add-margin">Standing Council Name:</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.oppPartyAdvocate}" />
-								</div>
-							</div>
+				</tbody>
+			</table>
+		</div>
 
-							<div class="row add-border">
-								<div class="col-xs-2 add-margin">Remarks:</div>
-								<div class="col-xs-3 add-margin view-content">
-									<c:out value="${legalCase.remarks}" />
+		<div class="main-content">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group">
+						<div class="row add-border">
+							<div class="col-xs-2 add-margin">
+								<spring:message code="lbl.representedby" />
+							</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.representedby}" />
+							</div>
+							<div class="col-xs-2 add-margin">Standing Council Name:</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.oppPartyAdvocate}" />
+							</div>
+						</div>
+
+						<div class="row add-border">
+							<div class="col-xs-2 add-margin">Remarks:</div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.remarks}" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="row form-group">
+			<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
+				<div class="panel-heading">
+					<div class="panel-title" align="center" style="font-weight: bold">
+						Standing Council Details:</div>
+				</div>
+
+				<div class="main-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-primary" data-collapsed="0">
+								<div class="panel-body">
+									<div class="form-group">
+										<div class="row add-border">
+											<div class="form-group">
+												<label class="col-sm-3 control-label text-right">Standing
+													Council: </label>
+												<div class="col-sm-3 add-margin">
+													<c:out
+														value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
+												</div>
+												<label class="col-sm-2 control-label text-right">Assigned
+													Date: </label>
+												<div class="col-sm-3 add-margin">
+													<fmt:formatDate pattern="dd/MM/yyyy"
+														value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}"
+														var="assignDate" />
+													<c:out value="${assignDate}" />
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label text-right">Date
+													on which Vakalaat filed:</label>
+												<div class="col-sm-3 add-margin">
+													<fmt:formatDate pattern="dd/MM/yyyy"
+														value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}"
+														var="assignDate" />
+													<c:out value="${assignDate}" />
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-3 control-label text-right"
+													id="persons">Is Senior Standing Counsel Required:</label>
+												<div class="col-sm-3 add-margin">
+
+													<c:choose>
+														<c:when test="${legalCase.isSenioradvrequired}">
+        Yes
+         </c:when>
+														<c:otherwise>
+        No 
+    </c:otherwise>
+													</c:choose>
+												</div>
+											</div>
+											<c:if test="${legalCase.isSenioradvrequired}">
+												<div id="seniordov1" class="form-group">
+													<label class="col-sm-3 control-label text-right">Senior
+														Standing Council: </label>
+													<div class="col-sm-3 add-margin">
+														<c:out
+															value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
+
+													</div>
+													<div class="form-group" id="seniordov3">
+														<label class="col-sm-2 control-label text-right">Assigned
+															On:</label>
+														<div class="col-sm-3 add-margin">
+
+															<fmt:formatDate pattern="dd/MM/yyyy"
+																value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}"
+																var="assignDate" />
+															<c:out value="${assignDate}" />
+														</div>
+													</div>
+												</div>
+												<div id="seniordov2" class="form-group">
+													<label class="col-sm-3 control-label text-right">Order
+														Date: </label>
+													<div class="col-sm-3 add-margin">
+
+														<fmt:formatDate pattern="dd/MM/yyyy"
+															value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}"
+															var="assignDate" />
+														<c:out value="${assignDate}" />
+													</div>
+													<label class="col-sm-2 control-label text-right">Order
+														Number: </label>
+													<div class="col-sm-3 add-margin">
+														<c:out
+															value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
+													</div>
+											</c:if>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			</c:if>
 		</div>
-	</div>
-	<c:if test="${not empty legalCase.eglcLegalcaseAdvocates }">
-	<div class="panel-heading">
-			<div class="panel-title">
-				<label class="col-sm-3 control-label text-right">Standing
-				Council Details:<span class="mandatory"></span>:
-			</label>
-			</div>
-		</div>
-	
-	<div class="main-content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-body">
-						<div class="form-group">
-							<div class="row add-border">
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right">Standing
-		Council:
-	</label>
-	<div class="col-sm-3 add-margin">
-	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].advocateMaster.name}" />
-	</div>
-	<label class="col-sm-2 control-label text-right">Assigned Date:
-	</label>
-	<div class="col-sm-3 add-margin">
-		<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodate}" var="assignDate" />
-								<c:out value="${assignDate}" />
-	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right">Date on which
-		Vakalaat filed:</label>
-	<div class="col-sm-3 add-margin">
-		<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCase.eglcLegalcaseAdvocates[0].vakalatdate}" var="assignDate" />
-								<c:out value="${assignDate}" />
-	</div>
-</div>
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons">Is
-		Senior Standing Counsel Required:</label>
-	<div class="col-sm-3 add-margin">
-	
-	<c:choose>
-    <c:when test="${legalCase.isSenioradvrequired}">
-        Yes
-         </c:when>    
-    <c:otherwise>
-        No 
-    </c:otherwise>
-</c:choose>
-	</div>
-</div>
- <c:if test="${legalCase.isSenioradvrequired}">
-<div id="seniordov1" class="form-group">
-	<label class="col-sm-3 control-label text-right">Senior
-		Standing Council:
-	</label>
-	<div class="col-sm-3 add-margin">
-		<c:out value="${legalCase.eglcLegalcaseAdvocates[0].eglcSeniorAdvocateMaster.name}" />
-		
-	</div>
-	<div class="form-group" id="seniordov3">
-	<label class="col-sm-2 control-label text-right">Assigned On:</label>
-	<div class="col-sm-3 add-margin">
-			
-		<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCase.eglcLegalcaseAdvocates[0].assignedtodateForsenior}" var="assignDate" />
-								<c:out value="${assignDate}" />
-	</div>
-</div>
-</div>
-<div id="seniordov2" class="form-group">
-	<label class="col-sm-3 control-label text-right">Order Date:
-	</label>
-	<div class="col-sm-3 add-margin">
-				
-				<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${legalCase.eglcLegalcaseAdvocates[0].orderdate}" var="assignDate" />
-								<c:out value="${assignDate}" />
-	</div>
-	<label class="col-sm-2 control-label text-right">Order Number:
-	</label>
-	<div class="col-sm-3 add-margin">
-	<c:out value="${legalCase.eglcLegalcaseAdvocates[0].ordernumber}" />
-	</div>
-	</c:if>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</c:if>
-		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+		<jsp:include page="documentdetails-view.jsp"></jsp:include>
+		<c:if test="${not empty pwrDocList}">
 
-<div class="form-group">
-		<div class="text-center">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()"><spring:message code="lbl.close" /></a>
+			<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
+
+		</c:if>
+		<div class="form-group">
+			<div class="text-center">
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="self.close()"><spring:message code="lbl.close" /></a>
+			</div>
 		</div>
 	</div>
 </form:form>

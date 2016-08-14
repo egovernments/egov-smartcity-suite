@@ -41,7 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="panel-heading ">
-	<div class="panel-title">Assigned Department</div>
+	<div class="panel-title"  style="font-weight: bold">Assigned Department</div>
 </div>
 <table class="table table-striped table-bordered" id="estimateDetails">
 	<thead>
@@ -101,9 +101,8 @@
 
 	</tbody>
 </table>
-<div>
 <div class="panel-heading ">
-	<div class="panel-title">Pwr Details</div>
+	<div class="panel-title"  style="font-weight: bold">Pwr Details</div>
 </div>
 <div class="form-group">
 			<label class="col-sm-3 control-label text-right">
@@ -123,13 +122,21 @@
 				<form:input name="eglcPwrs[0].pwrApprovalDate"
 					path="eglcPwrs[0].pwrApprovalDate" class="form-control datepicker"
 					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
-					data-date-end-date="-1d" id="eglcPwrs[0].pwrApprovalDate"
+					 id="eglcPwrs[0].pwrApprovalDate"
 					data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="eglcPwrs[0].pwrApprovalDate" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-<%-- <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><font size="2"><spring:message
+	
+		<c:choose>
+		<c:when test="${not empty pwrDocList}">
+		
+		<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include> 
+		
+		</c:when>
+		<c:otherwise>
+			<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><font size="4"><spring:message
 				code="lbl.mesg.document" /></font> </label>
 	<div class="col-sm-3 add-margin">
 
@@ -140,5 +147,34 @@
 			cssClass="add-margin error-msg" />
 		
 	</div>
-</div> --%>
 </div>
+		
+		</c:otherwise>
+		</c:choose>
+
+<div class="panel-heading ">
+	<div class="panel-title" style="font-weight: bold"> Counter Affidavit details</div>
+</div>
+<div class="form-group">
+			<label class="col-sm-3 control-label text-right">
+				 Date of submission of CA to GP/MSC:</label>
+			<div class="col-sm-3 add-margin">
+				<form:input name="eglcCounterAffidavit[0].counterAffidavitDueDate"
+					path="eglcCounterAffidavit[0].counterAffidavitDueDate"
+					 class="form-control datepicker"
+					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
+					data-date-end-date="-1d" id="eglcCounterAffidavit[0].counterAffidavitDueDate"
+					data-inputmask="'mask': 'd/m/y'" />
+				<form:errors path="eglcCounterAffidavit[0].counterAffidavitDueDate" cssClass="add-margin error-msg" />
+			</div>
+		<label class="col-sm-2 control-label text-right">
+		Date of Approval of CA to GP/MSC:</label>
+		<div class="col-sm-3 add-margin">
+				<form:input name="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
+					path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" class="form-control datepicker"
+					title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
+					id="eglcCounterAffidavit[0].counterAffidavitApprovalDate"
+					data-inputmask="'mask': 'd/m/y'" />
+				<form:errors path="eglcCounterAffidavit[0].counterAffidavitApprovalDate" cssClass="add-margin error-msg" />
+			</div>
+		</div>

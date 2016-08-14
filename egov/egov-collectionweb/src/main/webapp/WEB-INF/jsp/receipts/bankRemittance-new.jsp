@@ -115,7 +115,16 @@
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
 		}
-
+		var totalCashAmt = document.getElementsByName('totalCashAmountArray');
+		var totalAmtDisplay = 0.00;
+		for (i = 0; i < totalCashAmt.length; i++) {
+				totalAmtDisplay = totalAmtDisplay + +document.getElementsByName('totalCashAmountArray')[i].value;
+		}
+		var totalChequeAmt = document.getElementsByName('totalChequeAmountArray');
+		for (i = 0; i < totalChequeAmt.length; i++) {
+			totalAmtDisplay = totalAmtDisplay + +document.getElementsByName('totalChequeAmountArray')[i].value;
+		}
+		document.getElementById("remittanceAmount").value= totalAmtDisplay.toFixed(2);
 		//TODO: uncomment the validation after go live
 		/* var receiptDateArray=document.getElementsByName('receiptDateArray');
 		for(j=0; j<receiptDateArray.length; j++)
@@ -500,17 +509,21 @@
 						<img src="/collection/resources/images/bar_loader.gif" alt=""/> <span
 							style="color: red">Please wait....</span>
 					</div>
-					<s:if test="showRemittanceDate">
+					
 					<div align="center">
 					<table>
 					<tr>
-					<td class="bluebox" colspan="7"> &nbsp;</td>
+					<s:if test="showRemittanceDate">
+					<td class="bluebox" colspan="3"> &nbsp;</td>
 					<td class="bluebox" ><s:text name="bankremittance.remittancetdate"/><span class="mandatory"/></td>
-					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  onfocus = "waterMarkTextIn('remittanceDate','DD/MM/YYYY');"/><div>(DD/MM/YYYY)</div></td>
+					<td class="bluebox"><s:textfield id="remittanceDate" name="remittanceDate" readonly="true" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/></td>
+					</s:if>
+					<td class="bluebox" ><s:text name="bankremittance.remittanceamount"/></td>
+					<td class="bluebox"><s:textfield id="remittanceAmount" name="remittanceAmount" readonly="true"/></td>
 					</tr>
 					</table>
 					</div>
-					</s:if>
+					
 					<div align="left" class="mandatorycoll">
 						<s:text name="common.mandatoryfields" />
 					</div>

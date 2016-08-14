@@ -47,8 +47,8 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -59,7 +59,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,11 +93,15 @@ public class BoundaryService {
 
     @Transactional
     public Boundary createBoundary(final Boundary boundary) {
+        boundary.setHistory(false);
+        boundary.setMaterializedPath(getMaterializedPath(null, boundary.getParent()));
         return boundaryRepository.save(boundary);
     }
 
     @Transactional
     public void updateBoundary(final Boundary boundary) {
+        boundary.setHistory(false);
+        boundary.setMaterializedPath(getMaterializedPath(boundary, boundary.getParent()));
         boundaryRepository.save(boundary);
     }
 
@@ -106,35 +109,25 @@ public class BoundaryService {
         return boundaryRepository.findOne(id);
     }
 
-    public Boundary getBoundaryByName(final String name) {
-        return boundaryRepository.findByName(name);
-    }
-
-    public List<Boundary> getAllBoundaries() {
-        return boundaryRepository.findAll();
-    }
-   public List<Boundary> getAllBoundariesOrderByBoundaryNumAsc(BoundaryType boundaryType) {
+    public List<Boundary> getAllBoundariesOrderByBoundaryNumAsc(BoundaryType boundaryType) {
         return boundaryRepository.findByBoundaryTypeOrderByBoundaryNumAsc(boundaryType);
-    }
-   
-    public List<Boundary> getBoundaryByNameLike(final String name) {
-        return boundaryRepository.findByNameContainingIgnoreCase(name);
     }
 
     public List<Boundary> getAllBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
+
     public List<Boundary> getPageOfBoundaries(final Long boundaryTypeId) {
-          
+
         return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
     }
+
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {
         return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
     }
 
-    // TODO - Later - Use materializedPath instead of recursive calling
     public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
-        List<Boundary> boundaryList = new ArrayList<Boundary>();
+        List<Boundary> boundaryList = new ArrayList<>();
         final Boundary bndry = getBoundaryById(boundaryId);
         if (bndry != null) {
             boundaryList.add(bndry);
@@ -142,29 +135,6 @@ public class BoundaryService {
                 boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
         }
         return boundaryList;
-    }
-
-    public Map<String, List<Boundary>> getSecondLevelBoundaryByHierarchyType(final HierarchyType hierarchyType) {
-        List<Boundary> boundaryList = new ArrayList<Boundary>();
-        final Map<String, List<Boundary>> boundaryMap = new HashMap<String, List<Boundary>>();
-
-        boundaryList = boundaryRepository.findActiveBoundariesByHierarchyTypeAndLevelAndAsOnDate(hierarchyType, 2l,
-                new Date());
-        String bryName = null;
-        for (final Boundary boundary : boundaryList)
-            bryName = boundary.getBoundaryType().getName();
-        if (bryName != null)
-            boundaryMap.put(bryName, boundaryList);
-
-        return boundaryMap;
-    }
-
-    public Boundary getActiveBoundaryByIdAsOnCurrentDate(final Long id) {
-        return boundaryRepository.findActiveBoundaryByIdAndAsOnDate(id, new Date());
-    }
-
-    public Boundary getActiveBoundaryById(final Long id) {
-        return boundaryRepository.findActiveBoundaryById(id);
     }
 
     public List<Boundary> getActiveBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
@@ -184,25 +154,25 @@ public class BoundaryService {
     }
 
     public Boundary getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(final Long bndryNum,
-            final String boundaryType, final String hierarchyTypeCode) {
+                                                                           final String boundaryType, final String hierarchyTypeCode) {
         return boundaryRepository.findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(bndryNum,
                 boundaryType, hierarchyTypeCode, new Date());
     }
 
     public List<Boundary> getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-            final String hierarchyTypeName) {
+                                                                                 final String hierarchyTypeName) {
         return boundaryRepository.findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName);
     }
 
     public List<Boundary> getBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-            final String hierarchyTypeName) {
+                                                                           final String hierarchyTypeName) {
         return boundaryRepository.findBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName);
     }
 
     public Boundary getBoundaryByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-            final String hierarchyTypeName) {
+                                                                   final String hierarchyTypeName) {
         return boundaryRepository.findBoundaryByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
     }
 
@@ -211,46 +181,27 @@ public class BoundaryService {
     }
 
     public Boolean validateBoundary(final BoundaryType boundaryType) {
-        final Boundary bndry = boundaryRepository.findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(
-                boundaryType.getName(), boundaryType.getHierarchyType().getName(), 1l);
-        if (bndry != null)
-            return true;
-        else
-            return false;
+        return Optional.ofNullable(boundaryRepository.findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(
+                boundaryType.getName(), boundaryType.getHierarchyType().getName(), 1L)).isPresent();
     }
 
     public List<Boundary> getBondariesByNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
-            final String hierarchyTypeName, final String name) {
+                                                                         final String hierarchyTypeName, final String name) {
         return boundaryRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName, name);
     }
 
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {
-        final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> list = new ArrayList<>();
 
         crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration",
                 '%' + name + '%').stream().forEach(location -> {
-                    final Map<String, Object> res = new HashMap<String, Object>();
-                    res.put("id", location.getId());
-                    res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
-                    list.add(res);
-                });
-
-        /*
-         * getBoundaryByNameLike(name).stream() .forEach( location -> {
-         * Map<String, Object> res = new HashMap<String, Object>();
-         * res.put("id", location.getId()); if (location.isRoot())
-         * res.put("name", location.getName()); else { Boundary currentLocation
-         * = location; StringBuilder loc = new StringBuilder(); String delim =
-         * ""; while (!currentLocation.isRoot()) { loc.append(delim).append(
-         * currentLocation.getName()); delim = ","; currentLocation =
-         * currentLocation .getParent(); if (currentLocation.isRoot()) {
-         * loc.append(delim).append( currentLocation.getName()); break; } }
-         * res.put("name", loc.toString()); list.add(res); } });
-         */
-
+            final Map<String, Object> res = new HashMap<>();
+            res.put("id", location.getId());
+            res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
+            list.add(res);
+        });
         return list;
-
     }
 
     public List<Boundary> findActiveChildrenWithParent(final Long parentBoundaryId) {
@@ -259,22 +210,6 @@ public class BoundaryService {
 
     public List<Boundary> findActiveBoundariesForMpath(final Set<String> mpath) {
         return boundaryRepository.findActiveBoundariesForMpath(mpath);
-    }
-
-    public List<Boundary> findAllChildrenWithoutParent(final Long parentBoundaryId) {
-        return boundaryRepository.findAllChildrenWithOutParent(parentBoundaryId);
-    }
-
-    public List<Boundary> findActiveChildrenWitouthParent(final Long parentBoundaryId) {
-        return boundaryRepository.findActiveChildrenWithOutParent(parentBoundaryId);
-    }
-
-    public List<Boundary> findActiveImmediateChildrenWithOutParent(final Long parentBoudaryId) {
-        return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentBoudaryId);
-    }
-
-    public List<Boundary> findAllParents() {
-        return boundaryRepository.findAllParents();
     }
 
     public String getMaterializedPath(final Boundary child, final Boundary parent) {
@@ -286,12 +221,12 @@ public class BoundaryService {
             childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getId()).size();
         if (mpath.isEmpty())
             if (null != child) {
-                if (!child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {
+                if (parent != null && !child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {
                     childSize += 1;
                     mpath = parent.getMaterializedPath() + "." + childSize;
                 } else
                     mpath = child.getMaterializedPath();
-            } else {
+            } else if (parent != null) {
                 childSize += 1;
                 mpath = parent.getMaterializedPath() + "." + childSize;
             }
@@ -299,16 +234,15 @@ public class BoundaryService {
         return mpath;
     }
 
-    public Long getBndryIdFromShapefile(final Double latitude, final Double longitude) {
+    public Long getBoundaryIdFromShapefile(final Double latitude, final Double longitude) {
         Optional<Boundary> boundary = getBoundary(latitude, longitude);
-        return boundary.isPresent() ?  boundary.get().getId() : 0;
+        return boundary.isPresent() ? boundary.get().getId() : 0;
     }
 
     public Optional<Boundary> getBoundary(final Double latitude, final Double longitude) {
         try {
-            Boundary finalBoundary = null;
             if (latitude != null && longitude != null) {
-                final Map<String, URL> map = new HashMap<String, URL>();
+                final Map<String, URL> map = new HashMap<>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
                         .getResource("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.shp"));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
@@ -324,34 +258,34 @@ public class BoundaryService {
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
                         if (geom.contains(point)) {
                             LOG.debug("Found coordinates in shape file");
-                            final Long boundaryNum = (Long) feature.getAttribute("bndrynum");
-                            final String bndryType = (String) feature.getAttribute("bndrytype");
-                            LOG.debug("Got boundary number {} and boundary type {} from GIS", boundaryNum, bndryType);
-                            if (boundaryNum != null && StringUtils.isNotBlank(bndryType)) {
-                                final BoundaryType boundaryType = boundaryTypeService
-                                        .getBoundaryTypeByNameAndHierarchyTypeName(bndryType, "ADMINISTRATION");
-                                final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
-                                        boundaryNum);
-                                if (boundary != null)
-                                    finalBoundary = boundary;
-                                else {
-                                    final BoundaryType cityBoundaryType = boundaryTypeService
-                                            .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
-                                    finalBoundary = this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0);
-                                }
-
-                            }
-                            break;
+                            return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
                         }
                     }
                 } finally {
                     collection.close(iterator);
                 }
             }
-            LOG.debug("Found boundary data in GIS with boundary id : {}", finalBoundary == null ? 0 : finalBoundary.getId());
-            return Optional.ofNullable(finalBoundary);
+
+            return Optional.empty();
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
         }
+    }
+
+    public Optional<Boundary> getBoundaryByNumberAndType(Long boundaryNum, String boundaryTypeName) {
+        if (boundaryNum != null && StringUtils.isNotBlank(boundaryTypeName)) {
+            final BoundaryType boundaryType = boundaryTypeService
+                    .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, "ADMINISTRATION");
+            final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
+                    boundaryNum);
+            if (boundary == null) {
+                final BoundaryType cityBoundaryType = boundaryTypeService
+                        .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
+                return Optional.ofNullable(this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0));
+            }
+            return Optional.of(boundary);
+        }
+
+        return Optional.empty();
     }
 }

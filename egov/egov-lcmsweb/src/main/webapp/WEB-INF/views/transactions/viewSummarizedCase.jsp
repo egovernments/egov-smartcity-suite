@@ -42,7 +42,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<form:form method="post" action="create"
+<div class="row">
+	<div class="col-md-12">
+<form:form method="" action=""
 	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
 	id="legalCaseForm">
 	<input type="hidden" name="mode" value="${mode}" />
@@ -164,9 +166,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="row form-group">
+		
 			<div class="panel-heading">
-				<div class="panel-title">
+				<div class="panel-title" style="font-weight: bold">
 					<spring:message code="lbl.bipartisanDetails.details" />
 				</div>
 			</div>
@@ -252,14 +254,13 @@
 					</c:forEach>
 				</tbody>
 			</table>
-		</div>
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="lbl.bipartisanDetails.respondant" />
-			</div>
+		
+	
+		<div class="panel-heading ">
+		<div class="panel-title"  style="font-weight: bold"><spring:message code="lbl.bipartisanDetails.respondant" /></div>
 		</div>
 		<table class="table table-striped table-bordered"
-			id="respodantDetails">
+			id="respondantDetails">
 			<thead>
 				<tr>
 				<th class="text-center"><spring:message code="lbl.slno" />
@@ -342,6 +343,8 @@
 		</table>
 	</div>
 	</form:form>
+	</div>
+	</div>
 	<link rel="stylesheet"
 		href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 	<link rel="stylesheet"

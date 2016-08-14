@@ -104,7 +104,7 @@ public class CreateLetterOfAcceptanceController {
         model.addAttribute("engineerInchargeList",
                 letterOfAcceptanceService.getEngineerInchargeList(
                         lineEstimateDetails.getLineEstimate().getExecutingDepartment().getId(),
-                        letterOfAcceptanceService.getEngineerInchargeDesignationId()));
+                        letterOfAcceptanceService.getEngineerInchargeDesignationIds()));
     }
 
     @RequestMapping(value = "/loa-save", method = RequestMethod.POST)

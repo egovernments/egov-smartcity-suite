@@ -387,4 +387,14 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-edit.jsp"/>
 </definition>
 
+<definition name="judgmentimpl-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmentimpl.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgmentimpl/judgmentimpl-new.jsp"/>
+</definition>
+
+<definition name="judgmentimpl-success" extends="base_layout">
+	<put-attribute name="page-title" value="title.judgmentimpl.success" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/judgmentimpl/judgmentimpl-success.jsp"/>
+</definition>
+
 </tiles-definitions>

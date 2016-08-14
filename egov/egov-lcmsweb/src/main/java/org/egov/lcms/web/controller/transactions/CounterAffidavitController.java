@@ -39,13 +39,9 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,9 +64,8 @@ public class CounterAffidavitController {
 	@RequestMapping(value = "/create/", method = RequestMethod.GET)
 	public String viewForm(@ModelAttribute("legalCase") LegalCase legalCase,
 			@RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-		legalCase = getLegalCase(lcNumber);
-		
 		model.addAttribute("legalCase", legalCase);
+		model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
 		return "legalcase-caaffidavit";
 	}
 
@@ -88,23 +83,14 @@ public class CounterAffidavitController {
 			model.addAttribute("legalcase", legalCase);
 			return "legalcase-caaffidavit";
 		} else
-			
 		legalCaseService.update(legalCase);
 		redirectAttrs.addFlashAttribute("legalCase", legalCase);
 		model.addAttribute("message", "LegalCase Updated successfully.");
 		model.addAttribute("legalcase", legalCase);
+		  model.addAttribute("legalCaseDocList",
+	                legalCaseService.getLegalCaseDocList(legalCase));
+		model.addAttribute("pwrDocList", legalCaseService.getPwrDocList(legalCase));
 		model.addAttribute("mode", "view");
-		model.addAttribute("legalcase", legalCase);
-		final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
-		final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
-		for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
-			if (dd.getIsRepondent())
-				pettempList.add(dd);
-			else
-				respoTempList.add(dd);
-		model.addAttribute("mode", "view");
-		model.addAttribute("pettempList", pettempList);
-		model.addAttribute("respoTempList", respoTempList);
 		return "legalcasedetails-view";
 
 	}

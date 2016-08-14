@@ -39,16 +39,23 @@
  */
 package org.egov.lcms.utils;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.lcms.transactions.entity.BipartisanDetails;
+import org.egov.lcms.transactions.entity.LegalCase;
+import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LegalCaseUtil {
@@ -57,22 +64,41 @@ public class LegalCaseUtil {
     private EgwStatusHibernateDAO egwStatusDAO;
 
     @Autowired
+    private LegalCaseRepository legalCaseRepository;
+
+    @Autowired
     private FunctionaryHibernateDAO functionaryDAO;
 
     @Autowired
-    private CityService cityService;
+    private PositionMasterService positionMasterService;
 
-    public Functionary getFunctionaryByCode(final String[] funcString) {
-        final Functionary funcObj = functionaryDAO.getFunctionaryByCode(new BigDecimal(funcString[1]));
-        return funcObj;
-    }
+    @Autowired
+    private DepartmentService departmentService;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusForModuleAndCode(final String moduleName, final String statusCode) {
         final EgwStatus status = egwStatusDAO.getStatusByModuleAndCode(moduleName, statusCode);
         return status;
     }
 
-    public String getCityCode() {
-        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Position getPositionByName(final String name) {
+        return positionMasterService.getPositionByName(name);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Department getDepartmentByName(final String name) {
+        return departmentService.getDepartmentByName(name);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<BipartisanDetails> getBipartitionList(final LegalCase legalcase) {
+        return legalCaseRepository.getBipartitionDetList(legalcase.getId());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public List<LegalCaseDocuments> getLegalCaseDocumentList(final LegalCase legalcase) {
+        final List<LegalCaseDocuments> legalDoc = legalCaseRepository.getLegalCaseDocumentList(legalcase.getId());
+        return legalDoc;
     }
 }

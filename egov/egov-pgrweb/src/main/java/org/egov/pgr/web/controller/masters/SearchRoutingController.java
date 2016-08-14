@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.masters;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -62,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -131,13 +130,6 @@ public class SearchRoutingController {
     public String commonSearchResult(final Long boundaryTypeId, final Long complaintTypeId, final Long boundaryId) {
         final List<ComplaintRouter> pageOfRouters = complaintRouterService.getPageOfRouters(boundaryTypeId,
                 complaintTypeId, boundaryId);
-        return new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters)).append("}").toString();
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(ComplaintRouter.class, new ComplaintRouterAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+        return new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters, ComplaintRouter.class, ComplaintRouterAdaptor.class)).append("}").toString();
     }
 }

@@ -86,11 +86,6 @@ function addRow(tableObj,rowObj)
     tbody.appendChild(rowObj);
 }
 
-function process(date){
-   var parts = date.split("/");
-   return new Date(parts[2], parts[1] - 1, parts[0]);
-}
-
 function validateMiscReceipt()
 {
     if(!validateMiscDetails()){
@@ -98,15 +93,16 @@ function validateMiscReceipt()
         return false;
     }else{
     	var receiptDate = document.getElementById("voucherDate").value;
-        var cutOffDate = document.getElementById("cutOffDate").value;
-    	if(process(receiptDate) > process(cutOffDate)) {
-    		 var r = confirm('Please enter the date less than the cut-off date ' + cutOffDate + '. If the date entered is greater than the cut-off date , then it is considered as live transactions and it would go through approval workflow. Do you wish to continue?');
-    		 if (r != true) {
-    			 document.getElementById("receipt_error_area").style.display="none";
- 				return false;
-    		 } 
-    		}
+        var financialYearDate = document.getElementById("financialYearDate").value;
+    	if(process(financialYearDate) > process(receiptDate)) {
+			 document.getElementById("receipt_error_area").style.display="block";
+    		document.getElementById("receipt_error_area").innerHTML+=
+				'<s:text name="challan.error.receiptdate.lessthan.financialyear" />'+ '<br>';   	
+			       window.scroll(0,0);
+				return false;
+   		}
     }
+    
 	return true;
 }
 
@@ -218,9 +214,6 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
-    if(document.getElementById("deptId")!=null){
-        document.getElementById("deptId").disabled=true;
-    }
     document.getElementById("rebateDetails").style.display="none";
     loadDropDownCodes();
     loadDropDownRebateCodes();
@@ -783,8 +776,8 @@ var totaldbamt=0,totalcramt=0;
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
-         <s:date name="cutOffDate" var="cutOffDateFormat" format="dd/MM/yyyy"/>
-         <s:hidden label="cutOffDate" id="cutOffDate"  name="cutOffDate" value="%{cutOffDateFormat}"/>
+         <s:date name="financialYearDate" var="financialYearDateFormat" format="dd/MM/yyyy"/>
+         <s:hidden id="financialYearDate"  name="financialYearDate" value="%{financialYearDateFormat}"/>
           </td>
           </s:if>
            <s:else>

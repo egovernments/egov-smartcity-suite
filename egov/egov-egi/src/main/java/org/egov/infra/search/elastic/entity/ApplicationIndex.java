@@ -40,12 +40,7 @@
 
 package org.egov.infra.search.elastic.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
-import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
-import org.egov.search.domain.Searchable;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -55,8 +50,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
+import org.egov.infra.search.elastic.entity.enums.ClosureStatus;
+import org.egov.search.domain.Searchable;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * ApplicationIndex class
@@ -108,15 +110,6 @@ public class ApplicationIndex extends AbstractAuditable {
     private Date disposalDate;
 
     @NotNull
-    @Length(max = 250)
-    @Searchable(name = "ulbname", group = Searchable.Group.CLAUSES)
-    private String ulbName;
-
-    @Length(max = 250)
-    @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
-    private String districtName;
-
-    @NotNull
     @Length(max = 50)
     @Searchable(group = Searchable.Group.CLAUSES)
     private String status;
@@ -143,20 +136,45 @@ public class ApplicationIndex extends AbstractAuditable {
 
     @Searchable(name = "elapseddays", group = Searchable.Group.CLAUSES)
     private Integer elapsedDays;
-    
+
     @Length(max = 50)
     @Enumerated(EnumType.STRING)
     @Searchable(name = "closed", group = Searchable.Group.CLAUSES)
     private ClosureStatus closed;
-    
+
     @Length(max = 50)
     @Enumerated(EnumType.STRING)
     @Searchable(name = "approved", group = Searchable.Group.CLAUSES)
     private ApprovalStatus approved;
-    
+
     @Length(max = 50)
     @Searchable(name = "channel", group = Searchable.Group.CLAUSES)
     private String channel;
+
+    @Transient
+    @Searchable(name = "citycode", group = Searchable.Group.CLAUSES)
+    private String cityCode;
+
+    @NotNull
+    @Length(max = 250)
+    @Searchable(name = "cityname", group = Searchable.Group.CLAUSES)
+    private String cityName;
+
+    @Transient
+    @Searchable(name = "citygrade", group = Searchable.Group.CLAUSES)
+    private String cityGrade;
+
+    @Length(max = 250)
+    @Searchable(name = "districtname", group = Searchable.Group.CLAUSES)
+    private String districtName;
+
+    @Transient
+    @Searchable(name = "regionname", group = Searchable.Group.CLAUSES)
+    private String regionName;
+
+    @Transient
+    @Searchable(name = "isclosed", group = Searchable.Group.SEARCHABLE)
+    private Integer isClosed;
 
     @Override
     public Long getId() {
@@ -224,12 +242,12 @@ public class ApplicationIndex extends AbstractAuditable {
         this.disposalDate = disposalDate;
     }
 
-    public String getUlbName() {
-        return ulbName;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
+    public void setCityName(final String cityName) {
+        this.cityName = cityName;
     }
 
     public String getDistrictName() {
@@ -300,15 +318,19 @@ public class ApplicationIndex extends AbstractAuditable {
         return closed;
     }
 
-    public void setClosed(ClosureStatus closed) {
+    public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
+        if (this.closed.equals(ClosureStatus.YES.toString()))
+            isClosed = 0;
+        else
+            isClosed = 1;
     }
 
     public ApprovalStatus getApproved() {
         return approved;
     }
 
-    public void setApproved(ApprovalStatus approved) {
+    public void setApproved(final ApprovalStatus approved) {
         this.approved = approved;
     }
 
@@ -316,8 +338,36 @@ public class ApplicationIndex extends AbstractAuditable {
         return channel;
     }
 
-    public void setChannel(String channel) {
+    public void setChannel(final String channel) {
         this.channel = channel;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(final String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(final String regionName) {
+        this.regionName = regionName;
+    }
+
+    public Integer getIsClosed() {
+        return isClosed;
+    }
+
+    public String getCityGrade() {
+        return cityGrade;
+    }
+
+    public void setCityGrade(final String cityGrade) {
+        this.cityGrade = cityGrade;
     }
 
 }

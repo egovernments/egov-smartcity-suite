@@ -39,8 +39,6 @@
  */
 package org.egov.lcms.web.controller.masters;
 
-import java.util.List;
-import javax.validation.Valid;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
 import org.egov.lcms.web.adaptor.CaseTypeMasterJsonAdaptor;
@@ -56,8 +54,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping("/casetypemaster")
@@ -78,7 +79,7 @@ public class CaseTypeMasterController {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String newForm(final Model model) {
 		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", new CaseTypeMaster());
+		model.addAttribute("caseTypeMaster", new CaseTypeMaster());
 		return CASETYPEMASTER_NEW;
 	}
 
@@ -142,16 +143,8 @@ public class CaseTypeMasterController {
 	public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
 			@ModelAttribute final CaseTypeMaster casetypeMaster) {
 		List<CaseTypeMaster> searchResultList = casetypeMasterService.search(casetypeMaster);
-		String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+		String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList, CaseTypeMaster.class, CaseTypeMasterJsonAdaptor.class)).append("}")
 				.toString();
 		return result;
-	}
-
-	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(CaseTypeMaster.class, new CaseTypeMasterJsonAdaptor())
-				.create();
-		final String json = gson.toJson(object);
-		return json;
 	}
 }

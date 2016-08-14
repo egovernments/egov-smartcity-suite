@@ -49,7 +49,9 @@
 	role="form" method="post" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
 	 <input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />  
+		value="${legalCase.lcNumber}" /> 
+	<input type="hidden" id="caseDate" name="caseDate"
+		value="${legalCase.caseDate}" <fmt pattern="dd/MM/yyyy"/>  />	 
 	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
 	</div>
@@ -58,7 +60,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<form:button type="button" name="button" id="buttonid"
+			<form:button type="submit" name="button" id="buttonid"
 				class="btn btn-primary" value="Save">
 				<spring:message code="lbl.save" />
 			</form:button>

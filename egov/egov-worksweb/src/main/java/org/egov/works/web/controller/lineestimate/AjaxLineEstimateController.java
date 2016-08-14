@@ -99,6 +99,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class AjaxLineEstimateController {
@@ -150,10 +152,10 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/getsubschemesbyschemeid/{schemeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String getAllSubSchemesBySchemeId(final Model model, @PathVariable final String schemeId)
-            throws JsonGenerationException, JsonMappingException, IOException, NumberFormatException, ApplicationException {
+            throws IOException, NumberFormatException, ApplicationException {
         final Scheme scheme = schemeService.findById(Integer.parseInt(schemeId), false);
         final Set<SubScheme> subSchemes = scheme.getSubSchemes();
-        final String jsonResponse = toJSONSubScheme(subSchemes);
+        final String jsonResponse = toJSON(subSchemes, SubScheme.class, SubSchemeAdaptor.class);
         return jsonResponse;
     }
 
@@ -183,13 +185,6 @@ public class AjaxLineEstimateController {
         final List<Boundary> boundaries = boundaryService.getBondariesByNameAndBndryTypeAndHierarchyType(
                 WorksConstants.BOUNDARY_TYPE_WARD, WorksConstants.HIERARCHY_TYPE_ADMINISTRATION, "%" + name);
         return boundaries;
-    }
-
-    public String toJSONSubScheme(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SubScheme.class, new SubSchemeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)

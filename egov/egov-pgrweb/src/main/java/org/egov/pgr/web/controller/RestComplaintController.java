@@ -144,8 +144,7 @@ public class RestComplaintController extends GenericComplaintController {
             }.getType());
 
         } catch (final Exception e) {
-            Log.info("Error deserializing note " + complaint, e);
-            e.printStackTrace();
+            Log.error("Error deserializing note " + complaint, e);
         }
 
         return json;

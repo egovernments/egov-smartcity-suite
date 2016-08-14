@@ -39,7 +39,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="create" modelAttribute="casetypeMaster"
+<form:form role="form" action="create" modelAttribute="caseTypeMaster"
 	id="casetypeMasterform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="casetypemaster-form.jsp"%>
@@ -57,11 +57,3 @@
 		</div>
 	</div>
 </form:form>
-<script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
-</script>

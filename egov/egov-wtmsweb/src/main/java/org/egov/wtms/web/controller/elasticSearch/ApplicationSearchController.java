@@ -81,7 +81,6 @@ public class ApplicationSearchController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-
     @Autowired
     public ApplicationSearchController(final ApplicationSearchService applicationSearchService,
             final SearchService searchService, final CityService cityService) {
@@ -97,10 +96,12 @@ public class ApplicationSearchController {
                 .findApplicationIndexApplicationTypes(appModuleName);
         return applicationIndexList;
     }
+
     @ModelAttribute(value = "sourceList")
     public List<ApplicationIndex> getSourceList() {
         return applicationSearchService.getSourceList();
     }
+
     @ModelAttribute
     public ApplicationSearchRequest searchRequest() {
         return new ApplicationSearchRequest();
@@ -121,7 +122,7 @@ public class ApplicationSearchController {
     @ResponseBody
     public List<Document> searchApplication(@ModelAttribute final ApplicationSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        searchRequest.setUlbName(cityWebsite.getName());
+        searchRequest.setCityName(cityWebsite.getName());
         final Sort sort = Sort.by().field("searchable.applicationdate", SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.APPLICATION.toString()),
                 asList(IndexType.APPLICATIONSEARCH.toString()), searchRequest.searchQuery(),

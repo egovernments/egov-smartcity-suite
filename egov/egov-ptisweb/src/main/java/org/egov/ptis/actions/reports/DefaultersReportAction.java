@@ -39,19 +39,6 @@
  */
 package org.egov.ptis.actions.reports;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -75,8 +62,18 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_OF_PROPERTY_FOR_DEFAULTERS_REPORT;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -138,7 +135,7 @@ public class DefaultersReportAction extends BaseFormAction {
      */
     @SuppressWarnings("unchecked")
     @Action(value = "/defaultersReport-getDefaultersList")
-    public void getDefaultersList() {
+    public void getDefaultersList() throws IOException {
         List<DefaultersInfo> resultList = new ArrayList<DefaultersInfo>();
         String result = null;
         final Query query = propertyTaxUtil.prepareQueryforDefaultersReport(wardId, fromDemand, toDemand, limit,
@@ -146,27 +143,10 @@ public class DefaultersReportAction extends BaseFormAction {
         resultList = prepareOutput((List<PropertyMaterlizeView>) query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DefaultersInfo.class, DefaultersReportHelperAdaptor.class)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        try {
-            IOUtils.write(result, response.getWriter());
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param object
-     * @return
-     */
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DefaultersInfo.class, new DefaultersReportHelperAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
+        IOUtils.write(result, response.getWriter());
     }
 
     /**

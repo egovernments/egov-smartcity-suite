@@ -53,25 +53,7 @@ public class RevisionPetitionAdaptor implements JsonSerializer<RevisionPetition>
     public JsonElement serialize(final RevisionPetition revPetition, final Type type, final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("applicationNumber", revPetition.getObjectionNumber());
-        /*
-         * jsonObject.addProperty("receivedon", "" +
-         * revPetition.getRecievedOn());
-         * jsonObject.addProperty("status",revPetition
-         * .getEgwStatus().getCode()); jsonObject.addProperty("details", "" +
-         * revPetition.getDetails()); jsonObject.addProperty("recievedBy", "" +
-         * revPetition.getRecievedBy());
-         */
         jsonObject.addProperty("accessmentnumber", "" + revPetition.getBasicProperty().getUpicNo());
-
-        /*
-         * List<BasicPropertyImpl> sList = new ArrayList<BasicPropertyImpl>();
-         * BasicPropertyImpl b= new BasicPropertyImpl(); b.setModifiedDate(new
-         * Date()); BasicPropertyImpl c= new BasicPropertyImpl();
-         * c.setModifiedDate(new Date()); sList.add(b); sList.add(c); JSONObject
-         * obj = new JSONObject(); obj.put("properties", sList);
-         * jsonObject.addProperty("list", obj.toJSONString());
-         */
-
         return jsonObject;
     }
 

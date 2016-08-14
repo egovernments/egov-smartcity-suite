@@ -210,24 +210,24 @@ public class LetterOfAcceptanceService {
                 WorksConstants.CANCELLED_STATUS);
     }
 
-    public String getEngineerInchargeDesignationAppConfigValue() {
-        return worksService.getWorksConfigValue(WorksConstants.APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION);
+    public List<Long> getEngineerInchargeDesignationIds() {
+        final List<Long> designationIds = new ArrayList<Long>();
+        final List<String> designationNames = new ArrayList<String>();
+        final List<AppConfigValues> configList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_ENGINEERINCHARGE_DESIGNATION);
+        for (final AppConfigValues value : configList) {
+            designationNames.add(value.getValue().toUpperCase());
+        }
+        final List<Designation> designations = designationService.getDesignationsByNames(designationNames);
+        for (final Designation designation : designations) {
+            designationIds.add(designation.getId());
+        }
+        return designationIds;
     }
 
-    public Long getEngineerInchargeDesignationId() {
-        final String engineerInchargeDesignation = getEngineerInchargeDesignationAppConfigValue();
-        Designation designation = null;
-        Long designationId = null;
-        if (StringUtils.isNotBlank(engineerInchargeDesignation))
-            designation = designationService.getDesignationByName(engineerInchargeDesignation);
-        if (designation != null)
-            designationId = designation.getId();
-        return designationId;
-    }
-
-    public List<Assignment> getEngineerInchargeList(final Long departmentId, final Long designationId) {
-        return assignmentService.getAllPositionsByDepartmentAndDesignationForGivenRange(
-                departmentId, designationId, new Date());
+    public List<Assignment> getEngineerInchargeList(final Long departmentId, final List<Long> designationIds) {
+        return assignmentService.findByDepartmentDesignationsAndGivenDate(
+                departmentId, designationIds, new Date());
     }
 
     public WorkOrder getWorkOrderByEstimateNumber(final String estimateNumber) {

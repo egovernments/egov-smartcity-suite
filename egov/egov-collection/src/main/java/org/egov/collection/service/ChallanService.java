@@ -145,12 +145,18 @@ public class ChallanService extends PersistenceService<Challan, Long> {
         }
         // persist(challan);
 
-        LOGGER.debug("Challan workflow transition completed. Challan transitioned to : "
-                + challan.getCurrentState().getValue());
-
         if (CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName)
-                || CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)) {
+                || (CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName) && challan.getState() != null )) {
             challan.transition().end().withComments("End of challan worklow")
+                    .withStateValue(CollectionConstants.WF_STATE_END)
+            .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
+                    .withDateInfo(new Date());
+            LOGGER.debug("End of Challan Workflow.");
+        }
+        
+        if (challan.getState() == null &&
+                CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN.equals(actionName)){
+            challan.transition().start().end().withComments("End of challan worklow")
                     .withStateValue(CollectionConstants.WF_STATE_END)
             .withSenderName(challan.getCreatedBy().getUsername() + "::" + challan.getCreatedBy().getName())
                     .withDateInfo(new Date());

@@ -39,8 +39,6 @@
  */
 package org.egov.collection.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,7 +83,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.service.CollectionIndexService;
@@ -1090,6 +1087,18 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             // create voucher also, based on configuration.
             startWorkflow(receiptHeader);
             LOGGER.info("Workflow started for newly created receipts");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date cutOffDate = null;
+            try {
+                cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                        CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                        CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+            } catch (ParseException e) {
+                LOGGER.error("Error parsing Cut Off Date" + e.getMessage());
+            }
+            if (cutOffDate!=null && receiptHeader.getReceiptdate().before(cutOffDate))
+                performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
+                        "Legacy data Receipt Approval based on cutoff date");
             if (receiptHeader.getService().getServiceType().equalsIgnoreCase(CollectionConstants.SERVICE_TYPE_BILLING)) {
 
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);

@@ -81,6 +81,8 @@ $('#baseRegisterReportSearch').click(function(e){
 			},
 			"columns" : [
 						  { "data" : "assessmentNo" , "title": "Assessment Number"},
+						  { "data" : "oldAssessmentNo" , "title": "Old Assessment Number"},
+						  { "data" : "sitalArea" , "title": "Plot Area"},
 						  { "data" : "ward" , "title": "Ward"}, 
 						  { "data" : "ownerName", "title": "Owner Name"},
 						  { "data" : "surveyNo", "title": "surveyNo"},
