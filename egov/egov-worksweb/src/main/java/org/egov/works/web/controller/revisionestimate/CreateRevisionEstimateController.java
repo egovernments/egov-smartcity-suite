@@ -39,9 +39,17 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.egov.commons.service.UOMService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
-import org.egov.works.revisionestimate.service.RevisionEstimateService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,19 +63,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/revisionestimate")
 public class CreateRevisionEstimateController extends GenericWorkFlowController {
-    
+
+    final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
-    private RevisionEstimateService revisionEstimateService;
-    
+    private ScheduleCategoryService scheduleCategoryService;
+
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
-    
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private UOMService uomService;
+
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             @RequestParam final Long workOrderEstimateId, final Model model) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
-        revisionEstimate.setParent(workOrderEstimate.getEstimate());;
+        revisionEstimate.setParent(workOrderEstimate.getEstimate());
 
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
+        model.addAttribute("uoms", uomService.findAll());
+        model.addAttribute("revisionEstimate", revisionEstimate);
+        model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
+        model.addAttribute("workOrderDate", sdf.format(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
+        model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         return "revisionEstimate-form";
     }
 }

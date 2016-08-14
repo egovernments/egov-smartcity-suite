@@ -77,10 +77,11 @@
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
-
+	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${revisionEstimate.workValue}" default="0.0" />'/>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
+	<input type="hidden" name="workOrderDate" id="workOrderDate"  data-idx="0" data-optional="0" class="form-control datepicker estimateDateClassId" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" style="display: none" value='${workOrderDate}'  />
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="lbl.estimate.confirm" />" />
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
@@ -97,6 +98,8 @@
 			<div class="tab-pane fade in active" id="revisionheader">   
 			</div>
 			<div class="tab-pane fade" id="nontendered">
+				<%@ include file="revisionEstimate-nonTendered.jsp"%>
+				<%@ include file="revisionEstimate-lumpSum.jsp"%>
 			</div>
 			<div class="tab-pane fade" id="changequantity">
 			</div>

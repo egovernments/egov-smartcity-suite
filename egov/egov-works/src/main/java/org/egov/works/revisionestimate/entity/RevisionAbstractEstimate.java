@@ -65,6 +65,11 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     @Transient
     private BigDecimal amountRule;
 
+    private transient List<Activity> nonTenderedActivities = new ArrayList<Activity>(0);
+    
+    private transient List<Activity> lumpSumActivities = new ArrayList<Activity>(0);
+    
+    
     @Override
     public String getStateDetails() {
         return "Revision Estimate : " + getEstimateNumber();
@@ -100,5 +105,23 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     public void setAmountRule(final BigDecimal amountRule) {
         this.amountRule = amountRule;
     }
+
+    public List<Activity> getNonTenderedActivities() {
+        return nonTenderedActivities;
+    }
+
+    public void setNonTenderedActivities(List<Activity> nonTenderedActivities) {
+        this.nonTenderedActivities = nonTenderedActivities;
+    }
+
+    public List<Activity> getLumpSumActivities() {
+        return lumpSumActivities;
+    }
+
+    public void setLumpSumActivities(List<Activity> lumpSumActivities) {
+        this.lumpSumActivities = lumpSumActivities;
+    }
+    
+    
 
 }
