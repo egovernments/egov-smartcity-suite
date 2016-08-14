@@ -40,8 +40,6 @@
 
 package org.egov.infra.web.controller.admin.masters.appConfig;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigAdaptor;
@@ -60,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping("/appConfig")
@@ -86,14 +86,6 @@ public class ViewAppConfigController extends MultiActionController {
         return "appConfigList-view";
     }
 
-
-    public String toJSON(final Object object) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.registerTypeAdapter(AppConfig.class, new AppConfigAdaptor()).create();
-        String json = gson.toJson(object);
-        return json;
-    }
-
     @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -106,13 +98,13 @@ public class ViewAppConfigController extends MultiActionController {
             pageSize = totalRecords.size();
         }
 
-        final List<AppConfig> complaintTypeList = appConfigService.getListOfAppConfig(pageNumber, pageSize).getContent();
+        final List<AppConfig> appConfigs = appConfigService.getListOfAppConfig(pageNumber, pageSize).getContent();
         final StringBuilder appConfigJSONData = new StringBuilder();
         appConfigJSONData.append("{\"draw\": ").append("0");
         appConfigJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
-        appConfigJSONData.append(",\"totalDisplayRecords\":").append(complaintTypeList.size());
+        appConfigJSONData.append(",\"totalDisplayRecords\":").append(appConfigs.size());
         appConfigJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-        appConfigJSONData.append(",\"data\":").append(toJSON(complaintTypeList)).append("}");
+        appConfigJSONData.append(",\"data\":").append(toJSON(appConfigs, AppConfig.class, AppConfigAdaptor.class)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(appConfigJSONData, response.getWriter());
     }

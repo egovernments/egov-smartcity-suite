@@ -40,8 +40,13 @@
 
 package org.egov.infra.web.utils;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -90,5 +95,21 @@ public class WebUtils {
 
     public static String currentContextPath(final ServletRequest request) {
         return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
+    }
+
+    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adptorClazz) {
+        try {
+            return new GsonBuilder().registerTypeAdapter(objectClazz, adptorClazz.newInstance()).create().toJson(objects);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ApplicationRuntimeException("Could not convert object list to json string", e);
+        }
+    }
+
+    public static <T> String toJSON(T object, Class<? extends JsonSerializer<T>> adptorClazz) {
+        try {
+            return new GsonBuilder().registerTypeAdapter(object.getClass(), adptorClazz.newInstance()).create().toJson(object);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ApplicationRuntimeException("Could not convert object to json string", e);
+        }
     }
 }

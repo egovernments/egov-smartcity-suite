@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.service.reports.AgeingReportService;
 import org.hibernate.SQLQuery;
@@ -64,6 +62,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = {"/report", "/public/report"})
@@ -114,20 +114,10 @@ public class AgeingReportController {
         ageingreportQuery.setResultTransformer(Transformers.aliasToBean(AgeingReportResult.class));
         final List<AgeingReportResult> ageingresult = ageingreportQuery.list();
 
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(ageingresult)).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toJSON(ageingresult, AgeingReportResult.class, AgeingReportHelperAdaptor.class)).append("}").toString();
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-
-    }
-
-    private Object toJSON(final Object object) {
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(AgeingReportResult.class, new AgeingReportHelperAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
 
     }
 }
