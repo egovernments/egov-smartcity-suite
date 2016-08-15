@@ -109,3 +109,7 @@
 </form:form> 
 <script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+
+<div id="measurement" >
+<%@ include file="../measurementsheet/measurementsheet-formtable.jsp"%>
+</div>      

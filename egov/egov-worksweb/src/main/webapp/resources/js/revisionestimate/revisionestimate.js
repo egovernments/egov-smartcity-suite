@@ -39,6 +39,13 @@
  */
 $ExceptionalUOMs = "";
 var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa fa-question-circle" aria-hidden="true"></i></a>';
+var nonTenderedMsArray=new Array(200);
+var lumpSumMsArray=new Array(200);
+
+var headstart="<!--only for validity head start -->";
+var headend="<!--only for validity head end -->";
+var tailstart="<!--only for validity tail start -->";
+var tailend="<!--only for validity tail end -->";
 
 $(document).ready(function(){
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
@@ -572,13 +579,13 @@ var sorSearch = new Bloodhound({
 				document.getElementById(rowid.replace("msadd","msopen")).value="1";
 			var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
 			
-			if(sortable.indexOf("sorActivities") >= 0)
+			if(sortable.indexOf("nonTenderedActivities") >= 0)
 			{
-				sorMsArray[idx]=mscontent;
+				nonTenderedMsArray[idx]=mscontent;
 			}
 			else
 			{
-				nonSorMsArray[idx]=mscontent;
+				lumpSumMsArray[idx]=mscontent;
 			}
 
 
@@ -596,13 +603,13 @@ var sorSearch = new Bloodhound({
 				document.getElementById(rowid.replace("msadd","mspresent")).value="1";
 			curRow.after(newrow);
 			var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
-			if(sortable.indexOf("sorActivities") >= 0)
+			if(sortable.indexOf("nonTenderedActivities") >= 0)
 			{
-				sorMsArray[idx]="";
+				nonTenderedMsArray[idx]="";
 			}
 			else
 			{
-				nonSorMsArray[idx]="";
+				lumpSumMsArray[idx]="";
 			}
 
 		}
@@ -916,4 +923,404 @@ var sorSearch = new Bloodhound({
 		calculateLumpSumVatAmountTotal();
 		lumpSumTotal();
 		return true;
-}
+	}
+	
+	function limitCharatersBy3_2(object)
+	{
+		var valid = /^[0-9](\d{0,2})(\.\d{0,2})?$/.test($(object).val()),
+		val = $(object).val();
+
+		if(!valid){
+			//console.log("Invalid input!");
+			$(object).val(val.substring(0, val.length - 1));
+		}	
+
+	}
+	
+	function limitCharatersBy10_4(object)
+	{
+		var valid = /^[0-9](\d{0,9})(\.\d{0,4})?$/.test($(object).val()),
+		val = $(object).val();
+
+		if(!valid){
+			//console.log("Invalid input!");
+			$(object).val(val.substring(0, val.length - 1));
+		}	
+
+	}
+	
+	function findNet(obj)
+	{
+		var len=$(obj).closest('table').find('tr').length;
+
+
+		var name=obj.id.split(".");
+
+		var sum=0;
+		for(var i=0;i<len-2;i++)
+		{
+			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
+			var quantity=eval(document.getElementById(qname).value);
+			var oname=name[0]+'.measurementSheetList['+i+'].identifier';
+			var operationObj=document.getElementById(oname);
+			var operation=operationObj.options[operationObj.selectedIndex].value;
+			//console.log(quantity+"---"+operation);
+			if(quantity===undefined)
+				quantity=0;
+			if(quantity==NaN)
+				quantity=0;
+			if(quantity=='')
+				quantity=0;
+			if(operation=='A')
+				sum=sum+quantity;
+			else
+				sum=sum-quantity;
+		}
+		//var fname=obj.name.split(".");
+		var netName=name[0]+'.msnet';
+		var x=sum+"";
+		var y=x.split(".");
+		if(y.length>1)
+		  if(y[1].length>4)
+			  sum=sum.toFixed(4);  
+		
+		//sum=parseFloat(sum).toFixed(4);
+		//console.log(document.getElementById(netName).innerHTML);
+		document.getElementById(netName).innerHTML=sum;
+		return true;
+
+
+	}
+	
+	
+	$(document).on('click','.ms-submit',function () {
+
+		var sid=$(this).attr("id");
+		var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
+
+		var net=eval(document.getElementById(sid.split(".")[0]+".msnet").innerHTML);
+		if(net==NaN ||net<=0)
+		{
+			bootbox.alert("Net Quantity should be greater than 0");
+			return false;
+		}
+		var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
+		if(!validateMsheet(qobj1))
+		{
+			return false;
+		}
+
+		document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
+		mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
+		document.getElementById(sid.split(".")[0]+".mstr")
+		document.getElementById(sid.split(".")[0]+".mstd")
+		document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
+		document.getElementById(sid.split(".")[0]+".msopen").value="0";
+		var mstr=document.getElementById(sid.split(".")[0]+".mstr");
+		$(mstr).remove();
+		var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
+		if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
+		{
+			calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+		}else
+		{
+			calculateLumpSumEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+		}
+		$(qobj).attr("readonly","readonly");
+
+
+	});
+	
+	function validateMsheet(obj)
+	{
+
+		var len=$(obj).closest('table').find('tr').length;
+	
+	
+		var name=obj.id.split(".");
+	
+		var sum=0;
+		for(var i=0;i<len-2;i++)
+		{
+			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
+			var no=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].no').value);
+			var lent=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].length').value);
+			var width=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].width').value);
+			var depthorheight=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].depthOrHeight').value);
+			var qunatity=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].quantity').value);
+	
+			if((no===undefined ||no==NaN) && (width===undefined ||width==NaN) && (lent===undefined ||lent==NaN) 
+					&&(depthorheight===undefined ||depthorheight==NaN) &&  (qunatity===undefined ||qunatity==NaN))
+			{
+				bootbox.alert("Empty row is not allowed. Please delete the empty row or Enter Quantity");
+				return false;
+			}
+			if(qunatity==NaN || qunatity<=0)
+			{
+				bootbox.alert("Zero is not allowed in Quantity");
+				return false;
+			}
+				
+	
+	
+		}
+		return true;
+
+	}
+	
+	$(document).on('click','.add-msrow',function () {
+		var len=$(this).closest('table').find('tr').length;
+		var msrowname= $(this).closest('table').attr('id');
+		
+	 
+
+		//var msrowname1=	msrowname.id;
+		len=len-2;
+		var msrownameid=msrowname.split(".")[0];
+		var rep='measurementSheetList\['+len+'\]';
+
+		//console.log(len+'===='+rep);
+		var $newrow= "<tr>"+$('#msrowtemplate').html()+"</tr>";
+		$newrow=  $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+		$newrow=  $newrow.replace(/measurementSheetList\[0\]/g,rep);
+		$newrow=$newrow.replace('value="1"','value="'+(len+1)+'"');
+		////console.log($newrow)
+		$(this).closest('tr').before($newrow);
+
+		patternvalidation();
+
+
+	});
+	
+	$(document).on('click','.reset-ms',function () {
+
+		var len=$(this).closest('table').find('tr').length;
+		var msrowname= $(this).closest('table').attr('id');
+		var tbl=document.getElementById(msrowname);
+		var sid=msrowname.split(".")[0];
+		var newrow= document.getElementById("templatesorActivities[0].mstr").innerHTML;
+
+		newrow=  newrow.replace(/msrowtemplate/g,'msrow'+sid);
+		newrow=  newrow.replace(/templatesorActivities\[0\]/g,sid);
+		document.getElementById(sid+".mstr").innerHTML=newrow;
+		
+		
+	});
+	
+	
+	function openAllmsheet()
+	{
+		var open=false;
+		$('.classmsopen').each(function (index)
+				{
+
+			if($( this ).val()==0)
+				
+			{
+				var sid=$( this ).attr('id');
+				var	sortable=sid.split(".")[0];
+				if(document.getElementById(sid.split(".")[0]+".mspresent").value==1)
+				{
+					
+					var   mscontent=document.getElementById(sid.replace("msopen","mstd")).innerHTML;
+
+					if(mscontent!='')
+					{
+						if(mscontent.indexOf(headstart) >=0)
+						{
+							var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
+							var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
+							mscontent= mscontent.replace(head,"");
+							mscontent= mscontent.replace(tail,"");
+						}
+
+						var curRow = $(this).closest('tr');
+						var k= "<tr id=\""+sortable+".mstr\" class='msheet-tr'><td colspan=\"9\">";
+						mscontent=k+mscontent+"</td></tr>";
+						curRow.after(mscontent);
+						document.getElementById(sid.replace("msopen","mstd")).innerHTML="";
+						$( this ).val(1);
+						var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
+						
+						if(sortable.indexOf("nonTenderedActivities") >= 0)
+						{
+							nonTenderedMsArray[idx]=mscontent;
+						}
+						else
+						{
+							lumpSumMsArray[idx]=mscontent;
+						}
+
+						
+					}
+
+				}
+			}
+
+				});
+		return open;	
+	}
+	
+	function closeAllmsheet()
+	{
+		var retVal = confirm("This will validate and update quantities . Do you want to continue?");
+		if( retVal == false )
+		{
+			return ;
+		}
+		else{
+
+
+			var open=false;
+			$('.classmsopen').each(function (index)
+					{
+
+				if($( this ).val()==1)
+				{
+
+					var sid=$( this ).attr('id');
+					var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
+					if(!validateMsheet(qobj1))
+					{
+						return false;
+					}
+					
+					var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
+					document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
+
+					mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
+
+					
+					document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
+					document.getElementById(sid.split(".")[0]+".msopen").value="0";
+					var mstr=document.getElementById(sid.split(".")[0]+".mstr");
+					$(mstr).remove(); 
+					var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
+					$(qobj).attr("readonly","readonly");
+					if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
+					{
+						calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+					}else
+					{
+						calculateLumpSumEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+					}
+
+				    }
+					});
+		}
+		//console.log("mssheet open:"+open);
+		return open;
+
+	}
+	
+	function  deleteThisRow(obj) {
+		var rIndex = getRow(obj).rowIndex;
+		var tablename=$(obj).closest('table').attr('id');
+		var tbl=document.getElementById( tablename);
+		var rowcount=$(obj).closest('table').find('tr').length;
+		//console.log(tbl);
+		if(rowcount<=3) {
+			
+			var retVal = confirm("This action will remove complete Measurement Sheet for Non Tendered/Lum Sump. Do you want to continue ?");
+			if( retVal == false )
+			{
+				return ;
+			}
+			else{
+		   var sid=	tablename.split(".")[0];	
+		   var mstr=document.getElementById(sid+".msopen").value=0;
+		   var mstr=document.getElementById(sid+".mspresent").value=0;
+		   var mstr=document.getElementById(sid+".mstd").innerHTML="";
+		   document.getElementsByName(sid+".quantity")[0].value=0;
+		   var quantity=document.getElementsByName(sid+".quantity")[0];
+		   $(quantity).removeAttr("readonly");
+		   var mstr=document.getElementById(sid+".mstr");
+		   $(mstr).remove();
+		   if(sid.indexOf("nonTenderedActivities") >= 0)
+			{
+				calculateEstimateAmount(document.getElementsByName(sid+".quantity")[0]);
+			}else
+			{
+				calculateLumpSumEstimateAmount(document.getElementsByName(sid+".quantity")[0]);
+			}
+			}
+			return ;
+		} else {
+			tbl.deleteRow(rIndex);
+		}
+		reindex(tablename);
+		findNet(tbl);  
+
+	}
+	
+	function reindex(tableId)
+	{
+
+		var idx=0;
+		tbl=document.getElementById(tableId);
+		////console.log($(tbl).html());
+
+		$(tbl).find("tbody tr").each(function(e) {
+
+			//console.log('for loop');
+			$(this).find("input,select,textarea").each(function() {
+				var classval = jQuery(this).attr('class');	
+				 
+				if(classval && classval.indexOf("spanslno") > -1) {
+					jQuery(this).val(idx+1);
+					$(this).attr('value', $(this).val());
+				}
+
+				$(this).attr({
+					'name' : function(_, name) {
+						if(name)
+							return name.replace(/measurementSheetList\[.\]/g, "measurementSheetList["+idx+"]");
+					},
+					'id' : function(_, id) {
+						if(id)
+							return id.replace(/measurementSheetList\[.\]/g, "measurementSheetList["+idx+"]");
+					},
+					'data-idx' : function(_, dataIdx) {
+						return idx;
+					}
+				});
+
+			});
+			idx++;
+		});
+
+
+	}
+	
+	$(document).on('click','.hide-ms',function () {
+
+		var sid=$(this).closest('tr').attr("id");
+		var name=	sid.split(".")[0]
+		var idx=name.substr(name.indexOf("["),name.indexOf("]"));
+		if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
+		{
+			//to support view close option
+			if(nonTenderedMsArray[idx])
+				{
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=nonTenderedMsArray[idx];
+			if(nonTenderedMsArray[idx].length==0)
+				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+				}
+				
+		}else
+		{
+			if(lumpSumMsArray[idx])
+				{
+			document.getElementById(sid.split(".")[0]+".mstd").innerHTML=lumpSumMsArray[idx];
+			if(lumpSumMsArray[idx].length==0)
+				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+				}
+		}
+
+		document.getElementById(sid.split(".")[0]+".msopen").value="0";
+		
+		var mstr=document.getElementById(sid.split(".")[0]+".mstr");
+		$(mstr).remove();
+
+		 
+	});
