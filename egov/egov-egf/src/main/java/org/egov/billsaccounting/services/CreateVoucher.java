@@ -827,10 +827,10 @@ public class CreateVoucher {
 			final List<HashMap<String, Object>> subledgerdetails)
 			throws ApplicationRuntimeException, ValidationException {
 		final AppConfig appConfig = appConfigService
-				.findBykeyName("PREAPPROVEDVOUCHERSTATUS");
-		if (null != appConfig && null != appConfig.getAppDataValues())
+				.getAppConfigByKeyName("PREAPPROVEDVOUCHERSTATUS");
+		if (null != appConfig && null != appConfig.getConfValues())
 			for (final AppConfigValues appConfigVal : appConfig
-					.getAppDataValues())
+					.getConfValues())
 				headerdetails.put(VoucherConstant.STATUS,
 						Integer.valueOf(appConfigVal.getValue()));
 		else
@@ -1803,8 +1803,8 @@ public class CreateVoucher {
 				 * (AppConfig)
 				 * appConfigSer.find("from AppConfig where key_name =?",
 				 * "JournalVoucher_ConfirmonCreate"); if(null != appConfig &&
-				 * null!= appConfig.getAppDataValues() ){ for (AppConfigValues
-				 * appConfigVal : appConfig.getAppDataValues()) {
+				 * null!= appConfig.getValues() ){ for (AppConfigValues
+				 * appConfigVal : appConfig.getValues()) {
 				 * cVoucherHeader.
 				 * setIsConfirmed(Integer.valueOf(appConfigVal.getValue())); } }
 				 */
@@ -3088,7 +3088,7 @@ public class CreateVoucher {
 				.findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
 		for (final AppConfig appConfig : appConfigList)
 			for (final AppConfigValues appConfigVal : appConfig
-					.getAppDataValues()) {
+					.getConfValues()) {
 				final String value = appConfigVal.getValue();
 				final String header = value.substring(0, value.indexOf("|"));
 				headerFields.add(header);

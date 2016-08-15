@@ -47,8 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 
@@ -57,40 +55,38 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AppConfigValueService {
 
-	private final AppConfigValueRepository appConfigValueRepository;
-	@PersistenceContext
-	private EntityManager entityManager;
+    private final AppConfigValueRepository appConfigValueRepository;
 
-	@Autowired
-	public AppConfigValueService(
-			final AppConfigValueRepository appConfigValueRepos) {
-		this.appConfigValueRepository = appConfigValueRepos;
-	}
+    @Autowired
+    public AppConfigValueService(final AppConfigValueRepository appConfigValueRepos) {
+        this.appConfigValueRepository = appConfigValueRepos;
+    }
 
-	public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
-		return appConfigValueRepository.findByKey_KeyNameAndKey_Module_Name(keyName, moduleName);
-	}
-	public List<AppConfigValues> getConfigValuesByModuleAndKeyByValueAsc(final String moduleName, final String keyName) {
-            return appConfigValueRepository.findByKey_KeyNameAndKey_Module_NameOrderByValueAsc(keyName, moduleName);
-        }
+    public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
+        return appConfigValueRepository.findByConfig_KeyNameAndConfig_Module_Name(keyName, moduleName);
+    }
 
-	public AppConfigValues getAppConfigValueByDate(final String moduleName,final String keyName, final Date effectiveFrom) {
-		final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom,effectiveFrom);
-		Date fromDate = dateRange[0];
-		Date toDate = dateRange[1];
+    public List<AppConfigValues> getConfigValuesByModuleAndKeyByValueAsc(final String moduleName, final String keyName) {
+        return appConfigValueRepository.findByConfig_KeyNameAndConfig_Module_NameOrderByValueAsc(keyName, moduleName);
+    }
 
-		final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName,effectiveFrom, fromDate, toDate);
-		return appConfigValues.isEmpty() ? null : appConfigValues.get(appConfigValues.size() - 1);
-	}
+    public AppConfigValues getAppConfigValueByDate(final String moduleName, final String keyName, final Date effectiveFrom) {
+        final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom, effectiveFrom);
+        Date fromDate = dateRange[0];
+        Date toDate = dateRange[1];
 
-	public String getAppConfigValue(final String moduleName,final String keyName, final String defaultVal) {
-		Date effectiveFrom = new Date();
-		final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom,effectiveFrom);
-		Date fromDate = dateRange[0];
-		Date toDate = dateRange[1];
-		final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName,effectiveFrom, fromDate, toDate);
-		return appConfigValues.isEmpty() ? defaultVal : appConfigValues.get(appConfigValues.size() - 1).toString();
+        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName, effectiveFrom, fromDate, toDate);
+        return appConfigValues.isEmpty() ? null : appConfigValues.get(appConfigValues.size() - 1);
+    }
 
-	}
+    public String getAppConfigValue(final String moduleName, final String keyName, final String defaultVal) {
+        Date effectiveFrom = new Date();
+        final Date[] dateRange = DateUtils.constructDateRange(effectiveFrom, effectiveFrom);
+        Date fromDate = dateRange[0];
+        Date toDate = dateRange[1];
+        final List<AppConfigValues> appConfigValues = appConfigValueRepository.getAppConfigValueByModuleAndKeyAndDate(moduleName, keyName, effectiveFrom, fromDate, toDate);
+        return appConfigValues.isEmpty() ? defaultVal : appConfigValues.get(appConfigValues.size() - 1).toString();
+
+    }
 
 }

@@ -192,11 +192,11 @@ public class BillVoucherAction extends BaseVoucherAction {
             LOGGER.debug(">>>>>Query=:" + query);
         appConfig = (AppConfig) persistenceService.find(query);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Total app config values = " + appConfig.getAppDataValues().size());
-        if (appConfig.getAppDataValues().size() == 0)
+            LOGGER.debug("Total app config values = " + appConfig.getConfValues().size());
+        if (appConfig.getConfValues().size() == 0)
             throw new ValidationException(Arrays.asList(new ValidationError("Status for bill approval",
                     "App Config value is missing for exp type :" + expType)));
-        for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+        for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
 
             final String configvalue = appConfigVal.getValue();
             final EgwStatus egwstatus = egwStatusDAO.getStatusByModuleAndCode(configvalue.substring(0, configvalue.indexOf("|"))

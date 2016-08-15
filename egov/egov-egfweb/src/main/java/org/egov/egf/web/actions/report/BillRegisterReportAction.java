@@ -807,7 +807,7 @@ public class BillRegisterReportAction extends SearchFormAction {
         final List<AppConfig> appConfigList = persistenceService
                 .findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");
         for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+            for (final AppConfigValues appConfigVal : appConfig.getConfValues())
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

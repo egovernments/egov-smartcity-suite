@@ -1256,11 +1256,12 @@ public class BudgetReportAction extends BaseFormAction {
 
     protected Map<String, String> getReferenceNumber(final String appConfigKey) {
         final Map<String, String> referenceNo = new HashMap<String, String>();
+        //TODO THIS HAS TO BE CHANGED, THIS WILL RETURN UNDESIRED RESULT
         final List<AppConfigValues> appConfigList = persistenceService
                 .findAllBy("from AppConfigValues where key.keyName like '"
                         + appConfigKey + "-%'");
         for (final AppConfigValues appConfigVal : appConfigList)
-            referenceNo.put(appConfigVal.getKey().getKeyName().split("-")[1], appConfigVal.getValue());
+            referenceNo.put(appConfigVal.getConfig().getKeyName().split("-")[1], appConfigVal.getValue());
         return referenceNo;
     }
 

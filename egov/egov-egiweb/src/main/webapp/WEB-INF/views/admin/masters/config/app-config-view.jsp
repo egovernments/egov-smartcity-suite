@@ -38,20 +38,57 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/viewappconfig.js?rnd=${app_release_no}'/>"></script>
-
-<table class="table table-bordered datatable" id="view-appConfig-type">
-</table>
-<div class="form-group">
-<div class="text-center">
-<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-</div>
-</div>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <link rel="stylesheet"	href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+<div class="row" id="page-content">
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-danger" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+
+        <form id="searchAppconfigForm" method="post" class="form-horizontal form-groups-bordered">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="title.searchAppConfig"></spring:message></strong>
+                    </div>
+                </div>
+
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.module"/></label>
+                        <div class="col-sm-6 add-margin">
+                            <select id="moduleName" class="form-control">
+                                <option value=""> <spring:message code="lbl.select"/> </option>
+                                <c:forEach items="${modules}" var="module">
+                                    <option value="${module.name}">${module.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" id="search-view-btn"><spring:message code="lbl.search"/></button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+                        <spring:message code="lbl.close"/>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <table class="table table-bordered datatable" id="view-appConfig-tbl"></table>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
-
+<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>

@@ -1444,7 +1444,7 @@ public class EgovCommon {
         final List<AppConfig> appConfigList = persistenceService
                 .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
         for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+            for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf("|"));
                 final String mandate = value.substring(value.indexOf("|") + 1);

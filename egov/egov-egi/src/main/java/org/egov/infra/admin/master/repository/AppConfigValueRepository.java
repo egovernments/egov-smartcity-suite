@@ -52,11 +52,11 @@ import java.util.List;
 @Repository
 public interface AppConfigValueRepository extends JpaRepository<AppConfigValues, Long> {
 
-    List<AppConfigValues> findByKey_KeyNameAndKey_Module_Name(String keyName, String moduleName);
+    List<AppConfigValues> findByConfig_KeyNameAndConfig_Module_Name(String keyName, String moduleName);
     
-    List<AppConfigValues> findByKey_KeyNameAndKey_Module_NameOrderByValueAsc(String keyName, String moduleName);
+    List<AppConfigValues> findByConfig_KeyNameAndConfig_Module_NameOrderByValueAsc(String keyName, String moduleName);
     
-    @Query(" from AppConfigValues  a where a.key.keyName =:keyName and a.key.module.name =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc")
+    @Query("select a from AppConfigValues  a where a.config.keyName =:keyName and a.config.module.name =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc")
     List<AppConfigValues> getAppConfigValueByModuleAndKeyAndDate(@Param("moduleName") String moduleName, @Param("keyName") String keyName,
             @Param("effectiveFrom") Date effectiveFrom, @Param("dateFrom") Date fromDate, @Param("dateTo") Date toDate);
 

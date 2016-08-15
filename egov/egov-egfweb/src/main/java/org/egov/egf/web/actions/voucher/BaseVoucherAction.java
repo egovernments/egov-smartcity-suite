@@ -73,7 +73,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
@@ -86,7 +85,6 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -197,7 +195,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         final List<AppConfig> appConfigList = this.persistenceService
                 .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
         for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+            for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf("|"));
                 headerFields.add(header);

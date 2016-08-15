@@ -650,7 +650,7 @@ public class ScheduledRemittanceService {
                         "AuoRemittance_Account_Number_For_GJV app config key not defined",
                         "AuoRemittance_Account_Number_For_GJV app config key not defined")));
             for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfig.getConfValues())
                 {
                     value = appConfigVal.getValue();
 
@@ -700,7 +700,7 @@ public class ScheduledRemittanceService {
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined",
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined")));
             for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfig.getConfValues())
                 {
                     value = appConfigVal.getValue();
 
@@ -1106,7 +1106,7 @@ public class ScheduledRemittanceService {
                         "AutoRemittance_Start_Date app config key not defined",
                         "AutoRemittance_Start_Date app config key not defined")));
             for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfig.getConfValues())
                     value = appConfigVal.getValue();
 
             startDate = stringToDate.parse(value);

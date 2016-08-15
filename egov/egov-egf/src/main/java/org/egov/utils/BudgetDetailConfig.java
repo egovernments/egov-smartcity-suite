@@ -83,9 +83,9 @@ public class BudgetDetailConfig {
 
     final List<String> fetchAppConfigValues(final String keyName) {
         final AppConfig appConfig = (AppConfig) persistenceService.find("from AppConfig where key_name='" + keyName + "'");
-        if (appConfig != null && appConfig.getAppDataValues() != null)
-            if (appConfig.getAppDataValues().iterator().hasNext()) {
-                final AppConfigValues appDataValues = appConfig.getAppDataValues().iterator().next();
+        if (appConfig != null && appConfig.getConfValues() != null)
+            if (appConfig.getConfValues().iterator().hasNext()) {
+                final AppConfigValues appDataValues = appConfig.getConfValues().iterator().next();
                 return Arrays.asList(appDataValues.getValue().split(DELIMITER));
             }
         return new ArrayList<String>();

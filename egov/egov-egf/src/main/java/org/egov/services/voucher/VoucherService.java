@@ -970,9 +970,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 			final AppConfig appConfig = (AppConfig) persistenceService.find(
 					"from AppConfig where key_name =?",
 					"JournalVoucher_ConfirmonCreate");
-			if (null != appConfig && null != appConfig.getAppDataValues())
+			if (null != appConfig && null != appConfig.getConfValues())
 				for (final AppConfigValues appConfigVal : appConfig
-						.getAppDataValues())
+						.getConfValues())
 					voucherHeader.setIsConfirmed(Integer.valueOf(appConfigVal
 							.getValue()));
 			persist(voucherHeader);

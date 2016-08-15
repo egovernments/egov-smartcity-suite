@@ -38,87 +38,53 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.appConfig;
+package org.egov.infra.web.controller.admin.masters.config;
 
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-/**
- * @author Roopa
- */
 
 @Controller
-@RequestMapping(value = "/appConfig/create")
-public class CreateAppConfigController {
+@RequestMapping("/app/config/update/{moduleName}/{keyName}")
+public class UpdateAppConfigController {
 
-    private final AppConfigService appConfigValueService;
+    private final AppConfigService appConfigService;
 
     @Autowired
-    public CreateAppConfigController(final AppConfigService appConfigValueService) {
-        this.appConfigValueService = appConfigValueService;
+    public UpdateAppConfigController(final AppConfigService appConfigValueService) {
+        this.appConfigService = appConfigValueService;
     }
 
     @ModelAttribute
-    public AppConfig appConfig() {
-        return new AppConfig();
-    }
-
-    @ModelAttribute(value = "modulesList")
-    public List<Module> findAllModules() {
-        return appConfigValueService.findAllModules();
+    public AppConfig appConfig(@PathVariable String moduleName, @PathVariable String keyName) {
+        return appConfigService.getAppConfigByModuleNameAndKeyName(moduleName, keyName);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String createAppConfigValueForm(@ModelAttribute final AppConfig appConfig, final Model model) {
-        if (appConfig.getAppDataValues().isEmpty())
-            appConfig.addAppDataValues(new AppConfigValues());
-        model.addAttribute("mode", "new");
-        return "appConfig-form";
+    public String updateAppConfigForm(@ModelAttribute final AppConfig appConfig, final RedirectAttributes redirectAttrs) {
+        if (appConfig == null) {
+            redirectAttrs.addFlashAttribute("message", "err.app.config.not.found");
+            return "redirect:/app/config/update";
+        }
+        return "app-config-edit";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String createAppConfigValue(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+    public String updateAppConfig(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
+                                  final RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return "appConfig-form";
-        appConfig = buildappConfigDetails(appConfig, appConfig.getAppDataValues());
-        appConfigValueService.createAppConfigValues(appConfig);
-        model.addAttribute("mode", "new");
-        redirectAttrs.addFlashAttribute("appConfig", appConfig);
-        model.addAttribute("message", "msg.appconfig.create.success");
-        return "appConfig-success";
-
+            return "app-config-edit";
+        appConfigService.updateAppConfig(appConfig);
+        redirectAttrs.addFlashAttribute("message", "msg.appconfig.update.success");
+        return "redirect:/app/config/update/" + appConfig.getModule().getName() + "/" + appConfig.getKeyName();
     }
-
-    private AppConfig buildappConfigDetails(final AppConfig appConfig, final List<AppConfigValues> unitDetail) {
-        final Set<AppConfigValues> unitSet = new HashSet<AppConfigValues>();
-
-        for (final AppConfigValues unitdetail : unitDetail)
-            if (unitdetail.getEffectiveFrom() != null && !"".equals(unitdetail.getValue())) {
-                unitdetail.setKey(appConfig);
-                unitSet.add(unitdetail);
-            }
-        appConfig.getAppDataValues().clear();
-
-        appConfig.getAppDataValues().addAll(unitSet);
-
-        return appConfig;
-
-    }
-
 }

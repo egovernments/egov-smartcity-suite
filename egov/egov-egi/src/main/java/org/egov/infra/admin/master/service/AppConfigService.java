@@ -42,7 +42,7 @@ package org.egov.infra.admin.master.service;
 
 
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,72 +52,52 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Author Roopa
- */
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Service
 @Transactional(readOnly = true)
 public class AppConfigService {
-	
-	private final AppConfigRepository appConfigValueRepository;
-	
-   
-	 @Autowired
-	    public AppConfigService(final AppConfigRepository appConfigValueRepos) {
-	        this.appConfigValueRepository = appConfigValueRepos;
-	    }
 
-	 public AppConfig findBykeyNameAndModuleName( final Long keyId,final Long moduleId) {
-	        return appConfigValueRepository.findByIdAndModule_Id(keyId,moduleId);
-	    }
-	    public AppConfig findBykeyName(final String keyName) {
-	        return appConfigValueRepository.findBykeyName(keyName);
-	    }
-	    public AppConfig findById(final Long appId) {
-	        return appConfigValueRepository.findById(appId);
-	    }
-	  public List<Module> findByNameContainingIgnoreCase(String likemoduleName) {
-		  return appConfigValueRepository.findByNameContainingIgnoreCase(likemoduleName);
-	    }
-	  public Module findByModuleById(Long moduleId) {
-		 return appConfigValueRepository.findByModuleById(moduleId );
-	    }
-	  public List<AppConfig> findAll() {
-	        return appConfigValueRepository.findAll();
-	    }
-	  public List<AppConfig> findAllByModule(final Long module) {
-	        return appConfigValueRepository.findByModule_Id(module);
-	    }
-	  
-	  public Page<AppConfig> getListOfAppConfig(final Integer pageNumber, final Integer pageSize) {
-	        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "module.name");
-	        return appConfigValueRepository.findAll(pageable);
-	    }
-	  public List<Module> findAllModules() {
-	        return appConfigValueRepository.findAllModules();
-	    }
-	    @Transactional
-	    public void createAppConfigValues(final AppConfig appConfig) {
-	    	appConfigValueRepository.save(appConfig);
-	    }
-	    @Transactional
-	    public void updateAppConfigValues(final AppConfig appConfig) {
-	    	appConfigValueRepository.save(appConfig);
-	    }
-	    
-	    public  AppConfig getConfigKeyByName(final String keyName, final String moduleName)
-	    {
-	    	return appConfigValueRepository.findByKeyNameAndModule_Name(keyName, moduleName);
-	    }
-	    public List<AppConfig> getAppConfigKeys(final String moduleName) {
-	    	return appConfigValueRepository.findByModule_Name(moduleName);
-	   
-	    }
-	    
-	    public List<String> getAllAppConfigModule() {
-	    	return appConfigValueRepository.getAllAppConfigModule();
-			
-		}
+    private final AppConfigRepository appConfigRepository;
+
+    @Autowired
+    public AppConfigService(final AppConfigRepository appConfigRepository) {
+        this.appConfigRepository = appConfigRepository;
+    }
+
+    public AppConfig getAppConfigByModuleNameAndKeyName(final String moduleName, final String keyName) {
+        return appConfigRepository.findByModule_NameAndKeyName(moduleName, keyName);
+    }
+
+    public AppConfig getAppConfigByKeyName(final String keyName) {
+        return appConfigRepository.findByKeyName(keyName);
+    }
+
+    public List<AppConfig> getAllAppConfigByModuleName(final String moduleName) {
+        return appConfigRepository.findByModule_Name(moduleName);
+    }
+
+    public Page<AppConfig> getAllAppConfig(String moduleName, final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "module.name");
+        return isBlank(moduleName) ? appConfigRepository.findAll(pageable) : appConfigRepository.findByModule_Name(moduleName, pageable);
+    }
+
+    @Transactional
+    public void createAppConfig(AppConfig appConfig) {
+        for(AppConfigValues configValue : appConfig.getConfValues()) {
+            configValue.setConfig(appConfig);
+        }
+        appConfigRepository.save(appConfig);
+    }
+
+    @Transactional
+    public void updateAppConfig(AppConfig appConfig) {
+        final List<AppConfigValues> newConfigVaues = new ArrayList<>(appConfig.getConfValues());
+        appConfig.getConfValues().clear();
+        appConfig.setConfValues(newConfigVaues);
+        appConfigRepository.save(appConfig);
+    }
 }

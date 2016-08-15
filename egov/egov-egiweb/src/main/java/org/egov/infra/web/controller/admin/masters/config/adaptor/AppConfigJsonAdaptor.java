@@ -1,3 +1,4 @@
+
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -38,63 +39,35 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.appConfig;
+package org.egov.infra.web.controller.admin.masters.config.adaptor;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.AppConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.lang.reflect.Type;
 
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
-@Controller
-@RequestMapping("/appConfig/update")
-public class SearchAppConfigController {
+public class AppConfigJsonAdaptor implements JsonSerializer<AppConfig> {
 
-    private AppConfigService appConfigValueService;
-   
-    @Autowired
-    public SearchAppConfigController(AppConfigService appConfigValueService) {
-        this.appConfigValueService = appConfigValueService;
-    }
-
-    @ModelAttribute
-    public AppConfig appConfigModel() {
-        return new AppConfig();
-    }
-
-    @ModelAttribute(value = "appConfigList")
-    public List<AppConfig> listAppConfig() {
-        return appConfigValueService.findAll();
-    }
-    @ModelAttribute(value = "modulesList")
-    public List<Module> findAllModules() {
-        return appConfigValueService.findAllModules();
-    } 
-    
-    @RequestMapping(method = RequestMethod.GET)
-    public String showAppConfigValues(Model model) {
-
-        return "appConfig-list";
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String search(@ModelAttribute AppConfig appConfig, final BindingResult errors,
-            RedirectAttributes redirectAttrs, HttpServletRequest request) {
-
-        if (errors.hasErrors())
-            return "appConfig-list";
-    
-        return "redirect:/appConfig/update/" + appConfig.getKeyName()+","+appConfig.getModule().getName() ;
+    @Override
+    public JsonElement serialize(final AppConfig appConfig, final Type type, final JsonSerializationContext jsc) {
+        JsonObject appConfigJSON = new JsonObject();
+        appConfigJSON.addProperty("keyName", appConfig.getKeyName());
+        appConfigJSON.addProperty("description", appConfig.getDescription());
+        appConfigJSON.addProperty("module", appConfig.getModule().getName());
+        appConfigJSON.addProperty("id", appConfig.getId());
+        for(AppConfigValues confValue : appConfig.getConfValues()) {
+            JsonObject  configValueJSON = new JsonObject();
+            configValueJSON.addProperty("Effective Date", getDefaultFormattedDate(confValue.getEffectiveFrom()));
+            configValueJSON.addProperty("Value", confValue.getValue());
+            appConfigJSON.add("values", configValueJSON);
+        }
+        return appConfigJSON;
     }
 
 }

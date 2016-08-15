@@ -39,12 +39,6 @@
  */
 package org.egov.egf.web.actions.report;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -62,6 +56,12 @@ import org.egov.utils.Constants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 
 
@@ -130,7 +130,7 @@ public class ReportAction extends BaseFormAction
         final List<AppConfig> appConfigList = persistenceService
                 .findAllBy("from AppConfig where key_name = 'REPORT_SEARCH_MISATTRRIBUTES'");
         for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+            for (final AppConfigValues appConfigVal : appConfig.getConfValues())
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

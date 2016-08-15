@@ -38,75 +38,68 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.appConfig;
+package org.egov.infra.web.controller.admin.masters.config;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigAdaptor;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.web.controller.admin.masters.config.adaptor.AppConfigJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/appConfig")
-public class ViewAppConfigController extends MultiActionController {
+@RequestMapping("/app/config")
+public class ViewAppConfigController {
 
     private AppConfigService appConfigService;
-    public static final String CONTENTTYPE_JSON = "application/json";
+
+    @Autowired
+    private ModuleService moduleService;
 
     @Autowired
     public ViewAppConfigController(AppConfigService appConfigService) {
         this.appConfigService = appConfigService;
     }
 
-    @RequestMapping(value = "view", method = RequestMethod.GET)
-    public String AppConfigViewForm(@ModelAttribute AppConfig appConfig, Model model) {
-        return "view-appconfig";
-
-    }
-    
-    @RequestMapping(value = "/viewList/{id}", method = RequestMethod.GET)
-    public String viewAppConfigForm(final Model model, @ModelAttribute AppConfig appConfig,@PathVariable final Long id) {
-    	appConfig=appConfigService.findById(id);
-    	model.addAttribute("appConfig", appConfig);
-        return "appConfigList-view";
+    @RequestMapping(value = "/formodule/{moduleName}", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<AppConfig> getAppConfigsForModule(@PathVariable String moduleName) {
+        return appConfigService.getAllAppConfigByModuleName(moduleName);
     }
 
-    @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTables(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        int pageStart = Integer.valueOf(request.getParameter("start"));
-        int pageSize = Integer.valueOf(request.getParameter("length"));
-        int pageNumber = pageStart / pageSize + 1;
-        List<AppConfig> totalRecords = appConfigService.findAll();
+    @RequestMapping(value = "/view", method = GET)
+    public String viewAppConfig(Model model) {
+        model.addAttribute("modules", moduleService.getAllTopModules());
+        return "app-config-view";
+    }
 
-        if (pageSize == -1) {
-            pageSize = totalRecords.size();
-        }
-
-        final List<AppConfig> appConfigs = appConfigService.getListOfAppConfig(pageNumber, pageSize).getContent();
+    @RequestMapping(value = "/list", method = GET, produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String showAppConfigs(@RequestParam(required = false) String moduleName,
+                                           @RequestParam Integer start,
+                                           @RequestParam Integer length) {
+        int pageNumber = start / length + 1;
+        final Page<AppConfig> pagedAppConfigs = appConfigService.getAllAppConfig(moduleName, pageNumber, length == -1 ? Integer.MAX_VALUE : length);
         final StringBuilder appConfigJSONData = new StringBuilder();
         appConfigJSONData.append("{\"draw\": ").append("0");
-        appConfigJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
-        appConfigJSONData.append(",\"totalDisplayRecords\":").append(appConfigs.size());
-        appConfigJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-        appConfigJSONData.append(",\"data\":").append(toJSON(appConfigs, AppConfig.class, AppConfigAdaptor.class)).append("}");
-        response.setContentType(CONTENTTYPE_JSON);
-        IOUtils.write(appConfigJSONData, response.getWriter());
+        appConfigJSONData.append(",\"recordsTotal\":").append(pagedAppConfigs.getTotalElements());
+        appConfigJSONData.append(",\"totalDisplayRecords\":").append(pagedAppConfigs.getTotalElements());
+        appConfigJSONData.append(",\"recordsFiltered\":").append(pagedAppConfigs.getTotalElements());
+        appConfigJSONData.append(",\"data\":").append(toJSON(pagedAppConfigs.getContent(), AppConfig.class, AppConfigJsonAdaptor.class)).append("}");
+        return appConfigJSONData.toString();
     }
 
 }

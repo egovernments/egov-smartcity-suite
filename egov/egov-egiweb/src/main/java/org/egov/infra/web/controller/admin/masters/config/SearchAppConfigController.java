@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -39,31 +38,39 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.entity;
+package org.egov.infra.web.controller.admin.masters.config;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.lang.reflect.Type;
+import java.util.List;
 
-public class AppConfigAdaptor implements JsonSerializer<AppConfig> {
 
-    @Override
-    public JsonElement serialize(final AppConfig appConfig, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("keyName", appConfig.getKeyName());
-        jsonObject.addProperty("description", appConfig.getDescription());
-        jsonObject.addProperty("module", appConfig.getModule() != null ? appConfig.getModule().getName() : "N/A");
-        // jsonObject.addProperty("code", compaintType.getCode());
-        // jsonObject.addProperty("isActive", compaintType.getIsActive() == true
-        // ? "Yes" : "No");
-        // jsonObject.addProperty("description", null !=
-        // compaintType.getDescription() ? compaintType.getDescription() :
-        // "N/A");
-        jsonObject.addProperty("routerId", appConfig.getId());
-        return jsonObject;
+@Controller
+@RequestMapping("/app/config/update")
+public class SearchAppConfigController {
+
+    @Autowired
+    private ModuleService moduleService;
+
+    @ModelAttribute(value = "modules")
+    public List<Module> modules() {
+        return moduleService.getAllTopModules();
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String searchAppConfigForm() {
+        return "search-appconfig";
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String search(@RequestParam String appConfigModuleName, @RequestParam String appConfigKeyName) {
+        return "redirect:/app/config/update/" + appConfigModuleName + "/" + appConfigKeyName;
+    }
 }

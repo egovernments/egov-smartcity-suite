@@ -412,8 +412,8 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
         final AppConfig appConfig = (AppConfig) persistenceService.find("from AppConfig where key_name =?",
                 "PREAPPROVEDVOUCHERSTATUS");
-        if (null != appConfig && null != appConfig.getAppDataValues())
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+        if (null != appConfig && null != appConfig.getConfValues())
+            for (final AppConfigValues appConfigVal : appConfig.getConfValues())
                 preapprovalStatus = Integer.valueOf(appConfigVal.getValue());
         else
             throw new ApplicationRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");

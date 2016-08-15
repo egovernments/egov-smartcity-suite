@@ -38,51 +38,59 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.appConfig;
+package org.egov.infra.web.controller.admin.masters.config;
 
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-@Repository
-@RequestMapping(value = "/appConfig")
-public class GenericAppConfigAjaxController {
+@Controller
+@RequestMapping(value = "/app/config/create")
+public class CreateAppConfigController {
 
     private final AppConfigService appConfigValueService;
 
     @Autowired
-    public GenericAppConfigAjaxController(final AppConfigService appConfigValueService) {
+    private ModuleService moduleService;
+
+    @Autowired
+    public CreateAppConfigController(final AppConfigService appConfigValueService) {
         this.appConfigValueService = appConfigValueService;
     }
 
-    @RequestMapping(value = { "/modules" }, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Module> getAllModulesByNameLike(@RequestParam final String moduleName,
-            final HttpServletResponse response) throws IOException {
-        final String likemoduleName = "%" + moduleName + "%";
-        return appConfigValueService.findByNameContainingIgnoreCase(likemoduleName);
+    @ModelAttribute
+    public AppConfig appConfig() {
+        return new AppConfig();
     }
 
-    @RequestMapping(value = "/ajax-appConfigpopulate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<AppConfig> getAppConfigs(
-            @ModelAttribute("appConfig") @RequestParam final Long appModuleName) {
-        final List<AppConfig> appConfig = appConfigValueService.findAllByModule(appModuleName);
-        // FIXME this is hack for lazy loaded collection
-        appConfig.forEach(appConfigs -> appConfigs.toString());
-        return appConfig;
+    @ModelAttribute(value = "modules")
+    public List<Module> modules() {
+        return moduleService.getAllTopModules();
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public String createAppConfigForm() {
+        return "app-config-create";
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String createAppConfig(@Valid @ModelAttribute AppConfig appConfig, final BindingResult errors,
+                                       final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors())
+            return "app-config-create";
+        appConfigValueService.createAppConfig(appConfig);
+        redirectAttrs.addFlashAttribute("message", "msg.appconfig.create.success");
+        return "redirect:/app/config/update/" + appConfig.getModule().getName() + "/" + appConfig.getKeyName();
+    }
 }
