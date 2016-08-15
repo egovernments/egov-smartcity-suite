@@ -73,6 +73,9 @@
 								<resource>
 									<directory>../egov-lcms/src/main/resources/db/migration</directory>
 								</resource>
+								<resource>
+									<directory>../egov-stms/src/main/resources/db/migration</directory>
+								</resource>
 							</resources>
 						</configuration>
 					</execution>

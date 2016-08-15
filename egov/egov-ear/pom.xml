@@ -109,7 +109,12 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-stmsweb</artifactId>
+			<version>${project.parent.version}</version>
+			<type>war</type>
+		</dependency>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-api</artifactId>
@@ -213,6 +218,11 @@
 			<artifactId>egov-restapi</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-stms</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- Following dependencies are included in ear as these are used only 
 			in war modules and we have configured war modules to be archived as skinny 
@@ -347,6 +357,12 @@
 							<artifactId>egov-restapi</artifactId>
 							<contextRoot>/restapi</contextRoot>
 						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
+							<artifactId>egov-stmsweb</artifactId>
+							<contextRoot>/stms</contextRoot>
+						</webModule>
+						
 					</modules>
 
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
