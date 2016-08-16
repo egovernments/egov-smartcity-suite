@@ -67,8 +67,6 @@ public class GenericLegalCaseController {
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
 
-
-
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
         return courtTypeMasterService.getActiveCourtTypes();
     }
@@ -77,7 +75,6 @@ public class GenericLegalCaseController {
         return governmentDepartmentService.findAll();
     }
 
-   
     public @ModelAttribute("lcNumberTypes") Map<String, String> getLcNumberTypeTypes() {
         return getLcNumberTypesMap();
     }
@@ -92,7 +89,6 @@ public class GenericLegalCaseController {
     public @ModelAttribute("caseTypeList") List<CaseTypeMaster> caseTypeList() {
         return caseTypeMasterService.getActiveCaseTypeList();
     }
-
 
     public @ModelAttribute("wPYearList") List<Integer> getWPYearList() {
         final List<Integer> wPYearList = new ArrayList<Integer>();

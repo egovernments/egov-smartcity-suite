@@ -58,7 +58,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application/")
-public class CreateLegalcaseController extends GenericLegalCaseController {
+public class CreateLegalCaseController extends GenericLegalCaseController {
 
     @Autowired
     private LegalCaseService legalCaseService;
