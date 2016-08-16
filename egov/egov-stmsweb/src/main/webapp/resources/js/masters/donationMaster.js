@@ -348,12 +348,12 @@ $(document).ready(function() {
 	var datatbl = $('#donation_master_search');
 	$("#donation_master_search").on('click','tbody tr td i.fa-eye',function(e) {
 		var donationMasterId = datatbl.fnGetData($(this).parent().parent().parent(),1);
-		window.open("viewDonation/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("donationView/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#donation_master_search").on('click','tbody tr td i.fa-edit',function(e) {
 		var donationMasterId = datatbl.fnGetData($(this).parent().parent().parent(),1);
-		window.open("updateDonation/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("donationUpdate/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$(".btn-addRow").click(function(){

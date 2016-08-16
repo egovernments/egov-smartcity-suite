@@ -255,7 +255,7 @@ $(document).ready(function() {
 					
 					$("#sewerage_master_rates_table").on('click', 'tbody tr td i.fa-eye', function(e){
 						var sewerageRatesId=datatbl.fnGetData($(this).parent().parent().parent(),1);
-						window.open("viewSewerageRates/"+sewerageRatesId,''+sewerageRatesId+'','width=900, height=700, top=300, left=150, scrollbars=yes');
+						window.open("rateView/"+sewerageRatesId,''+sewerageRatesId+'','width=900, height=700, top=300, left=150, scrollbars=yes');
 					});
 					
 					$('#fromDate').datepicker('setEndDate',$('#effectiveEndDate').val());

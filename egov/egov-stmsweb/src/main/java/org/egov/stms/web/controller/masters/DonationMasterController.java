@@ -156,10 +156,10 @@ public class DonationMasterController {
             donationMaster = donationMasterService.createDonationRate(donationMaster);
         }
         redirectAttrs.addFlashAttribute("message", "msg.donationrate.creation.success");
-        return "redirect:/masters/donationmastersuccess/" +donationMaster.getId();
+        return "redirect:/masters/success/" +donationMaster.getId();
     }
 
-    @RequestMapping(value = "/donationmastersuccess/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/success/{id}", method = RequestMethod.GET)
     public String getSeweragerates(@ModelAttribute DonationMaster donationMaster, @PathVariable("id") Long id,
             final RedirectAttributes redirectAttrs, Model model) {
         DonationMaster donationMaster1 = donationMasterService.findById(id);
@@ -227,12 +227,12 @@ public class DonationMasterController {
         return donationMasterService.findFromDateByPropertyType(propertyType);
     }
     
-    @RequestMapping(value="/viewDonation/{id}", method=GET)
+    @RequestMapping(value="/donationView/{id}", method=GET)
     public String ViewDonation( @PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs){
-       return "redirect:/masters/donationmastersuccess/"+id;
+       return "redirect:/masters/success/"+id;
     }
     
-    @RequestMapping(value="/updateDonation/{id}", method=GET)
+    @RequestMapping(value="/donationUpdate/{id}", method=GET)
     public String UpdateDonation(@PathVariable final Long id, final Model model){
         DonationMaster dm = donationMasterService.findById(id);
         Collections.sort(dm.getDonationDetail(), new DonationRateComparatorOrderById());
@@ -241,7 +241,7 @@ public class DonationMasterController {
         return "donation-master-update";
     }
     
-    @RequestMapping(value="/updateDonation/{id}", method=POST)
+    @RequestMapping(value="/donationUpdate/{id}", method=POST)
     public String updateDonationValues(@ModelAttribute DonationMaster donationMaster, @PathVariable final Long id, final Model model,
             final RedirectAttributes redirectAttrs) throws ParseException{
       
@@ -299,6 +299,6 @@ public class DonationMasterController {
           return "donation-master-update";
       }
         redirectAttrs.addFlashAttribute("message", "msg.donationrate.update.success");
-        return "redirect:/masters/donationmastersuccess/" +id;
+        return "redirect:/masters/success/" +id;
     }
 }

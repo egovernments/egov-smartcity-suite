@@ -192,7 +192,7 @@ public class SewerageRateMasterController {
        
     }
     
-    // TODO : remove unused view method
+   
     @RequestMapping(value = "/viewSewerageRate", method = RequestMethod.GET)
     public String view(@ModelAttribute SewerageRatesSearch sewerageRatesSearch, final Model model) {
         model.addAttribute("propertyTypes",PropertyType.values());
@@ -200,7 +200,7 @@ public class SewerageRateMasterController {
         return "sewerageRates-view";
     }
     
-    @RequestMapping(value = "/viewSewerageRates/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/rateView/{id}", method = RequestMethod.GET)
     public String view( @ModelAttribute SewerageRatesSearch sewerageRatesSearch, final Model model, @PathVariable("id") final Long id, final RedirectAttributes redirectAttrs) {
         SewerageRatesMaster sewerageRatesMaster = sewerageRatesMasterService.findBy(id);
         model.addAttribute("sewerageRatesSearch",sewerageRatesMaster);
