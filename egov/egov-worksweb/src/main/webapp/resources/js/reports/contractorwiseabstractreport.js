@@ -47,6 +47,10 @@ $(document).ready(function() {
 		}
 	});
 	
+});
+
+
+$(document).ready(function() {
 	var contractorSearch = new Bloodhound(
 			{
 				datumTokenizer : function(datum) {
@@ -83,7 +87,6 @@ $(document).ready(function() {
 				}
 			});
 });
-
 
 $(document).ready(function(){
     var ward = new Bloodhound({

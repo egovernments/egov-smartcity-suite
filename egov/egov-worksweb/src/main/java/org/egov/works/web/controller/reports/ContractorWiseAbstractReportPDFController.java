@@ -40,7 +40,9 @@
 package org.egov.works.web.controller.reports;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,19 +87,19 @@ public class ContractorWiseAbstractReportPDFController {
 
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
-    
+
     @Autowired
     private MessageSource messageSource;
-    
+
     @Autowired
     private CFinancialYearService cFinancialYearService;
-    
+
     @Autowired
     private NatureOfWorkService natureOfWorkService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ContractorService contractorService;
 
@@ -123,45 +125,156 @@ public class ContractorWiseAbstractReportPDFController {
         return generateReport(contractorWiseAbstractList, request, session, contentType, contractorWiseAbstractReport);
     }
 
-    private ResponseEntity<byte[]> generateReport(final List<ContractorWiseAbstractSearchResult> contractorWiseAbstractList, final HttpServletRequest request,
+    private ResponseEntity<byte[]> generateReport(
+            final List<ContractorWiseAbstractSearchResult> contractorWiseAbstractList, final HttpServletRequest request,
             final HttpSession session, final String contentType,
             final ContractorWiseAbstractReport contractorWiseAbstractReport) {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         final SimpleDateFormat fomatter = new SimpleDateFormat("dd/MM/yyyy");
         reportParams.put("reportRunDate", sdf.format(new Date()));
-        reportInput = new ReportRequest(CONTRACTOWISEABSTRACTREPORT, contractorWiseAbstractList, reportParams);
+        final List<ContractorWiseAbstractSearchResult> contractorSearchList = new ArrayList<ContractorWiseAbstractSearchResult>();
+
+        for (final ContractorWiseAbstractSearchResult searchResult : contractorWiseAbstractList) {
+            final ContractorWiseAbstractSearchResult contractorResult = new ContractorWiseAbstractSearchResult();
+            if (searchResult != null) {
+                if (searchResult.getElectionWard() != null)
+                    contractorResult.setElectionWard(searchResult.getElectionWard());
+                else
+                    contractorResult.setElectionWard("NA");
+
+                if (searchResult.getContractorName() != null)
+                    contractorResult.setContractorName(searchResult.getContractorName());
+                else
+                    contractorResult.setContractorName("NA");
+
+                if (searchResult.getContractorCode() != null)
+                    contractorResult.setContractorCode(searchResult.getContractorCode());
+                else
+                    contractorResult.setContractorCode("NA");
+
+                if (searchResult.getContractorClass() != null)
+                    contractorResult.setContractorClass(searchResult.getContractorClass());
+                else
+                    contractorResult.setContractorClass("NA");
+
+                if (searchResult.getApprovedEstimates() != null)
+                    contractorResult.setApprovedEstimates(searchResult.getApprovedEstimates());
+                else
+                    contractorResult.setApprovedEstimates(0);
+
+                if (searchResult.getApprovedAmount() != null)
+                    contractorResult.setApprovedAmount(
+                            searchResult.getApprovedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setApprovedAmount(new BigDecimal(0));
+
+                if (searchResult.getSiteNotHandedOverEstimates() != null)
+                    contractorResult.setSiteNotHandedOverEstimates(searchResult.getSiteNotHandedOverEstimates());
+                else
+                    contractorResult.setSiteNotHandedOverEstimates(0);
+
+                if (searchResult.getSiteNotHandedOverAmount() != null)
+                    contractorResult.setSiteNotHandedOverAmount(
+                            searchResult.getSiteNotHandedOverAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setSiteNotHandedOverAmount(new BigDecimal(0));
+
+                if (searchResult.getNotWorkCommencedEstimates() != null)
+                    contractorResult.setNotWorkCommencedEstimates(searchResult.getNotWorkCommencedEstimates());
+                else
+                    contractorResult.setNotWorkCommencedEstimates(0);
+
+                if (searchResult.getNotWorkCommencedAmount() != null)
+                    contractorResult.setNotWorkCommencedAmount(
+                            searchResult.getNotWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setNotWorkCommencedAmount(new BigDecimal(0));
+
+                if (searchResult.getWorkCommencedEstimates() != null)
+                    contractorResult.setWorkCommencedEstimates(searchResult.getWorkCommencedEstimates());
+                else
+                    contractorResult.setWorkCommencedEstimates(0);
+
+                if (searchResult.getWorkCommencedAmount() != null)
+                    contractorResult.setWorkCommencedAmount(
+                            searchResult.getWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setWorkCommencedAmount(new BigDecimal(0));
+
+                if (searchResult.getWorkCompletedEstimates() != null)
+                    contractorResult.setWorkCompletedEstimates(searchResult.getWorkCompletedEstimates());
+                else
+                    contractorResult.setWorkCompletedEstimates(0);
+
+                if (searchResult.getWorkCompletedAmount() != null)
+                    contractorResult.setWorkCompletedAmount(
+                            searchResult.getWorkCompletedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setWorkCompletedAmount(new BigDecimal(0));
+
+                if (searchResult.getApprovedEstimates() != null && searchResult.getWorkCompletedEstimates() != null)
+                    contractorResult.setBalanceWorkEstimates(searchResult.getApprovedEstimates().intValue()
+                            - searchResult.getBalanceWorkEstimates().intValue());
+                else if (searchResult.getApprovedEstimates() != null)
+                    contractorResult.setBalanceWorkEstimates(searchResult.getApprovedEstimates());
+                else
+                    contractorResult.setBalanceWorkEstimates(0);
+
+                if (searchResult.getApprovedAmount() != null && searchResult.getWorkCompletedAmount() != null)
+                    contractorResult.setBalanceWorkAmount(searchResult.getApprovedAmount()
+                            .subtract(searchResult.getWorkCompletedAmount()).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else if (searchResult.getApprovedAmount() != null)
+                    contractorResult.setBalanceWorkAmount(
+                            searchResult.getApprovedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setBalanceWorkAmount(new BigDecimal(0));
+
+                if (searchResult.getLiableAmount() != null)
+                    contractorResult
+                            .setLiableAmount(searchResult.getLiableAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
+                    contractorResult.setLiableAmount(new BigDecimal(0));
+
+                contractorSearchList.add(contractorResult);
+
+            }
+        }
+        reportInput = new ReportRequest(CONTRACTOWISEABSTRACTREPORT, contractorSearchList, reportParams);
         String queryParameters = messageSource.getMessage("msg.contractorwiseabstractestimate.report", null, null);
-        
-        if (contractorWiseAbstractReport.getFinancialYearId() != null){
-            CFinancialYear finyear = cFinancialYearService.findOne(contractorWiseAbstractReport.getFinancialYearId());
-            queryParameters += " " +messageSource.getMessage("msg.daterange", null, null) + fomatter.format(finyear.getStartingDate()) + " - "
-                    + fomatter.format(finyear.getEndingDate())
+
+        if (contractorWiseAbstractReport.getFinancialYearId() != null) {
+            final CFinancialYear finyear = cFinancialYearService
+                    .findOne(contractorWiseAbstractReport.getFinancialYearId());
+            queryParameters += " " + messageSource.getMessage("msg.daterange", null, null)
+                    + fomatter.format(finyear.getStartingDate()) + " - " + fomatter.format(finyear.getEndingDate())
                     + ", ";
         }
-        if (contractorWiseAbstractReport.getElectionWardId() != null){
-            queryParameters += messageSource.getMessage("msg.ward", null, null) +
-                    boundaryService.getBoundaryById(contractorWiseAbstractReport.getElectionWardId()).getBoundaryNum() + ", ";
-        }
-        
+        if (contractorWiseAbstractReport.getElectionWardId() != null)
+            queryParameters += messageSource.getMessage("msg.ward", null, null)
+                    + boundaryService.getBoundaryById(contractorWiseAbstractReport.getElectionWardId()).getBoundaryNum()
+                    + ", ";
+
         if (contractorWiseAbstractReport.getNatureOfWork() != null)
-            queryParameters += messageSource.getMessage("msg.natureofwork", null, null)
+            queryParameters += " "+messageSource.getMessage("msg.natureofwork", null, null)
                     + natureOfWorkService.findById(contractorWiseAbstractReport.getNatureOfWork()).getName() + ", ";
-        
+
         if (contractorWiseAbstractReport.getContractor() != null) {
-            Contractor contractor = contractorService.getContractorById(null);
-            queryParameters += messageSource.getMessage("msg.contractor", null, null)
-                    + contractor.getName() + "-" + contractor.getCode() +  ", ";
+            final List<Contractor> contractor = contractorService
+                    .getContractorsByCodeOrName(contractorWiseAbstractReport.getContractor());
+            if (contractor != null)
+                queryParameters += " "+messageSource.getMessage("msg.contractor", null, null) + contractor.get(0).getName()
+                        + "-" + contractor.get(0).getCode() + ", ";
         }
-        
-        if (contractorWiseAbstractReport.getWorkStatus() != null) 
-            queryParameters += messageSource.getMessage("msg.workstatus", null, null)
-            + contractorWiseAbstractReport.getWorkStatus() +  ", ";
-        
+
+        if (contractorWiseAbstractReport.getWorkStatus() != null)
+            queryParameters += " "+messageSource.getMessage("msg.workstatus", null, null)
+                    + contractorWiseAbstractReport.getWorkStatus() + ", ";
+
         if (queryParameters.endsWith(", "))
             queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
-        
+
         reportParams.put("reportTitle", queryParameters);
-        reportParams.put("dataRunDate",sdf.format(workProgressRegisterService.getReportSchedulerRunDate()));
+        reportParams.put("dataRunDate", sdf.format(workProgressRegisterService.getReportSchedulerRunDate()));
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             reportInput.setReportFormat(FileFormat.PDF);

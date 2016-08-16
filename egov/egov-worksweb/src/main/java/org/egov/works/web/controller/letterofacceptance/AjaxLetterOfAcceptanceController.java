@@ -420,4 +420,5 @@ public class AjaxLetterOfAcceptanceController {
         final String json = gson.toJson(object);
         return json;
     }
+    
 }

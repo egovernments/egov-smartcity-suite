@@ -91,7 +91,7 @@ public class AjaxContractorWiseAbstractReportController {
     }
     
     @RequestMapping(value = "/ajax-searchcontractors", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public  List<Contractor> searchContractors(@RequestParam final String code) {
+    public @ResponseBody List<Contractor> searchContractors(@RequestParam final String code) {
         return workOrderEstimateService.findContractorsByWorkOrderStatus(code);
     }
 
