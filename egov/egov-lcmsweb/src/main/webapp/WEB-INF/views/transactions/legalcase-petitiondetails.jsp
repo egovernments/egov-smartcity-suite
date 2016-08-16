@@ -71,7 +71,7 @@
 				id="bipartisanPetitionerDetailsList[0].isRespondentGovernment"
 				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-right"
+				class="form-control table-input text-left"
 				data-pattern="alphanumerichyphenbackslash"
 				name="bipartisanPetitionerDetailsList[0].name" id="bipartisanPetitionerDetailsList[0].name"
 				maxlength="50" required="required"></td>
@@ -79,7 +79,7 @@
 				class="form-control table-input" name="bipartisanPetitionerDetailsList[0].address"
 				id="bipartisanPetitionerDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-right patternvalidation"
+				class="form-control table-input text-left patternvalidation"
 				data-pattern="number" name="bipartisanPetitionerDetailsList[0].contactNumber"
 				id="bipartisanPetitionerDetailsList[0].contactNumber" maxlength="10"></td>
 			<%-- <td class="text-right"><form:select path=""
@@ -95,8 +95,8 @@
 						itemLabel="code" />
 				</form:select></td> --%>
 			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
-			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><span style="cursor:pointer;" ><i class="fa fa-plus"></i></span></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-trash"></i></span></a></td>
 	</tr>
 	</tbody>
 </table>
@@ -132,7 +132,7 @@
 				id="bipartisanRespondentDetailsList[0].isRespondentGovernment"
 				onblur="onChangeofPetitioncheck(this)" /></td> -->
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-right"
+				class="form-control table-input text-left"
 				data-pattern="alphanumerichyphenbackslash"
 				name="bipartisanRespondentDetailsList[0].name"
 				id="bipartisanRespondentDetailsList[0].name" maxlength="50"
@@ -142,7 +142,7 @@
 				name="bipartisanRespondentDetailsList[0].address"
 				id="bipartisanRespondentDetailsList[0].address" maxlength="256"></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-right patternvalidation"
+				class="form-control table-input text-left patternvalidation"
 				data-pattern="number"
 				name="bipartisanRespondentDetailsList[0].contactNumber"
 				id="bipartisanRespondentDetailsList[0].contactNumber" maxlength="10"></td>
@@ -164,8 +164,8 @@
 					class="form-control table-input text-right" style="text-align: center"
 					value="${true}" />
 				
-			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><i class="fa fa-plus"></i></a>
-			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><i class="fa fa-trash"></i></a></td>
+			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><span style="cursor:pointer;"><i class="fa fa-plus"></i></span></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><span style="cursor:pointer;"><i class="fa fa-trash"></i></span></a></td>
 		</tr>
 	</tbody>
 </table>

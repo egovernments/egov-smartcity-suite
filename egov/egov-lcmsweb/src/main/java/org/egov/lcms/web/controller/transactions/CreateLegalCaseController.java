@@ -77,8 +77,11 @@ public class CreateLegalCaseController extends GenericLegalCaseController {
     @RequestMapping(value = "create/", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final LegalCase legalCase, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()){
+        	 model.addAttribute("legalcase", legalCase);
+        	 model.addAttribute("mode", "create");
             return "legalCase-newForm";
+        }
         if (legalCase.getLcNumberType() != null && legalCase.getLcNumberType().equals(LCNumberType.AUTOMATED))
             legalCase.setLcNumber(legalCaseNumberGenerator.generateLegalCaseNumber());
         else
