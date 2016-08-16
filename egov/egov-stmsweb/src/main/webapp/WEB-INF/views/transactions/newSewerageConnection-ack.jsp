@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
@@ -98,7 +98,7 @@
 	</div>
 </div>
 
-<script src="<c:url value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript">
 function printDiv(divName) {
     var printContents = document.getElementById(divName).innerHTML;

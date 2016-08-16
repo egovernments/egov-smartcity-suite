@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 	
 	<form:form id="sewerageNoticeSearch" method="get" class="form-horizontal form-groups-bordered" modelAttribute="sewerage" commandName="">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -143,26 +144,26 @@
 	</div>
 </div>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
 
-<script src="<c:url value='/resources/js/search/sewerageNoticeSearch.js?rnd=${app_release_no}'/>"
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/search/sewerageNoticeSearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

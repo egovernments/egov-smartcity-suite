@@ -43,10 +43,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-<script type="text/javascript" src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>    
+<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>    
 
 <form:form role="form" action="/stms/masters/donationmaster" class="form-horizontal form-groups-bordered"
 	modelAttribute="donationMaster" id="donationRatesSearchForm" commandName="donationMaster">
@@ -164,6 +165,6 @@
 		</div>
 </form:form>
 
-<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>
-<script src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
 

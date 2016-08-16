@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
@@ -125,10 +126,10 @@
        </div>
 	</div>
 </form:form>
-<script src="<c:url value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>    
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>    
 
 
 <script type="text/javascript">

@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"><spring:message code="lbl.application.date"/> : <fmt:formatDate pattern="dd/MM/yyyy" value="${sewerageApplicationDetails.applicationDate}" /></div>
@@ -70,6 +71,6 @@
 		</form:form>
 	</div>
 </div>
-<script src="<c:url value='/resources/js/transactions/newconnection.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/newconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>

@@ -41,6 +41,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form method="get" action=""
 	class="form-horizontal form-groups-bordered"
@@ -104,4 +105,4 @@
 	</div>
 </form:form>
 <script
-	src="<c:url value='/resources/js/masters/sewerageRatesSuccess.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/masters/sewerageRatesSuccess.js?rnd=${app_release_no}'/>"></script>

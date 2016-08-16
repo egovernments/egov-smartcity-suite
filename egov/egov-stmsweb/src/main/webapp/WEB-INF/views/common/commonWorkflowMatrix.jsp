@@ -40,6 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <c:if test="${nextAction !='END'}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-heading">
@@ -118,4 +119,4 @@
 	</div>				
 	</div>
 </c:if>
-<script src="<c:url value='/resources/js/transactions/commonworkflow.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/commonworkflow.js?rnd=${app_release_no}'/>"></script>

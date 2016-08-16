@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
@@ -112,8 +113,8 @@
 	</div>
 </form:form>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
-<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>
