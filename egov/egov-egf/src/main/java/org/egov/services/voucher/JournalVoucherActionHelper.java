@@ -272,6 +272,7 @@ public class JournalVoucherActionHelper {
         headerdetails.put(VoucherConstant.VOUCHERNUMBER, voucherHeader.getVoucherNumber());
         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherHeader.getVoucherDate());
         headerdetails.put(VoucherConstant.DESCRIPTION, voucherHeader.getDescription());
+        headerdetails.put(VoucherConstant.ALLOWNEGETIVE, voucherHeader.getAllowNegetive());
 
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
             headerdetails.put(VoucherConstant.DEPARTMENTCODE, voucherHeader.getVouchermis().getDepartmentid().getCode());

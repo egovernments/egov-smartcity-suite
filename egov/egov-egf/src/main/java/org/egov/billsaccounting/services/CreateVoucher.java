@@ -2321,7 +2321,7 @@ public class CreateVoucher {
 				 */
 				final Transaxtion transaction = new Transaxtion();
 				transaction.setGlCode(chartOfAcc.getGlcode());
-				transaction.setGlName(chartOfAcc.getName());
+				transaction.setGlName(chartOfAcc.getName()); 
 				transaction.setVoucherLineId(String.valueOf(voucherLineId++));
 				transaction.setVoucherHeaderId(vh.getId().toString());
 				transaction.setCrAmount(creditAmount);
@@ -2330,7 +2330,16 @@ public class CreateVoucher {
 				if (headerdetails != null
 						&& headerdetails.get("billid") != null)
 					transaction.setBillId((Long) headerdetails.get("billid"));
-
+				
+				//if not passeed consider allowed
+				if(headerdetails.get(VoucherConstant.ALLOWNEGETIVE)==null)
+				{
+					transaction.setAllowNegetiveBudgetAmount(true);
+				}else
+				{
+				//if present consider configured value	
+				transaction.setAllowNegetiveBudgetAmount((Boolean)headerdetails.get(VoucherConstant.ALLOWNEGETIVE));
+				} 
 				final ArrayList reqParams = new ArrayList();
 				for (final HashMap<String, Object> sublegDetailMap : subledgerdetails) {
 
