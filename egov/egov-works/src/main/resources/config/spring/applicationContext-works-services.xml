@@ -47,14 +47,6 @@
 
     <context:component-scan base-package="org.egov.works" />
 
-    <bean id="egDeductionDetHibernateDao" class="org.egov.dao.recoveries.EgDeductionDetailsHibernateDAO">
-        <constructor-arg index="0"
-                         value="org.egov.model.recoveries.EgDeductionDetails" />
-        <constructor-arg index="1">
-            <null />
-        </constructor-arg>
-    </bean>
-
     <bean id="scheduleOfRateService" class="org.egov.works.master.service.ScheduleOfRateService"/>
 
     <bean id="scheduleCategoryService" class="org.egov.works.master.service.ScheduleCategoryService"/>
