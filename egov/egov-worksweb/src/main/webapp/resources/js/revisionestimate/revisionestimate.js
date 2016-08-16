@@ -1324,3 +1324,102 @@ var sorSearch = new Bloodhound({
 
 		 
 	});
+	
+	
+	$(document).on('change','.runtime-update',function (e) {
+
+
+		if($(this).is("input"))
+		{
+			if($(this).val()==0)
+				{
+				bootbox.alert("Zero is not allowed");
+				$(this).val('');
+				}
+				$(this).attr('value', $(this).val());
+			
+
+		}
+		else if($(this).is("select"))
+		{
+			if($(this).val()=='A')
+				{
+				$(this).find('option[value="D"]').removeAttr('selected');	
+				//console.log('dropdown value change triggered!');
+				$(this).find('option[value="A"]').attr('selected', 'selected');
+				}else
+					{
+					$(this).find('option[value="A"]').removeAttr('selected');	
+					//console.log('dropdown value change triggered!');
+					$(this).find('option[value="D"]').attr('selected', 'selected');	
+					}
+			
+		}
+		else if($(this).is("textarea"))
+		{
+			//console.log('dropdown value change triggered!');
+			$(this).html($(this).val());
+		}
+		if($(this).attr('id').indexOf("quantity")>=0)
+			findNet(this);
+		else
+		findTotal(this);
+		//$(this).closest('tr').hide();
+	});
+
+	
+	function findTotal(obj)
+	{
+
+		var name=obj.name.split(".");
+		var lengthname=name[0]+'.'+name[1]+'.length';
+		var no1,depthOrHeight1,width1,length1;
+		var lent=$('input[id="'+lengthname+'"]');
+		//console.log($(lent).attr('value'));
+		var length=$(lent).attr('value');
+		var no=$('input[id="'+name[0]+'.'+name[1]+'.no'+'"]').attr('value');
+		var depthOrHeight=$('input[id="'+name[0]+'.'+name[1]+'.depthOrHeight'+'"]').attr('value');
+		var width=$('input[id="'+name[0]+'.'+name[1]+'.width'+'"]').attr('value');
+
+		if(isEmpty(length) && isEmpty(no) && isEmpty(depthOrHeight)  && isEmpty(width))
+			$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',0);
+		else {
+			if (length === undefined || length == '' || length == 0)
+				length = 1;
+			if (no === undefined || no == '' || no == 0)
+				no = 1;
+			if (depthOrHeight === undefined || depthOrHeight == '' || depthOrHeight == 0)
+				depthOrHeight = 1;
+			if (width === undefined || width == '' || width == 0)
+				width = 1;
+			var net=length * no * width * depthOrHeight;
+			var x=net+"";
+			var y=x.split(".");
+			if(y.length>1)
+			  if(y[1].length>4)
+				  net=net.toFixed(4);  
+			
+			document.getElementById(name[0]+'.'+name[1]+'.quantity').value=net;
+			$('input[id="'+name[0]+'.'+name[1]+'.quantity'+'"]').attr('value',net);
+
+		}
+		var netObj=document.getElementById(name[0]+'.'+name[1]+'.quantity');
+		$(netObj).attr('value', document.getElementById(name[0] + '.' + name[1] + '.quantity').value);
+		var len=$(obj).closest('table').find('tbody').children.length;
+		//console.log(len);
+		findNet(netObj);
+	}
+	
+	
+	function isEmpty(str)
+	{
+		if(!str)
+		{
+			return true;
+		}
+		else if(!str.trim()) {
+			return true;
+		}
+
+		return false;
+	}
