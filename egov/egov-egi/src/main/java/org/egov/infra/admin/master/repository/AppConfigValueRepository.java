@@ -54,6 +54,8 @@ public interface AppConfigValueRepository extends JpaRepository<AppConfigValues,
 
     List<AppConfigValues> findByConfig_KeyNameAndConfig_Module_Name(String keyName, String moduleName);
     
+    List<AppConfigValues> findByConfig_KeyNameLikeAndConfig_Module_Name(String keyName, String moduleName);
+    
     List<AppConfigValues> findByConfig_KeyNameAndConfig_Module_NameOrderByValueAsc(String keyName, String moduleName);
     
     @Query("select a from AppConfigValues  a where a.config.keyName =:keyName and a.config.module.name =:moduleName and (a.effectiveFrom < :effectiveFrom or a.effectiveFrom between :dateFrom and :dateTo) order by effectiveFrom asc")

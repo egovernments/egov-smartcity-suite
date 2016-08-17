@@ -65,6 +65,10 @@ public class AppConfigValueService {
     public List<AppConfigValues> getConfigValuesByModuleAndKey(final String moduleName, final String keyName) {
         return appConfigValueRepository.findByConfig_KeyNameAndConfig_Module_Name(keyName, moduleName);
     }
+    
+    public List<AppConfigValues> getConfigValuesByModuleAndKeyLike(final String moduleName, final String keyName) {
+        return appConfigValueRepository.findByConfig_KeyNameLikeAndConfig_Module_Name(keyName, moduleName);
+    }
 
     public List<AppConfigValues> getConfigValuesByModuleAndKeyByValueAsc(final String moduleName, final String keyName) {
         return appConfigValueRepository.findByConfig_KeyNameAndConfig_Module_NameOrderByValueAsc(keyName, moduleName);

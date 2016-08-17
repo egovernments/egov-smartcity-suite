@@ -1332,7 +1332,7 @@ public class CreateVoucher {
 	private void validateFunction(final HashMap<String, Object> headerdetails,
 			final List<HashMap<String, Object>> accountcodedetails) {
 
-		final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "ifRestrictedToOneFunctionCenter");
+		final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "ifRestrictedToOneFunctionCenter");
 		if (appConfigValues == null) {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("app config ifRestrictedToOneFunctionCenter is not defined");

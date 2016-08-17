@@ -226,7 +226,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         
         final List<AppConfigValues> appConfigValues = appConfigValuesService
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"ifRestrictedToOneFunctionCenter");
-        if (appConfigValues == null && appConfigValues.isEmpty())
+        if (appConfigValues == null || appConfigValues.isEmpty())
             throw new ValidationException("Error", "ifRestrictedToOneFunctionCenter is not defined");
         else
             voucherHeader.setIsRestrictedtoOneFunctionCenter(appConfigValues.get(0).getValue().equalsIgnoreCase("yes") ? true : false);
