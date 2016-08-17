@@ -42,12 +42,16 @@ package org.egov.works.web.controller.revisionestimate;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.service.UOMService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
@@ -55,10 +59,13 @@ import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -79,12 +86,21 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
     @Autowired
     private UOMService uomService;
+    
+    @Autowired
+    private RevisionEstimateService revisionEstimateService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showAbstractEstimateForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             @RequestParam final Long workOrderEstimateId, final Model model) {
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
         revisionEstimate.setParent(workOrderEstimate.getEstimate());
+        
+        final List<RevisionAbstractEstimate> revisionAbstractEstimates = revisionEstimateService.findApprovedRevisionEstimatesByParent(workOrderEstimate.getEstimate().getId());
+        
+        for (RevisionAbstractEstimate re : revisionAbstractEstimates) {
+            
+        }
 
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
@@ -99,6 +115,31 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         model.addAttribute("workOrderDate", sdf.format(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
         model.addAttribute("workOrderEstimate", workOrderEstimate);
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
+        revisionEstimate.setParent(workOrderEstimate.getEstimate());;
+        model.addAttribute("workOrder", workOrderEstimate.getWorkOrder());
         return "revisionEstimate-form";
+    }
+    
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String saveRevisionEstimate(@ModelAttribute final RevisionAbstractEstimate revisionEstimate,
+            final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
+            final HttpServletRequest request) {
+        
+        final RevisionAbstractEstimate savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate);
+        
+        return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + savedRevisionEstimate.getId();
+    }
+    
+    @RequestMapping(value = "/revisionestimate-success", method = RequestMethod.GET)
+    public ModelAndView successView(@ModelAttribute RevisionAbstractEstimate revisionEstimate,
+            @RequestParam("revisionEstimate") Long id,
+            final HttpServletRequest request, final Model model) {
+
+        if (id != null)
+            revisionEstimate = revisionEstimateService.getRevisionEstimateById(id);
+
+        model.addAttribute("message", "Revision Estimate Save successfully");
+
+        return new ModelAndView("revisionEstimate-success", "revisionEstimate", revisionEstimate);
     }
 }

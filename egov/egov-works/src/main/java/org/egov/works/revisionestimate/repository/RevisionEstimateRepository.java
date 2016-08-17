@@ -39,11 +39,20 @@
  */
 package org.egov.works.revisionestimate.repository;
 
+import java.util.List;
+
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstractEstimate, Long> {
+
+    @Query("from AbstractEstimate ae where ae.parent.id=:id and ae.egwStatus.code=:status order by ae.id")
+    List<RevisionAbstractEstimate> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
+    
+    List<RevisionAbstractEstimate> findByParent_Id(final Long id);
 
 }

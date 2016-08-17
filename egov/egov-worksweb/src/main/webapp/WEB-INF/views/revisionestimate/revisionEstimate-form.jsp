@@ -80,6 +80,7 @@
 	</div>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
+	<form:hidden path="parent" id="parent" name="parent" value="${revisionEstimate.parent.id }"/>
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${revisionEstimate.workValue}" default="0.0" />'/>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<input type="hidden" name="workOrderDate" id="workOrderDate"  data-idx="0" data-optional="0" class="form-control datepicker estimateDateClassId" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" style="display: none" value='${workOrderDate}'  />
@@ -97,6 +98,21 @@
 		</div>
 		<div class="tab-content">
 			<div class="tab-pane fade in active" id="revisionheader">   
+				<c:choose>
+					<c:when test="${revisionEstimate.parent.activities.isEmpty()}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form">
+								<div class="col-sm-9 add-margin error-msg text-left"><spring:message code="msg.abstractestimate.boq.null" /></div>
+							</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<%@ include file="revisionestimate-viewsor.jsp"%> 
+			 			<%@ include file="revisionestimate-viewnonsor.jsp"%>
+			 			<%@ include file="revisionestimate-viewnontenderedsor.jsp"%> 
+			 			<%@ include file="revisionestimate-viewnontenderednonsor.jsp"%>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			<div class="tab-pane fade" id="nontendered">
 				<%@ include file="revisionEstimate-nonTendered.jsp"%>
@@ -105,8 +121,10 @@
 			<div class="tab-pane fade" id="changequantity">
 			</div>
 		</div>
-  
-
+		<div class="col-sm-12 text-center">
+			<form:button type="button" id="submitForm" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
+			<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
+		</div>
 </form:form> 
 <script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

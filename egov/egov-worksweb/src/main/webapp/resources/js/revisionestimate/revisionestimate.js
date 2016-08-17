@@ -1424,3 +1424,34 @@ var sorSearch = new Bloodhound({
 
 		return false;
 	}
+
+function viewLineEstimate(id) {
+	window.open("/egworks/lineestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewLOA(id) {
+	window.open("/egworks/letterofacceptance/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewEstimate(id) {
+	window.open("/egworks/abstractestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+$('#submitForm').click(function() {
+	deleteHiddenRows();
+	document.forms[0].submit();
+});
+
+function deleteHiddenRows(){
+	var hiddenRowCount = $("#tblNonTendered tbody tr[sorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblNonTendered');
+		tbl.deleteRow(2);
+	}
+
+	hiddenRowCount = $("#tblLumpSum tbody tr[nonsorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblLumpSum');
+		tbl.deleteRow(2);
+	}
+}

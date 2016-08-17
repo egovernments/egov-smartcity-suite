@@ -42,7 +42,7 @@
 			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${estimateValue}" default="0.0"></c:out></span>
 		</div>
 		<div>
-		       <spring:hasBindErrors name="abstractEstimate">
+		       <spring:hasBindErrors name="revisionEstimate">
 				    <div class="col-md-10 col-md-offset-1">
 						<form:errors path="*" cssClass="error-msg add-margin" /><br/>
 				   </div>
@@ -55,41 +55,42 @@
 					<div class="panel-body">
 						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.estimateno" /> : </div> 
-							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-							<c:out value="${abstractEstimate.lineEstimateDetails.estimateNumber}"></c:out>
+								<a href='javascript:void(0)' onclick="viewEstimate('<c:out value="${revisionEstimate.parent.id}"/>')">
+									<c:out value="${revisionEstimate.parent.lineEstimateDetails.estimateNumber}"></c:out>
+								</a>
 							</div></c:if>
 							<input type="hidden" name="mode" value="${mode}" id="mode"/>
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${abstractEstimate.lineEstimateDetails.estimateNumber}"/>
+							<form:hidden path="estimateNumber" name="estimateNumber" value="${revisionEstimate.parent.lineEstimateDetails.estimateNumber}"/>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> :
 							</div> 
-							<c:if test="${abstractEstimate.lineEstimateDetails != null}">
+							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null}">
 							<div class="col-md-2 col-xs-6 add-margin view-content">
-								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.id}"/>')">
-								<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
+								<a href='javascript:void(0)' onclick="viewLineEstimate('<c:out value="${revisionEstimate.parent.lineEstimateDetails.lineEstimate.id}"/>')">
+								<c:out value="${revisionEstimate.parent.lineEstimateDetails.lineEstimate.lineEstimateNumber}"/></a>
 							</div>
 							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.workidentificationo" /> : </div>
-							<div class="col-md-2 col-xs-6 add-margin view-content">${abstractEstimate.projectCode.code}</div>
-							<form:hidden path="" name="code" id="code" value="${abstractEstimate.projectCode.code}"/>
+							<div class="col-md-2 col-xs-6 add-margin view-content">${revisionEstimate.parent.projectCode.code}</div>
+							<form:hidden path="" name="code" id="code" value="${revisionEstimate.parent.projectCode.code}"/>
 						</div>
 						
 						<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.adminsanctionestimatamount" /> : </div> 
 							<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
-							minFractionDigits="2" value="${abstractEstimate.lineEstimateDetails.estimateAmount}" /></div>
-							<c:if test="workOrder != null && workOrder.id != null">
-							<div class="row add-border">
-								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
-								<div class="col-md-2 col-xs-6 add-margin view-content">
-									<a href="javascript:void(0)" onclick='viewLOA(<c:out value="%{workOrder.id"/>)'><c:out value="%{workOrder.workOrderNumber}"/></a>
-								</div>
+							minFractionDigits="2" value="${revisionEstimate.parent.lineEstimateDetails.estimateAmount}" /></div>
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.loano" /> : </div>
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+								<a href="javascript:void(0)" onclick='viewLOA(<c:out value="${workOrder.id }"/>)'>
+									<c:out value="${workOrder.workOrderNumber}"></c:out>
+								</a>
 							</div>
-							</c:if> 
+							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.revision.estimate.number" /> : </div> 
+							<div class="col-md-2 col-xs-6 add-margin view-content">
+								<c:out value="${revisionEstimate.estimateNumber}"></c:out>
+							</div>
 						</div>
-						
-						
-						
 					</div>
 				</div>
 			</div>
