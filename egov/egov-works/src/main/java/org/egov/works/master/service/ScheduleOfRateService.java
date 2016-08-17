@@ -61,7 +61,9 @@ import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
+import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
+import org.hibernate.search.backend.impl.WorkQueuePerIndexSplitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,6 +159,24 @@ public class ScheduleOfRateService {
         return scheduleOfRates;
     }
 
+    public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(final String code, final String ids,
+            Date estimateDate, Long estimateId) {
+        final List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
+        final String[] split = ids.split(",");
+        for (final String s : split)
+            scheduleOfCategoryIds.add(Long.parseLong(s));
+        if (estimateDate == null)
+            estimateDate = new Date();
+        final List<ScheduleOfRate> scheduleOfRates = scheduleOfRateRepository
+                .findByCodeAndScheduleOfCategoriesAndEstimateId(code.toUpperCase(),
+                        scheduleOfCategoryIds, estimateDate, estimateId, WorksConstants.CANCELLED_STATUS,
+                        WorksConstants.CANCELLED_STATUS, WorksConstants.REJECTED);
+        for (final ScheduleOfRate rate : scheduleOfRates)
+            rate.setSorRateValue(rate.getRateOn(estimateDate).getRate().getValue());
+
+        return scheduleOfRates;
+    }
+
     // TODO: Need to remove this method after getting better alternate option
     public ScheduleOfRate setPrimaryDetails(final ScheduleOfRate scheduleOfRate) {
         final User user = userService.getUserById(worksService.getCurrentLoggedInUserId());
@@ -202,45 +222,45 @@ public class ScheduleOfRateService {
         final Date currentDate = new Date();
         for (final UploadScheduleOfRate obj : uploadSORRatesList) {
 
-                final ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
-                final SORRate sorRate = new SORRate();
-                final MarketRate marketRate = new MarketRate();
-                scheduleOfRate.setCode(obj.getSorCode());
-                scheduleOfRate.setScheduleCategory(obj.getScheduleCategory());
-                scheduleOfRate.setUom(obj.getUom());
-                scheduleOfRate.setDescription(obj.getSorDescription());
-                sorRate.setRate(new Money(obj.getRate().doubleValue()));
-                sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
-                sorRate.setScheduleOfRate(scheduleOfRate);
-                sorRate.setCreatedBy(
-                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                sorRate.setCreatedDate(currentDate);
-                sorRate.setModifiedBy(
-                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                sorRate.setModifiedDate(currentDate);
-                scheduleOfRate.getSorRates().add(sorRate);
-                if (obj.getMarketRate() != null) {
+            final ScheduleOfRate scheduleOfRate = new ScheduleOfRate();
+            final SORRate sorRate = new SORRate();
+            final MarketRate marketRate = new MarketRate();
+            scheduleOfRate.setCode(obj.getSorCode());
+            scheduleOfRate.setScheduleCategory(obj.getScheduleCategory());
+            scheduleOfRate.setUom(obj.getUom());
+            scheduleOfRate.setDescription(obj.getSorDescription());
+            sorRate.setRate(new Money(obj.getRate().doubleValue()));
+            sorRate.setValidity(new Period(obj.getFromDate(), obj.getToDate() != null ? obj.getToDate() : null));
+            sorRate.setScheduleOfRate(scheduleOfRate);
+            sorRate.setCreatedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            sorRate.setCreatedDate(currentDate);
+            sorRate.setModifiedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            sorRate.setModifiedDate(currentDate);
+            scheduleOfRate.getSorRates().add(sorRate);
+            if (obj.getMarketRate() != null) {
 
-                    marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
-                    marketRate.setValidity(
-                            new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
-                    marketRate.setCreatedBy(
-                            entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                    marketRate.setCreatedDate(currentDate);
-                    marketRate.setModifiedBy(
-                            entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                    marketRate.setModifiedDate(currentDate);
-                    marketRate.setScheduleOfRate(scheduleOfRate);
-                    scheduleOfRate.getMarketRates().add(marketRate);
-                }
+                marketRate.setMarketRate(new Money(obj.getMarketRate().doubleValue()));
+                marketRate.setValidity(
+                        new Period(obj.getMarketFromDate(), obj.getMarketToDate() != null ? obj.getMarketToDate() : null));
+                marketRate.setCreatedBy(
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                marketRate.setCreatedDate(currentDate);
+                marketRate.setModifiedBy(
+                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+                marketRate.setModifiedDate(currentDate);
+                marketRate.setScheduleOfRate(scheduleOfRate);
+                scheduleOfRate.getMarketRates().add(marketRate);
+            }
 
-                scheduleOfRate.setCreatedBy(
-                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                scheduleOfRate.setCreatedDate(currentDate);
-                scheduleOfRate.setModifiedBy(
-                        entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
-                scheduleOfRate.setModifiedDate(currentDate);
-                save(scheduleOfRate);
+            scheduleOfRate.setCreatedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            scheduleOfRate.setCreatedDate(currentDate);
+            scheduleOfRate.setModifiedBy(
+                    entityManager.unwrap(Session.class).load(User.class, ApplicationThreadLocals.getUserId()));
+            scheduleOfRate.setModifiedDate(currentDate);
+            save(scheduleOfRate);
             obj.setFinalStatus("Success");
         }
 

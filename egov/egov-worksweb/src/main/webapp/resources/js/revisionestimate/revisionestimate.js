@@ -68,15 +68,16 @@ var sorSearch = new Bloodhound({
 		},
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
 		remote: {
-			url: '/egworks/abstractestimate/ajaxsor-byschedulecategories?code=',
+			url: '/egworks/abstractestimate/ajaxsor-byschedulecategoriesandestimateid?code=',
 			replace: function (url, query) {
 				var scheduleCategories = $('#scheduleCategory').val();
 				var workOrderDate = $('#workOrderDate').val();
+				var estimateId = $('#estimateId').val();
 				if(scheduleCategories == null)
 					bootbox.alert($('#msgschedulecategory').val());
 				if(workOrderDate == "" || workOrderDate == null)
 					bootbox.alert($('#msgworkorderdate').val());
-				return url + query + '&scheduleCategories=' + scheduleCategories + "&estimateDate=" + workOrderDate;
+				return url + query + '&scheduleCategories=' + scheduleCategories + "&estimateDate=" + workOrderDate+ "&estimateId=" + estimateId;
 			},
 			filter: function (data) {
 				return $.map(data, function (ct) {

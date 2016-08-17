@@ -153,6 +153,15 @@ public class AjaxAbstractEstimateController {
         return null;
     }
 
+    @RequestMapping(value = "/ajaxsor-byschedulecategoriesandestimateid", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody List<ScheduleOfRate> findSorByScheduleCategoriesAndEstimateId(@RequestParam("code") final String code,
+            @RequestParam("scheduleCategories") final String scheduleCategories,
+            @RequestParam("estimateDate") final Date estimateDate, @RequestParam("estimateId") final Long estimateId) {
+        if (!scheduleCategories.equals("null"))
+            return scheduleOfRateService.getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(code, scheduleCategories, estimateDate,estimateId);
+        return null;
+    }
+
     @RequestMapping(value = "/ajaxestimatetemplatebycode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<EstimateTemplate> getEstimateTemplateByCodeIgnoreCase(@RequestParam final String code) {
         return estimateTemplateService.getEstimateTemplateByCodeIgnoreCase(code);

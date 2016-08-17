@@ -72,6 +72,7 @@
 	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
 	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
+	<input type="hidden" name="estimateId" id="estimateId" value="${revisionEstimate.parent.id}"/>
 	<div class="new-page-header"><spring:message code="lbl.createre" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">

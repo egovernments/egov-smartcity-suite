@@ -55,6 +55,12 @@ public interface ScheduleOfRateRepository extends JpaRepository<ScheduleOfRate, 
     List<ScheduleOfRate> findByCodeContainingIgnoreCaseAndScheduleCategory_IdInOrderByCode(@Param("code") final String code,
             @Param("ids") final List<Long> ids, @Param("estimateDate") final Date estimateDate);
 
+    @Query("from ScheduleOfRate as sch inner join fetch sch.sorRates as rates inner join fetch sch.uom as uom inner join fetch sch.scheduleCategory as categories where (upper(sch.code) like concat ('%', :code, '%') or upper(sch.description) like concat ('%', :code, '%')) and sch.scheduleCategory.id in :ids  and  ((:estimateDate between rates.validity.startDate and rates.validity.endDate ) or (rates.validity.startDate<=:estimateDate and rates.validity.endDate is null)) and  not exists (select act.schedule from Activity act  where act.schedule.id = sch.id and  ((act.abstractEstimate.parent is not null and act.abstractEstimate.parent.id=:estimateId and act.abstractEstimate.parent.egwStatus is not null and act.abstractEstimate.parent.egwStatus.code!=:parentEstimateStatus and act.abstractEstimate.egwStatus.code not in (:estimateStatus1,:estimateStatus2))) and act.schedule is not null) order by sch.code")
+    List<ScheduleOfRate> findByCodeAndScheduleOfCategoriesAndEstimateId(@Param("code") final String code,
+            @Param("ids") final List<Long> ids, @Param("estimateDate") final Date estimateDate,
+            @Param("estimateId") final Long estimateId, @Param("parentEstimateStatus") final String parentEstimateStatus,
+            @Param("estimateStatus1") final String estimateStatus1, @Param("estimateStatus2") final String estimateStatus2);
+
     ScheduleOfRate findByCode(final String sorCode);
 
     ScheduleOfRate findByCodeAndScheduleCategory_id(final String sorCode, final Long categoryId);
