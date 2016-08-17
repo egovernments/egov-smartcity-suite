@@ -43,6 +43,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,7 +112,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
         @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
         @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
+        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp"),
+        @Result(name = ChallanAction.ERROR, location = "challan-error.jsp") })
 public class ChallanAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -270,6 +272,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-newform")
+    @ValidationErrorPage(value = ERROR)
     @SkipValidation
     public String newform() {
         setLoginDept();
@@ -284,12 +287,16 @@ public class ChallanAction extends BaseFormAction {
         return NEW;
     }
 
-    private void setLoginDept() {
-        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        setDeptId(loginUserDepartment.getId().toString());
-        setDept(loginUserDepartment);
-        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-                collectionsUtil.getLoggedInUser(), receiptHeader));
+    private void setLoginDept()  {
+            final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+            if (loginUserDepartment == null) {
+                throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
+                        "viewchallan.validation.error.user.notexists")));
+            }
+            setDeptId(loginUserDepartment.getId().toString());
+            setDept(loginUserDepartment);
+            addDropdownData("approverDepartmentList", collectionsUtil
+                    .getDepartmentsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(), receiptHeader));
     }
 
     /**
@@ -399,6 +406,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-viewChallan")
+    @ValidationErrorPage(value = ERROR)
     @SkipValidation
     public String viewChallan() {
         if (challanId == null)
@@ -1497,7 +1505,10 @@ public class ChallanAction extends BaseFormAction {
     @Override
     public void validate() {
         super.validate();
-        setLoginDept();
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        if (loginUserDepartment != null) {
+            setLoginDept();
+        }
         if (receiptHeader.getReceiptdate() != null
                 && receiptHeader.getReceiptdate().before(
                         financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))

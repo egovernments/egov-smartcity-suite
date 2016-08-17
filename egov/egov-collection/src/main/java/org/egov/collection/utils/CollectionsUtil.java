@@ -215,7 +215,10 @@ public class CollectionsUtil {
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
-        return eisCommonService.getDepartmentForUser(user.getId());
+        if (assignmentService.getPrimaryAssignmentForUser(user.getId()) == null)
+            return null;
+        else
+            return eisCommonService.getDepartmentForUser(user.getId());
     }
 
     /**

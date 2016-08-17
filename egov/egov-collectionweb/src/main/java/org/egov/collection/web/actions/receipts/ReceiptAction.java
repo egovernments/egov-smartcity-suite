@@ -92,6 +92,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceCategory;
@@ -847,6 +849,11 @@ public class ReceiptAction extends BaseFormAction {
          * setServiceName(service.getName()); }
          */
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
+        if(dept==null)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
+                    "viewchallan.validation.error.user.notexists"))); 
+        }
         if (getDeptId() == null)
             setDeptId(dept.getId().toString());
         populateBankBranchList(false);
