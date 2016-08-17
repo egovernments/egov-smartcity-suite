@@ -96,7 +96,10 @@ function submitForm() {
 						{
 							"data" : "legalcaseno",
 							"sTitle" : "Legal Case Number",
-							"className" : "text-right"
+							"className" : "text-right",
+							"render": function ( data, type, full, meta ) {
+						            return '<a href="/lcms/application/view/?lcNumber='+data+'">'+data+'</div>';
+						    }
 						},
 						{
 							"data" : "casenumber",
