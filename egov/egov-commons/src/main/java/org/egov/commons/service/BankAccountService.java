@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -60,6 +61,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
     public static final String STANDARD_VOUCHER_TYPE_PAYMENT = "Payment";
     public static final String PAYMENTVOUCHER_NAME_REMITTANCE = "Remittance Payment";
     public static final String PAYMENTVOUCHER_NAME_SALARY = "Salary Bill Payment";
+    public static final String BRANCH_ID = "branchId";
 
     public BankAccountService() {
        super(Bankaccount.class);
@@ -97,19 +99,20 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
         final List<Bankaccount> bankAccounts =  new ArrayList<>();
         final List<String> addedBanks = new ArrayList<>();
         for (final Object[] account : fetchBankaccountsWithAssignedCheques(branchId, chequeType, asOnDate)) {
+            //FIXME did not understand the logic of below line, please correct it
             final String accountNumberAndType = account[0] != null ? account[0].toString()
-                    : "" + "-" + account[4] != null ? account[4].toString() : "";
+                    : ""+"-" + account[4] != null ? account[4].toString() : EMPTY;
             if (!addedBanks.contains(accountNumberAndType)) {
                 final Bankaccount bankaccount = new Bankaccount();
-                bankaccount.setAccountnumber(account[0] != null ? account[0].toString() : "");
-                bankaccount.setId(Long.valueOf(account[2] != null ? account[2].toString() : ""));
+                bankaccount.setAccountnumber(account[0] != null ? account[0].toString() : EMPTY);
+                bankaccount.setId(Long.valueOf(account[2] != null ? account[2].toString() : EMPTY));
                 final Bankbranch branch = new Bankbranch();
                 final Bank bank = new Bank();
                 bank.setName(account[4].toString());
                 branch.setBank(bank);
                 bankaccount.setBankbranch(branch);
                 final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                chartofaccounts.setGlcode(account[3] != null ? account[3].toString() : "");
+                chartofaccounts.setGlcode(account[3] != null ? account[3].toString() : EMPTY);
                 bankaccount.setChartofaccounts(chartofaccounts);
                 addedBanks.add(accountNumberAndType);
                 bankAccounts.add(bankaccount);
@@ -184,11 +187,12 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and ih.transactionNumber is not null").
                 append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ").
                 append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
-                append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=").append(branchId).
-                append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString())
-                .setDate("date", asOnDate)
-                .list();
+                append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
+                append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
+        return getSession().createSQLQuery(queryString.toString()).
+                setDate("asOnDate", asOnDate).
+                setInteger(BRANCH_ID, branchId).
+                list();
     }
 
     private List<Object[]> fetchBankaccountsWithAssignedCheques(final Integer branchId, String chequeType, final Date asOnDate) {
@@ -200,13 +204,14 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' ").
                 append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)=:type) and ispaycheque='1' ").
                 append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
-                append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=").append(branchId).
-                append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date").
+                append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
+                append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate").
                 append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString())
-                .setDate("date", asOnDate)
-                .setString("type", isBlank(chequeType) ? "CHEQUE" : chequeType)
-                .list();
+        return getSession().createSQLQuery(queryString.toString()).
+                setDate("asOnDate", asOnDate).
+                setInteger(BRANCH_ID, branchId).
+                setString("type", isBlank(chequeType) ? "CHEQUE" : chequeType).
+                list();
     }
 
     private List<Object[]> fetchBanAccountNoAndBankNameForApprovedPayment(final Integer fundId, final Integer branchId) {
@@ -216,27 +221,29 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append(" CAST(bankaccount.id AS INTEGER) AS id, coa.glcode AS glCode  FROM chartofaccounts coa, bankaccount bankaccount ,bankbranch branch,bank bank ").
                 append(" WHERE bankaccount.ID IN (SELECT DISTINCT PH.bankaccountnumberid  ").
                 append(" FROM   paymentheader ph,  voucherheader vh left OUTER JOIN egf_instrumentvoucher iv ON vh.id =iv.VOUCHERHEADERID").
-                append(" WHERE ph.voucherheaderid  =vh.id AND vh.status=0 AND VH.FUNDID=").append(fundId).append(" AND ph.voucherheaderid    =vh.id").
+                append(" WHERE ph.voucherheaderid  =vh.id AND vh.status=0 AND VH.FUNDID=:fundId AND ph.voucherheaderid    =vh.id").
                 append(" AND iv.VOUCHERHEADERID   IS NULL AND vh.name NOT IN ( 'Remittance Payment','Salary Bill Payment' ))").
-                append(" AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankaccount.fundid    =").append(fundId).
-                append(" AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  =").append(branchId).
+                append(" AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankaccount.fundid =:fundId").
+                append(" AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  =:branchId").
                 append(" and bankaccount.isactive=true union select bankaccount.accountnumber as accountnumber,bank.name as bankName,").
                 append("cast(bankaccount.id as integer) as id,coa.glcode as glCode from chartofaccounts coa, Bankaccount bankaccount  ,bankbranch branch,bank bank ").
                 append(" where bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.id in(SELECT DISTINCT PH.bankaccountnumberid  from  ").
                 append(" egf_instrumentvoucher iv,voucherheader vh, paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ").
                 append(" (select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,").
                 append(" instrumentnumber) max_rec where max_rec.bankid=ih1.bankid and max_rec.bankaccountid=ih1.bankaccountid and max_rec.instrumentnumber=ih1.instrumentnumber ").
-                append(" and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id  and vh.fundid=").append(fundId).
+                append(" and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id  and vh.fundid=:fundId").
                 append(" and vh.status=0 and  ph.voucherheaderid=vh.id and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id ").
                 append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='").append(STANDARD_VOUCHER_TYPE_PAYMENT).append("'").
                 append(" and vh.name NOT IN ( '").append(PAYMENTVOUCHER_NAME_REMITTANCE).append("','").
                 append(PAYMENTVOUCHER_NAME_SALARY).append("' ) and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') )").
-                append(" and coa.id=bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')  and bankaccount.branchid=").append(branchId);
-        if (fundId != null && fundId != 0 && fundId != -1)
-            queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                append(" and coa.id=bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')  and bankaccount.branchid=:branchId");
+        if (fundId != null && fundId > 0)
+                queryString.append(" and bankaccount.fundid=:fundId");
 
-        return getSession().createSQLQuery(queryString.toString())
-                .list();
+        return getSession().createSQLQuery(queryString.toString()).
+                setInteger("fundId", fundId).
+                setInteger(BRANCH_ID, branchId).
+                list();
     }
 
 }

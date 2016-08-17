@@ -56,6 +56,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
     public static final String BANK_BRANCH_ID = "bankBranchId";
     public static final String BANK_BRANCH_NAME = "bankBranchName";
+    public static final String FUND_ID = "fundId";
 
     public BankService() {
         super(Bank.class);
@@ -149,7 +150,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
         List<Object[]> bankBranch;
         if (fundId != null)
-            bankBranch = getSession().createQuery(query.toString()).setInteger("fundId", fundId).list();
+            bankBranch = getSession().createQuery(query.toString()).setInteger(FUND_ID, fundId).list();
         else
             bankBranch = getSession().createQuery(query.toString()).list();
         return bankBranch;
@@ -161,7 +162,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount  where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
                 append("and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id and bankaccount.fund.id=:fundId order by 2");
         return getSession().createSQLQuery(query.toString())
-                .setInteger("fundId", fundId)
+                .setInteger(FUND_ID, fundId)
                 .list();
     }
 
@@ -205,14 +206,14 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(" select DISTINCT ph.bankaccountnumberid from  paymentheader ph,egf_instrumentvoucher iv right outer join voucherheader vh on ").
                 append(" vh.id =iv.VOUCHERHEADERID where ph.voucherheaderid=vh.id  and  vh.status=0  and ").append(" ph.voucherheaderid=vh.id  and iv.VOUCHERHEADERID is null ");
         if (fundId != null && fundId > 0)
-            queryString.append(" and vh.fundid=").append(fundId);
+            queryString.append(" and vh.fundid=:fundId");
         queryString.append(" and vh.name NOT IN ( '").
                 append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("','").
                 append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("') ").
-                append("and vh.voucherdate <= :date1 ) AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true ").
+                append("and vh.voucherdate <= :asOnDate ) AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true ").
                 append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
         if (fundId != null && fundId > 0)
-            queryString.append(" and bankaccount.fundid=").append(fundId);
+            queryString.append(" and bankaccount.fundid=:fundId");
         queryString.append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),").
                 append("bankBranch.branchname) as bankbranchname from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ").
                 append(" select DISTINCT ph.bankaccountnumberid from egf_instrumentvoucher iv,voucherheader vh,").
@@ -222,17 +223,17 @@ public class BankService extends PersistenceService<Bank, Integer> {
                 append(" and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id and vh.status=0  and ph.voucherheaderid=vh.id and iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and ").
                 append("ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
         if (fundId != null && fundId > 0)
-            queryString.append(" and vh.fundid=").append(fundId);
-        queryString.append("  and vh.voucherdate <= :date2 and vh.name NOT IN ( '").
+            queryString.append(" and vh.fundid=:fundId");
+        queryString.append("  and vh.voucherdate <= :asOnDate and vh.name NOT IN ( '").
                 append(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE).append("','").
                 append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' ) ) ").
                 append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true ").
                 append("AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
         if (fundId != null && fundId > 0)
-            queryString.append(" and bankaccount.fundid=" + fundId);
+            queryString.append(" and bankaccount.fundid=:fundId");
         return getSession().createSQLQuery(queryString.toString())
-                .setDate("date1", asOnDate)
-                .setDate("date2", asOnDate)
+                .setDate(FUND_ID, asOnDate)
+                .setDate("asOnDate", asOnDate)
                 .list();
     }
 }
