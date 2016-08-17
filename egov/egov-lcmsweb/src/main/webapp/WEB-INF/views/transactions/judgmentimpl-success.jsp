@@ -156,11 +156,14 @@
 			</div>
 				<jsp:include page="appealdocuments-view.jsp"></jsp:include>
 		<input type="hidden" name="appealDocList" value="${appealDocList}" />
-			<div class="row text-center">
-				<div class="add-margin">
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()">Close</a>
-				</div>
+			
+				<div class="form-group text-center" >
+			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
+	
+					<!-- <a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()">Close</a> -->
+					<%-- 	<form:button type='button' class='btn btn-default' ><spring:message code='lbl.close' /></form:button> --%>
+				
 			</div>
 		</div>
 	</div>

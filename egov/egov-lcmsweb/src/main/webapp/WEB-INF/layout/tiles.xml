@@ -308,7 +308,7 @@
 </definition>
 
 <definition name="legalcase-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.createcase" cascade="true"/>
+	<put-attribute name="page-title" value="title.viewcase" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-success.jsp"/>
 </definition>
 <definition name="hearings-success" extends="base_layout">

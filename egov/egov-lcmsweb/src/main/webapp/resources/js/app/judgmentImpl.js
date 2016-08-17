@@ -45,53 +45,71 @@ $(document).ready(function(){
 	$('#dateofcomp1').show();
 	$('#dateofcomp2').show();
 
-	$("#IsCompliedYes").click(function () {
-		$('#dateofcomp1').show();
-		$('#dateofcomp2').show();
-		$("#dateOfCompliance").attr('required');
-		$("#complianceReport").attr('required');
-		$('#reason').hide();
-		$('#details').hide();
-		$("#apealFields1").hide();
-		$("#apealFields2").hide();
-		$("#contempFields1").hide();
-    	$("#contempFields2").hide();
-	});
+	$('input[type=radio][name=judgmentImplIsComplied]').change(function() {
+        console.log("Changed called -->", this.value);
+    	
+        if(this.value === "YES")
+        {
+        	$('#dateofcomp1').show();
+    		$('#dateofcomp2').show();
+    		$('#reason').hide();
+    		$('#details').hide();
+    		$("#apealFields1").hide();
+    		$("#apealFields2").hide();
+    		$("#contempFields1").hide();
+        	$("#contempFields2").hide();
+        	
+        	$('*[required]').removeAttr('required');
+        	
+        	$("#dateOfCompliance").attr('required','required');
+        	$("#complianceReport").attr('required','required');
+        	
+        }
+        else if(this.value === "NO")
+        {
+        	$('#reason').show();
+    		$('#dateofcomp1').hide();
+    		$('#dateofcomp2').hide();
+    		$('#details').hide();
+    		$("#apealFields1").hide();
+    		$("#apealFields2").hide();
+    		$("#contempFields1").hide();
+        	$("#contempFields2").hide();
+        	
+        	$('*[required]').removeAttr('required');
+        	
+        	$("#implementationFailure").prop('selectedIndex', 0);
+        	$("#implementationFailure").attr('required','required');
+        	
+        }
+        else if(this.value==="INPROGRESS")
+        {
+        	$('#details').show();
+    		$('#dateofcomp1').hide();
+    		$('#dateofcomp2').hide();
+    		$('#reason').hide();
+    		$("#apealFields1").hide();
+    		$("#apealFields2").hide();
+    		$("#contempFields1").hide();
+        	$("#contempFields2").hide();
+        	
+        	$('*[required]').removeAttr('required');
+        	$("textarea[name='details']").attr('required','required');
+        }
+    });
 	
-	$("#IsCompliedNo").click(function () {
-		$('#reason').show();
-		$('#dateofcomp1').hide();
-		$('#dateofcomp2').hide();
-		$('#details').hide();
-		$("#apealFields1").hide();
-		$("#apealFields2").hide();
-		$("#contempFields1").hide();
-    	$("#contempFields2").hide();
-	});
-	
-	$("#IsCompliedInProgress").click(function () {
-		$('#details').show();
-		$('#dateofcomp1').hide();
-		$('#dateofcomp2').hide();
-		$("#dateOfCompliance").removeAttr('required');
-		$("#complianceReport").removeAttr('required');
-		$('#reason').hide();
-		$("#apealFields1").hide();
-		$("#apealFields2").hide();
-		$("#contempFields1").hide();
-    	$("#contempFields2").hide();
-	});
-	
-	
-	
-
 });
 
-/*$('#btn btn-primary').click(function() {
-	// alert("hiiii");
-	validatecheck();
-
-});*/
+$('#buttonid').click(function() {
+	
+	if($("#judgmentImplform").valid())
+	{
+		document.forms[0].submit();
+		return true;
+		}
+	return false;
+	
+});
 
 loadAppealAndContemptFields();
 $('#implementationFailure').change(function(){
@@ -102,23 +120,32 @@ function loadAppealAndContemptFields(){
 	if ($('#implementationFailure :selected').text().localeCompare("Appeal") == 0 ) { 
 		$("#apealFields1").show();
 		$("#apealFields2").show();
+		$("*[name='appeal[0].srNumber']").attr('required', 'required');
+		$("*[name='appeal[0].appealFiledOn']").attr('required', 'required');
+		$("*[name='appeal[0].appealFiledBy']").attr('required', 'required');
 		}
 	else{
 		$("#apealFields1").hide();
 		$("#apealFields2").hide();
+		$("*[name='appeal[0].srNumber']").removeAttr('required');
+		$("*[name='appeal[0].appealFiledOn']").removeAttr('required');
+		$("*[name='appeal[0].appealFiledBy']").removeAttr('required');
+		
 	}
 		
 	if($('#implementationFailure :selected').text().localeCompare("Contempt") == 0) {  
 		$("#contempFields1").show();
     	$("#contempFields2").show();
+    	$("*[name='contempt[0].caNumber']").attr('required', 'required');
+    	$("*[name='contempt[0].receivingDate']").attr('required', 'required');
 	}else{
 		$("#contempFields1").hide();
     	$("#contempFields2").hide();
+    	$("*[name='contempt[0].caNumber']").removeAttr('required');
+    	$("*[name='contempt[0].receivingDate']").removeAttr('required');
 	}
 	
 }
-
-
 
 $('#btnclose').click(function(){
 	bootbox.confirm({
@@ -142,13 +169,3 @@ $('#btnclose').click(function(){
 	
 });
 
-function validatecheck() {
-	  var fields = $(".ss-item-required")
-	        .find("select, textarea, input").serializeArray();
-	  
-	  $.each(fields, function(i, field) {
-	    if (!field.value)
-	      alert(field.name + ' is required');
-	   }); 
-	  console.log(fields);
-	}

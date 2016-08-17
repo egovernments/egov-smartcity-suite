@@ -51,19 +51,29 @@
 								code="lbl.iscomplied" />:<span class="mandatory"></span></label>
 
 						<div class="col-sm-2 col-xs-12 add-margin">
-							<form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedYes" value="YES" checked="checked" />
-							<label>Yes</label>
+						
+						<div class="radio">
+							  <label><form:radiobutton path="judgmentImplIsComplied"
+								id="IsCompliedYes" value="YES" checked="checked"  />Yes</label>
+							</div>
+							
 						</div>
 						<div class="col-sm-2 col-xs-12 add-margin">
-							<form:radiobutton path="judgmentImplIsComplied" id="IsCompliedNo"
-								value="NO" />
-							<label>No</label>
+						
+						    <div class="radio">
+							  <label><form:radiobutton path="judgmentImplIsComplied" id="IsCompliedNo"
+								value="NO" />No</label>
+							</div>
+							
 						</div>
+						
 						<div class="col-sm-2 col-xs-12 add-margin">
-							<form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedInProgress" value="INPROGRESS" />
-							<label>In Progress</label>
+						
+							<div class="radio">
+							  <label><form:radiobutton path="judgmentImplIsComplied"
+								id="IsCompliedInProgress" value="INPROGRESS" />In Progress</label>
+							</div>
+							
 						</div>
 						<form:errors path="judgmentImplIsComplied" cssClass="error-msg" />
 					</div>
@@ -73,7 +83,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="dateOfCompliance"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance"  />
+								data-inputmask="'mask': 'd/m/y'" id="dateOfCompliance"  required="required"/>
 							<form:errors path="dateOfCompliance" cssClass="error-msg " />
 						</div>
 					</div>
@@ -84,7 +94,7 @@
 							<form:textarea path="complianceReport" id="complianceReport"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
-								maxlength="1024" />
+								maxlength="1024" required="required"/>
 							<form:errors path="complianceReport" cssClass="error-msg" />
 						</div>
 					</div>
@@ -107,10 +117,10 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.details" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea path="details"
+							<form:textarea id="details" path="details"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
-								maxlength="1024" />
+								maxlength="1024" required="required" />
 							<form:errors path="details" cssClass="error-msg" />
 						</div>
 					</div>
@@ -118,9 +128,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.srnumber" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="appeal[0].srNumber" id="srnumber"
+							<form:input id="appeal[0].srNumber" path="appeal[0].srNumber" 
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="50" />
+								data-pattern="alphanumeric" maxlength="50" required="required"/>
 							<form:errors path="appeal[0].srNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -128,7 +138,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="appeal[0].appealFiledOn"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" />
+								data-inputmask="'mask': 'd/m/y'" required="required"/>
 							<form:errors path="appeal[0].appealFiledOn" cssClass="error-msg" />
 						</div>
 					</div>
@@ -138,7 +148,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="appeal[0].appealFiledBy"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="36" />
+								data-pattern="alphanumeric" maxlength="36" required="required" />
 							<form:errors path="appeal[0].appealFiledBy" cssClass="error-msg" />
 						</div>
 						<input type="hidden" name="judgmentImpl.appeal" value="${appeal[0].id}" />
@@ -148,9 +158,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.canumber" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="contempt[0].caNumber"
+							<form:input id="contempt[0].caNumber" path="contempt[0].caNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="36" />
+								data-pattern="alphanumeric" maxlength="36" required="required"/>
 							<form:errors path="contempt[0].caNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -158,7 +168,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="contempt[0].receivingDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								data-inputmask="'mask': 'd/m/y'" />
+								data-inputmask="'mask': 'd/m/y'" required="required"/>
 							<form:errors path="contempt[0].receivingDate"
 								cssClass="error-msg" />
 						</div>
@@ -182,3 +192,4 @@
 						<input type="hidden" name="judgmentImpl.contempt" value="${contempt[0].id}" />
 					</div>
 					<input type="hidden" name="judgmentImpl" value="${judgmentImpl.id}" />
+					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>
