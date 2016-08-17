@@ -43,6 +43,7 @@
 package org.egov.egf.web.actions.voucher;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -65,6 +66,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -131,6 +133,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    protected AppConfigValueService appConfigValuesService;
 
     public BaseVoucherAction()
     {
@@ -192,10 +196,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
     @Deprecated
     protected void getHeaderMandateFields() {
-        final List<AppConfig> appConfigList = this.persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULTTXNMISATTRRIBUTES");
+
+            for (final AppConfigValues appConfigVal : appConfigList) {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf("|"));
                 headerFields.add(header);
@@ -220,21 +223,23 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     }
 
     public void setOneFunctionCenterValue() {
-        final AppConfigValues appConfigValues = (AppConfigValues) persistenceService.find("from AppConfigValues "
-                + "where key.keyName='ifRestrictedToOneFunctionCenter' and key.module.name='EGF' ");
-        if (appConfigValues == null)
+        
+        final List<AppConfigValues> appConfigValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"ifRestrictedToOneFunctionCenter");
+        if (appConfigValues == null && appConfigValues.isEmpty())
             throw new ValidationException("Error", "ifRestrictedToOneFunctionCenter is not defined");
         else
-            voucherHeader.setIsRestrictedtoOneFunctionCenter(appConfigValues.getValue().equalsIgnoreCase("yes") ? true : false);
+            voucherHeader.setIsRestrictedtoOneFunctionCenter(appConfigValues.get(0).getValue().equalsIgnoreCase("yes") ? true : false);
     }
 
     public boolean isBankBalanceMandatory()
     {
-        final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-                .find("from AppConfigValues where key in (select id from AppConfig where key_name='bank_balance_mandatory' and module.name='EGF' )");
+        
+        final List<AppConfigValues> appConfigValues = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"bank_balance_mandatory");
         if (appConfigValues == null)
             throw new ValidationException("", "bank_balance_mandatory parameter is not defined");
-        return appConfigValues.getValue().equals("Y") ? true : false;
+        return appConfigValues.get(0).getValue().equals("Y") ? true : false;
     }
 
     protected void loadSchemeSubscheme() {

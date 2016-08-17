@@ -330,32 +330,31 @@ public class CreateVoucher {
 	 * @throws Exception
 	 */
 
-	public long createVoucherFromBill(final int billId, String voucherStatus,
-			final String voucherNumber, final Date voucherDate)
-			throws ApplicationRuntimeException, SQLException,
-			TaskFailedException {
-		CVoucherHeader vh = null;
-		try {
-			if (voucherStatus == null) {
-				final List vStatusList = appConfigValuesService
-						.getConfigValuesByModuleAndKey("EGF",
-								"PREAPPROVEDVOUCHERSTATUS");
+    public long createVoucherFromBill(final int billId, String voucherStatus,
+            final String voucherNumber, final Date voucherDate)
+            throws ApplicationRuntimeException, SQLException,
+            TaskFailedException {
+        CVoucherHeader vh = null;
+        try {
+            if (voucherStatus == null) {
+                final List vStatusList = appConfigValuesService
+                        .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "PREAPPROVEDVOUCHERSTATUS");
 
-				if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
-					final AppConfigValues appVal = (AppConfigValues) vStatusList
-							.get(0);
-					voucherStatus = appVal.getValue();
-				} else
-					throw new ApplicationRuntimeException(
-							"PREAPPROVEDVOUCHERSTATUS"
-									+ "is not defined in AppConfig values cannot proceed creating voucher");
-			}
-			usrId = ApplicationThreadLocals.getUserId().intValue();
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug(" ---------------Generating Voucher for Bill-------");
-			EgBillregister egBillregister = null;
-			egBillregister = billsService.getBillRegisterById(Integer
-					.valueOf(billId));
+                if (!vStatusList.isEmpty() && vStatusList.size() == 1) {
+                    final AppConfigValues appVal = (AppConfigValues) vStatusList
+                            .get(0);
+                    voucherStatus = appVal.getValue();
+                } else
+                    throw new ApplicationRuntimeException(
+                            "PREAPPROVEDVOUCHERSTATUS"
+                                    + "is not defined in AppConfig values cannot proceed creating voucher");
+            }
+            usrId = ApplicationThreadLocals.getUserId().intValue();
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug(" ---------------Generating Voucher for Bill-------");
+            EgBillregister egBillregister = null;
+            egBillregister = billsService.getBillRegisterById(Integer
+                    .valueOf(billId));
 			/*
 			 * identify the bill type and delegate get the fund and fundsource
 			 * check for mandatory fields for implementation if missing throw
@@ -1333,15 +1332,13 @@ public class CreateVoucher {
 	private void validateFunction(final HashMap<String, Object> headerdetails,
 			final List<HashMap<String, Object>> accountcodedetails) {
 
-		final AppConfigValues appConfigValues = (AppConfigValues) persistenceService
-				.find("from AppConfigValues where key in "
-						+ "(select id from AppConfig where key_name='ifRestrictedToOneFunctionCenter' and module.name='EGF' )");
+		final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "ifRestrictedToOneFunctionCenter");
 		if (appConfigValues == null) {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("app config ifRestrictedToOneFunctionCenter is not defined");
 			throw new ValidationException("Error",
 					"Use Single Function For a transaction is not defined");
-		} else if (appConfigValues.getValue().equalsIgnoreCase("No")) {
+		} else if (appConfigValues.get(0).getValue().equalsIgnoreCase("No")) {
 
 			// Keep last two lines when making single function mandatory.
 			// Now this will support both.
@@ -1375,7 +1372,7 @@ public class CreateVoucher {
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Not a single Function Transaction  No need of Further check on function");
 			return;
-		} else if (appConfigValues.getValue().equalsIgnoreCase("Yes")) {
+		} else if (appConfigValues.get(0).getValue().equalsIgnoreCase("Yes")) {
 			boolean foundInHeader = false;
 			boolean atLeastOneMissing = false;
 			final Map functionMap = new HashMap<String, String>();// to find
@@ -3092,21 +3089,21 @@ public class CreateVoucher {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void getHeaderMandateFields() {
-		final List<AppConfig> appConfigList = persistenceService
-				.findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
-		for (final AppConfig appConfig : appConfigList)
-			for (final AppConfigValues appConfigVal : appConfig
-					.getConfValues()) {
-				final String value = appConfigVal.getValue();
-				final String header = value.substring(0, value.indexOf("|"));
-				headerFields.add(header);
-				final String mandate = value.substring(value.indexOf("|") + 1);
-				if (mandate.equalsIgnoreCase("M"))
-					mandatoryFields.add(header);
-			}
+    protected void getHeaderMandateFields() {
 
-	}
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULTTXNMISATTRRIBUTES");
+
+        for (final AppConfigValues appConfigVal : appConfigList)
+        {
+            final String value = appConfigVal.getValue();
+            final String header = value.substring(0, value.indexOf("|"));
+            headerFields.add(header);
+            final String mandate = value.substring(value.indexOf("|") + 1);
+            if (mandate.equalsIgnoreCase("M"))
+                mandatoryFields.add(header);
+        }
+    }
 
 
 

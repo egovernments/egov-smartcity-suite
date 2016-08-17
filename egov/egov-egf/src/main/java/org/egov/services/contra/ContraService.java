@@ -352,7 +352,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     public Map prepareForUpdateInstrumentDeposit(final String toBankaccountGlcode)
     {
         final Map<String, Object> valuesMap = new HashMap<String, Object>();
-        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 "PREAPPROVEDVOUCHERSTATUS");
         preapprovalStatus = Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
         final EgwStatus instrumentDepositedStatus = (EgwStatus) persistenceService.find(
@@ -410,10 +410,10 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Contra Service | updateCashDeposit | Start");
 
-        final AppConfig appConfig = (AppConfig) persistenceService.find("from AppConfig where key_name =?",
-                "PREAPPROVEDVOUCHERSTATUS");
-        if (null != appConfig && null != appConfig.getConfValues())
-            for (final AppConfigValues appConfigVal : appConfig.getConfValues())
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,"PREAPPROVEDVOUCHERSTATUS");
+
+        if (null != appConfigList && !appConfigList.isEmpty())
+            for (final AppConfigValues appConfigVal : appConfigList)
                 preapprovalStatus = Integer.valueOf(appConfigVal.getValue());
         else
             throw new ApplicationRuntimeException("Appconfig value for PREAPPROVEDVOUCHERSTATUS is not defined in the system");
@@ -441,13 +441,13 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 
     public void createVoucherfromPreApprovedVoucher(final ContraJournalVoucher cjv) {
         final List<AppConfigValues> appList = appConfigValuesService
-                .getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "APPROVEDVOUCHERSTATUS");
         final String approvedVoucherStatus = appList.get(0).getValue();
         cjv.getVoucherHeaderId().setStatus(Integer.valueOf(approvedVoucherStatus));
     }
 
     public void cancelVoucher(final ContraJournalVoucher cjv) {
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "cancelledstatus");
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "cancelledstatus");
         final String approvedVoucherStatus = appList.get(0).getValue();
         cjv.getVoucherHeaderId().setStatus(Integer.valueOf(approvedVoucherStatus));
     }
@@ -526,7 +526,7 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
     public Map prepareForUpdateInstrumentDepositSQL()
     {
         final Map<String, Object> valuesMap = new HashMap<String, Object>();
-        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> configValuesByModuleAndKey = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                 "PREAPPROVEDVOUCHERSTATUS");
         preapprovalStatus = Integer.valueOf(configValuesByModuleAndKey.get(0).getValue());
         final Integer instrumentDepositedStatusId = (Integer) persistenceService.find(

@@ -41,6 +41,7 @@ package org.egov.egf.web.actions.report;
 
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -63,6 +64,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -126,7 +128,8 @@ public class VoucherStatusReportAction extends BaseFormAction
     private EgovPaginatedList pagedResults;
     private String countQry;
     private String modeOfPayment;
-   
+   @Autowired 
+    private AppConfigValueService appConfigValueService;
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
@@ -212,10 +215,9 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     protected void getHeaderFields()
     {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getConfValues())
+        final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULT_SEARCH_MISATTRRIBUTES");
+
+            for (final AppConfigValues appConfigVal : appConfigList)
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

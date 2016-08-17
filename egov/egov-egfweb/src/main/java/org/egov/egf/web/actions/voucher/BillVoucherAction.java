@@ -53,6 +53,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
@@ -66,6 +67,7 @@ import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,6 +98,8 @@ public class BillVoucherAction extends BaseVoucherAction {
     private ScriptService scriptService;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
     
     public VoucherTypeBean getVoucherTypeBean() {
         return voucherTypeBean;
@@ -186,17 +190,12 @@ public class BillVoucherAction extends BaseVoucherAction {
 
     private String getApprovalStatusForBills() {
         String statusid = "";
-        AppConfig appConfig = null;
-        final String query = "from AppConfig where key_name = '" + expType + "BillApprovalStatus'";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(">>>>>Query=:" + query);
-        appConfig = (AppConfig) persistenceService.find(query);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Total app config values = " + appConfig.getConfValues().size());
-        if (appConfig.getConfValues().size() == 0)
+        final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, expType + "BillApprovalStatus");
+
+        if (appConfigList.size() == 0)
             throw new ValidationException(Arrays.asList(new ValidationError("Status for bill approval",
                     "App Config value is missing for exp type :" + expType)));
-        for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
+        for (final AppConfigValues appConfigVal : appConfigList) {
 
             final String configvalue = appConfigVal.getValue();
             final EgwStatus egwstatus = egwStatusDAO.getStatusByModuleAndCode(configvalue.substring(0, configvalue.indexOf("|"))

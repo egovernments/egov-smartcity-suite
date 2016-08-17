@@ -218,10 +218,8 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     protected void getHeaderFields() {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'REPORT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getConfValues()) {
+        final List<AppConfigValues> appConfigList =appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "REPORT_SEARCH_MISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList) {
 
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));
