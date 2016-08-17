@@ -41,6 +41,7 @@ package org.egov.utils;
 
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -61,6 +62,8 @@ public class BudgetDetailConfig {
     List<String> headerFields = new ArrayList<String>();
     List<String> gridFields = new ArrayList<String>();
     List<String> mandatoryFields = new ArrayList<String>();
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     public BudgetDetailConfig(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
@@ -82,12 +85,13 @@ public class BudgetDetailConfig {
     }
 
     final List<String> fetchAppConfigValues(final String keyName) {
-        final AppConfig appConfig = (AppConfig) persistenceService.find("from AppConfig where key_name='" + keyName + "'");
-        if (appConfig != null && appConfig.getAppDataValues() != null)
-            if (appConfig.getAppDataValues().iterator().hasNext()) {
-                final AppConfigValues appDataValues = appConfig.getAppDataValues().iterator().next();
-                return Arrays.asList(appDataValues.getValue().split(DELIMITER));
-            }
+        final List<AppConfigValues> appConfigValues=appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
+        if (appConfigValues != null && !appConfigValues.isEmpty())
+        {
+            for(AppConfigValues app:appConfigValues)
+                return Arrays.asList(app.getValue().split(DELIMITER));   
+                
+        }
         return new ArrayList<String>();
     }
 

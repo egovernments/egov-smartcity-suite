@@ -1,0 +1,5 @@
+update eg_feature set module = (select id from eg_module  where name = 'Advertisement Tax')
+ where name in ('Create Legacy Advertisement','Deactivate Advertisement','Search Advertisement','Generate Permit Order','Generate Demand Notice','Update Legacy Advertisements','Collect Advertisement Tax','Auto Generate Demand','Advertisement Renewal','Create Advertisement','Modify Advertisement','Create UOM','Search UOM','Modify UOM','View UOM','Change Penalty Rates',
+'Advertisement Create Category','Advertisement Search Category','Advertisement Modify Category','Advertisement View Category','Create Agency',
+'Search Agency','Modify Agency','View Agency','Create Subcategory','Modify Subcategory','Search Subcategory','View Subcategory','Create TPBO',
+'Modify TPBO','Search TPBO','View TPBO','Create Rate Class','View Rate Class','Search Rate Class','Modify Rate Class','Create Schedule Of Rate','Search Schedule Of Rate','Modify Schedule Of Rate','View Schedule Of Rate','Advertisement Collection Report','Agencywise Collection Report');

@@ -75,7 +75,7 @@ public class JudgmentController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)
-    public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @RequestParam("lcNumber")  final String lcNumber,
+    public String viewForm(@ModelAttribute("judgment") final Judgment judgment, @RequestParam("lcNumber") final String lcNumber,
             final Model model, final HttpServletRequest request) {
         prepareNewForm(model);
         final LegalCase legalCase = getLegalCase(lcNumber, request);

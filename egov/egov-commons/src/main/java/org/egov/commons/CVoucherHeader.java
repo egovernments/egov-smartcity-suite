@@ -95,7 +95,18 @@ public class CVoucherHeader extends StateAware {
     private Boolean isRestrictedtoOneFunctionCenter;
     @Transient
     private String voucherNumberPrefix;
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
+    //field is the confirmation after the budget check fails and user says to continue
+    @Transient
+    private Boolean allowNegetive;
+    public Boolean getAllowNegetive() {
+		return allowNegetive;
+	}
+
+	public void setAllowNegetive(Boolean allowNegetive) {
+		this.allowNegetive = allowNegetive;
+	}
+
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="voucherHeaderId",targetEntity=CGeneralLedger.class )
     private Set<CGeneralLedger> generalLedger;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "voucherheaderid" , targetEntity=Vouchermis.class)
     private Vouchermis vouchermis;

@@ -320,7 +320,7 @@ public class ApplicationIndex extends AbstractAuditable {
 
     public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
-        if (this.closed.equals(ClosureStatus.YES.toString()))
+        if (this.closed.toString().equals(ClosureStatus.YES.toString()))
             isClosed = 0;
         else
             isClosed = 1;

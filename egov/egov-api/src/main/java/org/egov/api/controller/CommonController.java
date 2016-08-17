@@ -40,6 +40,7 @@
 
 package org.egov.api.controller;
 
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.egov.api.adapter.UserAdapter;
 import org.egov.api.controller.core.ApiController;
@@ -50,6 +51,7 @@ import org.egov.infra.admin.master.entity.Device;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.DeviceRepository;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
@@ -119,15 +121,15 @@ public class CommonController extends ApiController {
                 device.setOSVersion(citizen.get("OSVersion").toString());
             }
             
-            User getUser=userservice.getUserByMobileNumber(citizenCreate.getMobileNumber());
-            if(getUser != null)
+            List<User> users=userservice.findAllByMatchingUserNameForType(citizenCreate.getMobileNumber(), UserType.CITIZEN);
+            if(users.size()>0)
             {
             	return res.error(getMessage("user.register.duplicate.mobileno"));
             }
             
             if(citizenCreate.getEmailId() != null && ! citizenCreate.getEmailId().isEmpty())
             {
-            	getUser=userservice.getUserByEmailId(citizenCreate.getEmailId());
+            	User getUser=userservice.getUserByEmailId(citizenCreate.getEmailId());
                 if(getUser != null)
                 {
                 	return res.error(getMessage("user.register.duplicate.email"));

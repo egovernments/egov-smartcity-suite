@@ -81,10 +81,10 @@ $(document).ready(function(){
     typeaheadWithEventsHandling(agency_typeahead, '#agencyId');
     });
 
-
+   
 $('#categories').change(function(){
 	$.ajax({
-		url: "/adtax/hoarding/subcategories-by-category",    
+		url: "/adtax/hoarding/getsubcategories-by-category",
 		type: "GET",
 		data: {
 			categoryId : $('#categories').val()   

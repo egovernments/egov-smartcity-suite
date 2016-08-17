@@ -122,7 +122,7 @@ public class DeactivateAdvertisementController extends GenericController {
         return "statuschange-search";
     }
 
-    @RequestMapping(value = "/search-activerecord-list", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/activerecord-list-search", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody void searchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetailRecord,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {

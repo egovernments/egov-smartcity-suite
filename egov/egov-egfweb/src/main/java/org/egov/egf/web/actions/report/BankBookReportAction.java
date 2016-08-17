@@ -39,21 +39,7 @@
  */
 package org.egov.egf.web.actions.report;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -92,6 +78,19 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results({
@@ -219,10 +218,8 @@ public class BankBookReportAction extends BaseFormAction {
     }
 
     protected void getHeaderFields() {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'REPORT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+        final List<AppConfigValues> appConfigList =appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "REPORT_SEARCH_MISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList) {
 
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

@@ -91,7 +91,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -216,7 +215,10 @@ public class CollectionsUtil {
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
-        return eisCommonService.getDepartmentForUser(user.getId());
+        if (assignmentService.getPrimaryAssignmentForUser(user.getId()) == null)
+            return null;
+        else
+            return eisCommonService.getDepartmentForUser(user.getId());
     }
 
     /**
@@ -486,9 +488,6 @@ public class CollectionsUtil {
         if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
             return true;
         return false;
-    }
-
-    public void setScriptService(final PersistenceService<Script, Long> scriptService) {
     }
 
     /**

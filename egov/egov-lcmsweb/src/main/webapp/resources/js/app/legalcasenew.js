@@ -39,6 +39,17 @@
  */
 $(document).ready(function(){
 	$(".show-ManualLcNumber").hide(); 
+	var lcNumberType=$('#lcNumberType').val();
+	if(lcNumberType !='' && lcNumberType== 'MANUAL')
+		{
+		
+		 $(".show-ManualLcNumber").show(); 
+		}
+	else
+		{
+		 $(".show-ManualLcNumber").hide(); 
+		}
+	
     $("#petitionDetails tbody tr").each(function( index ) {
     	var $this = $(this);
         $this.find("select, button").prop("disabled", true);
@@ -75,6 +86,47 @@ $(document).ready(function(){
 				return false;
 			}
 		}
+		  if($('#caseDate').val() != '' && $('#caseReceivingDate').val() != '' ){
+				var start = $('#caseDate').val();
+				var end = $('#caseReceivingDate').val();
+				var stsplit = start.split("/");
+					var ensplit = end.split("/");
+					
+					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+					if(!validCaseRecievingAndFillingRange(start,end))
+					{
+						
+					return false;
+					}
+			}
+		  if($('#caseDate').val() != '' && $('#noticeDate').val() != '' ){
+				var start = $('#caseDate').val();
+				var end = $('#noticeDate').val();
+				var stsplit = start.split("/");
+					var ensplit = end.split("/");
+					
+					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+					if(!validNoticeDateAndFillingRange(start,end))
+					{
+					return false;
+					}
+			}
+		  if($('#caseDate').val() != '' && $('#caDueDate').val() != '' ){
+				var start = $('#caseDate').val();
+				var end = $('#caDueDate').val();
+				var stsplit = start.split("/");
+					var ensplit = end.split("/");
+					
+					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+					if(!validCaDueDatendFillingRange(start,end))
+					{
+					return false;
+					}
+			}
+		  
 		$('#newlegalcaseForm :not([type=submit])').prop('disabled',false);
 		$(".btn-primary").prop('disabled',false);
 		document.forms[0].submit;
@@ -86,8 +138,53 @@ $(document).ready(function(){
     
 	
 });
+function validCaseRecievingAndFillingRange(start, end) {
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+    	bootbox.alert("Case Receiving Date should not be less than Case Filling Date");
+		$('#end_date').val('');
+		return false;
+		} else {
+		return true;
+	}
+    return true;
+}
 
+function validNoticeDateAndFillingRange(start, end) {
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+    	bootbox.alert("Notice Date should not be less than Case Filling Date");
+		$('#end_date').val('');
+		return false;
+		} else {
+		return true;
+	}
+    return true;
+}
 
+function validCaDueDatendFillingRange(start, end) {
+    var startDate = Date.parse(start);
+    var endDate = Date.parse(end);
+	
+    // Check the date range, 86400000 is the number of milliseconds in one day
+    var difference = (endDate - startDate) / (86400000 * 7);
+    if (difference < 0) {
+    	bootbox.alert("Counter Affidavit Due Date should not be less than Case Filling Date");
+		$('#end_date').val('');
+		return false;
+		} else {
+		return true;
+	}
+    return true;
+}
 function checkLCType()
 {
 	 if($('#lcNumberType').val() == "MANUAL")

@@ -91,7 +91,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         }
     }*/
     
-    @RequestMapping(value = "/updateLegacy/{id}", method = GET)
+    @RequestMapping(value = "/legacyUpdation/{id}", method = GET)
     public String updateHoarding(@PathVariable final String id, final Model model) {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         final Advertisement advertisement = advertisementPermitDetail.getAdvertisement();
@@ -128,7 +128,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
         return "hoarding-updateLegacy";
     }
 
-    @RequestMapping(value = "/updateLegacy/{id}", method = POST)
+    @RequestMapping(value = "/legacyUpdation/{id}", method = POST)
     public String updateHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib, final HttpServletRequest request,
             final Model model) {

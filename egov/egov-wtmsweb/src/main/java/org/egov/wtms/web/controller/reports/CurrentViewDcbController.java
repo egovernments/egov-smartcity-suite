@@ -139,7 +139,7 @@ public class CurrentViewDcbController {
         final SQLQuery query = currentDcbService.getMigratedReceipttDetails(consumerNumber);
         waterChargesReceiptInfo = query.list();
         final SQLQuery sqlQuery = currentDcbService.getMigratedReceiptDetails(
-                waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerNumber).getId());
+                waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,ConnectionStatus.ACTIVE).getId());
         waterChargesReceiptInfoList = sqlQuery.list();
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
         model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);

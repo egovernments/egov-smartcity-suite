@@ -76,7 +76,7 @@
 			 --%>
 			<td class="text-right">
 			<input type="text"
-				class="form-control table-input text-right"
+				class="form-control table-input text-left"
 				id="bipartisanPetitionerDetailsList[${status.index}].name"
 				name="bipartisanPetitionerDetailsList[${status.index}].name"
 				value="${bipartisanPetitionerDetailsList.name}"
@@ -85,13 +85,12 @@
 			<td class="text-right"><input type="text"
 				class="form-control table-input" 
 				name="bipartisanPetitionerDetailsList[${status.index}].address"
-				
 				id="bipartisanPetitionerDetailsList[${status.index}].address"
 				value="${bipartisanPetitionerDetailsList.address}"
 				
 				 maxlength="256"/></td>
 			<td class="text-right"><input type="text"
-				class="form-control table-input text-right patternvalidation"
+				class="form-control table-input text-left patternvalidation"
 				data-pattern="number" name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
 				value="${bipartisanPetitionerDetailsList.contactNumber}"
@@ -111,8 +110,8 @@
 			id="bipartisanPetitionerDetailsList[${status.index}].id" 
 			value="${bipartisanPetitionerDetailsList.id}"/>
 			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><i class="fa fa-plus"></i></a>
-			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><i class="fa fa-trash"></i></a></td>
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><span style="cursor:pointer;" ><i class="fa fa-plus"></i></span></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><span style="cursor:pointer;" > <i class="fa fa-trash"></i></span></a></td>
 	</tr>
 		</c:forEach>
 	</tbody>
