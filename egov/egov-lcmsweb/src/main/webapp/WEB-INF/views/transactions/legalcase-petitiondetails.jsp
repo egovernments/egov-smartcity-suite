@@ -61,7 +61,66 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr class="">
+	<c:choose>
+	<c:when test="${not empty bipartisanPetitionerDetailsList}">
+	<c:forEach var="bipartisanPetitionerDetailsList" items="${bipartisanPetitionerDetailsList}"
+			varStatus="status">
+				<tr class="">
+			<td>	<span class="petitionDetails spansno">1</span></td>
+			<%-- 	<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td> --%>
+				<%-- <td class="text-center"><input type="checkbox" id="bipartisanPetitionerDetailsList[${status.index}].isRespondentGovernment"
+				name="bipartisanPetitionerDetailsList[${status.index}].isRespondentGovernment"
+			value="${bipartisanPetitionerDetailsList.isRespondentGovernment}"
+				onblur="onChangeofPetitioncheck(this)" /></td>
+			 --%>
+			<td class="text-right">
+			<input type="text"
+				class="form-control table-input text-left"
+				id="bipartisanPetitionerDetailsList[${status.index}].name"
+				name="bipartisanPetitionerDetailsList[${status.index}].name"
+				value="${bipartisanPetitionerDetailsList.name}"
+				maxlength="50" required="required"/></td>
+				
+			<td class="text-right"><input type="text"
+				class="form-control table-input" 
+				name="bipartisanPetitionerDetailsList[${status.index}].address"
+				id="bipartisanPetitionerDetailsList[${status.index}].address"
+				value="${bipartisanPetitionerDetailsList.address}"
+				
+				 maxlength="256"/></td>
+			<td class="text-right"><input type="text"
+				class="form-control table-input text-left patternvalidation"
+				data-pattern="number" name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+				value="${bipartisanPetitionerDetailsList.contactNumber}"
+				 maxlength="10"/></td>
+			<%-- <td class="text-right"><form:select path=""
+					data-first-option="false"
+					name="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
+					id="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
+					value="${bipartisanPetitionerDetailsList.governmentDepartment.name}"
+					cssClass="form-control"
+					cssErrorClass="form-control error">
+					<form:options items="${govtDeptList}" itemValue="id"
+						itemLabel="code" />
+				</form:select></td> --%>
+				<input type="hidden" 
+				name="bipartisanPetitionerDetailsList[${status.index}].id"
+			id="bipartisanPetitionerDetailsList[${status.index}].id" 
+			value="${bipartisanPetitionerDetailsList.id}"/>
+			<td class="text-center">
+			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><span style="cursor:pointer;" ><i class="fa fa-plus"></i></span></a>
+			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><span style="cursor:pointer;" > <i class="fa fa-trash"></i></span></a></td>
+	</tr>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
+	
+	<tr class="">
 			<td>
 					<span class="petitionDetails spansno">1</span>
 					<form:hidden path="bipartisanPetitionerDetailsList[0].id" name="bipartisanPetitionerDetailsList[0].id" value="${bipartisanPetitionerDetailsList[0].id}" class="form-control table-input hidden-input"/>
@@ -98,6 +157,9 @@
 			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><span style="cursor:pointer;" ><i class="fa fa-plus"></i></span></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-trash"></i></span></a></td>
 	</tr>
+		</c:otherwise>
+</c:choose>
+		
 	</tbody>
 </table>
 
@@ -122,6 +184,71 @@
 		</tr>
 	</thead>
 	<tbody>
+	<c:choose>
+	<c:when test="${not empty bipartisanRespondentDetailsList}">
+	<c:forEach var="bipartisanRespondentDetailsList" items="${bipartisanRespondentDetailsList}"
+			varStatus="status">
+			<tr>
+			<td>
+					<span class="respondantDetails spansno">1</span></td>
+		<%-- 	<td>
+								<input type="text" id="table_name${status.index}" class="form-control"
+								readonly="readonly" style="text-align: center"
+								value="${status.index+1}" /> 
+								</td> --%>
+				<%-- <td class="text-center"><input type="checkbox" id="bipartisanRespondentDetailsList[${status.index}].isRespondentGovernment"
+				name="bipartisanRespondentDetailsList[${status.index}].isRespondentGovernment"
+			value="${bipartisanRespondentDetailsList.isRespondentGovernment}"
+				onblur="onChangeofPetitioncheck(this)" /></td> --%>
+			
+				<td><input type="text"
+				class="form-control table-input text-right"
+						id="bipartisanRespondentDetailsList[${status.index}].name"
+						name="bipartisanRespondentDetailsList[${status.index}].name" 
+						value="${bipartisanRespondentDetailsList.name}" /></td>
+					
+
+				<td><input type="text"
+				class="form-control table-input text-right"
+						id="bipartisanRespondentDetailsList[${status.index}].address"
+						name="bipartisanRespondentDetailsList[${status.index}].address" 
+						value="${bipartisanRespondentDetailsList.address}" /></td>
+
+				<td><input type="text" 
+						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
+						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
+					class="form-control table-input text-right" style="text-align: center"
+					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
+<%-- 
+				<td>
+					<form:select path="" data-first-option="false"
+						name="bipartisanRespondentDetailsList[${status.index}].governmentDepartment"
+						id="bipartisanRespondentDetailsList[${status.index}].governmentDepartment"
+						cssClass="form-control" 
+						value="${bipartisanRespondentDetailsList.governmentDepartment.name}"
+						cssErrorClass="form-control error">
+						<form:options items="${govtDeptList}" itemValue="id"
+							itemLabel="code" />
+					</form:select>
+				</td> --%>
+				<input type="hidden" id="activeid"
+				name="bipartisanRespondentDetailsList[${status.index}].id"
+			id="bipartisanRespondentDetailsList[${status.index}].id" 
+			value="${bipartisanRespondentDetailsList.id}"/>
+			<input type="hidden" 
+						id="bipartisanRespondentDetailsList[${status.index}].isRepondent"
+						name="bipartisanRespondentDetailsList[${status.index}].isRepondent" 
+					class="form-control table-input text-right" style="text-align: center"
+					value="${true}" />
+			<td class="text-center"><a href="javascript:void(0);"
+					class="btn-sm btn-default" onclick="addResRow();"><i
+						class="fa fa-plus"></i></a>  <a href="javascript:void(0);"
+					class="btn-sm btn-default" id="res_delete_row"><i
+						class="fa fa-trash"></i></a></td>
+			</tr>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
 		<tr class="">
 		<td>
 					<span class="respondantDetails spansno">1</span>
@@ -167,6 +294,8 @@
 			<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-default" onclick="addResRow();"><span style="cursor:pointer;"><i class="fa fa-plus"></i></span></a>
 			<a href="javascript:void(0);" class="btn-sm btn-default" id="res_delete_row"><span style="cursor:pointer;"><i class="fa fa-trash"></i></span></a></td>
 		</tr>
+		</c:otherwise>
+		</c:choose>
 	</tbody>
 </table>
 <div class="form-group">
