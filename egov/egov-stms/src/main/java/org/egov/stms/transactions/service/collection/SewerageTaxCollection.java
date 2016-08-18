@@ -41,29 +41,25 @@
 package org.egov.stms.transactions.service.collection;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
@@ -86,8 +82,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(SewerageTaxCollection.class);
-    
-    private HttpServletRequest request;
     
     @Autowired
     private EgBillDao egBillDAO;
@@ -118,9 +112,6 @@ public class SewerageTaxCollection extends TaxCollection {
     @Autowired
     private CollectionIntegrationService collectionService;
     
-    public void setRequest(final HttpServletRequest request) {
-        this.request = request;
-    }
     
     @Override
     public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
@@ -131,8 +122,7 @@ public class SewerageTaxCollection extends TaxCollection {
 
 
     /**
-     * Collection will be possible either by agency wise or individual hoarding wise. Calling common api to update demand. If
-     * demand present in agency wise collection object, then we will consider collection happened by Agency wise.
+     * Calling common api to update demand. 
      */
     @Override
     @Transactional
@@ -380,9 +370,14 @@ public class SewerageTaxCollection extends TaxCollection {
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails); 
                 sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
                 if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
-                    sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
+                    try{
+                        sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, ServletActionContext.getRequest());
+                    } catch (final Exception e) {
+                        final String errMsg = "Exception while sending sms and email!";
+                        LOGGER.error(errMsg, e);
+                       //throw new ApplicationRuntimeException(errMsg, e);
+                    }
                 }
-                    
             }
         }
     }
