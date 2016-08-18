@@ -933,9 +933,9 @@ public class ReportService {
         			BaseRegisterVLTResult baseRegisterVLTResultObj = null;
                     baseRegisterVLTResultObj = new BaseRegisterVLTResult();
                     baseRegisterVLTResultObj.setAssessmentNo(propMatView.getPropertyId());
-                    baseRegisterVLTResultObj.setWard(propMatView.getWard().getName()+" ,"+propMatView.getWard().getBoundaryNum());
-                    baseRegisterVLTResultObj.setOwnerName(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName()
-                            .replace(",", " & ") : propMatView.getOwnerName());
+                    baseRegisterVLTResultObj.setWard(propMatView.getWard()!=null?(propMatView.getWard().getName()+" ,"+propMatView.getWard().getBoundaryNum()):"");
+                    baseRegisterVLTResultObj.setOwnerName(propMatView.getOwnerName()!=null?(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName()
+                            .replace(",", " & ") : propMatView.getOwnerName()):"");
 
                     baseRegisterVLTResultObj.setSurveyNo(propMatView.getSurveyNo());
                     baseRegisterVLTResultObj.setTaxationRate(taxRate);
@@ -943,7 +943,7 @@ public class ReportService {
                     baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue());
                     basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propMatView.getPropertyId());
                     baseRegisterVLTResultObj.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
-                    baseRegisterVLTResultObj.setSitalArea((propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    baseRegisterVLTResultObj.setSitalArea(propMatView.getSitalArea()!=null?(propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP):BigDecimal.ZERO);
                     if(propMatView.getMarketValue()!=null && propMatView.getCapitalValue()!=null )
                     	baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue())>0?propMatView.getMarketValue():propMatView.getCapitalValue());
                     
@@ -952,13 +952,13 @@ public class ReportService {
                     Map<String, Installment> currYearInstMap =propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                     for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
                     	  if(instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))){
-                        		currFirstHalfLibCess=instDmdCollObj.getLibCessTax();
+                        		currFirstHalfLibCess=instDmdCollObj.getLibCessTax()!=null?instDmdCollObj.getLibCessTax():BigDecimal.ZERO;
                             	baseRegisterVLTResultObj.setLibraryCessTaxFirstHlf(currFirstHalfLibCess);
                         	}else if(instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))){
-                        		currSecondHalfLibCess=instDmdCollObj.getLibCessTax();
+                        		currSecondHalfLibCess=instDmdCollObj.getLibCessTax()!=null?instDmdCollObj.getLibCessTax():BigDecimal.ZERO;
                         		baseRegisterVLTResultObj.setLibraryCessTaxSecondHlf(currSecondHalfLibCess);
                         	}else{
-                        		arrLibCess=arrLibCess.add(instDmdCollObj.getLibCessTax());
+                        		arrLibCess=arrLibCess.add(instDmdCollObj.getLibCessTax()!=null?instDmdCollObj.getLibCessTax():BigDecimal.ZERO);
                         		baseRegisterVLTResultObj.setArrearLibraryTax(arrLibCess);
                         }
                     }
@@ -974,7 +974,7 @@ public class ReportService {
                     }
                     baseRegisterVLTResultObj.setPenaltyFines(currPenaltyFine);
                     baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd()!=null && propMatView.getAggrArrDmd().compareTo(BigDecimal.ZERO)>=1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : BigDecimal.ZERO);
-                    baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly());
+                    baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly()!=null?propMatView.getAggrArrearPenaly():BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearTotal(propMatView.getAggrArrDmd()!=null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO);
                     
 
