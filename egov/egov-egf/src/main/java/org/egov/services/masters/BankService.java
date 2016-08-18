@@ -232,7 +232,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
         if (fundId != null && fundId > 0)
             queryString.append(" and bankaccount.fundid=:fundId");
         return getSession().createSQLQuery(queryString.toString())
-                .setDate(FUND_ID, asOnDate)
+                .setInteger(FUND_ID, fundId)
                 .setDate("asOnDate", asOnDate)
                 .list();
     }
