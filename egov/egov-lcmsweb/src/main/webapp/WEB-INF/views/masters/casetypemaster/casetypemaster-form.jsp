@@ -71,7 +71,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="ordernumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="1000"/>
+								data-pattern="number" maxlength="4"/>
 							<form:errors path="ordernumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message

@@ -62,13 +62,13 @@
 	</div>
 </form:form>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 
 <script
-	src="<c:url value='/resources/js/app/standingCouncil.js?rnd=${app_release_no}'/>"></script>
-	<script src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/standingCouncil.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script>
 	$('#btnclose').click(function(){
 		bootbox.confirm({

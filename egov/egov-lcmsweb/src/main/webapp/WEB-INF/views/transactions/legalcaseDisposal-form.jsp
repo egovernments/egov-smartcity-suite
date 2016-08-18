@@ -61,7 +61,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="disposalDetails"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="1024" />
+								data-pattern="alphanumeric" maxlength="1024" required="required"/>
 							<form:errors path="disposalDetails" cssClass="error-msg" />
 						</div>
 					</div>

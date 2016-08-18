@@ -59,7 +59,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="courtType"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="100" required="required" />
+								data-pattern="alphabetwithspace" maxlength="32" required="required" />
 							<form:errors path="courtType" cssClass="error-msg" />
 						</div>
 					</div>
@@ -68,7 +68,7 @@
 								code="lbl.notes" /> :</label>
 						<div class="col-sm-3 add-margin">
 						<form:textarea class="form-control text-left patternvalidation" path="notes" id="notes"
-							name="notes" data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="128"/>
+							name="notes" data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="256"/>
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -76,7 +76,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" />
+								data-pattern="number" maxlength="4"/>
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>
 					</div>

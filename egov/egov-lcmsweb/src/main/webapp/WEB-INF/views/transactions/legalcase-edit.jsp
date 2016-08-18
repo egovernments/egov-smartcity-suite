@@ -40,10 +40,10 @@
 
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row">
 	<div class="col-md-12">
@@ -82,18 +82,18 @@
 	</div>
 </div>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script
-	src="<c:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
-	src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
 
 
