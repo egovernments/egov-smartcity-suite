@@ -37,44 +37,75 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<form:form role="form" action="create" modelAttribute="councilMeeting" 
-	id="councilMeetingform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" action="../update" modelAttribute="councilMeeting" id="councilMeetingform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilmeeting-form.jsp"%>
+	<div class="panel-body">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.agenda.details" />
+							</div>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<th align="center"><spring:message code="lbl.serial.number" /></th>
+								<th><spring:message code="lbl.agenda.item" /></th>
+								<th><spring:message code="lbl.agenda.number" /></th>
+								<th><spring:message code="lbl.preamble.number" /></th>
+								<th><spring:message code="lbl.department" /></th>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
+										<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
+											varStatus="counter">
+											<tr>
+												<div class="row add-margin">
+													<td align="center">${counter.count}</td>
+													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
+													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
+													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
+													<td><c:out value="${mom.preamble.department.name}" /></td>
+												</div>
+											</tr>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<div class="col-md-3 col-xs-6 add-margin">
+											<spring:message code="lbl.noAgenda.Detail" />
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
+						</table>
+					</div>
 	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.create' />
+				<spring:message code='lbl.update' />
 			</button>
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
 	</div>
 	
-	 <%@ include file="councilmeeting-agendaDetail.jsp"%> 
-	
+	<input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
+			
 </form:form>
-<div class="row text-center">
-			<div class="add-margin">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()">Close</a>
-			</div>
-		</div>
-<script
-	src="<c:url value='/resources/app/js/councilMeetingHelper.js?rnd=${app_release_no}'/>"></script>
 
+	<script src="<c:url value='/resources/app/js/councilMeeting.js?rnd=${app_release_no}'/>"></script>	
+	
 <script>
-	 $('#buttonSubmit').click(function(e) {
+	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
-			 var action = '/council/councilmeeting/create' ;
- 			$('#councilMeetingform').attr('method', 'post');
- 			$('#councilMeetingform').attr('action', action); 
 		} else {
 			e.preventDefault();
 		}
-	});	 
+	});
 </script>

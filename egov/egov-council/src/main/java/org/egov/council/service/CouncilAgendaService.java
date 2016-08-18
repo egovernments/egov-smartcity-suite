@@ -98,7 +98,7 @@ public class CouncilAgendaService {
         if(null != councilAgenda.getStatus())
         	criteria.add(Restrictions.eq("status", councilAgenda.getStatus().getCode()));
         if(null != councilAgenda.getCommitteeType())
-        	criteria.add(Restrictions.eq("committeeType", councilAgenda.getCommitteeType().getName()));
+        	criteria.add(Restrictions.eq("committeeType", councilAgenda.getCommitteeType()));
         return criteria.list();
     }
 

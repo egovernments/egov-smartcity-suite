@@ -95,6 +95,14 @@ public class CouncilMeetingService {
 				CouncilMeeting.class);
 	if (null != councilMeeting.getMeetingNumber())
 			criteria.add(Restrictions.ilike("meetingNumber", councilMeeting.getMeetingNumber(), MatchMode.ANYWHERE));
+	if(null != councilMeeting.getCommitteeType())
+		criteria.add(Restrictions.eq("committeeType", councilMeeting.getCommitteeType()));
+	if (null != councilMeeting.getMeetingDate())
+        criteria.add(Restrictions.eq("meetingDate", councilMeeting.getMeetingDate()));
+	if (null != councilMeeting.getMeetingTime())
+        criteria.add(Restrictions.eq("meetingTime", councilMeeting.getMeetingTime()));
+	if (null != councilMeeting.getMeetingLocation())
+        criteria.add(Restrictions.ilike("meetingLocation", councilMeeting.getMeetingLocation(),MatchMode.ANYWHERE));
 		return criteria.list();
 	}
     

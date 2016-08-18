@@ -18,6 +18,7 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -47,6 +48,7 @@ public class CouncilMeetingController {
     private final static String COUNCILMEETING_EDIT = "councilmeeting-edit";
     private final static String COUNCILMEETING_VIEW = "councilmeeting-view";
     private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
+    private final static String COUNCIL_MEETING_AGENDA_SEARCH ="councilmeetingAgenda-search";
     private final static String MODULE_NAME = "COUNCIL";
   
     @Autowired
@@ -62,13 +64,24 @@ public class CouncilMeetingController {
     private MessageSource messageSource;
     @Autowired
     private CommitteeTypeService committeeTypeService;
+    
+    @Autowired
+    private DepartmentService departmentService;
+    
+    
   
     @Qualifier("fileStoreService")
     protected @Autowired FileStoreService fileStoreService;
     protected @Autowired FileStoreUtils fileStoreUtils;
     private static final Logger LOGGER = Logger.getLogger(CouncilMeetingController.class);
     private void prepareNewForm(final Model model) {
-        model.addAttribute("commiteeTypes", committeeTypeService.getActiveCommiteeType());
+    	model.addAttribute("committeeType",
+				committeeTypeService.getActiveCommiteeType());
+        model.addAttribute("departmentList",
+				departmentService.getAllDepartments());
+        model.addAttribute("meetingTimingMap", CouncilConstants.MEETING_TIMINGS);
+        
+		
     }
 
     @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
@@ -77,17 +90,25 @@ public class CouncilMeetingController {
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
         if (councilAgenda != null) {
             //TODO: CHECK AGENDA STATUS. THROW ERROR IF AGENDA ALREADY USED IN MEETING.
+        /*	if(null!=councilAgenda.getStatus() && councilAgenda.getStatus()==egwStatusHibernateDAO.getStatusByModuleAndCode(
+    				CouncilConstants.PREAMBLE_MODULENAME,
+    				CouncilConstants.PREAMBLE_STATUS_CREATED)){*/
             councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
             buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
             councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.COUNCILMEETING,CouncilConstants.COUNCILMEETING_STATUS_CREATED));
+          
+        	/*}
+        	else{
+        		model.addAttribute("message", "msg.invalid.agenda.details");
+        		 return COMMONERRORPAGE;
+        	}*/
          }else
         {
             model.addAttribute("message", "msg.invalid.agenda.details");
             return COMMONERRORPAGE;
         }
         prepareNewForm(model);
-        model.addAttribute("meetingTimingMap", CouncilConstants.MEETING_TIMINGS);
-
+        
         return COUNCILMEETING_NEW;
     }
 
@@ -126,6 +147,7 @@ public class CouncilMeetingController {
     	}
     	
          councilMeetingService.create(councilMeeting); //TODO: CHANGE STATUS OF AGENDA ON CREATION.
+         
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
@@ -135,8 +157,7 @@ public class CouncilMeetingController {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilMeeting", councilMeeting);
-
-        return COUNCILMEETING_EDIT;
+         return COUNCILMEETING_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -149,7 +170,7 @@ public class CouncilMeetingController {
  
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
-        return "redirect:/councilMeeting/result/" + councilMeeting.getId();
+        return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -164,7 +185,9 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        
         model.addAttribute("councilMeeting", councilMeeting);
+      //  model.addAttribute("councilAgenda",new CouncilAgenda());
         return COUNCILMEETING_RESULT;
     }
 
@@ -174,6 +197,14 @@ public class CouncilMeetingController {
         prepareNewForm(model);
         model.addAttribute("councilMeeting", councilMeeting);
         return COUNCILMEETING_SEARCH;
+
+    }
+    
+    @RequestMapping(value = "/agendasearch/{mode}", method = RequestMethod.GET)
+    public String searchagenda(@PathVariable("mode") final String mode, Model model) {
+    	prepareNewForm(model);
+		model.addAttribute("councilAgenda", new CouncilAgenda());
+		return COUNCIL_MEETING_AGENDA_SEARCH;
 
     }
 

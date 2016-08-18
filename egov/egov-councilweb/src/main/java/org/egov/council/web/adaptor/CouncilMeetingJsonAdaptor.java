@@ -19,6 +19,22 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                 jsonObject.addProperty("meetingNumber", councilMeeting.getMeetingNumber());
             else
                 jsonObject.addProperty("meetingNumber", "");
+            if (councilMeeting.getCommitteeType() != null)
+                jsonObject.addProperty("committeeType", councilMeeting.getCommitteeType().getName());
+            else
+                jsonObject.addProperty("committeeType", "");
+            if (councilMeeting.getMeetingDate() != null)
+                jsonObject.addProperty("meetingDate", councilMeeting.getMeetingDate().toString());
+            else
+                jsonObject.addProperty("meetingDate", "");
+            if (councilMeeting.getMeetingDate() != null)
+                jsonObject.addProperty("meetingLocation", councilMeeting.getMeetingLocation());
+            else
+                jsonObject.addProperty("meetingLocation", "");
+            if (councilMeeting.getMeetingTime() != null)
+                jsonObject.addProperty("meetingTime", councilMeeting.getMeetingTime());
+            else
+                jsonObject.addProperty("meetingTime", "");
             jsonObject.addProperty("id", councilMeeting.getId());
         }
         return jsonObject;

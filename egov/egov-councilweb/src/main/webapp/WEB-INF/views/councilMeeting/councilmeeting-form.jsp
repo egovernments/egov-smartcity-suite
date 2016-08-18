@@ -103,8 +103,8 @@
 				</div>
 			</div>
 
-			<%-- 	<form:hidden path="id" id="id" value="${councilMeeting.id}" /> --%>
-						
+			 	<form:hidden path="id" id="id" value="${councilMeeting.id}" /> 
+					<form:hidden path="meetingNumber" id="meetingNumber" value="${councilMeeting.meetingNumber}" />	
 				
 		</div>
 	</div>

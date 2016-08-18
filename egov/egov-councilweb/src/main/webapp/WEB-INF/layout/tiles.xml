@@ -264,6 +264,11 @@
 	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-search.jsp"/>
 </definition>
 
+<definition name="councilmeetingAgenda-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-agendaSearch.jsp"/>
+</definition>
+
 <definition name="agenda-edit" extends="base_layout">
 	<put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/agenda/agenda-edit.jsp"/>
@@ -280,6 +285,16 @@
 <definition name="councilmeeting-view" extends="base_layout">
 	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-result.jsp"/>
+</definition>
+
+<definition name="councilmeeting-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-search.jsp"/>
+</definition>
+
+<definition name="councilmeeting-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-edit.jsp"/>
 </definition>
 
 <definition name="common-error-page" extends="base_layout">
