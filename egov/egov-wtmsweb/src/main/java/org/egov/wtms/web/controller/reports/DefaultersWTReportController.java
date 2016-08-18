@@ -39,26 +39,10 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.wtms.application.entity.DailyWTCollectionReport;
 import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
@@ -78,8 +62,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/report/defaultersWTReport/search")
@@ -150,7 +146,7 @@ public class DefaultersWTReportController {
         String result = null;
         for (final DefaultersReport dd : defaultersreportlist)
             dd.setDuePeriodFrom(getDuePeriodFrom(dd.getHscNo()));
-        result = new StringBuilder("{ \"data\":").append(toJSON(defaultersreportlist)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
@@ -175,13 +171,5 @@ public class DefaultersWTReportController {
             }
         } else
             return "";
-    }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DailyWTCollectionReport.class, new DefaultersReportAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

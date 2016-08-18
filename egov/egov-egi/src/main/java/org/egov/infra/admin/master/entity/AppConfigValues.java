@@ -40,15 +40,14 @@
 
 package org.egov.infra.admin.master.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.search.domain.Searchable;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,8 +59,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "eg_appconfig_values")
@@ -78,7 +80,6 @@ public class AppConfigValues extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    
     @NotBlank
     @SafeHtml
     @Length(max = 4000)
@@ -87,15 +88,23 @@ public class AppConfigValues extends AbstractAuditable {
     private String value;
 
     @NotNull
-    @DateFormat
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    @Column(name = "effective_from")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "effective_from", updatable = false)
     private Date effectiveFrom;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "key_id")
-    private AppConfig key;
+    @JoinColumn(name = "key_id", nullable = false)
+    @JsonIgnore
+    private AppConfig config;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
     public Date getEffectiveFrom() {
         return effectiveFrom;
@@ -113,51 +122,27 @@ public class AppConfigValues extends AbstractAuditable {
         this.value = value;
     }
 
-    public AppConfig getKey() {
-        return key;
+    public AppConfig getConfig() {
+        return config;
     }
 
-    public void setKey(final AppConfig key) {
-        this.key = key;
+    public void setConfig(final AppConfig config) {
+        this.config = config;
     }
 
     @Override
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AppConfigValues))
+            return false;
+        final AppConfigValues that = (AppConfigValues) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (value == null ? 0 : value.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final AppConfigValues other = (AppConfigValues) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
+        return Objects.hash(id, value);
     }
 }

@@ -40,8 +40,6 @@
 
 package org.egov.infra.web.controller.admin.masters.boundary;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -57,6 +55,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 public class PageViewBoundaryController {
@@ -75,16 +75,9 @@ public class PageViewBoundaryController {
         final Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));
 
         final List<Boundary> pageOfBoundaries = boundaryService.getPageOfBoundaries(boundaryTypeId);
-        final StringBuilder boundaryJSONData = new StringBuilder("{\"data\":").append(toJSON(pageOfBoundaries))
+        final StringBuilder boundaryJSONData = new StringBuilder("{\"data\":").append(toJSON(pageOfBoundaries, Boundary.class, BoundaryAdapter.class))
                 .append("}");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(boundaryJSONData, response.getWriter());
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Boundary.class, new BoundaryAdapter()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

@@ -40,7 +40,10 @@
 package org.egov.collection.web.actions.receipts;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -109,7 +112,8 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = CollectionConstants.CANCELRECEIPT, location = "challan-cancelReceipt.jsp"),
         @Result(name = ChallanAction.SUCCESS, location = "challan-success.jsp"),
         @Result(name = CollectionConstants.VIEW, location = "challan-view.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp") })
+        @Result(name = CollectionConstants.REPORT, location = "challan-report.jsp"),
+        @Result(name = ChallanAction.ERROR, location = "challan-error.jsp") })
 public class ChallanAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(ChallanAction.class);
@@ -150,7 +154,8 @@ public class ChallanAction extends BaseFormAction {
     private Integer designationId;
 
     /**
-     * A <code>String</code> value representing the challan number for which the challan has to be retrieved
+     * A <code>String</code> value representing the challan number for which the
+     * challan has to be retrieved
      */
     private String challanNumber;
 
@@ -159,14 +164,14 @@ public class ChallanAction extends BaseFormAction {
     private Boolean chequeDDAllowed = Boolean.TRUE;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
-     * creation
+     * An instance of <code>InstrumentHeader</code> representing the cash
+     * instrument details entered by the user during receipt creation
      */
     private InstrumentHeader instrHeaderCash;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the card instrument details entered by the user during receipt
-     * creation
+     * An instance of <code>InstrumentHeader</code> representing the card
+     * instrument details entered by the user during receipt creation
      */
     private InstrumentHeader instrHeaderCard;
 
@@ -202,7 +207,8 @@ public class ChallanAction extends BaseFormAction {
     Position position = null;
 
     /**
-     * A <code>Long</code> array of receipt header ids , which have to be displayed for view/print/cancel purposes
+     * A <code>Long</code> array of receipt header ids , which have to be
+     * displayed for view/print/cancel purposes
      */
     private Long[] selectedReceipts;
 
@@ -235,9 +241,11 @@ public class ChallanAction extends BaseFormAction {
     private ChallanService challanService;
     private String approverName;
     private Long functionId;
+    private Date cutOffDate;
 
     /**
-     * An array of <code>ReceiptHeader</code> instances which have to be displayed for view/print/cancel purposes
+     * An array of <code>ReceiptHeader</code> instances which have to be
+     * displayed for view/print/cancel purposes
      */
     // private ReceiptHeader[] receipts;
 
@@ -258,28 +266,43 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked when the user clicks on Create Challan from Menu Tree
+     * This method is invoked when the user clicks on Create Challan from Menu
+     * Tree
      *
      * @return
      */
     @Action(value = "/receipts/challan-newform")
+    @ValidationErrorPage(value = ERROR)
     @SkipValidation
     public String newform() {
         setLoginDept();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                    CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+        } catch (ParseException e) {
+            LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
+        }
         return NEW;
     }
 
-    private void setLoginDept() {
-        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
-        setDeptId(loginUserDepartment.getId().toString());
-        setDept(loginUserDepartment);
-        addDropdownData("approverDepartmentList", collectionsUtil.getDepartmentsAllowedForChallanApproval(
-                collectionsUtil.getLoggedInUser(), receiptHeader));
+    private void setLoginDept()  {
+            final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+            if (loginUserDepartment == null) {
+                throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
+                        "viewchallan.validation.error.user.notexists")));
+            }
+            setDeptId(loginUserDepartment.getId().toString());
+            setDept(loginUserDepartment);
+            addDropdownData("approverDepartmentList", collectionsUtil
+                    .getDepartmentsAllowedForChallanApproval(collectionsUtil.getLoggedInUser(), receiptHeader));
     }
 
     /**
-     * This method is invoked when user clicks on Save challan from Create Challan UI. All workflow transitions for the challan
-     * happen through this method.
+     * This method is invoked when user clicks on Save challan from Create
+     * Challan UI. All workflow transitions for the challan happen through this
+     * method.
      *
      * @return the string
      */
@@ -308,7 +331,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method in invoked when the user clicks on Create Challan Receipt from Menu Tree.
+     * This method in invoked when the user clicks on Create Challan Receipt
+     * from Menu Tree.
      *
      * @return the string
      */
@@ -382,6 +406,7 @@ public class ChallanAction extends BaseFormAction {
      * @return
      */
     @Action(value = "/receipts/challan-viewChallan")
+    @ValidationErrorPage(value = ERROR)
     @SkipValidation
     public String viewChallan() {
         if (challanId == null)
@@ -395,7 +420,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked on click of create button from Create Challan Receipt Screen
+     * This method is invoked on click of create button from Create Challan
+     * Receipt Screen
      *
      * @return
      */
@@ -444,7 +470,6 @@ public class ChallanAction extends BaseFormAction {
             if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
                 receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
             receiptHeaderService.setReceiptNumber(receiptHeader);
-
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
             final ReceiptHeader[] receipts = new ReceiptHeader[1];
             receipts[0] = receiptHeader;
@@ -532,8 +557,9 @@ public class ChallanAction extends BaseFormAction {
 
             if (collectionsUtil.checkChallanValidity(receiptHeader.getChallan())) {
                 /**
-                 * if instrument has been deposited create a new receipt in place of the cancelled the model is turned into a copy
-                 * of the receipt to be cancelled without the instrument details
+                 * if instrument has been deposited create a new receipt in
+                 * place of the cancelled the model is turned into a copy of the
+                 * receipt to be cancelled without the instrument details
                  */
 
                 // the reason for cancellation has to be persisted
@@ -641,11 +667,15 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
+     * This instrument creates instrument header instances for the receipt, when
+     * the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
      *
-     * @param k an int value representing the index of the instrument type as chosen from the front end
-     * @return an <code>InstrumentHeader</code> instance populated with the instrument details
+     * @param k
+     *            an int value representing the index of the instrument type as
+     *            chosen from the front end
+     * @return an <code>InstrumentHeader</code> instance populated with the
+     *         instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
@@ -669,9 +699,10 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * This method creates a receipt along with the challan. The receipt is created in PENDING status where as the challan is
-     * created with a CREATED status. The receipt is actually created later when there is a request for it to be created against
-     * the challan.
+     * This method creates a receipt along with the challan. The receipt is
+     * created in PENDING status where as the challan is created with a CREATED
+     * status. The receipt is actually created later when there is a request for
+     * it to be created against the challan.
      */
     private void populateAndPersistChallanReceipt() {
 
@@ -686,8 +717,10 @@ public class ChallanAction extends BaseFormAction {
         }
 
         /*
-         * receiptHeader.setService((ServiceDetails) getPersistenceService().findByNamedQuery(
-         * CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICE_CODE_COLLECTIONS));
+         * receiptHeader.setService((ServiceDetails)
+         * getPersistenceService().findByNamedQuery(
+         * CollectionConstants.QUERY_SERVICE_BY_CODE,
+         * CollectionConstants.SERVICE_CODE_COLLECTIONS));
          */
         receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
                 CollectionConstants.MODULE_NAME_RECEIPTHEADER, CollectionConstants.RECEIPT_STATUS_CODE_PENDING));
@@ -728,7 +761,8 @@ public class ChallanAction extends BaseFormAction {
             if (functionId != null)
                 function = functionDAO.getFunctionById(functionId);
             ReceiptDetail receiptDetail = new ReceiptDetail(account, function, rDetails.getCreditAmountDetail(),
-                    rDetails.getDebitAmountDetail(), null, Long.valueOf(m), null, null, receiptHeader, PURPOSE.OTHERS.toString());
+                    rDetails.getDebitAmountDetail(), null, Long.valueOf(m), null, null, receiptHeader,
+                    PURPOSE.OTHERS.toString());
             receiptDetail.setCramount(rDetails.getCreditAmountDetail());
 
             totalAmt = totalAmt.add(receiptDetail.getCramount()).subtract(receiptDetail.getDramount());
@@ -756,7 +790,8 @@ public class ChallanAction extends BaseFormAction {
         receiptHeader.setTotalAmount(totalAmt);
 
         /*
-         * if (receiptHeader.getChallan().getCreatedBy() == null) receiptHeader.getChallan
+         * if (receiptHeader.getChallan().getCreatedBy() == null)
+         * receiptHeader.getChallan
          * ().setCreatedBy(collectionsUtil.getLoggedInUser());
          */
 
@@ -768,6 +803,16 @@ public class ChallanAction extends BaseFormAction {
             receiptHeader.getChallan().setService(
                     (ServiceDetails) getPersistenceService().findByNamedQuery(CollectionConstants.QUERY_SERVICE_BY_ID,
                             receiptHeader.getChallan().getService().getId()));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
+                    CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                    CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
+        } catch (ParseException e) {
+            LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
+        }
+        if (receiptHeader.getChallan().getChallanDate().before(cutOffDate))
+            actionName = CollectionConstants.WF_ACTION_NAME_VALIDATE_CHALLAN;
         receiptHeaderService.persistChallan(receiptHeader, position, actionName, approvalRemarks);
         receiptId = receiptHeader.getId();
 
@@ -910,7 +955,8 @@ public class ChallanAction extends BaseFormAction {
     /**
      * Removes the empty rows.
      *
-     * @param list the list
+     * @param list
+     *            the list
      */
     void removeEmptyRows(final List list) {
         for (final Iterator<ReceiptDetailInfo> detail = list.iterator(); detail.hasNext();)
@@ -938,7 +984,8 @@ public class ChallanAction extends BaseFormAction {
                 && receiptHeader.getService().getServiceCategory().getId() != -1)
             addDropdownData("serviceList", serviceDetailsService.findAllByNamedQuery(
                     CollectionConstants.QUERY_SERVICE_BY_CATEGORY_FOR_TYPE, receiptHeader.getService()
-                            .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION, Boolean.TRUE));
+                            .getServiceCategory().getId(), CollectionConstants.SERVICE_TYPE_CHALLAN_COLLECTION,
+                    Boolean.TRUE));
         else
             addDropdownData("serviceList", Collections.EMPTY_LIST);
         setBillDetailslist(collectionCommon.setReceiptDetailsList(receiptHeader,
@@ -998,8 +1045,9 @@ public class ChallanAction extends BaseFormAction {
         addDropdownData("postionUserList", Collections.EMPTY_LIST);
         setCurrentFinancialYearId(collectionCommon.getFinancialYearIdByDate(new Date()));
         /**
-         * super class prepare is called at the end to ensure that the modified values are available to the model. The super class
-         * prepare need not run for cancel challan as the values should not be modified
+         * super class prepare is called at the end to ensure that the modified
+         * values are available to the model. The super class prepare need not
+         * run for cancel challan as the values should not be modified
          **/
         if (!CollectionConstants.WF_ACTION_NAME_CANCEL_CHALLAN.equals(actionName))
             super.prepare();
@@ -1190,7 +1238,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param challanId the challanId to set
+     * @param challanId
+     *            the challanId to set
      */
     public void setChallanId(final String challanId) {
         this.challanId = challanId;
@@ -1204,7 +1253,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param approvalRemarks the approvalRemarks to set
+     * @param approvalRemarks
+     *            the approvalRemarks to set
      */
     public void setApprovalRemarks(final String approvalRemarks) {
         this.approvalRemarks = approvalRemarks;
@@ -1218,21 +1268,24 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser the positionUser to set
+     * @param positionUser
+     *            the positionUser to set
      */
     public void setPositionUser(final Long positionUser) {
         this.positionUser = positionUser;
     }
 
     /**
-     * @param collectionCommon the collectionCommon to set
+     * @param collectionCommon
+     *            the collectionCommon to set
      */
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
 
     /**
-     * @param receiptHeaderService The receipt header service to set
+     * @param receiptHeaderService
+     *            The receipt header service to set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -1334,7 +1387,8 @@ public class ChallanAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId the designationId to set
+     * @param designationId
+     *            the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;
@@ -1439,11 +1493,22 @@ public class ChallanAction extends BaseFormAction {
     public void setFunctionId(final Long functionId) {
         this.functionId = functionId;
     }
+    
+    public Date getCutOffDate() {
+        return cutOffDate;
+    }
+
+    public void setCutOffDate(Date cutOffDate) {
+        this.cutOffDate = cutOffDate;
+    }
 
     @Override
     public void validate() {
         super.validate();
-        setLoginDept();
+        final Department loginUserDepartment = collectionsUtil.getDepartmentOfLoggedInUser();
+        if (loginUserDepartment != null) {
+            setLoginDept();
+        }
         if (receiptHeader.getReceiptdate() != null
                 && receiptHeader.getReceiptdate().before(
                         financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
@@ -1456,4 +1521,5 @@ public class ChallanAction extends BaseFormAction {
                 && receiptHeader.getReceiptdate().before(receiptHeader.getChallan().getChallanDate()))
             addActionError(getText("challan.error.receiptdate.lessthan.challandate"));
     }
+
 }

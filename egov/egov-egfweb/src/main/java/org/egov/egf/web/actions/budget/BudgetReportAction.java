@@ -40,6 +40,7 @@
 package org.egov.egf.web.actions.budget;
 
 import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -70,6 +71,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -1256,11 +1258,10 @@ public class BudgetReportAction extends BaseFormAction {
 
     protected Map<String, String> getReferenceNumber(final String appConfigKey) {
         final Map<String, String> referenceNo = new HashMap<String, String>();
-        final List<AppConfigValues> appConfigList = persistenceService
-                .findAllBy("from AppConfigValues where key.keyName like '"
-                        + appConfigKey + "-%'");
-        for (final AppConfigValues appConfigVal : appConfigList)
-            referenceNo.put(appConfigVal.getKey().getKeyName().split("-")[1], appConfigVal.getValue());
+        //TODO THIS HAS TO BE CHANGED, THIS WILL RETURN UNDESIRED RESULT
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKeyLike(FinancialConstants.MODULE_NAME_APPCONFIG, appConfigKey + "-%");
+        for (final AppConfigValues appConfigVal : appConfigValues)
+            referenceNo.put(appConfigVal.getConfig().getKeyName().split("-")[1], appConfigVal.getValue());
         return referenceNo;
     }
 
@@ -2011,7 +2012,7 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     private boolean getConsiderReAppropriationAsSeperate() {
-        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                 "CONSIDER_RE_REAPPROPRIATION_AS_SEPARATE");
         String appValue = "-1";
         appValue = appList.get(0).getValue();

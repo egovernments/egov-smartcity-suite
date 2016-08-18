@@ -55,7 +55,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.viewBoundary"/>${boundary.localName}</strong>
+						<strong><spring:message code="lbl.hdr.viewBoundary"/> ${boundary.localName}</strong>
 					</div>
 				</div> 
 				

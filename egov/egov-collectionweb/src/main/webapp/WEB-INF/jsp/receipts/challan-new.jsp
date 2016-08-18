@@ -67,6 +67,11 @@ display:none;
 }
 </style>
 <script type="text/javascript">
+function process(date){
+	   var parts = date.split("/");
+	   return new Date(parts[2], parts[1] - 1, parts[0]);
+	}
+	
 jQuery.noConflict();
 jQuery(document).ready(function() {
 
@@ -84,8 +89,14 @@ jQuery(document).ready(function() {
       	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
       	  }
        }).on('changeDate', function(ev) {
-     	  var string=jQuery(this).val();
-     	  if(!(string.indexOf("_") > -1)){
+     	  var date=jQuery(this).val();
+     	  var cutOff = jQuery("#cutOffDate").val();
+     	 if(process(date) >= process(cutOff))
+     		jQuery("#approvedet").show();
+     	 else
+     		jQuery("#approvedet").hide();
+     	 
+     	  if(!(date.indexOf("_") > -1)){
      		  isDatepickerOpened=false; 
      	  }
        }).data('datepicker');
@@ -273,18 +284,19 @@ function validate(obj){
 			valid=false;
 		 }            
 		</s:if>
-
-		if(null!= document.getElementById('approverDeptId') && document.getElementById('approverDeptId').value == "-1"){
+		 var chlndate=document.getElementById("challanDate").value;
+    	 var cutOff = document.getElementById("cutOffDate").value;
+		if(process(chlndate) >= process(cutOff) && null!= document.getElementById('approverDeptId') && document.getElementById('approverDeptId').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.department.errormessage" />'+ "<br>";
 			valid=false;
 		}
 		
-		if(null!= document.getElementById('designationId') && document.getElementById('designationId').value == "-1"){
+		if(process(chlndate) >= process(cutOff) && null!= document.getElementById('designationId') && document.getElementById('designationId').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.designation.errormessage" />'+ "<br>";
 			valid=false;
 		}
 		
-		if(null!= document.getElementById('positionUser') &&  document.getElementById('positionUser').value == "-1"){
+		if(process(chlndate) >= process(cutOff) && null!= document.getElementById('positionUser') &&  document.getElementById('positionUser').value == "-1"){
 			document.getElementById("challan_error_area").innerHTML+='<s:text name="challan.position.errormessage" />'+ "<br>";
 			valid=false;
 		}
@@ -768,7 +780,7 @@ function populatepositionuseronload()
 
 <!-- Change to Manual WorkFlow on Create Challan-->
  <!-- When request is to check/approve challan -->
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<table id="approvedet" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr><td> 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	    <!-- Remarks have to displayed on Challan Check/Approve. -->
@@ -826,6 +838,8 @@ onChange="onChangeDeparment(this.value)" />
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/> </div>
 <!-- </div> -->
 	<input type="hidden" name="actionName" id="actionName" value="{actionName}" />
+	<s:date name="cutOffDate" var="cutOffDateFormat" format="dd/MM/yyyy"/>
+    <s:hidden label="cutOffDate" id="cutOffDate"  name="cutOffDate" value="%{cutOffDateFormat}"/>
 	 <div class="buttonbottom" align="center" id="printButton">
 		<!-- Action Buttons should be displayed only in case of Create New Challan or 
 		     If page is opened from inbox -->

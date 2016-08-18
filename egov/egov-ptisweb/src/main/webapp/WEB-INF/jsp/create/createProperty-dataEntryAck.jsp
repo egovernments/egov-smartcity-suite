@@ -52,7 +52,7 @@
 		    window.location="/ptis/create/createProperty-dataEntry.action";
 		} else if(obj.id == 'editDCB') {
 			var propertyId = document.getElementById("upicNo").value;
-			window.location="/ptis/edit/editDemand-newEditForm.action?propertyId="+propertyId;
+			window.location="/ptis/edit/addDemand-newAddForm.action?propertyId="+propertyId;
 		}
 	}
 </script>

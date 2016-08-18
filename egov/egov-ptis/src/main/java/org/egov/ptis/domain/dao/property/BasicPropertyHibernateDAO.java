@@ -507,7 +507,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                 sb.append(" and propTypeMstrID.code <> :propertyType ");
                 if(StringUtils.isNotBlank(doorNo)){
                 	sb.append(" and houseNo like :DoorNo ");
-                    params.put("DoorNo", doorNo);
+                    params.put("DoorNo", "%"+(StringUtils.isNotBlank(doorNo) ? doorNo.trim() : "")+"%");
                 }
             }
             params.put("propertyType", PROPERTY_TYPE_CODE_VACANT);

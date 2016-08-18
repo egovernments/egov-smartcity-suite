@@ -40,8 +40,6 @@
 
 package org.egov.eis.web.controller.masters.position;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.service.DeptDesigService;
 import org.egov.eis.service.DesignationService;
@@ -69,6 +67,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -187,15 +186,8 @@ public class SearchPositionController {
     public String commonSearchResult(final Long departmentId, final Long designationId) {
 
         final List<Position> positionList = positionMasterService.getPageOfPositions(departmentId, designationId);
-        final StringBuilder PositionJSONData = new StringBuilder("{\"data\":").append(toJSON(positionList)).append("}");
+        final StringBuilder PositionJSONData = new StringBuilder("{\"data\":").append(toJSON(positionList, Position.class, PositionAdaptor.class)).append("}");
         return PositionJSONData.toString();
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Position.class, new PositionAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "search", method = RequestMethod.POST)

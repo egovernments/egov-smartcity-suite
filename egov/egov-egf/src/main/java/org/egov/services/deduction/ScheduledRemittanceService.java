@@ -55,6 +55,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
@@ -165,6 +166,8 @@ public class ScheduledRemittanceService {
     private User user;
 
     private Position nextOwner;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     /**
      * Our jboss Trnasaction manager does not support nested transactions https://community.jboss.org/thread/206684 so all have to
@@ -643,14 +646,13 @@ public class ScheduledRemittanceService {
         try {
             GJVBankAccountMap = new HashMap<String, Integer>();
             String value = "";
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AuoRemittance_Account_Number_For_GJV'");
+            final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_GJV");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AuoRemittance_Account_Number_For_GJV app config key not defined",
                         "AuoRemittance_Account_Number_For_GJV app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+           
+                for (final AppConfigValues appConfigVal : appConfigList)
                 {
                     value = appConfigVal.getValue();
 
@@ -693,14 +695,12 @@ public class ScheduledRemittanceService {
             // 2. 02-****701
             receiptBankAccountMap = new HashMap<String, Integer>();
             String value = "";
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AuoRemittance_Account_Number_For_Receipts'");
+             final List<AppConfigValues> appConfigList =appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AuoRemittance_Account_Number_For_Receipts");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined",
                         "AuoRemittance_Account_Number_For_Receipts app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfigList)
                 {
                     value = appConfigVal.getValue();
 
@@ -1099,14 +1099,12 @@ public class ScheduledRemittanceService {
         final SimpleDateFormat stringToDate = new SimpleDateFormat("dd/MM/yyyy");
         String value = null;
         try {
-            final List<AppConfig> appConfigList = remittancePersistenceService.getPersistenceService().findAllBy(
-                    "from AppConfig where key_name = 'AutoRemittance_Start_Date'");
+            final List<AppConfigValues> appConfigList =  appConfigValueService.getConfigValuesByModuleAndKey("EGF", "AutoRemittance_Start_Date");
             if (appConfigList == null)
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         "AutoRemittance_Start_Date app config key not defined",
                         "AutoRemittance_Start_Date app config key not defined")));
-            for (final AppConfig appConfig : appConfigList)
-                for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+                for (final AppConfigValues appConfigVal : appConfigList)
                     value = appConfigVal.getValue();
 
             startDate = stringToDate.parse(value);

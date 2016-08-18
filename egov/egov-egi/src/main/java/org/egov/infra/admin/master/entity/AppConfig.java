@@ -61,18 +61,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "eg_appconfig")
 @SequenceGenerator(name = AppConfig.SEQ_APPCONFIG, sequenceName = AppConfig.SEQ_APPCONFIG, allocationSize = 1)
-@CompositeUnique(fields = { "keyName", "module" }, enableDfltMsg = true, message = "Key Name and Module combination already exists")
+@CompositeUnique(fields = { "keyName", "module" }, enableDfltMsg = true)
 @Searchable
 public class AppConfig extends AbstractAuditable {
 
     private static final long serialVersionUID = 8904645810221559541L;
-
     public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
 
     @Expose
@@ -84,12 +86,13 @@ public class AppConfig extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 250)
-    @Column(name = "key_name")
+    @Column(name = "key_name", updatable = false)
     @Searchable
     private String keyName;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "module", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "module", nullable = false, updatable = false)
+    @NotNull
     @Searchable
     private Module module;
 
@@ -100,15 +103,16 @@ public class AppConfig extends AbstractAuditable {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "key", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AppConfigValues> appDataValues = new ArrayList<AppConfigValues>(0);
+    @Valid
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, mappedBy = "config")
+    private List<AppConfigValues> confValues = new ArrayList<>();
 
-    public String getDescription() {
-        return description;
+    public Long getId() {
+        return id;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getKeyName() {
@@ -120,7 +124,6 @@ public class AppConfig extends AbstractAuditable {
     }
 
     public Module getModule() {
-
         return module;
     }
 
@@ -128,56 +131,35 @@ public class AppConfig extends AbstractAuditable {
         this.module = module;
     }
 
-    public void addAppDataValues(final AppConfigValues appDataValues) {
-        getAppDataValues().add(appDataValues);
+    public String getDescription() {
+        return description;
     }
 
-    public List<AppConfigValues> getAppDataValues() {
-        return appDataValues;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
-    public void setAppDataValues(final List<AppConfigValues> appDataValues) {
-        this.appDataValues = appDataValues;
+    public List<AppConfigValues> getConfValues() {
+        return confValues;
+    }
+
+    public void setConfValues(final List<AppConfigValues> confValues) {
+        this.confValues = confValues;
     }
 
     @Override
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof AppConfig))
+            return false;
+        final AppConfig appConfig = (AppConfig) o;
+        return Objects.equals(keyName, appConfig.keyName) &&
+                Objects.equals(module, appConfig.module);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (keyName == null ? 0 : keyName.hashCode());
-        return result;
+        return Objects.hash(keyName, module);
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final AppConfig other = (AppConfig) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (keyName == null) {
-            if (other.keyName != null)
-                return false;
-        } else if (!keyName.equals(other.keyName))
-            return false;
-        return true;
-    }
-
 }

@@ -58,31 +58,27 @@ public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long
     BoundaryType findByNameContainingIgnoreCase(String name);
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:hierarchyName and bt.hierarchy=:hierarchyLevel")
-    public BoundaryType findByHierarchyTypeNameAndLevel(@Param("hierarchyName") String name,
+    BoundaryType findByHierarchyTypeNameAndLevel(@Param("hierarchyName") String name,
             @Param("hierarchyLevel") Long hierarchyLevel);
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.id=:hierarchyId")
-    public List<BoundaryType> findByHierarchyTypeId(@Param("hierarchyId") Long id);
+    List<BoundaryType> findByHierarchyTypeId(@Param("hierarchyId") Long id);
 
     @Query("select bt from BoundaryType bt where bt.parent.id=:parentId")
-    public BoundaryType findByParent(@Param("parentId") Long parentId);
+    BoundaryType findByParent(@Param("parentId") Long parentId);
 
     @Query("select bt from BoundaryType bt where bt.id = :id and bt.hierarchyType.id = :hierarchyId")
-    public BoundaryType findByIdAndHierarchy(@Param("id") Long id, @Param("hierarchyId") Long hierarchyId);
+    BoundaryType findByIdAndHierarchy(@Param("id") Long id, @Param("hierarchyId") Long hierarchyId);
 
-    public BoundaryType findByNameAndHierarchyType(String name, HierarchyType hierarchyType);
+    BoundaryType findByNameAndHierarchyType(String name, HierarchyType hierarchyType);
 
     @Query("select bt from BoundaryType bt where bt.name = :boundaryTypeName and bt.hierarchyType.name = :hierarchyTypeName")
-    public BoundaryType findByNameAndHierarchyTypeName(@Param("boundaryTypeName") String name,
+    BoundaryType findByNameAndHierarchyTypeName(@Param("boundaryTypeName") String name,
             @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select bt from BoundaryType bt where bt.parent is not null and bt.hierarchyType = :hierarchyType")
-    public List<BoundaryType> findAllByHierarchyTypeWhenParentIsNotNull(
-            @Param("hierarchyType") HierarchyType hierarchyType);
-
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:name")
-    public List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName);
+    List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName);
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.code in :names and bt.name like 'W%'")
-    public List<BoundaryType> findByHierarchyTypeNames(@Param("names") final Set<String> names);
+    List<BoundaryType> findByHierarchyTypeNames(@Param("names") final Set<String> names);
 }

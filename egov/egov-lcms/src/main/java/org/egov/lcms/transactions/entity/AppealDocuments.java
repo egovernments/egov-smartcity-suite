@@ -78,12 +78,11 @@ public class AppealDocuments extends AbstractPersistable<Long> {
     @JoinColumn(name = "appeal")
     private Appeal appeal;
 
-    @NotNull
     @Length(min = 3, max = 100)
     private String documentName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "eglc_appeal_filestore", joinColumns = @JoinColumn(name = "appealDocId"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "eglc_appeal_filestore", joinColumns = @JoinColumn(name = "appealdocid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private transient MultipartFile[] files;

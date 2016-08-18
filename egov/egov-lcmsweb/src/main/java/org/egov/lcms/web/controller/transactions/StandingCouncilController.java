@@ -63,56 +63,55 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/standingCouncil")
 public class StandingCouncilController {
 
-	@Autowired
-	private LegalCaseService legalCaseService;
+    @Autowired
+    private LegalCaseService legalCaseService;
 
-	@RequestMapping(value = "/create/", method = RequestMethod.GET)
-	public String viewForm(@ModelAttribute("legalCaseAdvocate") LegalCaseAdvocate legalCaseAdvocate,
-			@RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
-		final LegalCase legalCase = getLegalCase(lcNumber);
-		final List<LegalCaseAdvocate> legalAdvocateList = getLegalCase(lcNumber).getEglcLegalcaseAdvocates();
-		if (!legalAdvocateList.isEmpty()) {
-			legalCaseAdvocate = legalAdvocateList.get(0);
-		}
-		model.addAttribute("legalCase", legalCase);
-		model.addAttribute("seniourAdvisRequired", legalCase.getIsSenioradvrequired());
-		model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
-		return "legalcase-standingCouncil";
-	}
+    @RequestMapping(value = "/create/", method = RequestMethod.GET)
+    public String viewForm(@ModelAttribute("legalCaseAdvocate") LegalCaseAdvocate legalCaseAdvocate,
+            @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
+        final LegalCase legalCase = getLegalCase(lcNumber);
+        final List<LegalCaseAdvocate> legalAdvocateList = getLegalCase(lcNumber).getEglcLegalcaseAdvocates();
+        if (!legalAdvocateList.isEmpty())
+            legalCaseAdvocate = legalAdvocateList.get(0);
+        model.addAttribute("legalCase", legalCase);
+        model.addAttribute("seniourAdvisRequired", legalCase.getIsSenioradvrequired());
+        model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        return "legalcase-standingCouncil";
+    }
 
-	@ModelAttribute
-	private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
-		final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
-		return legalcase;
-	}
+    @ModelAttribute
+    private LegalCase getLegalCase(@RequestParam("lcNumber") final String lcNumber) {
+        final LegalCase legalcase = legalCaseService.findByLcNumber(lcNumber);
+        return legalcase;
+    }
 
-	@RequestMapping(value = "/create/", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute("legalCaseAdvocate") final LegalCaseAdvocate legalCaseAdvocate,
-			final BindingResult errors, final RedirectAttributes redirectAttrs,
-			@RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
-		final LegalCase legalCase = getLegalCase(lcNumber);
-		if (errors.hasErrors()) {
-			model.addAttribute("legalcase", legalCase);
-			return "legalcase-standingCouncil";
-		} else
-			legalCaseAdvocate.setLegalCase(legalCase);
-		legalCaseService.saveStandingCouncilEntity(legalCaseAdvocate);
-		redirectAttrs.addFlashAttribute("legalCaseAdvocate", legalCaseAdvocate);
-		model.addAttribute("message", "Standing Council Saved successfully.");
-		model.addAttribute("legalcase", legalCase);
-		model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
-		final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
-		final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
-		for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
-			if (dd.getIsRepondent())
-				pettempList.add(dd);
-			else
-				respoTempList.add(dd);
-		model.addAttribute("mode", "view");
-		model.addAttribute("pettempList", pettempList);
-		model.addAttribute("respoTempList", respoTempList);
-		return "legalcasedetails-view";
+    @RequestMapping(value = "/create/", method = RequestMethod.POST)
+    public String create(@Valid @ModelAttribute("legalCaseAdvocate") final LegalCaseAdvocate legalCaseAdvocate,
+            final BindingResult errors, final RedirectAttributes redirectAttrs,
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
+        final LegalCase legalCase = getLegalCase(lcNumber);
+        if (errors.hasErrors()) {
+            model.addAttribute("legalcase", legalCase);
+            return "legalcase-standingCouncil";
+        } else
+            legalCaseAdvocate.setLegalCase(legalCase);
+        legalCaseService.saveStandingCouncilEntity(legalCaseAdvocate);
+        redirectAttrs.addFlashAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        model.addAttribute("message", "Standing Council Saved successfully.");
+        model.addAttribute("legalcase", legalCase);
+        model.addAttribute("legalCaseAdvocate", legalCaseAdvocate);
+        final List<BipartisanDetails> pettempList = new ArrayList<BipartisanDetails>();
+        final List<BipartisanDetails> respoTempList = new ArrayList<BipartisanDetails>();
+        for (final BipartisanDetails dd : legalCase.getBipartisanDetails())
+            if (dd.getIsRepondent())
+                pettempList.add(dd);
+            else
+                respoTempList.add(dd);
+        model.addAttribute("mode", "view");
+        model.addAttribute("pettempList", pettempList);
+        model.addAttribute("respoTempList", respoTempList);
+        return "legalcasedetails-view";
 
-	}
+    }
 
 }

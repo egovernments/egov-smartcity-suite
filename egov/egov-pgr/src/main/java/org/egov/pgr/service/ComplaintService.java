@@ -181,7 +181,7 @@ public class ComplaintService {
         complaint.setStatus(complaintStatusService.getByName("REGISTERED"));
         if (complaint.getLocation() == null && complaint.getLat() != 0.0 && complaint.getLng() != 0.0)
             try {
-                final Long bndryId = boundaryService.getBndryIdFromShapefile(complaint.getLat(), complaint.getLng());
+                final Long bndryId = boundaryService.getBoundaryIdFromShapefile(complaint.getLat(), complaint.getLng());
                 if (bndryId != null && bndryId != 0) {
                     final Boundary location = boundaryService.getBoundaryById(bndryId);
                     complaint.setLocation(location);

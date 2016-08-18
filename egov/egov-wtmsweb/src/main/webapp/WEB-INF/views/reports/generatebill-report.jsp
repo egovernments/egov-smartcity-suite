@@ -173,7 +173,7 @@
 			
 			<div class="row hide" id="warning-msg">
 				   <div class="col-xs-12 col-md-6 col-md-offset-3">
-				     <div class="alert alert-warning">Search result exceeds the limit 1000. Please, refine your search</div>
+				     <div class="alert alert-warning">Search result exceeds the limit 2000. Please, refine your search</div>
 				   </div>
 				</div>
 

@@ -40,15 +40,15 @@
 
 package org.egov.infra.admin.master.service;
 
-import java.util.List;
-import java.util.Set;
-
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -79,10 +79,6 @@ public class BoundaryTypeService {
         return boundaryTypeRepository.findByName(name);
     }
 
-    public List<BoundaryType> getAllBoundaryTypes() {
-        return boundaryTypeRepository.findAll();
-    }
-
     public BoundaryType getBoundaryTypeByHierarchyTypeNameAndLevel(final String name, final Long hierarchyLevel) {
         return boundaryTypeRepository.findByHierarchyTypeNameAndLevel(name, hierarchyLevel);
     }
@@ -100,7 +96,7 @@ public class BoundaryTypeService {
     }
 
     public BoundaryType setHierarchyLevel(final BoundaryType boundaryType, final String mode) {
-        if (mode.equalsIgnoreCase("create"))
+        if ("create".equalsIgnoreCase(mode))
             boundaryType.setHierarchy(1l);
         else {
             final Long parentBoundaryTypeId = boundaryType.getParent().getId();
@@ -118,12 +114,8 @@ public class BoundaryTypeService {
     }
 
     public BoundaryType getBoundaryTypeByNameAndHierarchyTypeName(final String boundaryTypename,
-            final String hierarchyTypeName) {
+                                                                  final String hierarchyTypeName) {
         return boundaryTypeRepository.findByNameAndHierarchyTypeName(boundaryTypename, hierarchyTypeName);
-    }
-
-    public List<BoundaryType> getNonRootBoundaryTypesByHierarchyType(final HierarchyType hierarchyType) {
-        return boundaryTypeRepository.findAllByHierarchyTypeWhenParentIsNotNull(hierarchyType);
     }
 
     public List<BoundaryType> getBoundaryTypeByHierarchyTypeName(final String name) {

@@ -349,6 +349,11 @@ function deleteChequeObj(obj,tableId)
 	document.forms[0].instrumentCount.value=count;
 }
 
+function process(date){
+	   var parts = date.split("/");
+	   return new Date(parts[2], parts[1] - 1, parts[0]);
+	}
+
 function verifyChequeDetails(table,len1)
 {
 	var check=true;
@@ -409,6 +414,15 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	}else {
+	    		var receiptDate = document.getElementById("receiptdate").value;
+		   	   	 if(receiptDate !=null && receiptDate != '' && instrDate.value != null && instrDate.value!= '' && check==true ){
+		   				if(process(instrDate.value) > process(receiptDate)){
+		   		    		document.getElementById("challan_error_area").innerHTML+=
+		   						'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+		   					window.scroll(0,0);
+		   					check=false;
+		   		 	   	}
+		   			}
 	    	      checkForCurrentDate(instrDate);
 	    	    } 	                 
 	    }

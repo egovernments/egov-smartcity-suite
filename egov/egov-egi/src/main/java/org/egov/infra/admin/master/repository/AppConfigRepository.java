@@ -41,10 +41,9 @@
 package org.egov.infra.admin.master.repository;
 
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.Module;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,45 +51,13 @@ import java.util.List;
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
 
-    AppConfig findByIdAndModule_Id(final Long keyid, final Long moduleid);
+    AppConfig findByModule_NameAndKeyName(String moduleName, String keyName);
 
-    AppConfig findByKeyNameAndModule_Name(final String keyName, final String moduleName);
+    AppConfig findById(Long id);
 
-    AppConfig findById(final Long id);
+    AppConfig findByKeyName(final String keyName);
 
-    // @Query("select b from AppConfig b where b.module.id=:id")
-    List<AppConfig> findByModule_Id(final Long id);
+    List<AppConfig> findByModule_Name(String moduleName);
 
-    AppConfig findBykeyName(final String keyName);
-
-    List<AppConfig> findByModule_Name(final String moduleName);
-
-    @Query("select distinct(a.module.name) from AppConfig a order by a.module.name")
-    List<String> getAllAppConfigModule();
-
-    @Query("select app from AppConfig app where app.id = :keyid and app.module.id = :moduleid")
-    public AppConfig findBykeyIdAndModuleId(@Param("keyid") Long keyid, @Param("moduleid") Long moduleid);
-
-    @Query("select app from AppConfig app where app.keyName = :keyName and app.module.name = :moduleName")
-    public AppConfig getConfigKeyByName(@Param("keyName") String keyName, @Param("moduleName") String moduleName);
-
-    @Query("select b from AppConfig b where b.module.id=:id")
-    List<AppConfig> findAllByModuleId(@Param("id") Long id);
-
-    @Query("select b from Module b where  b.enabled=true AND "
-            + "(b.parentModule IS NULL OR (b.parentModule IN (select c.id from Module c where c.parentModule IS NULL ))) "
-            + "AND  UPPER(b.name) like UPPER(:name) order by b.id")
-    List<Module> findByNameContainingIgnoreCase(@Param("name") String name);
-
-    @Query("select b from Module b where  b.enabled=true AND "
-            + "(b.parentModule IS NULL OR (b.parentModule IN (select c.id from Module c where c.parentModule IS NULL ))) "
-            + " order by b.name")
-    List<Module> findAllModules();
-
-    @Query("select b from Module b where  b.enabled=true AND b.id=(:id)")
-    Module findByModuleById(@Param("id") Long id);
-
-    @Query("select b from AppConfig b where b.module.name=:moduleName")
-    List<AppConfig> getAppConfigKeys(@Param("moduleName") String moduleName);
-
+    Page<AppConfig> findByModule_Name(String moduleName, Pageable pageable);
 }

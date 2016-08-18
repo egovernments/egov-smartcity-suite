@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.service.ComplaintService;
@@ -51,10 +49,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -63,7 +61,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class PendingGrievanceController {
 
     private final ComplaintService complaintService;
-    public static final String CONTENTTYPE_JSON = "application/json";
 
     @Autowired
     public PendingGrievanceController(final ComplaintService complaintService) {
@@ -82,17 +79,9 @@ public class PendingGrievanceController {
     }
 
     @RequestMapping(value = "/ajax-grievancelist", method = GET, produces = APPLICATION_JSON_VALUE)
-    public @ResponseBody void getPendingGrievances(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    public @ResponseBody void getPendingGrievances(HttpServletResponse response) throws IOException {
         IOUtils.write(
-                new StringBuilder("{ \"data\":").append(toJSON(complaintService.getPendingGrievances())).append("}").toString(),
+                new StringBuilder("{ \"data\":").append(toJSON(complaintService.getPendingGrievances(), Complaint.class, PendingGrievanceAdaptor.class)).append("}").toString(),
                 response.getWriter());
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Complaint.class, new PendingGrievanceAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

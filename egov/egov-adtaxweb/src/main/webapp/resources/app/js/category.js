@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
 	
 	$('#categories').change(function(){
 		$.ajax({
-			url: "/adtax/hoarding/subcategories-by-category",    
+			url: "/adtax/hoarding/getsubcategories-by-category",    
 			type: "GET",
 			data: {
 				categoryId : $('#categories').val()   

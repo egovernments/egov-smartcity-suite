@@ -78,7 +78,7 @@
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType"/></label>
 						<div class="col-sm-6" style="padding-top: 7px">
-							<strong><c:out value="${boundaryType.hierarchyType.name}" /></strong>                 
+							<strong><c:out value="${boundaryType.hierarchyType.name}" /></strong>
 						</div>
 					</div>
 					<div class="form-group">
@@ -87,7 +87,7 @@
 						</label>
 						<div class="col-sm-6" style="padding-top: 7px">
 							<strong><c:out value="${boundaryType.name}" /></strong>
-							<input type="hidden" name="boundaryTypeId" value="<c:out value="${boundaryType.id}" />" />
+							<input type="hidden" name="boundaryType" value="<c:out value="${boundaryType.id}" />" />
 						</div>
 					</div>
 					  <div class="panel-body custom-form">
@@ -99,12 +99,11 @@
 									<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
-		                            <form:select path="parent"
-		                                         id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error" required="required">
+		                            <form:select path="parent" id="hierarchyTypeSelect" cssClass="form-control"  cssErrorClass="form-control error" required="true">
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
 		                            </form:select>
-		                            <form:errors path="name" cssClass="error-msg"/>
+		                            <form:errors path="parent" cssClass="error-msg"/>
 	                        	</div>
 	                        </div>
 	                 	</c:when>
@@ -119,7 +118,7 @@
 		                                <form:option value=""> <spring:message code="lbl.select"/> </form:option>
 		                                <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
 		                            </form:select>
-		                            <form:errors path="name" cssClass="error-msg"/>
+		                            <form:errors path="parent" cssClass="error-msg"/>
 	                        	</div>
 	                        </div>
 	                 	</c:otherwise>

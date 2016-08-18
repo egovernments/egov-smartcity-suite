@@ -40,14 +40,11 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -83,7 +80,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -102,6 +98,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -192,10 +189,11 @@ public class GenerateConnectionBillController {
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->"+Long.valueOf(count));
         List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)>1000){
+        if (Long.valueOf(count)>2000){
             generateconnectionBillList = new ArrayList<>();
         }
-        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
+                GenerateConnectionBillAdaptor.class)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
         
@@ -207,7 +205,7 @@ public class GenerateConnectionBillController {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
+        response.setHeader("content-disposition", "attachment; filename=\"" +consumerCode+".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
 
@@ -228,14 +226,6 @@ public class GenerateConnectionBillController {
             }
         else
             throw new ValidationException("err.demand.notice");
-    }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(GenerateConnectionBill.class,
-                new GenerateConnectionBillAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/mergeAndDownload", method = RequestMethod.GET)
@@ -275,7 +265,7 @@ public class GenerateConnectionBillController {
             if (!pdfs.isEmpty()) {
                 final ByteArrayOutputStream output = new ByteArrayOutputStream();
                 final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
+                response.setHeader("Content-disposition", "attachment;filename=" + "search_bill" + ".pdf");
                 response.setContentType("application/pdf");
                 response.setContentLength(data.length);
                 response.getOutputStream().write(data);
@@ -375,7 +365,7 @@ public class GenerateConnectionBillController {
             if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader("Content-disposition", "attachment;filename=" + "genaratebill" + ".zip");
+                response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 

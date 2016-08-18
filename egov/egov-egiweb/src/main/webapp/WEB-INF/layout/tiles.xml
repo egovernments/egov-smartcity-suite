@@ -51,46 +51,46 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
-	
-	<definition name="login" template="/WEB-INF/views/login.jsp"/>
-	
+    </definition>
+
+    <definition name="login" template="/WEB-INF/views/login.jsp"/>
+
     <definition name="home" template="/WEB-INF/views/home/home.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
     </definition>
-    
+
     <definition name="help" extends="base_layout">
         <put-attribute name="page-title" value="title.help.page" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/home/help.jsp"/>
     </definition>
-    
+
     <definition name="password/reset" extends="base_layout">
         <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/home/password-reset.jsp"/>
     </definition>
-    
+
     <definition name="profile-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.edit.profile" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/home/profile-edit.jsp"/>
     </definition>
-    
+
     <definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	  <definition name="userrole-search" extends="base_layout">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+    <definition name="userrole-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchuserRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-search.jsp"/>
     </definition>
-    	  <definition name="userrole-update" extends="base_layout">
+    <definition name="userrole-update" extends="base_layout">
         <put-attribute name="page-title" value="title.modifyuserRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-update.jsp"/>
     </definition>
-      <definition name="userrole-view" extends="base_layout">
+    <definition name="userrole-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewuserRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/userrole/userrole-view.jsp"/>
     </definition>
@@ -98,7 +98,7 @@
         <put-attribute name="page-title" value="title.createRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-form.jsp"/>
     </definition>
-     <definition name="role-search" extends="base_layout">
+    <definition name="role-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-search.jsp"/>
     </definition>
@@ -110,62 +110,49 @@
         <put-attribute name="page-title" value="title.updateRole" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/role/role-update.jsp"/>
     </definition>
-      <definition name="appConfig-form" extends="base_layout">
+
+    <definition name="app-config-create" extends="base_layout">
         <put-attribute name="page-title" value="title.createAppconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/config/app-config-create.jsp"/>
     </definition>
-    
-       <definition name="view-appconfig" extends="base_layout">
+    <definition name="app-config-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewpconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/view-appconfig.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/config/app-config-view.jsp"/>
     </definition>
-     <definition name="appConfig-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.successAppconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-success.jsp"/>
-    </definition>
-        <definition name="appConfig-editform" extends="base_layout">
+    <definition name="app-config-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.updateAppconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-editform.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/config/app-config-edit.jsp"/>
     </definition>
-      <definition name="appConfig-list" extends="base_layout">
+    <definition name="search-appconfig" extends="base_layout">
         <put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/config/app-config-search.jsp"/>
     </definition>
-     <definition name="appConfig-norecord" extends="base_layout">
-        <put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-norecord.jsp"/>
-    </definition>
-        
-    <definition name="appConfigList-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.searchpconfig" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/appConfig/appConfig-viewList.jsp"/>
-    </definition>
-    
+
     <definition name="hierarchyType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-form.jsp"/>
     </definition>
-    
+
     <definition name="hierarchyType-list" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-list.jsp"/>
     </definition>
-    
+
     <definition name="hierarchyType-view" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-view.jsp"/>
     </definition>
-    
+
     <definition name="hierarchyType-updateForm" extends="base_layout">
         <put-attribute name="page-title" value="title.hierarchyType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/hierarchytype/hierarchyType-updateForm.jsp"/>
     </definition>
-    
+
     <definition name="boundaryType-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createBoundaryType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-form.jsp"/>
     </definition>
-     <definition name="boundaryType-search" extends="base_layout">
+    <definition name="boundaryType-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchBoundaryType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundarytype/boundaryType-search.jsp"/>
     </definition>
@@ -189,47 +176,47 @@
         <put-attribute name="page-title" value="title.department.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-form.jsp"/>
     </definition>
-    
+
     <definition name="boundary-search" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-search.jsp"/>
     </definition>
-    
+
     <definition name="boundary-view" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-view.jsp"/>
     </definition>
-    
+
     <definition name="boundary-create" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-create.jsp"/>
     </definition>
-    
+
     <definition name="view-boundaries" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/view-boundaries.jsp"/>
     </definition>
-    
+
     <definition name="department-search" extends="base_layout">
         <put-attribute name="page-title" value="title.department.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-search.jsp"/>
     </definition>
-    
+
     <definition name="department-view" extends="base_layout">
         <put-attribute name="page-title" value="title.department.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-view.jsp"/>
     </definition>
-    
+
     <definition name="department-updateForm" extends="base_layout">
         <put-attribute name="page-title" value="title.department.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/department/department-updateForm.jsp"/>
     </definition>
-    
-     <definition name="city-setup" extends="base_layout">
+
+    <definition name="city-setup" extends="base_layout">
         <put-attribute name="page-title" value="title.city.setup" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/city/city-setup.jsp"/>
     </definition>
-    
+
     <definition name="reset-password" extends="base_layout">
         <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/user/reset-password.jsp"/>
@@ -242,7 +229,7 @@
         <put-attribute name="page-title" value="title.updateCrosshierarchy" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-editform.jsp"/>
     </definition>
-     <definition name="crossHierarchy-success" extends="base_layout">
+    <definition name="crossHierarchy-success" extends="base_layout">
         <put-attribute name="page-title" value="title.successCrosshierarchy" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-success.jsp"/>
     </definition>

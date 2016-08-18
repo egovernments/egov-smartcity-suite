@@ -1,0 +1,1 @@
+INSERT INTO eg_role(id, name, description, createddate, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (nextval('seq_eg_role'), 'Advertisement Tax Report Viewer', 'Advertisement Tax Report Viewer', now(), 1, 1, now(), 0); 

@@ -86,11 +86,6 @@ function addRow(tableObj,rowObj)
     tbody.appendChild(rowObj);
 }
 
-function process(date){
-   var parts = date.split("/");
-   return new Date(parts[2], parts[1] - 1, parts[0]);
-}
-
 function validateMiscReceipt()
 {
     if(!validateMiscDetails()){
@@ -219,9 +214,6 @@ function resetMisc(){
 function onBodyLoadMiscReceipt()
 {
     document.getElementById("voucherDate").value=currDate;
-    if(document.getElementById("deptId")!=null){
-        document.getElementById("deptId").disabled=true;
-    }
     document.getElementById("rebateDetails").style.display="none";
     loadDropDownCodes();
     loadDropDownRebateCodes();

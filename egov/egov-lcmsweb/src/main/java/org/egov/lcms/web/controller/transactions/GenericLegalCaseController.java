@@ -46,12 +46,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.lcms.masters.entity.CaseTypeMaster;
+import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.entity.GovernmentDepartment;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
 import org.egov.lcms.masters.service.CaseTypeMasterService;
+import org.egov.lcms.masters.service.CourtMasterService;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.masters.service.GovernmentDepartmentService;
+import org.egov.lcms.masters.service.PetitionTypeMasterService;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,18 +70,27 @@ public class GenericLegalCaseController {
 
     @Autowired
     private GovernmentDepartmentService governmentDepartmentService;
-
-
+    
+    @Autowired
+    private PetitionTypeMasterService petitionTypeMasterService;
+    
+    @Autowired
+    private CourtMasterService courtMasterService;
 
     public @ModelAttribute("courtTypeList") List<CourtTypeMaster> courtTypeList() {
         return courtTypeMasterService.getActiveCourtTypes();
     }
-
+    public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> getPetitionList() {
+        return petitionTypeMasterService.getPetitiontypeList();
+    }
+    
+    public @ModelAttribute("courtsList") List<CourtMaster> getCourtNameList() {
+        return courtMasterService.findAll();
+    }
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
         return governmentDepartmentService.findAll();
     }
 
-   
     public @ModelAttribute("lcNumberTypes") Map<String, String> getLcNumberTypeTypes() {
         return getLcNumberTypesMap();
     }
@@ -92,7 +105,6 @@ public class GenericLegalCaseController {
     public @ModelAttribute("caseTypeList") List<CaseTypeMaster> caseTypeList() {
         return caseTypeMasterService.getActiveCaseTypeList();
     }
-
 
     public @ModelAttribute("wPYearList") List<Integer> getWPYearList() {
         final List<Integer> wPYearList = new ArrayList<Integer>();

@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.masters;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeAdaptor;
@@ -53,16 +51,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 @Controller
 @RequestMapping("/complainttype")
-public class ViewComplaintTypeController extends MultiActionController {
+public class ViewComplaintTypeController {
 
     private ComplaintTypeService complaintTypeService;
     public static final String CONTENTTYPE_JSON = "application/json";
@@ -76,13 +75,6 @@ public class ViewComplaintTypeController extends MultiActionController {
     public String complaintTypeViewForm(@ModelAttribute ComplaintType complaintType, Model model) {
         return "view-complaintType";
 
-    }
-
-    public String toJSON(final Object object) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.registerTypeAdapter(ComplaintType.class, new ComplaintTypeAdaptor()).create();
-        String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
@@ -103,7 +95,7 @@ public class ViewComplaintTypeController extends MultiActionController {
         complaintTypeJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
         complaintTypeJSONData.append(",\"totalDisplayRecords\":").append(complaintTypeList.size());
         complaintTypeJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-        complaintTypeJSONData.append(",\"data\":").append(toJSON(complaintTypeList)).append("}");
+        complaintTypeJSONData.append(",\"data\":").append(toJSON(complaintTypeList, ComplaintType.class, ComplaintTypeAdaptor.class)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(complaintTypeJSONData, response.getWriter());
     }

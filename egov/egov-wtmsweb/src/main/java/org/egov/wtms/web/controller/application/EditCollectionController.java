@@ -207,11 +207,13 @@ public class EditCollectionController {
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
         final List<LegacyReceipts> legacyReceipts = waterConnectionDetails.getLegacyReceipts();
-        LegacyReceipts legacyreceipts = new LegacyReceipts();
-        for (final LegacyReceipts legacyReceipt : legacyReceipts) {
-            legacyreceipts = legacyReceiptsSevice.findByReceiptNumber(legacyReceipt.getReceiptNumber());
-            if (legacyreceipts != null)
-                throw new ValidationException("err.receipt.number.exists");
+        if (waterConnectionDetails.getLegacyReceipts().size()>0)
+        {
+          LegacyReceipts legacyreceipts = new LegacyReceipts();
+          LegacyReceipts legacyreceipt = waterConnectionDetails.getLegacyReceipts().get(waterConnectionDetails.getLegacyReceipts().size()-1);
+          legacyreceipts = legacyReceiptsSevice.findByReceiptNumber(legacyreceipt.getReceiptNumber());
+          if (legacyreceipts != null)
+              throw new ValidationException("err.receipt.number.exists");
         }
         for (final LegacyReceipts legacyReceipt : legacyReceipts)
             legacyReceipt.setWaterConnectionDetails(waterConnectionDetails);

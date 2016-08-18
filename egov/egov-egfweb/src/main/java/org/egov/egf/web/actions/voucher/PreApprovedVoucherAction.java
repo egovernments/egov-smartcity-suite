@@ -1136,10 +1136,9 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction
 
     protected void getHeaderMandateFields()
     {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULTTXNMISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULTTXNMISATTRRIBUTES");
+
+            for (final AppConfigValues appConfigVal : appConfigList)
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf("|"));

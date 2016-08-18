@@ -66,23 +66,8 @@ public class BoundaryTypeBuilder {
         return this;
     }
 
-    public BoundaryTypeBuilder withParentBndryType(final BoundaryType parentBndryType) {
-        boundaryTypeImpl.setParent(parentBndryType);
-        return this;
-    }
-
     public BoundaryTypeBuilder withName(final String name) {
         boundaryTypeImpl.setName(name);
-        return this;
-    }
-
-    public BoundaryTypeBuilder withParentName(final String parentName) {
-        boundaryTypeImpl.setParentName(parentName);
-        return this;
-    }
-
-    public BoundaryTypeBuilder withBndryTypeLocal(final String bndryTypeLocal) {
-        //boundaryTypeImpl.setBndryTypeLocal(bndryTypeLocal);
         return this;
     }
 
