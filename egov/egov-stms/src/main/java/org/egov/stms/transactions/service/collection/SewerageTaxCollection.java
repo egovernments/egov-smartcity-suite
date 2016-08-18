@@ -369,7 +369,10 @@ public class SewerageTaxCollection extends TaxCollection {
                     } 
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails); 
                 sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
-                if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
+                
+                //TODO: Sms and email not sending after doing demand collection,later must be fix
+                
+               /* if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
                     try{
                         sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, ServletActionContext.getRequest());
                     } catch (final Exception e) {
@@ -377,7 +380,7 @@ public class SewerageTaxCollection extends TaxCollection {
                         LOGGER.error(errMsg, e);
                        //throw new ApplicationRuntimeException(errMsg, e);
                     }
-                }
+                }*/
             }
         }
     }
