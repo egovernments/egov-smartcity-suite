@@ -50,6 +50,7 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -127,4 +128,7 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     Double getMeasurementsPreviousCumulativeQuantity(@Param("mbHeaderId") final Long mbHeaderId,
             @Param("status") final String status,
             @Param("woMeasurementSheetId") final Long woMeasurementSheetId);
+    
+    @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and mbh.egBillregister.id < :contractorBillId ")
+    List<MBHeader> findMBHeadersTillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId);
 }

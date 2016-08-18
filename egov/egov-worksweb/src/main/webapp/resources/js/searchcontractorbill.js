@@ -103,7 +103,9 @@ function callAjaxSearch() {
 									+ data.workOrderId + '\')">'
 									+ data.workOrderNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.billValue * 100) / 100).toFixed(2));
-					if(data.billStatus == 'APPROVED')
+					if(data.billStatus == 'APPROVED' && data.workActivitySize != 0 && data.billType == 'Part Bill')
+					    $('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option><option value="3">View Contract Certificate</option></select>');
+					else if(data.billStatus == 'APPROVED')
 						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option></select>');
 					else
 						$('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option></select>');
@@ -165,6 +167,9 @@ function renderAction(id, value) {
 				'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	if(value == 2)
 		window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	
+	if(value == 3)
+		window.open("/egworks/contractcertificate/contractcertificatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 function openLineEstimate(lineEstimateId) {
@@ -240,4 +245,9 @@ $(document).ready(function() {
 function renderPDF(){
 	var id = $('#id').val();
 	window.open("/egworks/contractorbill/contractorbillPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewContractCertificatePDF() {
+	var id = $('#id').val();
+	window.open("/egworks/contractcertificate/contractcertificatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

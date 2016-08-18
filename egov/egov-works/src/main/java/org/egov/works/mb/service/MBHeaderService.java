@@ -925,4 +925,8 @@ public class MBHeaderService {
                 MBHeader.MeasurementBookStatus.CANCELLED.toString(),
                 woMeasurementSheetId);
     }
+    
+    public List<MBHeader> getMBHeaderForBillTillDate(final Long contractorBillId,final Long workOrderEstimateId) {
+        return mbHeaderRepository.findMBHeadersTillDate(contractorBillId, workOrderEstimateId);
+    }
 }

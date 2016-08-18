@@ -97,4 +97,10 @@ public class WorkOrderActivityService {
 
         return criteria.list();
     }
+    
+    public List<WorkOrderActivity> getAllWOrkOrderActivitiesWithMB(final Long workOrderEstimateId) {
+        return workOrderActivityRepository.getAllWOrkOrderActivitiesWithMB(workOrderEstimateId);
+    }
+    
+    
 }
