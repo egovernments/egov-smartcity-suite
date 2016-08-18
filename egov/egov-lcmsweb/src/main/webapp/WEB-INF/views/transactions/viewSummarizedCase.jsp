@@ -154,6 +154,25 @@
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.officerincharge" />
+							</div>
+								<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.officerIncharge}" />
+							</div>
+							
+							
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.noticedate" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.noticeDate}" var="noticeDate" />
+								<c:out value="${noticeDate}" />
+							</div>
+						</div>
+						
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.fieldbycarp" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">

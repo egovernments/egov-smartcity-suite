@@ -54,7 +54,7 @@
 						
 						<div class="radio">
 							  <label><form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedYes" value="YES" checked="checked"  />Yes</label>
+								id="IsCompliedYes" value="YES" required="required" checked="checked" />Yes</label>
 							</div>
 							
 						</div>
@@ -62,7 +62,7 @@
 						
 						    <div class="radio">
 							  <label><form:radiobutton path="judgmentImplIsComplied" id="IsCompliedNo"
-								value="NO" />No</label>
+								value="NO"  required="required"/>No</label>
 							</div>
 							
 						</div>
@@ -71,7 +71,7 @@
 						
 							<div class="radio">
 							  <label><form:radiobutton path="judgmentImplIsComplied"
-								id="IsCompliedInProgress" value="INPROGRESS" />In Progress</label>
+								id="IsCompliedInProgress" value="INPROGRESS" required="required" />In Progress</label>
 							</div>
 							
 						</div>
@@ -113,7 +113,7 @@
 							<form:errors path="implementationFailure" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group" id="details" style="display: none">
+					<div class="form-group" id="judgmentdetails" style="display: none">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.details" />:<span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
@@ -192,4 +192,3 @@
 						<input type="hidden" name="judgmentImpl.contempt" value="${contempt[0].id}" />
 					</div>
 					<input type="hidden" name="judgmentImpl" value="${judgmentImpl.id}" />
-					<form:hidden id="reqAttr" path="" value="${reqAttr}"/>

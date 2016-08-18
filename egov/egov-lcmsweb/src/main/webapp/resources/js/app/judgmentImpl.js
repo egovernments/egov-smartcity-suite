@@ -38,67 +38,73 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function(){
-	
-	
-	
-	$('#dateofcomp1').show();
-	$('#dateofcomp2').show();
+$(document).ready(function(){	
 
+	refreshViewFromRadionOptionValue($('input[name=judgmentImplIsComplied]:checked').val(), true);
+	loadAppealAndContemptFields();
+	
 	$('input[type=radio][name=judgmentImplIsComplied]').change(function() {
-        console.log("Changed called -->", this.value);
-    	
-        if(this.value === "YES")
-        {
-        	$('#dateofcomp1').show();
-    		$('#dateofcomp2').show();
-    		$('#reason').hide();
-    		$('#details').hide();
-    		$("#apealFields1").hide();
-    		$("#apealFields2").hide();
-    		$("#contempFields1").hide();
-        	$("#contempFields2").hide();
-        	
-        	$('*[required]').removeAttr('required');
-        	
-        	$("#dateOfCompliance").attr('required','required');
-        	$("#complianceReport").attr('required','required');
-        	
-        }
-        else if(this.value === "NO")
-        {
-        	$('#reason').show();
-    		$('#dateofcomp1').hide();
-    		$('#dateofcomp2').hide();
-    		$('#details').hide();
-    		$("#apealFields1").hide();
-    		$("#apealFields2").hide();
-    		$("#contempFields1").hide();
-        	$("#contempFields2").hide();
-        	
-        	$('*[required]').removeAttr('required');
-        	
-        	$("#implementationFailure").prop('selectedIndex', 0);
-        	$("#implementationFailure").attr('required','required');
-        	
-        }
-        else if(this.value==="INPROGRESS")
-        {
-        	$('#details').show();
-    		$('#dateofcomp1').hide();
-    		$('#dateofcomp2').hide();
-    		$('#reason').hide();
-    		$("#apealFields1").hide();
-    		$("#apealFields2").hide();
-    		$("#contempFields1").hide();
-        	$("#contempFields2").hide();
-        	
-        	$('*[required]').removeAttr('required');
-        	$("textarea[name='details']").attr('required','required');
-        }
+		refreshViewFromRadionOptionValue(this.value, false);
     });
 	
 });
+
+
+function refreshViewFromRadionOptionValue(optionValue, isFromPageLoad)
+{
+	if(optionValue === "YES")
+    {
+    	$('#dateofcomp1').show();
+		$('#dateofcomp2').show();
+		$('#reason').hide();
+		$('#judgmentdetails').hide();
+		$("#apealFields1").hide();
+		$("#apealFields2").hide();
+		$("#contempFields1").hide();
+    	$("#contempFields2").hide();
+    	
+    	$('*[required]').removeAttr('required');
+    	
+    	$("#dateOfCompliance").attr('required','required');
+    	$("#complianceReport").attr('required','required');
+    	
+    }
+    else if(optionValue === "NO")
+    {
+    	$('#reason').show();
+		$('#dateofcomp1').hide();
+		$('#dateofcomp2').hide();
+		$('#judgmentdetails').hide();
+		$("#apealFields1").hide();
+		$("#apealFields2").hide();
+		$("#contempFields1").hide();
+    	$("#contempFields2").hide();
+    	
+    	$('*[required]').removeAttr('required');
+    	
+    	if(!isFromPageLoad)
+    	{
+    		$("#implementationFailure").prop('selectedIndex', 0);
+    	}
+    	
+    	$("#implementationFailure").attr('required','required');
+    	
+    }
+    else if(optionValue === "INPROGRESS")
+    {
+    	$('#judgmentdetails').show();
+		$('#dateofcomp1').hide();
+		$('#dateofcomp2').hide();
+		$('#reason').hide();
+		$("#apealFields1").hide();
+		$("#apealFields2").hide();
+		$("#contempFields1").hide();
+    	$("#contempFields2").hide();
+    	
+    	$('*[required]').removeAttr('required');
+    	$("textarea[name='details']").attr('required','required');
+    }
+}
 
 $('#buttonid').click(function() {
 	
@@ -111,7 +117,6 @@ $('#buttonid').click(function() {
 	
 });
 
-loadAppealAndContemptFields();
 $('#implementationFailure').change(function(){
 	loadAppealAndContemptFields();
 });
