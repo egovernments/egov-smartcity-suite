@@ -81,13 +81,37 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-12">
-                <table class="table table-bordered datatable" id="view-appConfig-tbl"></table>
-            </div>
+            <table class="table table-bordered" id="view-appConfig-tbl"></table>
         </form>
     </div>
 </div>
-
+<style>
+td.details-control,tr.shown td.details-control{
+	position:relative;
+}
+td.details-control:before {
+    content: "\f055";
+    font-family: FontAwesome;
+    position:absolute;
+    top: 8px;
+    font-size: 16px;
+}
+tr.shown td.details-control:before {
+    content: "\f056"; 
+    font-family: FontAwesome;
+    position:absolute;
+    top: 8px;
+    font-size: 16px;
+}
+.table tbody thead:first-child > tr:first-child th {
+    background: #fff;
+    color: #333;
+    font-family: semibold;
+}
+.table thead:first-child > tr:first-child th:first-child{
+	border-left: 1px solid #ccc;
+}
+</style>
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
 <script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>

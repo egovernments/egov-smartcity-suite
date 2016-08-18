@@ -98,6 +98,9 @@ public class AppConfigService {
         final List<AppConfigValues> newConfigVaues = new ArrayList<>(appConfig.getConfValues());
         appConfig.getConfValues().clear();
         appConfig.setConfValues(newConfigVaues);
+        for(AppConfigValues configValue : appConfig.getConfValues()) {
+            configValue.setConfig(appConfig);
+        }
         appConfigRepository.save(appConfig);
     }
 }

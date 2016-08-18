@@ -46,11 +46,11 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row" id="page-content">
+<form:form mothod="post" class="form-horizontal form-groups-bordered" modelAttribute="appConfig" id="appConfigForm">
     <div class="col-md-12">
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
-        <form:form mothod="post" class="form-horizontal form-groups-bordered" modelAttribute="appConfig" id="appConfigForm">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
@@ -89,51 +89,54 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12">
-                        <table class="table table-bordered" id="floorDetails">
-                            <tr>
-                                <th><spring:message code="lbl.date"/></th>
-                                <th><spring:message code="lbl.values"/></th>
-                                <th><spring:message code="lbl.operation"/></th>
-                            </tr>
-
-                            <c:choose>
-                                <c:when test="${not empty appConfig.confValues}">
-                                    <c:forEach items="${appConfig.confValues}" var="configValue" varStatus="counter">
-                                        <tr>
-                                            <td class="blueborderfortd">
-                                                <fmt:formatDate value="${configValue.effectiveFrom}" var="effectiveDt" pattern="dd/MM/yyyy"/>
-                                                <form:input path="confValues[${counter.index}].effectiveFrom" cssClass="form-control datepicker" value="${effectiveDt}"
-                                                            id="confValues[${counter.index}].effectiveFrom" required="required"/>
-                                                <form:errors path="confValues[${counter.index}].effectiveFrom" cssClass="add-margin error-msg"/>
-                                            </td>
-                                            <td class="blueborderfortd">
-                                                <form:input path="confValues[${counter.index}].value" cssClass="form-control low-width" value="${configValue.value}"
-                                                            id="confValues[${counter.index}].value" required="required"/>
-                                                <form:errors path="confValues[${counter.index}].value" cssClass="add-margin error-msg"/>
-                                            </td>
-                                            <td id="rowadddelete">
-                                                <input type="button" class="btn btn-primary" value="Add" name="Add" id="add">
-                                                <input type="button" class="btn btn-primary" name="Delete" value="Delete" id="delete">
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:when>
-                            </c:choose>
-                        </table>
-                    </div>
-                    <div class="col-md-12 text-center">
-                        <div class="add-margin">
-                            <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-                            <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
-                                <spring:message code="lbl.close"/>
-                            </button>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
-        </form:form>
+        
     </div>
+    <div class="col-md-12">
+    <button type="button" class="btn btn-secondary pull-right" id="addrow"><i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add Row</button>
+	  <table class="table table-bordered" id="configs">
+	      <thead>
+	          <th><spring:message code="lbl.date"/></th>
+	          <th><spring:message code="lbl.values"/></th>
+	          <th></th>
+	      </thead>
+		<tbody>
+			<c:choose>
+	          <c:when test="${not empty appConfig.confValues}">
+	              <c:forEach items="${appConfig.confValues}" var="configValue" varStatus="counter">
+	                  <tr>
+	                      <td>
+	                          <fmt:formatDate value="${configValue.effectiveFrom}" var="effectiveDt" pattern="dd/MM/yyyy"/>
+	                          <form:input path="confValues[${counter.index}].effectiveFrom" cssClass="form-control datepicker effectiveFrom" value="${effectiveDt}"
+	                                      id="confValues[${counter.index}].effectiveFrom" data-date-start-date="0d" required="required" disabled="true"/>
+	                          <form:errors path="confValues[${counter.index}].effectiveFrom" cssClass="add-margin error-msg"/>
+	                      </td>
+	                      <td>
+	                          <form:input path="confValues[${counter.index}].value" cssClass="form-control confValues" value="${configValue.value}"
+	                                      id="confValues[${counter.index}].value" required="required"/>
+	                          <form:errors path="confValues[${counter.index}].value" cssClass="add-margin error-msg"/>
+	                      </td>
+	                      <td>
+	                          <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span>
+	                      </td>
+	                  </tr>
+	              </c:forEach>
+	          </c:when>
+	      </c:choose>
+		</tbody>
+	    </table>
+	</div>
+	<div class="col-md-12 text-center">
+	    <div class="add-margin">
+	        <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+	      <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+	      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+	          <spring:message code="lbl.close"/>
+	        </button>
+	    </div>
+	</div>
+	</form:form>
 </div>
 <script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js'/>"></script>
