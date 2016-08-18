@@ -189,7 +189,7 @@ public class GenerateConnectionBillController {
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->"+Long.valueOf(count));
         List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)>1000){
+        if (Long.valueOf(count)>2000){
             generateconnectionBillList = new ArrayList<>();
         }
         result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
@@ -205,7 +205,7 @@ public class GenerateConnectionBillController {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" + "generate_bill.pdf" + "\"");
+        response.setHeader("content-disposition", "attachment; filename=\"" +consumerCode+".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
 
@@ -265,7 +265,7 @@ public class GenerateConnectionBillController {
             if (!pdfs.isEmpty()) {
                 final ByteArrayOutputStream output = new ByteArrayOutputStream();
                 final byte[] data = concatPDFs(pdfs, output);
-                response.setHeader("Content-disposition", "attachment;filename=" + "generate_bill" + ".pdf");
+                response.setHeader("Content-disposition", "attachment;filename=" + "search_bill" + ".pdf");
                 response.setContentType("application/pdf");
                 response.setContentLength(data.length);
                 response.getOutputStream().write(data);
@@ -365,7 +365,7 @@ public class GenerateConnectionBillController {
             if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader("Content-disposition", "attachment;filename=" + "genaratebill" + ".zip");
+                response.setHeader("Content-disposition", "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 

@@ -100,7 +100,7 @@ function merge()
 			'assessmentNumber': $("#assessmentNumber").val()
 		};
 	
-	window.open("/wtms/report/generateBill/search/mergeAndDownload"+obj_to_query(params));
+	window.open("/wtms/report/generateBill/search/mergeAndDownload"+obj_to_query(params), "_self");
 
 }
 
@@ -128,7 +128,7 @@ var params={
 			'houseNumber': $("#houseNumber").val(),
 			'assessmentNumber': $("#assessmentNumber").val()
 		};
-window.open("/wtms/report/generateBill/search/zipAndDownload"+obj_to_query(params));
+window.open("/wtms/report/generateBill/search/zipAndDownload"+obj_to_query(params), "_self");
 	
 }
 
