@@ -74,7 +74,7 @@
 								<spring:message code="lbl.petitiontype" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.petitionTypeMaster.code}" />
+								<c:out value="${legalCase.petitionTypeMaster.petitionType}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -86,7 +86,7 @@
 							</div>
 							<div class="col-xs-3 add-margin">Case Type</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.caseTypeMaster.code}" />
+								<c:out value="${legalCase.caseTypeMaster.caseType}" />
 							</div>
 						</div>
 						<div class="row add-border">
