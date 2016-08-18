@@ -49,7 +49,7 @@ public class ContractorBillCertificateInfo {
     private double lastExecutionAmount;
     private double executionAmount;
     private double tenderRate;
-    private double tebderQuantity;
+    private double tenderQuantity;
     private double tenderAmount;
     private double executionRate;
 
@@ -101,12 +101,12 @@ public class ContractorBillCertificateInfo {
         this.tenderRate = tenderRate;
     }
 
-    public double getTebderQuantity() {
-        return tebderQuantity;
+    public double getTenderQuantity() {
+        return tenderQuantity;
     }
 
-    public void setTebderQuantity(final double tebderQuantity) {
-        this.tebderQuantity = tebderQuantity;
+    public void setTenderQuantity(final double tenderQuantity) {
+        this.tenderQuantity = tenderQuantity;
     }
 
     public double getTenderAmount() {

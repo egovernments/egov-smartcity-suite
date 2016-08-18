@@ -40,6 +40,7 @@
 package org.egov.works.contractorbill.repository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -94,6 +95,10 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
     @Query("select distinct(cbr) from ContractorBillRegister as cbr where cbr.workOrderEstimate = :workOrderEstimate and upper(cbr.billstatus) != :status and cbr.billtype = :billtype")
     ContractorBillRegister findByWorkOrderAndBillTypeAndStatus(
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status,
+            @Param("billtype") final String billtype);
+    
+    @Query("select max(cbr.billdate) from ContractorBillRegister as cbr where upper(cbr.billstatus) = :billstatus and cbr.billtype = :billtype and cbr.workOrderEstimate.id = :workOrderEstimateId and cbr.id != :contractorBillId")
+    Date getLastPartBillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("billstatus") final String billstatus,
             @Param("billtype") final String billtype);
 
 }

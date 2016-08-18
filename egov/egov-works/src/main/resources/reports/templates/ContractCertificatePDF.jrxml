@@ -1,12 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-17T18:05:42 -->
+<!-- 2016-08-18T19:26:24 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractCertificatePDF" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3d70fa3-1a4e-4af9-897a-a9f1c1d03164">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="Parameter1" class="java.lang.String"/>
 	<parameter name="contractorBillRegister" class="org.egov.works.contractorbill.entity.ContractorBillRegister"/>
+	<parameter name="lastPartBillDate" class="java.lang.String"/>
+	<parameter name="billDate" class="java.lang.String"/>
+	<parameter name="reportRunDate" class="java.lang.String"/>
+	<parameter name="lastExecutionTotal" class="java.lang.Double"/>
+	<parameter name="uptoDateTotal" class="java.lang.Double"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -15,105 +59,106 @@
 	<field name="workOrderActivity" class="org.egov.works.workorder.entity.WorkOrderActivity"/>
 	<field name="lastExecutionQuantity" class="java.lang.Double"/>
 	<field name="lastExecutionAmount" class="java.lang.Double"/>
+	<variable name="lastExecustionTotal" class="java.math.BigDecimal"/>
 	<group name="Group1">
 		<groupHeader>
 			<band height="30">
 				<textField>
-					<reportElement x="400" y="0" width="350" height="30" uuid="cb039b77-d680-4e81-a97c-5e768692c59c"/>
+					<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="350" height="30" uuid="cb039b77-d680-4e81-a97c-5e768692c59c"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Date : </style>"+$P{contractorBillRegister}.getBilldate()]]></textFieldExpression>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Date : </style>"+$P{billDate}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="20" y="0" width="380" height="30" uuid="b8c487ed-c342-4845-b263-db54f43d62c5"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="380" height="30" uuid="b8c487ed-c342-4845-b263-db54f43d62c5"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
+					<textElement verticalAlignment="Middle" markup="styled"/>
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Name of the work : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getEstimate().getName()]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="30">
 				<textField>
-					<reportElement x="20" y="0" width="380" height="30" uuid="9d4f1bed-de93-48d7-86d0-6c56b30f91de"/>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="380" height="30" uuid="9d4f1bed-de93-48d7-86d0-6c56b30f91de"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
+					<textElement verticalAlignment="Middle" markup="styled"/>
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Estimate number : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getEstimate().getEstimateNumber()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="400" y="0" width="350" height="30" uuid="2255d7b6-5cf2-441f-9d08-d7619ce4e191"/>
+					<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="350" height="30" uuid="2255d7b6-5cf2-441f-9d08-d7619ce4e191"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
+					<textElement verticalAlignment="Middle" markup="styled"/>
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">LOA Number : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber()]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="50">
-				<textField>
-					<reportElement x="400" y="0" width="350" height="30" uuid="7b4f23d9-ac3b-4adf-a74d-1e92ec5addee"/>
+				<textField isStretchWithOverflow="true" pattern="#0.00">
+					<reportElement stretchType="RelativeToTallestObject" x="400" y="0" width="350" height="30" uuid="7b4f23d9-ac3b-4adf-a74d-1e92ec5addee"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
+					<textElement verticalAlignment="Middle" markup="styled"/>
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Agreement value (Rs) : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getWorkOrderAmount()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="20" y="0" width="380" height="30" uuid="f542c805-be50-4c34-a1dc-c55424660ecf"/>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="380" height="30" uuid="f542c805-be50-4c34-a1dc-c55424660ecf"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
+					<textElement verticalAlignment="Middle" markup="styled"/>
 					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contractor : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getName() + "-" +
 $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getCode()]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="10">
 				<textField>
-					<reportElement x="20" y="-20" width="730" height="30" uuid="9896988e-3b12-4fb2-88c6-72af733e5382"/>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="-20" width="730" height="30" uuid="9896988e-3b12-4fb2-88c6-72af733e5382"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work engineer : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getEngineerIncharge()]]></textFieldExpression>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work engineer : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getEngineerIncharge().getName()]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="30">
 				<textField>
-					<reportElement x="20" y="0" width="730" height="30" uuid="2e332efa-a9a2-4258-bb7b-81c7b3b95236"/>
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="730" height="30" uuid="2e332efa-a9a2-4258-bb7b-81c7b3b95236"/>
 					<box>
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement markup="styled"/>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contract certificate last generated on : </style>"]]></textFieldExpression>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contract certificate last generated on : </style>"+$P{lastPartBillDate}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="71">
@@ -133,7 +178,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<text><![CDATA[Sl No]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="50" y="20" width="60" height="51" uuid="59c4a83d-e4b1-4957-93fe-91ff127de709">
+					<reportElement x="50" y="20" width="54" height="51" uuid="59c4a83d-e4b1-4957-93fe-91ff127de709">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<box>
@@ -148,7 +193,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<text><![CDATA[SOR Code]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="110" y="20" width="230" height="51" uuid="41aa86f9-d53b-4779-88f5-afbe1c190489"/>
+					<reportElement x="104" y="20" width="236" height="51" uuid="41aa86f9-d53b-4779-88f5-afbe1c190489"/>
 					<box>
 						<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -199,7 +244,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Amount(Rs)]]></text>
+					<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="527" y="46" width="83" height="25" uuid="f85ab127-e8b2-46de-8a72-eb455e809716">
@@ -215,7 +260,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Quantity]]></text>
+					<text><![CDATA[Amount(Rs)]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="610" y="20" width="182" height="26" uuid="f601f00d-670a-489f-a9ce-e8905ce90364"/>
@@ -243,7 +288,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Amount(Rs)]]></text>
+					<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="708" y="46" width="84" height="25" uuid="78a90c63-daae-4a8b-b03a-e9e7b5f54bcc">
@@ -258,28 +303,25 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Quantity]]></text>
+					<text><![CDATA[Amount(Rs)]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
 	</group>
 	<background>
-		<band height="390" splitType="Stretch">
+		<band height="550" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<rectangle>
-				<reportElement x="0" y="10" width="792" height="380" uuid="45e01c71-b093-431c-af74-4e566a1c45ad">
+				<reportElement x="0" y="4" width="800" height="545" uuid="45e01c71-b093-431c-af74-4e566a1c45ad">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 			</rectangle>
 		</band>
 	</background>
 	<title>
-		<band height="87" splitType="Stretch">
+		<band height="110" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<image>
-				<reportElement x="18" y="14" width="50" height="50" uuid="9ae767a2-4c00-4e32-abc8-c2cef5e5ff4b"/>
-				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
-			</image>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="104" y="14" width="600" height="30" uuid="e0d111eb-3575-435e-8cc8-31b67e100a56"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -288,12 +330,18 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="130" y="57" width="550" height="30" uuid="35296deb-b785-4ff9-a282-4b8479b31bf3"/>
+				<reportElement x="130" y="57" width="550" height="30" uuid="35296deb-b785-4ff9-a282-4b8479b31bf3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[CONTRACT CERTIFICATE]]></text>
 			</staticText>
+			<image>
+				<reportElement x="24" y="11" width="54" height="53" uuid="c021f618-e4e8-4539-9e92-138ad0ea805a"/>
+				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
@@ -310,7 +358,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="50" y="0" width="60" height="30" uuid="ecc23cfc-7c49-4229-aacf-6f2a88b81b58"/>
+				<reportElement stretchType="RelativeToTallestObject" x="50" y="0" width="54" height="30" uuid="ecc23cfc-7c49-4229-aacf-6f2a88b81b58"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -321,17 +369,17 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getCode() : "NA"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="110" y="0" width="230" height="30" uuid="b45badb0-96b2-4d6f-9de8-eb04e07ee4b8"/>
-				<box topPadding="3" leftPadding="3">
+				<reportElement stretchType="RelativeToTallestObject" x="104" y="0" width="236" height="30" uuid="b45badb0-96b2-4d6f-9de8-eb04e07ee4b8"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getDescription() : $F{workOrderActivity}.getActivity().getNonSor().getDescription()]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement stretchType="RelativeToTallestObject" x="340" y="0" width="88" height="30" uuid="7c2323f8-b882-4232-b33f-b697814cc8e0"/>
 				<box rightPadding="3">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -342,7 +390,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getEstimateRate()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
 				<reportElement stretchType="RelativeToTallestObject" x="428" y="0" width="99" height="30" uuid="cdcfec9e-fc2f-4dfb-b71e-47fd08e5df6a"/>
 				<box rightPadding="3">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -351,10 +399,21 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{executionAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{lastExecutionQuantity}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="#0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="527" y="0" width="83" height="30" uuid="9076e83e-3ed0-4b2d-9d65-c90c02262152"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lastExecutionAmount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,###.##">
+				<reportElement stretchType="RelativeToTallestObject" x="610" y="0" width="98" height="30" uuid="ffef69e7-082a-41ba-a260-57a00ea95519"/>
 				<box rightPadding="3">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -364,18 +423,7 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{executionQuantity}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="610" y="0" width="98" height="30" uuid="ffef69e7-082a-41ba-a260-57a00ea95519"/>
-				<box rightPadding="3">
-					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{lastExecutionAmount}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="#0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="708" y="0" width="84" height="30" uuid="b9ad6703-1e86-445e-a74a-6956964f4ae3"/>
 				<box rightPadding="3">
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -384,13 +432,122 @@ $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor()
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{lastExecutionAmount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{executionAmount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="30" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="527" y="0" width="265" height="15" uuid="a259d5c6-2148-404f-8f0e-6a804f9510e4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box topPadding="1" leftPadding="0" bottomPadding="2" rightPadding="3"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Report Run Date: " + $P{reportRunDate} + " "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="347" y="0" width="103" height="18" uuid="a6308ad7-9ce0-4170-8e6f-315af748de65"/>
+				<box topPadding="1" bottomPadding="2"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
+	<summary>
+		<band height="30">
+			<staticText>
+				<reportElement x="12" y="0" width="38" height="30" uuid="caf6ba2c-6304-4049-9976-85e017fbe798"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="0" width="54" height="30" uuid="21df7ecf-eb37-4398-9816-6f47ed127ab2"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="0" width="236" height="30" uuid="0517d7cd-b7ef-4361-a582-7558ad09ba0b"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="88" height="30" uuid="2da63559-417f-460d-a8a0-8733cb976aa3"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="428" y="0" width="99" height="30" uuid="8900ec82-a1b7-4cbe-b10e-3c5c7479144e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="610" y="0" width="98" height="30" uuid="61944c4c-6330-4acc-b65d-e2ba4a24b1f5"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="#0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="527" y="0" width="83" height="30" uuid="aba58539-cde9-4bf9-9afb-5904e581a54f">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box rightPadding="3">
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{lastExecutionTotal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="708" y="0" width="84" height="30" uuid="e4d5ff65-39a3-4e81-87aa-ee86c08e597c"/>
+				<box rightPadding="3">
+					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{uptoDateTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
 </jasperReport>

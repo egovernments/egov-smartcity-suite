@@ -39,18 +39,11 @@
  */
 package org.egov.works.letterofacceptance.repository;
 
-import java.util.List;
-
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkOrderActivityRepository extends JpaRepository<WorkOrderActivity, Long> {
     
-    @Query("select mbDetails.workOrderActivity from MBDetails mbDetails where mbDetails.mbHeader.workOrderEstimate.id =:workOrderEstimateId and mbDetails.mbHeader.egwStatus.code = 'APPROVED'")
-    List<WorkOrderActivity> getAllWOrkOrderActivitiesWithMB(@Param("workOrderEstimateId") Long workOrderEstimateId);
-
 }

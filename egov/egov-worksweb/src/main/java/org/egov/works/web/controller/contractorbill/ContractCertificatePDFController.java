@@ -40,7 +40,9 @@
 package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -57,12 +60,9 @@ import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.entity.MBDetails;
-import org.egov.works.mb.entity.MBHeader;
-import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.mb.service.MBDetailsService;
 import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
-import org.egov.works.models.contractorBill.WorkCompletionDetailInfo;
 import org.egov.works.workorder.entity.WorkOrderActivity;
-import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -82,13 +82,7 @@ public class ContractCertificatePDFController {
     private ReportService reportService;
 
     @Autowired
-    private MBHeaderService mBHeaderService;
-
-    @Autowired
     private ContractorBillRegisterService contractorBillRegisterService;
-
-    @Autowired
-    private WorkOrderActivityService workOrderActivityService;
 
     public static final String CONTRACTCERTIFICATEPDF = "ContractCertificatePDF";
     private final Map<String, Object> reportParams = new HashMap<String, Object>();
@@ -104,75 +98,32 @@ public class ContractCertificatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request, final HttpSession session) {
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (contractorBillRegister != null) {
-
             final String url = WebUtils.extractRequestDomainURL(request, false);
-
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 
-            final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
+            final String cityName = ApplicationThreadLocals.getMunicipalityName();
             reportParams.put("cityName", cityName);
             reportParams.put("contractorBillRegister", contractorBillRegister);
-            final List<ContractorBillCertificateInfo> WorkCompletionDetailInfoList = getWorkCompletionData(
-                    contractorBillRegister);
-            reportInput = new ReportRequest(CONTRACTCERTIFICATEPDF, WorkCompletionDetailInfoList, reportParams);
+            final Date lastPartBillDate = contractorBillRegisterService.getLastPartBillDateForContractorBill(
+                    contractorBillRegister.getId(), contractorBillRegister.getWorkOrderEstimate().getId());
+            reportParams.put("lastPartBillDate", lastPartBillDate != null ? formatter.format(lastPartBillDate) : "NA");
+            reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
+            reportParams.put("reportRunDate", sdf.format(new Date()));
+            final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService.getContractCertificateDetails(
+                    contractorBillRegister,reportParams);
+            reportInput = new ReportRequest(CONTRACTCERTIFICATEPDF, contractCertificateInfoList, reportParams);
         }
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=ContractCertificate.pdf");
+        headers.add("content-disposition",
+                "inline;filename=ContractCertificate_" + contractorBillRegister.getBillnumber() + ".pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
-    private List<ContractorBillCertificateInfo> getWorkCompletionData(final ContractorBillRegister contractorBillRegister) {
-        final List<ContractorBillCertificateInfo> contractCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
-
-        List<MBHeader> mbHeaderList = null;
-        List<MBHeader> mbHeaderListTillDate = null;
-
-        mbHeaderList = mBHeaderService.getApprovedMBHeadersByContractorBill(contractorBillRegister);
-        WorkOrderEstimate workOrderEstimate = null;
-        if (mbHeaderList != null)
-            workOrderEstimate = mbHeaderList.get(0).getWorkOrderEstimate();
-        mbHeaderListTillDate = mBHeaderService.getMBHeaderForBillTillDate(contractorBillRegister.getId(),
-                workOrderEstimate.getId());
-
-        final List<WorkOrderActivity> workOrderActivities = workOrderActivityService
-                .getAllWOrkOrderActivitiesWithMB(workOrderEstimate.getId());
-
-        for (final WorkOrderActivity workOrderActivity : workOrderActivities) {
-            double executionQuantity = 0;
-            for (final MBHeader mbHeader : mbHeaderListTillDate)
-                for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
-                    final WorkOrderEstimate woe = mbDetails.getWorkOrderActivity().getWorkOrderEstimate();
-                    if (workOrderActivity.getId().equals(woe.getId()))
-                        executionQuantity = executionQuantity + mbDetails.getWorkOrderActivity().getApprovedQuantity();
-                }
-
-            final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
-            contractorBillCertificateInfo.setWorkOrderActivity(workOrderActivity);
-            contractorBillCertificateInfo.setExecutionQuantity(executionQuantity);
-            contractorBillCertificateInfo.setExecutionAmount(workOrderActivity.getApprovedRate() * executionQuantity);
-
-            double lastExecutionQuantity = 0;
-            for (final MBHeader mbHeader : mbHeaderList)
-                for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
-                    final WorkOrderEstimate woe = mbDetails.getWorkOrderActivity().getWorkOrderEstimate();
-                    if (workOrderActivity.getId().equals(woe.getId()))
-                        lastExecutionQuantity = lastExecutionQuantity
-                                + mbDetails.getWorkOrderActivity().getApprovedRate();
-                }
-
-            contractorBillCertificateInfo.setLastExecutionQuantity(lastExecutionQuantity);
-            contractorBillCertificateInfo
-                    .setLastExecutionAmount(workOrderActivity.getApprovedRate() * lastExecutionQuantity);
-
-            contractCertificateInfoList.add(contractorBillCertificateInfo);
-        }
-
-        return contractCertificateInfoList;
     }
 
 }

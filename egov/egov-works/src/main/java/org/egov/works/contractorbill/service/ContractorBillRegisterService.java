@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -69,15 +70,21 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.VoucherService;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.SearchRequestContractorBill;
+import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.repository.ContractorBillRegisterRepository;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.entity.MBDetails;
 import org.egov.works.mb.entity.MBForCancelledBill;
 import org.egov.works.mb.entity.MBHeader;
+import org.egov.works.mb.service.MBDetailsService;
 import org.egov.works.mb.service.MBForCancelledBillService;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -133,6 +140,12 @@ public class ContractorBillRegisterService {
 
     @Autowired
     private MBForCancelledBillService mbForCancelledBillService;
+    
+    @Autowired
+    private MBDetailsService mBDetailsService;
+
+    @Autowired
+    private WorkOrderActivityService workOrderActivityService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -640,6 +653,46 @@ public class ContractorBillRegisterService {
         for (final EgBilldetails billDetails : contractorBillRegister.getRetentionMoneyDeductionDetailes())
             if (billDetails.getId() == null)
                 contractorBillRegister.getBillDetailes().add(billDetails);
+    }
+    
+    public Date getLastPartBillDateForContractorBill(final Long contractorBillId,final Long workOrderEstimateId) {
+        return contractorBillRegisterRepository.getLastPartBillDate(contractorBillId, workOrderEstimateId, ContractorBillRegister.BillStatus.APPROVED.toString(), BillTypes.Part_Bill.toString());
+    }
+    
+    public List<ContractorBillCertificateInfo> getContractCertificateDetails(
+            final ContractorBillRegister contractorBillRegister,final Map<String, Object> reportParams) {
+        final List<ContractorBillCertificateInfo> contractCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
+
+        List<Object[]> distinctWoaList = null;
+        List<MBDetails> mbDetailsListTillDate = null;
+        Double lastExecutionTotal = 0.0;
+        Double uptoDateTotal = 0.0;
+
+        distinctWoaList = mBDetailsService.getActivitiesByContractorBillForApprovedMB(contractorBillRegister.getId());
+        mbDetailsListTillDate = mBDetailsService.getActivitiesByContractorBillTillDate(contractorBillRegister.getId(),
+                contractorBillRegister.getCreatedDate());
+
+        for (final Object[] Object : distinctWoaList) {
+            final WorkOrderActivity woa = workOrderActivityService
+                    .getWorkOrderActivityById(Long.valueOf(Object[0].toString()));
+            double lastExecutionQuantity = 0;
+            final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
+            for (final MBDetails mbDetailsTillDate : mbDetailsListTillDate)
+                if (woa.getId().equals(mbDetailsTillDate.getWorkOrderActivity().getId()))
+                    lastExecutionQuantity = lastExecutionQuantity + woa.getApprovedQuantity();
+            contractorBillCertificateInfo.setLastExecutionQuantity(lastExecutionQuantity);
+            contractorBillCertificateInfo.setLastExecutionAmount(woa.getActivity().getRate() * lastExecutionQuantity);
+            contractorBillCertificateInfo.setExecutionQuantity(Double.valueOf(Object[1].toString()));
+            contractorBillCertificateInfo.setExecutionAmount(
+                    woa.getActivity().getRate() * contractorBillCertificateInfo.getExecutionQuantity());
+            contractorBillCertificateInfo.setWorkOrderActivity(woa);
+            lastExecutionTotal = lastExecutionTotal + contractorBillCertificateInfo.getLastExecutionAmount();
+            uptoDateTotal = uptoDateTotal + contractorBillCertificateInfo.getExecutionAmount();
+            contractCertificateInfoList.add(contractorBillCertificateInfo);
+        }
+        reportParams.put("lastExecutionTotal", lastExecutionTotal);
+        reportParams.put("uptoDateTotal", uptoDateTotal);
+        return contractCertificateInfoList;
     }
 
 }
