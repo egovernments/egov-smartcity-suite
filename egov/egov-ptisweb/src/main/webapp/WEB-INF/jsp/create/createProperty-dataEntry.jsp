@@ -187,7 +187,70 @@ function loadOnStartUp() {
 	   	}
 	 });
      populateBoundaries();
-	 
+     showHideLengthBreadth();
+}
+
+function calculatePlintArea(obj){ 
+	var rIndex = getRow(obj).rowIndex;
+	var tbl = document.getElementById('floorDetails');
+	var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+	var unstructureLand = getControlInBranch(tbl.rows[rIndex],'unstructuredLand');
+	if(unstructureLand.options[unstructureLand.selectedIndex].text=='No'){
+		if(obj.value!=null && obj.value!=""){
+			var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+			var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
+			  
+			if(buildLength.value!=null && buildLength.value!="" && buildbreadth.value!=null && buildbreadth.value!=""){
+				builtUpArea.value= roundoff(eval(buildLength.value * buildbreadth.value));
+				trim(builtUpArea,builtUpArea.value);
+				checkForTwoDecimals(builtUpArea,'Assessable Area');
+				checkZero(builtUpArea,'Assessable Area'); 
+			}
+			else
+				builtUpArea.value="";
+		}else
+			builtUpArea.value="";
+	}
+}
+
+function enableDisableLengthBreadth(obj){ 
+	var selIndex = obj.selectedIndex;
+	if(obj.value=='true'){
+			obj.value='true';
+			obj.options[selIndex].selected = true;
+	}
+	else{
+		obj.value='false';
+		obj.options[selIndex].selected = true;
+	}
+	
+	if(selIndex != undefined){
+		var selText = obj.options[selIndex].text; 
+		var rIndex = getRow(obj).rowIndex;
+		var tbl = document.getElementById('floorDetails');
+		var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
+		var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
+		var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
+		if(selText!=null && selText=='No'){
+			buildLength.readOnly = false;      
+			buildbreadth.readOnly = false;
+			builtUpArea.readOnly = true;
+		} else{
+			buildLength.value="";
+			buildLength.readOnly = true; 
+			buildbreadth.value="";
+			buildbreadth.readOnly = true;
+			builtUpArea.readOnly = false;
+		}
+	}
+}
+
+function showHideLengthBreadth(){
+	var tbl=document.getElementById("floorDetails");
+    var tabLength = (tbl.rows.length)-1;
+    for(var i=1;i<=tabLength;i++){
+         enableDisableLengthBreadth(getControlInBranch(tbl.rows[i],'unstructuredLand'));
+    }
 }
 
 function onSubmit() { 
@@ -202,5 +265,6 @@ function onSubmit() {
 
 </script>
 <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 </body>
 </html>

@@ -157,7 +157,8 @@
 				var rIndex = getRow(obj).rowIndex;
 				var tbl = document.getElementById('floorDetails');
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
-				if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+				var unstructureLand = getControlInBranch(tbl.rows[rIndex],'unstructuredLand');
+				if(unstructureLand.options[unstructureLand.selectedIndex].text=='No'){
 					if(obj.value!=null && obj.value!=""){
 						var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
 						var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
@@ -194,15 +195,15 @@
 					var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
 					var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
 					if(selText!=null && selText=='No'){
+						buildLength.readOnly = false;      
+						buildbreadth.readOnly = false;
+						builtUpArea.readOnly = true;
+					} else{
 						buildLength.value="";
-						buildLength.readOnly = true;      
+						buildLength.readOnly = true; 
 						buildbreadth.value="";
 						buildbreadth.readOnly = true;
 						builtUpArea.readOnly = false;
-					} else{
-						buildLength.readOnly = false; 
-						buildbreadth.readOnly = false;
-						builtUpArea.readOnly = true;
 					}
 				}
 			}
