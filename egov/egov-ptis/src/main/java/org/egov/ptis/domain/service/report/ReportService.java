@@ -175,9 +175,9 @@ public class ReportService {
             PropertyMaterlizeView propMatView) {
         baseRegisterResultObj.setAssessmentNo(propMatView.getPropertyId());
         baseRegisterResultObj.setDoorNO(propMatView.getHouseNo());
-        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName()
-                .replace(",", " & ") : propMatView.getOwnerName());
-        baseRegisterResultObj.setIsExempted(propMatView.getIsExempted() ? "Yes" : "No");
+        baseRegisterResultObj.setOwnerName(propMatView.getOwnerName()!=null?(propMatView.getOwnerName().contains(",") ? propMatView.getOwnerName()
+                .replace(",", " & ") : propMatView.getOwnerName()):"");
+        baseRegisterResultObj.setIsExempted(propMatView.getIsExempted()!=null?(propMatView.getIsExempted() ? "Yes" : "No"):"No");
         baseRegisterResultObj.setCourtCase("No");
 
         PropertyTypeMaster propertyType = null;
@@ -237,8 +237,8 @@ public class ReportService {
                 baseRegisterResultObj = new BaseRegisterResult();
                 baseRegisterResultObj = addSingleFloor(baseRegisterResultObj, propMatView);
                 baseRegisterResultObj.setPlinthArea(floorview.getBuiltUpArea());
-                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview
-                        .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage()!=null?(floorview.getPropertyUsage().contains(",") ? floorview
+                        .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage()):"");
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
                 count++;
             } else {
@@ -249,8 +249,8 @@ public class ReportService {
                 baseRegisterResultObj.setCourtCase("");
                 baseRegisterResultObj.setArrearPeriod("");
                 baseRegisterResultObj.setPlinthArea(floorview.getBuiltUpArea());
-                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage().contains(",") ? floorview
-                        .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage());
+                baseRegisterResultObj.setPropertyUsage(floorview.getPropertyUsage()!=null?(floorview.getPropertyUsage().contains(",") ? floorview
+                        .getPropertyUsage().replace(",", " & ") : floorview.getPropertyUsage()):"");
                 baseRegisterResultObj.setClassificationOfBuilding(floorview.getClassification());
             }
             baseRegisterResultList.add(baseRegisterResultObj);
