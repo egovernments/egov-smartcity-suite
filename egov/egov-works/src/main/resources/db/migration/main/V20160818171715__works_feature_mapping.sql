@@ -1,0 +1,4 @@
+delete from eg_roleaction where actionid in(select id from eg_action where name = 'UploadSORRatesFirstTimeForm') and roleid in(select id from eg_role where name in('Super User','Works Creator'));
+delete from eg_action where name = 'UploadSORRatesFirstTimeForm' and contextroot='egworks';
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksEstimateTemplateSearchResult') ,(select id FROM eg_feature WHERE name = 'View Estimate Template'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksEstimateTemplateSearch') ,(select id FROM eg_feature WHERE name = 'View Estimate Template'));
