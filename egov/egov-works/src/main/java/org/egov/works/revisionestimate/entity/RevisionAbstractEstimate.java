@@ -59,6 +59,10 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     @Transient
     private List<String> revisionEstActions = new ArrayList<String>();
 
+    public enum RevisionEstimateStatus {
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+    }
+    
     @Transient
     private String additionalRule;
 

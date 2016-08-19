@@ -70,6 +70,18 @@ if($isServiceVATRequired == 'true') {
 
 $(document).ready(function(){
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
+	
+	$mode = $("#mode").val();
+	if($mode != 'workflowView'){
+		calculateEstimateAmountTotal();
+		calculateVatAmountTotal();
+		total();
+	
+		calculateLumpSumEstimateAmountTotal();
+		calculateLumpSumVatAmountTotal();
+		lumpSumTotal();
+	}
+	
 });
 
 function getRow(obj) {
@@ -170,7 +182,7 @@ var sorSearch = new Bloodhound({
 				key = 0;
 				$('#message').attr('hidden', 'true');;
 				$('#nonTenderedRow').removeAttr('hidden');
-				$('#nonTenderedRow').removeAttr('sorinvisible');
+				$('#nonTenderedRow').removeAttr('nontenderedinvisible');
 				if(document.getElementById('nonTenderedActivities[0].mstd'))
 					document.getElementById('nonTenderedActivities[0].mstd').innerHTML=""; 
 				if(document.getElementById('nonTenderedActivities[0].mspresent'))
@@ -680,7 +692,7 @@ var sorSearch = new Bloodhound({
 			$('.lumpSumServiceTaxPerc').val('');
 			$('#lumpSumMessage').attr('hidden', 'true');
 			$('#lumpSumRow').removeAttr('hidden');
-			$('#lumpSumRow').removeAttr('lumpSuminvisible');
+			$('#lumpSumRow').removeAttr('lumpsuminvisible');
 			if(document.getElementById('lumpSumActivities['+key+'].mstd'))
 				document.getElementById('lumpSumActivities['+key+'].mstd').innerHTML=""; 
 			if(document.getElementById('lumpSumActivities['+key+'].mspresent'))
@@ -730,7 +742,7 @@ var sorSearch = new Bloodhound({
 			$('.vatAmount_' + rowId).html('');
 			$('.total_' + rowId).html('');
 			$('#nonTenderedRow').attr('hidden', 'true');
-			$('#nonTenderedRow').attr('sorinvisible', 'true');
+			$('#nonTenderedRow').attr('nontenderedinvisible', 'true');
 			$('#message').removeAttr('hidden');
 		} else {
 			deleteRow('tblNonTendered',obj);
@@ -932,7 +944,7 @@ var sorSearch = new Bloodhound({
 			$('.lumpSumVatAmount_' + rowId).html('');
 			$('.lumpSumTotal_' + rowId).html('');
 			$('#lumpSumRow').attr('hidden', 'true');
-			$('#lumpSumRow').attr('nonsorinvisible', 'true');
+			$('#lumpSumRow').attr('lumpsuminvisible', 'true');
 			$('#lumpSumMessage').removeAttr('hidden');
 		} else {
 			deleteRow('tblLumpSum',obj);
@@ -1458,19 +1470,77 @@ function viewEstimate(id) {
 	window.open("/egworks/abstractestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-$('#submitForm').click(function() {
-	deleteHiddenRows();
-	document.forms[0].submit();
-});
+function validateWorkFlowApprover(name) {
+	document.getElementById("workFlowAction").value = name;
+	var approverPosId = document.getElementById("approvalPosition");
+	var button = document.getElementById("workFlowAction").value;
+	var flag = true;
+
+	if (button != null && button == 'Save') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Approve') {
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Submit') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+	}
+	if (button != null && button == 'Reject') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+	}
+	if (button != null && button == 'Cancel') {
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+		$('#approvalComent').attr('required', 'required');
+
+		if($("form").valid())
+		{
+			bootbox.confirm($('#cancelConfirm').val(), function(result) {
+				if(!result) {
+					bootbox.hideAll();
+					return false;
+				} else {
+					deleteHiddenRows();
+					document.forms[0].submit();
+				}
+			});
+		}
+		return false;
+	}
+	if (button != null && button == 'Forward') {
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+		$('#approvalComent').removeAttr('required');
+
+	}
+
+	if(flag) {
+		deleteHiddenRows();
+		document.forms[0].submit;
+		return true;
+	} else
+		return false;
+}
 
 function deleteHiddenRows(){
-	var hiddenRowCount = $("#tblNonTendered tbody tr[sorinvisible='true']").length;
+	var hiddenRowCount = $("#tblNonTendered tbody tr[nontenderedinvisible='true']").length;
 	if(hiddenRowCount == 1) {
 		var tbl=document.getElementById('tblNonTendered');
 		tbl.deleteRow(2);
 	}
 
-	hiddenRowCount = $("#tblLumpSum tbody tr[nonsorinvisible='true']").length;
+	hiddenRowCount = $("#tblLumpSum tbody tr[lumpsuminvisible='true']").length;
 	if(hiddenRowCount == 1) {
 		var tbl=document.getElementById('tblLumpSum');
 		tbl.deleteRow(2);

@@ -39,6 +39,7 @@
  */
 package org.egov.works.revisionestimate.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -47,20 +48,39 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.service.UOMService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.infra.workflow.service.SimpleWorkflowService;
+import org.egov.pims.commons.Position;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
+import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.repository.RevisionEstimateRepository;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 @Service
 @Transactional(readOnly = true)
@@ -74,7 +94,29 @@ public class RevisionEstimateService {
     private final RevisionEstimateRepository revisionEstimateRepository;
 
     @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<RevisionAbstractEstimate> revisionAbstractEstimateWorkflowService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private UOMService uomService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @Autowired
+    private ScheduleCategoryService scheduleCategoryService;
+
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -91,7 +133,9 @@ public class RevisionEstimateService {
     }
 
     @Transactional
-    public RevisionAbstractEstimate createRevisionEstimate(final RevisionAbstractEstimate revisionEstimate) {
+    public RevisionAbstractEstimate createRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
         mergeSorAndNonSorActivities(revisionEstimate);
         final AbstractEstimate abstractEstimate = revisionEstimate.getParent();
         final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
@@ -116,10 +160,99 @@ public class RevisionEstimateService {
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
 
-        revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
-                EstimateStatus.ADMIN_SANCTIONED.toString()));
+        revisionEstimateRepository.save(revisionEstimate);
+
+        createRevisionEstimateWorkflowTransition(revisionEstimate, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
+
         revisionEstimateRepository.save(revisionEstimate);
         return revisionEstimate;
+    }
+
+    @Transactional
+    public RevisionAbstractEstimate updateRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction)
+            throws ValidationException, IOException {
+
+        RevisionAbstractEstimate updateRevisionEstimate = null;
+
+        if ((EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                || EstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+                && !WorksConstants.CANCEL_ACTION.equals(workFlowAction)) {
+
+            mergeSorAndNonSorActivities(revisionEstimate);
+
+        }
+
+        updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
+
+        revisionEstimateStatusChange(revisionEstimate, workFlowAction);
+
+        createRevisionEstimateWorkflowTransition(revisionEstimate, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
+
+        revisionEstimateRepository.save(updateRevisionEstimate);
+
+        return updateRevisionEstimate;
+    }
+
+    public void createRevisionEstimateWorkflowTransition(final RevisionAbstractEstimate revisionEstimate,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        final User user = securityUtils.getCurrentUser();
+        final DateTime currentDate = new DateTime();
+        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        Position pos = null;
+        Assignment wfInitiator = null;
+        final String currState = "";
+        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_ESTIMATE;
+        WorkFlowMatrix wfmatrix = null;
+
+        if (null != revisionEstimate.getId())
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(revisionEstimate.getCreatedBy().getId());
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            if (wfInitiator.equals(userAssignment))
+                revisionEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+            else
+                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
+                        .withNatureOfTask(natureOfwork);
+        } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
+                    additionalRule, WorksConstants.NEW, null);
+            if (revisionEstimate.getState() == null)
+                revisionEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(WorksConstants.NEW)
+                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
+                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+        } else {
+            if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
+                pos = positionMasterService.getPositionById(approvalPosition);
+            if (null == revisionEstimate.getState()) {
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
+                        additionalRule, currState, null);
+                revisionEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                final String stateValue = WorksConstants.WF_STATE_CANCELLED;
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
+                        additionalRule, revisionEstimate.getCurrentState().getValue(), null);
+                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+            } else {
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
+                        additionalRule, revisionEstimate.getCurrentState().getValue(), null);
+                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+            }
+        }
     }
 
     private void mergeSorAndNonSorActivities(final RevisionAbstractEstimate revisionEstimate) {
@@ -299,5 +432,57 @@ public class RevisionEstimateService {
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
         revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
         revisionEstimate.getChangeQuantityLSActivities().addAll(lumpSumActivities);
+    }
+
+    public void loadViewData(RevisionAbstractEstimate revisionEstimate, WorkOrderEstimate workOrderEstimate, Model model) {
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
+        final AppConfigValues value = values.get(0);
+        if (value.getValue().equalsIgnoreCase("Yes"))
+            model.addAttribute("isServiceVATRequired", true);
+        else
+            model.addAttribute("isServiceVATRequired", false);
+        model.addAttribute("uoms", uomService.findAll());
+        final List<RevisionAbstractEstimate> revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
+                workOrderEstimate.getEstimate().getId());
+        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates);
+        model.addAttribute("revisionEstimate", revisionEstimate);
+        model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
+        model.addAttribute("workOrderDate",
+                DateUtils.getDefaultFormattedDate(workOrderEstimate.getWorkOrder().getWorkOrderDate()));
+        model.addAttribute("workOrderEstimate", workOrderEstimate);
+        model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
+        model.addAttribute("workOrder", workOrderEstimate.getWorkOrder());
+        model.addAttribute("stateType", revisionEstimate.getClass().getSimpleName());
+
+    }
+
+    public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate, final String workFlowAction) {
+        if (null != revisionEstimate && null != revisionEstimate.getEgwStatus()
+                && null != revisionEstimate.getEgwStatus().getCode())
+            if (WorksConstants.SAVE_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.NEW.toString()));
+            else if (WorksConstants.CANCEL_ACTION.equals(workFlowAction)
+                    && RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.CANCELLED.toString()));
+            else if (RevisionEstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.CREATED.toString()));
+            else if (WorksConstants.APPROVE_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.APPROVED.toString()));
+            else if (WorksConstants.REJECT_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.REJECTED.toString()));
+            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && WorksConstants.CANCEL_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.CANCELLED.toString()));
+            else if (RevisionEstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                    && WorksConstants.FORWARD_ACTION.equals(workFlowAction))
+                revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
+                        RevisionEstimateStatus.RESUBMITTED.toString()));
     }
 }

@@ -406,4 +406,9 @@
         <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-success.jsp"/>
     </definition>
 
+	<definition name="revisionEstimate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.re" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-view.jsp"/>
+    </definition>
+    
 </tiles-definitions>   

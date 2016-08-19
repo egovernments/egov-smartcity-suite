@@ -91,7 +91,7 @@
 				</tr>
 				<c:choose>
 					<c:when test="${revisionEstimate.lumpSumActivities.size() == 0 }">
-						<tr id="lumpSumRow" class="lumpSumRow" nonsorinvisible="true" hidden="true" align="center">
+						<tr id="lumpSumRow" class="lumpSumRow" lumpsuminvisible="true" hidden="true" align="center">
 							<td>
 								<span class="spanlumpsumslno">1</span>
 								<form:hidden path="lumpSumActivities[0].id" id="activityid_0" class="activityid" />
@@ -149,6 +149,66 @@
 						</tr>
 					</c:when>
 					<c:otherwise>
+						<c:forEach items="${revisionEstimate.lumpSumActivities}" var="activity" varStatus="item">
+								<tr id="lumpSumRow" class="lumpSumRow" align="center">
+									<td>
+										<span class="spanlumpsumslno">${item.index + 1 }</span>
+										<form:hidden path="lumpSumActivities[${item.index }].id" id="activityid_${item.index }" class="activityid" value="${activity.id }" />
+										<form:hidden path="lumpSumActivities[${item.index }].nonSor.id" id="lumpSumId_${item.index }" class="lumpSumId" value="${activity.nonSor.id }"/>
+									</td>
+									<td>
+										<form:input path="lumpSumActivities[${item.index }].nonSor.description" id="lumpSumDesc_${item.index }" value="${activity.nonSor.description }" class="form-control table-input text-left lumpSumDesc" maxlength="256"/>
+									</td>
+									<td>
+										<form:select path="lumpSumActivities[${item.index }].nonSor.uom" id="lumpSumUom_${item.index }" data-idx="${item.index }" data-first-option="false" class="form-control lumpSumUom" onchange="updateUom(this);">
+											<form:option value="">
+												<spring:message code="lbl.select" />
+											</form:option>
+											<c:forEach items="${uoms }" var="uom">
+												<c:if test="${uom.id == activity.uom.id }">
+													<form:option value="${uom.id }" selected="selected" >${uom.uomCategory.category } -- ${uom.uom }</form:option>
+												</c:if>
+												<c:if test="${uom.id != activity.uom.id }">
+													<form:option value="${uom.id }">${uom.uomCategory.category } -- ${uom.uom }</form:option>
+												</c:if>
+											</c:forEach>
+										</form:select>
+										<form:hidden path="lumpSumActivities[${item.index }].uom" value="${activity.uom.id }" id="lumpSumUomid_${item.index }" class="uomhiddenid"/>
+									</td>
+									<td align="right">
+										<form:input path="lumpSumActivities[${item.index }].estimateRate" id="lumpSumEstimateRate_${item.index }" value="${activity.estimateRate }" data-pattern="decimalvalue" class="activityEstimateRate form-control table-input text-right lumpSumEstimateRate" maxlength="256" onblur="calculateLumpSumEstimateAmount(this);" onkeyup="validateInput(this);"/>
+										<form:hidden path="lumpSumActivities[${item.index }].rate" id="lumpSumRate_${item.index }" class="activityRate form-control table-input text-right lumpSumRate"  />
+									</td>
+									<c:set var="isreadonly" value="false"/>
+									<c:if test="${activity.measurementSheetList.size() > 0 }">
+										<c:set var="isreadonly" value="true"/>
+									</c:if>
+									<td>
+										<div class="input-group" style="width:150px">
+										<form:input path="lumpSumActivities[${item.index }].quantity" readonly="${isreadonly}" id="lumpSumQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right lumpSumQuantity" maxlength="64" onchange="calculateLumpSumEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
+									     <span class="input-group-addon" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
+								</div>
+									</td>       
+ 
+									<%@ include file="../measurementsheet/lumpsum-measurementsheet-formtableedit.jsp"%>  
+									
+									<td align="right">
+										<span class="lumpSumAmount_${item.index } lumpsumamount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									</td>
+									<td hidden="true" class="lumpSumServiceTaxPerc">
+										<form:input path="lumpSumActivities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="lumpSumServiceTaxPerc_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right lumpSumServiceTaxPerc" maxlength="64" onblur="calculateLumpSumVatAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td hidden="true" align="right" class="lumpSumVatAmount">
+										<span class="lumpSumVatAmount_${item.index } lumpSumVatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
+									</td>
+									<td align="right">
+										<span class="lumpSumTotal_${item.index } lumpSumTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
+									</td>
+									<td>
+										<span class="add-padding delete_${item.index }" onclick="deleteLumpSum(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									</td>
+								</tr>
+						</c:forEach>
 					</c:otherwise>
 				</c:choose>
 			</tbody>

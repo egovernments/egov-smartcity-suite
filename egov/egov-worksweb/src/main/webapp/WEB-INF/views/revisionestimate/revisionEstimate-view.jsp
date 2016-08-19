@@ -69,22 +69,11 @@
 <form:form name="revisionEstimateForm" role="form" method="post" modelAttribute="revisionEstimate" id="revisionEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<input type="hidden" id="errorlocation" value="<spring:message code='error.locationdetails.required' />">
-	<form:hidden path="" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
-	<input type="hidden" name="locationAppConfig" id="locationAppConfig" value="${isLocationDetailsRequired}"/>
-	<input type="hidden" name="estimateId" id="estimateId" value="${revisionEstimate.parent.id}"/>
-	<div class="new-page-header"><spring:message code="lbl.createre" /></div> 
+	<div class="new-page-header"><spring:message code="lbl.re" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
 		<c:out value="${message}" /><br />
 	</div>
-	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
-	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
-	<form:hidden path="parent" id="parent" name="parent" value="${revisionEstimate.parent.id }"/>
-	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${revisionEstimate.workValue}" default="0.0" />'/>
-	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
-	<input type="hidden" name="workOrderDate" id="workOrderDate"  data-idx="0" data-optional="0" class="form-control datepicker estimateDateClassId" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" style="display: none" value='${workOrderDate}'  />
-	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.revisionestimate.confirm" />" />
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -115,16 +104,13 @@
 				</c:choose>
 			</div>
 			<div class="tab-pane fade" id="nontendered">
-				 <%@ include file="revisionEstimate-nonTendered.jsp"%>
-				 <%@ include file="revisionEstimate-lumpSum.jsp"%> 
+				 <%@ include file="revisionestimate-viewnontendered.jsp"%>
+				 <%@ include file="revisionestimate-viewlumpsum.jsp"%> 
 			</div>
 			<div class="tab-pane fade" id="changequantity">
+				 <%@ include file="revisionestimate-viewchangequantitys.jsp"%> 
 			</div>
 		</div>
-		<%-- <div class="col-sm-12 text-center">
-			<form:button type="button" id="submitForm" class="btn btn-primary" value="Save" ><spring:message code="lbl.save"/></form:button>
-			<form:button type="button" class="btn btn-default" id="button2" onclick="window.close();"><spring:message code="lbl.close"/></form:button>
-		</div> --%>
 		
 		<c:if test="${!workflowHistory.isEmpty() && mode != null }">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -145,7 +131,3 @@
 </form:form> 
 <script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
-<div id="measurement" >
-<%@ include file="../measurementsheet/measurementsheet-formtable.jsp"%>
-</div>      

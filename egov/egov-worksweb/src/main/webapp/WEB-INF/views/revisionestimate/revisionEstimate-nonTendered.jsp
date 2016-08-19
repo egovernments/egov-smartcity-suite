@@ -125,7 +125,7 @@
 				</tr>
 				<c:choose>
 					<c:when test="${revisionEstimate.nonTenderedActivities.size() == 0}">
-						<tr id="nonTenderedRow" class="nonTenderedRow" sorinvisible="true" hidden="true" align="center">
+						<tr id="nonTenderedRow" class="nonTenderedRow" nontenderedinvisible="true" hidden="true" align="center">
 							<td>
 								<span class="spannontenderedslno">1</span>
 								<form:hidden path="nonTenderedActivities[0].id" id="nonTenderedActivityid_0" class="activityid" />
@@ -179,7 +179,60 @@
 
 					</c:when>
 					<c:otherwise>
-						
+						 <c:forEach items="${revisionEstimate.nonTenderedActivities}" var="activity" varStatus="item">
+								<tr id="nonTenderedRow" class="nonTenderedRow" align="center">
+									 <td>
+										<span class="spannontenderedslno">${item.index + 1 }</span>
+										<form:hidden path="nonTenderedActivities[${item.index }].id" id="nonTenderedActivityid_${item.index }" class="activityid" value="${activity.id }" />
+										<form:hidden path="nonTenderedActivities[${item.index }].schedule.id" id="id_${item.index }" class="sorhiddenid" value="${activity.schedule.id }" />
+									</td>
+									<td>
+										<span class="categoryCode_${item.index }">${activity.schedule.scheduleCategory.code }</span>
+									</td>
+									<td>
+										<span class="code_${item.index }">${activity.schedule.code }</span>
+									</td>
+									<td align="left">
+										<span class="summary_${item.index }">${activity.schedule.getSummary() }</span>
+										<span class="hintanchor description_${item.index }"/><a href="#" class="hintanchor" title="${activity.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a></span>
+									</td>
+									<td>
+										<span class="uom_${item.index }">${activity.schedule.uom.uom }</span>
+										<form:hidden path="nonTenderedActivities[${item.index }].uom" id="nonTenderedUomid_${item.index }" class="uomhiddenid" value="${activity.schedule.uom.id }"/>
+									</td>
+									<td align="right">
+										<span class="estimateRate estimateRate_${item.index }">${activity.estimateRate }</span>
+										<form:hidden path="nonTenderedActivities[${item.index }].rate" id="rate_${item.index }" value="${activity.rate }" />
+										<form:hidden path="nonTenderedActivities[${item.index }].estimateRate" id="estimateRate_${item.index }" value="${activity.estimateRate }" />
+									</td>
+									<c:set var="isreadonly" value="false"/>
+ 									<c:if test="${activity.measurementSheetList.size() > 0 }">
+ 									<c:set var="isreadonly" value="true"/>
+ 									</c:if>
+									<td>
+										<div class="input-group" style="width:150px">
+									  <form:input path="nonTenderedActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" readonly="${isreadonly}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
+					                  <span class="input-group-addon" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>				
+                                    	</div>
+                                     </td>
+                               		<%@ include file="../measurementsheet/nontendered-measurementsheet-formtableedit.jsp"%>
+									<td align="right">
+										<span class="amount_${item.index } amount"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									</td>
+									<td hidden="true" class="serviceTaxPerc">
+										<form:input path="nonTenderedActivities[${item.index }].serviceTaxPerc" value="${activity.serviceTaxPerc }" id="vat_${item.index }" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="1" class="form-control table-input text-right" maxlength="64" onblur="calculateVatAmount(this);" onkeyup="validateInput(this);"/>
+									</td>
+									<td hidden="true" align="right" class="vatAmount">
+										<span class="vatAmount_${item.index } vatAmt"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100) }</fmt:formatNumber></span>
+									</td>
+									<td align="right">
+										<span class="total_${item.index } total"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(activity.rate * activity.quantity) + ((activity.rate * activity.quantity) * (activity.serviceTaxPerc / 100)) }</fmt:formatNumber></span>
+									</td>
+									<td>
+										<span class="add-padding delete_${item.index }" onclick="deleteNonTendered(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
+									</td> 
+								</tr>
+						</c:forEach> 
 					</c:otherwise>
 				</c:choose>
 			</tbody>
