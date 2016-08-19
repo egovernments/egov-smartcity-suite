@@ -39,6 +39,15 @@
  */
 package org.egov.egf.web.actions.budget;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -56,7 +65,6 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
-import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.Constants;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -64,29 +72,19 @@ import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
 @ParentPackage("egov")
 
 @Results({
-    @Result(name = "new-re", location = "budgetDetail-new-re.jsp"),
-    @Result(name = "budgets", location = "budgetDetail-budgets.jsp"),
-    @Result(name = "functions", location = "budgetDetail-functions.jsp"),
-    @Result(name = "budgetGroup", location = "budgetDetail-budgetGroup.jsp"),
-    @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
+        @Result(name = "new-re", location = "budgetDetail-new-re.jsp"),
+        @Result(name = "budgets", location = "budgetDetail-budgets.jsp"),
+        @Result(name = "functions", location = "budgetDetail-functions.jsp"),
+        @Result(name = "budgetGroup", location = "budgetDetail-budgetGroup.jsp"),
+        @Result(name = "AJAX_RESULT", type = "stream", location = "returnStream", params = { "contentType", "text/plain" })
 })
 public class BudgetDetailAction extends BaseBudgetDetailAction {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     private static final long serialVersionUID = 1L;
 
@@ -112,12 +110,12 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
         return is;
     }
 
-    public BudgetDetailAction(final BudgetDetailConfig budgetDetailConfig) {
-        super(budgetDetailConfig);
+    public BudgetDetailAction() {
+        super();
     }
 
     @Override
-    
+
     protected void saveAndStartWorkFlow(final BudgetDetail detail) {
         try {
             if (budgetDocumentNumber != null && budgetDetail.getBudget() != null) {
@@ -161,10 +159,10 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
                     bd.getFunction());
         // find all next year be for the function
         savedbudgetDetailList
-        .addAll(budgetDetailService
-                .findAllBy(
-                        "from BudgetDetail where budget=(select bd from Budget bd where referenceBudget=?) and function=? order by function.name,budgetGroup.name",
-                        bd.getBudget(), bd.getFunction()));
+                .addAll(budgetDetailService
+                        .findAllBy(
+                                "from BudgetDetail where budget=(select bd from Budget bd where referenceBudget=?) and function=? order by function.name,budgetGroup.name",
+                                bd.getBudget(), bd.getFunction()));
     }
 
     public String ajaxLoadBudgetDetailList() {
@@ -210,21 +208,20 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
 
     @SuppressWarnings("unchecked")
     private void loadAjaxedFunctionAndBudgetGroup() {
-        if (budgetDetail.getBudget() != null)
-        {
+        if (budgetDetail.getBudget() != null) {
             String sqlStr = "select distinct (f.name)  as name,f.id as id   from function f,egf_budgetdetail bd where  f.id=bd.function and bd.budget="
                     + budgetDetail.getBudget().getId() + "  order  by f.name";
             SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
             sqlQuery.addScalar("name")
-            .addScalar("id", LongType.INSTANCE)
-            .setResultTransformer(Transformers.aliasToBean(CFunction.class));
+                    .addScalar("id", LongType.INSTANCE)
+                    .setResultTransformer(Transformers.aliasToBean(CFunction.class));
             functionList = sqlQuery.list();
             sqlStr = "select  distinct (bg.name) as name ,bg.id  as id from egf_budgetgroup bg,egf_budgetdetail  bd where  bg.id=bd.budgetgroup and bd.budget="
                     + budgetDetail.getBudget().getId() + "  order  by bg.name";
             sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
             sqlQuery.addScalar("name")
-            .addScalar("id", LongType.INSTANCE)
-            .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
+                    .addScalar("id", LongType.INSTANCE)
+                    .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
             budgetGroupList = sqlQuery.list();
         }
 
@@ -244,8 +241,8 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
                 + id + "  order  by f.name";
         final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
         sqlQuery.addScalar("name")
-        .addScalar("id", LongType.INSTANCE)
-        .setResultTransformer(Transformers.aliasToBean(CFunction.class));
+                .addScalar("id", LongType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(CFunction.class));
         functionList = sqlQuery.list();
         return "functions";
     }
@@ -257,18 +254,16 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
                 + id + "  order  by bg.name";
         final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(sqlStr);
         sqlQuery.addScalar("name")
-        .addScalar("id", LongType.INSTANCE)
-        .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
+                .addScalar("id", LongType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(BudgetGroup.class));
         budgetGroupList = sqlQuery.list();
         return "budgetGroup";
     }
 
-    
     public String saveAndNew() {
         return create();
     }
 
-    
     public String saveAndNewRe() {
         return createRe();
     }
@@ -327,7 +322,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
     }
 
     @Override
-    
+
     protected void saveAndStartWorkFlowForRe(final BudgetDetail detail, final int index, final CFinancialYear finYear,
             final Budget refBudget) {
         try {
@@ -363,8 +358,8 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
     public void approve() {
         topBudget = savedbudgetDetailList.get(0).getBudget();
         setTopBudget(topBudget);
-        String budgetComment="";
-        if (parameters.get("budget.comments") != null){
+        String budgetComment = "";
+        if (parameters.get("budget.comments") != null) {
             budgetComment = parameters.get("budget.comments")[0];
         }
         Integer userId = null;
@@ -379,7 +374,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
             // budgetDetailWorkflowService.transition(parameters.get(ACTIONNAME)[0]+"|"+userId, detail, detail.getComment());
             if (new String("forward").equals(parameters.get(ACTIONNAME)[0]))
                 detail.transition(true).withStateValue("Forwarded by " + getPosition().getName())
-                .withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
+                        .withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
         // forwardBudget(budgetComment, userId); //for RE
         setTopBudget(budgetService.getReferenceBudgetFor(topBudget));
         // forwardBudget(budgetComment, userId); //for BE
@@ -390,8 +385,7 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
             else
                 addActionMessage(getMessage("budgetdetail.approved")
                         + budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwnerPosition()));
-        }
-        else
+        } else
             addActionMessage(getMessage("budgetdetail.approved")
                     + budgetService.getEmployeeNameAndDesignationForPosition(topBudget.getState().getOwnerPosition()));
     }
@@ -431,13 +425,11 @@ public class BudgetDetailAction extends BaseBudgetDetailAction {
         return getText(key);
     }
 
-    public Budget getTopBudget()
-    {
+    public Budget getTopBudget() {
         return topBudget;
     }
 
-    public void setTopBudget(final Budget topBudget)
-    {
+    public void setTopBudget(final Budget topBudget) {
         this.topBudget = topBudget;
     }
 

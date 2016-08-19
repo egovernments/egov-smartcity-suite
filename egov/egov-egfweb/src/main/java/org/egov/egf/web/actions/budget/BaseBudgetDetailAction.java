@@ -39,9 +39,16 @@
  */
 package org.egov.egf.web.actions.budget;
 
-
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -77,16 +84,8 @@ import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.ValueStack;
 
 public abstract class BaseBudgetDetailAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -103,7 +102,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
     protected boolean headerDisabled = false;
     protected List<BudgetAmountView> budgetAmountView = new ArrayList<BudgetAmountView>();
-    protected BudgetDetailConfig budgetDetailConfig;
     protected String currentYearRange;
     protected String previousYearRange;
     private String nextYearRange;
@@ -115,13 +113,15 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     BudgetDetailHelper budgetDetailHelper;
     protected boolean addNewDetails = false;
 
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    protected BudgetDetailConfig budgetDetailConfig;
     
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+
     public boolean isAddNewDetails() {
         return addNewDetails;
     }
@@ -194,27 +194,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return subSchemes;
     }
 
-    public BaseBudgetDetailAction(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-        headerFields = budgetDetailConfig.getHeaderFields();
-        gridFields = budgetDetailConfig.getGridFields();
-        mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        addRelatedEntity("budget", Budget.class);
-        addRelatedEntity(Constants.BUDGET_GROUP, BudgetGroup.class);
-        if (shouldShowField(Constants.FUNCTIONARY))
-            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
-        if (shouldShowField(Constants.FUNCTION))
-            addRelatedEntity(Constants.FUNCTION, CFunction.class);
-        if (shouldShowField(Constants.SCHEME))
-            addRelatedEntity(Constants.SCHEME, Scheme.class);
-        if (shouldShowField(Constants.SUB_SCHEME))
-            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
-        if (shouldShowField(Constants.FUND))
-            addRelatedEntity(Constants.FUND, Fund.class);
-        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
-        if (shouldShowField(Constants.BOUNDARY))
-            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
+    public BaseBudgetDetailAction() {
     }
 
     @Override
@@ -222,7 +202,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    
     public String create() {
         validateMandatoryFields();
         budgetDetailHelper.removeEmptyBudgetDetails(budgetDetailList);
@@ -233,7 +212,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return NEW;
     }
 
-    
     @ValidationErrorPage(value = "new-re")
     public String createRe() {
         showRe = true;
@@ -261,7 +239,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "new-re";
     }
 
-    
     @ValidationErrorPage(value = "newDetail-re")
     public String createBudgetDetail() {
 
@@ -299,7 +276,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return "newDetail-re";
     }
 
-    
     @ValidationErrorPage(value = "new-re")
     public String createReAndForward() {
         showRe = true;
@@ -334,7 +310,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     /**
      * @param budget deletes the existing selected budgets from db
      */
-    
+
     private void deleteExisting() {
 
         if (LOGGER.isInfoEnabled())
@@ -355,14 +331,14 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
 
         /*
          * for (BudgetDetail reDetail :budgetDetailList) { if(reDetail.getId()!=null && reDetail.getId()!=0) { for(BudgetDetail
-         * beDetail:result) { if(compareREandBEDetails(reDetail,beDetail)) { if(LOGGER.isInfoEnabled())
-         * LOGGER.info("deleting "+beDetail.getId() +"where budgetHeade is " +beDetail.getBudgetGroup().getName()
-         * +" and function  is "+beDetail.getFunction().getName());
-         * persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id="
-         * +beDetail.getId()).executeUpdate(); } } if(LOGGER.isInfoEnabled()) LOGGER.info("deleting "+reDetail.getId()
-         * +"where budgetHeade is " +reDetail.getBudgetGroup().getName() +" and function  is "+reDetail.getFunction().getName());
-         * .getCurrentSession().createSQLQuery("delete from egf_budgetdetail where id="+reDetail.getId()).executeUpdate();
-         * reDetail.setId(null); } else { reDetail.setId(null); } }
+         * beDetail:result) { if(compareREandBEDetails(reDetail,beDetail)) { if(LOGGER.isInfoEnabled()) LOGGER.info("deleting "
+         * +beDetail.getId() +"where budgetHeade is " +beDetail.getBudgetGroup().getName() +" and function  is "
+         * +beDetail.getFunction().getName()); persistenceService.getSession().createSQLQuery(
+         * "delete from egf_budgetdetail where id=" +beDetail.getId()).executeUpdate(); } } if(LOGGER.isInfoEnabled())
+         * LOGGER.info("deleting "+reDetail.getId() +"where budgetHeade is " +reDetail.getBudgetGroup().getName() +
+         * " and function  is "+reDetail.getFunction().getName()); .getCurrentSession().createSQLQuery(
+         * "delete from egf_budgetdetail where id="+reDetail.getId()).executeUpdate(); reDetail.setId(null); } else {
+         * reDetail.setId(null); } }
          */
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Deleting complete. deleted " + executeUpdate + " RE  and " + executeUpdate2 + " BE items ");
@@ -467,8 +443,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     private void saveBudgetDetails(final boolean withRe, CFinancialYear finYear, final Budget budget) {
         int index = 0;
         Budget refBudget = null;
-        if (withRe)
-        {
+        if (withRe) {
             refBudget = budgetService.getReferenceBudgetFor(budget);
             if (refBudget == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("no.reference.budget", "no.reference.budget")));
@@ -502,8 +477,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     private void saveNewBudgetDetailItems(final boolean withRe, CFinancialYear finYear, final Budget budget) {
         int index = 0;
         Budget refBudget = null;
-        if (withRe)
-        {
+        if (withRe) {
             refBudget = budgetService.getReferenceBudgetFor(budget);
             if (refBudget == null)
                 throw new ValidationException(Arrays.asList(new ValidationError("no.reference.budget", "no.reference.budget")));
@@ -549,14 +523,14 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         budgetList = new ArrayList<Budget>();
         if (!addNewDetails)
             budgetList
-            .addAll(persistenceService
-                    .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) "
-                            +
-                            "and isactivebudget = 1 and state.type='Budget' and isbere='"
-                            + bere.toUpperCase()
-                            + "' and (state.value='NEW' or lower(state.value) like lower('Forwarded by SMADMIN%')) and financialYear.id = "
-                            +
-                            getFinancialYear().getId() + " order by name"));
+                    .addAll(persistenceService
+                            .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) "
+                                    +
+                                    "and isactivebudget = 1 and state.type='Budget' and isbere='"
+                                    + bere.toUpperCase()
+                                    + "' and (state.value='NEW' or lower(state.value) like lower('Forwarded by SMADMIN%')) and financialYear.id = "
+                                    +
+                                    getFinancialYear().getId() + " order by name"));
         else
             budgetList.addAll(persistenceService
                     .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) " +
@@ -573,6 +547,22 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
+        addRelatedEntity("budget", Budget.class);
+        addRelatedEntity(Constants.BUDGET_GROUP, BudgetGroup.class);
+        if (shouldShowField(Constants.FUNCTIONARY))
+            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
+        if (shouldShowField(Constants.FUNCTION))
+            addRelatedEntity(Constants.FUNCTION, CFunction.class);
+        if (shouldShowField(Constants.SCHEME))
+            addRelatedEntity(Constants.SCHEME, Scheme.class);
+        if (shouldShowField(Constants.SUB_SCHEME))
+            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
+        if (shouldShowField(Constants.FUND))
+            addRelatedEntity(Constants.FUND, Fund.class);
+        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
+            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
+        if (shouldShowField(Constants.BOUNDARY))
+            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
         defaultToCurrentUsersExecutingDepartment();
         setupDropdownsInHeader();
         re = budgetService.hasReForYear(Long.valueOf(financialYearDAO.getCurrYearFiscalId()));
@@ -594,11 +584,12 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
-            .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
+                    .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by " +
-                "finYearRange desc "));
+        addDropdownData("financialYearList",
+                getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by " +
+                        "finYearRange desc "));
         dropdownData.put("departmentList", masterDataCache.get("egi-department"));
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
@@ -701,22 +692,21 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     }
 
     protected void setBudgetDropDown() {
-        if (addNewDetails)
-        {
+        if (addNewDetails) {
             if (getFinancialYear() != null && getFinancialYear().getId() != null) {
                 budgetList.addAll(persistenceService
                         .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) " +
                                 "and isactivebudget = 1 and state.type='Budget' and isbere='RE' and financialYear.id = " +
                                 getFinancialYear().getId() + " order by name"));
                 dropdownData.put("budgetList", budgetList);
-            }
-            else
+            } else
                 dropdownData.put("budgetList", Collections.EMPTY_LIST);
         } else
             dropdownData
-            .put("budgetList",
-                    persistenceService
-                    .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = 1 and state.type='Budget' and (state.value='NEW' or lower(state.value) like lower('Forwarded by SMADMIN%')) order by name"));
+                    .put("budgetList",
+                            persistenceService
+                                    .findAllBy(
+                                            "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = 1 and state.type='Budget' and (state.value='NEW' or lower(state.value) like lower('Forwarded by SMADMIN%')) order by name"));
     }
 
     public List<BudgetDetail> getSavedbudgetDetailList() {
@@ -724,7 +714,7 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     }
 
     private void defaultToCurrentUsersExecutingDepartment() {
-        if (shouldShowHeaderField("executingDepartment")){
+        if (shouldShowHeaderField("executingDepartment")) {
             User user = getUser();
         }
         /*
@@ -926,10 +916,6 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
         return mandatoryFields;
     }
 
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-    }
-
     public boolean isHeaderDisabled() {
         return headerDisabled;
     }
@@ -949,7 +935,8 @@ public abstract class BaseBudgetDetailAction extends BaseFormAction {
     }
 
     public String ajaxLoadSubSchemes() {
-        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+        subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+                schemeId);
         return Constants.SUBSCHEMES;
     }
 
