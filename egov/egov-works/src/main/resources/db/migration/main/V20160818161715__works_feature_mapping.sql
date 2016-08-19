@@ -1,0 +1,6 @@
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksAddEstimateTemplateToEstimate') ,(select id FROM eg_feature WHERE name = 'Create Abstract Estimate'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksGetOverheadRateByOverhead') ,(select id FROM eg_feature WHERE name = 'Create Abstract Estimate'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksLetterOfAcceptanceUpdate') ,(select id FROM eg_feature WHERE name = 'Update LOA'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AjaxCreateContractorBillValidate') ,(select id FROM eg_feature WHERE name = 'Create Contractor Bill'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'WorksAjaxOtherDeductionCOAForContractorBill') ,(select id FROM eg_feature WHERE name = 'Create Contractor Bill'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'AjaxCheckIfDependantObjectsCreatedToCancelLOA') ,(select id FROM eg_feature WHERE name = 'Cancel LOA'));
