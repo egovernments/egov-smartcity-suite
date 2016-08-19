@@ -41,19 +41,20 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <html>
 <head>
 <link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/objection.js' context='/ptis'/>"></script>
 <title><s:text name="objectionView.title" /></title>
 <script type="text/javascript">
 	jQuery.noConflict();
@@ -320,9 +321,9 @@
 		
 </script>
 <script
-	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
-<link href="<c:url value='/resources/css/headertab.css'/>"
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/headertab.css'/>"
 	rel="stylesheet" type="text/css" />
 </head>
 <body onload="loadOnStartUp();">

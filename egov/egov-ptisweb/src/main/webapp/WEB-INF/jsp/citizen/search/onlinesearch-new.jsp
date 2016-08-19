@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
@@ -110,6 +111,6 @@
 		</center>
 	</div>
 	<script
-		src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+		src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

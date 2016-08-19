@@ -44,8 +44,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/dateValidation.js'/>"></script>
 
 <form:form id="editVacancyRemissionApprovalForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemissionApproval">
@@ -120,5 +121,5 @@
 			</div>
 </form:form>
 
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 

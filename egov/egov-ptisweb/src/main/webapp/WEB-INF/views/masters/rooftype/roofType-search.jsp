@@ -42,7 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<script src="<c:url value='/resources/js/app/roofType.js'/>"></script>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/roofType.js'/>"></script>
 
 <div class="row" id="page-content">
     <div class="col-md-12">

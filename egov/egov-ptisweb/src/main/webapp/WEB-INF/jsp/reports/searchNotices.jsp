@@ -40,18 +40,19 @@
 
 <%@taglib uri="http://displaytag.sf.net" prefix="display"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
 <title><s:text name="SearchNotice.title" /></title>
 <link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery(function($) {
