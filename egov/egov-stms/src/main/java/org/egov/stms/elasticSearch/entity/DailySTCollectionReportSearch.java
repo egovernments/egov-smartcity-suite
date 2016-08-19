@@ -41,6 +41,7 @@ package org.egov.stms.elasticSearch.entity;
 
 import static org.egov.search.domain.Filter.rangeFilter;
 import static org.egov.search.domain.Filter.termsStringFilter;
+import static org.egov.search.domain.Filter.queryStringFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -166,11 +167,7 @@ public class DailySTCollectionReportSearch {
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_RECEIPT, collectionOperator));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_BILLING_SERVICE,
                 SewerageTaxConstants.APPL_INDEX_MODULE_NAME));
-        andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_STATUS, status));
-        if (!consumerCode.isEmpty()) {
-            final String[] consumerCodes = consumerCode.toArray(new String[consumerCode.size()]);
-            andFilters.add(termsStringFilter("common.consumercode", consumerCodes));
-        }
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_STATUS, status));
         andFilters.add(rangeFilter(SewerageTaxConstants.SEARCHABLE_RECEIPT_DATE, fromDate, toDate));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");

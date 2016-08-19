@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -73,10 +72,7 @@ import org.egov.search.service.SearchService;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageDailyCollectionReport;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.elasticsearch.search.sort.SortOrder;
-import org.json.JSONException;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,8 +85,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/reports/dailySTCollectionReport/search/")
 public class DailySTCollectionReportController {
-
-    String consumerNumber = null;
 
     @Autowired
     private SearchService searchService;
@@ -157,44 +151,37 @@ public class DailySTCollectionReportController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<SewerageDailyCollectionReport> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest) {
-        SearchResult sewerageSearchIndexSearchResult = null;
-        SearchResult consumerIndexSearchResult = null;
+        String consumerNumber = null;
         SearchResult collectionIndexSearchResult = null;
-        final List<String> consumerCodes = new ArrayList<String>();
         final List<SewerageDailyCollectionReport> searchResultFomatted = new ArrayList<SewerageDailyCollectionReport>(0);
-        final Sort sortByAssessment = Sort.by().field("clauses.ward", SortOrder.ASC);
+        final Sort sortByAssessment = Sort.by().field("clauses.revwardname", SortOrder.ASC);
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
 
-        if (StringUtils.isNotBlank(searchRequest.getRevenueWard())) {
-            consumerIndexSearchResult = searchService.search(asList(Index.SEWARAGE.toString()),
-                    asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
-                    searchRequest.searchConnectionForWardFilters(), sortByAssessment, Page.NULL);
-            for (final Document consumerDocument : consumerIndexSearchResult.getDocuments()) {
-                @SuppressWarnings("unchecked")
-                final Map<String, String> consumerCommonMap = (Map<String, String>) consumerDocument.getResource().get(
-                        "clauses");
-                consumerCodes.add(consumerCommonMap.get("consumercode"));
-            }
-            searchRequest.setConsumerCode(consumerCodes);
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        } else
-            collectionIndexSearchResult = getCollectionIndex(searchRequest);
-        
-
+        collectionIndexSearchResult = getCollectionIndex(searchRequest);
         for (final Document collectionIndexDocument : collectionIndexSearchResult.getDocuments()){
             final Map<String, String> searchableObjects =(Map<String, String>) collectionIndexDocument.getResource().get("common");
             if(searchableObjects != null){
                 consumerNumber = searchableObjects.get("consumercode");
-                
-                final SearchResult searchResult = getSewerageSearchResult (new SewerageConnSearchRequest());
-                for(Document document : searchResult.getDocuments()){
-                    SewerageDailyCollectionReport searchSewerageResult = new SewerageDailyCollectionReport();
-                    final Map<String, String> searchableSewerageObjects = (Map<String, String>)document.getResource().get("searchable");
-                    if(searchableSewerageObjects!=null){
-                        searchSewerageResult.setCollectionDocument(collectionIndexDocument);
-                        searchSewerageResult.setSewerageSearchDocument(document);
-                        searchResultFomatted.add(searchSewerageResult);
+                SewerageConnSearchRequest searchRequestObj = new SewerageConnSearchRequest();
+                if(null!=searchRequest.getRevenueWard()){
+                    searchRequestObj.setRevenueWard(searchRequest.getRevenueWard());
+                }
+                searchRequestObj.setConsumerNumber(consumerNumber);
+                final SearchResult searchResult = getSewerageSearchResult (searchRequestObj);
+                 if(null!=searchResult && !searchResult.getDocuments().isEmpty()){
+                     SewerageDailyCollectionReport searchSewerageResult = new SewerageDailyCollectionReport();
+                     
+                    for(Document document : searchResult.getDocuments()){
+                        final Map<String, String> searchableSewerageObjects = (Map<String, String>)document.getResource().get("searchable");
+                          if(searchableSewerageObjects!=null){
+                          if(searchableSewerageObjects.get("consumernumber").equalsIgnoreCase(consumerNumber)){
+                            searchSewerageResult.setCollectionDocument(collectionIndexDocument);
+                            searchSewerageResult.setSewerageSearchDocument(document);
+                            searchResultFomatted.add(searchSewerageResult);
+                            break;
+                            }
+                        }
                     }
                 }
             }
@@ -212,8 +199,8 @@ public class DailySTCollectionReportController {
     
     private SearchResult getSewerageSearchResult(final SewerageConnSearchRequest searchRequest){
         final Sort sortByApplicationDate = Sort.by().field("clauses.applicationdate", SortOrder.ASC);
-        searchRequest.setConsumerNumber(consumerNumber);
-        return searchService.search(asList(Index.SEWARAGE.toString()), asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(), searchRequest.searchFilters(), sortByApplicationDate, Page.NULL);
-        
+        return searchService.search(asList(Index.SEWARAGE.toString()), 
+                asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(), 
+                searchRequest.searchFilters(), sortByApplicationDate, Page.NULL);
     }
 }

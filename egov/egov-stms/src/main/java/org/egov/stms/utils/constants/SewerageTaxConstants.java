@@ -164,7 +164,7 @@ public class SewerageTaxConstants {
     public static final String CLAUSES_CHANNEL = "clauses.channel";
     public static final String CLAUSES_RECEIPT = "clauses.receiptcreator";
     public static final String CLAUSES_BILLING_SERVICE = "clauses.billingservice";
-    public static final String SEARCHABLE_STATUS = "searchable.status";
+    public static final String CLAUSES_STATUS = "clauses.status";
     public static final String SEARCHABLE_RECEIPT_DATE = "searchable.receiptdate";
     public static final String CLAUSES_PROPERTY_TYPE="clauses.propertytype";
     public static final String CLAUSES_ISACTIVE="clauses.isactive";
