@@ -97,8 +97,8 @@ public interface ContractorBillRegisterRepository extends JpaRepository<Contract
             @Param("workOrderEstimate") final WorkOrderEstimate workOrderEstimate, @Param("status") final String status,
             @Param("billtype") final String billtype);
     
-    @Query("select max(cbr.billdate) from ContractorBillRegister as cbr where upper(cbr.billstatus) = :billstatus and cbr.billtype = :billtype and cbr.workOrderEstimate.id = :workOrderEstimateId and cbr.id != :contractorBillId")
-    Date getLastPartBillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("billstatus") final String billstatus,
+    @Query("select max(cbr.billdate) from ContractorBillRegister as cbr where upper(cbr.billstatus) = :billstatus and cbr.billtype = :billtype and cbr.workOrderEstimate.id = :workOrderEstimateId and cbr.createdDate < :billCreatedDate")
+    Date getLastPartBillDate(@Param("billCreatedDate") final Date billCreatedDate,@Param("workOrderEstimateId") final Long workOrderEstimateId,@Param("billstatus") final String billstatus,
             @Param("billtype") final String billtype);
 
 }

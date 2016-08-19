@@ -489,6 +489,10 @@ function viewMB(id) {
 	window.open("/egworks/mb/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
+function viewContractCertificatePDF() {
+	var id = $('#id').val();
+	window.open("/egworks/contractcertificate/contractcertificatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
 
 function addRow(tableName,rowName) { 
 	

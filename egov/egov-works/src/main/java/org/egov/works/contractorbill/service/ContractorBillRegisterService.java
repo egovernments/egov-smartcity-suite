@@ -655,21 +655,19 @@ public class ContractorBillRegisterService {
                 contractorBillRegister.getBillDetailes().add(billDetails);
     }
     
-    public Date getLastPartBillDateForContractorBill(final Long contractorBillId,final Long workOrderEstimateId) {
-        return contractorBillRegisterRepository.getLastPartBillDate(contractorBillId, workOrderEstimateId, ContractorBillRegister.BillStatus.APPROVED.toString(), BillTypes.Part_Bill.toString());
+    public Date getLastPartBillDateForContractorBill(final Date billCreatedDate,final Long workOrderEstimateId) {
+        return contractorBillRegisterRepository.getLastPartBillDate(billCreatedDate, workOrderEstimateId, ContractorBillRegister.BillStatus.APPROVED.toString(), BillTypes.Part_Bill.toString());
     }
     
     public List<ContractorBillCertificateInfo> getContractCertificateDetails(
             final ContractorBillRegister contractorBillRegister,final Map<String, Object> reportParams) {
         final List<ContractorBillCertificateInfo> contractCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
 
-        List<Object[]> distinctWoaList = null;
-        List<MBDetails> mbDetailsListTillDate = null;
         Double lastExecutionTotal = 0.0;
         Double uptoDateTotal = 0.0;
 
-        distinctWoaList = mBDetailsService.getActivitiesByContractorBillForApprovedMB(contractorBillRegister.getId());
-        mbDetailsListTillDate = mBDetailsService.getActivitiesByContractorBillTillDate(contractorBillRegister.getId(),
+        List<Object[]> distinctWoaList = mBDetailsService.getActivitiesByContractorBillForApprovedMB(contractorBillRegister.getId());
+        List<MBDetails> mbDetailsListTillDate = mBDetailsService.getActivitiesByContractorBillTillDate(contractorBillRegister.getWorkOrderEstimate().getId(),
                 contractorBillRegister.getCreatedDate());
 
         for (final Object[] Object : distinctWoaList) {
@@ -679,7 +677,7 @@ public class ContractorBillRegisterService {
             final ContractorBillCertificateInfo contractorBillCertificateInfo = new ContractorBillCertificateInfo();
             for (final MBDetails mbDetailsTillDate : mbDetailsListTillDate)
                 if (woa.getId().equals(mbDetailsTillDate.getWorkOrderActivity().getId()))
-                    lastExecutionQuantity = lastExecutionQuantity + woa.getApprovedQuantity();
+                    lastExecutionQuantity = lastExecutionQuantity + mbDetailsTillDate.getQuantity();
             contractorBillCertificateInfo.setLastExecutionQuantity(lastExecutionQuantity);
             contractorBillCertificateInfo.setLastExecutionAmount(woa.getActivity().getRate() * lastExecutionQuantity);
             contractorBillCertificateInfo.setExecutionQuantity(Double.valueOf(Object[1].toString()));

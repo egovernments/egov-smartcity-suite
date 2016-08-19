@@ -110,6 +110,9 @@
 						<c:if test="${contractorBillRegister.billstatus == 'APPROVED' }">
 							<a href="javascript:void(0)" class="btn btn-primary" onclick="renderPDF()" ><spring:message code="lbl.view.contractorbillpdf" /></a>
 						</c:if>
+						<c:if test="${contractorBillRegister.billstatus == 'APPROVED' && contractorBillRegister.billtype == 'Part Bill' && !contractorBillRegister.workOrderEstimate.workOrderActivities.isEmpty()}">
+				          <a href="javascript:void(0)" class="btn btn-primary" onclick="viewContractCertificatePDF()" ><spring:message code="lbl.view.contractcectificate" /></a>
+				        </c:if>
 						<input type="submit" name="closeButton"	id="closeButton" value="Close" Class="btn btn-default" onclick="window.close();" />
 					</div>
 				</div>

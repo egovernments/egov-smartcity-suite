@@ -41,7 +41,6 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,14 +54,11 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
-import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
-import org.egov.works.mb.entity.MBDetails;
-import org.egov.works.mb.service.MBDetailsService;
 import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
-import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -98,7 +94,6 @@ public class ContractCertificatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request, final HttpSession session) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (contractorBillRegister != null) {
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -109,9 +104,9 @@ public class ContractCertificatePDFController {
             reportParams.put("cityName", cityName);
             reportParams.put("contractorBillRegister", contractorBillRegister);
             final Date lastPartBillDate = contractorBillRegisterService.getLastPartBillDateForContractorBill(
-                    contractorBillRegister.getId(), contractorBillRegister.getWorkOrderEstimate().getId());
-            reportParams.put("lastPartBillDate", lastPartBillDate != null ? formatter.format(lastPartBillDate) : "NA");
-            reportParams.put("billDate", formatter.format(contractorBillRegister.getBilldate()));
+                    contractorBillRegister.getCreatedDate(), contractorBillRegister.getWorkOrderEstimate().getId());
+            reportParams.put("lastPartBillDate", lastPartBillDate != null ? DateUtils.getDefaultFormattedDate(lastPartBillDate) : "NA");
+            reportParams.put("billDate", DateUtils.getDefaultFormattedDate(contractorBillRegister.getBilldate()));
             reportParams.put("reportRunDate", sdf.format(new Date()));
             final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService.getContractCertificateDetails(
                     contractorBillRegister,reportParams);

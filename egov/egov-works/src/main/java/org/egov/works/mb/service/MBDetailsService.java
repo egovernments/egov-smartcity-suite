@@ -25,7 +25,7 @@ public class MBDetailsService {
         return mBDetailsRepository.getActivitiesByContractorBill(contractorBillId, WorksConstants.APPROVED);
     }
 
-    public List<MBDetails> getActivitiesByContractorBillTillDate(final Long contractorBillId, final Date billCreatedDate) {
-        return mBDetailsRepository.getActivitiesByContractorBillTillDate(contractorBillId, WorksConstants.APPROVED,billCreatedDate);
+    public List<MBDetails> getActivitiesByContractorBillTillDate(final Long workOrderEstimateId, final Date billCreatedDate) {
+        return mBDetailsRepository.getActivitiesByContractorBillTillDate(workOrderEstimateId, WorksConstants.APPROVED,billCreatedDate);
     }
 }
