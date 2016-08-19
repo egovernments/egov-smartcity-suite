@@ -55,7 +55,6 @@ $(document).ready(function() {
 	drillDowntableContainer = $('#tbldcbdrilldown-report');
 	$('.report-section').removeClass('display-hide');
 	$("#report-footer").show();
-	event.preventDefault();
 	var wardsList = $('#ward').val();
 	var temp=null;
 	if(wardsList!=null && wardsList!="undefined"){
