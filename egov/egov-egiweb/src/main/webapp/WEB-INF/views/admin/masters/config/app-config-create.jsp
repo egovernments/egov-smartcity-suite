@@ -138,7 +138,7 @@
                            <form:errors path="confValues[0].value" cssClass="add-margin error-msg"/>
                        </td>
                        <td>
-                           <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span>
+                           <span class="add-padding"><i class="fa fa-trash" data-func="add" aria-hidden="true" id="deleterow"></i></span>
                        </td>
                    </tr>
                </c:otherwise>

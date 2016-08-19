@@ -110,13 +110,15 @@
 	                      <td>
 	                          <fmt:formatDate value="${configValue.effectiveFrom}" var="effectiveDt" pattern="dd/MM/yyyy"/>
 	                          <form:input path="confValues[${counter.index}].effectiveFrom" cssClass="form-control datepicker effectiveFrom" value="${effectiveDt}"
-	                                      id="confValues[${counter.index}].effectiveFrom" data-date-start-date="0d" required="required" disabled="true"/>
+	                                      id="confValues[${counter.index}].effectiveFrom" data-date-start-date="0d" required="required" readonly="true"/>
 	                          <form:errors path="confValues[${counter.index}].effectiveFrom" cssClass="add-margin error-msg"/>
 	                      </td>
 	                      <td>
 	                          <form:input path="confValues[${counter.index}].value" cssClass="form-control confValues" value="${configValue.value}"
 	                                      id="confValues[${counter.index}].value" required="required"/>
 	                          <form:errors path="confValues[${counter.index}].value" cssClass="add-margin error-msg"/>
+                              <form:hidden path="confValues[${counter.index}].markedForRemoval" id="confValues[${counter.index}].markedForRemoval"
+                                           value="${configValue.markedForRemoval}" class="markedForRemoval"/>
 	                      </td>
 	                      <td>
 	                          <span class="add-padding"><i class="fa fa-trash" aria-hidden="true" id="deleterow"></i></span>
@@ -131,8 +133,8 @@
 	<div class="col-md-12 text-center">
 	    <div class="add-margin">
 	        <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-	      <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
-	      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
+	        <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
 	          <spring:message code="lbl.close"/>
 	        </button>
 	    </div>

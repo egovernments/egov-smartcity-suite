@@ -52,7 +52,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -87,20 +86,12 @@ public class AppConfigService {
 
     @Transactional
     public void createAppConfig(AppConfig appConfig) {
-        for(AppConfigValues configValue : appConfig.getConfValues()) {
-            configValue.setConfig(appConfig);
-        }
         appConfigRepository.save(appConfig);
     }
 
     @Transactional
     public void updateAppConfig(AppConfig appConfig) {
-        final List<AppConfigValues> newConfigVaues = new ArrayList<>(appConfig.getConfValues());
-        appConfig.getConfValues().clear();
-        appConfig.setConfValues(newConfigVaues);
-        for(AppConfigValues configValue : appConfig.getConfValues()) {
-            configValue.setConfig(appConfig);
-        }
+        appConfig.getConfValues().removeIf(AppConfigValues::isMarkedForRemoval);
         appConfigRepository.save(appConfig);
     }
 }
