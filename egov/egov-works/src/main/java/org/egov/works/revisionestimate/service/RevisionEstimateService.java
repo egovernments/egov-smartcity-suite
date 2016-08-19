@@ -39,6 +39,7 @@
  */
 package org.egov.works.revisionestimate.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,10 +49,11 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
-import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.repository.RevisionEstimateRepository;
 import org.egov.works.utils.WorksConstants;
 import org.slf4j.Logger;
@@ -70,7 +72,7 @@ public class RevisionEstimateService {
     private EntityManager entityManager;
 
     private final RevisionEstimateRepository revisionEstimateRepository;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
@@ -79,11 +81,12 @@ public class RevisionEstimateService {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
 
-    public List<RevisionAbstractEstimate> findApprovedRevisionEstimatesByParent(Long id) {
-        return revisionEstimateRepository.findByParent_IdAndStatus(id, AbstractEstimate.EstimateStatus.APPROVED.toString());
+    public List<RevisionAbstractEstimate> findApprovedRevisionEstimatesByParent(final Long id) {
+        return revisionEstimateRepository.findByParent_IdAndStatus(id,
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 
-    public RevisionAbstractEstimate getRevisionEstimateById(Long id) {
+    public RevisionAbstractEstimate getRevisionEstimateById(final Long id) {
         return revisionEstimateRepository.findOne(id);
     }
 
@@ -91,7 +94,8 @@ public class RevisionEstimateService {
     public RevisionAbstractEstimate createRevisionEstimate(final RevisionAbstractEstimate revisionEstimate) {
         mergeSorAndNonSorActivities(revisionEstimate);
         final AbstractEstimate abstractEstimate = revisionEstimate.getParent();
-        final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository.findByParent_Id(abstractEstimate.getId());
+        final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
+                .findByParent_Id(abstractEstimate.getId());
 
         Integer reCount = revisionEstimates.size();
         if (revisionEstimate.getId() != null)
@@ -111,13 +115,13 @@ public class RevisionEstimateService {
             revisionEstimate.setFundSource(abstractEstimate.getFundSource());
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
-    
+
         revisionEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(WorksConstants.ABSTRACTESTIMATE,
                 EstimateStatus.ADMIN_SANCTIONED.toString()));
         revisionEstimateRepository.save(revisionEstimate);
         return revisionEstimate;
     }
-    
+
     private void mergeSorAndNonSorActivities(final RevisionAbstractEstimate revisionEstimate) {
         for (final Activity activity : revisionEstimate.getNonTenderedActivities())
             if (activity.getId() == null) {
@@ -222,5 +226,78 @@ public class RevisionEstimateService {
         oldActivity.setEstimateRate(activity.getEstimateRate());
         oldActivity.setUom(activity.getUom());
         oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity, activity));
+    }
+
+    public void populateHeaderActivities(final RevisionAbstractEstimate revisionEstimate,
+            final List<RevisionAbstractEstimate> revisionAbstractEstimates) {
+        // Adding Original Activities
+        final List<Activity> sorActivities = new ArrayList<>(revisionEstimate.getParent().getSORActivities());
+        final List<Activity> nonSorActivities = new ArrayList<>(revisionEstimate.getParent().getNonSORActivities());
+
+        final List<Activity> nonTenderedActivities = new ArrayList<>();
+        final List<Activity> lumpSumActivities = new ArrayList<>();
+
+        // Populating Revision Estimate Activities
+        for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
+            if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
+                    && revisionEstimate.getCreatedDate() != null
+                    && re.getCreatedDate().before(revisionEstimate.getCreatedDate()))
+                for (final Activity activity : re.getActivities()) {
+                    // Non Tendered SOR Activities
+                    if (activity.getParent() == null && activity.getSchedule() != null) {
+                        if (nonTenderedActivities.isEmpty())
+                            nonTenderedActivities.add(activity);
+                        else {
+                            boolean flag = false;
+                            for (final Activity nta : nonTenderedActivities)
+                                if (activity.getSchedule().getId().equals(nta.getSchedule().getId())) {
+                                    flag = true;
+                                    nta.setQuantity(nta.getQuantity() + activity.getQuantity());
+                                }
+                            if (!flag)
+                                nonTenderedActivities.add(activity);
+                        }
+                    }
+                    // Non Tendered NON SOR Activities
+                    else if (activity.getParent() == null && activity.getSchedule() == null) {
+                        if (lumpSumActivities.isEmpty())
+                            lumpSumActivities.add(activity);
+                        else {
+                            final boolean flag = false;
+                            for (final Activity lsa : lumpSumActivities)
+                                if (activity.getNonSor().getId().equals(lsa.getNonSor().getId()))
+                                    lsa.setQuantity(lsa.getQuantity() + activity.getQuantity());
+                            if (!flag)
+                                lumpSumActivities.add(activity);
+                        }
+                    }
+                    // Changed Quantity SOR Activities
+                    else if (activity.getParent() != null && activity.getSchedule() != null) {
+                        for (final Activity sa : sorActivities)
+                            if (activity.getParent().getId().equals(sa.getId()))
+                                if (activity.getRevisionType() != null
+                                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                                    sa.setQuantity(sa.getQuantity() + activity.getQuantity());
+                                else if (activity.getRevisionType() != null
+                                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                                    sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+                    }
+                    // Changed Quantity NON SOR Activities
+                    else if (activity.getParent() != null && activity.getSchedule() == null) {
+                        for (final Activity nsa : nonSorActivities)
+                            if (activity.getParent().getId().equals(nsa.getId()))
+                                if (activity.getRevisionType() != null
+                                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                                    nsa.setQuantity(nsa.getQuantity() + activity.getQuantity());
+                                else if (activity.getRevisionType() != null
+                                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                                    nsa.setQuantity(nsa.getQuantity() - activity.getQuantity());
+                    }
+                }
+
+        revisionEstimate.getSorActivities().addAll(sorActivities);
+        revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
+        revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
+        revisionEstimate.getChangeQuantityLSActivities().addAll(lumpSumActivities);
     }
 }

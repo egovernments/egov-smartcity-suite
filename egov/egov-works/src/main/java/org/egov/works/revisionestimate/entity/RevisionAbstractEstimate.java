@@ -66,10 +66,13 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     private BigDecimal amountRule;
 
     private transient List<Activity> nonTenderedActivities = new ArrayList<Activity>(0);
-    
+
     private transient List<Activity> lumpSumActivities = new ArrayList<Activity>(0);
-    
-    
+
+    private transient List<Activity> changeQuantityNTActivities = new ArrayList<Activity>(0);
+
+    private transient List<Activity> changeQuantityLSActivities = new ArrayList<Activity>(0);
+
     @Override
     public String getStateDetails() {
         return "Revision Estimate : " + getEstimateNumber();
@@ -110,7 +113,7 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
         return nonTenderedActivities;
     }
 
-    public void setNonTenderedActivities(List<Activity> nonTenderedActivities) {
+    public void setNonTenderedActivities(final List<Activity> nonTenderedActivities) {
         this.nonTenderedActivities = nonTenderedActivities;
     }
 
@@ -118,10 +121,24 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
         return lumpSumActivities;
     }
 
-    public void setLumpSumActivities(List<Activity> lumpSumActivities) {
+    public void setLumpSumActivities(final List<Activity> lumpSumActivities) {
         this.lumpSumActivities = lumpSumActivities;
     }
-    
-    
+
+    public List<Activity> getChangeQuantityNTActivities() {
+        return changeQuantityNTActivities;
+    }
+
+    public void setChangeQuantityNTActivities(final List<Activity> changeQuantityNTActivities) {
+        this.changeQuantityNTActivities = changeQuantityNTActivities;
+    }
+
+    public List<Activity> getChangeQuantityLSActivities() {
+        return changeQuantityLSActivities;
+    }
+
+    public void setChangeQuantityLSActivities(final List<Activity> changeQuantityLSActivities) {
+        this.changeQuantityLSActivities = changeQuantityLSActivities;
+    }
 
 }

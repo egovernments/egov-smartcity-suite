@@ -65,8 +65,8 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${revisionEstimate.parent.activities.size() != 0}">
-						<c:forEach items="${revisionEstimate.parent.getNonSORActivities()}" var="nonSorDtls" varStatus="item">
+					<c:when test="${revisionEstimate.nonSorActivities.size() != 0}">
+						<c:forEach items="${revisionEstimate.nonSorActivities}" var="nonSorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
@@ -92,8 +92,8 @@
 			</tbody>
 			<tfoot>
 				<c:set var="nonsortotal" value="${0}" scope="session" />
-				<c:if test="${revisionEstimate.parent.getActivities() != null}">
-					<c:forEach items="${revisionEstimate.parent.getNonSORActivities()}" var="nonSor">
+				<c:if test="${revisionEstimate.nonSorActivities != null}">
+					<c:forEach items="${revisionEstimate.nonSorActivities}" var="nonSor">
 						<c:set var="nonsortotal" value="${nonsortotal + nonSor.getAmount().value }" />
 					</c:forEach>
 				</c:if>

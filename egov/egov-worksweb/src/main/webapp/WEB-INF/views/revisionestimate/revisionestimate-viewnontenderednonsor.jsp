@@ -40,7 +40,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:if test="${revisionEstimate.lumpSumActivities.size() != 0}">
+<c:if test="${revisionEstimate.changeQuantityLSActivities.size() != 0}">
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -66,8 +66,8 @@
 				</thead>
 				<tbody>
 					<c:choose>
-						<c:when test="${revisionEstimate.lumpSumActivities.size() != 0}">
-							<c:forEach items="${revisionEstimate.lumpSumActivities}" var="nonSorDtls" varStatus="item">
+						<c:when test="${revisionEstimate.changeQuantityLSActivities.size() != 0}">
+							<c:forEach items="${revisionEstimate.changeQuantityLSActivities}" var="nonSorDtls" varStatus="item">
 									<tr >
 										<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 										<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
@@ -75,10 +75,10 @@
 									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
 									 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out>
 									 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
-									 	 <button class="btn btn-default" name="nonSorActivities[${item.index}].msadd" id="nonSorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									 	 <button class="btn btn-default" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 									 	</c:if>
 									 	</td>
-									 		<%@ include file="../measurementsheet/nonsor-measurementsheet-formtableview.jsp"%>  
+									 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  
 									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
 									 	<c:if test="${isServiceVATRequired == true }">
 											<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>
@@ -93,8 +93,8 @@
 				</tbody>
 				<tfoot>
 					<c:set var="nonsortotal" value="${0}" scope="session" />
-					<c:if test="${revisionEstimate.lumpSumActivities != null}">
-						<c:forEach items="${revisionEstimate.lumpSumActivities}" var="nonSor">
+					<c:if test="${revisionEstimate.changeQuantityLSActivities != null}">
+						<c:forEach items="${revisionEstimate.changeQuantityLSActivities}" var="nonSor">
 							<c:set var="nonsortotal" value="${nonsortotal + nonSor.getAmount().value }" />
 						</c:forEach>
 					</c:if>

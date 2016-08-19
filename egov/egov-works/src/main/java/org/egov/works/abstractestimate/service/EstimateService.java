@@ -222,6 +222,10 @@ public class EstimateService {
         return abstractEstimateRepository.findOne(id);
     }
 
+    public List<AbstractEstimate> getAbstractEstimateByParentId(final Long id) {
+        return abstractEstimateRepository.findByParent_idAndEgwStatus_codeEquals(id, EstimateStatus.ADMIN_SANCTIONED.toString());
+    }
+
     @Transactional
     public AbstractEstimate createAbstractEstimate(final AbstractEstimate abstractEstimate, final MultipartFile[] files,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
@@ -1352,8 +1356,7 @@ public class EstimateService {
         return measurementSheetMap;
     }
 
-    public List<AbstractEstimate> getBySorIdAndEstimateDate(Long sorId, Date estimateDate) {
-
+    public List<AbstractEstimate> getBySorIdAndEstimateDate(final Long sorId, final Date estimateDate) {
         return abstractEstimateRepository.findBySorIdAndEstimateDate(sorId, estimateDate, WorksConstants.CANCELLED_STATUS);
     }
 

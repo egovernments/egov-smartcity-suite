@@ -57,6 +57,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
 
     List<AbstractEstimate> findByEstimateNumberAndEgwStatus_codeEquals(final String estimateNumber, final String statusCode);
 
+    List<AbstractEstimate> findByParent_idAndEgwStatus_codeEquals(final Long parentId, final String statusCode);
+
     AbstractEstimate findByEstimateNumberAndEgwStatus_codeNotLike(final String estimateNumber, final String statusCode);
 
     AbstractEstimate findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(final String estimateNumber,

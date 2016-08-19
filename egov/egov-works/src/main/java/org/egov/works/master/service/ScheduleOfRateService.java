@@ -55,15 +55,15 @@ import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.persistence.entity.component.Period;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.master.repository.ScheduleOfRateRepository;
 import org.egov.works.models.masters.MarketRate;
 import org.egov.works.models.masters.SORRate;
 import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
-import org.egov.works.utils.WorksConstants;
 import org.hibernate.Session;
-import org.hibernate.search.backend.impl.WorkQueuePerIndexSplitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +80,9 @@ public class ScheduleOfRateService {
 
     @Autowired
     private WorksService worksService;
+
+    @Autowired
+    private EstimateService estimateService;
 
     @Autowired
     private UserService userService;
@@ -160,8 +163,14 @@ public class ScheduleOfRateService {
     }
 
     public List<ScheduleOfRate> getScheduleOfRatesByCodeAndScheduleOfCategoriesAndEstimateId(final String code, final String ids,
-            Date estimateDate, Long estimateId) {
+            Date estimateDate, final Long estimateId) {
         final List<Long> scheduleOfCategoryIds = new ArrayList<Long>();
+        final List<Long> estimateIds = new ArrayList<Long>();
+        final List<AbstractEstimate> estimates = estimateService.getAbstractEstimateByParentId(estimateId);
+        for (final AbstractEstimate estimate : estimates)
+            estimateIds.add(estimate.getId());
+
+        estimateIds.add(estimateId);
         final String[] split = ids.split(",");
         for (final String s : split)
             scheduleOfCategoryIds.add(Long.parseLong(s));
@@ -169,8 +178,7 @@ public class ScheduleOfRateService {
             estimateDate = new Date();
         final List<ScheduleOfRate> scheduleOfRates = scheduleOfRateRepository
                 .findByCodeAndScheduleOfCategoriesAndEstimateId(code.toUpperCase(),
-                        scheduleOfCategoryIds, estimateDate, estimateId, WorksConstants.CANCELLED_STATUS,
-                        WorksConstants.CANCELLED_STATUS, WorksConstants.REJECTED);
+                        scheduleOfCategoryIds, estimateDate, estimateIds);
         for (final ScheduleOfRate rate : scheduleOfRates)
             rate.setSorRateValue(rate.getRateOn(estimateDate).getRate().getValue());
 

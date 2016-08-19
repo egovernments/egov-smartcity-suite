@@ -77,8 +77,8 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${revisionEstimate.parent.activities.size() != 0}">
-						<c:forEach items="${revisionEstimate.parent.getSORActivities()}" var="sorDtls" varStatus="item">
+					<c:when test="${revisionEstimate.sorActivities.size() != 0}">
+						<c:forEach items="${revisionEstimate.sorActivities}" var="sorDtls" varStatus="item">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
 									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
@@ -109,8 +109,8 @@
 			</tbody>
 			<tfoot>
 				<c:set var="sortotal" value="${0}" scope="session" />
-				<c:if test="${revisionEstimate.parent.getActivities() != null}">
-					<c:forEach items="${revisionEstimate.parent.getSORActivities()}" var="sor">
+				<c:if test="${revisionEstimate.sorActivities != null}">
+					<c:forEach items="${revisionEstimate.sorActivities}" var="sor">
 						<c:set var="sortotal"	value="${sortotal + sor.getAmount().value }" />  
 					</c:forEach>
 				</c:if>

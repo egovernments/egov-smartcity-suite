@@ -47,6 +47,27 @@ var headend="<!--only for validity head end -->";
 var tailstart="<!--only for validity tail start -->";
 var tailend="<!--only for validity tail end -->";
 
+$isServiceVATRequired = $('#isServiceVATRequired').val();
+
+if($isServiceVATRequired == 'true') {
+	//For Non Tendered Screen
+	$('#serviceVatHeader').removeAttr('hidden');
+	$('#vatAmountHeader').removeAttr('hidden');
+	$('.serviceTaxPerc').removeAttr('hidden');
+	$('.vatAmount').removeAttr('hidden');
+	$('.emptytd').removeAttr('hidden');
+	$('.serviceVatAmt').removeAttr('hidden');
+
+	//For lump Sum Screen
+	$('#lumpSumServiceVatHeader').removeAttr('hidden');
+	$('#lumpSumVatAmountHeader').removeAttr('hidden');
+	$('.lumpSumServiceTaxPerc').removeAttr('hidden');
+	$('.lumpSumVatAmount').removeAttr('hidden');
+	$('.emptytd').removeAttr('hidden');
+	$('.lumpSumServiceVatAmt').removeAttr('hidden');
+}
+
+
 $(document).ready(function(){
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
 });
@@ -1454,4 +1475,49 @@ function deleteHiddenRows(){
 		var tbl=document.getElementById('tblLumpSum');
 		tbl.deleteRow(2);
 	}
+}
+
+
+function calculateVatAmount(currentObj) {
+	rowcount = $(currentObj).attr('id').split('_').pop();
+	var estimatedAmount = parseFloat($('.amount_' + rowcount).html().trim());
+	var vatAmount = parseFloat(($(currentObj).val() * estimatedAmount) / 100).toFixed(2);
+	$('.vatAmount_' + rowcount).html(vatAmount);
+	$('.total_' + rowcount).html(parseFloat(parseFloat(estimatedAmount) + parseFloat(vatAmount)).toFixed(2));
+	calculateVatAmountTotal();
+	total();
+}
+
+
+function calculateVatAmountTotal() {
+	var total = 0;
+	$('.vatAmt').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#serviceVatAmtTotal').html(total);
+}
+
+function calculateLumpSumVatAmount(currentObj) {
+	var rowcount = $(currentObj).attr('id').split('_').pop();
+	var estimatedAmount = $('.lumpSumAmount_' + rowcount).html();
+	if(estimatedAmount == "")
+		estimatedAmount = 0.0;
+	var serviceTaxPerc = $('#lumpSumServiceTaxPerc_' + rowcount).val();
+	if(serviceTaxPerc == "")
+		serviceTaxPerc = 0.0;
+	var vatAmount = parseFloat((serviceTaxPerc * estimatedAmount) / 100).toFixed(2);
+	$('.lumpSumVatAmount_' + rowcount).html(vatAmount);
+	$('.lumpSumTotal_' + rowcount).html(parseFloat(parseFloat(estimatedAmount) + parseFloat(vatAmount)).toFixed(2));
+	calculateLumpSumVatAmountTotal();
+	lumpSumTotal();
+}
+
+function calculateLumpSumEstimateAmountTotal() {
+	var total = 0;
+	$('.lumpSumamount').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#lumpSumEstimateTotal').html(total);
 }
