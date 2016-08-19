@@ -244,7 +244,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected List<StateHistory> setUpWorkFlowHistory(final Long stateId) {
         final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
-        workflowBean.setWorkFlowHistoryItems(workflowHisObj);
+        if (workflowBean != null)
+        	workflowBean.setWorkFlowHistoryItems(workflowHisObj);
         return workflowHisObj;
     }
 

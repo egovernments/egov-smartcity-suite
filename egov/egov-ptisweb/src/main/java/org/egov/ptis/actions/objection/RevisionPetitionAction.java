@@ -1168,7 +1168,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
         // setupWorkflowDetails();
         if (objection != null && objection.getState() != null) {
-            setUpWorkFlowHistory(objection.getState().getId());
+        	if(!objection.getState().getHistory().isEmpty())
+        		setUpWorkFlowHistory(objection.getState().getId());
             historyMap = propService.populateHistory(objection);
         }
         setOwnerName(objection.getBasicProperty().getProperty());
