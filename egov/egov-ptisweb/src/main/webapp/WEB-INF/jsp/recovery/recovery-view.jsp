@@ -50,7 +50,7 @@
 		jQuery("#loadingMask").remove();
 	</script>
 		<title><s:text name="recovery"></s:text></title>
-		<link href="<cdn:url cdn='${applicationScope.cdn}' value='/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:form action="recovery" method="post" name="recoveryForm" theme="simple">

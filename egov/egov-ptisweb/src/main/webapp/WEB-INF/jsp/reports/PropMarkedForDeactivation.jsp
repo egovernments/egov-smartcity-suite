@@ -45,8 +45,8 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Report - List Of Properties Marked For Deactivation</title>
- 	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
-	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
+ 	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/propertytax.css'/>" rel="stylesheet" type="text/css" />
+	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/commonegov.css'/>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/erp2/js/ajaxCommonFunctions.js'/>"></script>
  
 
