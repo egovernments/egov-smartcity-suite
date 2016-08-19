@@ -99,7 +99,7 @@ public class CaseTypeMasterController {
 	public String edit(@PathVariable("id") final Long id, Model model) {
 		CaseTypeMaster casetypeMaster = casetypeMasterService.findOne(id);
 		prepareNewForm(model);
-		model.addAttribute("casetypeMaster", casetypeMaster);
+		model.addAttribute("caseTypeMaster", casetypeMaster);
 		return CASETYPEMASTER_EDIT;
 	}
 

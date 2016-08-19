@@ -75,7 +75,7 @@
 							<form:errors path="ordernumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.notes" /> :</label>
+								code="lbl.description" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea class="form-control text-left patternvalidation"
 								path="notes" id="notes" name="notes"
@@ -99,5 +99,5 @@
 							</form:select>
 						</div>
 
-						<input type="hidden" name="casetypeMaster"
-							value="${casetypeMaster.id}" />
+						<input type="hidden" name="caseTypeMaster"
+							value="${caseTypeMaster.id}" />
