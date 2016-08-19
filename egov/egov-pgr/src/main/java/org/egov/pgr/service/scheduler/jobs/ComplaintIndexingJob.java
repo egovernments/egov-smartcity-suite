@@ -37,29 +37,24 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.pgr.service.scheduler.jobs;
 
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.pgr.service.EscalationService;
+import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author Vaibhav.K
- */
 @Transactional
-public class ComplaintEscalationJob extends AbstractQuartzJob {
+public class ComplaintIndexingJob extends AbstractQuartzJob{
 
-    private static final long serialVersionUID = -5428952585539260293L;
+	private static final long serialVersionUID = 6375563786654750608L;
+	
+	@Autowired
+    private ComplaintIndexService complaintIndexService;
 
-    @Autowired
-    private EscalationService escalationService;
-
-    @Override
-    public void executeJob() {
-    	prepareCityThreadLocal();
-        escalationService.escalateComplaint();
-    }
-
+	@Override
+	public void executeJob() {
+		prepareCityThreadLocal();
+		complaintIndexService.updateAllOpenComplaintIndex();
+	}
 }
