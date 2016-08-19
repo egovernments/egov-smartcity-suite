@@ -53,7 +53,7 @@
 				    <th><spring:message code="lbl.estimateno" /></th>
 					<th><spring:message code="lbl.loanumber" /></th>
 					<th><spring:message code="lbl.loadate" /></th>
-					<th><spring:message code="lbl.contractor.name" /></th> 
+					<th><spring:message code="lbl.contractor" /></th> 
 					<th><spring:message code="lbl.agreement.value" /></th>
 				</tr>
 			</thead>

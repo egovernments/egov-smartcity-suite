@@ -61,12 +61,12 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fromdate" /></label>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.loa.fromdate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="fromDate" class="form-control datepicker"	id="fromDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="fromDate" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.todate" /></label>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.loa.todate" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="toDate" class="form-control datepicker" id="toDate" data-inputmask="'mask': 'd/m/y'" />
 				<form:errors path="toDate" cssClass="add-margin error-msg" />
