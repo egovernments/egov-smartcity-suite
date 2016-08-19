@@ -152,22 +152,22 @@ public class SewerageActionDropDownUtil {
         LOGGER.debug(" ************ registrationStatus  " + collectionStatus);
       
         if (roleName != null && !roleName.isEmpty()) {
-            if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR)) {
-                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR);
-            } else if (roleName.contains(SewerageTaxConstants.ROLE_SUPERUSER)) {
+            if (roleName.contains(SewerageTaxConstants.ROLE_SUPERUSER)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SUPERUSER);
-            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR)) {
-                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR);
-            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER)) {
-                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER);
             } else if (roleName.contains(SewerageTaxConstants.ROLE_CSCOPERTAOR)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_CSCOPERTAOR);
             } else if (roleName.contains(SewerageTaxConstants.ROLE_ULBOPERATOR)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_ULBOPERATOR);
             } else if (roleName.contains(SewerageTaxConstants.ROLE_BILLCOLLECTOR)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_BILLCOLLECTOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER);
             } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER)) {
                 actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR);
             } else {
                 actionList = SEWERAGEROLEACTIONMAP.get(DEFAULT); 
             }
