@@ -243,5 +243,5 @@
 </div>
 
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>

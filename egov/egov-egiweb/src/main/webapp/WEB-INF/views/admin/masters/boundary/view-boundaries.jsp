@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<link rel="stylesheet"	href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+<link rel="stylesheet"	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -93,7 +93,7 @@
 <table class="table table-bordered datatable" id="view-boundaries">
 </table>
 
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/viewboundaries.js?rnd=${app_release_no}'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/viewboundaries.js?rnd=${app_release_no}'/>"></script>

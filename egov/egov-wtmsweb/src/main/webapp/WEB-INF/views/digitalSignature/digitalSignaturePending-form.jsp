@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>  
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/digitalSignatureReport.js'/>"></script>  
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
 <div class="row">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered" action=""
@@ -126,4 +126,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/helper.js?rnd=${app_release_no}' context='/wtms'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/helper.js?rnd=${app_release_no}' context='/wtms'/>"></script>

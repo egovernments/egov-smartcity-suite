@@ -115,4 +115,4 @@
 			</div>				
 		</div>
 </c:if>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/commonworkflow.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/commonworkflow.js'/>"></script>

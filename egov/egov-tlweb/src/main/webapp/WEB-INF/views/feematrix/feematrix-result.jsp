@@ -92,5 +92,5 @@
     <button type="button" id="save" class="btn btn-primary">Save</button>
   </div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/feematrix.js?rnd=${app_release_no}'/>"></script>

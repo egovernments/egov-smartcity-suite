@@ -82,18 +82,18 @@
 	</div>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 <link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/populateDropdown.js?rnd=${app_release_no}'/>"></script>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
 
 

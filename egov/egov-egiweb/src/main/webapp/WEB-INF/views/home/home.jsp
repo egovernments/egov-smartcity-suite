@@ -55,23 +55,23 @@
 		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
 		<title>eGov Urban Portal</title>
 		
-		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png'/>" sizes="32x32">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>"> 
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/multi-level-menu/jquery.multilevelpushmenu.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 		
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/multi-level-menu/jquery.multilevelpushmenu.js'/>"></script>
 		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 		<style>
 		body{padding:0;}
@@ -208,7 +208,7 @@
 						
 						<li class="dropdown">
 							<a href="http://www.egovernments.org" target="_blank">
-								<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
+								<img src="<cdn:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
 							</a>
 						</li>
 					</ul>
@@ -494,14 +494,14 @@
 		var focussedmenu = "worklist";
 		var now;
 		</script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/moment.min.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/homepageofficial.js?rnd=${app_release_no}'/>"></script>
+		<script src="<cdn:url value='/resources/js/app/custom-menu.js?rnd=${app_release_no}'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
+		<script src="<cdn:url value='/resources/js/app/homepageofficial.js?rnd=${app_release_no}'/>"></script>
 		<script type="text/javascript">
 			$(window).load(function(){
 		        document.getElementById("loading").style.display = "none";

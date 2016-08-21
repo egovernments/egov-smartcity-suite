@@ -100,4 +100,4 @@
 		</form:form>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/floortype.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/floortype.js'/>"></script>

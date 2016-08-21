@@ -46,13 +46,13 @@
 <head>
 <title><s:text name='transferProperty' /></title>
 <link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 
 <link
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript">
 	jQuery.noConflict();
 	jQuery("#loadingMask").remove();
@@ -362,7 +362,7 @@
 		} 
 		
 	</script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/transferProperty.js'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/transferProperty.js'/>"></script>
 </body>
 </html>

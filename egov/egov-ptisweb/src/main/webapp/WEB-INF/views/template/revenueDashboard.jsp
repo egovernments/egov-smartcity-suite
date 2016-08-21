@@ -57,16 +57,16 @@
 		<title><tiles:insertAttribute name="title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/global.css' context='/dashboard'/>">
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css' context='/egi'/>">
-        <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css' context='/dashboard'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>				
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/css/jquery.loadmask.css' context='/dashboard'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.css' context='/dashboard'/>" />
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/dataTables.bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/css/dataTables.responsive.css' context='/dashboard'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.css' context='/dashboard'/>" con>
 		
-	    <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+	    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 	    	
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -86,7 +86,7 @@
     <body data-spy="scroll">
     	<div class="cover" id="cover"></div>
     	<div class="preloader-container" id="preloader-container">
-    		<div class="preloader-logo">eGov<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/images/mask.gif' context='/dashboard'/>">Dashboard</div>
+    		<div class="preloader-logo">eGov<img src="<cdn:url value='/resources/images/mask.gif' context='/dashboard'/>">Dashboard</div>
     	</div>
     	 <nav class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="container-fluid">
@@ -99,7 +99,7 @@
 		      
 		      <a class="navbar-brand customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
 				  <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-					  <img src="<cdn:url cdn='${applicationScope.cdn}' value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="55">
+					  <img src="<cdn:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="55">
 				  </c:if>
 		      </a>
 		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Property Tax Home" href="/ptis/dashboard/home?isdefault=true">Property Tax</a>
@@ -108,7 +108,7 @@
 		    <span class="navbar-brand pull-right egov-logo-right"  style="color:#FFF">
 		    <!-- span class="title"></span-->
 		    <a href="http://www.egovernments.org" target="_blank">
-			   <img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+			   <img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
 			</a>
 		    </span>		    
 		    <div class="collapse navbar-collapse" id="myNavbar">
@@ -143,21 +143,21 @@
 		   <div style="margin-top: 20px;padding: 5px 19px;font-size: 12px;background: #F1F2F3;">Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a></div>
 		</footer>
 	</body>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/highstock.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/modules/exporting.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/highcharts-more.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/highstock.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/exporting.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/highcharts-more.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/date.js' context='/dashboard'/>"></script>
-	<script src='<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js' context='/dashboard'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>
-	<script src='<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/global.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/date.js' context='/dashboard'/>"></script>
+	<script src='<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
+	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/js/jquery.dataTables.min.js' context='/dashboard'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/js/jquery/plugins/datatable/extensions/responsive/js/dataTables.responsive.min.js' context='/dashboard'/>"></script>
+	<script src='<cdn:url value='/resources/js/jquery/plugins/bootstrap-switch/bootstrap-switch.min.js' context='/dashboard'/>'></script>
+	<script src="<cdn:url value='/resources/js/global.js' context='/dashboard'/>"></script>
 	<script src='../resources/js/app/revenueDashboard.js'></script>
 </html>

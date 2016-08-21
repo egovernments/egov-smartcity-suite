@@ -44,7 +44,7 @@
 
 <html>
 	<head>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/objection.js' context='/ptis'/>"></script>
+		<script src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
 		<title><s:text name="recordObjection.title"></s:text></title>
 		<script type="text/javascript">
 			jQuery.noConflict();
@@ -79,8 +79,8 @@
 			}
 	
 		</script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-		<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
 	</head>
 	<body  class="yui-skin-sam" onload="loadOnStartup(); ">

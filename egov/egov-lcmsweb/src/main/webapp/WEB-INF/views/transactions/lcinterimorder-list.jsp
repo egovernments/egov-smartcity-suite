@@ -74,15 +74,15 @@
 
 </form:form>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 	<link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
+	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>" type="text/javascript"></script>
 <link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/lcInterimOrderHelper.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>

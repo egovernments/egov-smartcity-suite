@@ -57,9 +57,9 @@
 	</s:elseif>
 </title>
 
-<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 
 <script type="text/javascript">
 	jQuery.noConflict();
@@ -191,8 +191,8 @@
 		}
 	}
 </script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 </head>
 
 <body onload="loadOnStartUp();">

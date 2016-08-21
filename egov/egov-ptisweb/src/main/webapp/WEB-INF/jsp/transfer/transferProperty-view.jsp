@@ -77,7 +77,7 @@
 	}
 </script>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </head>
 <body>
 	<div class="formmainbox">

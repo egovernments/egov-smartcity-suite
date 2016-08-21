@@ -161,10 +161,10 @@
 
 </div>
 
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
 <script type="text/javascript">
 		$('#multiselect').multiselect();
 </script>
 
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/crosshierarchy.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/crosshierarchy.js'/>"></script>
 

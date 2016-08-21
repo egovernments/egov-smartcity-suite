@@ -141,4 +141,4 @@
 	</div>
 	</form:form>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/appconfig.js'/>"></script>

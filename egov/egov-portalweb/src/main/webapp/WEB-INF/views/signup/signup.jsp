@@ -53,16 +53,16 @@
 		<spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
 		<spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg"/>
 		<title>Citizen Portal Registration</title>
-		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js' context='/egi'/>" type="text/javascript"></script>
+		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>" type="text/javascript"></script>
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
-			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+			<script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
 		<![endif]-->
 		<style>
 			#recaptcha_area, #recaptcha_table {
@@ -89,7 +89,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-									<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/egov_logo_tr_h.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
+									<img src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
 									</a>
 								</li>
 							</ul>
@@ -472,9 +472,9 @@
                 </div>
             </div>
         </div>
-        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>" type="text/javascript"></script>
-        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js' context='/egi'/>" type="text/javascript"></script>
-        <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/signup.js'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>" type="text/javascript"></script>
+        <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/egov/custom.js' context='/egi'/>" type="text/javascript"></script>
+        <script src="<cdn:url value='/resources/js/signup.js'/>"></script>
   </body>
 </html>						

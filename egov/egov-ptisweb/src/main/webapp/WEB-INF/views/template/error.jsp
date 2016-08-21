@@ -53,9 +53,9 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css' context='/egi'/>">
 		
 		
 		

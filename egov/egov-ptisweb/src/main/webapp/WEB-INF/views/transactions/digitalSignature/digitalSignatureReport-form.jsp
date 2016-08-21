@@ -114,5 +114,5 @@
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/digitalSignatureReport.js'/>"></script>  
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>

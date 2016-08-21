@@ -45,7 +45,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <style>
 body
 {
@@ -159,7 +159,7 @@ body
 		</div>
 	</div>
 </form:form>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 
 
 

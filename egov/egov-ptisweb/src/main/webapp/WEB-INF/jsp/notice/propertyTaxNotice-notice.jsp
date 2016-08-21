@@ -66,6 +66,6 @@
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
   </s:form>
-  <script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script> 
+  <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
   </body>
 </html>

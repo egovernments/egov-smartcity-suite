@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<link rel="stylesheet"	href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+<link rel="stylesheet"	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
     <div class="col-md-12">
         <c:if test="${not empty message}">
@@ -112,7 +112,7 @@ tr.shown td.details-control:before {
 	border-left: 1px solid #ccc;
 }
 </style>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>

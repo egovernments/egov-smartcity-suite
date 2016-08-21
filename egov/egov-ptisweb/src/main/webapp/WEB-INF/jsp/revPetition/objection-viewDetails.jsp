@@ -46,7 +46,7 @@
 <html>
 <head>
 	<title><s:text name="objectionView.det"></s:text></title>
-		<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:push value="model">

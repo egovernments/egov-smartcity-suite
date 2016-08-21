@@ -51,8 +51,8 @@ body
   font-size:14px;
 }
 </style>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
 
 <form:form id="editVacancyRemissionForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
@@ -106,4 +106,4 @@ body
 		</div>
 </form:form>
 
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>

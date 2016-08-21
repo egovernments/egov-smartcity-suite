@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
@@ -69,4 +69,4 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/digitalSignatureReport.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/digitalSignatureReport.js?rnd=${app_release_no}'/>"></script>

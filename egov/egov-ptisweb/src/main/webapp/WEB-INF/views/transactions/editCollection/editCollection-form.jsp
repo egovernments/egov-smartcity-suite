@@ -50,7 +50,7 @@ body {
 }
 </style>
 <script type="text/javascript"
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/validations.js'/>"></script>
+	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript">
 	function submitForm(obj) {
 		if (obj.value == "submit") {

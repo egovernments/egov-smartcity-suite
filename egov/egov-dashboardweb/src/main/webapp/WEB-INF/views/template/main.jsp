@@ -54,17 +54,17 @@
 		<title>${sessionScope.citymunicipalityname} Smart City Dashboard</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
        
-       	<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-	    <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-	    <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/global.css'/>">
-	    <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/dashboard.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/grayscale.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/css/home.css'/>">
+       	<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+	    <link rel="stylesheet" href="<cdn:url value='/resources/css/global.css'/>">
+	    <link rel="stylesheet" href="<cdn:url value='/resources/css/dashboard.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/css/grayscale.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/css/home.css'/>">
 		
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/egov/custom.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 		<script>
 			$(window).load(function() {
 				$("#cover").delay(1000).slideUp(300);
@@ -74,8 +74,8 @@
     	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     	<!--[if lt IE 9]>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     	<![endif]-->    		
     </head>
     <body id="page-top" data-spy="scroll" />
@@ -91,9 +91,9 @@
 			<tiles:insertAttribute name="footer"/>
         </div>
 	</body>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/highchart/highstock.js'/>"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/date.js'/>" type="text/javascript"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/home.js'/>" type="text/javascript"></script>
+	<script src="<cdn:url value='/resources/js/highchart/highstock.js'/>"></script>
+	<script src="<cdn:url value='/resources/js/date.js'/>" type="text/javascript"></script>
+	<script src="<cdn:url value='/resources/js/home.js'/>" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(window).load(function(){
 	        document.getElementById("loading").style.display = "none";

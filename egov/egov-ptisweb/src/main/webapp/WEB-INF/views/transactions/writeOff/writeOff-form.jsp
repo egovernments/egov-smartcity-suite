@@ -52,7 +52,7 @@ body
 }
 </style>
 <script type="text/javascript"
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/validations.js'/>"></script>
+	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <form:form id="WriteOff" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
@@ -152,4 +152,4 @@ body
 		</div>
 	</div>
 </form:form>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/writeoff.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/writeoff.js'/>"></script>
