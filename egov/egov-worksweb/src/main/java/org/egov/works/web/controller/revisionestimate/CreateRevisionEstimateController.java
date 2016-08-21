@@ -233,6 +233,9 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         else if (EstimateStatus.CANCELLED.toString().equals(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.cancelled",
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
+        else if (EstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
+            message = messageSource.getMessage("msg.revisionestimate.approved",
+                    new String[] { revisionEstimate.getEstimateNumber() }, null); 
         return message;
 
     }

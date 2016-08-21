@@ -206,7 +206,7 @@ public class RevisionEstimateService {
         Position pos = null;
         Assignment wfInitiator = null;
         final String currState = "";
-        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_ESTIMATE;
+        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE;
         WorkFlowMatrix wfmatrix = null;
 
         if (null != revisionEstimate.getId())
@@ -244,6 +244,15 @@ public class RevisionEstimateService {
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+            } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+                wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
+                        additionalRule, revisionEstimate.getCurrentState().getValue(), null);
+                revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
+                        .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(natureOfwork);
+                revisionEstimate.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate());
             } else {
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
                         additionalRule, revisionEstimate.getCurrentState().getValue(), null);

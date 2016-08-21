@@ -273,6 +273,8 @@ public class WorksConstants {
     public static final String WORKFLOWTYPE_CBR_DISPLAYNAME = "Contractor Bill";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_ESTIMATE = "Abstract Estimate";
+    
+    public static final String WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE = "Revision Estimate";
 
     public static final String WORKFLOWTYPE_DISPLAYNAME_MBHEADER = "Measurement Book";
 
