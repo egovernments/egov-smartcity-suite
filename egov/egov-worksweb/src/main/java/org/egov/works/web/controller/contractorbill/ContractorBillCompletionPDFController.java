@@ -155,7 +155,7 @@ public class ContractorBillCompletionPDFController {
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 
-            reportParams.put("cityName", ApplicationThreadLocals.getCityName());
+            reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy hh:mm a"));
 
             final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
