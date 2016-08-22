@@ -510,10 +510,10 @@
 			$('#new-pass').popover({ trigger: "focus",placement: "bottom"});
 			$(document).on("keydown", disableRefreshAndBack);
 
-			window.location.hash = "no-back-button";
-	        window.location.hash = "Again-No-back-button";//again because google chrome does not insert first hash into history
+			window.location.hash = "nbk";
+	        window.location.hash = "Again-nbk";//again because google chrome does not insert first hash into history
 	        window.onhashchange = function() {
-	            window.location.hash = "no-back-button";
+	            window.location.hash = "nbk";
 	        }
 	        
 		</script>

@@ -110,7 +110,7 @@
 	                      <td>
 	                          <fmt:formatDate value="${configValue.effectiveFrom}" var="effectiveDt" pattern="dd/MM/yyyy"/>
 	                          <form:input path="confValues[${counter.index}].effectiveFrom" cssClass="form-control datepicker effectiveFrom" value="${effectiveDt}"
-	                                      id="confValues[${counter.index}].effectiveFrom" data-date-start-date="0d" required="required" readonly="true"/>
+	                                      id="confValues[${counter.index}].effectiveFrom" data-date-start-date="0d" required="required" disabled="true"/>
 	                          <form:errors path="confValues[${counter.index}].effectiveFrom" cssClass="add-margin error-msg"/>
 	                      </td>
 	                      <td>
@@ -133,7 +133,7 @@
 	<div class="col-md-12 text-center">
 	    <div class="add-margin">
 	        <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-	        <button type="button" class="btn btn-default" onclick="history.back()"><spring:message code="lbl.back"/></button>
+	        <a href="/egi/app/config/update" class="btn btn-default">Search</a>
 	        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()">
 	          <spring:message code="lbl.close"/>
 	        </button>
