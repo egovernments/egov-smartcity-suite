@@ -827,3 +827,8 @@ function openAbstractEstimate() {
 	var abstractEstimateId = $('#abstractEstimateId').val();
 	window.open("/egworks/abstractestimate/view/"+ abstractEstimateId , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
 }
+
+function viewContractCompletionCertificatePDF() {
+	var id = $('#id').val();
+	window.open("/egworks/contractorbill/contractorbillcompletionPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}

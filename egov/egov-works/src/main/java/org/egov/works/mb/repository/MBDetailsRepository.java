@@ -17,4 +17,8 @@ public interface MBDetailsRepository extends JpaRepository<MBDetails, Long> {
     
     @Query("select mbDetails from MBDetails mbDetails where mbDetails.mbHeader.egwStatus.code = :status and mbDetails.mbHeader.workOrderEstimate.id =:workOrderEstimateId and mbDetails.mbHeader.egBillregister.createdDate < :billCreatedDate and mbDetails.mbHeader.egBillregister.status.code = :status ")
     List<MBDetails> getActivitiesByContractorBillTillDate(@Param("workOrderEstimateId") Long workOrderEstimateId,@Param("status") String status,@Param("billCreatedDate") Date billCreatedDate);
+    
+    @Query("select distinct(mbdetails) from MBDetails as mbdetails where mbdetails.workOrderActivity.id =:woaId and mbHeader.egwStatus.code =:status")
+    List<MBDetails> getMBDetailsByWorkOrderActivity(@Param("woaId") Long woaId, @Param("status") String status);
+
 }

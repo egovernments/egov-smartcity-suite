@@ -1360,4 +1360,8 @@ public class EstimateService {
         return abstractEstimateRepository.findBySorIdAndEstimateDate(sorId, estimateDate, WorksConstants.CANCELLED_STATUS);
     }
 
+    public List<Activity> getActivitiesByParent(final Long activityId) {
+        return abstractEstimateRepository.findActivitiesByParent(activityId, EstimateStatus.ADMIN_SANCTIONED.toString());
+    }
+
 }

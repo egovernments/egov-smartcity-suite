@@ -44,6 +44,7 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -110,5 +111,8 @@ public interface AbstractEstimateRepository extends JpaRepository<AbstractEstima
     @Query("select estimate from AbstractEstimate estimate where exists (select a.abstractEstimate from Activity a where a.abstractEstimate.id = estimate.id and a.schedule.id=:sorId) and estimate.estimateDate>=:estimateDate and estimate.egwStatus.code !=:abstractEstimateStatus ")
     List<AbstractEstimate> findBySorIdAndEstimateDate(@Param("sorId") final Long sorId,
             @Param("estimateDate") final Date estimateDate, @Param("abstractEstimateStatus") final String abstractEstimateStatus);
+
+    @Query("select act from Activity act where act.parent.id =:activityId and act.abstractEstimate.egwStatus.code =:abstractEstimateStatus ")
+    List<Activity> findActivitiesByParent(@Param("activityId") final Long activityId,@Param("abstractEstimateStatus") final String abstractEstimateStatus);
 
 }
