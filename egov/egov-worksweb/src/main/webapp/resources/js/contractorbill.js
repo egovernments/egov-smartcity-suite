@@ -830,5 +830,5 @@ function openAbstractEstimate() {
 
 function viewContractCompletionCertificatePDF() {
 	var id = $('#id').val();
-	window.open("/egworks/contractorbill/contractorbillcompletionPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open("/egworks/contractorbill/completioncertificatepdf/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

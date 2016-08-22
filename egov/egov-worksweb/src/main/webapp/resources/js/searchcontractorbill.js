@@ -104,7 +104,7 @@ function callAjaxSearch() {
 									+ data.workOrderNumber + '</a>');
 					$('td:eq(8)',row).html(parseFloat(Math.round(data.billValue * 100) / 100).toFixed(2));
 					if(data.billStatus == 'APPROVED' && data.workActivitySize != 0 && data.billType == 'Final Bill')
-					    $('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option><option value="4">View Contract Completion Certificate</option></select>');
+					    $('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option><option value="4">View Completion Certificate</option></select>');
 					else if(data.billStatus == 'APPROVED' && data.workActivitySize != 0 && data.billType == 'Part Bill')
 					    $('td:eq(11)',row).html('<select id="actionDropdown" class="form-control" onchange="renderAction('+ data.id +', this.value)"><option value="">Select from below</option><option value="1">View</option><option value="2">View PDF</option><option value="3">View Contract Certificate</option></select>');
 					else if(data.billStatus == 'APPROVED')
@@ -174,7 +174,7 @@ function renderAction(id, value) {
 		window.open("/egworks/contractcertificate/contractcertificatePDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 	
 	if(value == 4)
-		window.open("/egworks/contractorbill/contractorbillcompletionPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+		window.open("/egworks/contractorbill/completioncertificatepdf/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 
 }
 
@@ -260,5 +260,5 @@ function viewContractCertificatePDF() {
 
 function viewContractCompletionCertificatePDF() {
 	var id = $('#id').val();
-	window.open("/egworks/contractorbill/contractorbillcompletionPDF/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open("/egworks/contractorbill/completioncertificatepdf/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }

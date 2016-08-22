@@ -103,6 +103,7 @@ import org.egov.works.master.service.OverheadService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.service.WorkProgressRegisterService;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.hibernate.Criteria;
@@ -1361,7 +1362,7 @@ public class EstimateService {
     }
 
     public List<Activity> getActivitiesByParent(final Long activityId) {
-        return abstractEstimateRepository.findActivitiesByParent(activityId, EstimateStatus.ADMIN_SANCTIONED.toString());
+        return abstractEstimateRepository.findActivitiesByParent(activityId, RevisionEstimateStatus.APPROVED.toString());
     }
 
 }

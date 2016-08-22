@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -70,7 +69,6 @@ import org.egov.works.offlinestatus.service.OfflineStatusService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -83,7 +81,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
-public class ContractorBillCompletionPDFController {
+public class CompletionCertificatePDFController {
 
     @Autowired
     private ReportService reportService;
@@ -102,11 +100,7 @@ public class ContractorBillCompletionPDFController {
 
     public static final String CONTRACTORCOMPLETIONBILLPDF = "completionCertificate";
 
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @RequestMapping(value = "/contractorbillcompletionPDF/{contractorBillId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/completioncertificatepdf/{contractorBillId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateContractorBillPDF(final HttpServletRequest request,
             @PathVariable("contractorBillId") final Long id, final HttpSession session) throws IOException {
         final ContractorBillRegister contractorBillRegister = contractorBillRegisterService.getContractorBillById(id);
@@ -175,8 +169,8 @@ public class ContractorBillCompletionPDFController {
                 	
                 	contractorBillCertificateInfo.setTenderQuantity(activity.getQuantity());
                 	contractorBillCertificateInfo.setTenderAmount(activity.getAmount().getValue());
-                	contractorBillCertificateInfo.setTenderRate(activity.getRate());
-                	contractorBillCertificateInfo.setExecutionRate(activity.getRate());
+                	contractorBillCertificateInfo.setTenderRate(activity.getEstimateRate());
+                	contractorBillCertificateInfo.setExecutionRate(activity.getEstimateRate());
                 	contractorBillCertificateInfo.setExecutionAmount(quantity * activity.getRate());
                 	contractorBillCertificateInfo.setWorkOrderActivity(woa);
                 	contractorBillCertificateInfoList.add(contractorBillCertificateInfo);
@@ -190,7 +184,7 @@ public class ContractorBillCompletionPDFController {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=completionCertificate.pdf");
+        headers.add("content-disposition", "inline;filename=CompletionCertificate_"+ contractorBillRegister.getBillnumber() + ".pdf");
         reportOutput = reportService.createReport(reportInput);
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
