@@ -101,9 +101,6 @@ public class ContractorBillCompletionPDFController {
     private MBDetailsService mbDetailsService;
 
     public static final String CONTRACTORCOMPLETIONBILLPDF = "completionCertificate";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -120,6 +117,9 @@ public class ContractorBillCompletionPDFController {
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request,
             final HttpSession session) {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
         if (contractorBillRegister != null) {
 
             final DecimalFormat df = new DecimalFormat("0.00");
