@@ -169,7 +169,7 @@ public class DailySTCollectionReportController {
                 }
                 searchRequestObj.setConsumerNumber(consumerNumber);
                 final SearchResult searchResult = getSewerageSearchResult (searchRequestObj);
-                 if(null!=searchResult && !searchResult.getDocuments().isEmpty()){
+                 if(searchResult!=null && !searchResult.getDocuments().isEmpty()){
                      SewerageDailyCollectionReport searchSewerageResult = new SewerageDailyCollectionReport();
                      
                     for(Document document : searchResult.getDocuments()){
