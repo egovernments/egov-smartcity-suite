@@ -180,10 +180,8 @@ public class JournalVoucherReverseAction extends BaseVoucherAction {
     }
 
     protected void getHeaderFieldsLoad() {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULT_SEARCH_MISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList)
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

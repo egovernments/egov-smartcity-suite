@@ -126,7 +126,7 @@ $(document).ready(function(){
 	
 	$('#categories').change(function(){
 		$.ajax({
-			url: "/adtax/hoarding/subcategories-by-category",    
+			url: "/adtax/hoarding/getsubcategories-by-category",    
 			type: "GET",
 			data: {
 				categoryId : $('#categories').val()   
@@ -170,7 +170,7 @@ $(document).ready(function(){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
+			"ajax": "/adtax/hoarding/hoarding-search-list?"+$("#hoardingsearchform").serialize(),
 			"columns" : [
 			              { "data" : "id","visible": false, "searchable": false },
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
@@ -192,7 +192,7 @@ $(document).ready(function(){
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 				"autoWidth": false,
 				"bDestroy": true,
-				"ajax": "/adtax/hoarding/search-list?"+$("#hoardingsearchform").serialize(),
+				"ajax": "/adtax/hoarding/hoarding-search-list?"+$("#hoardingsearchform").serialize(),
 				"columns" : [
 				              { "data": "hordingIdsSearchedByAgency","visible": false, "searchable": false },
 							  { "data" : "agencyName", "title": "Agency"},
@@ -214,7 +214,7 @@ $(document).ready(function(){
 	var datatbl = $('#search-update-result-table');
 	$('#search-update').click(function(e){
 		datatbl.dataTable({
-			"ajax": {url:"/adtax/hoarding/search-for-update?"+$("#hoardingsearchform").serialize(),
+			"ajax": {url:"/adtax/hoarding/findhoarding-for-update?"+$("#hoardingsearchform").serialize(),
 				type:"POST"
 			},
 			"sPaginationType": "bootstrap",
@@ -265,7 +265,7 @@ $(document).ready(function(){
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-edit',function(e) {
 		var hoardingId = datatbl.fnGetData($(this).parent().parent().parent(),0);
-		window.open("updateLegacy/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("legacyUpdation/"+hoardingId, ''+hoardingId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#search-update-result-table").on('click','tbody tr td i.fa-eye',function(e) {

@@ -79,6 +79,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.Recovery;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -109,6 +110,7 @@ import com.exilant.exility.dataservice.DataExtractor;
 @Service
 public class ChartOfAccounts {
 
+	
 	static ChartOfAccounts singletonInstance;
 	private static final Logger LOGGER = Logger
 			.getLogger(ChartOfAccounts.class);
@@ -529,6 +531,7 @@ public class ChartOfAccounts {
 			paramMap.put("mis.budgetcheckreq", voucherHeader.getVouchermis()
 					.isBudgetCheckReq());
 			paramMap.put("voucherHeader", voucherHeader);
+			paramMap.put("allowNegetive", txnObj.getAllowNegetiveBudgetAmount()); 
 			if (txnObj.getBillId() != null)
 				paramMap.put("bill", txnObj.getBillId());
 			if (!budgetDetailsDAO.budgetaryCheck(paramMap))
@@ -544,7 +547,7 @@ public class ChartOfAccounts {
 			final String vDate) throws Exception, ValidationException {
 
 		if (!checkBudget(txnList))
-			throw new Exception("Budgetary check is failed");
+			throw new Exception(FinancialConstants.BUDGET_CHECK_ERROR_MESSAGE);   
 		// if objects are lost load them
 		loadAccountData();
 		try {

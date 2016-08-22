@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="register" modelAttribute="complaint" commandName="complaint" id="complaintform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
@@ -231,7 +231,7 @@
 							<!-- panel body -->
 							<div class="panel-body no-padding">
 								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
-								<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
+								<script type="text/javascript" src="<cdn:url  value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
 								<input id="pac-input" class="controls" type="text" placeholder="Enter a location">
 							</div>
@@ -247,9 +247,9 @@
 		</div>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/complaint.js?rnd=${app_release_no}'/>"></script>
 <script>
 	var receivingMode = '${complaint.receivingMode}';
 	if(receivingMode === 'MANUAL') {

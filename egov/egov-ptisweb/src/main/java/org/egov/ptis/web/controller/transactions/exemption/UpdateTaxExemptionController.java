@@ -169,7 +169,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             return "redirect:/notice/propertyTaxNotice-generateSpecialNotice.action?basicPropId="
                     + property.getBasicProperty().getId() + "&noticeType=" + NOTICE_TYPE_SPECIAL_NOTICE
-                    + "&noticeMode=" + APPLICATION_TYPE_DEMOLITION;
+                    + "&noticeMode=" + APPLICATION_TYPE_TAX_EXEMTION;
         } else {
 
             if (request.getParameter("mode").equalsIgnoreCase(VIEW)) {

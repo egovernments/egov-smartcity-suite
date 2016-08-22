@@ -1297,7 +1297,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>

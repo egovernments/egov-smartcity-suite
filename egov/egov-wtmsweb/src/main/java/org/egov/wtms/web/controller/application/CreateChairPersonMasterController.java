@@ -40,8 +40,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.service.ChairPersonService;
@@ -59,6 +57,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -99,7 +98,7 @@ public class CreateChairPersonMasterController {
         chairPersonJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
         chairPersonJSONData.append(",\"totalDisplayRecords\":").append(chairPersonsList.size());
         chairPersonJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-        chairPersonJSONData.append(",\"data\":").append(toJSON(chairPersonsList)).append("}");
+        chairPersonJSONData.append(",\"data\":").append(toJSON(chairPersonsList, ChairPerson.class, ChairPersonAdaptor.class)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(chairPersonJSONData, response.getWriter());
     }
@@ -139,12 +138,5 @@ public class CreateChairPersonMasterController {
             
             }
         }
-    }
-
-    public String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(ChairPerson.class, new ChairPersonAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

@@ -40,8 +40,6 @@
 
 package org.egov.ptis.actions.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -82,6 +80,7 @@ import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.web.struts.actions.BaseFormAction.VIEW;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.COLL_MODES_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
@@ -277,34 +276,18 @@ public class CollectionSummaryReportAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @ValidationErrorPage(value = "view")
     @Action(value = "/reports/collectionSummaryReport-list")
-    public void list() throws ParseException {
+    public void list() throws ParseException, IOException {
         List<CollectionSummaryReportResult> resultList = new ArrayList<CollectionSummaryReportResult>();
         String result = null;
         final Query query = prepareQuery();
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, CollectionSummaryReportResult.class,
+                CollectionSummaryReportHelperAdaptor.class)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        try {
-            IOUtils.write(result, response.getWriter());
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param object
-     * @return
-     */
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CollectionSummaryReportResult.class,
-                new CollectionSummaryReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+        IOUtils.write(result, response.getWriter());
     }
 
     /**

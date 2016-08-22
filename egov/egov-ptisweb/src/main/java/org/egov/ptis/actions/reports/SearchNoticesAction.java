@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -58,6 +59,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
@@ -67,6 +69,7 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -88,10 +91,13 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
+import org.egov.ptis.bean.CitizenMutationInfo;
 import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.notice.PtNotice;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -108,6 +114,7 @@ import com.lowagie.text.pdf.PdfWriter;
         @Result(name = SearchNoticesAction.SUCCESS, type = "stream", params = { "contentType", "${contentType}",
                 "inputName", "fileStream", "contentDisposition", "attachment; filename=${fileName}" }),
         @Result(name = "RENDER_NOTICE", location = "/commons/htmlFileRenderer.jsp"),
+        @Result(name = SearchNoticesAction.NEW, location = "reports/citizen-search-notice.jsp"),
         @Result(name = SearchNoticesAction.INDEX, location = "reports/searchNotices.jsp") })
 public class SearchNoticesAction extends SearchFormAction {
     private static final Logger LOGGER = Logger.getLogger(SearchNoticesAction.class);
@@ -131,11 +138,13 @@ public class SearchNoticesAction extends SearchFormAction {
     private Map<String, String> noticeTypeMap;
     private String target = "new";
     private List<PtNotice> noticeList;
+    private List<CitizenMutationInfo> mutationList;
     private String contentType;
     private String fileName;
     private InputStream fileStream;
     private Long contentLength;
     private String partNo;
+    
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
     @Autowired
@@ -146,7 +155,7 @@ public class SearchNoticesAction extends SearchFormAction {
     private String municipal;
     private String district;
     private String reportHeader;
-  
+
     public SearchNoticesAction() {
         super();
     }
@@ -175,47 +184,121 @@ public class SearchNoticesAction extends SearchFormAction {
                     + "noticeToDate : " + noticeToDate + ", " + "Property Id : " + indexNumber + ", "
                     + "House Number : " + houseNumber);
         }
-          
-        if (noticeType!="-1") {
-        	reportHeader=reportHeader+", NoticeType: " + noticeType;
+
+        if (noticeType != "-1") {
+            reportHeader = reportHeader + ", NoticeType: " + noticeType;
         }
-		if (!ownerName.isEmpty()){
-				reportHeader=reportHeader+ ", OwnerName: "+ownerName ;
-	    }
-		if(zoneId!=-1){
-			reportHeader=reportHeader+", Zone: " +getBoundary(zoneId);
-		}
-		if (wardId!=-1){
-			reportHeader=reportHeader+", Ward: "+ getBoundary(wardId);
-		}
-		if(!propertyType.equalsIgnoreCase("-1")){
-			reportHeader=reportHeader+", PropertyType: " +getPropType(propertyType);
-		}
-		if(!noticeNumber.isEmpty()){
-			reportHeader=reportHeader+", noticeNum: "+noticeNumber;
-		}
-		if(noticeFromDate!=null) {
-			reportHeader=reportHeader+", noticeDateFrom: "+ noticeFromDate;
-	    }
-		if(noticeToDate!=null) {
-			reportHeader=reportHeader+", noticeDateTo: "+ noticeToDate;
-	    }
-		if(!indexNumber.isEmpty()){
-			reportHeader=reportHeader+", propertyId: "+indexNumber;
-	    }
-		if (!houseNumber.isEmpty()){
-			reportHeader=reportHeader+", HouseNo: " +houseNumber;
-		}
+        if (!ownerName.isEmpty()) {
+            reportHeader = reportHeader + ", OwnerName: " + ownerName;
+        }
+        if (zoneId != -1) {
+            reportHeader = reportHeader + ", Zone: " + getBoundary(zoneId);
+        }
+        if (wardId != -1) {
+            reportHeader = reportHeader + ", Ward: " + getBoundary(wardId);
+        }
+        if (!propertyType.equalsIgnoreCase("-1")) {
+            reportHeader = reportHeader + ", PropertyType: " + getPropType(propertyType);
+        }
+        if (!noticeNumber.isEmpty()) {
+            reportHeader = reportHeader + ", noticeNum: " + noticeNumber;
+        }
+        if (noticeFromDate != null) {
+            reportHeader = reportHeader + ", noticeDateFrom: " + noticeFromDate;
+        }
+        if (noticeToDate != null) {
+            reportHeader = reportHeader + ", noticeDateTo: " + noticeToDate;
+        }
+        if (!indexNumber.isEmpty()) {
+            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+        }
+        if (!houseNumber.isEmpty()) {
+            reportHeader = reportHeader + ", HouseNo: " + houseNumber;
+        }
         target = "searchresult";
         super.search();
         noticeList = searchResult.getList();
-       
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Number of notices : " + noticeList.size());
             LOGGER.debug("Exit from search method");
         }
 
         return INDEX;
+    }
+
+    @SkipValidation
+    @Action(value = "/searchNotices-citizen")
+    public String citizen() {
+        return NEW;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.egov.infra.web.struts.actions.SearchFormAction#search()
+     */
+    @SkipValidation
+    @ValidationErrorPage(value = NEW)
+    @Action(value = "/searchNotices-citizenSearch")
+    public String searchNotice() {
+
+        if (!indexNumber.isEmpty()) {
+            reportHeader = reportHeader + ", propertyId: " + indexNumber;
+            setIndexNumber(indexNumber);
+
+            mutationList = getMutationsList(indexNumber);
+        } else {
+            addActionError(getText("mandatory.indexNumber"));
+        }
+
+        return NEW;
+    }
+
+    private List<CitizenMutationInfo> getMutationsList(String indexNumber) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
+        if (StringUtils.isNotBlank(indexNumber))
+            queryStr.append(" where bp.upicNo=:assessmentNo ");
+        queryStr.append(" order by mt.mutationDate desc ");
+        final Query query = persistenceService.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(indexNumber))
+            query.setString("assessmentNo", indexNumber);
+        List<PropertyMutation> mutations = query.list();
+        List<CitizenMutationInfo> citizenMutationInfo = new LinkedList<CitizenMutationInfo>();
+        for (PropertyMutation mt : mutations) {
+            CitizenMutationInfo citizenMutationBean = new CitizenMutationInfo();
+            citizenMutationBean.setAssessmentNo(indexNumber);
+            citizenMutationBean.setNewOwnerName(mt.getFullTranfereeName().toString());
+            citizenMutationBean.setOldOwnerName(mt.getFullTranferorName().toString());
+            citizenMutationBean.setApplicationNo(mt.getApplicationNo());
+            citizenMutationBean.setMutationFee(mt.getMutationFee() != null ? mt.getMutationFee() : BigDecimal.ZERO);
+            citizenMutationBean.setReceiptNo(mt.getReceiptNum() != null ? mt.getReceiptNum() : "");
+            citizenMutationBean.setStatus(mt.getState().getValue());
+            citizenMutationBean.setNotice(getNoticeByApplicationNo(mt.getApplicationNo()));
+            citizenMutationBean.setAddress(mt.getBasicProperty().getAddress().toString());
+            citizenMutationInfo.add(citizenMutationBean);
+        }
+
+        return citizenMutationInfo;
+
+    }
+
+    private String getNoticeByApplicationNo(String applicationNo) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        String noticeNum = "";
+        queryStr.append("select notice.noticeNo from PtNotice notice left join notice.basicProperty bp , PropertyMutation mt ");
+        queryStr.append(" where notice.applicationNumber=:applicationNo");
+        queryStr.append(" and notice.id = ( select max(id) from PtNotice where  applicationNumber = notice.applicationNumber and basicProperty = mt.basicProperty)");
+        final Query query = persistenceService.getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(applicationNo))
+            query.setString("applicationNo", applicationNo);
+        List<String> notices = query.list();
+        if (notices.size() != 0) {
+            noticeNum = (String) query.list().get(0);
+
+        } else
+            noticeNum = "";
+        return noticeNum;
     }
 
     /**
@@ -373,10 +456,10 @@ public class SearchNoticesAction extends SearchFormAction {
     @Action(value = "/searchNotices-reset")
     public String reset() {
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId
-                    + " wardId : " + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType
-                    + " noticeNumber : " + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : "
-                    + noticeToDate + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
+            LOGGER.debug("reset : Before reset values : ownerName : " + ownerName + " zoneId : " + zoneId + " wardId : "
+                    + wardId + " propertyType : " + propertyType + " noticeType : " + noticeType + " noticeNumber : "
+                    + noticeNumber + " noticeFromDate : " + noticeFromDate + " noticeToDate : " + noticeToDate
+                    + " indexNumber : " + indexNumber + " houseNumber : " + houseNumber);
         ownerName = "";
         zoneId = -1l;
         wardId = -1l;
@@ -397,12 +480,12 @@ public class SearchNoticesAction extends SearchFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into prepare method");
         super.prepare();
-        municipal=getSession().get("citymunicipalityname").toString();
-        district=getSession().get("districtName").toString();
-        district=district.substring(0,1)+district.substring(1, district.length()).toLowerCase()+ " District";
-        reportHeader=municipal+", "+district;
-        final List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                ZONE.toUpperCase(), REVENUE_HIERARCHY_TYPE);
+        municipal = getSession().get("citymunicipalityname").toString();
+        district = getSession().get("districtName").toString();
+        district = district.substring(0, 1) + district.substring(1, district.length()).toLowerCase() + " District";
+        reportHeader = municipal + ", " + district;
+        final List<Boundary> zoneList = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE.toUpperCase(), REVENUE_HIERARCHY_TYPE);
         final List<Boundary> wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward",
                 REVENUE_HIERARCHY_TYPE);
         final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAll();
@@ -474,7 +557,6 @@ public class SearchNoticesAction extends SearchFormAction {
         return propTypeMstr.getType();
     }
 
-    
     /**
      * @param basicProperty
      * @return
@@ -503,7 +585,7 @@ public class SearchNoticesAction extends SearchFormAction {
             LOGGER.debug("Entered into prepareQuery method");
             LOGGER.debug("Sort Field : " + sortField + ", " + "Sort Dir : " + sortDir);
         }
-        
+
         final Map<String, Object> map = getCriteriaString();
 
         return new SearchQueryHQL(prepareSearchQuery(map.get("criteriaString")),
@@ -527,16 +609,16 @@ public class SearchNoticesAction extends SearchFormAction {
         StringBuilder criteriaString = new StringBuilder();
         criteriaString = new StringBuilder(" where notice.noticeType = ?");
         params.add(noticeType);
-        
-      
+
         // To show only the active Demand Bill
         if (NOTICE_TYPE_BILL.equalsIgnoreCase(noticeType))
-            criteriaString = criteriaString.append(" and bill.isactive = true and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
+            criteriaString = criteriaString.append(
+                    " and bill.isactive = true and bill.billnumber = notice.noticeNo and pmv.propertyId=bill.assessmentNo");
         else
             criteriaString = criteriaString.append(" and bp.upicNo=pmv.propertyId");
         if (ownerName != null && !ownerName.equals("")) {
             criteriaString.append(" and pmv.ownerName like ?");
-            params.add("%"+ownerName+"%");
+            params.add("%" + ownerName + "%");
         }
         if (zoneId != null && !zoneId.equals(-1l)) {
             criteriaString.append(" and bp.propertyID.zone.id = ?");
@@ -589,6 +671,7 @@ public class SearchNoticesAction extends SearchFormAction {
 
     @Override
     public void validate() {
+
         if (noticeType == null || noticeType.equals("-1"))
             addActionError(getText("mandatory.noticeType"));
         if (noticeFromDate != null && !noticeFromDate.equals("DD/MM/YYYY")
@@ -616,8 +699,8 @@ public class SearchNoticesAction extends SearchFormAction {
 
         final Map<String, Object> map = getCriteriaString();
 
-        final List<PtNotice> noticeList = persistenceService.findAllBy(prepareSearchQuery(map.get("criteriaString")),
-                ((ArrayList<Object>) map.get("params")).toArray());
+        final List<PtNotice> noticeList = this.persistenceService.findAllBy(
+                prepareSearchQuery(map.get("criteriaString")), ((ArrayList<Object>) map.get("params")).toArray());
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Number of notices : " + (noticeList != null ? noticeList.size() : ZERO));
             LOGGER.debug("Exit from getNoticeBySearchParameter method");
@@ -934,28 +1017,37 @@ public class SearchNoticesAction extends SearchFormAction {
         this.partNo = partNo;
     }
 
-	public String getMunicipal() {
-		return municipal;
-	}
+    public String getMunicipal() {
+        return municipal;
+    }
 
-	public void setMunicipal(String municipal) {
-		this.municipal = municipal;
-	}
+    public void setMunicipal(String municipal) {
+        this.municipal = municipal;
+    }
 
-	public String getDistrict() {
-		return district;
-	}
+    public String getDistrict() {
+        return district;
+    }
 
-	public void setDistrict(String district) {
-		this.district = district;
-	}
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 
-	public String getReportHeader() {
-		return reportHeader;
-	}
+    public String getReportHeader() {
+        return reportHeader;
+    }
 
-	public void setReportHeader(String reportHeader) {
-		this.reportHeader = reportHeader;
-	}
+    public void setReportHeader(String reportHeader) {
+        this.reportHeader = reportHeader;
+    }
 
+    public List<CitizenMutationInfo> getMutationList() {
+        return mutationList;
+    }
+
+    public void setMutationList(List<CitizenMutationInfo> mutationList) {
+        this.mutationList = mutationList;
+    }
+
+   
 }

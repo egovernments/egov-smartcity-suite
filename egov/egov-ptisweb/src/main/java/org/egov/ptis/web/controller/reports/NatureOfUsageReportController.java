@@ -39,8 +39,6 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -68,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
@@ -123,7 +122,7 @@ public class NatureOfUsageReportController {
     public @ResponseBody void search(final HttpServletRequest request, final HttpServletResponse response, final Model model)
             throws IOException {
         final List<NatureOfUsageResult> natureOfUsageResultList = getReportResults(request);
-        final StringBuilder natureOfUsageSONData = new StringBuilder("{ \"data\":").append(toJSON(natureOfUsageResultList))
+        final StringBuilder natureOfUsageSONData = new StringBuilder("{ \"data\":").append(toJSON(natureOfUsageResultList, NatureOfUsageResult.class, NatureOfUsageReportAdaptor.class))
                 .append("}");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(natureOfUsageSONData.toString(), response.getWriter());
@@ -170,13 +169,6 @@ public class NatureOfUsageReportController {
         srchCriteria.append(" are : " + results.size());
         setSrchCriteria(srchCriteria.toString());
         return results;
-    }
-
-    public String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(NatureOfUsageResult.class, new NatureOfUsageReportAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     public Session getSession() {

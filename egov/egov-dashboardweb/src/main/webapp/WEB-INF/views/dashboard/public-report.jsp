@@ -55,7 +55,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="javascript:void(0);">
-						<img src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+						<img src="<cdn:url  value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
 				
 									</a>
 								</li>
@@ -196,14 +196,14 @@
 				</div>
 
 			</div>
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/egov/custom.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/css/report.css' />">
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/custom.css' context='/egi'/>">
+		<link rel="stylesheet" href="<cdn:url  value='/resources/css/report.css' />">
 		
-		<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/report.js' />"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/js/report.js' />"></script>
 		
 
 

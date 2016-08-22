@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <style>
 body {
 	font-family: regular !important;
@@ -49,7 +50,7 @@ body {
 }
 </style>
 <script type="text/javascript"
-	src="<c:url value='/resources/javascript/validations.js'/>"></script>
+	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript">
 	function submitForm(obj) {
 		if (obj.value == "submit") {

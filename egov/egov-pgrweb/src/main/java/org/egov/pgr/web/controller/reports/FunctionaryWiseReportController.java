@@ -40,12 +40,6 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.service.reports.FunctionaryWiseReportService;
 import org.hibernate.SQLQuery;
@@ -62,8 +56,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/functionaryWiseReport")
@@ -103,7 +101,8 @@ public class FunctionaryWiseReportController {
                     toDate, usrid, complaintDateType, status);
             functionaryReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
             functionaryReportResult = functionaryReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSONForFunctionary(functionaryReportResult)).append("}")
+            result = new StringBuilder("{ \"data\":").append(toJSON(functionaryReportResult, DrillDownReportResult.class,
+                    DrillDownReportWithcompTypeAdaptor.class)).append("}")
                     .toString();
 
         } else {
@@ -111,30 +110,13 @@ public class FunctionaryWiseReportController {
                     toDate, usrid, complaintDateType);
             functionaryReportQuery.setResultTransformer(Transformers.aliasToBean(DrillDownReportResult.class));
             functionaryReportResult = functionaryReportQuery.list();
-            result = new StringBuilder("{ \"data\":").append(toJSON(functionaryReportResult)).append("}")
+            result = new StringBuilder("{ \"data\":").append(toJSON(functionaryReportResult, DrillDownReportResult.class,
+                    DrillDownReportHelperAdaptor.class)).append("}")
                     .toString();
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-
-    }
-
-    private Object toJSONForFunctionary(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
-                new DrillDownReportWithcompTypeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-
-    }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DrillDownReportResult.class,
-                new DrillDownReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
 
     }
 }

@@ -42,6 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
 <form:form method="" action=""
@@ -73,7 +74,7 @@
 								<spring:message code="lbl.petitiontype" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.petitionTypeMaster.code}" />
+								<c:out value="${legalCase.petitionTypeMaster.petitionType}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -85,7 +86,7 @@
 							</div>
 							<div class="col-xs-3 add-margin">Case Type</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.caseTypeMaster.code}" />
+								<c:out value="${legalCase.caseTypeMaster.caseType}" />
 							</div>
 						</div>
 						<div class="row add-border">
@@ -152,6 +153,25 @@
 								<c:out value="${caduedate}" />
 							</div>
 						</div>
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.officerincharge" />
+							</div>
+								<div class="col-xs-3 add-margin view-content">
+								<c:out value="${legalCase.officerIncharge}" />
+							</div>
+							
+							
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.noticedate" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<fmt:formatDate pattern="dd/MM/yyyy"
+									value="${legalCase.noticeDate}" var="noticeDate" />
+								<c:out value="${noticeDate}" />
+							</div>
+						</div>
+						
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.fieldbycarp" />
@@ -346,16 +366,16 @@
 	</div>
 	</div>
 	<link rel="stylesheet"
-		href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+		href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
 	<link rel="stylesheet"
-		href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+		href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 	<script
-		src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+		src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 	<script
-		src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+		src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 	<script
-		src="<c:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
+		src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 	<script
-		src="<c:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>
+		src="<cdn:url value='/resources/js/app/legalcasenew.js?rnd=${app_release_no}'/>"></script>

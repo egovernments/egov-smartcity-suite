@@ -58,6 +58,6 @@ public interface WaterRatesHeaderRepository extends JpaRepository<WaterRatesHead
 
     List<WaterRatesHeader> findAllByWaterSource(WaterSource waterSource);
 
-    List<WaterRatesHeader>  findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSizeOrderByIdDesc(ConnectionType connectionType,
+    List<WaterRatesHeader>  findByActiveTrueAndConnectionTypeAndUsageTypeAndWaterSourceAndPipeSizeOrderByIdDesc(ConnectionType connectionType,
             UsageType usageType, WaterSource waterSource, PipeSize pipeSize);
 }

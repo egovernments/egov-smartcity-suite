@@ -80,7 +80,7 @@ public class CurrentDcbService {
     public SQLQuery getMigratedReceipttDetails(final String consumerNumber) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select distinct(i_bookno) as \"bookNumber\", i_ctrrcptno as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
+                "select distinct(i_bookno) as \"bookNumber\", cast(i_ctrrcptno as varchar) as \"receiptNumber\",dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\","
                         + "d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =" + consumerNumber
                         + " order by dt_ctrrcptdt desc");
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
@@ -93,7 +93,7 @@ public class CurrentDcbService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\","
-                        + "amount as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
+                        +  "cast(amount as numeric(18,2)) as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails ="
                         + connectiondetails);
         final SQLQuery finalQuery = getCurrentSession().createSQLQuery(queryStr.toString());
         finalQuery.setResultTransformer(new AliasToBeanResultTransformer(WaterChargesReceiptInfo.class));

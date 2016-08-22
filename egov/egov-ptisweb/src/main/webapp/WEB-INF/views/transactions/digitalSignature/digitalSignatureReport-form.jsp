@@ -41,7 +41,8 @@
 <%@ page contentType="text/html" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>  
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%> 
 	
 <div class="row">
 	<div class="col-md-12">
@@ -113,5 +114,5 @@
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript" src="<c:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>  
-<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/app/digitalSignatureReport.js'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>

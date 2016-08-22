@@ -40,6 +40,8 @@
 
 package org.egov.pgr.repository;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pgr.entity.Complaint;
 import org.springframework.data.domain.Page;
@@ -48,8 +50,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
@@ -61,6 +61,8 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     
     @Query("select complaint from Complaint complaint where createdBy =:createdBy and status.name in (:statuses) order by createddate DESC")
     Page<Complaint> findMyComplaintyByStatus(@Param("createdBy") User createdBy, @Param("statuses") String[] statuses, Pageable pageable);
+    
+    List<Complaint> findByStatusNameIn(List<String> statusList);
     
     @Query("select count(*) from Complaint complaint where status.name in (:statuses)")
     Long getComplaintsTotalCountByStatus(@Param("statuses") String[] statuses);

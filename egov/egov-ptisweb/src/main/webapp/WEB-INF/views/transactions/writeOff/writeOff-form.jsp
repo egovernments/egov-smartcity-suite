@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <style>
 body
 {
@@ -51,7 +52,7 @@ body
 }
 </style>
 <script type="text/javascript"
-	src="<c:url value='/resources/javascript/validations.js'/>"></script>
+	src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <form:form id="WriteOff" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
@@ -151,4 +152,4 @@ body
 		</div>
 	</div>
 </form:form>
-<script src="<c:url value='/resources/js/app/writeoff.js'/>"></script>
+<script src="<cdn:url value='/resources/js/app/writeoff.js'/>"></script>

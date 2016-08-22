@@ -1107,4 +1107,40 @@ public class WaterConnectionDetailsService {
             balance = BigDecimal.ZERO;
         return balance;
     }
+    
+    public BigDecimal getArrearsDemand(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        BigDecimal balance = BigDecimal.ZERO;
+        if (currentDemand != null) {
+            final List<Object> instVsAmt = connectionDemandService
+                    .getDmdCollAmtInstallmentWiseUptoPreviousFinYear(currentDemand, waterConnectionDetails);
+            for (final Object object : instVsAmt) {
+                final Object[] ddObject = (Object[]) object;
+                final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+                if (ddObject[2] != null)
+                balance = balance.add(dmdAmt);
+            }
+        }
+        if (balance.compareTo(BigDecimal.ZERO) < 0)
+            balance = BigDecimal.ZERO;
+        return balance;
+    }
+    
+    public BigDecimal getTotalDemandTillCurrentFinYear(final WaterConnectionDetails waterConnectionDetails) {
+        final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        BigDecimal balance = BigDecimal.ZERO;
+        if (currentDemand != null) {
+            final List<Object> instVsAmt = connectionDemandService
+                    .getDmdCollAmtInstallmentWiseUptoCurrentFinYear(currentDemand, waterConnectionDetails);
+            for (final Object object : instVsAmt) {
+                final Object[] ddObject = (Object[]) object;
+                final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+                if (ddObject[2] != null)
+                balance = balance.add(dmdAmt);
+            }
+        }
+        if (balance.compareTo(BigDecimal.ZERO) < 0)
+            balance = BigDecimal.ZERO;
+        return balance;
+    }
 }

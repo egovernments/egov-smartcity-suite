@@ -41,7 +41,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <div class="page-error-404">
 	<div class="error-text">
 		<div class="alert alert-danger" role="alert">

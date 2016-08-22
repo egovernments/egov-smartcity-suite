@@ -87,7 +87,7 @@ public class Appeal extends AbstractPersistable<Long> {
     @Column(name = "srnumber")
     private String srNumber;
 
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Temporal(TemporalType.DATE)
     @Column(name = "appealfiledon")
     private Date appealFiledOn;

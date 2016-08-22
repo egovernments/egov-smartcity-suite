@@ -118,7 +118,12 @@ public class ConsumerIndexService {
                 waterConnectionDetailsService.getTotalAmountTillCurrentFinYear(waterConnectionDetails).subtract(
                         waterConnectionDetailsService.getTotalAmountTillPreviousFinYear(waterConnectionDetails)));
         consumerSearch
-                .setArrearsDue(waterConnectionDetailsService.getTotalAmountTillCurrentFinYear(waterConnectionDetails));
+                .setArrearsDue(waterConnectionDetailsService.getTotalAmountTillPreviousFinYear(waterConnectionDetails));
+        consumerSearch.setCurrentDemand(
+                waterConnectionDetailsService.getTotalDemandTillCurrentFinYear(waterConnectionDetails).subtract(
+                        waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails)));
+        consumerSearch
+                .setArrearsDemand(waterConnectionDetailsService.getArrearsDemand(waterConnectionDetails));
         if (connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails) != null
                 && connectionDemandService.getWaterRatesDetailsForDemandUpdate(waterConnectionDetails)
                         .getMonthlyRate() != null)

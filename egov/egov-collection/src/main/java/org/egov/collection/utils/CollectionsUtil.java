@@ -91,7 +91,6 @@ import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.script.entity.Script;
 import org.egov.infra.search.elastic.entity.CollectionIndex;
 import org.egov.infra.search.elastic.entity.CollectionIndexBuilder;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -216,7 +215,10 @@ public class CollectionsUtil {
      * @return department of the given user
      */
     public Department getDepartmentOfUser(final User user) {
-        return eisCommonService.getDepartmentForUser(user.getId());
+        if (assignmentService.getPrimaryAssignmentForUser(user.getId()) == null)
+            return null;
+        else
+            return eisCommonService.getDepartmentForUser(user.getId());
     }
 
     /**
@@ -247,18 +249,12 @@ public class CollectionsUtil {
      */
     public Location getLocationOfUser(final Map<String, Object> sessionMap) {
         Location location = null;
-        try {
-            location = getLocationById(Long.valueOf((String) sessionMap
-                    .get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID)));
-            if (location == null)
-                throw new ApplicationRuntimeException("Unable to fetch the location of the logged in user ["
-                        + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]");
-        } catch (final Exception exp) {
-            final String errorMsg = "Unable to fetch the location of the logged in user ["
-                    + (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_NAME) + "]";
-            LOGGER.error(errorMsg, exp);
-            throw new ApplicationRuntimeException(errorMsg, exp);
-        }
+        String locationId = (String) sessionMap.get(CollectionConstants.SESSION_VAR_LOGIN_USER_LOCATIONID);
+        if (locationId != null && !locationId.isEmpty())
+            location = getLocationById(Long.valueOf(locationId));
+        if (location == null)
+            throw new ValidationException(Arrays.asList(
+                    new ValidationError("Location Not Found", "submitcollections.validation.error.location.notfound")));
         return location;
     }
 
@@ -486,9 +482,6 @@ public class CollectionsUtil {
         if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
             return true;
         return false;
-    }
-
-    public void setScriptService(final PersistenceService<Script, Long> scriptService) {
     }
 
     /**

@@ -58,6 +58,7 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
@@ -94,6 +95,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private String billDateTo;
     private String expType;
     private List<Map<String, Object>> billList;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
    
  @Autowired
  @Qualifier("persistenceService")
@@ -289,10 +292,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
     }
 
     protected void getHeaderFields() {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'DEFAULT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues()) {
+        final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey("EGF", "DEFAULT_SEARCH_MISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList) {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));
                 headerFields.add(header);

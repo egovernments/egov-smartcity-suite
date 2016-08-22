@@ -311,5 +311,22 @@
 
 </definition>
 
+<definition name="budgetcheckconfig-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.budgetcheckconfig.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/budgetcheckconfig/budgetcheckconfig-new.jsp"/>
+</definition>
+
+<definition name="budgetcheckconfig-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.budgetcheckconfig.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/budgetcheckconfig/budgetcheckconfig-view.jsp"/>
+</definition>
+
+
+<definition name="budgetcheckconfig-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.budgetcheckconfig.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/budgetcheckconfig/budgetcheckconfig-result.jsp"/>
+</definition>
+
+
 
 </tiles-definitions>
