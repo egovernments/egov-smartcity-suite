@@ -111,7 +111,8 @@ public class ComplaintIndexService {
     			&& (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
     					|| complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
     		complaintIndex.setSource("By citizens:ULB Portal");
-    	else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+    	else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE) 
+    			  || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
     		complaintIndex.setSource("ULB counter");
     	complaintIndex.setIsClosed(false);
     	complaintIndex.setComplaintIsClosed('N');
@@ -157,7 +158,8 @@ public class ComplaintIndexService {
                 && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
                         || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
             complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE) 
+  			  || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
             complaintIndex.setSource("ULB counter");
         
         //Update the complaint index object  with the existing values
@@ -285,7 +287,8 @@ public class ComplaintIndexService {
                 && (complaintIndex.getCreatedBy().getType().equals(UserType.CITIZEN)
                         || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM)))
             complaintIndex.setSource("By citizens:ULB Portal");
-        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE))
+        else if (complaintIndex.getCreatedBy().getType().equals(UserType.EMPLOYEE) 
+    			  || complaintIndex.getCreatedBy().getType().equals(UserType.SYSTEM))
             complaintIndex.setSource("ULB counter");
         //Update the complaint index object  with the existing values
         complaintIndex = populateFromIndex(complaintIndex);
