@@ -49,7 +49,7 @@
 
 <div>
 	<spring:hasBindErrors name="sewerageApplicationDetails">
-	<div class="alert-danger col-md-10 col-md-offset-1">
+	<div class="alert alert-danger col-md-10 col-md-offset-1">
      			<form:errors path="*" /><br/>
    	</div>
     </spring:hasBindErrors>

@@ -137,7 +137,9 @@ $(document).ready(function(){
 					bootbox.alert("connection validation failed");
 				}
 			});
-		}		
+		} else {
+			resetPropertyDetails();
+			}
 	}
 });
 
