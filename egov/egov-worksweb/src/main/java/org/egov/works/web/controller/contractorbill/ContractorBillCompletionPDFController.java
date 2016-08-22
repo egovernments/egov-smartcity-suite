@@ -41,7 +41,6 @@ package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +50,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -155,8 +155,7 @@ public class ContractorBillCompletionPDFController {
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
 
-            final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
-            reportParams.put("cityName", cityName);
+            reportParams.put("cityName", ApplicationThreadLocals.getCityName());
             reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy hh:mm a"));
 
             final List<ContractorBillCertificateInfo> contractorBillCertificateInfoList = new ArrayList<ContractorBillCertificateInfo>();
