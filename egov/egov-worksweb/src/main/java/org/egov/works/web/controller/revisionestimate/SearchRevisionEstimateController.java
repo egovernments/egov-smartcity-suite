@@ -64,15 +64,11 @@ public class SearchRevisionEstimateController {
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String searchForm(@ModelAttribute final SearchRevisionEstimate SearchRevisionEstimate, final Model model)
             throws ApplicationException {
-        setDropDownValues(model);
         model.addAttribute("SearchRevisionEstimate", SearchRevisionEstimate);
-        return "revisionEstimate-search";
-    }
-
-    private void setDropDownValues(final Model model) {
         model.addAttribute("createdUsers", revisionEstimateService.getRevisionEstimateCreatedByUsers());
         model.addAttribute("revisionEstimateStatus", worksUtils.getStatusByModule(WorksConstants.REVISIONABSTRACTESTIMATE));
 
+        return "revisionEstimate-search";
     }
 
 }

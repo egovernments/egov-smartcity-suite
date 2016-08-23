@@ -43,6 +43,7 @@ package org.egov.works.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.springframework.stereotype.Component;
 
@@ -62,57 +63,57 @@ public class RevisionEstimateJsonAdaptor implements JsonSerializer<SearchRevisio
             if (searchRevisionEstimate.getId() != null)
                 jsonObject.addProperty("id", searchRevisionEstimate.getId());
             else
-                jsonObject.addProperty("id", "");
+                jsonObject.addProperty("id", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getWoId() != null)
                 jsonObject.addProperty("woId", searchRevisionEstimate.getWoId());
             else
-                jsonObject.addProperty("woId", "");
+                jsonObject.addProperty("woId", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getAeId() != null)
                 jsonObject.addProperty("aeId", searchRevisionEstimate.getAeId());
             else
-                jsonObject.addProperty("aeId", "");
+                jsonObject.addProperty("aeId", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getEstimateNumber() != null)
                 jsonObject.addProperty("estimateNumber", searchRevisionEstimate.getEstimateNumber());
             else
-                jsonObject.addProperty("estimateNumber", "");
+                jsonObject.addProperty("estimateNumber", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
                 jsonObject.addProperty("revisionEstimateNumber", searchRevisionEstimate.getRevisionEstimateNumber());
             else
-                jsonObject.addProperty("revisionEstimateNumber", "");
+                jsonObject.addProperty("revisionEstimateNumber", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getReDate() != null)
                 jsonObject.addProperty("reDate", DateUtils.getDefaultFormattedDate(searchRevisionEstimate.getReDate()));
             else
-                jsonObject.addProperty("reDate", "");
+                jsonObject.addProperty("reDate", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getLoaNumber() != null)
                 jsonObject.addProperty("loaNumber", searchRevisionEstimate.getLoaNumber());
             else
-                jsonObject.addProperty("loaNumber", "");
+                jsonObject.addProperty("loaNumber", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getContractorName() != null)
                 jsonObject.addProperty("contractorName", searchRevisionEstimate.getContractorName());
             else
-                jsonObject.addProperty("contractorName", "");
+                jsonObject.addProperty("contractorName", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getReValue() != null)
                 jsonObject.addProperty("reValue", searchRevisionEstimate.getReValue());
             else
-                jsonObject.addProperty("reValue", "");
+                jsonObject.addProperty("reValue", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getRevisionEstimateStatus() != null)
                 jsonObject.addProperty("status", searchRevisionEstimate.getRevisionEstimateStatus());
             else
-                jsonObject.addProperty("status", "");
+                jsonObject.addProperty("status", StringUtils.EMPTY);
 
             if (searchRevisionEstimate.getCurrentOwner() != null)
                 jsonObject.addProperty("currentOwner", searchRevisionEstimate.getCurrentOwner());
             else
-                jsonObject.addProperty("currentOwner", "");
+                jsonObject.addProperty("currentOwner", StringUtils.EMPTY);
 
         }
         return jsonObject;
