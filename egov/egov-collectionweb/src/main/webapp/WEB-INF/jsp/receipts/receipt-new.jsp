@@ -986,7 +986,15 @@ function validate()
 		validation = false;
    	}
 
-   	if(validation==false){
+   	<s:if test="%{!isBillSourcemisc()}"> 
+	 if((document.getElementById("totalamountdisplay").value>document.getElementById("totalamounttobepaid").value)){
+		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
+		 if(r !=true)
+			 validation = false;
+	 }
+	 </s:if>
+
+   	if(validation==false &&  document.getElementById("receipt_error_area").innerHTML!=''){
 		document.getElementById("receipt_error_area").style.display="block";
 		window.scroll(0,0);
 	}
