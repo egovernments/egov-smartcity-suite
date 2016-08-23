@@ -92,6 +92,9 @@ public class CourtMasterService {
     public List<CourtMaster> findActiveCourtByCourtType(final CourtTypeMaster courtType) {
         return courtMasterRepository.findByActiveTrueAndCourtType(courtType);
     }
+    public List<CourtMaster> getActiveCourtMaster() {
+        return courtMasterRepository.findByActiveTrueOrderByNameAsc();
+    }
 
     public List<CourtMaster> search(final CourtMaster courtMaster) {
 

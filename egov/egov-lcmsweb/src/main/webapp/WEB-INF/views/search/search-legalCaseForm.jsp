@@ -79,7 +79,7 @@
 							<form:option value="">
 								<spring:message code="lbls.select"/>
 							</form:option>
-							<form:options items="${caseTypeList}"  itemValue="id"  itemLabel="code"  />  
+							<form:options items="${caseTypeList}"  itemValue="id"  itemLabel="caseType"  />  
 						</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label">Standing Council</label>
@@ -97,7 +97,7 @@
 							<form:option value="">
 								<spring:message code="lbls.select"/>
 							</form:option>
-							<form:options items="${courtTypeList}" itemValue="id"  itemLabel="code"   />  
+							<form:options items="${courtTypeList}" itemValue="id"  itemLabel="courtType"   />  
 						</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label">Court Name</label>
