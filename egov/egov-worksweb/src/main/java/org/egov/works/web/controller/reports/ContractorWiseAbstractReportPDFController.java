@@ -50,6 +50,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -81,8 +82,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ContractorWiseAbstractReportPDFController {
 
     public static final String CONTRACTOWISEABSTRACTREPORT = "contractorWiseAbstractReport";
-    
-    public static final String DATE_FORMAT = "dd/MM/yyyy hh:mm a";
 
     @Autowired
     private ReportService reportService;
@@ -130,7 +129,7 @@ public class ContractorWiseAbstractReportPDFController {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
-        reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(), DATE_FORMAT));
+        reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new Date()));
         final List<ContractorWiseAbstractSearchResult> contractorSearchList = new ArrayList<ContractorWiseAbstractSearchResult>();
 
         for (final ContractorWiseAbstractSearchResult searchResult : contractorWiseAbstractList) {
@@ -238,9 +237,9 @@ public class ContractorWiseAbstractReportPDFController {
                             searchResult.getApprovedAmount().subtract(searchResult.getWorkCompletedAmount())
                                     .divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
                 else if (searchResult.getApprovedAmount() != null)
-                    contractorResult.setBalanceWorkAmount(
-                            searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
-                else 
+                    contractorResult.setBalanceWorkAmount(searchResult.getApprovedAmount()
+                            .divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                else
                     contractorResult.setBalanceWorkAmount(new BigDecimal(0));
 
                 if (searchResult.getWorkCompletedAmount() == null)
@@ -259,41 +258,49 @@ public class ContractorWiseAbstractReportPDFController {
             }
         }
         reportInput = new ReportRequest(CONTRACTOWISEABSTRACTREPORT, contractorSearchList, reportParams);
-        String queryParameters = messageSource.getMessage("msg.contractorwiseabstractestimate.report", null, null);
+        StringBuilder subHeader = new StringBuilder();
+        subHeader.append(messageSource.getMessage("msg.contractorwiseabstractestimate.report", null, null));
 
         if (contractorWiseAbstractReport.getFinancialYearId() != null) {
             final CFinancialYear finyear = cFinancialYearService
                     .findOne(contractorWiseAbstractReport.getFinancialYearId());
-            queryParameters += " " + messageSource.getMessage("msg.daterange", null, null)
-                    + DateUtils.getDefaultFormattedDate(finyear.getStartingDate()) + " - "
-                    + DateUtils.getDefaultFormattedDate(finyear.getEndingDate()) + ", ";
+            subHeader.append(" ").append(messageSource.getMessage("msg.daterange", null, null))
+                    .append(DateUtils.getDefaultFormattedDate(finyear.getStartingDate())).append(" - ")
+                    .append(DateUtils.getDefaultFormattedDate(finyear.getEndingDate())).append(",");
         }
         if (contractorWiseAbstractReport.getElectionWardId() != null)
-            queryParameters += messageSource.getMessage("msg.ward", null, null)
-                    + boundaryService.getBoundaryById(contractorWiseAbstractReport.getElectionWardId()).getBoundaryNum()
-                    + ", ";
+            subHeader.append(" ")
+                    .append(messageSource.getMessage("msg.ward", null, null)).append(boundaryService
+                            .getBoundaryById(contractorWiseAbstractReport.getElectionWardId()).getBoundaryNum())
+                    .append(",");
 
         if (contractorWiseAbstractReport.getNatureOfWork() != null)
-            queryParameters += " " + messageSource.getMessage("msg.natureofwork", null, null)
-                    + natureOfWorkService.findById(contractorWiseAbstractReport.getNatureOfWork()).getName() + ", ";
+            subHeader.append(" ").append(messageSource.getMessage("msg.natureofwork", null, null)).append(" ")
+                    .append(natureOfWorkService.findById(contractorWiseAbstractReport.getNatureOfWork()).getName())
+                    .append(",");
 
         if (contractorWiseAbstractReport.getContractor() != null) {
             final List<Contractor> contractor = contractorService
                     .getContractorsByCodeOrName(contractorWiseAbstractReport.getContractor());
             if (contractor != null)
-                queryParameters += " " + messageSource.getMessage("msg.contractor", null, null)
-                        + contractor.get(0).getName() + " " + "-" + " " + contractor.get(0).getCode() + ", ";
+                subHeader.append(" ").append(messageSource.getMessage("msg.contractor", null, null)).append(" ")
+                        .append(contractor.get(0).getName()).append(" - ")
+                        .append(contractor.get(0).getCode()).append(",");
         }
 
         if (contractorWiseAbstractReport.getWorkStatus() != null)
-            queryParameters += " " + messageSource.getMessage("msg.workstatus", null, null)
-                    + contractorWiseAbstractReport.getWorkStatus() + ", ";
+            subHeader.append(" ").append(messageSource.getMessage("msg.workstatus", null, null)).append(" ")
+                    .append(contractorWiseAbstractReport.getWorkStatus()).append(",");
 
-        if (queryParameters.endsWith(", "))
-            queryParameters = queryParameters.substring(0, queryParameters.length() - 2);
+        String subHeaderStr = StringUtils.EMPTY;
+        if (subHeader.toString().endsWith(","))
+            subHeaderStr = subHeader.toString().substring(0, subHeader.toString().length() - 2);
+        else
+            subHeaderStr = subHeader.toString();
 
-        reportParams.put("reportTitle", queryParameters);
-        reportParams.put("dataRunDate", DateUtils.getFormattedDate(workProgressRegisterService.getReportSchedulerRunDate(),DATE_FORMAT));
+        reportParams.put("reportTitle", subHeaderStr);
+        reportParams.put("dataRunDate",
+                DateUtils.getFormattedDateWithTimeStamp(workProgressRegisterService.getReportSchedulerRunDate()));
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             reportInput.setReportFormat(FileFormat.PDF);

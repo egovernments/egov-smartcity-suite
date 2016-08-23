@@ -40,7 +40,6 @@
 package org.egov.works.web.controller.contractorbill;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +93,6 @@ public class ContractCertificatePDFController {
 
     private ResponseEntity<byte[]> generateReport(final ContractorBillRegister contractorBillRegister,
             final HttpServletRequest request, final HttpSession session) {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (contractorBillRegister != null) {
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
@@ -107,7 +105,7 @@ public class ContractCertificatePDFController {
                     contractorBillRegister.getCreatedDate(), contractorBillRegister.getWorkOrderEstimate().getId());
             reportParams.put("lastPartBillDate", lastPartBillDate != null ? DateUtils.getDefaultFormattedDate(lastPartBillDate) : "NA");
             reportParams.put("billDate", DateUtils.getDefaultFormattedDate(contractorBillRegister.getBilldate()));
-            reportParams.put("reportRunDate", sdf.format(new Date()));
+            reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new Date()));
             final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService.getContractCertificateDetails(
                     contractorBillRegister,reportParams);
             reportInput = new ReportRequest(CONTRACTCERTIFICATEPDF, contractCertificateInfoList, reportParams);

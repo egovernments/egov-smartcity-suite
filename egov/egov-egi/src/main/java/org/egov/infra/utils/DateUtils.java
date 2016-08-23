@@ -61,6 +61,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static final String DFT_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String DFT_DATE_FORMAT_WITHTIMESTAMP = "dd/MM/yyyy hh:mm a";
     public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
     public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern(DFT_DATE_FORMAT);
 
@@ -428,5 +429,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      */
     public static boolean between(final Date date, final Date fromDate, final Date toDate) {
         return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
+    }
+    
+    /**
+     * Will format the given Date by dd/MM/yyyy hh:mm a pattern.
+     *
+     * @param date
+     *            the date
+     * @return the default formatted date
+     */
+    public static String getFormattedDateWithTimeStamp(final Date date) {
+        return getDateFormatter(DFT_DATE_FORMAT_WITHTIMESTAMP).format(date);
     }
 }

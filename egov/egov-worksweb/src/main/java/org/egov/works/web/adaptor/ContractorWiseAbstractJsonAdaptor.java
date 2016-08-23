@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
+import org.egov.infra.utils.DateUtils;
 import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.service.WorkProgressRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
     public JsonElement serialize(final ContractorWiseAbstractSearchResult searchResult, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (searchResult != null) {
             jsonObject.addProperty("ward", searchResult.getElectionWard());
             jsonObject.addProperty("contractorName",
@@ -118,7 +118,7 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
                 jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 
             jsonObject.addProperty("createdDate",
-                    formatter.format(workProgressRegisterService.getReportSchedulerRunDate()));
+                    DateUtils.getFormattedDateWithTimeStamp(workProgressRegisterService.getReportSchedulerRunDate()));
         }
         return jsonObject;
     }
