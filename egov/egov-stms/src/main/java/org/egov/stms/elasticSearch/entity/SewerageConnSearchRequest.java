@@ -131,9 +131,8 @@ public class SewerageConnSearchRequest {
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
         andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE,applicationDate));
-        andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_APPLICATIONNO,(consumerNumber!=null && !consumerNumber.trim().isEmpty()) ? "\""+consumerNumber+"\"" : consumerNumber ));
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO,consumerNumber));
         andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_ISACTIVE, "true"));
-        //andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_STATUS, "Sanctioned"));
         if (logger.isDebugEnabled())
             logger.debug("finished filters");
         return Filters.withAndFilters(andFilters);
