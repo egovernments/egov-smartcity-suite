@@ -304,7 +304,6 @@ public class WorkOrderEstimateService {
     }
     
     public List<Contractor> findContractorsByWorkOrderStatus(final String code) {
-        return workOrderEstimateRepository.findContractorsByWorkOrderStatus(
-                "%" + code + "%", WorksConstants.APPROVED,WorksConstants.WORKORDER);
+        return workOrderEstimateRepository.findContractorsByWorkOrderStatus("%" + code + "%", WorksConstants.APPROVED);
     }
 }

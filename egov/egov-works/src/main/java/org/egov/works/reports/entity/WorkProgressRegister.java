@@ -256,6 +256,8 @@ public class WorkProgressRegister extends AbstractAuditable {
     private String contractorCode;
     
     private Long boundaryNum;
+    
+    private boolean bOQExists;
 
     @Override
     protected void setId(final Long id) {
@@ -705,6 +707,14 @@ public class WorkProgressRegister extends AbstractAuditable {
 
     public void setBoundaryNum(Long boundaryNum) {
         this.boundaryNum = boundaryNum;
+    }
+
+    public boolean isBOQExists() {
+        return bOQExists;
+    }
+
+    public void setBOQExists(boolean bOQExists) {
+        this.bOQExists = bOQExists;
     }
 
 }

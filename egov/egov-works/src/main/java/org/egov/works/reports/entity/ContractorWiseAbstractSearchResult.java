@@ -16,6 +16,8 @@ public class ContractorWiseAbstractSearchResult {
     private BigDecimal notWorkCommencedAmount;
     private Integer workCommencedEstimates;
     private BigDecimal workCommencedAmount;
+    private Integer lagecyWorkCommencedEstimates;
+    private BigDecimal lagecyWorkCommencedAmount;
     private Integer workCompletedEstimates;
     private BigDecimal workCompletedAmount;
     private Integer balanceWorkEstimates;
@@ -156,6 +158,22 @@ public class ContractorWiseAbstractSearchResult {
 
     public void setContractorCode(String contractorCode) {
         this.contractorCode = contractorCode;
+    }
+
+    public Integer getLagecyWorkCommencedEstimates() {
+        return lagecyWorkCommencedEstimates;
+    }
+
+    public void setLagecyWorkCommencedEstimates(Integer lagecyWorkCommencedEstimates) {
+        this.lagecyWorkCommencedEstimates = lagecyWorkCommencedEstimates;
+    }
+
+    public BigDecimal getLagecyWorkCommencedAmount() {
+        return lagecyWorkCommencedAmount;
+    }
+
+    public void setLagecyWorkCommencedAmount(BigDecimal lagecyWorkCommencedAmount) {
+        this.lagecyWorkCommencedAmount = lagecyWorkCommencedAmount;
     }
 
 }

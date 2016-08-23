@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-16T15:08:05 -->
+<!-- 2016-08-19T17:31:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contractorwiseAbstractReport" pageWidth="1080" pageHeight="595" orientation="Landscape" columnWidth="920" leftMargin="20" rightMargin="40" topMargin="40" bottomMargin="40" uuid="59ffa221-2434-4ff3-83b3-9bef4e768390">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.utils.NumberUtil"/>
@@ -467,7 +467,7 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{workCommencedEstimates}]]></textFieldExpression>
@@ -537,7 +537,7 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{workCompletedEstimates}]]></textFieldExpression>
@@ -572,28 +572,28 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="298" y="0" width="48" height="40" uuid="c7a853d3-823e-4e60-9632-903063545f4b"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{approvedEstimates}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="510" y="0" width="48" height="40" uuid="c08de1c2-5b9a-418e-88f1-23b6cd4ed63f"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{notWorkCommencedEstimates}]]></textFieldExpression>
@@ -628,14 +628,14 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="404" y="0" width="48" height="40" uuid="2e9cc7b8-853d-428a-8fab-174e33375595"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{siteNotHandedOverEstimates}]]></textFieldExpression>
@@ -677,7 +677,7 @@
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{balanceWorkEstimates}]]></textFieldExpression>

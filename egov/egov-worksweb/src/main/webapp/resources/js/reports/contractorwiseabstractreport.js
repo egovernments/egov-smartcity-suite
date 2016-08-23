@@ -199,14 +199,14 @@ jQuery('.report-section').removeClass('display-hide');
 			columns : [ { 
 				"data" : ""} ,
 				{"data" : "ward"}, 
-				{"data" : "contractorName"},{"data" : "contractorCode"},{"data" : "contractorClass"},
-				{"data" : "approvedEstimates"},{"data" : "approvedAmount"},
-				{"data" : "siteNotHandedOverEstimates"},{"data" : "siteNotHandedOverAmount"},
-				{"data" : "notWorkCommencedEstimates"},{"data" : "notWorkCommencedAmount"},
-				{"data" : "workCommencedEstimates"},{"data" : "workCommencedAmount"},
-				{"data" : "workCompletedEstimates"},{"data" : "workCompletedAmount"},
-				{"data" : "balanceWorkEstimates"},{"data" : "balanceWorkAmount"},
-				{"data" : "liableAmount"}]				
+				{"data" : "contractorName"},{"data" : "contractorClass"},
+				{"data" : "approvedEstimates","sClass" : "text-right"},{"data" : "approvedAmount" ,"sClass" : "text-right"},
+				{"data" : "siteNotHandedOverEstimates","sClass" : "text-right"},{"data" : "siteNotHandedOverAmount" , "sClass" : "text-right"},
+				{"data" : "notWorkCommencedEstimates" , "sClass" : "text-right"},{"data" : "notWorkCommencedAmount" , "sClass" : "text-right"},
+				{"data" : "workCommencedEstimates" , "sClass" : "text-right"},{"data" : "workCommencedAmount" , "sClass" : "text-right"},
+				{"data" : "workCompletedEstimates" , "sClass" : "text-right"},{"data" : "workCompletedAmount" , "sClass" : "text-right"},
+				{"data" : "balanceWorkEstimates" , "sClass" : "text-right"},{"data" : "balanceWorkAmount" , "sClass" : "text-right"},
+				{"data" : "liableAmount" , "sClass" : "text-right"}]				
 		});
 	}
 

@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-08-19T13:39:40 -->
+<!-- 2016-08-22T11:37:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ContractCertificatePDF" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3d70fa3-1a4e-4af9-897a-a9f1c1d03164">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cityLogo" class="java.lang.String"/>
@@ -131,8 +131,7 @@
 						<rightPen lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle" markup="styled"/>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contractor : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getName() + "-" +
-$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getCode()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contractor : </style>"+$P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getName() + " " + "-" + " " + $P{contractorBillRegister}.getWorkOrderEstimate().getWorkOrder().getContractor().getCode()]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="10">

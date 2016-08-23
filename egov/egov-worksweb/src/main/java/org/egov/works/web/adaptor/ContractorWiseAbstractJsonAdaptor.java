@@ -19,7 +19,7 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
 
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
-    
+
     @Override
     public JsonElement serialize(final ContractorWiseAbstractSearchResult searchResult, final Type typeOfSrc,
             final JsonSerializationContext context) {
@@ -27,70 +27,98 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
         if (searchResult != null) {
             jsonObject.addProperty("ward", searchResult.getElectionWard());
-            jsonObject.addProperty("contractorName", searchResult.getContractorName());
-            jsonObject.addProperty("contractorCode", searchResult.getContractorCode());
-            jsonObject.addProperty("contractorClass", searchResult.getContractorClass());
+            jsonObject.addProperty("contractorName",
+                    searchResult.getContractorName() + " " + "-" + " " + searchResult.getContractorCode());
+            jsonObject.addProperty("contractorClass",
+                    searchResult.getContractorClass() != null ? searchResult.getContractorClass() : "NA");
             jsonObject.addProperty("approvedEstimates", searchResult.getApprovedEstimates());
             if (searchResult.getApprovedAmount() != null)
                 jsonObject.addProperty("approvedAmount",
-                        searchResult.getApprovedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("approvedAmount", "");
 
-            
             jsonObject.addProperty("siteNotHandedOverEstimates", searchResult.getSiteNotHandedOverEstimates());
             if (searchResult.getSiteNotHandedOverAmount() != null)
                 jsonObject.addProperty("siteNotHandedOverAmount",
-                        searchResult.getSiteNotHandedOverAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getSiteNotHandedOverAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("siteNotHandedOverAmount", "");
-            
+
             jsonObject.addProperty("notWorkCommencedEstimates", searchResult.getNotWorkCommencedEstimates());
             if (searchResult.getNotWorkCommencedAmount() != null)
                 jsonObject.addProperty("notWorkCommencedAmount",
-                        searchResult.getNotWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getNotWorkCommencedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("notWorkCommencedAmount", "");
-            
-            jsonObject.addProperty("workCommencedEstimates", searchResult.getWorkCommencedEstimates());
-            if (searchResult.getWorkCommencedAmount() != null)
-                jsonObject.addProperty("workCommencedAmount",
-                        searchResult.getWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+
+            if (searchResult.getWorkCommencedEstimates() != null
+                    && searchResult.getLagecyWorkCommencedEstimates() != null)
+                jsonObject.addProperty("workCommencedEstimates",
+                        searchResult.getWorkCommencedEstimates() + searchResult.getLagecyWorkCommencedEstimates());
+            else if (searchResult.getWorkCommencedEstimates() != null)
+                jsonObject.addProperty("workCommencedEstimates", searchResult.getWorkCommencedEstimates());
+            else if (searchResult.getLagecyWorkCommencedEstimates() != null)
+                jsonObject.addProperty("workCommencedEstimates", searchResult.getLagecyWorkCommencedEstimates());
             else
-                jsonObject.addProperty("workCommencedAmount", "");
-            
-            jsonObject.addProperty("workCompletedEstimates", searchResult.getWorkCompletedEstimates());
+                jsonObject.addProperty("workCommencedEstimates", 0);
+
+            if (searchResult.getWorkCommencedAmount() != null && searchResult.getLagecyWorkCommencedAmount() != null)
+                jsonObject.addProperty("workCommencedAmount",
+                        searchResult.getWorkCommencedAmount().add(searchResult.getLagecyWorkCommencedAmount()).divide(new BigDecimal(10000000))
+                                .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            else if (searchResult.getWorkCommencedAmount() != null)
+                jsonObject.addProperty("workCommencedAmount",
+                        searchResult.getWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).divide(new BigDecimal(10000000)));
+            else if (searchResult.getLagecyWorkCommencedAmount() != null)
+                jsonObject.addProperty("workCommencedAmount",
+                        searchResult.getLagecyWorkCommencedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).divide(new BigDecimal(10000000)));
+            else
+                jsonObject.addProperty("workCommencedAmount",
+                        new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+
+            jsonObject.addProperty("workCompletedEstimates",
+                    searchResult.getWorkCompletedEstimates() != null ? searchResult.getWorkCompletedEstimates() : 0);
             if (searchResult.getWorkCompletedAmount() != null)
                 jsonObject.addProperty("workCompletedAmount",
-                        searchResult.getWorkCompletedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getWorkCompletedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
-                jsonObject.addProperty("workCompletedAmount", "");
-            
-            if(searchResult.getApprovedEstimates() != null && searchResult.getBalanceWorkEstimates() != null) {
-            jsonObject.addProperty("balanceWorkEstimates",
-                    searchResult.getApprovedEstimates().intValue() - searchResult.getBalanceWorkEstimates().intValue());
-            } else if(searchResult.getApprovedEstimates() != null) 
-                jsonObject.addProperty("balanceWorkEstimates",
-                        searchResult.getApprovedEstimates());
-            
+                jsonObject.addProperty("workCompletedAmount",
+                        new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+
+            if (searchResult.getApprovedEstimates() != null && searchResult.getWorkCompletedEstimates() != null)
+                jsonObject.addProperty("balanceWorkEstimates", searchResult.getApprovedEstimates().intValue()
+                        - searchResult.getWorkCompletedEstimates().intValue());
+            else if (searchResult.getApprovedEstimates() != null)
+                jsonObject.addProperty("balanceWorkEstimates", searchResult.getApprovedEstimates());
+
             if (searchResult.getApprovedAmount() != null && searchResult.getWorkCompletedAmount() != null) {
                 final BigDecimal balanceWorkAmount = searchResult.getApprovedAmount()
                         .subtract(searchResult.getWorkCompletedAmount());
                 jsonObject.addProperty("balanceWorkAmount",
-                        balanceWorkAmount.setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        balanceWorkAmount.divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             } else if (searchResult.getApprovedAmount() != null)
                 jsonObject.addProperty("balanceWorkAmount",
-                        searchResult.getApprovedAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                        searchResult.getApprovedAmount().divide(new BigDecimal(10000000)).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("balanceWorkAmount", "");
+
+            if(searchResult.getWorkCompletedAmount() == null) 
+                searchResult.setWorkCompletedAmount(new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN));
             
-            
-            if (searchResult.getLiableAmount() != null)
-                jsonObject.addProperty("liableAmount",
-                        searchResult.getLiableAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+            if (searchResult.getApprovedAmount() != null && searchResult.getLiableAmount() != null
+                    && searchResult.getWorkCompletedAmount() != null)
+                jsonObject
+                        .addProperty("liableAmount",
+                                searchResult.getApprovedAmount()
+                                        .subtract(searchResult.getWorkCompletedAmount()
+                                                .add(searchResult.getLiableAmount()))
+                                        .setScale(2, BigDecimal.ROUND_HALF_EVEN));
             else
-                jsonObject.addProperty("liableAmount", "");
-            jsonObject.addProperty("createdDate", formatter.format(workProgressRegisterService.getReportSchedulerRunDate()));
+                jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+
+            jsonObject.addProperty("createdDate",
+                    formatter.format(workProgressRegisterService.getReportSchedulerRunDate()));
         }
         return jsonObject;
     }

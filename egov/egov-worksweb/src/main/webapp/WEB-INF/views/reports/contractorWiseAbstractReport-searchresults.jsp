@@ -52,7 +52,6 @@
                              <th rowspan="2"><spring:message code="lbl.slno" /></th>
                              <th rowspan="2"><spring:message code="lbl.election.ward" /></th>
                              <th rowspan="2"><spring:message code="lbl.contractor.name" /></th>
-                             <th rowspan="2"><spring:message code="lbl.contractor.code" /></th>
 							 <th rowspan="2"><spring:message code="lbl.contractor.class" /></th>
                              <th colspan="2"><spring:message code="lbl.loacreated" /></th>
                              <th colspan="2"><spring:message code="lbl.sitenothandedover" /></th>

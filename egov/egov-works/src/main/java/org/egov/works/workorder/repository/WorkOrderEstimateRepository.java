@@ -93,8 +93,6 @@ public interface WorkOrderEstimateRepository extends JpaRepository<WorkOrderEsti
             @Param("billtype") String billtype);
     
     
-    @Query("select distinct(woe.workOrder.contractor) as contractor from WorkOrderEstimate as woe where upper(woe.workOrder.contractor.name) like upper(:contractorname) or upper(woe.workOrder.contractor.code) like upper(:contractorname)  and woe.workOrder.egwStatus.code in (:workOrderStatus) and exists (select distinct(os.objectId) from OfflineStatus as os where os.objectId = woe.workOrder.id and os.objectType = :objectType )")
-    List<Contractor> findContractorsByWorkOrderStatus(@Param("contractorname") String contractorname,
-            @Param("workOrderStatus") String workOrderStatus,
-            @Param("objectType") String objectType);
+    @Query("select distinct(woe.workOrder.contractor) as contractor from WorkOrderEstimate as woe where upper(woe.workOrder.contractor.name) like upper(:contractorname) or upper(woe.workOrder.contractor.code) like upper(:contractorname)  and woe.workOrder.egwStatus.code =:workOrderStatus ")
+    List<Contractor> findContractorsByWorkOrderStatus(@Param("contractorname") String contractorname, @Param("workOrderStatus") String workOrderStatus);
 }
