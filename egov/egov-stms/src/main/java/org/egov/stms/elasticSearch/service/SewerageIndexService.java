@@ -68,7 +68,7 @@ public class SewerageIndexService {
 		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 		
 		SewerageSearch sewarageSearch = new SewerageSearch(sewerageApplicationDetails.getApplicationNumber(),
-				 cityWebsite.getName(),cityWebsite.getGrade(), sewerageApplicationDetails.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
+				 cityWebsite.getName(),cityWebsite.getCode(), sewerageApplicationDetails.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),
 					cityWebsite.getGrade());
 		
 		sewarageSearch.setApplicationCreatedBy(sewerageApplicationDetails.getCreatedBy().getName());
