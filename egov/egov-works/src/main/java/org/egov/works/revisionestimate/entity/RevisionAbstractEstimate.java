@@ -62,7 +62,7 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     public enum RevisionEstimateStatus {
         NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
     }
-    
+
     @Transient
     private String additionalRule;
 
@@ -76,6 +76,8 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
     private transient List<Activity> changeQuantityNTActivities = new ArrayList<Activity>(0);
 
     private transient List<Activity> changeQuantityLSActivities = new ArrayList<Activity>(0);
+
+    private transient List<Activity> changeQuantityActivities = new ArrayList<Activity>(0);
 
     @Override
     public String getStateDetails() {
@@ -143,6 +145,14 @@ public class RevisionAbstractEstimate extends AbstractEstimate {
 
     public void setChangeQuantityLSActivities(final List<Activity> changeQuantityLSActivities) {
         this.changeQuantityLSActivities = changeQuantityLSActivities;
+    }
+
+    public List<Activity> getChangeQuantityActivities() {
+        return changeQuantityActivities;
+    }
+
+    public void setChangeQuantityActivities(final List<Activity> changeQuantityActivities) {
+        this.changeQuantityActivities = changeQuantityActivities;
     }
 
 }

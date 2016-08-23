@@ -65,7 +65,10 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
+import org.egov.works.abstractestimate.repository.ActivityRepository;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.master.service.ScheduleCategoryService;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -73,6 +76,7 @@ import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.repository.RevisionEstimateRepository;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -89,6 +93,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -127,13 +132,22 @@ public class RevisionEstimateService {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
+    private ActivityRepository activityRepository;
+
+    @Autowired
+    WorkOrderActivityService workOrderActivityService;
+
+    @Autowired
+    MBHeaderService mbHeaderService;
+
+    @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
 
     public List<RevisionAbstractEstimate> findApprovedRevisionEstimatesByParent(final Long id) {
         return revisionEstimateRepository.findByParent_IdAndStatus(id,
-                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+                RevisionAbstractEstimate.RevisionEstimateStatus.APPROVED.toString());
     }
 
     public RevisionAbstractEstimate getRevisionEstimateById(final Long id) {
@@ -176,6 +190,8 @@ public class RevisionEstimateService {
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
 
+        saveChangeQuantityActivities(revisionEstimate);
+
         revisionEstimateRepository.save(revisionEstimate);
 
         createRevisionEstimateWorkflowTransition(revisionEstimate, approvalPosition, approvalComent, additionalRule,
@@ -185,10 +201,28 @@ public class RevisionEstimateService {
         return revisionEstimate;
     }
 
+    private void saveChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
+        for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
+            final Activity act = activityRepository.findOne(activity.getParent().getId());
+            activity.setParent(act);
+            activity.setAbstractEstimate(revisionEstimate);
+            activity.setSchedule(act.getSchedule());
+            activity.setNonSor(act.getNonSor());
+            activity.setUom(act.getUom());
+            activity.setRate(act.getRate());
+            if ("-".equals(activity.getSignValue()))
+                activity.setRevisionType(RevisionType.REDUCED_QUANTITY);
+            else
+                activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
+            activity.setEstimateRate(activity.getRate() * activity.getQuantity());
+        }
+        revisionEstimate.getActivities().addAll(revisionEstimate.getChangeQuantityActivities());
+    }
+
     @Transactional
     public RevisionAbstractEstimate updateRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction)
+            final String workFlowAction, final String removedCQIds)
             throws ValidationException, IOException {
 
         RevisionAbstractEstimate updateRevisionEstimate = null;
@@ -198,7 +232,11 @@ public class RevisionEstimateService {
                 && !WorksConstants.CANCEL_ACTION.equals(workFlowAction)) {
 
             mergeSorAndNonSorActivities(revisionEstimate);
+            mergeChangeQuantityActivities(revisionEstimate);
 
+            List<Activity> activities = new ArrayList<Activity>(revisionEstimate.getActivities());
+            activities = removeDeletedActivities(activities, removedCQIds);
+            revisionEstimate.setActivities(activities);
         }
 
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
@@ -211,6 +249,24 @@ public class RevisionEstimateService {
         revisionEstimateRepository.save(updateRevisionEstimate);
 
         return updateRevisionEstimate;
+    }
+
+    private List<Activity> removeDeletedActivities(final List<Activity> activities, final String removedActivityIds) {
+        final List<Activity> activityList = new ArrayList<Activity>();
+        if (null != removedActivityIds) {
+            final String[] ids = removedActivityIds.split(",");
+            final List<String> strList = new ArrayList<String>();
+            for (final String str : ids)
+                strList.add(str);
+            for (final Activity activity : activities)
+                if (activity.getId() != null) {
+                    if (!strList.contains(activity.getId().toString()))
+                        activityList.add(activity);
+                } else
+                    activityList.add(activity);
+        } else
+            return activities;
+        return activityList;
     }
 
     public void createRevisionEstimateWorkflowTransition(final RevisionAbstractEstimate revisionEstimate,
@@ -315,6 +371,54 @@ public class RevisionEstimateService {
                     ms.setActivity(ac);
     }
 
+    private void mergeChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
+        for (final Activity activity : revisionEstimate.getChangeQuantityActivities())
+            if (activity.getId() == null) {
+                final Activity act = activityRepository.findOne(activity.getParent().getId());
+                activity.setParent(act);
+                activity.setAbstractEstimate(revisionEstimate);
+                activity.setSchedule(act.getSchedule());
+                activity.setNonSor(act.getNonSor());
+                activity.setUom(act.getUom());
+                activity.setRate(act.getRate());
+                if ("-".equals(activity.getSignValue()))
+                    activity.setRevisionType(RevisionType.REDUCED_QUANTITY);
+                else
+                    activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
+                activity.setEstimateRate(activity.getRate() * activity.getQuantity());
+                revisionEstimate.addActivity(activity);
+            } else
+                for (final Activity oldActivity : revisionEstimate.getActivities())
+                    if (oldActivity.getId() != null && oldActivity.getId().equals(activity.getId()))
+                        updateChangeQuantityActivity(oldActivity, activity);
+        if (LOG.isDebugEnabled())
+            for (final Activity ac : revisionEstimate.getActivities())
+                LOG.debug(ac.getMeasurementSheetList().size() + "    " + ac.getQuantity());
+
+        for (final Activity ac : revisionEstimate.getChangeQuantityActivities())
+            for (final MeasurementSheet ms : ac.getMeasurementSheetList())
+                if (ms.getActivity() == null)
+                    ms.setActivity(ac);
+    }
+
+    private void updateChangeQuantityActivity(final Activity oldActivity, final Activity activity) {
+        final Activity parent = activityRepository.findOne(activity.getParent().getId());
+        oldActivity.setParent(parent);
+        oldActivity.setSchedule(parent.getSchedule());
+        oldActivity.setAmt(activity.getAmt());
+        oldActivity.setNonSor(parent.getNonSor());
+        oldActivity.setQuantity(activity.getQuantity());
+        oldActivity.setRate(parent.getRate());
+        oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
+        oldActivity.setEstimateRate(activity.getRate() * activity.getQuantity());
+        oldActivity.setUom(parent.getUom());
+        oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity, activity));
+        if ("+".equals(activity.getSignValue()))
+            oldActivity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
+        else
+            oldActivity.setRevisionType(RevisionType.REDUCED_QUANTITY);
+    }
+
     private List<MeasurementSheet> mergeMeasurementSheet(final Activity oldActivity, final Activity activity) {
         final List<MeasurementSheet> newMsList = new LinkedList<MeasurementSheet>(oldActivity.getMeasurementSheetList());
         for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
@@ -403,58 +507,15 @@ public class RevisionEstimateService {
             if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
                     && revisionEstimate.getCreatedDate() != null
                     && re.getCreatedDate().before(revisionEstimate.getCreatedDate()))
-                for (final Activity activity : re.getActivities()) {
-                    // Non Tendered SOR Activities
-                    if (activity.getParent() == null && activity.getSchedule() != null) {
-                        if (nonTenderedActivities.isEmpty())
-                            nonTenderedActivities.add(activity);
-                        else {
-                            boolean flag = false;
-                            for (final Activity nta : nonTenderedActivities)
-                                if (activity.getSchedule().getId().equals(nta.getSchedule().getId())) {
-                                    flag = true;
-                                    nta.setQuantity(nta.getQuantity() + activity.getQuantity());
-                                }
-                            if (!flag)
-                                nonTenderedActivities.add(activity);
-                        }
-                    }
-                    // Non Tendered NON SOR Activities
-                    else if (activity.getParent() == null && activity.getSchedule() == null) {
-                        if (lumpSumActivities.isEmpty())
-                            lumpSumActivities.add(activity);
-                        else {
-                            final boolean flag = false;
-                            for (final Activity lsa : lumpSumActivities)
-                                if (activity.getNonSor().getId().equals(lsa.getNonSor().getId()))
-                                    lsa.setQuantity(lsa.getQuantity() + activity.getQuantity());
-                            if (!flag)
-                                lumpSumActivities.add(activity);
-                        }
-                    }
-                    // Changed Quantity SOR Activities
-                    else if (activity.getParent() != null && activity.getSchedule() != null) {
-                        for (final Activity sa : sorActivities)
-                            if (activity.getParent().getId().equals(sa.getId()))
-                                if (activity.getRevisionType() != null
-                                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
-                                    sa.setQuantity(sa.getQuantity() + activity.getQuantity());
-                                else if (activity.getRevisionType() != null
-                                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
-                                    sa.setQuantity(sa.getQuantity() - activity.getQuantity());
-                    }
-                    // Changed Quantity NON SOR Activities
-                    else if (activity.getParent() != null && activity.getSchedule() == null) {
-                        for (final Activity nsa : nonSorActivities)
-                            if (activity.getParent().getId().equals(nsa.getId()))
-                                if (activity.getRevisionType() != null
-                                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
-                                    nsa.setQuantity(nsa.getQuantity() + activity.getQuantity());
-                                else if (activity.getRevisionType() != null
-                                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
-                                    nsa.setQuantity(nsa.getQuantity() - activity.getQuantity());
-                    }
-                }
+                for (final Activity activity : re.getActivities())
+                    if (activity.getParent() == null && activity.getSchedule() != null)
+                        populateNonTenderedLumpSumActivities(activity, nonTenderedActivities);
+                    else if (activity.getParent() == null && activity.getSchedule() == null)
+                        populateNonTenderedLumpSumActivities(activity, lumpSumActivities);
+                    else if (activity.getParent() != null && activity.getSchedule() != null)
+                        populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities);
+                    else if (activity.getParent() != null && activity.getSchedule() == null)
+                        populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
 
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
@@ -462,7 +523,46 @@ public class RevisionEstimateService {
         revisionEstimate.getChangeQuantityLSActivities().addAll(lumpSumActivities);
     }
 
-    public void loadViewData(RevisionAbstractEstimate revisionEstimate, WorkOrderEstimate workOrderEstimate, Model model) {
+    private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities) {
+        if (activities.isEmpty())
+            activities.add(activity);
+        else {
+            boolean flag = false;
+            for (final Activity act : activities)
+                if (activity.getSchedule() != null && activity.getSchedule().getId().equals(act.getSchedule().getId())) {
+                    flag = true;
+                    act.setQuantity(act.getQuantity() + activity.getQuantity());
+                } else if (activity.getSchedule() == null && activity.getNonSor().getId().equals(act.getNonSor().getId())) {
+                    flag = true;
+                    act.setQuantity(act.getQuantity() + activity.getQuantity());
+                }
+            if (!flag)
+                activities.add(activity);
+        }
+    }
+
+    private void populateChangeQuantityActivities(final Activity activity, final List<Activity> activities,
+            final List<Activity> nonTenderedLumpSumActivities) {
+        for (final Activity sa : activities)
+            if (activity.getParent().getId().equals(sa.getId()))
+                if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                    sa.setQuantity(sa.getQuantity() + activity.getQuantity());
+                else if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                    sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+        for (final Activity sa : nonTenderedLumpSumActivities)
+            if (activity.getParent().getId().equals(sa.getId()))
+                if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                    sa.setQuantity(sa.getQuantity() + activity.getQuantity());
+                else if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                    sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+    }
+
+    public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
+            final Model model) {
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.WORKS_MODULE_NAME, WorksConstants.APPCONFIG_KEY_SHOW_SERVICE_FIELDS);
         final AppConfigValues value = values.get(0);
@@ -610,4 +710,53 @@ public class RevisionEstimateService {
         return query;
     }
 
+    public List<Activity> searchActivities(final Long estimateId, final String sorType) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        queryStr.append(
+                "select act from Activity act where (act.abstractEstimate.egwStatus.code = :aeStatus or act.abstractEstimate.egwStatus.code = :reStatus) ");
+        if (estimateId != null)
+            queryStr.append(
+                    " and (act.abstractEstimate.id = :estimateId or act.abstractEstimate.parent.id = :estimateId )");
+        if (sorType != null && "SOR".equalsIgnoreCase(sorType))
+            queryStr.append(" and act.schedule != null");
+        if (sorType != null && "Non Sor".equalsIgnoreCase(sorType))
+            queryStr.append(" and act.schedule = null");
+
+        queryStr.append(" order by act.id");
+
+        Query query = entityManager.unwrap(Session.class)
+                .createQuery(queryStr.toString());
+
+        query = setParameterForSearchActivities(estimateId, query);
+        return query.list();
+    }
+
+    private Query setParameterForSearchActivities(final Long estimateId, final Query query) {
+        if (estimateId != null)
+            query.setLong("estimateId", estimateId);
+        query.setString("aeStatus", EstimateStatus.ADMIN_SANCTIONED.toString());
+        query.setString("reStatus", RevisionEstimateStatus.APPROVED.toString());
+        return query;
+    }
+
+    public void validateChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate,
+            final BindingResult bindErrors) {
+        for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
+            if (activity.getQuantity() <= 0)
+                bindErrors.reject("error.quantity.zero", "error.quantity.zero");
+            if (activity.getRate() <= 0)
+                bindErrors.reject("error.rates.zero", "error.rates.zero");
+
+            if ("-".equals(activity.getSignValue())) {
+                final WorkOrderActivity workOrderActivity = workOrderActivityService
+                        .getWorkOrderActivityByActivity(activity.getParent().getId());
+                if (workOrderActivity != null) {
+                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    if ("-".equals(activity.getSignValue())
+                            && workOrderActivity.getApprovedQuantity() - consumedQuantity - activity.getQuantity() < 0)
+                        bindErrors.reject("error.change.quantity", "error.change.quantity");
+                }
+            }
+        }
+    }
 }

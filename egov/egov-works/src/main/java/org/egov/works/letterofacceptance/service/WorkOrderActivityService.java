@@ -45,6 +45,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.works.letterofacceptance.repository.WorkOrderActivityRepository;
+import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -97,7 +98,10 @@ public class WorkOrderActivityService {
 
         return criteria.list();
     }
-    
-    
-    
+
+    public WorkOrderActivity getWorkOrderActivityByActivity(final Long activityId) {
+        return workOrderActivityRepository.findByActivity_IdAndWorkOrderEstimate_WorkOrder_EgwStatus_Code(activityId,
+                WorksConstants.APPROVED);
+    }
+
 }

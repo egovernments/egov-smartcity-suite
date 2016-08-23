@@ -69,6 +69,7 @@
 <form:form name="revisionEstimateForm" role="form" method="post" modelAttribute="revisionEstimate" id="revisionEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" name="removedCQIds" id="removedCQIds" value="${removedCQIds }" class="form-control table-input hidden-input"/>
 	<div class="new-page-header"><spring:message code="lbl.re" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">

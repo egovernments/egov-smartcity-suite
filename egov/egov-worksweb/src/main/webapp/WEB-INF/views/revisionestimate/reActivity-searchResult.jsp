@@ -55,6 +55,7 @@
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.sor.nonsor.type" /></th>
 					<th><spring:message code="lbl.uom" /></th>
+					<th><spring:message code="lbl.approved.quantity" /></th>
 					<th><spring:message code="lbl.rate" /></th>
 				</tr>
 			</thead>

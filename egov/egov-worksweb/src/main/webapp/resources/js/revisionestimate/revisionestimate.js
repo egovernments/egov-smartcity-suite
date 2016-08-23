@@ -42,6 +42,7 @@ var hint='<a href="#" class="hintanchor" title="@fulldescription@"><i class="fa 
 var nonTenderedMsArray=new Array(200);
 var lumpSumMsArray=new Array(200);
 
+var sorMsArray=new Array(200);
 var headstart="<!--only for validity head start -->";
 var headend="<!--only for validity head end -->";
 var tailstart="<!--only for validity tail start -->";
@@ -193,7 +194,7 @@ var sorSearch = new Bloodhound({
 				if(id == "id")
 					$('#' + id + "_" + key).val(val);
 				else if(id == "uomid")
-					$('#sorUomid_' + key).val(val);
+					$('#nonTenderedUomid_' + key).val(val);
 				else if(id == 'description') {
 					$('.' + id + "_" + key).html(hint.replace(/@fulldescription@/g, val));
 				} else if(id == 'estimateRate') {
@@ -576,6 +577,63 @@ var sorSearch = new Bloodhound({
 			idx++;
 		});
 	}
+	
+	function resetChangeQuantityIndexes() {
+		var idx = 0;
+
+		//regenerate index existing inputs in table row
+		$(".activityRow").each(function() {
+			$(this).find("input,button, select,textarea,td,tbody,tr,table, errors, span, input:hidden").each(function() {
+
+
+				if (!$(this).is('span')) {
+					$(this).attr({
+						'name' : function(_, name) {
+							//console.log(name);
+							if(name)
+								{
+								name= name.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
+								return name.replace(/_\d+/,"_"+idx);
+								}
+						},
+						'id' : function(_, id) {
+							//console.log(id);
+							if(id)
+								{
+								id= id.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
+								return id.replace(/_\d+/,"_"+idx);
+								}
+								
+						},
+						'data-idx' : function(_, dataIdx) {
+							return idx;
+						}
+					});
+				} else {
+					$(this).attr({
+						'class' : function(_, name) {
+							//console.log(name);
+							if(name)
+								{
+								name= name.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
+							return	name=name.replace(/_\d+/,"_"+idx);
+								
+								}
+						},
+						'id' : function(_, id) {
+							if(id)
+							{
+								//console.log(id);
+								id= id.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
+								return id.replace(/_\d+/,"_"+idx);
+							}
+						}
+					});
+				}
+			});
+			idx++;
+		});
+	}
 
 	
 	function addMSheet(obj)    
@@ -678,7 +736,7 @@ var sorSearch = new Bloodhound({
 			if(document.getElementById('lumpSumActivities['+key+'].mspresent'))
 				document.getElementById('lumpSumActivities['+key+'].mspresent').value="0"; 
 
-			generateSlno();
+			generateSlno("spanlumpsumslno");
 		} else {
 			var key = 0;
 			$('#lumpSumDesc_' + key).attr('required', 'required');
@@ -699,25 +757,6 @@ var sorSearch = new Bloodhound({
 				document.getElementById('lumpSumActivities['+key+'].mspresent').value="0"; 
 		}
 	});
-	
-	
-	function generateSlno()
-	{
-		var idx=1;
-		$(".spanlumpsumslno").each(function(){
-			$(this).text(idx);
-			idx++;
-		});
-	}
-	
-	function generateNonTenderedSno()
-	{
-		var idx=1;
-		$(".spannontenderedslno").each(function(){
-			$(this).text(idx);
-			idx++;
-		});
-	}
 	
 	function deleteNonTendered(obj) {
 		var rIndex = getRow(obj).rowIndex;
@@ -749,7 +788,7 @@ var sorSearch = new Bloodhound({
 		}
 		resetIndexes();
 		//starting index for table fields
-		generateNonTenderedSno();
+		generateSlno("spannontenderedslno");
 		calculateEstimateAmountTotal();
 		calculateVatAmountTotal();
 		total();
@@ -951,7 +990,7 @@ var sorSearch = new Bloodhound({
 		}
 		resetIndexes();
 		//starting index for table fields
-		generateSlno();
+		generateSlno("spanlumpsumslno");
 
 		calculateLumpSumEstimateAmountTotal();
 		calculateLumpSumVatAmountTotal();
@@ -1545,6 +1584,12 @@ function deleteHiddenRows(){
 		var tbl=document.getElementById('tblLumpSum');
 		tbl.deleteRow(2);
 	}
+	
+	var hiddenRowCount = $("#tblchangequantity tbody tr[sorinvisible='true']").length;
+	if(hiddenRowCount == 1) {
+		var tbl=document.getElementById('tblchangequantity');
+		tbl.deleteRow(2);
+	}
 }
 
 
@@ -1590,4 +1635,216 @@ function calculateLumpSumEstimateAmountTotal() {
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 	});
 	$('#lumpSumEstimateTotal').html(total);
+}
+
+$('#searchAndAdd').click(function() {
+	var workOrderEstimateId = $('#workOrderEstimateId').val();
+	var workOrderNumber = $('#workOrderNumber').val();
+	
+	window.open("/egworks/revisionestimate/searchactivityform?woeId=" + workOrderEstimateId + "&workOrderNo=" + workOrderNumber, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+});
+
+function populateActivities(data, selectedActivities){
+	var activityArray = selectedActivities.split(",");
+	var existingActivityArray = [];
+	$('.parent').each(function() {
+		existingActivityArray.push($(this).val());
+	});
+	var activityCount = $("#tblchangequantity > tbody > tr:visible[id='activityRow']").length;
+	$(data.data).each(function(index, activity){
+		if($.inArray("" + activity.id + "", existingActivityArray) == -1
+				&& $.inArray("" + activity.id + "", activityArray) != -1) {
+			if(activityCount==0){
+				$('#activityMessage').prop("hidden",true);
+				$('#activityRow').removeAttr("hidden");
+				$('#activityRow').removeAttr('sorinvisible');
+			}else{
+				var key = $("#tblchangequantity > tbody > tr:visible[id='activityRow']").length;
+				addRow('tblchangequantity', 'activityRow');
+				resetChangeQuantityIndexes();
+				$('#activityQuantity_' + key).val('');
+				generateSlno('spanactivityslno');
+			}
+			$('#changeQuantityActivitiesParent_' + activityCount).val(activity.id);
+			$('.activityCategory_' + activityCount).html(activity.categoryType);
+			$('.activityCode_' + activityCount).html(activity.sorCode);
+			$('.activitySummary_' + activityCount).html(activity.summary);
+			$('.activityDescription_' + activityCount).html(hint.replace(/@fulldescription@/g, activity.description));
+			$('.activityUom_' + activityCount).html(activity.uom);
+			$('.activityRate_' + activityCount).html(parseFloat(activity.rate).toFixed(2));
+			$('.activityEstimateRate_' + activityCount).html(parseFloat(activity.estimateRate).toFixed(2));
+			if (activity.estimateQuantity != "")
+				$('.activityEstimateQuantity_' + activityCount).html(parseFloat(activity.estimateQuantity).toFixed(2));
+			else
+				$('.activityEstimateQuantity_' + activityCount).html("");
+			if (activity.consumedQuantity != "")
+				$('.activityConsumedQuantity_' + activityCount).html(parseFloat(activity.consumedQuantity).toFixed(2));
+			else
+				$('.activityConsumedQuantity_' + activityCount).html("");
+			unitRate = getUnitRate(activity.uom, activity.rate);
+			$('#activityUnitRate_' + activityCount).val(unitRate);
+			$('.activityApprovedAmount_' + activityCount).html(parseFloat(activity.activityAmount).toFixed(2));
+			if (activity.ms != "") {
+				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').removeAttribute('style');
+				var newrow= $('#msheaderrowtemplate').html();
+
+				newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorchangeQuantityActivities[' + activityCount + ']');
+				newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'changeQuantityActivities[' + activityCount + ']');
+				newrow = newrow.replace(/templatesorActivities_0/g, 'changeQuantityActivities_' + activityCount);
+				newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + activityCount);
+				newrow = newrow.replace('msrowslNo_0_0', 'msrowslNo_' + activityCount + '_0');
+				newrow = newrow.replace('msrowremarks_0_0', 'msrowremarks_' + activityCount + '_0');
+				newrow = newrow.replace('msrowno_0_0', 'msrowno_' + activityCount + '_0');
+				newrow = newrow.replace('msrowlength_0_0', 'msrowlength_' + activityCount + '_0');
+				newrow = newrow.replace('msrowwidth_0_0', 'msrowwidth_' + activityCount + '_0');
+				newrow = newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + activityCount + '_0');
+				newrow = newrow.replace('msrowquantity_0_0', 'msrowquantity_' + activityCount + '_0');
+				newrow = newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + activityCount + '_0');
+				newrow = newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + activityCount + '_0');
+				document.getElementById('changeQuantityActivities[' + activityCount + '].mstd').innerHTML=newrow;
+				$(activity.ms).each(function(index, measurementSheet){
+					if (index > 0) {
+						var msrowname= "changeQuantityActivities[" + activityCount + "].mstable";
+						var msrownameid=msrowname.split(".")[0];
+						var rep='measurementSheets\['+ index +'\]';
+
+						var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+						$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
+						$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+						$newrow = $newrow.replace(/templatesorActivities_0/g, 'changeQuantityActivities_' + activityCount);
+						$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
+						$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+						$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowlength_0_0', 'msrowlength_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowwidth_0_0', 'msrowwidth_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowdepthOrHeight_0_0', 'msrowdepthOrHeight_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowquantity_0_0', 'msrowquantity_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowidentifier_0_0', 'msrowidentifier_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('msrowmbmsPreviousEntry_0_0', 'msrowmbmsPreviousEntry_' + activityCount + '_' + index);
+						$newrow = $newrow.replace('value="1"','value="'+(index+1)+'"');
+						$('.mssubmit_' + activityCount).closest('tr').before($newrow);
+
+						patternvalidation();
+					}
+					$.each(measurementSheet, function(key, value){
+						if(key == "msid") {
+							$('#changeQuantityActivities_' + activityCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
+						} else if(key == "id") {
+							$('#changeQuantityActivities_' + activityCount + '_measurementSheets_' + index + '_id').attr('value', value);
+						} else if(key == "identifier") {
+							if(value == 'A')
+								$('#msrowidentifier_' + activityCount + '_' + index).html('No');
+							else
+								$('#msrowidentifier_' + activityCount + '_' + index).html('Yes');
+						} else
+							$('#msrow' + key + '_' + activityCount + '_' + index).html(value);
+					});
+				});
+			} else {
+				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').style.display = 'none';
+			}
+			calculateActivityAmounts($('#activityQuantity_' + activityCount));
+			activityCount++;
+		}
+	});
+	activityTotal();
+}
+
+function generateSlno(className)
+{
+	var idx=1;
+	$("." + className).each(function(){
+		$(this).text(idx);
+		idx++;
+	});
+}
+
+function deleteActivity(obj) {
+	// close all measurement sheets before deleting
+	closeAllmsheet();
+	var rIndex = getRow(obj).rowIndex;
+	var id = $(getRow(obj)).children('td:first').children('input:first').val();
+    //To get all the deleted rows id
+    var aIndex = rIndex - 1;
+    
+    if(!$("#removedCQIds").val()==""){
+		$("#removedCQIds").val($("#removedCQIds").val()+",");
+	}
+	$("#removedCQIds").val($("#removedCQIds").val()+id);
+	
+	var tbl=document.getElementById('tblchangequantity');	
+	var rowcount=$("#tblchangequantity > tbody > tr").length;
+	if(rowcount==2) {
+		var rowId = $(obj).attr('class').split('_').pop();
+		$('#changeQuantityActivitiesId_' + rowId).val('');
+		$('#activity_' + rowId).val('');
+		$('.activityCategory_' + rowId).html('');
+		$('.activityCode_' + rowId).html('');
+		$('.activitySummary_' + rowId).html('');
+		$('.activityDescription_' + rowId).html('');
+		$('.activityUom_' + rowId).html('');
+		$('.activityApprovedRate_' + rowId).html('');
+		$('#activityUnitRate_' + rowId).val('');
+		$('#activityQuantity_' + rowId).val('');
+		$('.activityApprovedAmount_' + rowId).html('');
+		$('#activityRow').prop("hidden",true);
+		$('#activityRow').attr('sorinvisible', true);
+		$('#activityMessage').removeAttr('hidden');
+		document.getElementById('changeQuantityActivities[' + rowId + '].mstd').innerHTML = "";
+		sorMsArray[rowId]="";
+	} else {
+		deleteRow('tblchangequantity',obj);
+	}
+	resetChangeQuantityIndexes();
+	//starting index for table fields
+	generateSlno('spanactivityslno');
+	return true;
+}
+
+function calculateActivityAmounts(currentObj) {
+	rowcount = $(currentObj).attr('id').split('_').pop();
+	var unitRate = parseFloat($('#activityUnitRate_' + rowcount).val().trim());
+	var signValue = $('#changeQuantityActivitiesSignValue_' + rowcount).val();
+	var estimateQuantity = 0;
+	var consumedQuantity = 0;
+	if ($('.activityEstimateQuantity_' + rowcount).html() != "")
+		estimateQuantity = parseFloat($('.activityEstimateQuantity_' + rowcount).html().trim());
+	if ($('.activityConsumedQuantity_' + rowcount).html() != "")
+		consumedQuantity = parseFloat($('.activityConsumedQuantity_' + rowcount).html().trim());
+	
+	if (signValue == "-" && (estimateQuantity - consumedQuantity - $(currentObj).val()) < 0) {
+		bootbox.alert($('#errorchangequantity').val());
+		$(currentObj).val('');
+	}
+		
+	var estimatedAmount = parseFloat($(currentObj).val() * unitRate).toFixed(2);
+	if (signValue == "-")
+		estimatedAmount = -1 * estimatedAmount;
+	$('.activityEstimatedAmount_' + rowcount).html(parseFloat(estimatedAmount).toFixed(2));
+	$('.activityTotal_' + rowcount).html((parseFloat(parseFloat(estimateQuantity) * unitRate) + parseFloat(estimatedAmount)).toFixed(2));
+	activityTotal();
+}
+
+function activityTotal() {
+	var total = 0;
+	$('.activityTotal').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#activityTotal').html(total);
+}
+
+function changeSign(obj) {
+	var className = $(obj).attr('class');
+	if ($(obj).html() == "+") {
+		$('#changeQuantityActivitiesSignValue_' + className).val("+");
+		$('.sign-text_' + className).html("+")
+	}
+	else {
+		$('#changeQuantityActivitiesSignValue_' + className).val("-");
+		$('.sign-text_' + className).html("-")
+	}
+	calculateActivityAmounts($('#activityQuantity_' + className));
 }

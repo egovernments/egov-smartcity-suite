@@ -40,11 +40,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<c:if test="${revisionEstimate.activities.size() != 0}">
+<c:if test="${revisionEstimate.changeQuantityActivities.size() != 0}">
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="title.nontendered" />
+			<spring:message code="lbl.change.quantity" />
 		</div>
 	</div>
 	<div class="panel-body">
@@ -57,32 +57,60 @@
 					<th><spring:message code="lbl.description" /></th>
 					<th><spring:message code="lbl.uom" /></th>
 					<th><spring:message code="lbl.rate" /></th>
+					<th><spring:message code="lbl.estimate.quantity" /></th>
+					<th><spring:message code="lbl.consumed.quantity" /></th>
 					<th><spring:message code="lbl.estimatedquantity" /></th>
 					<th><spring:message code="lbl.estimatedamount" /></th>
 					<c:if test="${isServiceVATRequired == true }">
 						<th><spring:message code="lbl.service.vat" /></th>
 						<th><spring:message code="lbl.service.vat.amount" /></th>
 					</c:if>
+					<th><spring:message code="lbl.total" /></th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${revisionEstimate.activities.size() != 0}">
-						<c:forEach items="${revisionEstimate.activities}" var="sorDtls" varStatus="item">
-							<c:if test="${sorDtls.schedule !=null && sorDtls.parent != null}">
+					<c:when test="${revisionEstimate.changeQuantityActivities.size() != 0}">
+						<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls" varStatus="item">
+							<c:if test="${sorDtls.parent != null}">
 								<tr >
 									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
-									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
+									<td>
+										<c:if test="${sorDtls.schedule !=null }">
+											<c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out>
+										</c:if>
+									</td>
+									<td>
+										<c:if test="${sorDtls.schedule !=null }">
+											<c:out value="${sorDtls.schedule.code}"></c:out>
+										</c:if>
+									</td>
 								 	<td>
-								 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
-								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+								 		<c:choose>
+								 			<c:when test="${sorDtls.schedule !=null }">
+								 				<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
+								 				<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+								 			</c:when>
+								 			<c:otherwise>
+								 				<c:out value="${sorDtls.nonSor.description}"></c:out>
+								 				<a href="#" class="hintanchor" title="${sorDtls.nonSor.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+								 			</c:otherwise>
+								 		</c:choose>
 								 	</td> 
 								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.rate}"></c:out></fmt:formatNumber></td>
+								 	<td>
+										<span class="activityEstimateQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.estimateQuantity }</fmt:formatNumber></span>
+									</td>
+									<td>
+										<span class="activityConsumedQuantity_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.consumedQuantity }</fmt:formatNumber></span>
+									</td>
+								 	<td class="text-right">
+								 		<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">+</c:if>
+								 		<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">-</c:if>
+								 		<c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
-								 		 <button class="btn btn-default" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 		 <button class="btn btn-default" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 								 	 </c:if>
 								 	</td>
 								 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  
@@ -91,6 +119,14 @@
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
 										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
 									</c:if>
+									<td>
+										<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+											<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity) }</fmt:formatNumber></span>
+										</c:if>
+										<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+											<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity) }</fmt:formatNumber></span>
+										</c:if>
+									</td>
 								</tr>
 							</c:if>
 						</c:forEach>
@@ -101,19 +137,22 @@
 			</tbody>
 			<tfoot>
 				<c:set var="cqsortotal" value="${0}" scope="session" />
-				<c:if test="${revisionEstimate.activities != null}">
-					<c:forEach items="${revisionEstimate.activities}" var="sor">
-						<c:if test="${sorDtls.schedule !=null && sor.parent != null}">
-							<c:set var="cqsortotal"	value="${cqsortotal + sor.getAmount().value }" />  
+				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
+					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
+						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity)) }" />
+						</c:if>
+						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal - (sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
 						</c:if>
 					</c:forEach>
 				</c:if>
 				<tr>
 				<c:if test="${isServiceVATRequired == true }">
-					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="12" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
 				<c:if test="${isServiceVATRequired == false }">
-					<td colspan="7" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
 					<td class="text-right">
 						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${cqsortotal}" /></fmt:formatNumber></span>
@@ -123,84 +162,4 @@
 		</table>
 	</div>
 </div>
-</c:if>
-
-
-<c:if test="${revisionEstimate.activities.size() != 0}">
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="title.lumpsum" />
-			</div>
-		</div>
-		<div class="panel-body">
-			
-			<table class="table table-bordered" >
-				<thead>
-					<tr>
-					<th><spring:message code="lbl.slNo" /></th>
-						<th><spring:message code="lbl.description" /></th>
-						<th><spring:message code="lbl.uom" /></th>
-						<th><spring:message code="lbl.rate" /></th>
-						<th><spring:message code="lbl.estimatedquantity" /></th>
-						<th><spring:message code="lbl.estimatedamount" /></th>
-						<c:if test="${isServiceVATRequired == true }">
-							<th><spring:message code="lbl.service.vat" /></th>
-							<th><spring:message code="lbl.service.vat.amount" /></th>
-						</c:if>
-					</tr>
-				</thead>
-				<tbody>
-					<c:choose>
-						<c:when test="${revisionEstimate.activities.size() != 0}">
-							<c:forEach items="${revisionEstimate.activities}" var="nonSorDtls" varStatus="item">
-								<c:if test="${nonSorDtls.nonSor !=null && nonSorDtls.parent != null}">
-									<tr >
-										<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-										<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
-									 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
-									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-									 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out>
-									 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
-									 	 <button class="btn btn-default" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-									 	</c:if>
-									 	</td>
-									 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  
-									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
-									 	<c:if test="${isServiceVATRequired == true }">
-											<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>
-											<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(nonSorDtls.getAmount().value) * (nonSorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
-										</c:if>
-									</tr>
-								</c:if>
-							</c:forEach>
-						</c:when>
-						<c:otherwise>
-						</c:otherwise>
-					</c:choose> 
-				</tbody>
-				<tfoot>
-					<c:set var="cqnonsortotal" value="${0}" scope="session" />
-					<c:if test="${revisionEstimate.activities != null}">
-						<c:forEach items="${revisionEstimate.activities}" var="nonSor">
-							<c:if test="${nonSorDtls.nonSor !=null && nonSorDtls.parent != null}">
-								<c:set var="cqnonsortotal" value="${cqnonsortotal + nonSor.getAmount().value }" />
-							</c:if>
-						</c:forEach>
-					</c:if>
-					<tr>
-					<c:if test="${isServiceVATRequired == true }">
-						<td colspan="7" class="text-right"><spring:message code="lbl.total" /></td>
-					</c:if>
-					<c:if test="${isServiceVATRequired == false }">
-						<td colspan="5" class="text-right"><spring:message code="lbl.total" /></td>
-					</c:if>
-						<td class="text-right">
-							<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${cqnonsortotal}" /></fmt:formatNumber></span>
-						</td>
-					</tr>
-				</tfoot>
-			</table>
-		</div>
-	</div>
 </c:if>

@@ -50,6 +50,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -71,4 +72,13 @@ public class SearchRevisionEstimateController {
         return "revisionEstimate-search";
     }
 
+    @RequestMapping(value = "/searchactivityform", method = RequestMethod.GET)
+    public String showSearchActivityForm(@RequestParam("woeId") final Long workOrderEstimateId,
+            @RequestParam("workOrderNo") final String workOrderNo,
+            final Model model) {
+        model.addAttribute("workOrderEstimateId", workOrderEstimateId);
+        model.addAttribute("workOrderNo", workOrderNo);
+
+        return "reactivity-searchform";
+    }
 }

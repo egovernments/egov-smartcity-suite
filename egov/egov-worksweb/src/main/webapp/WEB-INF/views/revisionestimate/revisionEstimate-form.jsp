@@ -81,10 +81,14 @@
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<form:hidden path="estimateValue" id="estimateValue" name="estimateValue" value='<c:out value="${estimateValue}" default="0.0" />'/>
 	<form:hidden path="parent" id="parent" name="parent" value="${revisionEstimate.parent.id }"/>
+	<form:hidden path="id" id="id" name="id" value="${revisionEstimate.id }"/>
 	<input type="hidden" id="workValue" name="workValue" value='<c:out value="${revisionEstimate.workValue}" default="0.0" />'/>
 	<input type="hidden" id="exceptionaluoms" name="exceptionaluoms" value='<c:out value="${exceptionaluoms}"/>'/>
 	<input type="hidden" name="workOrderDate" id="workOrderDate"  data-idx="0" data-optional="0" class="form-control datepicker estimateDateClassId" maxlength="10" data-inputmask="'mask': 'd/m/y'" data-date-end-date="-0d" style="display: none" value='${workOrderDate}'  />
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.revisionestimate.confirm" />" />
+	<input type="hidden" id="workOrderNumber" name="workOrderNumber" value='<c:out value="${workOrderEstimate.workOrder.workOrderNumber }"/>'/>
+	<input type="hidden" id="workOrderEstimateId" name="workOrderEstimateId" value='<c:out value="${workOrderEstimate.id }"/>'/>
+	<input type="hidden" name="removedCQIds" id="removedCQIds" value="${removedCQIds }" class="form-control table-input hidden-input"/>
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -119,6 +123,7 @@
 				 <%@ include file="revisionEstimate-lumpSum.jsp"%> 
 			</div>
 			<div class="tab-pane fade" id="changequantity">
+				<%@ include file="revisionestimate-changequantity.jsp"%>
 			</div>
 		</div>
 		<%-- <div class="col-sm-12 text-center">

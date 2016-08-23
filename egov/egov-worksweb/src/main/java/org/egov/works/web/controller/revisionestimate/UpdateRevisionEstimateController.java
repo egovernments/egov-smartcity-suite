@@ -54,10 +54,13 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
+import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
+import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +71,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -91,6 +95,12 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     @Autowired
     private EstimateService estimateService;
 
+    @Autowired
+    WorkOrderActivityService workOrderActivityService;
+
+    @Autowired
+    MBHeaderService mbHeaderService;
+
     @ModelAttribute("revisionEstimate")
     public RevisionAbstractEstimate getRevisionEstimate(@PathVariable final String revisionEstimateId) {
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService
@@ -102,12 +112,13 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     public String updateForm(final Model model, @PathVariable final Long revisionEstimateId,
             final HttpServletRequest request) {
 
-        RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
 
         prepareNonTenderedAndLumpSumActivities(revisionEstimate);
+        prepareChangeQuantityActivities(revisionEstimate);
 
         if (revisionEstimate.getCurrentState() != null
                 && !WorksConstants.NEW.equals(revisionEstimate.getCurrentState().getValue()))
@@ -146,7 +157,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     public String viewForm(final Model model, @PathVariable final Long revisionEstimateId,
             final HttpServletRequest request) {
 
-        RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
@@ -160,21 +171,34 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         return "revisionEstimate-view";
     }
 
-    private void prepareNonTenderedAndLumpSumActivities(RevisionAbstractEstimate revisionEstimate) {
+    private void prepareNonTenderedAndLumpSumActivities(final RevisionAbstractEstimate revisionEstimate) {
 
-        for (Activity activity : revisionEstimate.getActivities()) {
-            if (activity.getSchedule() != null && activity.getParent() == null) {
+        for (final Activity activity : revisionEstimate.getActivities())
+            if (activity.getSchedule() != null && activity.getParent() == null)
                 revisionEstimate.getNonTenderedActivities().add(activity);
-            } else if (activity.getNonSor() != null && activity.getParent() == null)
+            else if (activity.getNonSor() != null && activity.getParent() == null)
                 revisionEstimate.getLumpSumActivities().add(activity);
-        }
+    }
 
+    private void prepareChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
+        for (final Activity activity : revisionEstimate.getActivities())
+            if (activity.getParent() != null) {
+                final WorkOrderActivity workOrderActivity = workOrderActivityService
+                        .getWorkOrderActivityByActivity(activity.getParent().getId());
+                if (workOrderActivity != null) {
+                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
+                    activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
+                }
+                revisionEstimate.getChangeQuantityActivities().add(activity);
+            }
     }
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.POST)
     public String update(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             final BindingResult errors, final RedirectAttributes redirectAttributes,
-            final Model model, final HttpServletRequest request)
+            final Model model, final HttpServletRequest request,
+            @RequestParam final String removedCQIds)
             throws ApplicationException, IOException {
 
         String mode = "";
@@ -209,6 +233,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
 
+        revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, errors);
         if (errors.hasErrors()) {
 
             revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
@@ -228,11 +253,12 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
+            model.addAttribute("removedCQIds", removedCQIds);
             return "revisionEstimate-form";
         } else {
             if (null != workFlowAction)
                 updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction);
+                        approvalComment, null, workFlowAction, removedCQIds);
 
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 

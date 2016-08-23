@@ -134,6 +134,12 @@ public class Activity extends AbstractAuditable {
     @Transient
     private String signValue;
 
+    @Transient
+    private Double estimateQuantity;
+
+    @Transient
+    private Double consumedQuantity;
+
     @Valid
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "activity", targetEntity = MeasurementSheet.class)
     @OrderBy("slNo ASC")
@@ -334,6 +340,22 @@ public class Activity extends AbstractAuditable {
 
     public void setEstimateRate(final double estimateRate) {
         this.estimateRate = estimateRate;
+    }
+
+    public Double getEstimateQuantity() {
+        return estimateQuantity;
+    }
+
+    public void setEstimateQuantity(final Double estimateQuantity) {
+        this.estimateQuantity = estimateQuantity;
+    }
+
+    public Double getConsumedQuantity() {
+        return consumedQuantity;
+    }
+
+    public void setConsumedQuantity(final Double consumedQuantity) {
+        this.consumedQuantity = consumedQuantity;
     }
 
 }

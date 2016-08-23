@@ -37,36 +37,35 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="lbl.activity.result" />
-	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.selectall" /><br /><input type="checkbox" id="selectall"></th>
-					<th><spring:message code="lbl.sorcode" /></th>
-					<th><spring:message code="lbl.category.type" /></th>
-					<th><spring:message code="lbl.description" /></th>
-					<th><spring:message code="lbl.sor.nonsor.type" /></th>
-					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.rate" /></th>
-				</tr>
-			</thead>
-		</table>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btnadd">
-				<spring:message code='lbl.add' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+		<form name="SearchRequest" role="form" action="" id="SearchRequest" class="form-horizontal form-groups-bordered">
+			<input type="hidden" id="errorSelect" value="<spring:message code='msg.select.activity' />">
+			<div class="row">
+				<div class="col-md-12">
+					<jsp:include page="searchREActivity-header.jsp"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button type='button' class='btn btn-primary' id="btnsearch">
+						<spring:message code='lbl.search' />
+					</button>
+					<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div>
-</div>
+				</div>
+			</div>
+		</form>  
+	<jsp:include page="reActivity-searchResult.jsp"/>
+<script>
+	$('#btnsearch').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>
+<script src="<c:url value='/resources/js/revisionestimate/searchreactivityhelper.js?rnd=${app_release_no}'/>"></script>

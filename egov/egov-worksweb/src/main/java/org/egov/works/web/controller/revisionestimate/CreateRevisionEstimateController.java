@@ -44,7 +44,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.commons.service.UOMService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
@@ -78,9 +77,6 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     private WorksUtils worksUtils;
 
     @Autowired
-    private UOMService uomService;
-
-    @Autowired
     private RevisionEstimateService revisionEstimateService;
 
     @Autowired
@@ -90,7 +86,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     private MessageSource messageSource;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String showAbstractEstimateForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
+    public String showForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             @RequestParam final Long workOrderEstimateId, final Model model) {
 
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
@@ -112,7 +108,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String saveRevisionEstimate(@ModelAttribute final RevisionAbstractEstimate revisionEstimate,
+    public String save(@ModelAttribute final RevisionAbstractEstimate revisionEstimate,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult bindErrors,
             final HttpServletRequest request, @RequestParam String workFlowAction) {
         RevisionAbstractEstimate savedRevisionEstimate;
@@ -126,6 +122,8 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+        
+        revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
 
@@ -159,15 +157,14 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
             savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate, approvalPosition,
                     approvalComment, null, workFlowAction);
-            
+
         }
-        
 
         if (EstimateStatus.NEW.toString().equals(savedRevisionEstimate.getEgwStatus().getCode()))
             return "redirect:/revisionestimate/update/" + savedRevisionEstimate.getId() + "?mode=save";
 
         return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + savedRevisionEstimate.getId()
-                + "&approvalPosition=";
+                + "&approvalPosition=" + approvalPosition;
     }
 
     @RequestMapping(value = "/revisionestimate-success", method = RequestMethod.GET)
@@ -235,7 +232,7 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
                     new String[] { revisionEstimate.getEstimateNumber() }, null);
         else if (EstimateStatus.APPROVED.toString().equalsIgnoreCase(revisionEstimate.getEgwStatus().getCode()))
             message = messageSource.getMessage("msg.revisionestimate.approved",
-                    new String[] { revisionEstimate.getEstimateNumber() }, null); 
+                    new String[] { revisionEstimate.getEstimateNumber() }, null);
         return message;
 
     }

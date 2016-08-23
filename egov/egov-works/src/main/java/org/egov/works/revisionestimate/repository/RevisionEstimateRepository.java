@@ -51,7 +51,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstractEstimate, Long> {
 
-    @Query("from AbstractEstimate ae where ae.parent.id=:id and ae.egwStatus.code=:status order by ae.id")
+    @Query("from RevisionAbstractEstimate re where re.parent.id=:id and re.egwStatus.code=:status order by re.id")
     List<RevisionAbstractEstimate> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
 
     List<RevisionAbstractEstimate> findByParent_Id(final Long id);

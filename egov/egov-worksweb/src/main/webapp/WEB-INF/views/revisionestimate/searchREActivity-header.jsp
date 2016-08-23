@@ -37,36 +37,40 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left">
-		<spring:message code="lbl.activity.result" />
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title" style="text-align:center;"><spring:message code="title.searchview.workorderactivity" /></div>
 	</div>
-	<div class="col-md-12 form-group report-table-container">
-		<table class="table table-bordered table-hover"
-			id="resultTable">
-			<thead>
-				<tr>
-					<th><spring:message code="lbl.slno" /></th>
-					<th><spring:message code="lbl.selectall" /><br /><input type="checkbox" id="selectall"></th>
-					<th><spring:message code="lbl.sorcode" /></th>
-					<th><spring:message code="lbl.category.type" /></th>
-					<th><spring:message code="lbl.description" /></th>
-					<th><spring:message code="lbl.sor.nonsor.type" /></th>
-					<th><spring:message code="lbl.uom" /></th>
-					<th><spring:message code="lbl.rate" /></th>
-				</tr>
-			</thead>
-		</table>
-	</div>
-	<div class="row">
-		<div class="col-sm-12 text-center">
-			<button type='button' class='btn btn-primary' id="btnadd">
-				<spring:message code='lbl.add' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
+	<input type="hidden" name="workOrderEstimateId" id="workOrderEstimateId" value="${workOrderEstimateId }"/>
+	<div class="panel-body">
+		<div class="col-md-12 text-left">
+			<spring:message code="lbl.workordernumber" />: ${workOrderNo }
+		</div><br /><br />
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.item.code" /></label>
+			<div class="col-sm-3 add-margin">
+				<input name="itemCode" id="itemCode" class="form-control"/>
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.description.item" /></label>
+			<div class="col-sm-3 add-margin">
+				<input name="description" id="description" class="form-control"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sor.nonsor.type" /></label>
+			<div class="col-sm-3 add-margin">
+				<select name="sorType" data-first-option="false" id="sorType" class="form-control">
+					<option value="">
+						<spring:message code="lbl.select" />
+					</option>
+					<option value="SOR">SOR</option>
+					<option value="Non SOR">Non SOR</option>
+				</select>
+			</div>
 		</div>
 	</div>
 </div>

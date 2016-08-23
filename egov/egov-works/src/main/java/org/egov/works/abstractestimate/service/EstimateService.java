@@ -224,7 +224,7 @@ public class EstimateService {
     }
 
     public List<AbstractEstimate> getAbstractEstimateByParentId(final Long id) {
-        return abstractEstimateRepository.findByParent_idAndEgwStatus_codeEquals(id, EstimateStatus.ADMIN_SANCTIONED.toString());
+        return abstractEstimateRepository.findByParent_idAndEgwStatus_codeEquals(id, RevisionEstimateStatus.APPROVED.toString());
     }
 
     @Transactional

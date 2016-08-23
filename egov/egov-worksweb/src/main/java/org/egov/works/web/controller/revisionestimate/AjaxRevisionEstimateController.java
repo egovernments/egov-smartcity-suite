@@ -39,11 +39,19 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
+import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
+import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
+import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -67,6 +75,12 @@ public class AjaxRevisionEstimateController {
     @Autowired
     private RevisionEstimateJsonAdaptor revisionEstimateJsonAdaptor;
 
+    @Autowired
+    private SearchActivityJsonAdaptor searchActivityJsonAdaptor;
+
+    @Autowired
+    private WorkOrderEstimateService workOrderEstimateService;
+
     @RequestMapping(value = "/getrevisionestimatesbynumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(
             @RequestParam final String revisionEstimateNumber) {
@@ -88,6 +102,76 @@ public class AjaxRevisionEstimateController {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class,
                 revisionEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchWorkOrderActivities(final HttpServletRequest request) {
+        final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
+        final String description = request.getParameter("description");
+        final String itemCode = request.getParameter("itemCode");
+        final String sorType = request.getParameter("sorType");
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        final List<Activity> activities = revisionEstimateService
+                .searchActivities(workOrderEstimate.getEstimate().getId(), sorType);
+        final List<Activity> activityList = new ArrayList<Activity>();
+        // TODO re factor this code to handle via criteria
+        if (description != null && !description.equals(""))
+            for (final Activity act : activities)
+                if (act.getSchedule() != null
+                        && act.getSchedule().getDescription().toLowerCase()
+                                .contains(description.toLowerCase())
+                        || act.getNonSor() != null && act.getNonSor().getDescription()
+                                .toLowerCase().contains(description.toLowerCase()))
+                    activityList.add(act);
+
+        if (!activityList.isEmpty()) {
+            activities.clear();
+            activities.addAll(activityList);
+        }
+
+        if (itemCode != null && !itemCode.equals("")) {
+            activityList.clear();
+            for (final Activity act : activities)
+                if (act.getSchedule() != null
+                        && act.getSchedule().getCode().toLowerCase().contains(itemCode.toLowerCase()))
+                    activityList.add(act);
+        }
+
+        if (!activityList.isEmpty()) {
+            activities.clear();
+            activities.addAll(activityList);
+        }
+
+        final List<Activity> updatedActivities = mergeChangedQuantities(activities);
+
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchActivityResultJson(updatedActivities)).append("}").toString();
+        return result;
+    }
+
+    private List<Activity> mergeChangedQuantities(final List<Activity> activities) {
+        final List<Activity> updatedActivities = new ArrayList<>();
+        for (final Activity activity : activities)
+            if (activity.getParent() == null)
+                updatedActivities.add(activity);
+            else if (updatedActivities.isEmpty())
+                updatedActivities.add(activity);
+            else
+                for (final Activity act : updatedActivities)
+                    if (act.getId().equals(activity.getParent().getId()))
+                        if (activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                            act.setQuantity(act.getQuantity() + activity.getQuantity());
+                        else
+                            act.setQuantity(act.getQuantity() - activity.getQuantity());
+        return updatedActivities;
+    }
+
+    public Object toSearchActivityResultJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, searchActivityJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
