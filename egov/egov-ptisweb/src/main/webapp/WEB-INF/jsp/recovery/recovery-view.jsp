@@ -40,6 +40,7 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <html>
 <head>
@@ -49,7 +50,7 @@
 		jQuery("#loadingMask").remove();
 	</script>
 		<title><s:text name="recovery"></s:text></title>
-		<link href="<c:url value='/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:form action="recovery" method="post" name="recoveryForm" theme="simple">

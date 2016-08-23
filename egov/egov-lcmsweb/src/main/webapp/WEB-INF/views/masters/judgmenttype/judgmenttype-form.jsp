@@ -79,7 +79,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" />
+								data-pattern="number" maxlength="4"/>
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>
 					</div>

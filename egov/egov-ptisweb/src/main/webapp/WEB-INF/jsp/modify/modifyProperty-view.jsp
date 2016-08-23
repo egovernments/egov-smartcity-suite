@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
@@ -56,10 +56,10 @@
 	         </s:elseif>
 		</title>
 		<link
-			href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+			href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 			rel="stylesheet" type="text/css" />
 		<script
-			src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -157,7 +157,8 @@
 				var rIndex = getRow(obj).rowIndex;
 				var tbl = document.getElementById('floorDetails');
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
-				if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+				var unstructureLand = getControlInBranch(tbl.rows[rIndex],'unstructuredLand');
+				if(unstructureLand.options[unstructureLand.selectedIndex].text=='No'){
 					if(obj.value!=null && obj.value!=""){
 						var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
 						var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
@@ -194,15 +195,15 @@
 					var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
 					var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
 					if(selText!=null && selText=='No'){
+						buildLength.readOnly = false;      
+						buildbreadth.readOnly = false;
+						builtUpArea.readOnly = true;
+					} else{
 						buildLength.value="";
-						buildLength.readOnly = true;      
+						buildLength.readOnly = true; 
 						buildbreadth.value="";
 						buildbreadth.readOnly = true;
 						builtUpArea.readOnly = false;
-					} else{
-						buildLength.readOnly = false; 
-						buildbreadth.readOnly = false;
-						builtUpArea.readOnly = true;
 					}
 				}
 			}
@@ -286,8 +287,8 @@
 			}				
 
 </script>
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
 		<div align="left" class="errortext">

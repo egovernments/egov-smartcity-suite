@@ -49,7 +49,9 @@
 	role="form" method="post" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />
 	 <input type="hidden" id="lcNumber" name="lcNumber"
-		value="${legalCase.lcNumber}" />  
+		value="${legalCase.lcNumber}" /> 
+	<input type="hidden" id="caseDate" name="caseDate"
+		value="${legalCase.caseDate}" <fmt pattern="dd/MM/yyyy"/>  />	 
 	<jsp:include page="../transactions/viewSummarizedCase.jsp"/>
 	<%@ include file="hearings-form.jsp"%>
 	</div>
@@ -58,7 +60,7 @@
 	</div>
 	<div class="form-group">
 		<div class="text-center">
-			<form:button type="button" name="button" id="buttonid"
+			<form:button type="submit" name="button" id="buttonid"
 				class="btn btn-primary" value="Save">
 				<spring:message code="lbl.save" />
 			</form:button>
@@ -69,10 +71,10 @@
 	</div>
 </form:form>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/hearings.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/hearings.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/legalcaseSearch.js?rnd=${app_release_no}'/>"></script>

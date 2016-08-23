@@ -58,13 +58,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "eglc_legalcase_document")
 @SequenceGenerator(name = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, sequenceName = LegalCaseDocuments.SEQ_LEGALCASEDOCUMENTS, allocationSize = 1)
-public class LegalCaseDocuments implements Serializable {
+public class LegalCaseDocuments extends AbstractPersistable<Long>  {
     private static final long serialVersionUID = -4555037259173138199L;
     public static final String SEQ_LEGALCASEDOCUMENTS = "SEQ_eglc_legalcase_document";
 

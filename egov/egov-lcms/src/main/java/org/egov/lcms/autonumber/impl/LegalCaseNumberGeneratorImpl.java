@@ -44,6 +44,7 @@ import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.utils.LegalCaseUtil;
@@ -58,16 +59,17 @@ public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     @Override
     public String generateLegalCaseNumber() {
         final String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%s%s%06d", "LC/", legalCaseUtil.getCityCode()+"/",(finYear!=null ?(finYear.getFinYearRange().split("-")[0]+"/"):"/"),nextSequence);
+        return String.format("%s%s%s%06d", "LC/", ApplicationThreadLocals.getCityCode() + "/", (finYear != null ? (finYear
+                .getFinYearRange().split("-")[0] + "/") : "/"), nextSequence);
     }
 
 }

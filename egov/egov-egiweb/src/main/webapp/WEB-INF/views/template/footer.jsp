@@ -42,6 +42,6 @@
 <footer class="main">
     Powered by <a href="http://egovernments.org/" target="_blank">eGovernments Foundation</a>
 </footer>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/bootstrap/typeahead.bundle.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>

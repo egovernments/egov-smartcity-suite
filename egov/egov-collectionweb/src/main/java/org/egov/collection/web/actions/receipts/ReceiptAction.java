@@ -92,6 +92,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.models.ServiceCategory;
@@ -296,14 +298,11 @@ public class ReceiptAction extends BaseFormAction {
     private List<CChartOfAccounts> bankCOAList;
     private Long functionId;
 
-    private Date cutOffDate;
-    
     @Autowired
     private FinancialYearDAO financialYearDAO;
-    
+
     private Date financialYearDate;
 
-    
     @Override
     public void prepare() {
         super.prepare();
@@ -364,7 +363,7 @@ public class ReceiptAction extends BaseFormAction {
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
-        financialYearDate=financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate();
+        financialYearDate = financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate();
     }
 
     private String decodeBillXML() {
@@ -701,8 +700,8 @@ public class ReceiptAction extends BaseFormAction {
                 receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
                 receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
                 receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
-                            CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                            CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
+                        CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                        CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
                 receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
                 receiptHeader.setSource(Source.SYSTEM.toString());
 
@@ -755,20 +754,7 @@ public class ReceiptAction extends BaseFormAction {
             LOGGER.info("Call back for apportioning is completed");
             // billing system
             receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
-                   
-            if (isBillSourcemisc()) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                try {
-                    cutOffDate = sdf.parse(collectionsUtil.getAppConfigValue(
-                            CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
-                            CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
-                } catch (ParseException e) {
-                    LOGGER.error(getText("Error parsing Cut Off Date") + e.getMessage());
-                }
-                if(voucherDate.before(cutOffDate))
-                receiptHeaderService.performWorkflow(CollectionConstants.WF_ACTION_APPROVE, receiptHeader,
-                        "Legacy data Approval based on cutoff date");
-            }
+
             // populate all receipt header ids except the cancelled receipt
             // (in effect the newly created receipts)
             selectedReceipts = new Long[noOfNewlyCreatedReceipts];
@@ -863,6 +849,11 @@ public class ReceiptAction extends BaseFormAction {
          * setServiceName(service.getName()); }
          */
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
+        if(dept==null)
+        {
+            throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
+                    "viewchallan.validation.error.user.notexists"))); 
+        }
         if (getDeptId() == null)
             setDeptId(dept.getId().toString());
         populateBankBranchList(false);
@@ -1887,14 +1878,6 @@ public class ReceiptAction extends BaseFormAction {
         this.serviceId = serviceId;
     }
 
-    public Date getCutOffDate() {
-        return cutOffDate;
-    }
-
-    public void setCutOffDate(Date cutOffDate) {
-        this.cutOffDate = cutOffDate;
-    }
-
     public Date getFinancialYearDate() {
         return financialYearDate;
     }
@@ -1902,6 +1885,5 @@ public class ReceiptAction extends BaseFormAction {
     public void setFinancialYearDate(Date financialYearDate) {
         this.financialYearDate = financialYearDate;
     }
-    
-    
+
 }

@@ -39,8 +39,6 @@
  */
 package org.egov.eis.web.controller.masters.designation;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.service.DesignationService;
 import org.egov.pims.commons.Designation;
@@ -60,6 +58,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping("/designation")
@@ -95,18 +95,11 @@ public class CreateAndViewDesignationController {
         return "success-designation";
     }
 
-    public String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Designation.class, new DesignationAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
     @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final List<Designation> designationList = designationService.getAllDesignations();
-        final StringBuilder designationJSONData = new StringBuilder("{\"data\":").append(toJSON(designationList))
+        final StringBuilder designationJSONData = new StringBuilder("{\"data\":").append(toJSON(designationList, Designation.class, DesignationAdaptor.class))
                 .append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(designationJSONData, response.getWriter());

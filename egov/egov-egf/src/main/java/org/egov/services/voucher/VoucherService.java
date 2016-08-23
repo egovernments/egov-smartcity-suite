@@ -394,7 +394,7 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 
 	public void createVoucherfromPreApprovedVoucher(final CVoucherHeader vh) {
 		final List<AppConfigValues> appList = appConfigValuesService
-				.getConfigValuesByModuleAndKey("EGF", "APPROVEDVOUCHERSTATUS");
+				.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "APPROVEDVOUCHERSTATUS");
 		final String approvedVoucherStatus = appList.get(0).getValue();
 		vh.setStatus(Integer.valueOf(approvedVoucherStatus));
 	}
@@ -967,12 +967,9 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 			voucherHeader.getVouchermis().setVoucherheaderid(voucherHeader);
 			voucherHeader
 					.setStatus(FinancialConstants.PREAPPROVEDVOUCHERSTATUS);
-			final AppConfig appConfig = (AppConfig) persistenceService.find(
-					"from AppConfig where key_name =?",
-					"JournalVoucher_ConfirmonCreate");
-			if (null != appConfig && null != appConfig.getAppDataValues())
-				for (final AppConfigValues appConfigVal : appConfig
-						.getAppDataValues())
+			 final List<AppConfigValues> appConfig =appConfigValuesService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "JournalVoucher_ConfirmonCreate");
+			if (null != appConfig &&!appConfig.isEmpty())
+				for (final AppConfigValues appConfigVal : appConfig)
 					voucherHeader.setIsConfirmed(Integer.valueOf(appConfigVal
 							.getValue()));
 			persist(voucherHeader);

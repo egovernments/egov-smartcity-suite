@@ -39,12 +39,6 @@
  */
 package org.egov.egf.web.actions.report;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -56,12 +50,20 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 
 
@@ -79,6 +81,8 @@ public class ReportAction extends BaseFormAction
     protected static final String REPORT = "report";
     protected SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     protected SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     @Override
     public Object getModel() {
@@ -127,10 +131,8 @@ public class ReportAction extends BaseFormAction
 
     protected void getHeaderFields()
     {
-        final List<AppConfig> appConfigList = persistenceService
-                .findAllBy("from AppConfig where key_name = 'REPORT_SEARCH_MISATTRRIBUTES'");
-        for (final AppConfig appConfig : appConfigList)
-            for (final AppConfigValues appConfigVal : appConfig.getAppDataValues())
+        final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "REPORT_SEARCH_MISATTRRIBUTES");
+            for (final AppConfigValues appConfigVal : appConfigList)
             {
                 final String value = appConfigVal.getValue();
                 final String header = value.substring(0, value.indexOf('|'));

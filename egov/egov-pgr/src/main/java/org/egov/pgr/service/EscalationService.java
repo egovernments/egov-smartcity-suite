@@ -56,10 +56,13 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pgr.config.properties.PgrApplicationProperties;
+import org.egov.pgr.elasticSearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticSearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
@@ -68,9 +71,11 @@ import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.search.service.SearchService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -78,7 +83,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 @Service
 @Transactional(readOnly = true)
 public class EscalationService {
@@ -116,6 +120,12 @@ public class EscalationService {
 
     @Autowired
     private PositionMasterService positionMasterService;
+    
+    @Autowired
+    private CityService cityService;
+    
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     @Autowired
     public EscalationService(final EscalationRepository escalationRepository) {
@@ -125,6 +135,9 @@ public class EscalationService {
 
     @Autowired
     private SecurityUtils securityUtils;
+    
+    @Autowired
+    private SearchService searchService;
 
     @Transactional
     public void create(final Escalation escalation) {
@@ -183,7 +196,7 @@ public class EscalationService {
                             .withDateInfo(complaint.getEscalationDate().toDate())
                             .withStateValue(complaint.getStatus().getName())
                             .withSenderName(securityUtils.getCurrentUser().getName());
-                    complaintRepository.save(complaint);
+                    final Complaint savedComplaint = complaintRepository.save(complaint);
                     if (superiorUser != null) {
                         final AppConfigValues appConfigValue = appConfigValuesService
                                 .getConfigValuesByModuleAndKey(PGRConstants.MODULE_NAME, "SENDEMAILFORESCALATION").get(0);
@@ -213,6 +226,11 @@ public class EscalationService {
                             messagingService.sendSMS(superiorUser.getMobileNumber(), smsBody.toString());
                         }
                     }
+                   //update complaint index values
+                    final Complaint savedComplaintIndex = new ComplaintIndex();
+                    BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
+                    final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
+                    complaintIndexService.updateComplaintEscalationIndexValues(complaintIndex);
                 }
             }
         } catch (final Exception e) {
@@ -281,5 +299,9 @@ public class EscalationService {
                     positionHierarchy.getObjectSubType());
 
         return existingPosHierarchy != null ? existingPosHierarchy : null;
+    }
+    
+    public Escalation getEscalationBycomplaintTypeAndDesignation(Long complaintTypeId, Long designationId){
+       return escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);  	
     }
 }

@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/crosshierarchy.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/crosshierarchy.js'/>"></script>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <div class="row" id="page-content">
     <div class="col-md-12">

@@ -89,15 +89,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
 
-
 @ParentPackage("egov")
 @Results({
-    @Result(name = "approvalList", location = "budgetReAppropriationModify-approvalList.jsp"),
-    @Result(name = "modify", location = "budgetReAppropriationModify-modify.jsp")
+        @Result(name = "approvalList", location = "budgetReAppropriationModify-approvalList.jsp"),
+        @Result(name = "modify", location = "budgetReAppropriationModify-modify.jsp")
 })
 public class BudgetReAppropriationModifyAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationModifyAction.class);
+    @Autowired
     protected BudgetDetailConfig budgetDetailConfig;
     BudgetDetail budgetDetail;
     protected Budget budget;
@@ -131,7 +131,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public void setMiscWorkflowService(final WorkflowService<BudgetReAppropriationMisc> miscWorkflowService) {
         this.miscWorkflowService = miscWorkflowService;
     }
@@ -220,26 +220,8 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         return mandatoryFields;
     }
 
-    public BudgetReAppropriationModifyAction(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-        headerFields = budgetDetailConfig.getHeaderFields();
-        gridFields = budgetDetailConfig.getGridFields();
-        mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        addRelatedEntity("budgetGroup", BudgetGroup.class);
-        if (shouldShowField(Constants.FUNCTIONARY))
-            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
-        if (shouldShowField(Constants.FUNCTION))
-            addRelatedEntity(Constants.FUNCTION, CFunction.class);
-        if (shouldShowField(Constants.SCHEME))
-            addRelatedEntity(Constants.SCHEME, Scheme.class);
-        if (shouldShowField(Constants.SUB_SCHEME))
-            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
-        if (shouldShowField(Constants.FUND))
-            addRelatedEntity(Constants.FUND, Fund.class);
-        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
-        if (shouldShowField(Constants.BOUNDARY))
-            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
+    public BudgetReAppropriationModifyAction() {
+
     }
 
     protected void setupDropdownsInHeader() {
@@ -259,7 +241,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
-            .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
+                    .put("fundList", persistenceService.findAllBy("from Fund where isNotLeaf=0 and isActive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
     }
@@ -290,6 +272,21 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
+        addRelatedEntity("budgetGroup", BudgetGroup.class);
+        if (shouldShowField(Constants.FUNCTIONARY))
+            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
+        if (shouldShowField(Constants.FUNCTION))
+            addRelatedEntity(Constants.FUNCTION, CFunction.class);
+        if (shouldShowField(Constants.SCHEME))
+            addRelatedEntity(Constants.SCHEME, Scheme.class);
+        if (shouldShowField(Constants.SUB_SCHEME))
+            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
+        if (shouldShowField(Constants.FUND))
+            addRelatedEntity(Constants.FUND, Fund.class);
+        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
+            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
+        if (shouldShowField(Constants.BOUNDARY))
+            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
         setupDropdownsInHeader();
         addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
@@ -301,7 +298,6 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         return budgetDetail;
     }
 
-    
     @Action(value = "/budget/budgetReAppropriationModify-update")
     public String update() {
         for (final BudgetReAppropriationView entry : savedBudgetReAppropriationList) {
@@ -310,8 +306,7 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
             if ("Addition".equalsIgnoreCase(entry.changeRequestType)) {
                 reApp.setOriginalAdditionAmount(entry.getDeltaAmount());
                 reApp.setAdditionAmount(entry.getApprovedDeltaAmount());
-            }
-            else {
+            } else {
                 reApp.setOriginalDeductionAmount(entry.getDeltaAmount());
                 reApp.setDeductionAmount(entry.getApprovedDeltaAmount());
             }
@@ -344,20 +339,19 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
                     .add(budgetReAppropriationView.getAppropriatedAmount()).subtract(budgetReAppropriationView.getActuals())
                     .setScale(2));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount()) == 0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount()) == 0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getDeductionAmount());
-            }
-            else {
+            } else {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount()) == 0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else
@@ -415,26 +409,25 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
             budgetReAppropriationView.setActuals(new BigDecimal(actuals));
             budgetReAppropriationView.setApprovedAmount(row.getBudgetDetail().getApprovedAmount());
             budgetReAppropriationView
-            .setAddedReleased(row.getBudgetDetail().getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO : row
-                    .getBudgetDetail().getApprovedReAppropriationsTotal());
+                    .setAddedReleased(row.getBudgetDetail().getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO : row
+                            .getBudgetDetail().getApprovedReAppropriationsTotal());
             budgetReAppropriationView.setAvailableAmount(budgetReAppropriationView.getApprovedAmount()
                     .add(budgetReAppropriationView.getAddedReleased())
                     .subtract(budgetReAppropriationView.getActuals()));
             budgetReAppropriationView.setSequenceNumber(row.getReAppropriationMisc().getSequenceNumber());
-            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount())==0) {
+            if (row.getOriginalAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getOriginalAdditionAmount()) == 0) {
                 budgetReAppropriationView.setChangeRequestType("Deduction");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalDeductionAmount());
-                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount())==0)
+                if (row.getDeductionAmount() == null || BigDecimal.ZERO.compareTo(row.getDeductionAmount()) == 0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalDeductionAmount() == null ? BigDecimal.ZERO
                             : row.getOriginalDeductionAmount());
                 else
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getDeductionAmount());
-            }
-            else {
+            } else {
                 budgetReAppropriationView.setChangeRequestType("Addition");
                 budgetReAppropriationView.setDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO.setScale(2)
                         : row.getOriginalAdditionAmount().setScale(2));
-                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount())==0)
+                if (row.getAdditionAmount() == null || BigDecimal.ZERO.compareTo(row.getAdditionAmount()) == 0)
                     budgetReAppropriationView.setApprovedDeltaAmount(row.getOriginalAdditionAmount() == null ? BigDecimal.ZERO
                             .setScale(2) : row.getOriginalAdditionAmount().setScale(2));
                 else
@@ -554,7 +547,8 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
             if ("END".equalsIgnoreCase(misc.getCurrentState().getValue()))
                 addActionMessage(getText("budget.reapp.approved.end"));
             else
-                addActionMessage(getText("budget.reapp.approved") + budgetService.getEmployeeNameAndDesignationForPosition(owner));
+                addActionMessage(
+                        getText("budget.reapp.approved") + budgetService.getEmployeeNameAndDesignationForPosition(owner));
         } else if (actionName.contains("eject"))
             addActionMessage(getText("budget.reapp.rejected") + budgetService.getEmployeeNameAndDesignationForPosition(owner));
         else if (actionName.contains("ancel"))
@@ -620,19 +614,16 @@ public class BudgetReAppropriationModifyAction extends BaseFormAction {
         return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
     }
 
-    protected Boolean validateOwner(final State state)
-    {
+    protected Boolean validateOwner(final State state) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
         positionsForUser = eisService.getPositionsForUser(ApplicationThreadLocals.getUserId(), new Date());
-        if (positionsForUser.contains(state.getOwnerPosition()))
-        {
+        if (positionsForUser.contains(state.getOwnerPosition())) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Valid Owner :return true");
             return true;
-        } else
-        {
+        } else {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Invalid  Owner :return false");
             return false;

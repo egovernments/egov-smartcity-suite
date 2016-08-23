@@ -46,7 +46,7 @@ public class LcmsConstants {
     public static final String CIVIL_COURT_KEY = "Civil Court";
     public static final String EX_PARTE_KEY = "Ex-parte";
     public static final String DATE_FILTER_KEY = "DateFilterKey";
-    public static final String JUDGMENTIMPLEMENT_STATUS = "Judgement Implemented";
+    public static final String JUDGMENTIMPLEMENT_STATUS = "Judgment_Implemented";
     public static final String JUDGMENTIMPLEMENT_INPROGRESS_STATUS = "Implementation In Progress";
     public static final String START_CASE_YEAR_KEY = "START_CASE_YEAR";
     public static final String LC_NUMBER_TYPE_KEY = "LC_NUMBER_TYPE";

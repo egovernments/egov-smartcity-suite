@@ -53,6 +53,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.exception.ApplicationException;
@@ -483,7 +484,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
 
     @Override
     public List<BasicProperty> getBasicPropertiesForTaxDetails(String assessmentNo, String ownerName, String mobileNumber,
-            String propertyType) {
+            String propertyType, String doorNo) {
         StringBuilder sb = new StringBuilder();
         sb.append("select propertyId from PropertyMaterlizeView where propertyId is not null");
         Map<String, String> params = new HashMap<String, String>();
@@ -504,6 +505,10 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
                 sb.append(" and propTypeMstrID.code = :propertyType ");
             } else if (propertyType.equals(CATEGORY_TYPE_PROPERTY_TAX)) {
                 sb.append(" and propTypeMstrID.code <> :propertyType ");
+                if(StringUtils.isNotBlank(doorNo)){
+                	sb.append(" and houseNo like :DoorNo ");
+                    params.put("DoorNo", "%"+(StringUtils.isNotBlank(doorNo) ? doorNo.trim() : "")+"%");
+                }
             }
             params.put("propertyType", PROPERTY_TYPE_CODE_VACANT);
         }

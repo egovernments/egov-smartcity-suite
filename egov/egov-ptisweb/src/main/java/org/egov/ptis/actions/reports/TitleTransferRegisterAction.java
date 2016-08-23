@@ -40,8 +40,6 @@
 
 package org.egov.ptis.actions.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -74,6 +72,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @SuppressWarnings("serial")
@@ -193,7 +192,7 @@ public class TitleTransferRegisterAction extends BaseFormAction {
      */
     @SuppressWarnings("unchecked")
     @Action(value = "/titleTransferRegister-getPropertyList")
-    public void getPropertyList() {
+    public void getPropertyList() throws IOException {
         List<TitleTransferReportResult> resultList = new ArrayList<TitleTransferReportResult>();
         String result = null;
         final Query query = propertyTaxUtil
@@ -201,27 +200,11 @@ public class TitleTransferRegisterAction extends BaseFormAction {
         resultList = prepareOutput(query.list());
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(resultList, TitleTransferReportResult.class,
+                TitleTransferReportHelperAdaptor.class)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        try {
-            IOUtils.write(result, response.getWriter());
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param object
-     * @return
-     */
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(TitleTransferReportResult.class,
-                new TitleTransferReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+        IOUtils.write(result, response.getWriter());
     }
 
     /**

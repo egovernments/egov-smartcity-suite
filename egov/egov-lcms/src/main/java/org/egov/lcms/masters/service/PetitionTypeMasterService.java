@@ -155,10 +155,12 @@ public class PetitionTypeMasterService {
         return resultList;
     }
 
-    public List<PetitionTypeMaster> getPetitiontypeList()
-    {
+    public List<PetitionTypeMaster> getPetitiontypeList() {
         return petitionTypeMasterRepository.findAll();
     }
-   
+
+    public List<PetitionTypeMaster> getActivePetitionTypes() {
+        return petitionTypeMasterRepository.findByActiveTrueOrderByPetitionTypeAsc();
+    }
 
 }

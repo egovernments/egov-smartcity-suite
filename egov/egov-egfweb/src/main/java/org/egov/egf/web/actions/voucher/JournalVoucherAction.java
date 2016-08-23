@@ -55,6 +55,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -112,6 +114,8 @@ public class JournalVoucherAction extends BaseVoucherAction
     DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
     Date date;
+    @Autowired
+    private BudgetControlTypeService budgetCheckConfigService;
 
     @Autowired
     private ScriptService scriptService;
@@ -147,6 +151,7 @@ public class JournalVoucherAction extends BaseVoucherAction
         subLedgerlist.add(new VoucherDetails());
         // setting the typa as default for reusing billvoucher.nextdesg workflow
         showMode = NEW;
+        voucherHeader.setAllowNegetive(false);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherAction | new | End");
         return NEW;
@@ -280,6 +285,7 @@ public class JournalVoucherAction extends BaseVoucherAction
                 // clearMessages();
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
+                addBudgetCheckMessages(e.getErrors().get(0).getMessage());
                 voucherHeader.setVoucherNumber(voucherNumber);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
@@ -291,6 +297,7 @@ public class JournalVoucherAction extends BaseVoucherAction
             } catch (final Exception e) {
                 e.printStackTrace();
                 clearMessages();
+                addBudgetCheckMessages(e.getMessage());
                 if (subLedgerlist.size() == 0)
                     subLedgerlist.add(new VoucherDetails());
                 voucherHeader.setVoucherNumber(voucherNumber);
@@ -306,7 +313,20 @@ public class JournalVoucherAction extends BaseVoucherAction
         return NEW;
     }
 
-    public List<String> getValidActions() {
+    private void addBudgetCheckMessages(String errorMessage) {
+
+    	
+    	if( errorMessage.contains(FinancialConstants.BUDGET_CHECK_ERROR_MESSAGE))
+    	{
+    		if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString()))
+    		{
+    			message=FinancialConstants.BUDGET_CHECK_ERROR_MESSAGE;
+    		}
+    	}
+		
+	}
+
+	public List<String> getValidActions() {
         List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         List<String> validActions = Collections.emptyList();

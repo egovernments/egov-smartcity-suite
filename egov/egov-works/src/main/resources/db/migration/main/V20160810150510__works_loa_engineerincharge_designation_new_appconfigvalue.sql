@@ -1,0 +1,3 @@
+INSERT INTO eg_appconfig_values(id, key_id, effective_from, value, version) VALUES (nextval('seq_eg_appconfig_values'), (select id from eg_appconfig where key_name='ENGINEERINCHARGE_DESIGNATION'), to_date('01-03-2016','DD-MM-YYYY'), 'Assistant executive engineer', 0);
+
+--rollback delete from eg_appconfig_values where value = 'Assistant executive engineer' and key_id in (select id from eg_appconfig where key_name in('ENGINEERINCHARGE_DESIGNATION'));

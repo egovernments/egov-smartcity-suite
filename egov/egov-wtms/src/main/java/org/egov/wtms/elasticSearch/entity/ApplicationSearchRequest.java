@@ -39,9 +39,9 @@
  */
 package org.egov.wtms.elasticSearch.entity;
 
-import org.egov.search.domain.Filter;
-import org.egov.search.domain.Filters;
-import org.jboss.logging.Logger;
+import static org.egov.search.domain.Filter.queryStringFilter;
+import static org.egov.search.domain.Filter.rangeFilter;
+import static org.egov.search.domain.Filter.termsStringFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,9 +49,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.egov.search.domain.Filter.queryStringFilter;
-import static org.egov.search.domain.Filter.rangeFilter;
-import static org.egov.search.domain.Filter.termsStringFilter;
+import org.egov.search.domain.Filter;
+import org.egov.search.domain.Filters;
+import org.jboss.logging.Logger;
 
 public class ApplicationSearchRequest {
     private String searchText;
@@ -63,7 +63,7 @@ public class ApplicationSearchRequest {
     private String mobileNumber;
     private String fromDate;
     private String toDate;
-    private String ulbName;
+    private String cityName;
     private String source;
     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
@@ -151,31 +151,31 @@ public class ApplicationSearchRequest {
         return toDate;
     }
 
-    public String getUlbName() {
-        return ulbName;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
+    public void setCityName(final String cityName) {
+        this.cityName = cityName;
     }
 
     public void setSearchText(final String searchText) {
         this.searchText = searchText;
     }
-    
 
     public String getSource() {
-		return source;
-	}
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(final String source) {
+        this.source = source;
+    }
 
-	public Filters searchFilters() {
+    public Filters searchFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter("clauses.ulbname", ulbName));
-        andFilters.add(queryStringFilter("searchable.applicationnumber",(applicationNumber!=null && !applicationNumber.trim().isEmpty()) ? "\""+applicationNumber+"\"" : applicationNumber ));
+        andFilters.add(termsStringFilter("clauses.cityname", cityName));
+        andFilters.add(queryStringFilter("searchable.applicationnumber", applicationNumber != null
+                && !applicationNumber.trim().isEmpty() ? "\"" + applicationNumber + "\"" : applicationNumber));
         andFilters.add(termsStringFilter("clauses.modulename", moduleName));
         andFilters.add(termsStringFilter("clauses.applicationtype", applicationType));
         andFilters.add(termsStringFilter("clauses.channel", source));

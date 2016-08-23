@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <style>
 body
 {
@@ -50,8 +51,8 @@ body
   font-size:14px;
 }
 </style>
-<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
 <c:if test="${errorMsg != ''}">
  	<div class="panel-heading">
 				<div class="add-margin error-msg" style="text-align:center;">
@@ -111,5 +112,5 @@ body
 		</div>
 </form:form>
 
-<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 

@@ -86,12 +86,6 @@ public class BoundaryBuilder {
         return this;
     }
 
-    public BoundaryBuilder withParentBoundaryNum(final Long parentBoundaryNum) {
-        boundary.setParentBoundaryNum(parentBoundaryNum);
-        return this;
-    }
-
-
     public BoundaryBuilder withFromDate(final Date fromDate) {
         boundary.setFromDate(fromDate);
         return this;

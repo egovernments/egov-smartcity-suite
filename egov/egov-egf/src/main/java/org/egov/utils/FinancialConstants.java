@@ -58,7 +58,7 @@ public interface FinancialConstants {
     public static final String CONTINGENCYBILL = "CBILL";
     // this is the one which is used by financials from 13/03/2010
     public static final String CONTINGENCYBILL_FIN = "EXPENSEBILL";
-    public static final String SUPPLIERBILL = "PURCHBILL";
+    public static final String SUPPLIERBILL = "PURCHBILL"; 
     public static final String CONTRACTORBILL = "WORKSBILL";
     public static final String PENSIONBILL = "PENSIONBILL";
 
@@ -324,4 +324,6 @@ public interface FinancialConstants {
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
     
     public static final String CREATEANDAPPROVE="Create And Approve";
+    public static final String BUDGET_CHECK_ERROR_MESSAGE = "Budgetary check is failed";
+    
 }

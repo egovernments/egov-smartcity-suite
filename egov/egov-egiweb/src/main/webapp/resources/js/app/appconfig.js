@@ -38,121 +38,167 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function(){
-	
-	// Instantiate the Bloodhound suggestion engine
-	/*var complaintlocation = new Bloodhound({
-		datumTokenizer: function (datum) {
-			return Bloodhound.tokenizers.whitespace(datum.value);
-		},
-		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		remote: {
-			url: 'modules?moduleName=%QUERY',
-			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
-				return $.map(data, function (cl) {
-					return {
-						name: cl.name,
-						value: cl.id
-					};
-				});
-			}
-		}
-	});
-	
-	// Initialize the Bloodhound suggestion engine
-	complaintlocation.initialize();
-	
-	// Instantiate the Typeahead UI
-	$('#module').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 3
-		}, {
-		displayKey: 'name',
-		source: complaintlocation.ttAdapter()
-	}).on('typeahead:selected', function(event, data){    
-		$("#module").val(data.name);    
-		$("#moduleid").val(data.value);    
+$(document).ready(function () {
+
+    $('#appConfigModuleName').change(function () {
+        $.ajax({
+            url: "/egi/app/config/formodule/"+$('#appConfigModuleName').val(),
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                var appConfigDrpDown = $('#appConfigKeyName');
+                appConfigDrpDown.find("option:gt(0)").remove();
+                $.each(response, function (index, value) {
+                    appConfigDrpDown.append($('<option>').text(value.keyName).attr('value', value.keyName));
+                });
+
+            },
+            error: function (response) {
+                console.log("failed");
+            }
+        });
     });
-	*/
-	$('#appModuleName').change(function(){
-		$.ajax({
-			url: "/egi/appConfig/ajax-appConfigpopulate",     
-			type: "GET",
-			data: {
-				appModuleName : $('#appModuleName').val()   
-			},
-			dataType: "json",
-			success: function (response) {
-				console.log("success"+response);
-				$('#appKeyName').empty();
-				$('#appKeyName').append($("<option value=''>Select</option>"));
-				$.each(response, function(index, value) {
-					$('#appKeyName').append($('<option>').text(value.keyName).attr('value', value.id));
-				});
-				
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
+
+    $('#search-view-btn').on('click', function () {
+        oTable=	$('#view-appConfig-tbl').DataTable({
+            processing : true,
+            serverSide : true,
+            type : 'GET',
+            sort : true,
+            filter : true,
+            responsive : true,
+            destroy : true,
+            "autoWidth": false,
+            ajax : "list?moduleName="+$("#moduleName").val(),
+            "aLengthMenu" : [ [ 10, 25, 50, -1 ],
+                [ 10, 25, 50, "All" ] ],
+            "sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+            columns : [
+				{
+				    "className":      'details-control',
+				    "orderable":      false,
+				    "sortable":      false,
+				    "data":           null,
+				    "defaultContent": ''
+				},
+                {
+                    "mData" : "module",
+                    "sTitle" : "Module Name"
+                },
+                {
+                    "mData" : "keyName",
+                    "sTitle" : "Key Name",
+                },{
+                    "mData" : "description",
+                    "sTitle" : "Description"
+                } ,{
+                    "mData" : "id",
+                    "visible": false
+                },{
+                    "mData" : "values",
+                    "visible": false
+                }]
+        });
+    });
+    
+    // Add event listener for opening and closing details
+    $('#view-appConfig-tbl').on('click', 'tbody tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = oTable.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    } );
+    
+    function format ( d ) {
+        // `d` is the original data object for the row
+    	var tablerows='';
+    	$.each(d.values, function( index, value ) {
+		  console.log( value["Effective Date"]+'<--->'+value["Value"] );
+		  var tr = '<tr><td>'+value["Effective Date"]+'</td><td>'+value["Value"]+'</td></tr>';
+		  tablerows+=tr;
 		});
-	});
-	
+        return '<table class="table table-bordered" style="width: 90%;margin: 0 auto;"><thead><th>Effective Date</th><th>Values</th></thead><tbody>'+tablerows+'</tbody></table>';
+    }
+    
+    var count = $("#configs tbody  tr").length - 1;
+    
+    $('#addrow').click(function(){
+    	var $tableBody = $('#configs').find("tbody"),
+        $trLast = $tableBody.find("tr:last"),
+        $trNew = $trLast.clone();
+    	
+    	if( !$.trim($trLast.find('input.effectiveFrom').val()) || !$.trim($trLast.find('input.confValues').val())){
+    		bootbox.alert('Date effective from and values are mandatory!');
+    	}else{
+    		count++;
+    		$trNew.find("input").each(function(){
+    	        $(this).attr({
+    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ count +']'); } ,
+    	        	'id': function(_, id) { return id.replace(/\[.\]/g, '['+ count +']'); }
+    	        });
+    	    });
+    		$trLast.after($trNew);
+        	$trNew.find('input').val('').removeAttr('disabled');
+            $trNew.find('input.markedForRemoval').val('false');
+        	dateinitialize();
+    	}
+    });
+    
+    var regexp_alphanumericcomma = /[^a-zA-Z0-9 ,]/g ;
+    
+    $('.confValues').on('keyup',function(e){
+    	obj = $(this);
+    	if(jQuery(obj).val().match(regexp_alphanumericcomma)){
+    		jQuery(obj).val( jQuery(obj).val().replace(regexp_alphanumericcomma,'') );
+    	}
+    })
+    	
+    function dateinitialize(){
+    	$(".datepicker").datepicker({
+			format: "dd/mm/yyyy",
+			autoclose: true 
+		}); 
+    }
+    
+    $(document).on('click','#deleterow',function(){
+    	var length = $('#configs').find("tbody tr").length;
+    	if(length == 1){
+    		bootbox.alert('First row cannot be deleted!');
+    	}else{
+            if($(this).data('func')){
+                $(this).closest('tr').remove();
+                var idx=0;
+                //regenerate index existing inputs in table row
+                jQuery("#configs tbody tr").each(function() {
+                 jQuery(this).find("input").each(function() {
+                 jQuery(this).attr({
+                 'id': function(_, id) {
+                 return id.replace(/\[.\]/g, '['+ idx +']');
+                 },
+                 'name': function(_, name) {
+                 return name.replace(/\[.\]/g, '['+ idx +']');
+                 }
+                 });
+                 });
+
+                 idx++;
+                 });
+            } else {
+                $(this).closest('tr').find('input[type=hidden]').val('true');
+                $(this).closest('tr').hide();
+            }
+    		
+    	}
+    		
+    })
+
 });
-
-
-
-function compareDate(dt1, dt2){			
-	/*******		Return Values [0 if dt1=dt2], [1 if dt1<dt2],  [-1 if dt1>dt2]     *******/
-		var d1, m1, y1, d2, m2, y2, ret;
-		dt1 = dt1.split('/');
-		dt2 = dt2.split('/');
-		ret = (eval(dt2[2])>eval(dt1[2])) ? 1 : (eval(dt2[2])<eval(dt1[2])) ? -1 : (eval(dt2[1])>eval(dt1[1])) ? 1 : (eval(dt2[1])<eval(dt1[1])) ? -1 : (eval(dt2[0])>eval(dt1[0])) ? 1 : (eval(dt2[0])<eval(dt1[0])) ? -1 : 0 ;										
-		return ret;
-	}
-function getTodayDate()
-{
-	var date;
-	    var d = new Date();
-	var curr_date = d.getDate();
-	var curr_month = d.getMonth();
-		curr_month++;
-	var curr_year = d.getFullYear();
-	    date=curr_date+"/"+curr_month+"/"+curr_year;
-	    return date;
-}
-
-function validateDate(obj)
-{
-
-	var todaysDate=getTodayDate();
-	document.getElementById("egi_error_area").style.display='none';
-	if(compareDate(obj.value,todaysDate) == 1)
-	{		
-		 var color = "#FF0000";
-		document.getElementById("egi_error_area").style.display = '';
-		document.getElementById("egi_error_area").innerHTML = '<font color="+color+">Effective Date should not be less than todays date</font>';
-		obj.value="";
-		return false;
-		}
-}
-
-	function checkSplCharIncludingFewSplchar(obj)
-	{
-		var iChars = ",";
-		document.getElementById("egi_error_area").style.display='none';
-		for (var i = 0; i < obj.value.length; i++)
-		{
-			if (iChars.indexOf(obj.value.charAt(i)) != -1)
-			{
-				
-				 var color = "#FF0000";
-				document.getElementById("egi_error_area").style.display = '';
-				document.getElementById("egi_error_area").innerHTML = '<font color="+color+">Special characters comma(,) is not allowed so add New Row for Second Value</font>';
-				obj.value="";
-				return false;
-			}
-		}
-		return true;
-	}

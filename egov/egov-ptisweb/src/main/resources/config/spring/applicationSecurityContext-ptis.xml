@@ -86,8 +86,8 @@
 				<security:filter-chain pattern="/report/dailyCollection" filters="none" />
 				<security:filter-chain pattern="/report/dailyCollection/result" filters="none" />
 				<security:filter-chain pattern="/report/currentInstDCB" filters="none" />
-				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" />  
-					<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
+				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" /> 
+				<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
 				
 				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/reports/ulbWiseCollectionList" filters="none" />  

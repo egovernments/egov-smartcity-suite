@@ -91,6 +91,9 @@ public class JudgmentTypeService {
     public List<JudgmentType> getJudgmentTypeList() {
         return judgmentTypeRepository.findAll();
     }
+    public List<JudgmentType> getActiveJudgementTypes() {
+        return judgmentTypeRepository.findByActiveTrueOrderByNameAsc();
+    }
 
     public List<JudgmentType> search(final JudgmentType judgmentType) {
 

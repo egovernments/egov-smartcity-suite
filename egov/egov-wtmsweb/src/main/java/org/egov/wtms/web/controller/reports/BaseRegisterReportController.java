@@ -39,15 +39,6 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -69,8 +60,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/report/baseRegister")
@@ -119,7 +117,7 @@ public class BaseRegisterReportController {
         for (final BaseRegisterResult br : baseRegisterResultList)
             br.setPeriod(getDuePeriodFrom(br.getConsumerNo()));
         String result = "";
-        result = new StringBuilder("{ \"data\":").append(toJSON(baseRegisterResultList)).append("}").toString();
+        result = new StringBuilder("{ \"data\":").append(toJSON(baseRegisterResultList, BaseRegisterResult.class, BaseRegisterResultAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
     }
@@ -140,13 +138,4 @@ public class BaseRegisterReportController {
             return "";
 
     }
-
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(BaseRegisterResult.class, new BaseRegisterResultAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
 }

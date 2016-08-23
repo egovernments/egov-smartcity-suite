@@ -160,7 +160,7 @@ public class Judgment extends AbstractAuditable {
     private List<JudgmentDocuments> judgmentDocuments = new ArrayList<JudgmentDocuments>(0);
 
     @OneToMany(mappedBy = "judgment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<JudgmentImpl> judgmentImpl = new HashSet<JudgmentImpl>(0);
+    private List<JudgmentImpl> judgmentImpl = new ArrayList<JudgmentImpl>(0);
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "parent")
@@ -316,11 +316,11 @@ public class Judgment extends AbstractAuditable {
         this.sapAccepted = sapAccepted;
     }
 
-    public Set<JudgmentImpl> getJudgmentImpl() {
+    public List<JudgmentImpl> getJudgmentImpl() {
         return judgmentImpl;
     }
 
-    public void setJudgmentImpl(final Set<JudgmentImpl> judgmentImpl) {
+    public void setJudgmentImpl(final List<JudgmentImpl> judgmentImpl) {
         this.judgmentImpl = judgmentImpl;
     }
 

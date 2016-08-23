@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.masters.repository;
 
+import java.util.List;
+
 import org.egov.lcms.masters.entity.GovernmentDepartment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -48,5 +50,6 @@ public interface GovernmentDepartmentRepository extends JpaRepository<Government
 
     GovernmentDepartment findByCode(String code);
     GovernmentDepartment findByName(String name);
+    List<GovernmentDepartment> findByActiveTrueOrderByNameAsc();
 
 }

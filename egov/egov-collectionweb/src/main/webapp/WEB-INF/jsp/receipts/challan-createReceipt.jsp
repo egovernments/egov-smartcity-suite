@@ -40,6 +40,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <head>
 <style type="text/css">
 #bankcodescontainer {position:absolute;left:11em;width:9%;text-align: left;}
@@ -348,6 +349,11 @@ function deleteChequeObj(obj,tableId)
 	document.forms[0].instrumentCount.value=count;
 }
 
+function process(date){
+	   var parts = date.split("/");
+	   return new Date(parts[2], parts[1] - 1, parts[0]);
+	}
+
 function verifyChequeDetails(table,len1)
 {
 	var check=true;
@@ -408,6 +414,15 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	}else {
+	    		var receiptDate = document.getElementById("receiptdate").value;
+		   	   	 if(receiptDate !=null && receiptDate != '' && instrDate.value != null && instrDate.value!= '' && check==true ){
+		   				if(process(instrDate.value) > process(receiptDate)){
+		   		    		document.getElementById("challan_error_area").innerHTML+=
+		   						'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
+		   					window.scroll(0,0);
+		   					check=false;
+		   		 	   	}
+		   			}
 	    	      checkForCurrentDate(instrDate);
 	    	    } 	                 
 	    }
@@ -1282,7 +1297,7 @@ var bobexample=new switchcontent("switchgroup1", "div") //Limit scanning of swit
 bobexample.collapsePrevious(true) //Only one content open at any given time
 bobexample.init()
 </script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script>
 jQuery(":input").inputmask();
 </script>

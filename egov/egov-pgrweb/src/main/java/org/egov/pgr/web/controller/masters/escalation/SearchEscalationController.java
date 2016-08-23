@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
@@ -66,6 +64,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -147,15 +146,6 @@ public class SearchEscalationController {
             escalationHelper.setToPosition(posHir.getToPosition());
             escalationHelperList.add(escalationHelper);
         }
-        return new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList)).append("}").toString();
+        return new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(EscalationHelper.class, new EscalationHelperAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
 }

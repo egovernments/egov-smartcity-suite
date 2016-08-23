@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,14 +52,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -68,7 +68,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGLC_APPEAL")
 @SequenceGenerator(name = Appeal.SEQ_EGLC_APPEAL, sequenceName = Appeal.SEQ_EGLC_APPEAL, allocationSize = 1)
-public class Appeal extends AbstractAuditable {
+public class Appeal extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_APPEAL = "SEQ_EGLC_APPEAL";
@@ -77,26 +77,30 @@ public class Appeal extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGLC_APPEAL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "JUDGMENTIMPL")
+    @JoinColumn(name = "judgmentimpl")
     private JudgmentImpl judgmentImpl;
 
-    @NotNull
     @Length(max = 50)
+    @NotNull
+    @Column(name = "srnumber")
     private String srNumber;
 
-    @NotNull
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.appeal.date")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Temporal(TemporalType.DATE)
+    @Column(name = "appealfiledon")
     private Date appealFiledOn;
 
-    @NotNull
     @Length(max = 100)
+    @Column(name = "appealfiledby")
     private String appealFiledBy;
 
-    @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AppealDocuments> appealDocuments = new ArrayList<AppealDocuments>(0);
+    /*
+     * @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade =
+     * CascadeType.ALL) private List<AppealDocuments> appealDocuments = new
+     * ArrayList<AppealDocuments>(0);
+     */
 
     @Override
     public Long getId() {
@@ -140,13 +144,12 @@ public class Appeal extends AbstractAuditable {
         this.judgmentImpl = judgmentImpl;
     }
 
-    public List<AppealDocuments> getAppealDocuments() {
-        return appealDocuments;
-    }
-
-    public void setAppealDocuments(final List<AppealDocuments> appealDocuments) {
-        this.appealDocuments = appealDocuments;
-    }
+    /*
+     * public List<AppealDocuments> getAppealDocuments() { return
+     * appealDocuments; } public void setAppealDocuments(final
+     * List<AppealDocuments> appealDocuments) { this.appealDocuments =
+     * appealDocuments; }
+     */
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();

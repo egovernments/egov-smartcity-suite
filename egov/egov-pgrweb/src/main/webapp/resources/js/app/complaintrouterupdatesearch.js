@@ -186,7 +186,7 @@ jQuery(document).ready(function($)
 		oTable.$('tr.row_selected').removeClass('row_selected');
         $(this).addClass('row_selected');
         var fid= oTable.fnGetData( this, 4 );
-        window.open('/pgr/router/update-search/'+ fid, '', 'height=800,width=800');
+        window.open('/pgr/router/search/update/'+ fid, '', 'height=800,width=800');
 	
 	});
 		

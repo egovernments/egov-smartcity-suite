@@ -54,12 +54,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 
 @Entity
 @Table(name = "eglc_counter_affidavit")
 @SequenceGenerator(name = CounterAffidavit.SEQ_EGLC_CA, sequenceName = CounterAffidavit.SEQ_EGLC_CA, allocationSize = 1)
-public class CounterAffidavit  implements Serializable {
+public class CounterAffidavit  extends AbstractPersistable<Long>  {
 
     private static final long serialVersionUID = 1517694643078084884L;
     public static final String SEQ_EGLC_CA= "seq_eglc_counter_affidavit";
