@@ -82,7 +82,7 @@ public class CreateCategoryController {
 			return "licensecategory-create";
 		}
 
-		licenseCategoryService.createPersist(licenseCategory);
+		licenseCategoryService.persistCategory(licenseCategory);
 		additionalAttr.addFlashAttribute("message", "msg.create.category.success");
 
 		return "redirect:/licensecategory/view/" + licenseCategory.getCode();

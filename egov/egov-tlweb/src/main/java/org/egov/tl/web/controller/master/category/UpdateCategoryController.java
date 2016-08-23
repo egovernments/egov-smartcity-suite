@@ -83,7 +83,7 @@ public class UpdateCategoryController {
 			return "licensecategory-update";
 		}
 
-		licenseCategoryService.createPersist(licenseCategory);
+		licenseCategoryService.persistCategory(licenseCategory);
 		additionalAttr.addFlashAttribute("message", "msg.success.category.update");
 		return "redirect:/licensecategory/view/" + licenseCategory.getCode();
 	}

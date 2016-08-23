@@ -56,7 +56,7 @@ public class LicenseCategoryService {
     private LicenseCategoryRepository licenseCategoryRepository;
 
     @Transactional
-    public LicenseCategory createPersist(final LicenseCategory licenseCategory) {
+    public LicenseCategory persistCategory(final LicenseCategory licenseCategory) {
         return licenseCategoryRepository.save(licenseCategory);
     }
 
