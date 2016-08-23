@@ -1135,7 +1135,6 @@ public class WorkProgressRegisterService {
         query.append(" egw_contractor_grade cg on cg.id = cd.contractor_grade_id ");
         query.append(" WHERE details.woStatusCode = '" + WorksConstants.APPROVED + "' ");
         query.append(" AND details.woOfflineStatusCode ='" + OfflineStatuses.WORK_COMMENCED.toString().toUpperCase() + "' ");
-        //TODO bill type and offline status needs to be considered?? check with sathish
         query.append(" AND details.billtype != '" + WorksConstants.FINAL_BILL + "' "); 
         query.append(commonFilterConditions.toString());
         query.append(groupByFilter.toString());
