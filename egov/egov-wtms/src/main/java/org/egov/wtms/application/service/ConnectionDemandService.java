@@ -877,7 +877,7 @@ public class ConnectionDemandService {
                 "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
                         + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
                         + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                        + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currFinStartDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                        + "and dmdDet.id_demand =:dmdId and inst.start_date<:currFinStartDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
                         + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
         final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
                 .setParameter("dmdId", egDemand.getId())

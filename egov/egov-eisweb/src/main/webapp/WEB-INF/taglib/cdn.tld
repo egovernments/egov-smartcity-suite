@@ -101,15 +101,5 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-        <attribute>
-            <description>
-                CDN domain URL, Not added in validation but if cdn
-                is specified ensure value for context and value are
-                also present. eg: cdn="http://cdn.egovernments.org"
-            </description>
-            <name>cdn</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
     </tag>
 </taglib>

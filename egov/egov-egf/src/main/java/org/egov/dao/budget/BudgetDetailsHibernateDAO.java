@@ -105,14 +105,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
-	private static int count=0;
-    public BudgetDetailsHibernateDAO() {
-		super();
-		LOG.error("-------------Creating the instance.---------------"+count++);
-		LOG.error(this.getClass().getClassLoader().getClass().getCanonicalName());
-	}
+    private static int count = 0;
 
-	@Transactional
+    public BudgetDetailsHibernateDAO() {
+        super();
+    }
+
+    @Transactional
     public BudgetDetail update(final BudgetDetail entity) {
         getCurrentSession().update(entity);
         return entity;
@@ -179,8 +178,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     private BudgetUsageService budgetUsageService;
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-    
-    private static Logger LOG=Logger.getLogger(BudgetDetailsHibernateDAO.class);
+
+    private static Logger LOG = Logger.getLogger(BudgetDetailsHibernateDAO.class);
     @Autowired
     private BudgetControlTypeService budgetCheckConfigService;
 
@@ -412,7 +411,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 final List<BudgetDetail> bdList = q.list();
                 if (bdList == null || bdList.size() == 0) {
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
+                        LOGGER.debug(
+                                "IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("financial year id - " + financialyearid.toString() + " Budget Group -  "
                                 + budgetheadid.toString() + " Query - " + query);
@@ -491,12 +491,14 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 q.setParameterList("bgId", budgetheadid);
                 final List<BudgetDetail> bdList = q.list();
                 // List<BudgetDetail> bdList =
-                // persistenceService.findAllBy(" from BudgetDetail bd where  bd.budget.financialYear.id=? and bd.budgetGroup.id=? "+query,
+                // persistenceService.findAllBy(" from BudgetDetail bd where bd.budget.financialYear.id=? and bd.budgetGroup.id=?
+                // "+query,
                 // financialyearid,budgetheadid);
 
                 if (bdList == null || bdList.size() == 0) {
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
+                        LOGGER.debug(
+                                "IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("financial year id - " + financialyearid.toString() + " Budget Group -  "
                                 + budgetheadid.toString() + " Query - " + query);
@@ -576,12 +578,14 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                 q.setParameterList("bgId", budgetheadid);
                 final List<BudgetDetail> bdList = q.list();
                 // List<BudgetDetail> bdList =
-                // persistenceService.findAllBy(" from BudgetDetail bd where  bd.budget.financialYear.id=? and bd.budgetGroup.id=? "+query,
+                // persistenceService.findAllBy(" from BudgetDetail bd where bd.budget.financialYear.id=? and bd.budgetGroup.id=?
+                // "+query,
                 // financialyearid,budgetheadid);
 
                 if (bdList == null || bdList.size() == 0) {
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
+                        LOGGER.debug(
+                                "IN consumeEncumbranceBudget()-getDetail() - No budget detail item defined for RE or BE for this combination!!");
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("financial year id - " + financialyearid.toString() + " Budget Group -  "
                                 + budgetheadid.toString() + " Query - " + query);
@@ -1218,8 +1222,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             hibQuery.setParameterList("budgetHeadList", budgetHeadList);
             final List<BudgetDetail> bdList = hibQuery.list();
             if (bdList == null || bdList.size() == 0)
-              // return BigDecimal.ZERO;
-            	throw new ValidationException(new ValidationError("Budget not defined for Glcode"+budgetHeadList.get(0)+" and given combination", "Budget not defined for Glcode"+budgetHeadList.get(0)+" and given combination"));
+                // return BigDecimal.ZERO;
+                throw new ValidationException(
+                        new ValidationError("Budget not defined for Glcode" + budgetHeadList.get(0) + " and given combination",
+                                "Budget not defined for Glcode" + budgetHeadList.get(0) + " and given combination"));
             else
                 return getApprovedAmt(bdList);
         } catch (final ValidationException v) {
@@ -1551,19 +1557,18 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         BigDecimal txnAmt = null;
 
         try {
-           
-        	String  budgetCheckConfig = budgetCheckConfigService.getConfigValue();
-        	
-       	   List<AppConfigValues> list ; /* appConfigValuesService.getConfigValuesByModuleAndKey(EGF,
-                    "budgetCheckRequired");
-            if (list.isEmpty())
-                throw new ValidationException(EMPTY_STRING, "budgetCheckRequired is not defined in AppConfig");
 
-            if ("N".equalsIgnoreCase(list.get(0).getValue()))
-                return true;*/
-        	if(budgetCheckConfig.equals("NONE"))   
-        		return true;
-        	
+            String budgetCheckConfig = budgetCheckConfigService.getConfigValue();
+
+            List<AppConfigValues> list; /*
+                                         * appConfigValuesService.getConfigValuesByModuleAndKey(EGF, "budgetCheckRequired"); if
+                                         * (list.isEmpty()) throw new ValidationException(EMPTY_STRING,
+                                         * "budgetCheckRequired is not defined in AppConfig"); if
+                                         * ("N".equalsIgnoreCase(list.get(0).getValue())) return true;
+                                         */
+            if (budgetCheckConfig.equals("NONE"))
+                return true;
+
             if (paramMap.get("mis.budgetcheckreq") != null
                     && ((Boolean) paramMap.get("mis.budgetcheckreq")).equals(false))
                 return true;
@@ -1698,10 +1703,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                                                                                 // budgetedamount
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug(".............Budgeted Amount For the year............" + budgetedAmt);
-                
-                if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
-                if (budgetedAmt.compareTo(BigDecimal.ZERO) == 0)
-                    return false;
+
+                if (budgetCheckConfigService.getConfigValue()
+                        .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
+                    if (budgetedAmt.compareTo(BigDecimal.ZERO) == 0)
+                        return false;
 
                 final BigDecimal actualAmt = getActualBudgetUtilizedForBudgetaryCheck(paramMap); // get
                                                                                                  // actual
@@ -1737,42 +1743,37 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     LOGGER.debug("************ BudgetCheck Details End****************");
                 // BigDecimal diff = budgetedAmt.subtract(actualAmt);
 
-                
-                
-                if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
-                {
-                	if (txnAmt.compareTo(diff) <= 0) {
+                if (budgetCheckConfigService.getConfigValue()
+                        .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString())) {
+                    if (txnAmt.compareTo(diff) <= 0) {
 
-                		generateBanNumber(paramMap, bill);
-                		return true;
-                	}
+                        generateBanNumber(paramMap, bill);
+                        return true;
+                    }
 
-                	else
-                		return false;
+                    else
+                        return false;
                 }
-                if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString()))
-                {
-                	if (txnAmt.compareTo(diff) <= 0) {
+                if (budgetCheckConfigService.getConfigValue()
+                        .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString())) {
+                    if (txnAmt.compareTo(diff) <= 0) {
 
-                		generateBanNumber(paramMap, bill);
-                		return true;
-                	}
+                        generateBanNumber(paramMap, bill);
+                        return true;
+                    }
 
-                	else if(paramMap.get("allowNegetive")!=null && (Boolean)paramMap.get("allowNegetive"))
-                	{
-                		//first time allowNegetive will be set to false. After the user says okay it will be set to true
-                		generateBanNumber(paramMap, bill);
-                		return true;
+                    else if (paramMap.get("allowNegetive") != null && (Boolean) paramMap.get("allowNegetive")) {
+                        // first time allowNegetive will be set to false. After the user says okay it will be set to true
+                        generateBanNumber(paramMap, bill);
+                        return true;
 
-
-                	}else
-                	{
-                		return false;
-                	}
+                    } else {
+                        return false;
+                    }
 
                 }
-                
-            } else  //no budget check for coa
+
+            } else  // no budget check for coa
                 return true;
         } catch (final ValidationException v) {
             final List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -1785,23 +1786,23 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         return true;
     }
 
-	private void generateBanNumber(final Map<String, Object> paramMap,
-			EgBillregister bill) {
-		if (bill == null || bill.getEgBillregistermis().getBudgetaryAppnumber() == null)
-		    if (paramMap.get("voucherHeader") != null
-		            && ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis()
-		                    .getBudgetaryAppnumber() == null) {
-		        if (LOGGER.isDebugEnabled())
-		            LOGGER.debug("Bill level budget app no not generated so generating voucher level");
-		        if (bill != null) {
-		            if (LOGGER.isDebugEnabled())
-		                LOGGER.debug("bill Number..........." + bill.getBillnumber());
-		        } else if (LOGGER.isDebugEnabled())
-		            LOGGER.debug("Bill not present");
-		        ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis().setBudgetaryAppnumber(
-		                getBudgetApprNumber(paramMap));
-		    }
-	}
+    private void generateBanNumber(final Map<String, Object> paramMap,
+            EgBillregister bill) {
+        if (bill == null || bill.getEgBillregistermis().getBudgetaryAppnumber() == null)
+            if (paramMap.get("voucherHeader") != null
+                    && ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis()
+                            .getBudgetaryAppnumber() == null) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Bill level budget app no not generated so generating voucher level");
+                if (bill != null) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("bill Number..........." + bill.getBillnumber());
+                } else if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Bill not present");
+                ((CVoucherHeader) paramMap.get("voucherHeader")).getVouchermis().setBudgetaryAppnumber(
+                        getBudgetApprNumber(paramMap));
+            }
+    }
 
     /**
      * @param paramMap
@@ -2002,9 +2003,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     LOGGER.debug("voucher Level budget check disabled  so skipping budget check.");
                 return true;
             }
-            if(paramMap.get("allowNegetive")==null)
-            {
-            	paramMap.put("allowNegetive", true);
+            if (paramMap.get("allowNegetive") == null) {
+                paramMap.put("allowNegetive", true);
             }
             if (paramMap.get("debitAmt") != null)
                 debitAmt = (BigDecimal) paramMap.get("debitAmt");
@@ -2133,62 +2133,60 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("************ BudgetCheck Details For bill End *********************");
 
-                    
-                    if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString()))
-                    {
-                    	if (txnAmt.compareTo(diff) <= 0) {
+                    if (budgetCheckConfigService.getConfigValue()
+                            .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.MANDATORY.toString())) {
+                        if (txnAmt.compareTo(diff) <= 0) {
 
                             if (paramMap.get("bill") != null)
                                 // getCurrentSession().refresh((EgBillregister)paramMap.get("bill"));
-                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis().getBudgetaryAppnumber() == null) {
-                                    final String budgetApprNumber = getBudgetApprNumber(paramMap);
-                                    ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
-                                            budgetApprNumber);
+                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis()
+                                        .getBudgetaryAppnumber() == null) {
+                                final String budgetApprNumber = getBudgetApprNumber(paramMap);
+                                ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
+                                        budgetApprNumber);
                                 }
 
-                    		return true;
-                    	}
+                            return true;
+                        }
 
-                    	else
-                    		return false;
+                        else
+                            return false;
                     }
-                    if(budgetCheckConfigService.getConfigValue().equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString()))
-                    {
-                    	if (txnAmt.compareTo(diff) <= 0) {
+                    if (budgetCheckConfigService.getConfigValue()
+                            .equalsIgnoreCase(BudgetControlType.BudgetCheckOption.ANTICIPATORY.toString())) {
+                        if (txnAmt.compareTo(diff) <= 0) {
 
                             if (paramMap.get("bill") != null)
                                 // getCurrentSession().refresh((EgBillregister)paramMap.get("bill"));
-                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis().getBudgetaryAppnumber() == null) {
-                                    final String budgetApprNumber = getBudgetApprNumber(paramMap);
-                                    ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
-                                            budgetApprNumber);
+                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis()
+                                        .getBudgetaryAppnumber() == null) {
+                                final String budgetApprNumber = getBudgetApprNumber(paramMap);
+                                ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
+                                        budgetApprNumber);
                                 }
 
-                    		return true;
-                    	}
+                            return true;
+                        }
 
-                    	else if(paramMap.get("allowNegetive")!=null && (Boolean)paramMap.get("allowNegetive"))
-                    	{
-                    		//first time allowNegetive will be set to false. After the user says okay it will be set to true
+                        else if (paramMap.get("allowNegetive") != null && (Boolean) paramMap.get("allowNegetive")) {
+                            // first time allowNegetive will be set to false. After the user says okay it will be set to true
                             if (paramMap.get("bill") != null)
                                 // getCurrentSession().refresh((EgBillregister)paramMap.get("bill"));
-                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis().getBudgetaryAppnumber() == null) {
-                                    final String budgetApprNumber = getBudgetApprNumber(paramMap);
-                                    ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
-                                            budgetApprNumber);
+                                if (((EgBillregister) paramMap.get("bill")).getEgBillregistermis()
+                                        .getBudgetaryAppnumber() == null) {
+                                final String budgetApprNumber = getBudgetApprNumber(paramMap);
+                                ((EgBillregister) paramMap.get("bill")).getEgBillregistermis().setBudgetaryAppnumber(
+                                        budgetApprNumber);
                                 }
 
-                    		return true;
+                            return true;
 
-
-                    	}else
-                    	{
-                    		return false;
-                    	}
+                        } else {
+                            return false;
+                        }
 
                     }
- 
-                    
+
                 } else
                     return true;
 
@@ -2633,7 +2631,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         // 3. get Budget approvedAmount
         amount = (BigDecimal) persistenceService.find(
                 "select sum(approvedAmount) from BudgetDetail bd where  bd.executingDepartment.id=? and bd.fund.id=?"
-                        + " and bd.budget.financialYear=? and bd.budget.isbere=? ", deptId, fundId, finYear, isbere);
+                        + " and bd.budget.financialYear=? and bd.budget.isbere=? ",
+                deptId, fundId, finYear, isbere);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Approved " + isbere + " Amount" + amount);
         amount = amount == null ? BigDecimal.ZERO : amount;

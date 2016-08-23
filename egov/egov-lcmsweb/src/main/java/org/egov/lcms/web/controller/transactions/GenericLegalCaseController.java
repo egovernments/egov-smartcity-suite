@@ -81,14 +81,14 @@ public class GenericLegalCaseController {
         return courtTypeMasterService.getActiveCourtTypes();
     }
     public @ModelAttribute("petitiontypeList") List<PetitionTypeMaster> getPetitionList() {
-        return petitionTypeMasterService.getPetitiontypeList();
+        return petitionTypeMasterService.getActivePetitionTypes();
     }
     
     public @ModelAttribute("courtsList") List<CourtMaster> getCourtNameList() {
-        return courtMasterService.findAll();
+        return courtMasterService.getActiveCourtMaster();
     }
     public @ModelAttribute("govtDeptList") List<GovernmentDepartment> getGovtDeptList() {
-        return governmentDepartmentService.findAll();
+        return governmentDepartmentService.getActiveGovernmentDepartment();
     }
 
     public @ModelAttribute("lcNumberTypes") Map<String, String> getLcNumberTypeTypes() {

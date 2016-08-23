@@ -85,6 +85,6 @@
 				</tr>
 			</table>
 		</div>
-		<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+		<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
 	</body>
 </html>

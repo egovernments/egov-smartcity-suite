@@ -92,6 +92,9 @@ public class InterimOrderService {
     public InterimOrder findOne(final Long id) {
         return interimOrderRepository.findOne(id);
     }
+    public List<InterimOrder> getActiveInterimOrder() {
+        return interimOrderRepository.findByActiveTrueOrderByInterimOrderTypeAsc();
+    }
 
     public List<InterimOrder> search(final InterimOrder interimOrder) {
 

@@ -58,6 +58,7 @@ public class ComplaintEscalationJob extends AbstractQuartzJob {
 
     @Override
     public void executeJob() {
+    	prepareCityThreadLocal();
         escalationService.escalateComplaint();
     }
 

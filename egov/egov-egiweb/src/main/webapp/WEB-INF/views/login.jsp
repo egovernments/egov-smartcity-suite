@@ -64,16 +64,16 @@
 		<meta name="author" content="eGovernments Foundation" />
         <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
-		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png'/>" sizes="32x32">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}'/>">
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js'/>" type="text/javascript"></script>
+		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png'/>" sizes="32x32">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}'/>">
+		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js'/>" type="text/javascript"></script>
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
-			<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/ie8/respond.min.js'/>"></script>
+			<script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+			<script src="<cdn:url value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 	</head>
 	<body class="page-body index">
@@ -93,7 +93,7 @@
 							<ul class="hr-menu text-right">
 								<li class="ico-menu">
 									<a href="http://www.egovernments.org" data-strwindname = "egovsite" class="open-popup">
-									<img src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/egov_logo_tr_h.png'/>" title="Powered by eGovernments" height="37" alt="">
+									<img src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png'/>" title="Powered by eGovernments" height="37" alt="">
 									</a>
 								</li>
 							</ul>
@@ -411,9 +411,9 @@
 		</script>
 		</c:if>
 		
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
-		<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/login.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
+		<script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
+		<script src="<cdn:url value='/resources/js/app/login.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
 	</body>
 </html>

@@ -68,7 +68,7 @@ public class GenerateConnectionBillService {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
-                "select dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
+                "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\","
                         + "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , "
                         + " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_dcb_view dcbinfo"
                         + " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id"

@@ -77,7 +77,7 @@ public class LegalCaseInterimOrderController {
             @RequestParam("lcNumber") final String lcNumber, final Model model, final HttpServletRequest request) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         model.addAttribute("legalCase", legalCase);
-        model.addAttribute("interimOrders", interimOrderService.findAll());
+        model.addAttribute("interimOrders", interimOrderService.getActiveInterimOrder());
         model.addAttribute("legalCaseInterimOrder", legalCaseInterimOrder);
         model.addAttribute("lcNumber", legalCase.getLcNumber());
         model.addAttribute("mode", "create");
@@ -97,7 +97,7 @@ public class LegalCaseInterimOrderController {
             @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
         final LegalCase legalCase = getLegalCase(lcNumber, request);
         if (errors.hasErrors()) {
-            model.addAttribute("interimOrders", interimOrderService.findAll());
+            model.addAttribute("interimOrders", interimOrderService.getActiveInterimOrder());
             model.addAttribute("legalCase", legalCase);
             return "lcinterimorder-new";
         } else

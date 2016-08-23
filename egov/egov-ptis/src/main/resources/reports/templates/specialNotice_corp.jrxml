@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-06-24T12:19:23 -->
+<!-- 2016-08-18T14:56:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="specialNotice" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -117,7 +78,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNew_rev_ARV()!=null?$P{ownerInfo}.getNew_rev_ARV():0]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="282" y="310" width="231" height="12" uuid="704f2578-066f-48fd-a8e8-713e01cb8264"/>
@@ -173,7 +134,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevPropertyTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevPropertyTax()!=null?$P{ownerInfo}.getRevPropertyTax():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="397" y="335" width="116" height="12" uuid="95dc0297-5c2c-46d5-9e23-cd516ffa74af"/>
@@ -187,7 +148,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewPropertyTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewPropertyTax()!=null?$P{ownerInfo}.getNewPropertyTax():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="282" y="347" width="115" height="12" uuid="686ced6a-ac6d-40c4-a44c-00cf4aaccfbc"/>
@@ -201,9 +162,9 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevLibraryCess()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevLibraryCess()!=null?$P{ownerInfo}.getRevLibraryCess():0]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="397" y="347" width="116" height="12" uuid="82c31a7f-60ee-4f02-982a-f0816410cde4"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -215,7 +176,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewLibraryCess()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewLibraryCess()!=null?$P{ownerInfo}.getNewLibraryCess():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="282" y="359" width="115" height="12" uuid="c5fb0710-715d-4372-b145-c786f8c07b37"/>
@@ -229,7 +190,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevUCPenalty()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevUCPenalty()!=null?$P{ownerInfo}.getRevUCPenalty():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="397" y="359" width="116" height="12" uuid="93856ee2-88da-4042-aead-1d8b9bccbb78"/>
@@ -243,7 +204,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewUCPenalty()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewUCPenalty()!=null?$P{ownerInfo}.getNewUCPenalty():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="282" y="371" width="115" height="12" uuid="2ea52558-f522-4de6-8f8e-850462a2cccd"/>
@@ -257,9 +218,9 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevTotalTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getRevTotalTax()!=null?$P{ownerInfo}.getRevTotalTax():0]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="397" y="371" width="116" height="12" uuid="e1d987ae-1ba3-4523-8707-4b9dddbe8784"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -271,7 +232,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewTotalTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getNewTotalTax()!=null?$P{ownerInfo}.getNewTotalTax():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="272" y="25" width="242" height="14" isPrintWhenDetailOverflows="true" uuid="7ce698fd-018d-45d9-8f84-4a2b508f2eeb"/>
@@ -287,7 +248,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">ORIGINAL COPY</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">OFFICE COPY</style>"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="37" y="285" width="245" height="15" uuid="79a902fe-2e91-42fa-a896-bb9df4cb3b23"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -299,7 +260,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingARV()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingARV()!=null?$P{ownerInfo}.getExistingARV():0]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="37" y="270" width="245" height="15" uuid="2f6fbf3d-e0bc-41b8-a183-b2dd1b8e7c64"/>
@@ -329,7 +290,7 @@
 				</textElement>
 				<text><![CDATA[Existing H/Y Tax if any (Rs.)]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="160" y="347" width="122" height="12" uuid="fad818b9-7feb-45cb-91cc-037bd9ff2820"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -341,7 +302,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingLibraryCess()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingLibraryCess()!=null?$P{ownerInfo}.getExistingLibraryCess():0]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
 				<reportElement x="160" y="335" width="122" height="12" uuid="90facf79-c2d6-4653-afeb-79cb0b46d395"/>
@@ -355,9 +316,9 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingPropertyTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingPropertyTax()!=null?$P{ownerInfo}.getExistingPropertyTax():0]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="160" y="359" width="122" height="12" uuid="3a6e7ec7-fcf0-404d-8ea1-70f8b86fec60"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -369,9 +330,9 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingUCPenalty()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingUCPenalty()!=null?$P{ownerInfo}.getExistingUCPenalty():0]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="false">
 				<reportElement x="160" y="371" width="122" height="12" uuid="1c588542-50d2-40d1-a5af-9c69e437eeee"/>
 				<box rightPadding="2">
 					<pen lineWidth="0.5"/>
@@ -383,7 +344,7 @@
 				<textElement textAlignment="Right" markup="styled">
 					<font size="8" isBold="true" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingTotalTax()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownerInfo}.getExistingTotalTax()!=null?$P{ownerInfo}.getExistingTotalTax():0]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="37" y="335" width="123" height="12" uuid="b3431ef3-b86e-4f3b-b657-7266d7662294"/>

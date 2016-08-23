@@ -39,8 +39,17 @@
  */
 package org.egov.egf.web.actions.report;
 
-
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -70,7 +79,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.payment.Paymentheader;
@@ -83,32 +91,20 @@ import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
-		@Result(name = "results", location = "budgetVarianceReport-results.jsp"),
-		@Result(name = "form", location = "budgetVarianceReport-form.jsp"),
+        @Result(name = "results", location = "budgetVarianceReport-results.jsp"),
+        @Result(name = "form", location = "budgetVarianceReport-form.jsp"),
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/pdf", "contentDisposition", "no-cache;filename=BudgetVarianceReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=BudgetVarianceReport.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=BudgetVarianceReport.xls" })
 })
- 
+
 @ParentPackage("egov")
 public class BudgetVarianceReportAction extends BaseFormAction {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -9048247816556335427L;
     String jasperpath = "budgetVarianceReport";
     List<Paymentheader> paymentHeaderList = new ArrayList<Paymentheader>();
@@ -119,15 +115,17 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
     private Vouchermis vouchermis = new Vouchermis();
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    AppConfigValueService appConfigValuesService;
     private ReportService reportService;
     private final List<String> accountTypeList = new ArrayList<String>();
     private String accountType = "";
     private BudgetDetail budgetDetail = new BudgetDetail();
+    @Autowired
     private BudgetDetailConfig budgetDetailConfig;
     protected List<String> gridFields = new ArrayList<String>();
     protected BudgetDetailService budgetDetailService;
@@ -139,7 +137,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     private Department department = new Department();
     private CFunction function = new CFunction();
     private Fund fund = new Fund();
-    
+
     @ValidationErrorPage(value = "form")
     @SkipValidation
     @Override
@@ -147,8 +145,11 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return "form";
     }
 
-    public BudgetVarianceReportAction(final BudgetDetailConfig config) {
-        budgetDetailConfig = config;
+    public BudgetVarianceReportAction() {
+    }
+
+    @Override
+    public void prepare() {
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
@@ -169,14 +170,10 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         if (isFieldMandatory(Constants.BOUNDARY))
             addRelatedEntity("boundary", Boundary.class);
         addRelatedEntity("budgetGroup", BudgetGroup.class);
-    }
-
-    @Override
-    public void prepare() {
-    	 super.prepare();
+        super.prepare();
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-       
+
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         if (!parameters.containsKey("skipPrepare")) {
             accountTypeList.add(BudgetAccountType.REVENUE_EXPENDITURE.name());
@@ -184,8 +181,9 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             accountTypeList.add(BudgetAccountType.CAPITAL_EXPENDITURE.name());
             accountTypeList.add(BudgetAccountType.CAPITAL_RECEIPTS.name());
             addDropdownData("accountTypeList", accountTypeList);
-            
-            dropdownData.put("budgetGroupList", persistenceService.findAllBy("from BudgetGroup where isActive=true order by name"));
+
+            dropdownData.put("budgetGroupList",
+                    persistenceService.findAllBy("from BudgetGroup where isActive=true order by name"));
             if (isFieldMandatory(Constants.EXECUTING_DEPARTMENT))
                 addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
             if (isFieldMandatory(Constants.FUNCTION))
@@ -229,8 +227,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return new Date();
     }
 
-    private StringBuffer formMiscQuery(final String mis, final String gl, final String detail)
-    {
+    private StringBuffer formMiscQuery(final String mis, final String gl, final String detail) {
         StringBuffer miscQuery = new StringBuffer();
         if (shouldShowHeaderField(Constants.FUND) && queryParamMap.containsKey("fundId")) {
             miscQuery = miscQuery.append(" and " + detail + ".fundId=bd.fund ");
@@ -311,7 +308,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         }
         final List<BudgetDetail> result = persistenceService.findAllBy("from BudgetDetail where budget.isbere='" + budgetType
                 + "' and " +
-                "budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id=" + financialYear.getId()
+                "budget.isActiveBudget=true and budget.status.code='Approved' and budget.financialYear.id="
+                + financialYear.getId()
                 + getMiscQuery() + " order by budget.name,budgetGroup.name");
         if (budgetVarianceEntries == null)
             budgetVarianceEntries = new ArrayList<BudgetVarianceEntry>();
@@ -328,21 +326,18 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                 budgetVarianceEntry.setFunctionCode(budgetDetail.getFunction().getName());
             budgetVarianceEntry.setDetailId(budgetDetail.getId());
             budgetVarianceEntry.setBudgetCode(budgetDetail.getBudget().getName());
-            if ("RE".equalsIgnoreCase(budgetType) && !getConsiderReAppropriationAsSeperate())
-            {
+            if ("RE".equalsIgnoreCase(budgetType) && !getConsiderReAppropriationAsSeperate()) {
                 budgetVarianceEntry.setAdditionalAppropriation(BigDecimal.ZERO);
                 final BigDecimal estimateAmount = (budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
                         .getApprovedAmount()).add(budgetDetail.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO
                                 : budgetDetail.getApprovedReAppropriationsTotal());
                 budgetVarianceEntry.setEstimate(estimateAmount);
-            }
-            else
-            {
+            } else {
                 budgetVarianceEntry.setEstimate(budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
                         .getApprovedAmount());
                 budgetVarianceEntry
-                .setAdditionalAppropriation(budgetDetail.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO
-                        : budgetDetail.getApprovedReAppropriationsTotal());
+                        .setAdditionalAppropriation(budgetDetail.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO
+                                : budgetDetail.getApprovedReAppropriationsTotal());
             }
             budgetVarianceEntries.add(budgetVarianceEntry);
         }
@@ -379,8 +374,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return query.toString();
     }
 
-    private void setQueryParams()
-    {
+    private void setQueryParams() {
         if (shouldShowHeaderField(Constants.EXECUTING_DEPARTMENT) && budgetDetail.getExecutingDepartment() != null
                 && budgetDetail.getExecutingDepartment().getId() != null && budgetDetail.getExecutingDepartment().getId() != -1
                 && budgetDetail.getExecutingDepartment().getId() != 0)
@@ -408,8 +402,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
 
     private void populateActualData(final CFinancialYear financialYear) {
         final String fromDate = Constants.DDMMYYYYFORMAT2.format(financialYear.getStartingDate());
-        if (budgetVarianceEntries != null && budgetVarianceEntries.size() != 0)
-        {
+        if (budgetVarianceEntries != null && budgetVarianceEntries.size() != 0) {
             setQueryParams();
             final List<Object[]> resultForVoucher = budgetDetailService.fetchActualsForFYWithParams(fromDate, "'"
                     + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", formMiscQuery("vmis", "gl", "vh"));
@@ -417,10 +410,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
             final List<Object[]> resultForBill = budgetDetailService.fetchActualsForBillWithVouchersParams(fromDate, "'"
                     + Constants.DDMMYYYYFORMAT2.format(asOnDate) + "'", formMiscQuery("bmis", "bdetail", "bmis"));
             extractData(resultForBill);
-        }
-        else
-        {
-        	addActionError("no data found");
+        } else {
+            addActionError("no data found");
         }
     }
 
@@ -437,7 +428,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                 if (actual == null || BigDecimal.ZERO.compareTo(actual) == 0)
                     row.setActual(new BigDecimal(budgetDetailIdsAndAmount.get(row.getDetailId().toString())));
                 else
-                    row.setActual(row.getActual().add(new BigDecimal(budgetDetailIdsAndAmount.get(row.getDetailId().toString()))));
+                    row.setActual(
+                            row.getActual().add(new BigDecimal(budgetDetailIdsAndAmount.get(row.getDetailId().toString()))));
             } else if (actual == null)
                 row.setActual(BigDecimal.ZERO);
             row.setVariance(row.getEstimate().add(
@@ -456,8 +448,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return "XLS";
     }
 
-    protected void checkMandatoryField(final String objectName, final String fieldName, final Object value, final String errorKey)
-    {
+    protected void checkMandatoryField(final String objectName, final String fieldName, final Object value,
+            final String errorKey) {
         if (mandatoryFields.contains(fieldName) && (value == null || value.equals(-1) || value.equals(0)))
             addFieldError(objectName, getText(errorKey));
     }
@@ -468,7 +460,8 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                 .getFund().getId(), "voucher.fund.mandatory");
         checkMandatoryField("executingDepartment", Constants.EXECUTING_DEPARTMENT,
                 budgetDetail.getExecutingDepartment() == null ? Integer.parseInt("0") : budgetDetail.getExecutingDepartment()
-                        .getId(), "voucher.department.mandatory");
+                        .getId(),
+                "voucher.department.mandatory");
         checkMandatoryField("scheme", Constants.SCHEME, budgetDetail.getScheme() == null ? Integer.parseInt("0") : budgetDetail
                 .getScheme().getId(), "voucher.scheme.mandatory");
         checkMandatoryField("subScheme", Constants.SUBSCHEME, budgetDetail.getSubScheme() == null ? Integer.parseInt("0")
@@ -536,9 +529,6 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return accountType;
     }
 
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-    }
 
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
@@ -586,28 +576,28 @@ public class BudgetVarianceReportAction extends BaseFormAction {
         return "Y".equalsIgnoreCase(appValue);
     }
 
-	public Department getDepartment() {
-		return department;
-	}
+    public Department getDepartment() {
+        return department;
+    }
 
-	public void setDepartment(Department department) {
-		this.department = department;
-	}
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
-	public CFunction getFunction() {
-		return function;
-	}
+    public CFunction getFunction() {
+        return function;
+    }
 
-	public void setFunction(CFunction function) {
-		this.function = function;
-	}
+    public void setFunction(CFunction function) {
+        this.function = function;
+    }
 
-	public Fund getFund() {
-		return fund;
-	}
+    public Fund getFund() {
+        return fund;
+    }
 
-	public void setFund(Fund fund) {
-		this.fund = fund;
-	}
+    public void setFund(Fund fund) {
+        this.fund = fund;
+    }
 
 }

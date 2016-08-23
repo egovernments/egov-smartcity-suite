@@ -43,21 +43,28 @@ package org.egov.infra.admin.master.repository;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
+
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
 
+    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
     AppConfig findByModule_NameAndKeyName(String moduleName, String keyName);
 
     AppConfig findById(Long id);
 
+    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
     AppConfig findByKeyName(final String keyName);
 
+    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.LOAD)
     List<AppConfig> findByModule_Name(String moduleName);
 
+    @EntityGraph(value = FETCH_WITH_VALUES, type = EntityGraph.EntityGraphType.FETCH)
     Page<AppConfig> findByModule_Name(String moduleName, Pageable pageable);
 }

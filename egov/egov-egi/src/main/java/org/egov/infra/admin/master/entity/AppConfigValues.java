@@ -51,24 +51,27 @@ import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.SEQUENCE;
+import static javax.persistence.TemporalType.DATE;
+import static org.egov.infra.admin.master.entity.AppConfigValues.SEQ_APPCONFIG_VALUE;
+
 @Entity
 @Table(name = "eg_appconfig_values")
 @Searchable
-@SequenceGenerator(name = AppConfigValues.SEQ_APPCONFIG_VALUE, sequenceName = AppConfigValues.SEQ_APPCONFIG_VALUE, allocationSize = 1)
+@SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
 public class AppConfigValues extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;
@@ -77,7 +80,7 @@ public class AppConfigValues extends AbstractAuditable {
     @Expose
     @DocumentId
     @Id
-    @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = SEQUENCE)
     private Long id;
 
     @NotBlank
@@ -88,14 +91,17 @@ public class AppConfigValues extends AbstractAuditable {
     private String value;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Temporal(DATE)
     @Column(name = "effective_from", updatable = false)
     private Date effectiveFrom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "key_id", nullable = false)
     @JsonIgnore
     private AppConfig config;
+
+    @Transient
+    private boolean markedForRemoval;
 
     @Override
     public Long getId() {
@@ -128,6 +134,14 @@ public class AppConfigValues extends AbstractAuditable {
 
     public void setConfig(final AppConfig config) {
         this.config = config;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(final boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
     @Override

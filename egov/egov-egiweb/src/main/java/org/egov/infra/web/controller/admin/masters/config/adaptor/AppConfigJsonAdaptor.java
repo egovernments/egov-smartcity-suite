@@ -41,10 +41,12 @@
 
 package org.egov.infra.web.controller.admin.masters.config.adaptor;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 
@@ -61,12 +63,14 @@ public class AppConfigJsonAdaptor implements JsonSerializer<AppConfig> {
         appConfigJSON.addProperty("description", appConfig.getDescription());
         appConfigJSON.addProperty("module", appConfig.getModule().getName());
         appConfigJSON.addProperty("id", appConfig.getId());
+        JsonArray  configValues = new JsonArray();
         for(AppConfigValues confValue : appConfig.getConfValues()) {
-            JsonObject  configValueJSON = new JsonObject();
+        	JsonObject configValueJSON = new JsonObject();
             configValueJSON.addProperty("Effective Date", getDefaultFormattedDate(confValue.getEffectiveFrom()));
             configValueJSON.addProperty("Value", confValue.getValue());
-            appConfigJSON.add("values", configValueJSON);
+            configValues.add(configValueJSON);
         }
+        appConfigJSON.add("values", configValues);
         return appConfigJSON;
     }
 

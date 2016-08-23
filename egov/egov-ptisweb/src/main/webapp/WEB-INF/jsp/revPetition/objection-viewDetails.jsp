@@ -40,12 +40,13 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 
 <html>
 <head>
 	<title><s:text name="objectionView.det"></s:text></title>
-		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	</head>
 	<body class="yui-skin-sam">
 	<s:push value="model">

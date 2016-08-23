@@ -66,6 +66,6 @@ public final class ApplicationConstant {
     public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     public static final String CITY_LOGO_PATH_KEY = "logopath";
 
-    public static final String CDN_KEY = "cdn";
+    public static final String CDN_ATTRIB_NAME = "cdn";
     public static final String USERID_KEY = "userid";
 }

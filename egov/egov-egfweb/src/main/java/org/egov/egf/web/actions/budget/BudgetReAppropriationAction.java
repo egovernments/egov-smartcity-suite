@@ -39,8 +39,14 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -84,14 +90,8 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.ValueStack;
 
 @ParentPackage("egov")
 @Results({
@@ -105,6 +105,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationAction.class);
     private List<BudgetReAppropriationView> budgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
     private List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    @Autowired
     protected BudgetDetailConfig budgetDetailConfig;
     private BudgetDetail budgetDetail;
     protected Budget budget;
@@ -220,28 +221,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return mandatoryFields;
     }
 
-    public BudgetReAppropriationAction(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-        headerFields = budgetDetailConfig.getHeaderFields();
-        gridFields = budgetDetailConfig.getGridFields();
-        mandatoryFields = budgetDetailConfig.getMandatoryFields();
-        addRelatedEntity("budgetGroup", BudgetGroup.class);
-        addRelatedEntity("budget", Budget.class);
-        if (shouldShowField(Constants.FUNCTIONARY))
-            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
-        if (shouldShowField(Constants.FUNCTION))
-            addRelatedEntity(Constants.FUNCTION, CFunction.class);
-        if (shouldShowField(Constants.SCHEME))
-            addRelatedEntity(Constants.SCHEME, Scheme.class);
-        if (shouldShowField(Constants.SUB_SCHEME))
-            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
-        if (shouldShowField(Constants.FUND))
-            addRelatedEntity(Constants.FUND, Fund.class);
-        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
-        if (shouldShowField(Constants.BOUNDARY))
-            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
-        appropriationMisc.setReAppropriationDate(new Date());
+    public BudgetReAppropriationAction() {
     }
 
     protected void setupDropdownsInHeader() {
@@ -299,6 +279,23 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
+        addRelatedEntity("budgetGroup", BudgetGroup.class);
+        addRelatedEntity("budget", Budget.class);
+        if (shouldShowField(Constants.FUNCTIONARY))
+            addRelatedEntity(Constants.FUNCTIONARY, Functionary.class);
+        if (shouldShowField(Constants.FUNCTION))
+            addRelatedEntity(Constants.FUNCTION, CFunction.class);
+        if (shouldShowField(Constants.SCHEME))
+            addRelatedEntity(Constants.SCHEME, Scheme.class);
+        if (shouldShowField(Constants.SUB_SCHEME))
+            addRelatedEntity(Constants.SUB_SCHEME, SubScheme.class);
+        if (shouldShowField(Constants.FUND))
+            addRelatedEntity(Constants.FUND, Fund.class);
+        if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
+            addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
+        if (shouldShowField(Constants.BOUNDARY))
+            addRelatedEntity(Constants.BOUNDARY, Boundary.class);
+        appropriationMisc.setReAppropriationDate(new Date());
         if (financialYear != null && financialYear.getId() != 0L && budgetService.hasApprovedReForYear(financialYear.getId()))
             beRe = Constants.RE;
         setupDropdownsInHeader();
@@ -361,12 +358,10 @@ public class BudgetReAppropriationAction extends BaseFormAction {
                         "budgetDetail.budgetGroup.mandatory")));
             newBudgetReAppropriationList.clear();
             budgetReAppropriationList.clear();
-        } catch (final ValidationException e)
-        {
+        } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
                     e.getMessage())));
         }
@@ -387,8 +382,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return userId;
     }
 
-  
-
     protected BudgetReAppropriationMisc createBudgetReAppropriationMisc(final String actionName) {
         final Budget budget = new Budget();
         budget.setIsbere(beRe);
@@ -405,12 +398,10 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     protected Position getPosition() {
         try {
             return eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
-        } catch (final ValidationException e)
-        {
+        } catch (final ValidationException e) {
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError("Do transaction with proper user",
                     "Do transaction with proper user")));
         }
@@ -494,7 +485,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     List getFinancialYearDropDown() {
         List<Long> ids = new ArrayList<Long>();
         ids = (List<Long>) persistenceService
-                .findAllBy("select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and status.code='Approved'");
+                .findAllBy(
+                        "select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and status.code='Approved'");
         Query query;
         if (!ids.isEmpty()) {
             query = persistenceService.getSession()
@@ -510,7 +502,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
             return budgetService
                     .findAllBy(
                             "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true and status.moduletype='BUDGET' and status.code='"
-                                    + finalStatus + "' and financialYear.id=? and isbere=? order by name", id, beRe);
+                                    + finalStatus + "' and financialYear.id=? and isbere=? order by name",
+                            id, beRe);
         return new ArrayList();
     }
 
@@ -519,15 +512,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     }
 
     @Action(value = "/budget/budgetReAppropriation-beforeSearch")
-    public String beforeSearch()
-    {
+    public String beforeSearch() {
         return "search";
     }
 
     @SkipValidation
     @Action(value = "/budget/budgetReAppropriation-search")
-    public String search()
-    {
+    public String search() {
         String sql = " ba.budgetDetail.budget.financialYear=" + financialYear.getId() + " and ba.budgetDetail.budget.isbere='"
                 + budgetDetail.getBudget().getIsbere() + "' ";
         if (budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != 0)

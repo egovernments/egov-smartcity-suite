@@ -151,6 +151,12 @@ public class ConsumerSearch implements Indexable {
     @Searchable(name = "currentDue", group = Searchable.Group.SEARCHABLE)
     private BigDecimal currentDue;
     
+    @Searchable(name = "arrearsDemand", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal arrearsDemand;
+    
+    @Searchable(name = "currentDemand", group = Searchable.Group.SEARCHABLE)
+    private BigDecimal currentDemand;
+    
     @Searchable(name = "monthlyRate", group = Searchable.Group.SEARCHABLE)
     private BigDecimal monthlyRate;
 
@@ -419,4 +425,20 @@ public class ConsumerSearch implements Indexable {
         this.monthlyRate = monthlyRate;
     }
 
+    public BigDecimal getArrearsDemand() {
+        return arrearsDemand;
+    }
+
+    public void setArrearsDemand(BigDecimal arrearsDemand) {
+        this.arrearsDemand = arrearsDemand;
+    }
+
+    public BigDecimal getCurrentDemand() {
+        return currentDemand;
+    }
+
+    public void setCurrentDemand(BigDecimal currentDemand) {
+        this.currentDemand = currentDemand;
+    }
+    
 }

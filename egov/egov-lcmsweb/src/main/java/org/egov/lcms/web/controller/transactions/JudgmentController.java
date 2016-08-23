@@ -71,7 +71,7 @@ public class JudgmentController {
     private JudgmentService judgmentService;
 
     private void prepareNewForm(final Model model) {
-        model.addAttribute("judgmentTypes", judgmentTypeService.findAll());
+        model.addAttribute("judgmentTypes", judgmentTypeService.getActiveJudgementTypes());
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.GET)

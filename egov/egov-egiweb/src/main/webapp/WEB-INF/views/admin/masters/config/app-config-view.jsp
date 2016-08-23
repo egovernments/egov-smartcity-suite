@@ -42,7 +42,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<link rel="stylesheet"	href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
+<link rel="stylesheet"	href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
     <div class="col-md-12">
         <c:if test="${not empty message}">
@@ -81,14 +81,38 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-12">
-                <table class="table table-bordered datatable" id="view-appConfig-tbl"></table>
-            </div>
+            <table class="table table-bordered" id="view-appConfig-tbl"></table>
         </form>
     </div>
 </div>
-
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>
+<style>
+td.details-control,tr.shown td.details-control{
+	position:relative;
+}
+td.details-control:before {
+    content: "\f055";
+    font-family: FontAwesome;
+    position:absolute;
+    top: 8px;
+    font-size: 16px;
+}
+tr.shown td.details-control:before {
+    content: "\f056"; 
+    font-family: FontAwesome;
+    position:absolute;
+    top: 8px;
+    font-size: 16px;
+}
+.table tbody thead:first-child > tr:first-child th {
+    background: #fff;
+    color: #333;
+    font-family: semibold;
+}
+.table thead:first-child > tr:first-child th:first-child{
+	border-left: 1px solid #ccc;
+}
+</style>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/appconfig.js?rnd=${app_release_no}'/>"></script>

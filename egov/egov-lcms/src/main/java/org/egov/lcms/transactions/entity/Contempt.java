@@ -90,7 +90,7 @@ public class Contempt extends  AbstractPersistable<Long> {
 
    
     @Temporal(TemporalType.DATE)
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.contempt.date")
+    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT)
     @Column(name = "receivingdate")
     private Date receivingDate;
 
