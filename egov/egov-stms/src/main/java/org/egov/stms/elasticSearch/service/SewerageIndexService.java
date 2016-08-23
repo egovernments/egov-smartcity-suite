@@ -75,6 +75,7 @@ public class SewerageIndexService {
 		sewarageSearch.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
 		sewarageSearch.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
 		sewarageSearch.setApplicationStatus(sewerageApplicationDetails.getStatus()!=null?sewerageApplicationDetails.getStatus().getDescription():"");
+	        sewarageSearch.setConsumerNumber(sewerageApplicationDetails.getApplicationNumber());
 		sewarageSearch.setApplicationType(sewerageApplicationDetails.getApplicationType()!=null?sewerageApplicationDetails.getApplicationType().getName():"");
 		sewarageSearch.setConnectionStatus(sewerageApplicationDetails.getConnection().getStatus()!=null?sewerageApplicationDetails.getConnection().getStatus().name():"");
 		sewarageSearch.setCreatedDate(sewerageApplicationDetails.getCreatedDate());

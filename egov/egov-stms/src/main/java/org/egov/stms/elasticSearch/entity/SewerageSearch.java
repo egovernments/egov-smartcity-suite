@@ -55,7 +55,10 @@ public class SewerageSearch implements Indexable {
 	}
 	
 	@Searchable(name = "consumernumber", group = Searchable.Group.SEARCHABLE)
-	private String applicationNumber;
+	private String consumerNumber;
+	
+	@Searchable(name = "applicationnumber", group = Searchable.Group.CLAUSES)
+        private String applicationNumber;
 	
 	@Searchable(name = "type", group = Searchable.Group.CLAUSES)
 	private String applicationType;
@@ -146,11 +149,11 @@ public class SewerageSearch implements Indexable {
 	@Searchable(name = "isactive", group = Searchable.Group.CLAUSES)
         private boolean isActive;
 	
-	public SewerageSearch(final String applicationNumber,
+	public SewerageSearch(final String consumerNumber,
 			final String ulbName, final String ulbCode, final Date createdDate,
 			final String districtName, final String regionName,
 			final String ulbGrade) {
-		this.applicationNumber = applicationNumber;
+		this.consumerNumber = consumerNumber;
 		this.ulbName = ulbName;
 		this.createdDate = createdDate;
 		this.districtName = districtName;
@@ -399,5 +402,13 @@ public class SewerageSearch implements Indexable {
         
         public boolean getIsActive() {
             return isActive;
+        }
+
+        public String getConsumerNumber() {
+            return consumerNumber;
+        }
+
+        public void setConsumerNumber(String consumerNumber) {
+            this.consumerNumber = consumerNumber;
         }
 }
