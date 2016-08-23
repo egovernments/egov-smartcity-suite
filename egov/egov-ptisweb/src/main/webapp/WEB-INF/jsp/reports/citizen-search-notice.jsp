@@ -55,7 +55,7 @@
 			return false;
 		} else {
 			if (obj.value == 'Search') {
-				document.forms[0].action = '/ptis/reports/searchNotices-citizenSearch.action?propertyId='
+				document.forms[0].action = '/ptis/public/reports/searchNotices-citizenSearch.action?propertyId='
 						+ indexNumber;
 
 				document.forms[0].submit();
@@ -70,11 +70,10 @@
 			sUrl = "/egi/docmgmt/ajaxFileDownload.action?moduleName=PT&docNumber="
 					+ noticeNumber + "&fileName=" + noticeNumber + ".pdf";
 		} else {
-			sUrl = "/ptis/citizen/search/searchNotice-showNotice.action?noticeNumber="
+			sUrl = "/ptis/public/reports/searchNotices-showNotice.action?noticeNumber="
 					+ noticeNumber;
 		}
-		window.open(sUrl, "window",
-				'scrollbars=yes,resizable=no,height=200,width=400,status=yes');
+		window.open(sUrl, "_self");
 	}
 </script>
 </head>
@@ -179,9 +178,7 @@
 				</a>
 
 			</display:column>
-			<%-- <display:setProperty name="export.pdf" value="true" />
-			<display:setProperty name="export.pdf.filename"
-				value="propertyTax-noticeReports.pdf" /> --%>
+			
 		</display:table>
 	</s:if>
 	<s:if test="mutationList.isEmpty()">
