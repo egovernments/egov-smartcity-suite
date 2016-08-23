@@ -1,0 +1,1 @@
+delete from eg_feature_action  where feature = (select id FROM eg_feature WHERE name = 'View Estimate Template') and action = (select id from eg_action where name='WorksEstimateTemplateSearch')
