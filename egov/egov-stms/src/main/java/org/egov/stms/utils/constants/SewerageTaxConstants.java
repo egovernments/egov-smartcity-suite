@@ -169,6 +169,7 @@ public class SewerageTaxConstants {
     public static final String CLAUSES_PROPERTY_TYPE="clauses.propertytype";
     public static final String CLAUSES_ISACTIVE="clauses.isactive";
     public static final String SEARCHABLE_APPLICATIONNO="searchable.consumernumber";
+    public static final String CLAUSES_APPLICATIONNO="clauses.applicationnumber";
 
     public static final LinkedHashMap<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<Integer, Integer>() {
         /**
