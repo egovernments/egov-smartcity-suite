@@ -38,65 +38,54 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity;
+package org.egov.tl.web.controller.master.category;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.egov.tl.entity.LicenseCategory;
+import org.egov.tl.service.masters.LicenseCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.validation.Valid;
 
-@Entity
-@Table(name = "EGTL_MSTR_CATEGORY")
-@Unique(fields = {"name", "code"}, enableDfltMsg = true)
-@SequenceGenerator(name = LicenseCategory.SEQUENCE, sequenceName = LicenseCategory.SEQUENCE, allocationSize = 1)
-public class LicenseCategory extends AbstractAuditable {
-    private static final long serialVersionUID = 2997222319085575846L;
+@Controller
+@RequestMapping("/licensecategory")
+public class UpdateCategoryController {
 
-    public static final String SEQUENCE = "SEQ_EGTL_MSTR_CATEGORY";
+	private LicenseCategoryService licenseCategoryService;
 
-    @Id
-    @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
-    @DocumentId
-    private Long id;
+	@Autowired
+	public UpdateCategoryController(LicenseCategoryService licenseCategoryService) {
+		this.licenseCategoryService = licenseCategoryService;
+	}
 
-    @NotEmpty(message = "tradelic.master.tradecategoryname.null")
-    @Length(max = 256, message = "tradelic.masters.tradecategoryname.length")
-    private String name;
+	@ModelAttribute
+	public LicenseCategory licenseCategoryModel(@PathVariable String code) {
+		return licenseCategoryService.findCategoryByCode(code);
+	}
 
-    @NotEmpty(message = "tradelic.master.tradecategorycode.null")
-    @Length(max = 32, message = "tradelic.masters.tradecategorycode.length")
-    private String code;
+	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
+	public String categoryUpdateForm(@ModelAttribute @Valid LicenseCategory licenseCategory,final Model model) {
+		return "licensecategory-update";
+	}
 
-    public String getName() {
-        return name;
-    }
+	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
+	public String updateCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult errors,
+			RedirectAttributes additionalAttr) {
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+		if (errors.hasErrors()) {
+			return "licensecategory-update";
+		}
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+		licenseCategoryService.createPersist(licenseCategory);
+		additionalAttr.addFlashAttribute("message", "msg.success.category.update");
+		return "redirect:/licensecategory/view/" + licenseCategory.getCode();
+	}
 
 }

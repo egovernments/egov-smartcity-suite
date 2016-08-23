@@ -56,7 +56,7 @@ public class LicenseCategoryService {
     private LicenseCategoryRepository licenseCategoryRepository;
 
     @Transactional
-    public LicenseCategory create(final LicenseCategory licenseCategory) {
+    public LicenseCategory createPersist(final LicenseCategory licenseCategory) {
         return licenseCategoryRepository.save(licenseCategory);
     }
 
@@ -79,5 +79,4 @@ public class LicenseCategoryService {
     public List<LicenseCategory> findAllOrderByName() {
         return licenseCategoryRepository.findAllByOrderByNameAsc();
     }
-
 }
