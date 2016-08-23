@@ -122,12 +122,13 @@
 				<jsp:include page="../common/commonWorkflowhistory-view.jsp"></jsp:include>
 			</div>
 		</c:if>
-		<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-                   
-		</div>
-				
+		<c:if test="${mode != 'view' }">
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+	                   
+			</div>
+		</c:if>	
 </form:form> 
 <script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

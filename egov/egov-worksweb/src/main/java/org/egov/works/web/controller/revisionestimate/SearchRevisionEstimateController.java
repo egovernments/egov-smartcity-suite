@@ -39,15 +39,40 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import org.egov.infra.exception.ApplicationException;
+import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
+import org.egov.works.utils.WorksConstants;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
 public class SearchRevisionEstimateController {
-    
+
     @Autowired
     private RevisionEstimateService revisionEstimateService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
+    @RequestMapping(value = "/searchform", method = RequestMethod.GET)
+    public String searchForm(@ModelAttribute final SearchRevisionEstimate SearchRevisionEstimate, final Model model)
+            throws ApplicationException {
+        setDropDownValues(model);
+        model.addAttribute("SearchRevisionEstimate", SearchRevisionEstimate);
+        return "revisionEstimate-search";
+    }
+
+    private void setDropDownValues(final Model model) {
+        model.addAttribute("createdUsers", revisionEstimateService.getRevisionEstimateCreatedByUsers());
+        model.addAttribute("revisionEstimateStatus", worksUtils.getStatusByModule(WorksConstants.REVISIONABSTRACTESTIMATE));
+
+    }
+
 }

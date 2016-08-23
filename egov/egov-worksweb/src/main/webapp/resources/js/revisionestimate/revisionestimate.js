@@ -72,7 +72,7 @@ $(document).ready(function(){
 	$ExceptionalUOMs = $('#exceptionaluoms').val();  
 	
 	$mode = $("#mode").val();
-	if($mode != 'workflowView'){
+	if($mode != 'workflowView' && $mode != 'view'){
 		calculateEstimateAmountTotal();
 		calculateVatAmountTotal();
 		total();

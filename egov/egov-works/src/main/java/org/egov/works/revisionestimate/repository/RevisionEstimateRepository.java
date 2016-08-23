@@ -41,6 +41,7 @@ package org.egov.works.revisionestimate.repository;
 
 import java.util.List;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -52,7 +53,13 @@ public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstra
 
     @Query("from AbstractEstimate ae where ae.parent.id=:id and ae.egwStatus.code=:status order by ae.id")
     List<RevisionAbstractEstimate> findByParent_IdAndStatus(@Param("id") final Long id, @Param("status") final String status);
-    
+
     List<RevisionAbstractEstimate> findByParent_Id(final Long id);
+
+    @Query("select distinct(re.createdBy) from RevisionAbstractEstimate as re")
+    List<User> findRevisionEstimateCreatedByUsers();
+
+    @Query("select distinct(re.estimateNumber) from RevisionAbstractEstimate as re where upper(re.estimateNumber) like upper(:estimateNumber)")
+    List<String> findDistinctEstimateNumberContainingIgnoreCase(@Param("estimateNumber") final String estimateNumber);
 
 }

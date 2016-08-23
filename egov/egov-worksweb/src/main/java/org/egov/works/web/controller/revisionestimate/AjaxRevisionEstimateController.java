@@ -39,10 +39,23 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import java.util.List;
+
+import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
+import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -50,4 +63,32 @@ public class AjaxRevisionEstimateController {
 
     @Autowired
     private RevisionEstimateService revisionEstimateService;
+
+    @Autowired
+    private RevisionEstimateJsonAdaptor revisionEstimateJsonAdaptor;
+
+    @RequestMapping(value = "/getrevisionestimatesbynumber", method = RequestMethod.GET)
+    public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(
+            @RequestParam final String revisionEstimateNumber) {
+        return revisionEstimateService.getRevisionEstimateByEstimateNumberLike(revisionEstimateNumber);
+    }
+
+    @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchRevisionEstimates(
+            @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
+        final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
+                .searchRevisionEstimates(searchRevisionEstimate);
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJson(searchRevisionEstimates))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object toJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class,
+                revisionEstimateJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
 }

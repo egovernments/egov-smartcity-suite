@@ -68,11 +68,19 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
+import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.repository.RevisionEstimateRepository;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,6 +138,14 @@ public class RevisionEstimateService {
 
     public RevisionAbstractEstimate getRevisionEstimateById(final Long id) {
         return revisionEstimateRepository.findOne(id);
+    }
+
+    public List<User> getRevisionEstimateCreatedByUsers() {
+        return revisionEstimateRepository.findRevisionEstimateCreatedByUsers();
+    }
+
+    public List<String> getRevisionEstimateByEstimateNumberLike(final String revisionEstimateNumber) {
+        return revisionEstimateRepository.findDistinctEstimateNumberContainingIgnoreCase("%" + revisionEstimateNumber + "%");
     }
 
     @Transactional
@@ -206,7 +222,6 @@ public class RevisionEstimateService {
         Position pos = null;
         Assignment wfInitiator = null;
         final String currState = "";
-        final String natureOfwork = WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE;
         WorkFlowMatrix wfmatrix = null;
 
         if (null != revisionEstimate.getId())
@@ -214,12 +229,13 @@ public class RevisionEstimateService {
         if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.equals(userAssignment))
                 revisionEstimate.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate())
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             else
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.WF_STATE_REJECTED)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition()).withNextAction("")
-                        .withNatureOfTask(natureOfwork);
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
         } else if (WorksConstants.SAVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
             wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
                     additionalRule, WorksConstants.NEW, null);
@@ -227,7 +243,8 @@ public class RevisionEstimateService {
                 revisionEstimate.transition(true).start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(WorksConstants.NEW)
                         .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE).withNatureOfTask(natureOfwork);
+                        .withNextAction(WorksConstants.ESTIMATE_ONSAVE_NEXTACTION_VALUE)
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
         } else {
             if (null != approvalPosition && approvalPosition != -1 && !approvalPosition.equals(Long.valueOf(0)))
                 pos = positionMasterService.getPositionById(approvalPosition);
@@ -236,21 +253,23 @@ public class RevisionEstimateService {
                         additionalRule, currState, null);
                 revisionEstimate.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.CANCEL_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 final String stateValue = WorksConstants.WF_STATE_CANCELLED;
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
                         additionalRule, revisionEstimate.getCurrentState().getValue(), null);
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(pos).withNextAction("").withNatureOfTask(natureOfwork);
+                        .withOwner(pos).withNextAction("")
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             } else if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = revisionAbstractEstimateWorkflowService.getWfMatrix(revisionEstimate.getStateType(), null, null,
                         additionalRule, revisionEstimate.getCurrentState().getValue(), null);
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
                 revisionEstimate.transition(true).end().withSenderName(user.getName()).withComments(approvalComent)
                         .withDateInfo(currentDate.toDate());
             } else {
@@ -259,7 +278,7 @@ public class RevisionEstimateService {
                 revisionEstimate.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
-                        .withNatureOfTask(natureOfwork);
+                        .withNatureOfTask(WorksConstants.WORKFLOWTYPE_DISPLAYNAME_REVISION_ESTIMATE);
             }
         }
     }
@@ -494,4 +513,101 @@ public class RevisionEstimateService {
                 revisionEstimate.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                         RevisionEstimateStatus.RESUBMITTED.toString()));
     }
+
+    public List<SearchRevisionEstimate> searchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate) {
+        Query query = null;
+        query = entityManager.unwrap(Session.class)
+                .createSQLQuery(getQueryForSearchRevisionEstimates(searchRevisionEstimate))
+                .addScalar("id", LongType.INSTANCE)
+                .addScalar("aeId", LongType.INSTANCE)
+                .addScalar("woId", LongType.INSTANCE)
+                .addScalar("revisionEstimateNumber")
+                .addScalar("reDate", DateType.INSTANCE)
+                .addScalar("loaNumber", StringType.INSTANCE)
+                .addScalar("contractorName", StringType.INSTANCE)
+                .addScalar("estimateNumber", StringType.INSTANCE)
+                .addScalar("reValue", BigDecimalType.INSTANCE)
+                .addScalar("revisionEstimateStatus", StringType.INSTANCE)
+                .addScalar("currentOwner", StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(SearchRevisionEstimate.class));
+        query = setParameterForSearchRevisionEstimates(searchRevisionEstimate, query);
+        return query.list();
+    }
+
+    private String getQueryForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate) {
+        final StringBuilder filterConditions = new StringBuilder();
+
+        if (searchRevisionEstimate != null) {
+
+            if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
+                filterConditions.append(" AND aec.estimateNumber =:estimateNumber ");
+
+            if (searchRevisionEstimate.getFromDate() != null)
+                filterConditions.append(" AND aec.estimateDate >=:fromDate ");
+
+            if (searchRevisionEstimate.getToDate() != null)
+                filterConditions.append(" AND aec.estimateDate <=:toDate ");
+
+            if (searchRevisionEstimate.getLoaNumber() != null)
+                filterConditions.append(" AND wo.workOrder_Number like =:loaNumber ");
+
+            if (searchRevisionEstimate.getCreatedBy() != null)
+                filterConditions.append(" AND aec.createdBy =:createdBy ");
+
+            if (searchRevisionEstimate.getStatus() != null)
+                filterConditions.append(" AND aec.status =:status ");
+
+        }
+        final StringBuilder query = new StringBuilder();
+        query.append(" SELECT distinct re.id                     AS id, ");
+        query.append(" aep.id                           AS aeId ,  ");
+        query.append(" wo.id                            AS woId ,  ");
+        query.append(" aec.estimateNumber               AS revisionEstimateNumber ,  ");
+        query.append(" aec.estimateDate                 AS reDate ,  ");
+        query.append(" wo.workOrder_Number              AS loaNumber ,  ");
+        query.append(" contractor.name                  AS contractorName,  ");
+        query.append(" aep.estimateNumber               AS estimateNumber,  ");
+        query.append(" aec.estimateValue                AS reValue,  ");
+        query.append(" status.description               AS revisionEstimateStatus, ");
+        query.append(" u.username                       AS currentOwner  ");
+        query.append(" FROM egw_revision_estimate re,egw_abstractestimate aec,egw_abstractestimate aep,");
+        query.append(" egw_workorder wo,egw_workorder_estimate woe,egw_contractor contractor,egw_status status,eg_user u ");
+        query.append(" WHERE aec.parent = aep.id ");
+        query.append(" AND aec.id = re.id ");
+        query.append(" AND aep.id = woe.abstractestimate_id ");
+        query.append(" AND woe.workorder_id = wo.id ");
+        query.append(" AND wo.contractor_id = contractor.id ");
+        query.append(" AND aec.createdby = u.id ");
+        query.append(" AND aec.status = status.id ");
+        query.append(filterConditions.toString());
+        return query.toString();
+    }
+
+    private Query setParameterForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate, final Query query) {
+
+        if (searchRevisionEstimate != null) {
+
+            if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
+                query.setString("estimateNumber", searchRevisionEstimate.getRevisionEstimateNumber());
+
+            if (searchRevisionEstimate.getFromDate() != null)
+                query.setDate("fromDate", searchRevisionEstimate.getFromDate());
+
+            if (searchRevisionEstimate.getToDate() != null)
+                query.setDate("toDate", searchRevisionEstimate.getToDate());
+
+            if (searchRevisionEstimate.getLoaNumber() != null)
+                query.setString("loaNumber", searchRevisionEstimate.getLoaNumber());
+
+            if (searchRevisionEstimate.getCreatedBy() != null)
+                query.setLong("createdBy", searchRevisionEstimate.getCreatedBy());
+
+            if (searchRevisionEstimate.getStatus() != null)
+                query.setLong("status", searchRevisionEstimate.getStatus());
+
+        }
+
+        return query;
+    }
+
 }

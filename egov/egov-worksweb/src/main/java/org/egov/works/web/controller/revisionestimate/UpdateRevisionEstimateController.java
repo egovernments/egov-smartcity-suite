@@ -99,7 +99,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     }
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.GET)
-    public String updateRevisionEstimateForm(final Model model, @PathVariable final Long revisionEstimateId,
+    public String updateForm(final Model model, @PathVariable final Long revisionEstimateId,
             final HttpServletRequest request) {
 
         RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
@@ -124,7 +124,6 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             model.addAttribute("validActionList", validActions);
         }
 
-
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
@@ -141,6 +140,24 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             return "revisionEstimate-view";
         }
 
+    }
+
+    @RequestMapping(value = "/view/{revisionEstimateId}", method = RequestMethod.GET)
+    public String viewForm(final Model model, @PathVariable final Long revisionEstimateId,
+            final HttpServletRequest request) {
+
+        RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
+        revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
+
+        prepareNonTenderedAndLumpSumActivities(revisionEstimate);
+
+        model.addAttribute("workflowHistory",
+                lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));
+        model.addAttribute("estimateValue", revisionEstimate.getEstimateValue().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+        model.addAttribute("mode", "view");
+        return "revisionEstimate-view";
     }
 
     private void prepareNonTenderedAndLumpSumActivities(RevisionAbstractEstimate revisionEstimate) {

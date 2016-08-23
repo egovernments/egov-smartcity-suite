@@ -411,4 +411,9 @@
         <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-view.jsp"/>
     </definition>
     
+     <definition name="revisionEstimate-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchre" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/revisionestimate/revisionEstimate-search.jsp"/>
+    </definition>
+    
 </tiles-definitions>   
