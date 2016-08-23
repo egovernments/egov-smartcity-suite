@@ -382,6 +382,16 @@
 								value="%{finYearId}"
 								 /> 
 								</td>
+						<td class="bluebox"><s:text
+								name="collectionReport.criteria.payment.mode" /></td>
+						<td class="bluebox"><s:select
+								headerKey="-1" headerValue="--Select--"
+								list="paymentModesMap" 
+								id="paymentMode" 
+								label="paymentMode" name="paymentMode" 
+								value="%{paymentMode}"
+								 /> 
+								</td>
 						</tr>
 					</table>
 					<div class="buttonbottom">
@@ -455,7 +465,8 @@
 								class="blueborderfortd" title="Department"
 								style="width:10%;text-align: center"
 								value="${currentRow.DEPARTMENTNAME}" />
-
+								
+							<s:if test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CASH) || paymentMode.equals('-1')">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Cash Collection"
 								style="width:10%;text-align: center">
@@ -466,7 +477,8 @@
 									&nbsp;
 								</div>
 							</display:column>
-
+							</s:if>
+							<s:if test="paymentMode.equals(@org.egov.collection.constants.CollectionConstants@INSTRUMENTTYPE_CHEQUEORDD) || paymentMode.equals('-1')">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Cheque Collection"
 								style="width:10%;text-align: center">
@@ -477,6 +489,7 @@
 									&nbsp;
 								</div>
 							</display:column>
+							</s:if>
 							<s:if test="showCardAndOnlineColumn">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd" title="Total Card Collection"

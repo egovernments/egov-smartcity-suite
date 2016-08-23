@@ -94,7 +94,7 @@ public class AgencyReportController extends GenericController {
         return hoardingCategoryService.getAllActiveHoardingCategory();
     }
 
-    @RequestMapping(value = "/search-dcbreport", method = GET)
+    @RequestMapping(value = "/dcbreport-search", method = GET)
     public String searchAgencyWiseHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
         return "report-agencywise";
     }

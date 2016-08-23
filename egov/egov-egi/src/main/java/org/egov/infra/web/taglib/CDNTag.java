@@ -45,23 +45,15 @@ import org.apache.taglibs.standard.tag.rt.core.UrlTag;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
+
+import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 
 public class CDNTag extends UrlTag {
-    private String cdn;
-
-    public CDNTag() {
-        super();
-        this.cdn = null;
-    }
-
-    public void setCdn(String cdn)  throws JspTagException {
-        this.cdn = cdn;
-    }
 
     public int doEndTag() throws JspException {
-        if (StringUtils.isNotBlank(cdn))
-            this.value = new StringBuilder(cdn).
+        String cdnURI = (String)pageContext.getServletContext().getAttribute(CDN_ATTRIB_NAME);
+        if (StringUtils.isNotBlank(cdnURI))
+            this.value = new StringBuilder(cdnURI).
                     append(context == null ? ((HttpServletRequest) pageContext.getRequest()).getContextPath() : context).
                     append(value).toString();
         return super.doEndTag();

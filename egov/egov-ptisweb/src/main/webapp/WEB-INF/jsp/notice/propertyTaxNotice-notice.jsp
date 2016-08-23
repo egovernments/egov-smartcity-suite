@@ -40,6 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -65,6 +66,6 @@
 		<input name="buttonClose" type="button" class="button"	id="buttonClose" value="Close" onclick="window.close();" />&nbsp;
 	</div>
   </s:form>
-  <script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script> 
+  <script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
   </body>
 </html>

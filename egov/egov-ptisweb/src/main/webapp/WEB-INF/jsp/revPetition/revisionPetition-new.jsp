@@ -40,11 +40,11 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <html>
 	<head>
-		<script src="<c:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
+		<script src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
 		<title><s:text name="recordObjection.title"></s:text></title>
 		<script type="text/javascript">
 			jQuery.noConflict();
@@ -79,8 +79,8 @@
 			}
 	
 		</script>
-		<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-		<link href="<c:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
+		<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
 	</head>
 	<body  class="yui-skin-sam" onload="loadOnStartup(); ">

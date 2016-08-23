@@ -39,6 +39,17 @@
  */
 package org.egov.egf.web.actions.budget;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -80,7 +91,6 @@ import org.egov.pims.service.EisUtilService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.services.voucher.VoucherService;
-import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
@@ -89,20 +99,6 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-
 
 @ParentPackage("egov")
 /*
@@ -115,12 +111,12 @@ import java.util.TreeMap;
  * .CONTENT_TYPE,"application/xls",Constants.CONTENT_DISPOSITION,"no-cache;filename=BudgetReport.xls"}) })
  */
 @Results({
-    @Result(name = "reportview", location = "budgetProposal-reportview.jsp"),
-    @Result(name = "message", location = "budgetProposal-message.jsp"),
-    @Result(name = Constants.DETAILLIST, location = "budgetProposal-" + Constants.DETAILLIST + ".jsp"),
-    @Result(name = "failure", location = "budgetProposal-failure.jsp"),
-    @Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}",
-            "contentDisposition", "attachment; filename=${fileName}" })
+        @Result(name = "reportview", location = "budgetProposal-reportview.jsp"),
+        @Result(name = "message", location = "budgetProposal-message.jsp"),
+        @Result(name = Constants.DETAILLIST, location = "budgetProposal-" + Constants.DETAILLIST + ".jsp"),
+        @Result(name = "failure", location = "budgetProposal-failure.jsp"),
+        @Result(name = "reportview", type = "stream", location = "inputStream", params = { "contentType", "${contentType}",
+                "contentDisposition", "attachment; filename=${fileName}" })
 })
 public class BudgetProposalAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -137,7 +133,6 @@ public class BudgetProposalAction extends BaseFormAction {
     protected String twopreviousfinYearRange = "";
     private List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();
     protected List<BudgetDetail> savedbudgetDetailList = new ArrayList<BudgetDetail>();
-    protected BudgetDetailConfig budgetDetailConfig;
     protected BudgetDetailService budgetDetailService;
     protected BudgetService budgetService;
     private BudgetDetailHelper budgetDetailHelper;
@@ -163,11 +158,12 @@ public class BudgetProposalAction extends BaseFormAction {
     private static final String SUCCESSFUL = "successful";
     private Date asOndate;
     private Date headerAsOnDate;
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    @Autowired
+    AppConfigValueService appConfigValuesService;
     private InputStream inputStream;
     private ReportHelper reportHelper;
     private Long docNo;
@@ -211,7 +207,7 @@ public class BudgetProposalAction extends BaseFormAction {
 
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;
     }
@@ -280,8 +276,7 @@ public class BudgetProposalAction extends BaseFormAction {
 
     private void populateBudgetDetailReport() {
         loadToMasterDataMap();
-        if (budgetDetail.getBudget().getId() != null)
-        {
+        if (budgetDetail.getBudget().getId() != null) {
             topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
             budgetDetail = (BudgetDetail) persistenceService.find("from BudgetDetail where budget.id=?",
                     Long.valueOf(parameters.get("budgetDetail.budget.id")[0]));
@@ -340,8 +335,7 @@ public class BudgetProposalAction extends BaseFormAction {
     @SkipValidation
     public String ajaxUpdateBudgetDetail() {
 
-        if (validateOwner())
-        {
+        if (validateOwner()) {
             if (factor.equalsIgnoreCase("thousand"))
                 amount = amount.multiply(bigThousand);
 
@@ -371,8 +365,8 @@ public class BudgetProposalAction extends BaseFormAction {
         try {
             if (bpBean.getId() != null && bpBean.getNextYrId() != null) {
                 persistenceService.getSession()
-                .createSQLQuery(
-                        "delete from egf_budgetdetail where id in (" + bpBean.getId() + "," + bpBean.getNextYrId() + ")")
+                        .createSQLQuery(
+                                "delete from egf_budgetdetail where id in (" + bpBean.getId() + "," + bpBean.getNextYrId() + ")")
                         .executeUpdate();
                 persistenceService.getSession().flush();
             }
@@ -613,7 +607,8 @@ public class BudgetProposalAction extends BaseFormAction {
                     : majorCodeAndBEMap.get(entry.getKey()).toString());
             bpbean.setReappropriation(majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     .toString() : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
-            bpbean.setTotal(new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
+            bpbean.setTotal(
+                    new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
             bpbean.setAnticipatory(majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     .toString() : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
             bpbean.setProposedRE(majorCodeAndOriginalMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
@@ -721,7 +716,8 @@ public class BudgetProposalAction extends BaseFormAction {
                     : majorCodeAndBEMap.get(entry.getKey()).toString());
             bpbean.setReappropriation(majorCodeAndAppropriationMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     .toString() : majorCodeAndAppropriationMap.get(entry.getKey()).toString());
-            bpbean.setTotal(new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
+            bpbean.setTotal(
+                    new BigDecimal(bpbean.getCurrentYearBE()).add(new BigDecimal(bpbean.getReappropriation())).toString());
             bpbean.setAnticipatory(majorCodeAndAnticipatoryMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
                     .toString() : majorCodeAndAnticipatoryMap.get(entry.getKey()).toString());
             bpbean.setProposedRE(majorCodeAndOriginalMap.get(entry.getKey()) == null ? BigDecimal.ZERO.setScale(2)
@@ -758,17 +754,20 @@ public class BudgetProposalAction extends BaseFormAction {
 
         final List<Object[]> resultCurrentActuals = budgetDetailService.fetchActualsForFinYear(financialYear, mandatoryFields,
                 topBudget, null, asOndate, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                .getFunction().getId(), excludelist);
+                        .getFunction().getId(),
+                excludelist);
         addToMapStringBigDecimal(resultCurrentActuals, budgetDetailIdsAndAmount);
 
         final List<Object[]> resultPreviousActuals = budgetDetailService.fetchActualsForFinYear(lastFinancialYearByDate,
                 mandatoryFields, topBudget, null, null, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                .getFunction().getId(), excludelist);
+                        .getFunction().getId(),
+                excludelist);
         addToMapStringBigDecimal(resultPreviousActuals, previousYearBudgetDetailIdsAndAmount);
 
         final List<Object[]> resultTwoPreviousActuals = budgetDetailService.fetchActualsForFinYear(beforeLastFinancialYearByDate,
                 mandatoryFields, topBudget, null, null, budgetDetail.getExecutingDepartment().getId().intValue(), budgetDetail
-                .getFunction().getId(), excludelist);
+                        .getFunction().getId(),
+                excludelist);
         addToMapStringBigDecimal(resultTwoPreviousActuals, twopreviousYearBudgetDetailIdsAndAmount);
 
         final List<Object[]> resultUniqueNoBE = budgetDetailService.fetchUniqueNoAndBEAmount(topBudget, budgetDetail,
@@ -878,8 +877,7 @@ public class BudgetProposalAction extends BaseFormAction {
     }
 
     @SkipValidation
-    private void loadApproverUser(final List<BudgetDetail> budgetDetailList)
-    {
+    private void loadApproverUser(final List<BudgetDetail> budgetDetailList) {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Starting loadApproverUser.....");
         final Map<String, Object> map = voucherService.getDesgBYPassingWfItem("BudgetDetail.nextDesg", null, budgetDetail
@@ -994,13 +992,13 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.info("Starting computeTotal................");
         bpbeanTotal.setPreviousYearActuals(bpbeanTotal.getPreviousYearActuals() == null ? bpbean.getPreviousYearActuals()
                 : new BigDecimal(bpbeanTotal.getPreviousYearActuals()).add(new BigDecimal(bpbean.getPreviousYearActuals()))
-                .toString());
+                        .toString());
         bpbeanTotal.setTwoPreviousYearActuals(bpbeanTotal.getTwoPreviousYearActuals() == null ? bpbean
                 .getTwoPreviousYearActuals() : new BigDecimal(bpbeanTotal.getTwoPreviousYearActuals()).add(
                         new BigDecimal(bpbean.getTwoPreviousYearActuals())).toString());
         bpbeanTotal.setCurrentYearActuals(bpbeanTotal.getCurrentYearActuals() == null ? bpbean.getCurrentYearActuals()
                 : new BigDecimal(bpbeanTotal.getCurrentYearActuals()).add(new BigDecimal(bpbean.getCurrentYearActuals()))
-                .toString());
+                        .toString());
         bpbeanTotal.setCurrentYearBE(bpbeanTotal.getCurrentYearBE() == null ? bpbean.getCurrentYearBE() : new BigDecimal(
                 bpbeanTotal.getCurrentYearBE()).add(new BigDecimal(bpbean.getCurrentYearBE())).toString());
         bpbeanTotal.setReappropriation(bpbeanTotal.getReappropriation() == null ? bpbean.getReappropriation() : new BigDecimal(
@@ -1023,11 +1021,9 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.info("Finished computeTotal");
     }
 
-    
     @SkipValidation
     @Action(value = "/budget/budgetProposal-update")
-    public String update()
-    {
+    public String update() {
         // Only save the items
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Stating updation .....");
@@ -1045,8 +1041,7 @@ public class BudgetProposalAction extends BaseFormAction {
         if (name == null)
             name = empForCurrentUser.getEmployeeFirstName();
 
-        if (actionName.contains("save"))
-        {
+        if (actionName.contains("save")) {
             if (consolidatedScreen)
                 save(BigDecimal.valueOf(1000));
             else
@@ -1055,25 +1050,22 @@ public class BudgetProposalAction extends BaseFormAction {
 
         }
         // Save and Push the items
-        else if (actionName.contains("forward"))
-        {
+        else if (actionName.contains("forward")) {
             final boolean hod = isHOD();
-            if (consolidatedScreen || hod)
-            {
+            if (consolidatedScreen || hod) {
                 if (hod)
                     save(null);
                 else
                     save(BigDecimal.valueOf(1000));
                 topBudget.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
-                .withComments(comment);
+                        .withComments(comment);
 
-            }
-            else {
+            } else {
 
                 saveWithForward(positionByUserId, name, hod);
                 if (isNextUserHOD(approverUserId) || hod)
                     topBudget.transition(true).withStateValue("Forwarded by " + name).withOwner(positionByUserId)
-                    .withComments(comment);
+                            .withComments(comment);
 
             }
             addActionMessage("Budget/BudgetDetails Forwarded Succesfully to "
@@ -1081,8 +1073,7 @@ public class BudgetProposalAction extends BaseFormAction {
 
         }
         // Final approval
-        else if (actionName.contains("approve"))
-        {
+        else if (actionName.contains("approve")) {
             save(BigDecimal.valueOf(1000));
             topBudget.transition(true).withStateValue("END").withOwner(positionByUserId).withComments(comment);
             addActionMessage("Budget/BudgetDetails Approved Succesfully ");
@@ -1093,12 +1084,9 @@ public class BudgetProposalAction extends BaseFormAction {
         return "message";
     }
 
-    
-    private void save(final BigDecimal multiplicationFactor)
-    {
+    private void save(final BigDecimal multiplicationFactor) {
         String columntoupdate = "originalAmount";
-        if (multiplicationFactor != null)
-        {
+        if (multiplicationFactor != null) {
             columntoupdate = "approvedAmount";
         }
         final String sql = "update egf_budgetdetail set " + columntoupdate + "=:amount,document_Number=:docNo where id=:id";
@@ -1111,8 +1099,7 @@ public class BudgetProposalAction extends BaseFormAction {
         final SQLQuery updateCommentQuery = persistenceService.getSession().createSQLQuery(commentsql);
         int i = 0;
 
-        for (final BudgetProposalBean bpBean : bpBeanList)
-        {
+        for (final BudgetProposalBean bpBean : bpBeanList) {
 
             if (bpBean == null || bpBean.getId() == null)
                 continue;
@@ -1137,8 +1124,7 @@ public class BudgetProposalAction extends BaseFormAction {
             i++;
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Updated  " + i + "record.....");
-            if (i % 10 == 0)
-            {
+            if (i % 10 == 0) {
                 persistenceService.getSession().flush();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("flushed for " + i + "record.....");
@@ -1151,9 +1137,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.debug("Completed Save .....");
     }
 
-    
-    private void saveWithForward(final Position pos, final String name, final boolean hod)
-    {
+    private void saveWithForward(final Position pos, final String name, final boolean hod) {
 
         BudgetDetail bd = null;
         BudgetDetail nextYearBd = null;
@@ -1161,8 +1145,7 @@ public class BudgetProposalAction extends BaseFormAction {
         int i = 0;
         if (hod)
             stateString = "END";
-        for (final BudgetProposalBean bpBean : bpBeanList)
-        {
+        for (final BudgetProposalBean bpBean : bpBeanList) {
             if (bpBean == null || bpBean.getId() == null)
                 continue;
             bd = budgetDetailService.find("from BudgetDetail where id=?", bpBean.getId());
@@ -1179,8 +1162,7 @@ public class BudgetProposalAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Updated  " + i + "record.....");
             i++;
-            if (i % 10 == 0)
-            {
+            if (i % 10 == 0) {
                 persistenceService.getSession().flush();
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("flushed for " + i + "record.....");
@@ -1191,9 +1173,7 @@ public class BudgetProposalAction extends BaseFormAction {
             LOGGER.debug("Completed saveWithForward .....");
     }
 
-    
-    public String modifyList()
-    {
+    public String modifyList() {
         if (budgetDetail.getBudget().getId() != null)
             topBudget = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
         consolidatedScreen = budgetDetailService.toBeConsolidated();
@@ -1204,13 +1184,12 @@ public class BudgetProposalAction extends BaseFormAction {
 
     }
 
-    private boolean isHOD()
-    {
+    private boolean isHOD() {
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
-        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(ApplicationThreadLocals.getUserId(),
+        final Assignment empAssignment = eisCommonService.getLatestAssignmentForEmployeeByToDate(
+                ApplicationThreadLocals.getUserId(),
                 new Date());
-        if (empAssignment.getDesignation().getName().equalsIgnoreCase("assistant"))
-        {
+        if (empAssignment.getDesignation().getName().equalsIgnoreCase("assistant")) {
             asstFMU = true;
             final BudgetDetail approvedBd = (BudgetDetail) persistenceService.find(
                     " from  BudgetDetail where budget=? and approvedAmount>0 ", topBudget);
@@ -1224,23 +1203,20 @@ public class BudgetProposalAction extends BaseFormAction {
         return eisCommonService.isHod(empAssignment.getId());
     }
 
-    public Position getPosition() throws ApplicationRuntimeException
-    {
+    public Position getPosition() throws ApplicationRuntimeException {
         Position pos;
         // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
         pos = eisCommonService.getPrimaryAssignmentPositionForEmp(ApplicationThreadLocals.getUserId());
         return pos;
     }
 
-    private boolean isNextUserHOD(final Integer approverUserId)
-    {
+    private boolean isNextUserHOD(final Integer approverUserId) {
         final Assignment empAssignment = eisCommonService
                 .getLatestAssignmentForEmployeeByToDate(approverUserId.longValue(), new Date());
         return eisCommonService.isHod(empAssignment.getId());
     }
 
-    private boolean validateForAllFunctionsMappedForDept(final Budget topBudget, final Position position)
-    {
+    private boolean validateForAllFunctionsMappedForDept(final Budget topBudget, final Position position) {
         final BudgetDetail bd = budgetDetailService.find("from BudgetDetail  where budget.id=?", topBudget.getId());
         final String Query = "select distinct(f.name) as functionid from eg_dept_functionmap m,function f where departmentid=" +
                 bd.getExecutingDepartment().getId() + " and f.id= m.functionid and m.budgetaccount_Type='"
@@ -1300,12 +1276,10 @@ public class BudgetProposalAction extends BaseFormAction {
             reportParams.put("nextfinYearRange", nextfinYearRange);
             // bpBeanList=new ArrayList<BudgetProposalBean>();
             String templateName = "";
-            if (isConsolidatedScreen() || isHod())
-            {
+            if (isConsolidatedScreen() || isHod()) {
                 templateName = "budgetProposalReport";
                 fileName = "BudgetProposalReport." + FileFormat.PDF.toString().toLowerCase();
-            } else
-            {
+            } else {
                 templateName = "budgetProposalReport-draft";
                 fileName = "BudgetProposalReport-draft." + FileFormat.PDF.toString().toLowerCase();
             }
@@ -1353,12 +1327,10 @@ public class BudgetProposalAction extends BaseFormAction {
             reportParams.put("nextfinYearRange", nextfinYearRange);
             // bpBeanList=new ArrayList<BudgetProposalBean>();
             String templateName = "";
-            if (isConsolidatedScreen() || isHod())
-            {
+            if (isConsolidatedScreen() || isHod()) {
                 templateName = "budgetProposalReport";
                 fileName = "BudgetProposalReport." + FileFormat.XLS.toString().toLowerCase();
-            } else
-            {
+            } else {
                 templateName = "budgetProposalReport-draft";
                 fileName = "BudgetProposalReport-draft." + FileFormat.XLS.toString().toLowerCase();
             }
@@ -1377,8 +1349,7 @@ public class BudgetProposalAction extends BaseFormAction {
         return "reportview";
     }
 
-    protected Boolean validateOwner()
-    {
+    protected Boolean validateOwner() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("validating owner for user " + ApplicationThreadLocals.getUserId());
         List<Position> positionsForUser = null;
@@ -1386,17 +1357,15 @@ public class BudgetProposalAction extends BaseFormAction {
         State state = null;
         if (factor.equalsIgnoreCase("thousand"))
             state = (State) persistenceService
-            .find("select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
-                    validId);
+                    .find("select b.state from Budget b where b.id =(select bd.budget.id from BudgetDetail bd where bd.id=?) ",
+                            validId);
         else
             state = (State) persistenceService.find("select bd.state from BudgetDetail bd where bd.id=? ", validId);
-        if (state != null && positionsForUser.contains(state.getOwnerPosition()))
-        {
+        if (state != null && positionsForUser.contains(state.getOwnerPosition())) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Valid Owner :return true");
             return true;
-        } else
-        {
+        } else {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Invalid  Owner :return false");
             return false;
@@ -1489,14 +1458,6 @@ public class BudgetProposalAction extends BaseFormAction {
 
     public void setSavedbudgetDetailList(final List<BudgetDetail> savedbudgetDetailList) {
         this.savedbudgetDetailList = savedbudgetDetailList;
-    }
-
-    public BudgetDetailConfig getBudgetDetailConfig() {
-        return budgetDetailConfig;
-    }
-
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
     }
 
     public BudgetDetailService getBudgetDetailService() {

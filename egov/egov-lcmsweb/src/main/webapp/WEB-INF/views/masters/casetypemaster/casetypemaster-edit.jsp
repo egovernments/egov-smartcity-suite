@@ -40,11 +40,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <form:form role="form" action="../update"
-	modelAttribute="casetypeMaster" id="casetypeMasterform"
+	modelAttribute="caseTypeMaster" id="casetypeMasterform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="casetypemaster-form.jsp"%>
-	<input type="hidden" name="casetypeMaster" value="${casetypeMaster.id}" />
+	<input type="hidden" name="caseTypeMaster" value="${caseTypeMaster.id}" />
 	</div>
 	</div>
 	</div>

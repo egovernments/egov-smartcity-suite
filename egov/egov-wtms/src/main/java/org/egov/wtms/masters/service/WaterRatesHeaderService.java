@@ -101,7 +101,7 @@ public class WaterRatesHeaderService {
     public List<WaterRatesHeader> findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSize(
             final ConnectionType connectionType, final UsageType usageType, final WaterSource waterSource,
             final PipeSize pipeSize) {
-        return waterRatesHeaderRepository.findByConnectionTypeAndUsageTypeAndWaterSourceAndPipeSizeOrderByIdDesc(connectionType,
+        return waterRatesHeaderRepository.findByActiveTrueAndConnectionTypeAndUsageTypeAndWaterSourceAndPipeSizeOrderByIdDesc(connectionType,
                 usageType, waterSource, pipeSize);
     }
 

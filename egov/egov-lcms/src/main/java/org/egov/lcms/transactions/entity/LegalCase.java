@@ -70,15 +70,12 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.lcms.masters.entity.CaseTypeMaster;
 import org.egov.lcms.masters.entity.CourtMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.egov.lcms.masters.entity.enums.LCNumberType;
-import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.pims.commons.Position;
 import org.egov.search.domain.Searchable;
 import org.hibernate.validator.constraints.Length;
@@ -140,14 +137,11 @@ public class LegalCase extends AbstractAuditable {
     @Length(max = 1024, message = "remarks.length")
     private String remarks;
 
-    @DateFormat(message = "invalid.fieldvalue.model.caseReceivingDate")
-    @ValidateDate(allowPast = true, dateFormat = LcmsConstants.DATE_FORMAT, message = "invalid.caseReceivingDate.date")
     @Column(name = "casereceivingdate")
     private Date caseReceivingDate;
 
     private Boolean isfiledbycorporation;
 
-    @OptionalPattern(regex = LcmsConstants.alphaNumericwithSlashes, message = "case.lcnumber.invalid")
     @Length(max = 50, message = "lcnumber.length")
     @Column(name = "lcnumber")
     private String lcNumber;
@@ -162,12 +156,10 @@ public class LegalCase extends AbstractAuditable {
     @Column(name = "assigntoIdboundary")
     private Long assigntoIdboundary;
 
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "oppPartyAdvocate.alphanumeric")
     @Length(max = 128, message = "oppPartyAdvocate.length")
     @Column(name = "oppPartyAdvocate")
     private String oppPartyAdvocate;
 
-    @OptionalPattern(regex = LcmsConstants.mixedChar, message = "representedby.alphanumeric")
     @Length(max = 256, message = "representedby.length")
     @Column(name = "representedby")
     private String representedby;
@@ -176,11 +168,9 @@ public class LegalCase extends AbstractAuditable {
     @Enumerated(EnumType.STRING)
     private LCNumberType lcNumberType;
 
-    @DateFormat(message = "invalid.fieldvalue.model.previousDate")
     @Column(name = "previousDate")
     private Date previousDate;
 
-    @Length(max = 50, message = "stampNumber.length")
     @Column(name = "stampNumber")
     private String stampNumber;
 
@@ -193,7 +183,6 @@ public class LegalCase extends AbstractAuditable {
     @Column(name = "noticedate")
     private Date noticeDate;
 
-    @DateFormat(message = "invalid.fieldvalue.model.firstAppearenceDate")
     private Date casefirstappearancedate;
 
     @Transient

@@ -39,8 +39,6 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -61,6 +59,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/report/currentInstDCB")
@@ -89,15 +89,7 @@ public class CurrentInstDCBReportController {
             throws IOException {
 
         final List<CurrentInstDCBReportResult> propertyList = reportService.getCurrentInstallmentDCB(ward);
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(propertyList)).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toJSON(propertyList, CurrentInstDCBReportResult.class, CurrentInstDCBResultAdaptor.class)).append("}").toString();
         IOUtils.write(result, response.getWriter());
-    }
-    
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CurrentInstDCBReportResult.class, new CurrentInstDCBResultAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
     }
 }

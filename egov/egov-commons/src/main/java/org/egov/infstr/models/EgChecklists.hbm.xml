@@ -65,7 +65,7 @@
 	</class>
 	<query name="checklist.by.appconfigid.and.objectid">
 	<![CDATA[
-		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.key.id in(?)
+		from org.egov.infstr.models.EgChecklists as checkList where checkList.objectid =? and checkList.appconfigvalue.config.id in(?)
 	]]>
 	</query>
  

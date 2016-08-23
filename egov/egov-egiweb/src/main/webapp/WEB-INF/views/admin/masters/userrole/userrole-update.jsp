@@ -135,13 +135,13 @@
 		</div>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/userrole.js?rnd=${app_release_no}'/>"></script>
 <script>
 	$('#userroleSearchBtn').click(function() {
 		window.location = '/egi/userrole/search';
 	})
 </script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/multiselect.js'/>"></script>
 <script type="text/javascript">
 	$('#multiselect').multiselect();
 </script>

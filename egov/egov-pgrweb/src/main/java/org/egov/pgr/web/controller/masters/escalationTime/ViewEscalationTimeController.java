@@ -40,8 +40,6 @@
 
 package org.egov.pgr.web.controller.masters.escalationTime;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.service.DesignationService;
 import org.egov.pgr.entity.Escalation;
@@ -62,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
@@ -133,17 +132,7 @@ public class ViewEscalationTimeController {
         complaintRouterJSONData.append(",\"recordsTotal\":").append(pageOfEscalation.getTotalElements());
         complaintRouterJSONData.append(",\"totalDisplayRecords\":").append(pageSize);
         complaintRouterJSONData.append(",\"recordsFiltered\":").append(pageOfEscalation.getTotalElements());
-       complaintRouterJSONData.append(",\"data\":").append(toJSON(positionList)).append("}");
+       complaintRouterJSONData.append(",\"data\":").append(toJSON(positionList, Escalation.class, EscalationTimeAdaptor.class)).append("}");
         return complaintRouterJSONData.toString();
     }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Escalation.class, new EscalationTimeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
- 
- 
-    
 }

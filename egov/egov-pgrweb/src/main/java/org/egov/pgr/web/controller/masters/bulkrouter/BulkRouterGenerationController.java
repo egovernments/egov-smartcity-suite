@@ -39,15 +39,6 @@
  */
 package org.egov.pgr.web.controller.masters.bulkrouter;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -69,8 +60,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/bulkRouter")
@@ -114,16 +111,9 @@ public class BulkRouterGenerationController {
             throws IOException {
         final List<ComplaintRouter> pageOfRouters = complaintRouterService
                 .getRoutersByComplaintTypeBoundary(bulkRouterGenerator.getComplaintTypes(), bulkRouterGenerator.getBoundaries());
-        final String complaintRouterJSONData = new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters)).append("}")
+        final String complaintRouterJSONData = new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters, ComplaintRouter.class, ComplaintRouterAdaptor.class)).append("}")
                 .toString();
         IOUtils.write(complaintRouterJSONData, response.getWriter());
-    }
-
-    private String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(ComplaintRouter.class, new ComplaintRouterAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

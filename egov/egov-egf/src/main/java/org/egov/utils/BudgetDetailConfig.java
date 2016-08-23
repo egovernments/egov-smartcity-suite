@@ -39,55 +39,54 @@
  */
 package org.egov.utils;
 
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infstr.services.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 public class BudgetDetailConfig {
     private static final String DELIMITER = ",";
     @Autowired
     @Qualifier("persistenceService")
-    private final PersistenceService persistenceService;
+    private PersistenceService persistenceService;
     List<String> headerFields = new ArrayList<String>();
     List<String> gridFields = new ArrayList<String>();
     List<String> mandatoryFields = new ArrayList<String>();
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
-    public BudgetDetailConfig(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-        headerFields = fetchAppConfigValues("budgetDetail.header.component");
-        gridFields = fetchAppConfigValues("budgetDetail.grid.component");
-        mandatoryFields = fetchAppConfigValues("budgetDetail_mandatory_fields");
+    public BudgetDetailConfig() {
     }
 
     public final List<String> getGridFields() {
-        return gridFields;
+        return fetchAppConfigValues("budgetDetail.grid.component");
     }
 
     public final List<String> getMandatoryFields() {
-        return mandatoryFields;
+        return fetchAppConfigValues("budgetDetail_mandatory_fields");
     }
 
     public final List<String> getHeaderFields() {
-        return headerFields;
+        return fetchAppConfigValues("budgetDetail.header.component");
     }
 
     final List<String> fetchAppConfigValues(final String keyName) {
-        final AppConfig appConfig = (AppConfig) persistenceService.find("from AppConfig where key_name='" + keyName + "'");
-        if (appConfig != null && appConfig.getAppDataValues() != null)
-            if (appConfig.getAppDataValues().iterator().hasNext()) {
-                final AppConfigValues appDataValues = appConfig.getAppDataValues().iterator().next();
-                return Arrays.asList(appDataValues.getValue().split(DELIMITER));
-            }
+        final List<AppConfigValues> appConfigValues = appConfigValueService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, keyName);
+        if (appConfigValues != null && !appConfigValues.isEmpty()) {
+            for (AppConfigValues app : appConfigValues)
+                return Arrays.asList(app.getValue().split(DELIMITER));
+
+        }
         return new ArrayList<String>();
     }
 

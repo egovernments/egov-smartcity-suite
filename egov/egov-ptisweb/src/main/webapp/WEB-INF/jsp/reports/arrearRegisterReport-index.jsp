@@ -40,13 +40,14 @@
 
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags"%>
 <%@ include file="/includes/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <html>
 <head> 
 	<title><s:text name='arrearRegReport.search' /></title>
-	<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 	<script type="text/javascript">
 	function validateFormAndSubmit(){
 		 document.arrearRegForm.action='${pageContext.request.contextPath}/reports/arrearRegisterReport-generateArrearReport.action';

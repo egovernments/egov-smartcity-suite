@@ -136,16 +136,19 @@ $(document).ready(function()
 		});
 	
 	$('#escalationsave').click(function(e){  
-		if($("#bulk_escalation_table").dataTable().fnSettings().aoData.length == 0){
-			document.forms["bulkEscalation"].submit();//submit it
-		}else{
-			bootbox.confirm("Existing Escalation Data will be overridden, Are you sure?", function(result) {
-				  if(result){
-					  document.forms["bulkEscalation"].submit();//submit it
-				  }else{
-					  //leave it.. Don't submit
-				  }
+		if($('form').valid())
+		{
+			if($("#bulk_escalation_table").dataTable().fnSettings().aoData.length == 0){
+				document.forms["bulkEscalation"].submit();//submit it
+			}else{
+				bootbox.confirm("Existing Escalation Data will be overridden, Are you sure?", function(result) {
+					if(result){
+						document.forms["bulkEscalation"].submit();//submit it
+					}else{
+						//leave it.. Don't submit
+					}
 				}); 
+			}
 		}
 	});
 });

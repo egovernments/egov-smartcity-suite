@@ -130,7 +130,7 @@ $('#searchrecord').click(function(e){
 			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 			"autoWidth": false,
 			"bDestroy": true,
-			"ajax": "/adtax/deactivate/search-activerecord-list?"+$("#activehoardingsearchform").serialize(),
+			"ajax": "/adtax/deactivate/activerecord-list-search?"+$("#activehoardingsearchform").serialize(),
 			"columns" : [
 						  { "data" : "advertisementNumber", "title":"Advertisement No."},
 						  { "data" : "applicationNumber", "title": "Application No."},
@@ -187,7 +187,7 @@ $('#searchrecord').click(function(e){
 	
 	$('#categories').change(function(){
 		$.ajax({
-			url: "/adtax/hoarding/subcategories-by-category",    
+			url: "/adtax/hoarding/getsubcategories-by-category",    
 			type: "GET",
 			data: {
 				categoryId : $('#categories').val()   

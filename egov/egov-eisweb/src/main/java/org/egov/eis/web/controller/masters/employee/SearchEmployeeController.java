@@ -39,8 +39,6 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.EmployeeAdaptor;
@@ -50,7 +48,6 @@ import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,6 +63,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/employee")
@@ -99,19 +98,11 @@ public class SearchEmployeeController {
         return "employeesearch-form";
     }
 
-    public String toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY);
-        final Gson gson = gsonBuilder.registerTypeAdapter(Employee.class, new EmployeeAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
-    }
-
     @RequestMapping(value = "ajax/employees", method = RequestMethod.GET)
     public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
             final HttpServletResponse response, final EmployeeSearchDTO employee) throws IOException {
         final List<Employee> employees = employeeService.searchEmployees(employee);
-        final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees)).append("}");
+        final StringBuilder employeeJSONData = new StringBuilder("{\"data\":").append(toJSON(employees, Employee.class, EmployeeAdaptor.class)).append("}");
         response.setContentType(CONTENTTYPE_JSON);
         IOUtils.write(employeeJSONData, response.getWriter());
     }

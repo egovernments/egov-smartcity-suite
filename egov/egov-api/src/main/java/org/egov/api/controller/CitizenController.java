@@ -159,7 +159,7 @@ public class CitizenController extends ApiController {
             Citizen citizenUpdate = citizenService.getCitizenByUserName(citizen.get("userName").toString());
             citizenUpdate.setName(citizen.get("name").toString());
             citizenUpdate.setGender(Gender.valueOf(citizen.get("gender").toString()));
-            citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());
+            /*citizenUpdate.setMobileNumber(citizen.get("mobileNumber").toString());*/
             
             if(citizen.get("emailId")!=null)
             citizenUpdate.setEmailId(citizen.get("emailId").toString());

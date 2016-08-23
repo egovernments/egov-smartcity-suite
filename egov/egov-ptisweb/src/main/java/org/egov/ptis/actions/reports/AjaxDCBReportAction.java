@@ -42,7 +42,6 @@ package org.egov.ptis.actions.reports;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.io.IOUtils;
 import org.apache.struts2.ServletActionContext;
@@ -59,6 +58,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -90,34 +91,17 @@ public class AjaxDCBReportAction extends BaseFormAction {
      */
     @SuppressWarnings("unchecked")
     @Action(value = "/ajaxDCBReport-getBoundaryWiseDCBList")
-    public void getBoundaryWiseDCBList() {
+    public void getBoundaryWiseDCBList() throws IOException {
         List<DCBReportResult> resultList = new ArrayList<DCBReportResult>();
-        String result = null;
         final SQLQuery query = prepareQuery();
         resultList = query.list();
         // for converting resultList to JSON objects.
         // Write back the JSON Response.
-        result = new StringBuilder("{ \"data\":").append(toJSON(resultList)).append("}").toString();
+        String result = new StringBuilder("{ \"data\":").append(toJSON(resultList, DCBReportResult.class,
+                DCBReportHelperAdaptor.class)).append("}").toString();
         final HttpServletResponse response = ServletActionContext.getResponse();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        try {
-            IOUtils.write(result, response.getWriter());
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param object
-     * @return
-     */
-    private Object toJSON(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(DCBReportResult.class,
-                new DCBReportHelperAdaptor()).create();
-        final String json = gson.toJson(object);
-        return json;
+        IOUtils.write(result, response.getWriter());
     }
 
     /**

@@ -184,6 +184,7 @@
 		<td class="greybox"></td>
 		<td class="greybox"></td>
 	</s:else>
+	<input type="hidden" name="voucherHeader.allowNegetive" id="voucherHeader.allowNegetive" />
 
 </tr>
 <script type="text/javascript">

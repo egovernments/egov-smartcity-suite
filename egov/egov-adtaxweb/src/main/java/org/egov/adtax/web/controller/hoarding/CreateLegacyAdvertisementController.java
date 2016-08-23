@@ -68,7 +68,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
 	@Autowired
 	private ResourceBundleMessageSource messageSource;
 
-    @RequestMapping(value = "createLegacy", method = GET)
+    @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
         if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null)
             advertisementPermitDetail.setAdvertisement(new Advertisement());
@@ -96,7 +96,7 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
 
     }
 
-    @RequestMapping(value = "createLegacy", method = POST)
+    @RequestMapping(value = "adtaxCreateLegacy", method = POST)
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
