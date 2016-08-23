@@ -65,6 +65,7 @@ import org.egov.works.models.masters.Contractor;
 import org.egov.works.reports.entity.ContractorWiseAbstractReport;
 import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.service.WorkProgressRegisterService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -129,7 +130,7 @@ public class ContractorWiseAbstractReportPDFController {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
-        reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new Date()));
+        reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
         final List<ContractorWiseAbstractSearchResult> contractorSearchList = new ArrayList<ContractorWiseAbstractSearchResult>();
 
         for (final ContractorWiseAbstractSearchResult searchResult : contractorWiseAbstractList) {
@@ -299,8 +300,8 @@ public class ContractorWiseAbstractReportPDFController {
             subHeaderStr = subHeader.toString();
 
         reportParams.put("reportTitle", subHeaderStr);
-        reportParams.put("dataRunDate",
-                DateUtils.getFormattedDateWithTimeStamp(workProgressRegisterService.getReportSchedulerRunDate()));
+        reportParams.put("dataRunDate", workProgressRegisterService.getReportSchedulerRunDate() != null ?
+                DateUtils.getFormattedDateWithTimeStamp(new DateTime(workProgressRegisterService.getReportSchedulerRunDate())) : StringUtils.EMPTY);
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
             reportInput.setReportFormat(FileFormat.PDF);

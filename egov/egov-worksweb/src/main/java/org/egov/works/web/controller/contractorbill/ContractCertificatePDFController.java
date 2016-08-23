@@ -58,6 +58,7 @@ import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
 import org.egov.works.models.contractorBill.ContractorBillCertificateInfo;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -105,7 +106,7 @@ public class ContractCertificatePDFController {
                     contractorBillRegister.getCreatedDate(), contractorBillRegister.getWorkOrderEstimate().getId());
             reportParams.put("lastPartBillDate", lastPartBillDate != null ? DateUtils.getDefaultFormattedDate(lastPartBillDate) : "NA");
             reportParams.put("billDate", DateUtils.getDefaultFormattedDate(contractorBillRegister.getBilldate()));
-            reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new Date()));
+            reportParams.put("reportRunDate", DateUtils.getFormattedDateWithTimeStamp(new DateTime()));
             final List<ContractorBillCertificateInfo> contractCertificateInfoList = contractorBillRegisterService.getContractCertificateDetails(
                     contractorBillRegister,reportParams);
             reportInput = new ReportRequest(CONTRACTCERTIFICATEPDF, contractCertificateInfoList, reportParams);

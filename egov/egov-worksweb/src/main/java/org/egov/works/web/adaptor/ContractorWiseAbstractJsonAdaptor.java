@@ -2,11 +2,12 @@ package org.egov.works.web.adaptor;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.works.reports.entity.ContractorWiseAbstractSearchResult;
 import org.egov.works.reports.service.WorkProgressRegisterService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -117,8 +118,8 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
             else
                 jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 
-            jsonObject.addProperty("createdDate",
-                    DateUtils.getFormattedDateWithTimeStamp(workProgressRegisterService.getReportSchedulerRunDate()));
+            jsonObject.addProperty("createdDate", workProgressRegisterService.getReportSchedulerRunDate() != null ?
+                    DateUtils.getFormattedDateWithTimeStamp(new DateTime(workProgressRegisterService.getReportSchedulerRunDate())) : StringUtils.EMPTY );
         }
         return jsonObject;
     }

@@ -64,6 +64,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static final String DFT_DATE_FORMAT_WITHTIMESTAMP = "dd/MM/yyyy hh:mm a";
     public static final DateTimeFormatter FORMAT_DATE_TO_YEAR = DateTimeFormat.forPattern("yyyy");
     public static final DateTimeFormatter TO_DEFAULT_DATE_FORMAT = DateTimeFormat.forPattern(DFT_DATE_FORMAT);
+    public static final DateTimeFormatter DATE_TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(DFT_DATE_FORMAT_WITHTIMESTAMP); 
 
     public static String currentDateToYearFormat() {
         return toYearFormat(new LocalDate());
@@ -438,7 +439,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      *            the date
      * @return the default formatted date
      */
-    public static String getFormattedDateWithTimeStamp(final Date date) {
-        return getDateFormatter(DFT_DATE_FORMAT_WITHTIMESTAMP).format(date);
+    public static String getFormattedDateWithTimeStamp(final DateTime date) {
+        return DATE_TIMESTAMP_FORMATTER.print(date);
     }
 }
