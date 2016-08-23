@@ -587,7 +587,7 @@ public class ComplaintIndexService {
         	LinkedHashMap<String, Object> searchableObject = (LinkedHashMap<String, Object>) documents.get(0).getResource().get("searchable");
 
         	double complaintPeriod = (clausesObject.get("complaintPeriod") == null) ? 0 : (double)clausesObject.get("complaintPeriod");
-        	double complaintDuration = (searchableObject.get("complaintDuration") == null) ? 0 : (double)searchableObject.get("complaintDuration");
+        	double complaintDuration = (searchableObject.get("complaintDuration") == null) ? 0 : (double)Double.valueOf(searchableObject.get("complaintDuration").toString());
         	int complaintSlaDays = (clausesObject.get("complaintSLADays") == null) ? 0 : (int)clausesObject.get("complaintSLADays");
         	double complaintAgeingFromDue = (clausesObject.get("complaintAgeingFromDue") == null) ? 0 : (double)clausesObject.get("complaintAgeingFromDue");
         	char isSla = (clausesObject.get("isSLA") == null) ? '-' : clausesObject.get("isSLA").toString().charAt(0);
