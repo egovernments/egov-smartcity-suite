@@ -199,7 +199,7 @@ jQuery('.report-section').removeClass('display-hide');
 			columns : [ { 
 				"data" : ""} ,
 				{"data" : "ward"}, 
-				{"data" : "contractorName"},{"data" : "contractorClass"},
+				{"data" : "contractorName"},
 				{"data" : "approvedEstimates","sClass" : "text-right"},{"data" : "approvedAmount" ,"sClass" : "text-right"},
 				{"data" : "siteNotHandedOverEstimates","sClass" : "text-right"},{"data" : "siteNotHandedOverAmount" , "sClass" : "text-right"},
 				{"data" : "notWorkCommencedEstimates" , "sClass" : "text-right"},{"data" : "notWorkCommencedAmount" , "sClass" : "text-right"},

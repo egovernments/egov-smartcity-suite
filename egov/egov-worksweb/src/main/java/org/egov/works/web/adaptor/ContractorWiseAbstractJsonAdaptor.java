@@ -27,11 +27,12 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         if (searchResult != null) {
-            jsonObject.addProperty("ward", searchResult.getElectionWard());
+            if(searchResult.getElectionWard().contains("{"))
+                jsonObject.addProperty("ward", searchResult.getElectionWard().replace("{", " ").replace("}", " ").replaceAll("\"", ""));
+            else
+                jsonObject.addProperty("ward", searchResult.getElectionWard());
             jsonObject.addProperty("contractorName",
                     searchResult.getContractorName() + " " + "-" + " " + searchResult.getContractorCode());
-            jsonObject.addProperty("contractorClass",
-                    searchResult.getContractorClass() != null ? searchResult.getContractorClass() : "NA");
             jsonObject.addProperty("approvedEstimates", searchResult.getApprovedEstimates());
             if (searchResult.getApprovedAmount() != null)
                 jsonObject.addProperty("approvedAmount",
@@ -114,7 +115,7 @@ public class ContractorWiseAbstractJsonAdaptor implements JsonSerializer<Contrac
                                 searchResult.getApprovedAmount()
                                         .subtract(searchResult.getWorkCompletedAmount()
                                                 .add(searchResult.getLiableAmount()))
-                                        .setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                                        .setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
             else
                 jsonObject.addProperty("liableAmount", new BigDecimal(0).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 

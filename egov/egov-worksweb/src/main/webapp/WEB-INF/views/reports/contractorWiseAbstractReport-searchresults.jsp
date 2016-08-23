@@ -44,7 +44,7 @@
 <div class="display-hide report-section">
 	<div id="searchCriteria" class="text-center"></div>
 	<div id="dataRun" class="text-center"></div>
-	<div class="form-group report-table-container">
+	<div class="report-table-container">
 		<table class="table table-bordered table-responsive table-hover multiheadertbl"
 			id="resultTable">
 			<thead>
@@ -52,7 +52,6 @@
                              <th rowspan="2"><spring:message code="lbl.slno" /></th>
                              <th rowspan="2"><spring:message code="lbl.election.ward" /></th>
                              <th rowspan="2"><spring:message code="lbl.contractor.name" /></th>
-							 <th rowspan="2"><spring:message code="lbl.contractor.class" /></th>
                              <th colspan="2"><spring:message code="lbl.loacreated" /></th>
                              <th colspan="2"><spring:message code="lbl.sitenothandedover" /></th>
                              <th colspan="2"><spring:message code="lbl.sitehandedover.notworkcommenced" /></th>

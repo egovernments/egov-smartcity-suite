@@ -136,7 +136,9 @@ public class ContractorWiseAbstractReportPDFController {
         for (final ContractorWiseAbstractSearchResult searchResult : contractorWiseAbstractList) {
             final ContractorWiseAbstractSearchResult contractorResult = new ContractorWiseAbstractSearchResult();
             if (searchResult != null) {
-                if (searchResult.getElectionWard() != null)
+                if (searchResult.getElectionWard() != null && searchResult.getElectionWard().contains("{"))
+                    contractorResult.setElectionWard(searchResult.getElectionWard().replace("{", "").replace("}","").replaceAll("\"", ""));
+                else if(searchResult.getElectionWard() != null)
                     contractorResult.setElectionWard(searchResult.getElectionWard());
                 else
                     contractorResult.setElectionWard("NA");
