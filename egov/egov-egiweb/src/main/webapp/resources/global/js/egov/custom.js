@@ -154,6 +154,10 @@ $(document).ready(function()
 	    });
 	}
 	
+	jQuery.extend(jQuery.validator.messages, {
+		required: "Required"
+	});
+	
 	/*$("select").each(function() { 
 		if($(this).children('option').length == 2)
 		{
