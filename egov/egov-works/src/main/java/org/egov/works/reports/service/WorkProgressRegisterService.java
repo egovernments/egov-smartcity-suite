@@ -1019,7 +1019,7 @@ public class WorkProgressRegisterService {
         query.append("0                                                 AS approvedEstimates,");
         query.append("0                                                 AS approvedAmount,");
         query.append("COUNT(DISTINCT details.agreementnumber)           AS siteNotHandedOverEstimates,");
-        query.append("SUM(details.agreementamount)/10000000             AS siteNotHandedOverAmount,");
+        query.append("SUM(details.agreementamount)                      AS siteNotHandedOverAmount,");
         query.append("0                                                 AS notWorkCommencedEstimates,");
         query.append("0                                                 AS notWorkCommencedAmount,");
         query.append("0                                                 AS workCommencedEstimates,");
