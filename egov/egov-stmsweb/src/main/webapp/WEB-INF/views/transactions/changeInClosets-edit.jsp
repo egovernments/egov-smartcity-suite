@@ -120,10 +120,10 @@
        </div>
 	</div>
 </form:form>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>    
+<script src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>    
 
 
 <script type="text/javascript">

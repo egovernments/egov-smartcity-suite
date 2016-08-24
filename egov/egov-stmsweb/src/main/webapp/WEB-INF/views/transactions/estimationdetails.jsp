@@ -302,8 +302,8 @@
 		</div>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/estimatedetails.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>
-<script	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+<script src="<cdn:url  value='/resources/js/transactions/estimatedetails.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script	src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>

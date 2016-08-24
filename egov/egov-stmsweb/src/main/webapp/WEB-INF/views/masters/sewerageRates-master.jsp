@@ -113,8 +113,8 @@
 	</div>
 </form:form>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>
+	src="<cdn:url  value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>

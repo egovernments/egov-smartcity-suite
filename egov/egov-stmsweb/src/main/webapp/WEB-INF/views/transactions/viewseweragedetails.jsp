@@ -73,7 +73,7 @@
 		</c:choose>
 	</div>
 </div>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
 <script type="text/javascript">  
 
 function printDiv(divName) {

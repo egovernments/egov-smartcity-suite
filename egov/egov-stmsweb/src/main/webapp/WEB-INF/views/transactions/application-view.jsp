@@ -95,4 +95,4 @@
 </div>
 </form:form>
 
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
