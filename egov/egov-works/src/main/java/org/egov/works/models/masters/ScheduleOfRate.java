@@ -41,16 +41,17 @@ package org.egov.works.models.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 import org.egov.common.entity.UOM;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
@@ -90,9 +91,9 @@ public class ScheduleOfRate extends BaseModel {
         this.code = code;
         this.description = description;
     }
-    @OrderBy("id DESC")
+
     private List<SORRate> sorRates = new LinkedList<SORRate>();
-    @OrderBy("id DESC")
+
     private List<MarketRate> marketRates = new LinkedList<MarketRate>();
 
     @Transient
@@ -136,6 +137,12 @@ public class ScheduleOfRate extends BaseModel {
     }
 
     public List<SORRate> getSorRates() {
+        return sorRates;
+    }
+
+    public List<SORRate> getSorRatesOrderById() {
+        Collections.sort(sorRates, (c1, c2) -> c1.getId().compareTo(c2.getId()));
+        Collections.reverse(sorRates);
         return sorRates;
     }
 

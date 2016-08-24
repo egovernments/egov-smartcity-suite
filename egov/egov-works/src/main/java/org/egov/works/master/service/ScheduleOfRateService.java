@@ -41,6 +41,7 @@
 package org.egov.works.master.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -64,8 +65,11 @@ import org.egov.works.models.masters.ScheduleOfRate;
 import org.egov.works.services.WorksService;
 import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.hibernate.Session;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -86,6 +90,9 @@ public class ScheduleOfRateService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
@@ -316,6 +323,144 @@ public class ScheduleOfRateService {
         }
 
         return uploadSORRatesList;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    public Boolean validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
+        Boolean errorInMasterData = false;
+        List<AbstractEstimate> estimates = null;
+        Period checkPeriod = null;
+        String error = "";
+        LocalDate existingStartDate = null;
+        LocalDate existingEndDate = null;
+        LocalDate checkStartDate = null;
+        LocalDate checkEndDate = null;
+        Boolean toDateUpdated = false;
+        Boolean isLatestRate = false;
+        for (UploadScheduleOfRate obj : uploadSORRatesList) {
+            checkPeriod = new Period(obj.getFromDate(), obj.getToDate());
+            error = "";
+            if (obj.getScheduleOfRate() != null)
+                if (obj.getScheduleOfRate().getSorRatesOrderById().get(0).getValidity().getEndDate() == null)
+                    obj.setIsToDateNull(true);
+            isLatestRate = false;
+            toDateUpdated = false;
+            if (obj.getScheduleOfRate() != null)
+                for (SORRate rate : obj.getScheduleOfRate().getSorRatesOrderById()) {
+                    if (!isLatestRate)
+                        isLatestRate = true;
+                    existingStartDate = new LocalDate(rate.getValidity().getStartDate());
+                    if (rate.getValidity().getEndDate() != null)
+                        existingEndDate = new LocalDate(rate.getValidity().getEndDate());
+                    checkStartDate = new LocalDate(obj.getFromDate());
+                    if (obj.getToDate() != null)
+                        checkEndDate = new LocalDate(obj.getToDate());
+                    /**
+                     * If latest existing SOR Rate to date is null
+                     * 
+                     * then
+                     * 
+                     * Check any active estimates is exist after new SOR from date
+                     * 
+                     * if exist
+                     * 
+                     * throw error
+                     * 
+                     * else
+                     * 
+                     * update to date of existing SOR to before date of new SOR from date
+                     * 
+                     * And check overlap issue for from dates ,to dates of existing and new SOR rates both
+                     * 
+                     */
+                    if (obj.getIsToDateNull() != null && obj.getIsToDateNull()) {
+
+                        estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
+                                obj.getFromDate());
+
+                        if (estimates != null && !estimates.isEmpty())
+                            error = error + " " + messageSource
+                                    .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
+                                    + ",";
+                        else if (!toDateUpdated && isLatestRate) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(obj.getFromDate());
+                            cal.add(Calendar.DATE, -1);
+                            Date oneDayBefore = cal.getTime();
+                            rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                            toDateUpdated = true;
+                        }
+
+                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
+                                || (obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
+                                || (rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            if (obj.getErrorReason() != null)
+                                error = obj.getErrorReason() + error;
+                            obj.setErrorReason(error);
+                        }
+
+                    } else {
+
+                        /**
+                         * If latest existing SOR Rate to date is present and to date is grater then new SOR rate from date
+                         * 
+                         * then Check any active estimates is exist after new SOR from date
+                         * 
+                         * if exist
+                         * 
+                         * throw error
+                         * 
+                         * else
+                         * 
+                         * update to date of existing SOR to before date of new SOR from date
+                         * 
+                         * And check overlap issue for from dates ,to dates of existing and new SOR rates both
+                         * 
+                         */
+
+                        if (existingEndDate.compareTo(checkStartDate) > 0) {
+
+                            estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
+                                    obj.getFromDate());
+
+                            if (estimates != null && !estimates.isEmpty())
+                                error = error + " " + messageSource
+                                        .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
+                                        + ",";
+                            else if (!toDateUpdated && isLatestRate) {
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(obj.getFromDate());
+                                cal.add(Calendar.DATE, -1);
+                                Date oneDayBefore = cal.getTime();
+                                rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                                toDateUpdated = true;
+                            }
+                        }
+
+                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
+                                || (obj.getToDate() != null
+                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
+                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
+                                || (rate.getValidity().getEndDate() != null
+                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
+                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            if (obj.getErrorReason() != null)
+                                error = obj.getErrorReason() + error;
+                            obj.setErrorReason(error);
+                        }
+                    }
+                }
+
+        }
+
+        if (!error.equalsIgnoreCase(""))
+            errorInMasterData = true;
+
+        return errorInMasterData;
     }
 
 }

@@ -115,16 +115,16 @@ public class UploadSORController {
 
     @Autowired
     protected UploadSORService uploadSORService;
-    
+
     @SuppressWarnings("unchecked")
-    @RequestMapping(value="/common-form",method = RequestMethod.GET)
+    @RequestMapping(value = "/common-form", method = RequestMethod.GET)
     public String showCommonForm(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
             final Model model) throws ApplicationException {
         return "uploadSor";
     }
 
     @SuppressWarnings("unchecked")
-    @RequestMapping(value="/form",method = RequestMethod.GET)
+    @RequestMapping(value = "/form", method = RequestMethod.GET)
     public String showForm(@ModelAttribute("uploadSORRates") final UploadSOR uploadSOR,
             final Model model) throws ApplicationException {
         model.addAttribute("originalFiles", worksUtils.getLatestSorRateUploadFiles(WorksConstants.SOR_ORIGINAL_FILE_NAME_KEY));
@@ -133,7 +133,7 @@ public class UploadSORController {
     }
 
     @SuppressWarnings("unchecked")
-    @RequestMapping(value="/form",method = RequestMethod.POST)
+    @RequestMapping(value = "/form", method = RequestMethod.POST)
     public String create(@ModelAttribute("uploadSOR") final UploadSOR uploadSOR,
             final RedirectAttributes redirectAttributes, final Model model, final BindingResult errors)
             throws ApplicationException, IOException {
@@ -227,18 +227,18 @@ public class UploadSORController {
 
                 // Validating SOR code
                 if (obj.getSorCode() != null && !obj.getSorCode().equalsIgnoreCase("")) {
-                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null)
+                    if (sorMap.get(obj.getSorCode().toLowerCase()) == null){
                         if (uploadSORService.isContainsWhitespace(obj.getSorCode()))
                             error = error + " "
-                                    + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null)
-                                    + obj.getSorCode() + ",";
+                                    + messageSource.getMessage("error.whitespace.is.not.allowed.in.sorcode", null, null);
+                        }
                     else {
                         obj.setScheduleOfRate(sorMap.get(obj.getSorCode().toLowerCase()));
                     }
                 } else
                     error = error + " " + messageSource.getMessage("error.sorcode.is.required", null, null) + ",";
 
-             // To-Do When ever there is a change in length of code in POJO we need to change this condition.
+                // To-Do When ever there is a change in length of code in POJO we need to change this condition.
                 if (obj.getSorCode() != null && obj.getSorCode().length() > 255)
                     error = error + " " + messageSource.getMessage("error.sor.code.length", null, null) + ",";
 
@@ -298,29 +298,23 @@ public class UploadSORController {
                         error = error + " " + messageSource.getMessage("error.fromdate.cannot.be.grater.then.todate", null, null)
                                 + ",";
 
-                /*// Validating market rate and from date
-                if (obj.getMarketRate() != null && (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1
-                        || obj.getMarketRate().compareTo(BigDecimal.ZERO) == 0))
-                    error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
-                            + obj.getMarketRate() + ",";
-
-                if (obj.getMarketRate() != null && obj.getMarketFromDate() == null)
-                    error = error + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ",";
-                if (obj.getMarketRate() != null && !obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?"))
-                    error = error + " "
-                            + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null, null)
-                            + obj.getRate() + ",";
-
-                if (obj.getMarketFromDate() != null && obj.getMarketRate() == null)
-                    error = error + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ",";
-
-                if (obj.getMarketFromDate() != null && obj.getMarketToDate() != null)
-                    if (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0)
-                        error = error + " " + messageSource
-                                .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";*/
+                /*
+                 * // Validating market rate and from date if (obj.getMarketRate() != null &&
+                 * (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1 || obj.getMarketRate().compareTo(BigDecimal.ZERO) == 0))
+                 * error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
+                 * + obj.getMarketRate() + ","; if (obj.getMarketRate() != null && obj.getMarketFromDate() == null) error = error
+                 * + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ","; if
+                 * (obj.getMarketRate() != null && !obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")) error =
+                 * error + " " + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null,
+                 * null) + obj.getRate() + ","; if (obj.getMarketFromDate() != null && obj.getMarketRate() == null) error = error
+                 * + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ","; if
+                 * (obj.getMarketFromDate() != null && obj.getMarketToDate() != null) if
+                 * (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0) error = error + " " + messageSource
+                 * .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";
+                 */
 
                 // Validate duplicate (From Database)
-                if ( obj.getScheduleOfRate() != null
+                if (obj.getScheduleOfRate() != null
                         && obj.getScheduleCategory() != null)
                     if (obj.getScheduleOfRate().getScheduleCategory().getCode()
                             .equalsIgnoreCase(obj.getScheduleCategory().getCode()))

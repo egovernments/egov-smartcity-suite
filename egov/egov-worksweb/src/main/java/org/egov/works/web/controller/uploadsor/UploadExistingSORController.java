@@ -116,14 +116,14 @@ public class UploadExistingSORController {
     private WorksUtils worksUtils;
 
     @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-
-    @Autowired
     protected UploadSORService uploadSORService;
 
     @Autowired
     protected EstimateService estimateService;
+    
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
@@ -162,8 +162,7 @@ public class UploadExistingSORController {
 
             validateMandatoryFeilds(uploadSORRatesList);
 
-            validateRates(uploadSORRatesList);
-
+           errorInMasterData = scheduleOfRateService.validateRates(uploadSORRatesList);
 
             loadSorRateOriginalFileName = uploadSORService.prepareOriginalFileName(
                     WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
@@ -173,10 +172,12 @@ public class UploadExistingSORController {
             final FileStoreMapper originalFileStore = fileStoreService.store(uploadSOR.getFile().getInputStream(),
                     loadSorRateOriginalFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
 
-            persistenceService.persist(originalFileStore);
-            originalFileStoreId = originalFileStore.getFileStoreId();
+           
 
             if (errorInMasterData) {
+                persistenceService.getSession().clear();
+                persistenceService.persist(originalFileStore);
+                originalFileStoreId = originalFileStore.getFileStoreId();
                 inputFile.close();
                 outPutFileStoreId = uploadSORService.prepareOutPutFileWithErrors(
                         WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
@@ -186,6 +187,9 @@ public class UploadExistingSORController {
                 model.addAttribute("outPutFileStoreId", outPutFileStoreId);
                 return "uploadSor-result";
             }
+            
+            persistenceService.persist(originalFileStore);
+            originalFileStoreId = originalFileStore.getFileStoreId();
 
             uploadSORRatesList = scheduleOfRateService.createSORRate(uploadSORRatesList);
 
@@ -218,139 +222,6 @@ public class UploadExistingSORController {
         return "uploadSor-result";
     }
 
-
-    private void validateRates(List<UploadScheduleOfRate> uploadSORRatesList) {
-        List<AbstractEstimate> estimates = null;
-        Period checkPeriod = null;
-        String error = "";
-        LocalDate existingStartDate = null;
-        LocalDate existingEndDate = null;
-        LocalDate checkStartDate = null;
-        LocalDate checkEndDate = null;
-        for (UploadScheduleOfRate obj : uploadSORRatesList) {
-            checkPeriod = new Period(obj.getFromDate(), obj.getToDate());
-            error = "";
-            if (obj.getScheduleOfRate() != null)
-                for (SORRate rate : obj.getScheduleOfRate().getSorRates()) {
-                    if (rate.getValidity().getEndDate() == null)
-                        obj.setIsToDateNull(true);
-                    break;
-                }
-
-            if (obj.getScheduleOfRate() != null)
-                for (SORRate rate : obj.getScheduleOfRate().getSorRates()) {
-
-                    existingStartDate = new LocalDate(rate.getValidity().getStartDate());
-                    if (rate.getValidity().getEndDate() != null)
-                        existingEndDate = new LocalDate(rate.getValidity().getEndDate());
-                    checkStartDate = new LocalDate(obj.getFromDate());
-                    if (obj.getToDate() != null)
-                        checkEndDate = new LocalDate(obj.getToDate());
-                    /**
-                     * If latest existing SOR Rate to date is null
-                     * 
-                     * then
-                     * 
-                     * Check any active estimates is exist after new SOR from date
-                     * 
-                     * if exist
-                     * 
-                     * throw error
-                     * 
-                     * else
-                     * 
-                     * update to date of existing SOR to before date of new SOR from date
-                     * 
-                     * And check overlap issue for from dates ,to dates of existing and new SOR rates both
-                     * 
-                     */
-                    if (obj.getIsToDateNull() != null && obj.getIsToDateNull()) {
-
-                        estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
-                                obj.getFromDate());
-
-                        if (estimates != null && !estimates.isEmpty())
-                            error = error + " " + messageSource
-                                    .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
-                                    + ",";
-                        else {
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(obj.getFromDate());
-                            cal.add(Calendar.DATE, -1);
-                            Date oneDayBefore = cal.getTime();
-                            rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
-                        }
-
-                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
-                                || (obj.getToDate() != null
-                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
-                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
-                                || (rate.getValidity().getEndDate() != null
-                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
-                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
-                            if (obj.getErrorReason() != null)
-                                error = obj.getErrorReason() + error;
-                            obj.setErrorReason(error);
-                        }
-
-                    } else {
-
-                        /**
-                         * If latest existing SOR Rate to date is present and to date is grater then new SOR rate from date
-                         * 
-                         * then Check any active estimates is exist after new SOR from date
-                         * 
-                         * if exist
-                         * 
-                         * throw error
-                         * 
-                         * else
-                         * 
-                         * update to date of existing SOR to before date of new SOR from date
-                         * 
-                         * And check overlap issue for from dates ,to dates of existing and new SOR rates both
-                         * 
-                         */
-
-                        if (existingEndDate.compareTo(checkStartDate) > 0) {
-
-                            estimates = estimateService.getBySorIdAndEstimateDate(obj.getScheduleOfRate().getId(),
-                                    obj.getFromDate());
-
-                            if (estimates != null && !estimates.isEmpty())
-                                error = error + " " + messageSource
-                                        .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
-                                        + ",";
-                            else {
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(obj.getFromDate());
-                                cal.add(Calendar.DATE, -1);
-                                Date oneDayBefore = cal.getTime();
-                                rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
-                            }
-                        }
-
-                        if (obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getFromDate())
-                                || (obj.getToDate() != null
-                                        && obj.getScheduleOfRate().isWithin(rate.getValidity(), obj.getToDate()))
-                                || obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getStartDate())
-                                || (rate.getValidity().getEndDate() != null
-                                        && obj.getScheduleOfRate().isWithin(checkPeriod, rate.getValidity().getEndDate()))) {
-                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
-                            if (obj.getErrorReason() != null)
-                                error = obj.getErrorReason() + error;
-                            obj.setErrorReason(error);
-                        }
-                    }
-
-                }
-
-        }
-
-        if (!error.equalsIgnoreCase(""))
-            errorInMasterData = true;
-
-    }
 
     private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
@@ -436,26 +307,20 @@ public class UploadExistingSORController {
                         error = error + " " + messageSource.getMessage("error.fromdate.cannot.be.grater.then.todate", null, null)
                                 + ",";
 
-              /*  // Validating market rate and from date
-                if (obj.getMarketRate() != null && (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1
-                        || obj.getMarketRate().compareTo(BigDecimal.ZERO) == 0))
-                    error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
-                            + obj.getMarketRate() + ",";
-
-                if (obj.getMarketRate() != null && obj.getMarketFromDate() == null)
-                    error = error + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ",";
-                if (obj.getMarketRate() != null && !obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?"))
-                    error = error + " "
-                            + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null, null)
-                            + obj.getRate() + ",";
-
-                if (obj.getMarketFromDate() != null && obj.getMarketRate() == null)
-                    error = error + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ",";
-
-                if (obj.getMarketFromDate() != null && obj.getMarketToDate() != null)
-                    if (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0)
-                        error = error + " " + messageSource
-                                .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";*/
+                /*
+                 * // Validating market rate and from date if (obj.getMarketRate() != null &&
+                 * (obj.getMarketRate().compareTo(BigDecimal.ZERO) == -1 || obj.getMarketRate().compareTo(BigDecimal.ZERO) == 0))
+                 * error = error + " " + messageSource.getMessage("error.negative.values.not.allowed.in.market.rate", null, null)
+                 * + obj.getMarketRate() + ","; if (obj.getMarketRate() != null && obj.getMarketFromDate() == null) error = error
+                 * + " " + messageSource.getMessage("error.market.fromdate.is.required", null, null) + ","; if
+                 * (obj.getMarketRate() != null && !obj.getMarketRate().toString().matches("[0-9]+([,.][0-9]{1,2})?")) error =
+                 * error + " " + messageSource.getMessage("error.more.then.two.decimal.places.not.allowed.market.rate", null,
+                 * null) + obj.getRate() + ","; if (obj.getMarketFromDate() != null && obj.getMarketRate() == null) error = error
+                 * + " " + messageSource.getMessage("error.market.rate.is.required", null, null) + ","; if
+                 * (obj.getMarketFromDate() != null && obj.getMarketToDate() != null) if
+                 * (obj.getMarketFromDate().compareTo(obj.getMarketToDate()) > 0) error = error + " " + messageSource
+                 * .getMessage("error.market.fromdate.cannot.be.grater.then.market.todate", null, null) + ",";
+                 */
 
                 if (obj.getErrorReason() != null)
                     error = obj.getErrorReason() + error;
