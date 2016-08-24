@@ -246,6 +246,10 @@ public class UpdateConnectionController extends GenericConnectionController {
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
+        model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
+        model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
         return "newconnection-edit";
     }
 
@@ -277,10 +281,7 @@ public class UpdateConnectionController extends GenericConnectionController {
                     .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, waterConnectionDetails
                             .getApplicationType().getCode(), "fieldInspection", ""));
             model.addAttribute("roadCategoryList", roadCategoryService.getAllRoadCategory());
-            model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
-            model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
-            model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
-            model.addAttribute("typeOfConnection", waterConnectionDetails.getApplicationType().getCode());
+            
         } else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null)
             model.addAttribute("approvalPositionExist", waterConnectionDetailsService
