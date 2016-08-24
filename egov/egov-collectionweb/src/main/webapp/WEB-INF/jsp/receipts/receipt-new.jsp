@@ -987,7 +987,7 @@ function validate()
    	}
 
    	<s:if test="%{!isBillSourcemisc()}"> 
-	 if((document.getElementById("totalamountdisplay").value>document.getElementById("totalamounttobepaid").value)){
+	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
 		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
 		 if(r !=true)
 			 validation = false;
