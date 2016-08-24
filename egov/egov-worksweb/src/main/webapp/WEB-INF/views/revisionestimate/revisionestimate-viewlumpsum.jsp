@@ -75,7 +75,7 @@
 									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
 									 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out>
 									 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
-									 	 <button class="btn btn-default" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+									 	 <button class="btn btn-default openmsheet" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 									 	</c:if>
 									 	</td>
 									 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  

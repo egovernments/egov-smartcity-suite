@@ -42,8 +42,10 @@ package org.egov.works.revisionestimate.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -494,7 +496,7 @@ public class RevisionEstimateService {
     }
 
     public void populateHeaderActivities(final RevisionAbstractEstimate revisionEstimate,
-            final List<RevisionAbstractEstimate> revisionAbstractEstimates) {
+            final List<RevisionAbstractEstimate> revisionAbstractEstimates, final Model model) {
         // Adding Original Activities
         final List<Activity> sorActivities = new ArrayList<>(revisionEstimate.getParent().getSORActivities());
         final List<Activity> nonSorActivities = new ArrayList<>(revisionEstimate.getParent().getNonSORActivities());
@@ -502,11 +504,13 @@ public class RevisionEstimateService {
         final List<Activity> nonTenderedActivities = new ArrayList<>();
         final List<Activity> lumpSumActivities = new ArrayList<>();
 
+        final Map<Long, String> previousEstimates = new HashMap<>();
+
         // Populating Revision Estimate Activities
         for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
             if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
                     && revisionEstimate.getCreatedDate() != null
-                    && re.getCreatedDate().before(revisionEstimate.getCreatedDate()))
+                    && re.getCreatedDate().before(revisionEstimate.getCreatedDate())) {
                 for (final Activity activity : re.getActivities())
                     if (activity.getParent() == null && activity.getSchedule() != null)
                         populateNonTenderedLumpSumActivities(activity, nonTenderedActivities);
@@ -516,11 +520,15 @@ public class RevisionEstimateService {
                         populateChangeQuantityActivities(activity, sorActivities, nonTenderedActivities);
                     else if (activity.getParent() != null && activity.getSchedule() == null)
                         populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
+                previousEstimates.put(re.getId(), re.getEstimateNumber());
+            }
 
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
         revisionEstimate.getChangeQuantityNTActivities().addAll(nonTenderedActivities);
         revisionEstimate.getChangeQuantityLSActivities().addAll(lumpSumActivities);
+
+        model.addAttribute("previousEstimates", previousEstimates);
     }
 
     private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities) {
@@ -546,19 +554,25 @@ public class RevisionEstimateService {
         for (final Activity sa : activities)
             if (activity.getParent().getId().equals(sa.getId()))
                 if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
-                else if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                    sa.setQuantityChanged(true);
+                } else if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+                    sa.setQuantityChanged(true);
+                }
         for (final Activity sa : nonTenderedLumpSumActivities)
             if (activity.getParent().getId().equals(sa.getId()))
                 if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY))
+                        && activity.getRevisionType().equals(RevisionType.ADDITIONAL_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() + activity.getQuantity());
-                else if (activity.getRevisionType() != null
-                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY))
+                    sa.setQuantityChanged(true);
+                } else if (activity.getRevisionType() != null
+                        && activity.getRevisionType().equals(RevisionType.REDUCED_QUANTITY)) {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
+                    sa.setQuantityChanged(true);
+                }
     }
 
     public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
@@ -573,7 +587,7 @@ public class RevisionEstimateService {
         model.addAttribute("uoms", uomService.findAll());
         final List<RevisionAbstractEstimate> revisionAbstractEstimates = findApprovedRevisionEstimatesByParent(
                 workOrderEstimate.getEstimate().getId());
-        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates);
+        populateHeaderActivities(revisionEstimate, revisionAbstractEstimates, model);
         model.addAttribute("revisionEstimate", revisionEstimate);
         model.addAttribute("exceptionaluoms", worksUtils.getExceptionalUOMS());
         model.addAttribute("workOrderDate",

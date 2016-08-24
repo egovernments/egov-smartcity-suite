@@ -69,28 +69,37 @@
 				<c:choose>
 					<c:when test="${revisionEstimate.changeQuantityNTActivities.size() != 0}">
 						<c:forEach items="${revisionEstimate.changeQuantityNTActivities}" var="sorDtls" varStatus="item">
-								<tr >
-									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
-									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
-								 	<td>
-								 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
-								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
-								 	</td> 
-								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out>
-								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
-								 		 <button class="btn btn-default" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-								 	 </c:if>
-								 	</td>
-								 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  
-								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
-								 	<c:if test="${isServiceVATRequired == true }">
-										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
-										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
-									</c:if>
-								</tr>
+							<tr>
+								<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+								<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
+								<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
+							 	<td>
+							 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
+							 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+							 	</td> 
+							 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
+							 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
+							 	<c:choose>
+									<c:when test="${sorDtls.quantityChanged == true }">
+										<td class="text-right" style="color: blue;">
+									</c:when>
+									<c:otherwise>
+										<td class="text-right">
+									</c:otherwise>
+								</c:choose>
+							 		<c:out value="${sorDtls.quantity}">
+							 	</c:out>
+							 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
+							 		 <button class="btn btn-default openmsheet" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+							 	 </c:if>
+							 	</td>
+							 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  
+							 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
+							 	<c:if test="${isServiceVATRequired == true }">
+									<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
+									<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
+								</c:if>
+							</tr>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>

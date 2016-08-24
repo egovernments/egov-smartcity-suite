@@ -120,7 +120,7 @@
 							<td>
 							<div class="input-group" style="width:150px">
 								<form:input path="lumpSumActivities[0].quantity" id="lumpSumQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right lumpSumQuantity" maxlength="64" onchange="calculateLumpSumEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-								<span class="input-group-addon" name="lumpSumActivities[0].msadd" id="lumpSumActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+								<span class="input-group-addon openmsheet" name="lumpSumActivities[0].msadd" id="lumpSumActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
 						    </div>
 							</td>
                              <td hidden="true">
@@ -186,7 +186,7 @@
 									<td>
 										<div class="input-group" style="width:150px">
 										<form:input path="lumpSumActivities[${item.index }].quantity" readonly="${isreadonly}" id="lumpSumQuantity_${item.index }" value="${activity.quantity }" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0"  class="form-control table-input text-right lumpSumQuantity" maxlength="64" onchange="calculateLumpSumEstimateAmount(this);" onkeyup="validateQuantityInput(this);" />
-									     <span class="input-group-addon" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
+									     <span class="input-group-addon openmsheet" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="${item.index }" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"  ></i></button>
 								</div>
 									</td>       
  

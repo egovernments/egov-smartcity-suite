@@ -153,7 +153,7 @@
 							<td>
 								<div class="input-group" style="width:150px">
 								  <form:input path="nonTenderedActivities[0].quantity" id="quantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-								  <span class="input-group-addon" name="nonTenderedActivities[0].msadd" id="nonTenderedActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+								  <span class="input-group-addon openmsheet" name="nonTenderedActivities[0].msadd" id="nonTenderedActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
 								</div>
 							</td>
 							<td hidden="true">
@@ -212,7 +212,7 @@
 									<td>
 										<div class="input-group" style="width:150px">
 									  <form:input path="nonTenderedActivities[${item.index }].quantity" id="quantity_${item.index }" value="${activity.quantity }" readonly="${isreadonly}" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="${item.index }" data-optional="0" class="form-control table-input text-right quantity" maxlength="64" onblur="calculateEstimateAmount(this);" onkeyup="validateQuantityInput(this);"/>
-					                  <span class="input-group-addon" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>				
+					                  <span class="input-group-addon openmsheet" name="nonTenderedActivities[${item.index}].msadd" id="nonTenderedActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>				
                                     	</div>
                                      </td>
                                		<%@ include file="../measurementsheet/nontendered-measurementsheet-formtableedit.jsp"%>

@@ -83,6 +83,17 @@ $(document).ready(function(){
 		lumpSumTotal();
 	}
 	
+	$('#expandre').click(function () {
+	    if ($(this).html() == "More..") {
+	    	$(this).html('Less..');
+	         $('#renumbers').show();
+		} else {
+	        $(this).html('More..');
+	        $('#renumbers').hide();
+		}
+			
+	});
+	
 });
 
 function getRow(obj) {
@@ -1180,112 +1191,6 @@ var sorSearch = new Bloodhound({
 		
 	});
 	
-	
-	function openAllmsheet()
-	{
-		var open=false;
-		$('.classmsopen').each(function (index)
-				{
-
-			if($( this ).val()==0)
-				
-			{
-				var sid=$( this ).attr('id');
-				var	sortable=sid.split(".")[0];
-				if(document.getElementById(sid.split(".")[0]+".mspresent").value==1)
-				{
-					
-					var   mscontent=document.getElementById(sid.replace("msopen","mstd")).innerHTML;
-
-					if(mscontent!='')
-					{
-						if(mscontent.indexOf(headstart) >=0)
-						{
-							var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
-							var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
-							mscontent= mscontent.replace(head,"");
-							mscontent= mscontent.replace(tail,"");
-						}
-
-						var curRow = $(this).closest('tr');
-						var k= "<tr id=\""+sortable+".mstr\" class='msheet-tr'><td colspan=\"9\">";
-						mscontent=k+mscontent+"</td></tr>";
-						curRow.after(mscontent);
-						document.getElementById(sid.replace("msopen","mstd")).innerHTML="";
-						$( this ).val(1);
-						var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
-						
-						if(sortable.indexOf("nonTenderedActivities") >= 0)
-						{
-							nonTenderedMsArray[idx]=mscontent;
-						}
-						else
-						{
-							lumpSumMsArray[idx]=mscontent;
-						}
-
-						
-					}
-
-				}
-			}
-
-				});
-		return open;	
-	}
-	
-	function closeAllmsheet()
-	{
-		var retVal = confirm("This will validate and update quantities . Do you want to continue?");
-		if( retVal == false )
-		{
-			return ;
-		}
-		else{
-
-
-			var open=false;
-			$('.classmsopen').each(function (index)
-					{
-
-				if($( this ).val()==1)
-				{
-
-					var sid=$( this ).attr('id');
-					var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
-					if(!validateMsheet(qobj1))
-					{
-						return false;
-					}
-					
-					var mscontent="<tr id=\""+sid.split(".")[0]+".mstr\">";
-					document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
-
-					mscontent=document.getElementById(sid.split(".")[0]+".mstr").innerHTML;
-
-					
-					document.getElementById(sid.split(".")[0]+".mstd").innerHTML=mscontent;
-					document.getElementById(sid.split(".")[0]+".msopen").value="0";
-					var mstr=document.getElementById(sid.split(".")[0]+".mstr");
-					$(mstr).remove(); 
-					var qobj=document.getElementsByName(sid.split(".")[0]+".quantity")[0];
-					$(qobj).attr("readonly","readonly");
-					if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
-					{
-						calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-					}else
-					{
-						calculateLumpSumEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-					}
-
-				    }
-					});
-		}
-		//console.log("mssheet open:"+open);
-		return open;
-
-	}
-	
 	function  deleteThisRow(obj) {
 		var rIndex = getRow(obj).rowIndex;
 		var tablename=$(obj).closest('table').attr('id');
@@ -1507,6 +1412,10 @@ function viewLOA(id) {
 
 function viewEstimate(id) {
 	window.open("/egworks/abstractestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+}
+
+function viewRevisionEstimate(id) {
+	window.open("/egworks/revisionestimate/view/" + id, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
 function validateWorkFlowApprover(name) {
@@ -1847,4 +1756,16 @@ function changeSign(obj) {
 		$('.sign-text_' + className).html("-")
 	}
 	calculateActivityAmounts($('#activityQuantity_' + className));
+}
+
+function openAllmsheet() {
+	$(".openmsheet:visible").each(function() {
+		$(this).trigger('click');
+	});
+}
+
+function closeAllmsheet() {
+	$(".hide-ms:visible").each(function() {
+		$(this).trigger('click');
+	});
 }

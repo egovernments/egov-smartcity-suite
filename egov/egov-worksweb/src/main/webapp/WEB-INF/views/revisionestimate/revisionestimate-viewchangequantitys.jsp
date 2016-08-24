@@ -47,6 +47,11 @@
 			<spring:message code="lbl.change.quantity" />
 		</div>
 	</div>
+	<div align="right" class="openCloseAll">
+		<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
+			onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+			value="Open All Measurements" onclick="openAllmsheet()" />
+	</div>
 	<div class="panel-body">
 		<table class="table table-bordered">
 			<thead>
@@ -110,7 +115,7 @@
 								 		<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">-</c:if>
 								 		<c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
-								 		 <button class="btn btn-default" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 		 <button class="btn btn-default openmsheet" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 								 	 </c:if>
 								 	</td>
 								 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  

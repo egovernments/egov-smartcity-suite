@@ -131,7 +131,7 @@
 						               <form:hidden path="changeQuantityActivities[0].signValue" value="+" id="changeQuantityActivitiesSignValue_0" />
 						            </span>
 									<form:input path="changeQuantityActivities[0].quantity" id="activityQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-									<span class="input-group-addon openmbsheet" name="changeQuantityActivities[0].msadd" id="changeQuantityActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+									<span class="input-group-addon openmsheet" name="changeQuantityActivities[0].msadd" id="changeQuantityActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
 								</div>
 							</td>
 							<td hidden="true">
@@ -210,7 +210,7 @@
 												<span class="input-group-addon openmbsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
 											</c:when>
 											<c:otherwise>
-												<span style="display: none;" class="input-group-addon openmbsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+												<span style="display: none;" class="input-group-addon openmsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
 											</c:otherwise>
 										</c:choose>
 									</div>

@@ -50,13 +50,12 @@
 	</div>
 	<div class="panel-body">
 	<c:if test="${measurementsPresent}">
-	
-	<div align="right">
+		<div align="right">
 			<input type="button" value="Close All Measurements" class="btn btn-sm btn-secondary"
-				onclick="closeAllViewmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
-				value="Open All Measurements" onclick="openAllViewmsheet()" />
+				onclick="closeAllmsheet()" /> <input type="button" class="btn btn-sm btn-secondary"
+				value="Open All Measurements" onclick="openAllmsheet()" />
 		</div>
-		</c:if>
+	</c:if>
 		
 		<table class="table table-bordered">
 			<thead>
@@ -79,28 +78,37 @@
 				<c:choose>
 					<c:when test="${revisionEstimate.sorActivities.size() != 0}">
 						<c:forEach items="${revisionEstimate.sorActivities}" var="sorDtls" varStatus="item">
-								<tr >
-									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-									<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
-									<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
-								 	<td>
-								 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
-								 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
-								 	</td> 
-								 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
-								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-								 	<td class="text-right"><c:out value="${sorDtls.quantity}"></c:out>
-								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
-								 		 <button class="btn btn-default" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-								 	 </c:if>
-								 	</td>
-								 		<%@ include file="../measurementsheet/sor-measurementsheet-formtableview.jsp" %>  
-								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
-								 	<c:if test="${isServiceVATRequired == true }">
-										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
-										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
-									</c:if>
-								</tr>
+							<tr>
+								<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+								<td><c:out value="${sorDtls.schedule.scheduleCategory.code}"></c:out></td>
+								<td><c:out value="${sorDtls.schedule.code}"></c:out></td>
+							 	<td>
+							 		<c:out value="${sorDtls.schedule.getSummary()}"></c:out>
+							 		<a href="#" class="hintanchor" title="${sorDtls.schedule.description }"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+							 	</td> 
+							 	<td><c:out value="${sorDtls.uom.uom}"></c:out></td>
+							 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
+							 	<c:choose>
+									<c:when test="${sorDtls.quantityChanged == true }">
+										<td class="text-right" style="color: blue;">
+									</c:when>
+									<c:otherwise>
+										<td class="text-right">
+									</c:otherwise>
+								</c:choose>
+							 		<c:out value="${sorDtls.quantity}">
+							 	</c:out>
+							 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
+							 		 <button class="btn btn-default openmsheet" name="sorActivities[${item.index}].msadd" id="sorActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+							 	 </c:if>
+							 	</td>
+							 		<%@ include file="../measurementsheet/sor-measurementsheet-formtableview.jsp" %>  
+							 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
+							 	<c:if test="${isServiceVATRequired == true }">
+									<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
+									<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(sorDtls.getAmount().value) * (sorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
+								</c:if>
+							</tr>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>
@@ -127,5 +135,7 @@
 				</tr>
 			</tfoot>
 		</table>
+		<div class="col-sm-7 add-margin"></div>
+		<div class="col-sm-5 add-margin"><div class="add-margin error-msg text-right"><spring:message code="msg.re.changequantity.footnote" /></div></div>
 	</div>
 </div>

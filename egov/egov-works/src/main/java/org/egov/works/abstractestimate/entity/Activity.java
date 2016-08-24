@@ -140,6 +140,9 @@ public class Activity extends AbstractAuditable {
     @Transient
     private Double consumedQuantity;
 
+    @Transient
+    private boolean quantityChanged;
+
     @Valid
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "activity", targetEntity = MeasurementSheet.class)
     @OrderBy("slNo ASC")
@@ -356,6 +359,14 @@ public class Activity extends AbstractAuditable {
 
     public void setConsumedQuantity(final Double consumedQuantity) {
         this.consumedQuantity = consumedQuantity;
+    }
+
+    public boolean isQuantityChanged() {
+        return quantityChanged;
+    }
+
+    public void setQuantityChanged(final boolean quantityChanged) {
+        this.quantityChanged = quantityChanged;
     }
 
 }

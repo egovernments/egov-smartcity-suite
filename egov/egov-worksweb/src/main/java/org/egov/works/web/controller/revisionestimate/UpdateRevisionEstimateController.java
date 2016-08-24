@@ -163,6 +163,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);
 
         prepareNonTenderedAndLumpSumActivities(revisionEstimate);
+        prepareChangeQuantityActivities(revisionEstimate);
 
         model.addAttribute("workflowHistory",
                 lineEstimateService.getHistory(revisionEstimate.getState(), revisionEstimate.getStateHistory()));

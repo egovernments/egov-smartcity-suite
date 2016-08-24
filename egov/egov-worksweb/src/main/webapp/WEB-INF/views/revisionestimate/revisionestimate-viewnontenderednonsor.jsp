@@ -68,23 +68,32 @@
 					<c:choose>
 						<c:when test="${revisionEstimate.changeQuantityLSActivities.size() != 0}">
 							<c:forEach items="${revisionEstimate.changeQuantityLSActivities}" var="nonSorDtls" varStatus="item">
-									<tr >
-										<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
-										<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
-									 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
-									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
-									 	<td class="text-right"><c:out value="${nonSorDtls.quantity}"></c:out>
-									 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
-									 	 <button class="btn btn-default" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
-									 	</c:if>
-									 	</td>
-									 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  
-									 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
-									 	<c:if test="${isServiceVATRequired == true }">
-											<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>
-											<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(nonSorDtls.getAmount().value) * (nonSorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
-										</c:if>
-									</tr>
+								<tr>
+									<td><span class="spansno"><c:out value="${item.index + 1}" /></span></td>
+									<td><c:out value="${nonSorDtls.nonSor.description}"></c:out></td>
+								 	<td><c:out value="${nonSorDtls.uom.uom}"></c:out></td>
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.estimateRate}"></c:out></fmt:formatNumber></td>
+								 	<c:choose>
+										<c:when test="${nonSorDtls.quantityChanged == true }">
+											<td class="text-right" style="color: blue;">
+										</c:when>
+										<c:otherwise>
+											<td class="text-right">
+										</c:otherwise>
+									</c:choose>
+								 		<c:out value="${nonSorDtls.quantity}">
+								 	</c:out>
+								 	<c:if test="${nonSorDtls.measurementSheetList.size() > 0 }">
+								 	 <button class="btn btn-default openmsheet" name="lumpSumActivities[${item.index}].msadd" id="lumpSumActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 	</c:if>
+								 	</td>
+								 		<%@ include file="../measurementsheet/nontenderednonsor-measurementsheet-formtableview.jsp"%>  
+								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${nonSorDtls.getAmount().value}" /></fmt:formatNumber></td>
+								 	<c:if test="${isServiceVATRequired == true }">
+										<td class="text-right"><c:out value="${nonSorDtls.serviceTaxPerc}"></c:out></td>
+										<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2">${(nonSorDtls.getAmount().value) * (nonSorDtls.serviceTaxPerc / 100) }</fmt:formatNumber></td>
+									</c:if>
+								</tr>
 							</c:forEach>
 						</c:when>
 						<c:otherwise>

@@ -62,7 +62,6 @@
 								</a>
 							</div></c:if>
 							<input type="hidden" name="mode" value="${mode}" id="mode"/>
-							<form:hidden path="estimateNumber" name="estimateNumber" value="${revisionEstimate.parent.lineEstimateDetails.estimateNumber}"/>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.lineestimateno" /> :
 							</div> 
 							<c:if test="${revisionEstimate.parent.lineEstimateDetails != null}">
@@ -91,6 +90,32 @@
 								<c:out value="${revisionEstimate.estimateNumber}"></c:out>
 							</div>
 						</div>
+						
+						<c:if test="${previousEstimates.size() != 0 }">
+							<div class="row add-border">
+								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.old.res" /> : </div> 
+								<div class="add-margin view-content">
+									<c:forEach var="estimate" items="${previousEstimates}" varStatus="item">
+										<c:if test="${item.index <= 4 }">
+											<a href='javascript:void(0)' onclick="viewRevisionEstimate('<c:out value="${estimate.key}"/>')">
+											<c:out value="${estimate.value}"/></a>&nbsp
+										</c:if>
+									</c:forEach>
+									<c:if test="${previousEstimates.size() > 5 }">
+										<span id="renumbers" class="display-hide">
+											<c:forEach var="estimate" items="${previousEstimates}" varStatus="item">
+												<c:if test="${item.index > 4 }">
+													<a href='javascript:void(0)' onclick="viewRevisionEstimate('<c:out value="${estimate.key}"/>')">
+													<c:out value="${estimate.value}"/></a>&nbsp
+												</c:if>
+											</c:forEach>
+										</span>
+										<a href="javascript:void(0);" id="expandre"
+										class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
+									</c:if>
+								</div>
+							</div>
+						</c:if>
 					</div>
 				</div>
 			</div>
