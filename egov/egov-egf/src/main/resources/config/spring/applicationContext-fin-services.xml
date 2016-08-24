@@ -62,7 +62,6 @@
 		<property name="eisService" ref="eisService" />
 	</bean>
 
-
 	<bean id="instrumentTypeService" class = "org.egov.services.instrument.InstrumentTypeService" >
 		<constructor-arg name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
@@ -118,11 +117,7 @@
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
 	</bean>
-
-	<!-- <bean id="createVoucher" class="org.egov.billsaccounting.services.CreateVoucher"
-		scope="prototype">
-	</bean>
- -->
+	
 	<bean id="voucherHeaderPersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type" value="org.egov.commons.CVoucherHeader" />
 	</bean>
@@ -156,7 +151,7 @@
 	<bean id="budgetDetailService" class="org.egov.services.budget.BudgetDetailService">
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetDetail"/>
 	</bean>
-<bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
+    <bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetUsage"/>
 	</bean>
 	<bean id="budgetService" class="org.egov.services.budget.BudgetService" scope="prototype">
@@ -177,18 +172,12 @@
 		<constructor-arg name="type" value="org.egov.commons.CFinancialYear" />
 	</bean>
 
-	<bean id="budgetDetailConfig" class="org.egov.utils.BudgetDetailConfig"
-		scope="prototype">
-		<constructor-arg ref="persistenceService" />
+	<bean id="budgetDetailConfig" class="org.egov.utils.BudgetDetailConfig" scope="prototype">
 	</bean>
 	<bean id="voucherHeaderService" class="org.egov.services.voucher.VoucherHeaderService">
 		<constructor-arg name="type" value="org.egov.commons.CVoucherHeader" />
 	</bean>
 
-	<!-- <bean id="accountEntityService" class="org.egov.masters.services.AccountEntityService">
-		<constructor-arg index="0"
-			value="org.egov.masters.model.AccountEntity" />
-	</bean> -->
 	<bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO"
 		scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
@@ -318,7 +307,6 @@
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="voucherHibDAO" ref="voucherHibDAO" />
 	</bean>
-
 
 	<bean id="lgService" class="org.egov.services.report.LoanGrantService">
 	</bean>
