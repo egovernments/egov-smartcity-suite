@@ -38,6 +38,9 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	if($('#fileNumber').val() == '' && $('#spillOverFlag').val() == 'true' && $('#workOrderCreated').val() == 'true') {
+		$('#workOrderDate').val('');
+	}
 	var contractorSearch = new Bloodhound({
         datumTokenizer: function (datum) {
             return Bloodhound.tokenizers.whitespace(datum.value);
