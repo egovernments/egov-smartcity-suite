@@ -52,6 +52,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -61,6 +63,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -70,6 +73,8 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
@@ -81,415 +86,443 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jasperreports.engine.JRException;
-
 @Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
-		@Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-				Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-				"no-cache;filename=ChequeIssueRegister.pdf" }),
-		@Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
-				Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-				"no-cache;filename=ChequeIssueRegister.xls" }) })
+        @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=ChequeIssueRegister.pdf" }),
+        @Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
+                Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
+                "no-cache;filename=ChequeIssueRegister.xls" }) })
 @ParentPackage("egov")
 public class ChequeIssueRegisterReportAction extends BaseFormAction {
-	/**
+    /**
 	 *
 	 */
-	private static final long serialVersionUID = -5452940328051657821L;
-	private static final String MULTIPLE = "Multiple";
-	String jasperpath = "/reports/templates/chequeIssueRegisterReport.jasper";
-	private List<ChequeIssueRegisterDisplay> chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
-	PersistenceService persistenceService;
-	private Date fromDate;
-	private Date toDate;
-	private String chequeFromNumber;
-	private String chequeToNumber;
-	private Department department;
-	private Bankaccount accountNumber;
-	ReportHelper reportHelper;
-	private InputStream inputStream;
-	private EgovCommon egovCommon;
-	private @Autowired AppConfigValueService appConfigValuesService;
-	private String ulbName = "";
-	private String bank;
-	private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
-	@Autowired
-	private EgovMasterDataCaching masterDataCache;
-	private boolean chequePrintingEnabled;
-	private String chequePrintAvailableAt;
-	private boolean chequeFormatExists;
-	private String chequeFormat = "";
+    private static final long serialVersionUID = -5452940328051657821L;
+    private static final String MULTIPLE = "Multiple";
+    String jasperpath = "/reports/templates/chequeIssueRegisterReport.jasper";
+    String bankAdviceJasperPath = "/reports/templates/bankAdviceExcelReport.jasper";
+    private List<ChequeIssueRegisterDisplay> chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
+    PersistenceService persistenceService;
+    private Date fromDate;
+    private Date toDate;
+    private String chequeFromNumber;
+    private String chequeToNumber;
+    private Department department;
+    private Bankaccount accountNumber;
+    ReportHelper reportHelper;
+    private InputStream inputStream;
+    private EgovCommon egovCommon;
+    private @Autowired AppConfigValueService appConfigValuesService;
+    private String ulbName = "";
+    private String bank;
+    private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
+    @Autowired
+    private EgovMasterDataCaching masterDataCache;
+    private boolean chequePrintingEnabled;
+    private String chequePrintAvailableAt;
+    private boolean chequeFormatExists;
+    private String chequeFormat = "";
+    private Long instrumentHeaderId;
+    private InstrumentHeaderService instrumentHeaderService;
 
-	public ChequeIssueRegisterReportAction() {
-		addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
-	}
+    public ChequeIssueRegisterReportAction() {
+        addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
+    }
 
-	@Override
-	public void prepare() {
-		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
-		super.prepare();
-		if (!parameters.containsKey("showDropDown")) {
-			addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
-			addDropdownData("bankAccountList", Collections.EMPTY_LIST);
-			dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
-		}
-		populateUlbName();
-	}
+    @Override
+    public void prepare() {
+        persistenceService.getSession().setDefaultReadOnly(true);
+        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        super.prepare();
+        if (!parameters.containsKey("showDropDown")) {
+            addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
+            addDropdownData("bankAccountList", Collections.EMPTY_LIST);
+            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+        }
+        populateUlbName();
+    }
 
-	@Override
-	public String execute() throws Exception {
-		return "form";
-	}
+    @Override
+    public String execute() throws Exception {
+        return "form";
+    }
 
-	public void setReportHelper(final ReportHelper reportHelper) {
-		this.reportHelper = reportHelper;
-	}
+    public void setReportHelper(final ReportHelper reportHelper) {
+        this.reportHelper = reportHelper;
+    }
 
-	public void generateReport() throws JRException, IOException {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("----Inside generateReport---- ");
+    public void generateReport() throws JRException, IOException {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("----Inside generateReport---- ");
 
-		accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
-		if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
-			chequeFormat = accountNumber.getChequeformat().getId().toString();
-		}
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
+            chequeFormat = accountNumber.getChequeformat().getId().toString();
+        }
 
-		validateDates(fromDate, toDate);
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
-					+ getFormattedDate(getNextDate(toDate)));
-		// persistenceService.setType(InstrumentHeader.class);
-		final List<AppConfigValues> printAvailConfig = appConfigValuesService
-				.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
+        validateDates(fromDate, toDate);
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Querying to date range " + getFormattedDate(fromDate) + "to date "
+                    + getFormattedDate(getNextDate(toDate)));
+        // persistenceService.setType(InstrumentHeader.class);
+        final List<AppConfigValues> printAvailConfig = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
 
-		chequePrintingEnabled = isChequePrintEnabled();
+        chequePrintingEnabled = isChequePrintEnabled();
 
-		for (final AppConfigValues appConfigVal : printAvailConfig)
-			chequePrintAvailableAt = appConfigVal.getValue();
+        for (final AppConfigValues appConfigVal : printAvailConfig)
+            chequePrintAvailableAt = appConfigVal.getValue();
 
-		final Query query = persistenceService.getSession()
-				.createSQLQuery("select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
-						+ "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
-						+ "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
-						+ "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
-						+ getFormattedDate(getNextDate(toDate)) + "' and ih.instrumentDate>='"
-						+ getFormattedDate(fromDate) + "' and ih.isPayCheque='1' "
-						+ "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
-						+ getExcludeVoucherStatues() + ") and vh.id=iv.voucherheaderid and  bankAccountId="
-						+ accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id "
-						+ " and vmis.voucherheaderid=vh.id " + createQuery()
-						+ " order by ih.instrumentDate,ih.instrumentNumber ")
-				.addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
-				.addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
-				.addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
-				.addScalar("billNumber").addScalar("billDate", StandardBasicTypes.DATE).addScalar("type")
-				.addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
-				.addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
-				.setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Search query" + query.getQueryString());
-		chequeIssueRegisterList = query.list();
-		if (chequeIssueRegisterList == null)
-			chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Got Cheque list| Size of list is" + chequeIssueRegisterList.size());
-		updateBillNumber();
-		updateVoucherNumber();
-		removeDuplicates();
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("--End  generateReport--");
-	}
+        final Query query = persistenceService
+                .getSession()
+                .createSQLQuery(
+                        "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
+                                + "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
+                                + "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
+                                + "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
+                                + getFormattedDate(getNextDate(toDate))
+                                + "' and ih.instrumentDate>='"
+                                + getFormattedDate(fromDate)
+                                + "' and ih.isPayCheque='1' "
+                                + "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
+                                + getExcludeVoucherStatues() + ") and vh.id=iv.voucherheaderid and  bankAccountId="
+                                + accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id "
+                                + " and vmis.voucherheaderid=vh.id " + createQuery()
+                                + " order by ih.instrumentDate,ih.instrumentNumber ")
+                .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
+                .addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                .addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
+                .addScalar("billNumber").addScalar("billDate", StandardBasicTypes.DATE).addScalar("type")
+                .addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
+                .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Search query" + query.getQueryString());
+        chequeIssueRegisterList = query.list();
+        if (chequeIssueRegisterList == null)
+            chequeIssueRegisterList = new ArrayList<ChequeIssueRegisterDisplay>();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Got Cheque list| Size of list is" + chequeIssueRegisterList.size());
+        updateBillNumber();
+        updateVoucherNumber();
+        removeDuplicates();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("--End  generateReport--");
+    }
 
-	public boolean isChequePrintEnabled() {
+    public boolean isChequePrintEnabled() {
 
-		String chequePrintEnabled = null;
-		final List<AppConfigValues> enablePrintConfig = appConfigValuesService
-				.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
-		if (enablePrintConfig != null)
-			for (final AppConfigValues appConfigVal : enablePrintConfig)
-				chequePrintEnabled = appConfigVal.getValue();
+        String chequePrintEnabled = null;
+        final List<AppConfigValues> enablePrintConfig = appConfigValuesService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
+        if (enablePrintConfig != null)
+            for (final AppConfigValues appConfigVal : enablePrintConfig)
+                chequePrintEnabled = appConfigVal.getValue();
 
-		if (chequePrintEnabled != null && chequePrintEnabled.equalsIgnoreCase("Y"))
-			return true;
-		else
-			return false;
-	}
+        if (chequePrintEnabled != null && chequePrintEnabled.equalsIgnoreCase("Y"))
+            return true;
+        else
+            return false;
+    }
 
-	private void removeDuplicates() {
-		final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
-		for (final Iterator<ChequeIssueRegisterDisplay> row = chequeIssueRegisterList.iterator(); row.hasNext();) {
-			final ChequeIssueRegisterDisplay next = row.next();
-			if (map.get(next.getChequeNumber() + "-" + next.getSerialNo()) == null)
-				map.put(next.getChequeNumber() + "-" + next.getSerialNo(), next);
-			else
-				row.remove();
-		}
-	}
+    private void removeDuplicates() {
+        final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
+        for (final Iterator<ChequeIssueRegisterDisplay> row = chequeIssueRegisterList.iterator(); row.hasNext();) {
+            final ChequeIssueRegisterDisplay next = row.next();
+            if (map.get(next.getChequeNumber() + "-" + next.getSerialNo()) == null)
+                map.put(next.getChequeNumber() + "-" + next.getSerialNo(), next);
+            else
+                row.remove();
+        }
+    }
 
-	String createQuery() {
-		String query = "";
-		if (department != null && department.getId() != 0)
-			query = query.concat(" and vmis.departmentid=" + department.getId());
-		return query;
-	}
+    String createQuery() {
+        String query = "";
+        if (department != null && department.getId() != 0)
+            query = query.concat(" and vmis.departmentid=" + department.getId());
+        return query;
+    }
 
-	private void updateBillNumber() {
-		final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Inside updateBillNumber ");
-		for (final ChequeIssueRegisterDisplay row : chequeIssueRegisterList)
-			if (map.get(row.getChequeNumber()) == null)
-				map.put(row.getChequeNumber(), row);
-			else if (row.getBillNumber() != null
-					&& row.getBillNumber().equalsIgnoreCase(map.get(row.getChequeNumber()).getBillNumber()))
-				continue;
-			else {
-				map.get(row.getChequeNumber()).setBillNumber("MULTIPLE");
-				row.setBillNumber(MULTIPLE);
-			}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("End updateBillNumber ");
-	}
+    private void updateBillNumber() {
+        final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Inside updateBillNumber ");
+        for (final ChequeIssueRegisterDisplay row : chequeIssueRegisterList)
+            if (map.get(row.getChequeNumber()) == null)
+                map.put(row.getChequeNumber(), row);
+            else if (row.getBillNumber() != null
+                    && row.getBillNumber().equalsIgnoreCase(map.get(row.getChequeNumber()).getBillNumber()))
+                continue;
+            else {
+                map.get(row.getChequeNumber()).setBillNumber("MULTIPLE");
+                row.setBillNumber(MULTIPLE);
+            }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("End updateBillNumber ");
+    }
 
-	private void updateVoucherNumber() {
-		final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("End updateVoucherNumber ");
-		for (final ChequeIssueRegisterDisplay row : chequeIssueRegisterList)
-			if (map.get(row.getChequeNumber()) == null)
-				map.put(row.getChequeNumber(), row);
-			else if (row.getVoucherNumber() != null
-					&& row.getVoucherNumber().equalsIgnoreCase(map.get(row.getChequeNumber()).getVoucherNumber()))
-				continue;
-			else if (map.get(row.getChequeNumber()).getChequeStatus()
-					.equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
-					|| map.get(row.getChequeNumber()).getChequeStatus()
-							.equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
-					|| map.get(row.getChequeNumber()).getChequeStatus()
-							.equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS)
-					|| row.getChequeStatus()
-							.equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
-					|| row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
-					|| row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS))
-				continue;
-			else {
-				map.get(row.getChequeNumber()).setVoucherNumber("MULTIPLE");
-				row.setVoucherNumber(MULTIPLE);
-			}
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("End updateVoucherNumber ");
-	}
+    private void updateVoucherNumber() {
+        final Map<String, ChequeIssueRegisterDisplay> map = new HashMap<String, ChequeIssueRegisterDisplay>();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("End updateVoucherNumber ");
+        for (final ChequeIssueRegisterDisplay row : chequeIssueRegisterList)
+            if (map.get(row.getChequeNumber()) == null)
+                map.put(row.getChequeNumber(), row);
+            else if (row.getVoucherNumber() != null
+                    && row.getVoucherNumber().equalsIgnoreCase(map.get(row.getChequeNumber()).getVoucherNumber()))
+                continue;
+            else if (map.get(row.getChequeNumber()).getChequeStatus()
+                    .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
+                    || map.get(row.getChequeNumber()).getChequeStatus()
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
+                    || map.get(row.getChequeNumber()).getChequeStatus()
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS)
+                    || row.getChequeStatus()
+                            .equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS)
+                    || row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS)
+                    || row.getChequeStatus().equalsIgnoreCase(FinancialConstants.INSTRUMENT_CANCELLED_STATUS))
+                continue;
+            else {
+                map.get(row.getChequeNumber()).setVoucherNumber("MULTIPLE");
+                row.setVoucherNumber(MULTIPLE);
+            }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("End updateVoucherNumber ");
+    }
 
-	private void validateDates(final Date fromDate, final Date toDate) {
-		if (fromDate.compareTo(toDate) == 1)
-			throw new ValidationException(Arrays.asList(new ValidationError("invalid.from.date", "invalid.from.date")));
-	}
+    private void validateDates(final Date fromDate, final Date toDate) {
+        if (fromDate.compareTo(toDate) == 1)
+            throw new ValidationException(Arrays.asList(new ValidationError("invalid.from.date", "invalid.from.date")));
+    }
 
-	@Action(value = "/report/chequeIssueRegisterReport-generatePdf")
-	public String generatePdf() throws JRException, IOException {
-		generateReport();
-		final List<Object> data = new ArrayList<Object>();
-		data.addAll(getChequeIssueRegisterList());
-		inputStream = reportHelper.exportPdf(getInputStream(), jasperpath, getParamMap(), data);
-		return "PDF";
-	}
+    @Action(value = "/report/chequeIssueRegisterReport-generatePdf")
+    public String generatePdf() throws JRException, IOException {
+        generateReport();
+        final List<Object> data = new ArrayList<Object>();
+        data.addAll(getChequeIssueRegisterList());
+        inputStream = reportHelper.exportPdf(getInputStream(), jasperpath, getParamMap(), data);
+        return "PDF";
+    }
 
-	@Action(value = "/report/chequeIssueRegisterReport-generateXls")
-	public String generateXls() throws JRException, IOException {
-		generateReport();
-		final List<Object> data = new ArrayList<Object>();
-		data.addAll(getChequeIssueRegisterList());
-		inputStream = reportHelper.exportXls(getInputStream(), jasperpath, getParamMap(), data);
-		return "XLS";
-	}
+    @Action(value = "/report/chequeIssueRegisterReport-generateXls")
+    public String generateXls() throws JRException,
+            IOException {
+        generateReport();
+        final List<Object> data = new ArrayList<Object>();
+        data.addAll(getChequeIssueRegisterList());
+        inputStream = reportHelper.exportXls(getInputStream(), jasperpath,
+                getParamMap(), data);
+        return "XLS";
+    }
 
-	@Action(value = "/report/chequeIssueRegisterReport-ajaxPrint")
-	public String ajaxPrint() throws JRException, IOException {
-		generateReport();
-		return "result";
-	}
+    @Action(value = "/report/chequeIssueRegisterReport-bankAdviceExcel")
+    public String bankAdviceExcel() throws JRException, IOException {
+        BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+                instrumentHeaderId);
+        bankAdvice.setPartyName(instrumentHeader.getPayTo());
+        bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
+        final List<Object> data = new ArrayList<Object>();
+        data.add(bankAdvice);
+        inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
+        return "XLS";
+    }
 
-	@Override
-	public Object getModel() {
-		return null;
-	}
+    @Action(value = "/report/chequeIssueRegisterReport-ajaxPrint")
+    public String ajaxPrint() throws JRException, IOException {
+        generateReport();
+        return "result";
+    }
 
-	public void setFromDate(final Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    @Override
+    public Object getModel() {
+        return null;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setToDate(final Date toDate) {
-		this.toDate = toDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
 
-	@Override
-	public void setPersistenceService(final PersistenceService persistenceService) {
-		this.persistenceService = persistenceService;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public String getFormattedDate(final Date date) {
-		final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
-		return formatter.format(date);
-	}
+    @Override
+    public void setPersistenceService(final PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
 
-	private Date getNextDate(final Date date) {
-		final Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(Calendar.DATE, 1);
-		return calendar.getTime();
-	}
+    public String getFormattedDate(final Date date) {
+        final SimpleDateFormat formatter = Constants.DDMMYYYYFORMAT1;
+        return formatter.format(date);
+    }
 
-	protected Map<String, Object> getParamMap() {
-		accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
-		final Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("bank", getFormattedBankName());
-		paramMap.put("accountNumber", accountNumber.getAccountnumber());
-		paramMap.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fromDate));
-		paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
-		paramMap.put("ulbName", ulbName);
-		if (department != null && department.getId() != null && department.getId() != 0) {
-			final Department dept = (Department) persistenceService.find("from Department where id=?",
-					department.getId());
-			paramMap.put("departmentName", dept.getName());
-		}
-		return paramMap;
-	}
+    private Date getNextDate(final Date date) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, 1);
+        return calendar.getTime();
+    }
 
-	public String getFormattedBankName() {
-		final String[] bankData = bank.split("-");
-		final Bank bank = (Bank) persistenceService.find("from Bank where id=?", Integer.valueOf(bankData[0]));
-		final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?",
-				Integer.valueOf(bankData[1]));
-		String name = "";
-		if (bank != null && bankBranch != null)
-			name = bank.getName().concat(" - ").concat(bankBranch.getBranchname());
-		return name;
-	}
+    protected Map<String, Object> getParamMap() {
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("bank", getFormattedBankName());
+        paramMap.put("accountNumber", accountNumber.getAccountnumber());
+        paramMap.put("fromDate", Constants.DDMMYYYYFORMAT1.format(fromDate));
+        paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
+        paramMap.put("ulbName", ulbName);
+        if (department != null && department.getId() != null && department.getId() != 0) {
+            final Department dept = (Department) persistenceService.find("from Department where id=?",
+                    department.getId());
+            paramMap.put("departmentName", dept.getName());
+        }
+        return paramMap;
+    }
 
-	public InputStream getInputStream() {
-		return inputStream;
-	}
+    public String getFormattedBankName() {
+        final String[] bankData = bank.split("-");
+        final Bank bank = (Bank) persistenceService.find("from Bank where id=?", Integer.valueOf(bankData[0]));
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?",
+                Integer.valueOf(bankData[1]));
+        String name = "";
+        if (bank != null && bankBranch != null)
+            name = bank.getName().concat(" - ").concat(bankBranch.getBranchname());
+        return name;
+    }
 
-	public List<ChequeIssueRegisterDisplay> getChequeIssueRegisterList() {
-		return chequeIssueRegisterList;
-	}
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 
-	public void setChequeIssueRegisterList(final List<ChequeIssueRegisterDisplay> chequeIssueRegisterList) {
-		this.chequeIssueRegisterList = chequeIssueRegisterList;
-	}
+    public List<ChequeIssueRegisterDisplay> getChequeIssueRegisterList() {
+        return chequeIssueRegisterList;
+    }
 
-	public void setAccountNumber(final Bankaccount bankAccount) {
-		accountNumber = bankAccount;
-	}
+    public void setChequeIssueRegisterList(final List<ChequeIssueRegisterDisplay> chequeIssueRegisterList) {
+        this.chequeIssueRegisterList = chequeIssueRegisterList;
+    }
 
-	public Bankaccount getAccountNumber() {
-		return accountNumber;
-	}
+    public void setAccountNumber(final Bankaccount bankAccount) {
+        accountNumber = bankAccount;
+    }
 
-	public void setEgovCommon(final EgovCommon egovCommon) {
-		this.egovCommon = egovCommon;
-	}
+    public Bankaccount getAccountNumber() {
+        return accountNumber;
+    }
 
-	private String getExcludeVoucherStatues() {
-		final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
-				"statusexcludeReport");
-		String statusExclude = "-1";
-		statusExclude = appList.get(0).getValue();
-		return statusExclude;
-	}
+    public void setEgovCommon(final EgovCommon egovCommon) {
+        this.egovCommon = egovCommon;
+    }
 
-	private void populateUlbName() {
+    private String getExcludeVoucherStatues() {
+        final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
+                "statusexcludeReport");
+        String statusExclude = "-1";
+        statusExclude = appList.get(0).getValue();
+        return statusExclude;
+    }
 
-		setUlbName(ReportUtil.getCityName());
-	}
+    private void populateUlbName() {
 
-	public void setUlbName(final String ulbName) {
-		this.ulbName = ulbName;
-	}
+        setUlbName(ReportUtil.getCityName());
+    }
 
-	public String getUlbName() {
-		return ulbName;
-	}
+    public void setUlbName(final String ulbName) {
+        this.ulbName = ulbName;
+    }
 
-	public void setBank(final String bank) {
-		this.bank = bank;
-	}
+    public String getUlbName() {
+        return ulbName;
+    }
 
-	public String getBank() {
-		return bank;
-	}
+    public void setBank(final String bank) {
+        this.bank = bank;
+    }
 
-	public void setDepartment(final Department department) {
-		this.department = department;
-	}
+    public String getBank() {
+        return bank;
+    }
 
-	public Department getDepartment() {
-		return department;
-	}
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
 
-	public void setChequeToNumber(final String chequeToNumber) {
-		this.chequeToNumber = chequeToNumber;
-	}
+    public Department getDepartment() {
+        return department;
+    }
 
-	public String getChequeToNumber() {
-		return chequeToNumber;
-	}
+    public void setChequeToNumber(final String chequeToNumber) {
+        this.chequeToNumber = chequeToNumber;
+    }
 
-	public void setChequeFromNumber(final String chequeFromNumber) {
-		this.chequeFromNumber = chequeFromNumber;
-	}
+    public String getChequeToNumber() {
+        return chequeToNumber;
+    }
 
-	public String getChequeFromNumber() {
-		return chequeFromNumber;
-	}
+    public void setChequeFromNumber(final String chequeFromNumber) {
+        this.chequeFromNumber = chequeFromNumber;
+    }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public String getChequeFromNumber() {
+        return chequeFromNumber;
+    }
 
-	public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public boolean isChequePrintingEnabled() {
-		return chequePrintingEnabled;
-	}
+    public void setAppConfigValuesService(AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
-	public String getChequePrintAvailableAt() {
-		return chequePrintAvailableAt;
-	}
+    public boolean isChequePrintingEnabled() {
+        return chequePrintingEnabled;
+    }
 
-	public boolean isChequeFormatExists() {
-		return chequeFormatExists;
-	}
+    public String getChequePrintAvailableAt() {
+        return chequePrintAvailableAt;
+    }
 
-	public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
-		this.chequePrintingEnabled = chequePrintingEnabled;
-	}
+    public boolean isChequeFormatExists() {
+        return chequeFormatExists;
+    }
 
-	public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
-		this.chequePrintAvailableAt = chequePrintAvailableAt;
-	}
+    public void setChequePrintingEnabled(boolean chequePrintingEnabled) {
+        this.chequePrintingEnabled = chequePrintingEnabled;
+    }
 
-	public void setChequeFormatExists(boolean chequeFormatExists) {
-		this.chequeFormatExists = chequeFormatExists;
-	}
+    public void setChequePrintAvailableAt(String chequePrintAvailableAt) {
+        this.chequePrintAvailableAt = chequePrintAvailableAt;
+    }
 
-	public String getChequeFormat() {
-		return chequeFormat;
-	}
+    public void setChequeFormatExists(boolean chequeFormatExists) {
+        this.chequeFormatExists = chequeFormatExists;
+    }
 
-	public void setChequeFormat(String chequeFormat) {
-		this.chequeFormat = chequeFormat;
-	}
+    public String getChequeFormat() {
+        return chequeFormat;
+    }
+
+    public void setChequeFormat(String chequeFormat) {
+        this.chequeFormat = chequeFormat;
+    }
+
+    public Long getInstrumentHeaderId() {
+        return instrumentHeaderId;
+    }
+
+    public void setInstrumentHeaderId(Long instrumentHeaderId) {
+        this.instrumentHeaderId = instrumentHeaderId;
+    }
 
 }

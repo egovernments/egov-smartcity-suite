@@ -39,6 +39,8 @@
  */
 package org.egov.model.instrument;
 
+import java.math.BigDecimal;
+
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.models.BaseModel;
 
@@ -50,12 +52,10 @@ import org.egov.infstr.models.BaseModel;
 
 public class InstrumentVoucher extends BaseModel {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -8963680071959894532L;
     InstrumentHeader instrumentHeaderId;
     CVoucherHeader voucherHeaderId;
+    private transient BigDecimal paymentAmount;
 
     public InstrumentHeader getInstrumentHeaderId() {
         return instrumentHeaderId;
@@ -78,7 +78,7 @@ public class InstrumentVoucher extends BaseModel {
         final StringBuffer ivBuffer = new StringBuffer();
         ivBuffer.append("[id=" + id).append(
                 "instrumentHeader=" + instrumentHeaderId).append(
-                        "voucherHeader=" + voucherHeaderId).append("]");
+                "voucherHeader=" + voucherHeaderId).append("]");
         return ivBuffer.toString();
     }
 
@@ -115,6 +115,14 @@ public class InstrumentVoucher extends BaseModel {
         } else if (!voucherHeaderId.equals(other.voucherHeaderId))
             return false;
         return true;
+    }
+
+    public BigDecimal getPaymentAmount() {
+        return paymentAmount;
+    }
+
+    public void setPaymentAmount(BigDecimal paymentAmount) {
+        this.paymentAmount = paymentAmount;
     }
 
 }

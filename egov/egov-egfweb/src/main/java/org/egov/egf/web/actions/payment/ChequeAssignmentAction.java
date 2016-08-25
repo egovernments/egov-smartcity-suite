@@ -39,61 +39,7 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Fund;
-import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.service.BankAccountService;
-import org.egov.commons.utils.EntityType;
-import org.egov.egf.autonumber.RtgsNumberGenerator;
-import org.egov.egf.commons.EgovCommon;
-import org.egov.egf.web.actions.voucher.BaseVoucherAction;
-import org.egov.eis.entity.DrawingOfficer;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.entity.Script;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.model.instrument.InstrumentVoucher;
-import org.egov.model.payment.ChequeAssignment;
-import org.egov.model.recoveries.Recovery;
-import org.egov.model.service.RecoveryService;
-import org.egov.payment.client.BankAdviceForm;
-import org.egov.services.cheque.ChequeService;
-import org.egov.services.contra.ContraService;
-import org.egov.services.instrument.InstrumentHeaderService;
-import org.egov.services.instrument.InstrumentService;
-import org.egov.services.masters.BankService;
-import org.egov.services.payment.ChequeAssignmentHelper;
-import org.egov.services.payment.PaymentService;
-import org.egov.utils.Constants;
-import org.egov.utils.FinancialConstants;
-import org.egov.utils.ReportHelper;
-import org.egov.utils.VoucherHelper;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -114,6 +60,65 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import net.sf.jasperreports.engine.JRException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.commons.Bankaccount;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Fund;
+import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.service.BankAccountService;
+import org.egov.commons.utils.EntityType;
+import org.egov.egf.autonumber.RtgsNumberGenerator;
+import org.egov.egf.commons.EgovCommon;
+import org.egov.egf.model.BankAdviceReportInfo;
+import org.egov.egf.web.actions.voucher.BaseVoucherAction;
+import org.egov.eis.entity.DrawingOfficer;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.script.entity.Script;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.model.instrument.InstrumentVoucher;
+import org.egov.model.payment.ChequeAssignment;
+import org.egov.model.payment.Paymentheader;
+import org.egov.model.recoveries.Recovery;
+import org.egov.model.service.RecoveryService;
+import org.egov.payment.client.BankAdviceForm;
+import org.egov.services.cheque.ChequeService;
+import org.egov.services.contra.ContraService;
+import org.egov.services.instrument.InstrumentHeaderService;
+import org.egov.services.instrument.InstrumentService;
+import org.egov.services.masters.BankService;
+import org.egov.services.payment.ChequeAssignmentHelper;
+import org.egov.services.payment.PaymentService;
+import org.egov.utils.Constants;
+import org.egov.utils.FinancialConstants;
+import org.egov.utils.ReportHelper;
+import org.egov.utils.VoucherHelper;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
 @Results({
@@ -242,6 +247,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     List<ChequeAssignment> viewReceiptDetailsList = new ArrayList<ChequeAssignment>();
     public static final String RTGSAUTOGENERATIONNUMBERFORMAT = "000000";
     private final NumberFormat ackNumberFormat = new DecimalFormat(RTGSAUTOGENERATIONNUMBERFORMAT);
+    String bankAdviceJasperPath = "/reports/templates/bankAdviceExcelReport.jasper";
     private Integer drawingOfficerId;
     private String drawingOfficerCode;
     private String billSubType;
@@ -256,8 +262,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     private Long departmentId;
     private boolean chequePrintingEnabled;
     private String chequePrintAvailableAt;
-    private String instrumentHeader ;
+    private String instrumentHeader;
     private String chequeFormat;
+    private Long instHeaderId;
 
     public List<String> getChequeSlNoList() {
         return chequeSlNoList;
@@ -1015,7 +1022,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         if (getBankbranch() != null)
         {
             setTypeOfAccount(typeOfAccount);
-            addDropdownData("bankaccountList", bankAccountService.getBankaccountsHasApprovedPayment(voucherHeader.getFundId().getId(), getBankbranch()));
+            addDropdownData("bankaccountList",
+                    bankAccountService.getBankaccountsHasApprovedPayment(voucherHeader.getFundId().getId(), getBankbranch()));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadBankAndAccount.");
@@ -1071,19 +1079,19 @@ public class ChequeAssignmentAction extends BaseVoucherAction
     {
         final List<AppConfigValues> printAvailConfig = appConfigValuesService.
                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintavailableat");
-        
+
         chequePrintingEnabled = isChequePrintEnabled();
-        
+
         for (final AppConfigValues appConfigVal : printAvailConfig)
             chequePrintAvailableAt = appConfigVal.getValue();
-        if(chequePrintAvailableAt==null)
-            chequePrintAvailableAt="";
+        if (chequePrintAvailableAt == null)
+            chequePrintAvailableAt = "";
         Bankaccount bankAccount = new Bankaccount();
-        if(bankaccount!=null && bankaccount.equals("") ){
-        bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
-        if( bankAccount.getChequeformat()!=null &&  !bankAccount.getChequeformat().equals("")){
-            chequeFormat=bankAccount.getChequeformat().getId().toString();
-        }
+        if (bankaccount != null && bankaccount.equals("")) {
+            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.longValue());
+            if (bankAccount.getChequeformat() != null && !bankAccount.getChequeformat().equals("")) {
+                chequeFormat = bankAccount.getChequeformat().getId().toString();
+            }
         }
 
         if (LOGGER.isDebugEnabled())
@@ -1183,8 +1191,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction
                     instVoucherList.addAll(paymentService.getInstVoucherList());
                     List<InstrumentVoucher> tempInstVoucherList = new ArrayList<InstrumentVoucher>();
                     for (InstrumentVoucher iv : instVoucherList) {
-                        iv.getInstrumentHeaderId().setInstrumentAmount(
-                                iv.getInstrumentHeaderId().getInstrumentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+                        Paymentheader payment = paymentService.getPaymentHeaderByVoucherHeaderId(iv.getVoucherHeaderId().getId());
+                        iv.setPaymentAmount(payment.getPaymentAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN));
+
                         tempInstVoucherList.add(iv);
                     }
                     instVoucherList = new ArrayList<InstrumentVoucher>();
@@ -1635,7 +1644,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction
         setTypeOfAccount(typeOfAccount);
         addDropdownData("bankbranchList", bankService.getChequeAssignedBankAndBranchName(currentDate));
         if (getBankbranch() != null) {
-            addDropdownData("bankaccountList", bankAccountService.getBankaccountsWithAssignedCheques(getBankbranch(), null, currentDate));
+            addDropdownData("bankaccountList",
+                    bankAccountService.getBankaccountsWithAssignedCheques(getBankbranch(), null, currentDate));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadBankAndAccounForSurender.");
@@ -2113,21 +2123,35 @@ public class ChequeAssignmentAction extends BaseVoucherAction
             LOGGER.debug("Completed generateAdviceXls.");
         return "bankAdvice-XLS";
     }
-    
+
     public boolean isChequePrintEnabled() {
-        
+
         String chequePrintEnabled = null;
         final List<AppConfigValues> enablePrintConfig = appConfigValuesService.
                 getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "chequeprintingenabled");
         for (final AppConfigValues appConfigVal : enablePrintConfig)
             chequePrintEnabled = appConfigVal.getValue();
-        if(chequePrintEnabled==null)
+        if (chequePrintEnabled == null)
             return false;
-            
+
         if (chequePrintEnabled.equalsIgnoreCase("Y"))
             return true;
         else
             return false;
+    }
+
+    @SkipValidation
+    @Action(value = "/payment/chequeAssignment-bankAdviceExcel")
+    public String bankAdviceExcel() throws JRException, IOException {
+        BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+                instHeaderId);
+        bankAdvice.setPartyName(instrumentHeader.getPayTo());
+        bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
+        final List<Object> data = new ArrayList<Object>();
+        data.add(bankAdvice);
+        inputStream = reportHelper.exportXls(getInputStream(), bankAdviceJasperPath, null, data);
+        return "bankAdvice-XLS";
     }
 
     protected String getMessage(final String key) {
@@ -2648,5 +2672,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction
 
     public void setChequeFormat(String chequeFormat) {
         this.chequeFormat = chequeFormat;
+    }
+
+    public Long getInstHeaderId() {
+        return instHeaderId;
+    }
+
+    public void setInstHeaderId(Long instHeaderId) {
+        this.instHeaderId = instHeaderId;
     }
 }
