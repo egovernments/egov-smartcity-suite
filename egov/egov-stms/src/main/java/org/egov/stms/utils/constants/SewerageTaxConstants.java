@@ -271,4 +271,6 @@ public class SewerageTaxConstants {
     public static final String NOTICE_TYPE_DEMAND_BILL_NOTICE = "Demand Bill";
     public static final String NOTICE_ESTIMATION = "EM";
     public static final String NOTICE_WORK_ORDER = "WO";
+    
+    public static final String NEWCONNECTION_DOCTYPE_OTHERS = "Others";
 }

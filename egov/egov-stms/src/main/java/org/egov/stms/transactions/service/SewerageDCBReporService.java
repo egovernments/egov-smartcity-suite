@@ -176,8 +176,9 @@ public class SewerageDCBReporService {
                         if (null != propertyType) {
                             dcbResult.setPropertyType(propertyType);
                         }
-                        Boundary boundary = boundaryService.getBoundaryByName(entry.getKey());
-                        dcbResult.setWardId(boundary.getId());
+                        //Commented to fix compilation error.
+                        /*Boundary boundary = boundaryService.getBoundaryByName(entry.getKey());
+                        dcbResult.setWardId(boundary.getId());*/
 
                         final DCBReportWardwiseResult rateResult = dcbReportMap.get(entry.getKey());
 

@@ -184,7 +184,39 @@ public class SewerageApplicationDetailsService {
         return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
     }
     
-    
+    @Transactional
+    public SewerageApplicationDetails createLegacySewerageConnection(
+            final SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request) {
+
+        if (sewerageApplicationDetails.getApplicationNumber() == null) {
+            SewerageApplicationNumberGenerator sewerageApplnNumberGenerator = beanResolver
+                    .getAutoNumberServiceFor(SewerageApplicationNumberGenerator.class);
+            if (sewerageApplnNumberGenerator != null)
+                sewerageApplicationDetails.setApplicationNumber(sewerageApplnNumberGenerator
+                        .generateNextApplicationNumber(sewerageApplicationDetails));
+        }
+        sewerageApplicationDetails.getConnection().setLegacy(true);
+        sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
+        sewerageApplicationDetails.setActive(true);
+        sewerageApplicationDetails.setApplicationDate(new Date());
+        final Date disposalDate = getDisposalDate(sewerageApplicationDetails, sewerageApplicationDetails.getApplicationType().getProcessingTime());
+        sewerageApplicationDetails.setDisposalDate(disposalDate);
+        
+        if (sewerageApplicationDetails != null && sewerageApplicationDetails.getCurrentDemand() == null) {
+            final EgDemand demand = sewerageDemandService.createDemandOnLegacyConnection(
+                    sewerageApplicationDetails.getDemandDetailBeanList(), sewerageApplicationDetails);
+            if (demand != null){
+                SewerageDemandConnection sdc = new SewerageDemandConnection();
+                sdc.setDemand(demand);
+                sdc.setApplicationDetails(sewerageApplicationDetails);
+                sewerageApplicationDetails.addDemandConnections(sdc);
+            } 
+        }
+        sewerageApplicationDetailsRepository.save(sewerageApplicationDetails);
+        updateIndexes(sewerageApplicationDetails);
+        return sewerageApplicationDetails;
+    }
+
     @Transactional
     public SewerageApplicationDetails createNewSewerageConnection(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
@@ -761,6 +793,10 @@ public class SewerageApplicationDetailsService {
     
     public SewerageApplicationDetails checkModifyClosetInProgress(final String shscNumber){
       return sewerageApplicationDetailsRepository.getSewerageApplicationInWorkFlow(shscNumber);
+    }
+    
+    public SewerageApplicationDetails checkSHSCNumberExists(final String shscNumber) {
+        return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
     }
 
 }

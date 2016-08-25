@@ -190,7 +190,8 @@ public class SewerageRateDCBReportController {
             wards.addAll(searchRequest.getWards());
         }
         else{
-            wards.addAll(boundaryService.getAllBoundaries());
+            // Commented to fix compilation error.
+            //wards.addAll(boundaryService.getAllBoundaries());
         }
         
         for(Boundary boundary : wards){

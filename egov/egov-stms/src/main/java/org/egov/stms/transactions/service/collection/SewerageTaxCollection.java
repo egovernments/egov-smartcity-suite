@@ -305,7 +305,7 @@ public class SewerageTaxCollection extends TaxCollection {
                 // part of collection system.
                 final EgDemandDetails demandDetail = sewerageDemandService.createDemandDetails(recAccInfo
                         .getCrAmount(), sewerageDemandService.getDemandReasonByCodeAndInstallment(
-                        demandMasterReasonDesc, sewerageDemandService.getInstallmentByDescription(financialYearDesc)),
+                        demandMasterReasonDesc, sewerageDemandService.getInstallmentByDescription(financialYearDesc).getId()),
                                 recAccInfo
                                 .getCrAmount());
                 demand.addEgDemandDetails(demandDetail);
@@ -382,7 +382,7 @@ public class SewerageTaxCollection extends TaxCollection {
                     }
                 }*/
             }
-        }
+        }    
     }
 
     @Override

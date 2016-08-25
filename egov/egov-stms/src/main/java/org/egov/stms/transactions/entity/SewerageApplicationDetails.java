@@ -182,6 +182,9 @@ public class SewerageApplicationDetails extends StateAware {
     @Transient
     private String ownerName;
     
+    @Transient
+    private List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<SewerageDemandDetail>(0);
+    
     @Override
     public Long getId() {
         return id;
@@ -427,6 +430,14 @@ public class SewerageApplicationDetails extends StateAware {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public List<SewerageDemandDetail> getDemandDetailBeanList() {
+        return demandDetailBeanList;
+    }
+
+    public void setDemandDetailBeanList(List<SewerageDemandDetail> demandDetailBeanList) {
+        this.demandDetailBeanList = demandDetailBeanList;
     }
     
 }

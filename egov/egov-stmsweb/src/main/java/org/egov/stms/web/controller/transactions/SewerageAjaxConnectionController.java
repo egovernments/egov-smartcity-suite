@@ -40,15 +40,30 @@
 
 package org.egov.stms.web.controller.transactions;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.commons.Installment;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.DonationMasterService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageDemandDetail;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
+import org.egov.stms.utils.SewerageTaxUtils;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
@@ -73,6 +88,14 @@ public class SewerageAjaxConnectionController {
     
     @Autowired
     private ResourceBundleMessageSource messageSource;
+    
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+    
+    
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
+    
 
   
     @RequestMapping(value = "/ajaxconnection/check-connection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -109,6 +132,58 @@ public class SewerageAjaxConnectionController {
         }
         else
             return validationMessage; 
+    }
+    
+
+    @RequestMapping(value = "/ajaxconnection/check-shscnumber-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String isSHSCNumberUnique(@RequestParam final String shscNumber) { 
+        if(sewerageApplicationDetailsService.checkSHSCNumberExists(shscNumber)!=null)
+            return messageSource.getMessage("err.validate.shscnumber.exists", new String[] {shscNumber},null);
+        else 
+            return "";
+    }
+    
+    @RequestMapping(value = "/ajaxconnection/getlegacy-demand-details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<SewerageDemandDetail> getLegacyDemandDetails(@RequestParam("executionDate") final String executionDate,
+            final HttpServletRequest request) {
+        List<SewerageDemandDetail> sdd = new LinkedList<SewerageDemandDetail>(); 
+        
+        final List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<SewerageDemandDetail>();
+        final Set<SewerageDemandDetail> tempDemandDetail = new LinkedHashSet<SewerageDemandDetail>();
+        List<Installment> allInstallments = new ArrayList<Installment>();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            allInstallments = sewerageTaxUtils.getInstallmentsForCurrYear(
+                    sdf.parse(executionDate));
+        } catch (final ParseException e) {
+            throw new ApplicationRuntimeException("Error while getting all installments from start date", e);
+        }
+        SewerageDemandDetail dmdDtl = null;
+            for (final Installment installObj : allInstallments) {
+                final EgDemandReason demandReasonObj = sewerageDemandService
+                        .getDemandReasonByCodeAndInstallment(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, installObj.getId());
+                if (demandReasonObj != null) {
+                        dmdDtl = createDemandDetailBean(installObj, demandReasonObj);
+                }
+                tempDemandDetail.add(dmdDtl);
+            }
+        for (final SewerageDemandDetail demandDetList : tempDemandDetail)
+            if (demandDetList != null)
+                demandDetailBeanList.add(demandDetList);
+        return demandDetailBeanList;
+    }
+    
+    
+    private SewerageDemandDetail createDemandDetailBean(final Installment installment, final EgDemandReason demandReasonObj) {
+        final SewerageDemandDetail demandDetail = new SewerageDemandDetail();
+        demandDetail.setInstallment(installment.getDescription());
+        demandDetail.setReasonMaster(demandReasonObj.getEgDemandReasonMaster().getCode());
+        demandDetail.setInstallmentId(installment.getId());
+        demandDetail.setDemandReasonId(demandReasonObj.getId());
+        demandDetail.setActualAmount(BigDecimal.ZERO);
+        demandDetail.setActualCollection(BigDecimal.ZERO);
+        demandDetail.setReasonMasterDesc(demandReasonObj.getEgDemandReasonMaster().getReasonMaster());
+        return demandDetail;
     }
 
 }

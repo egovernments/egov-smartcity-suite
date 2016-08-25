@@ -107,26 +107,8 @@ $(document).ready(function(){
 				dataType: "json",
 				success: function (response) { 
 					if(response != '') {
-						
-						if($('#legacy'))
-						{
-							var radioValue = $("input[name='applicationType']:checked").val();
-							 $('#frm input[type="radio"]').each(function(){
-							      $(this).checked = false;  
-							  });
-							 $('input[type="radio"]').val=radioValue;
-				           if(radioValue==2)
-							 loadPropertyDetails();
-							else{
-								resetPropertyDetails();
-								bootbox.alert(response);
-							}
-						}
-						else
-						{	
 							resetPropertyDetails();
 							bootbox.alert(response);
-						}
 					}
 					else {
 						loadPropertyDetails();

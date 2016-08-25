@@ -240,5 +240,12 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/reports/sewerage-dcbWardConnections.jsp" />	
 	</definition>
+	 
+	<definition name="legacySewerageConnection-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.legacySewerageApplication" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/legacySewerageConnection-form.jsp" />	
+	</definition>
 	
 </tiles-definitions>

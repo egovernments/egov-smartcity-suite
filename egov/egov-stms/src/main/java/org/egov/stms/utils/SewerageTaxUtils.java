@@ -45,7 +45,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -53,12 +55,14 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -71,7 +75,6 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.wtms.PropertyIntegrationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.entity.SewerageDemandConnection;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -114,6 +117,13 @@ public class SewerageTaxUtils {
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    @Autowired
+    private ModuleService moduleService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
+
 
     /**
      * @return false by default. If configuration value is Yes, then returns
@@ -423,5 +433,16 @@ public class SewerageTaxUtils {
             }
         return seweragedemandConnection;
     }*/
+    
+    /**
+     * @description returns list of installments from the given date to till date
+     * @param currDate
+     * @return
+     */
+    public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
+        final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME); 
+        final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
+        return installments;
+    }
 
 }
