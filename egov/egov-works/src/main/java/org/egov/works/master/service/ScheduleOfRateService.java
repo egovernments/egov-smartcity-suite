@@ -41,7 +41,6 @@
 package org.egov.works.master.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -383,11 +382,8 @@ public class ScheduleOfRateService {
                                     .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                     + ",";
                         else if (!toDateUpdated && isLatestRate) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(obj.getFromDate());
-                            cal.add(Calendar.DATE, -1);
-                            Date oneDayBefore = cal.getTime();
-                            rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                            LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
+                            rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
                             toDateUpdated = true;
                         }
 
@@ -432,11 +428,8 @@ public class ScheduleOfRateService {
                                         .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                         + ",";
                             else if (!toDateUpdated && isLatestRate) {
-                                Calendar cal = Calendar.getInstance();
-                                cal.setTime(obj.getFromDate());
-                                cal.add(Calendar.DATE, -1);
-                                Date oneDayBefore = cal.getTime();
-                                rate.setValidity(new Period(rate.getValidity().getStartDate(), oneDayBefore));
+                                LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
+                                rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
                                 toDateUpdated = true;
                             }
                         }
