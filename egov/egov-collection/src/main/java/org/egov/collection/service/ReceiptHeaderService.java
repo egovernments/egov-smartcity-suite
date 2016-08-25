@@ -665,11 +665,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
         final Challan challan = receiptHeader.getChallan();
-        final Calendar date = new GregorianCalendar();
-        final DateTime dateTime = new DateTime(challan.getChallanDate());
-        date.set(Calendar.YEAR, dateTime.getYear());
-        date.set(Calendar.MONTH, dateTime.getMonthOfYear());
-        date.set(Calendar.DAY_OF_MONTH, dateTime.getDayOfMonth());
+        GregorianCalendar date = new GregorianCalendar();
+        date.setTime(challan.getChallanDate());
         date.add(Calendar.DATE, validUpto);
         challan.setValidUpto(date.getTime());
         if (challan.getChallanNumber() == null)
