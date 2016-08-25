@@ -38,27 +38,14 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.service;
+package org.egov.infra.workflow.repository;
 
-import org.egov.infra.admin.master.repository.StateHistoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class StateHistoryService {
+@Repository
+public interface StateHistoryRepository extends JpaRepository<StateHistory, Long> {
 
-    private final StateHistoryRepository stateHistoryRepository;
-
-    @Autowired
-    public StateHistoryService(final StateHistoryRepository stateHistoryRepository) {
-        this.stateHistoryRepository = stateHistoryRepository;
-    }
-
-    public boolean isPositionUnderWorkflowHistory(final Long posId) {
-
-        return stateHistoryRepository.countByOwnerPosition_Id(posId) > 0;
-    }
-
+    Long countByOwnerPosition_Id(Long id);
 }

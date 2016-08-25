@@ -38,15 +38,10 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.infra.workflow.matrix.repository;
 
-import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface StateRepository extends JpaRepository<State, Long> {
-
-    Long countByOwnerPosition_Id(Long id);
-
+public interface WorkflowMatrixRepository extends JpaRepository<WorkFlowMatrix, Long> {
 }

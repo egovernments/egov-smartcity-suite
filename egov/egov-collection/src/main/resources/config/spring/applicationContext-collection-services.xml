@@ -188,7 +188,6 @@
 
     <bean id="challanWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
         <constructor-arg name="stateAwarePersistenceService" ref="challanPersistenceService"/>
-        <property name="actionPersistenceService" ref="actionPersistenceService"/> 
     </bean>
    
 </beans>

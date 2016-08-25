@@ -38,37 +38,15 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.utils;
+package org.egov.infra.workflow.repository;
 
-public final class ApplicationConstant {
+import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    public static final String CITY_CODE_KEY = "cityCode";
-    public static final String CITY_NAME_KEY = "cityname";
-    public static final String CITY_URL_KEY = "cityurl";
-    public static final String CITY_LOGO_KEY = "citylogo";
-    public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
-    public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
-    public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
-    public static final String CITY_LAT_KEY = "citylat";
-    public static final String CITY_LNG_KEY = "citylng";
-    public static final String CITY_CORP_GRADE_KEY = "cityGrade";
-    public static final String CITY_DIST_NAME_KEY = "districtName";
-    public static final String CITY_DIST_CODE_KEY = "districtCode";
-    public static final String CITY_CORP_NAME_KEY = "citymunicipalityname";
-    public static final String CITY_CORP_ADDRESS_KEY = "corpAddress";
-    public static final String CITY_CORP_CALLCENTER_NO_KEY = "corpCallCenterNo";
-    public static final String CITY_CORP_CONTACT_NO_KEY = "corpContactNo";
-    public static final String CITY_CORP_EMAIL_KEY = "corpContactEmail";
-    public static final String CITY_CORP_TWITTER_KEY = "corpTwitterLink";
-    public static final String CITY_CORP_FB_KEY = "corpFBLink";
-    public static final String CITY_CORP_GOOGLE_MAP_KEY = "corpGisLink";
+public interface WorkflowTypeRepository extends JpaRepository<WorkflowTypes, Long> {
 
-    public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
-    public static final String CITY_LOGO_PATH_KEY = "logopath";
+    WorkflowTypes findByTypeAndEnabledIsTrue(String type);
 
-    public static final String CDN_ATTRIB_NAME = "cdn";
-    public static final String USERID_KEY = "userid";
+    WorkflowTypes findByType(String type);
 
-    public static final Character Y = Character.valueOf('Y');
-    public static final Character N = Character.valueOf('Y');
 }

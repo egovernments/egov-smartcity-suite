@@ -38,27 +38,28 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.service;
+package org.egov.infra.workflow.service;
 
-import org.egov.infra.admin.master.repository.StateRepository;
+import org.egov.infra.workflow.entity.WorkflowAction;
+import org.egov.infra.workflow.repository.WorkflowActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
-public class StateService {
-
-    private final StateRepository stateRepository;
+public class WorkflowActionService {
 
     @Autowired
-    public StateService(final StateRepository stateRepository) {
-        this.stateRepository = stateRepository;
+    private WorkflowActionRepository workflowActionRepository;
+
+    public WorkflowAction getWorkflowActionByNameAndType(String name, String type) {
+        return workflowActionRepository.findByNameAndType(name, type);
     }
 
-    public boolean isPositionUnderWorkflow(final Long posId) {
-
-        return stateRepository.countByOwnerPosition_Id(posId) > 0;
+    public List<WorkflowAction> getAllWorkflowActionByTypeAndActionNames(String type, List<String> names) {
+        return workflowActionRepository.findAllByTypeAndNameIn(type, names);
     }
-
 }

@@ -58,34 +58,9 @@
 
     <bean id="abstractPersistenceService" class="org.egov.infstr.services.PersistenceService" abstract="true"/>
 
-	<!-- Bean for report service. constructor arguments: arg0 => Report Template
-		Cache minimum size arg1 => Report Template Cache maximum size -->
-	<bean id="reportService" class="org.egov.infra.reporting.engine.jasper.JasperReportService" lazy-init="false">
-		<constructor-arg value="10" />
-		<constructor-arg value="30" />
-	</bean>
-
-
-	<bean id="customizedWorkFlowService" class="org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService" scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-		<property name="workflowService" ref="workflowService" />
-	</bean>
-
-
 	<bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
 	
 	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
-	
-	<bean id="workFlowMatrixService" class="org.egov.infra.workflow.matrix.service.WorkFlowMatrixService" scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-
-	<bean id="workFlowAdditionalDetailsService" class="org.egov.infra.workflow.matrix.service.WorkFlowAdditionalDetailsService" scope="prototype">
-		<property name="persistenceService" ref="persistenceService" />
-	</bean>
-	
-	<bean id="eisService" class="org.egov.pims.service.EisUtilService" scope="prototype"/>
-	
 	
 	<!-- Use this only for generic hibernate query -->
 	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">
@@ -96,23 +71,11 @@
 	
 	<!-- NEW WORKFLOW ADDITIONS -->
 	
-	<bean id="statePersistenceService" parent="abstractPersistenceService">
-		<constructor-arg name="type" value="org.egov.infra.workflow.entity.State" />
-	</bean>
-	
 	<bean id="stateAwarePersistenceService" parent="abstractPersistenceService">
 		<constructor-arg name="type" value="org.egov.infra.workflow.entity.StateAware" />
 	</bean>
 	
-	<bean id="actionPersistenceService" parent="abstractPersistenceService">
-		<constructor-arg name="type" value="org.egov.infra.workflow.entity.WorkflowAction" />
-	</bean>
-	
-	<bean id="workflowTypePersistenceService" parent="abstractPersistenceService">
-		<constructor-arg name="type" value="org.egov.infra.workflow.entity.WorkflowTypes" />
-	</bean>
-	
-	<!-- 
+	<!--
 		This is a generic bean so do not use this to do transition of your own StateAware objects
 		For your own StateAware object transition declare a separate bean definition
 		like 
@@ -122,9 +85,6 @@
 	-->
 	<bean id="workflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
 		<constructor-arg index="0" ref="stateAwarePersistenceService" />
-		<property name="actionPersistenceService" ref="actionPersistenceService"/>
 	</bean>
-	
-	<bean id="entityValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 	
 </beans>

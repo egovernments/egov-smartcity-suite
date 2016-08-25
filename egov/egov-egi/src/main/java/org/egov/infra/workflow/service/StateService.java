@@ -38,37 +38,37 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.utils;
+package org.egov.infra.workflow.service;
 
-public final class ApplicationConstant {
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.repository.StateRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    public static final String CITY_CODE_KEY = "cityCode";
-    public static final String CITY_NAME_KEY = "cityname";
-    public static final String CITY_URL_KEY = "cityurl";
-    public static final String CITY_LOGO_KEY = "citylogo";
-    public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
-    public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
-    public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
-    public static final String CITY_LAT_KEY = "citylat";
-    public static final String CITY_LNG_KEY = "citylng";
-    public static final String CITY_CORP_GRADE_KEY = "cityGrade";
-    public static final String CITY_DIST_NAME_KEY = "districtName";
-    public static final String CITY_DIST_CODE_KEY = "districtCode";
-    public static final String CITY_CORP_NAME_KEY = "citymunicipalityname";
-    public static final String CITY_CORP_ADDRESS_KEY = "corpAddress";
-    public static final String CITY_CORP_CALLCENTER_NO_KEY = "corpCallCenterNo";
-    public static final String CITY_CORP_CONTACT_NO_KEY = "corpContactNo";
-    public static final String CITY_CORP_EMAIL_KEY = "corpContactEmail";
-    public static final String CITY_CORP_TWITTER_KEY = "corpTwitterLink";
-    public static final String CITY_CORP_FB_KEY = "corpFBLink";
-    public static final String CITY_CORP_GOOGLE_MAP_KEY = "corpGisLink";
+import java.util.List;
 
-    public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
-    public static final String CITY_LOGO_PATH_KEY = "logopath";
+@Service
+@Transactional(readOnly = true)
+public class StateService {
 
-    public static final String CDN_ATTRIB_NAME = "cdn";
-    public static final String USERID_KEY = "userid";
+    private final StateRepository stateRepository;
 
-    public static final Character Y = Character.valueOf('Y');
-    public static final Character N = Character.valueOf('Y');
+    @Autowired
+    public StateService(final StateRepository stateRepository) {
+        this.stateRepository = stateRepository;
+    }
+
+    public boolean isPositionUnderWorkflow(final Long posId) {
+        return stateRepository.countByOwnerPosition_Id(posId) > 0;
+    }
+
+    public List<String> getAssignedWorkflowTypeNames(List<Long> ownerIds) {
+        return stateRepository.findAllTypeByOwnerAndStatus(ownerIds);
+    }
+
+    public State getStateById(Long id) {
+        return stateRepository.findOne(id);
+    }
+
 }
