@@ -59,6 +59,8 @@
 </form:form>
 <script>
 	$('#buttonSubmit').click(function(e) {
+		if(!checkPanNumber())
+			return false;
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
