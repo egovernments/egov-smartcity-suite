@@ -44,9 +44,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -665,10 +663,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                 CollectionConstants.APPCONFIG_VALUE_CHALLANVALIDUPTO));
         final Challan challan = receiptHeader.getChallan();
-        GregorianCalendar date = new GregorianCalendar();
-        date.setTime(challan.getChallanDate());
-        date.add(Calendar.DATE, validUpto);
-        challan.setValidUpto(date.getTime());
+        DateTime date = new DateTime(challan.getChallanDate());
+        date=date.plusDays(validUpto);
+        challan.setValidUpto(date.toDate());
         if (challan.getChallanNumber() == null)
             setChallanNumber(challan);
 
