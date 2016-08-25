@@ -52,7 +52,6 @@ import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.WorkProgressRegister;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
-import org.egov.works.utils.WorksConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -178,21 +177,12 @@ public class WorkProgressRegisterService {
                 query.setLong("subScheme", estimateAbstractReport.getSubScheme());
             }
 
-            if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
-                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
+            if (estimateAbstractReport.getWorkCategory() != null) {
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
-                        query.setString("typeofslum", estimateAbstractReport.getTypeOfSlum());
-                    }
-
-                    if (estimateAbstractReport.getBeneficiary() != null) {
-                        query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-                    }
-
-                } else {
-                    query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                }
+            }
+            
+            if (estimateAbstractReport.getBeneficiary() != null) {
+                query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
             }
 
             if (estimateAbstractReport.getNatureOfWork() != null) {
@@ -243,21 +233,12 @@ public class WorkProgressRegisterService {
                 query.setLong("subScheme", estimateAbstractReport.getSubScheme());
             }
 
-            if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
-                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
+            if (estimateAbstractReport.getWorkCategory() != null ) {
                     query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
-                        query.setString("typeofslum", estimateAbstractReport.getTypeOfSlum());
-                    }
+            }
 
-                    if (estimateAbstractReport.getBeneficiary() != null) {
-                        query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
-                    }
-
-                } else {
-                    query.setString("workcategory", estimateAbstractReport.getWorkCategory());
-                }
+            if (estimateAbstractReport.getBeneficiary() != null) {
+                query.setString("beneficiary", estimateAbstractReport.getBeneficiary());
             }
 
             if (estimateAbstractReport.getNatureOfWork() != null) {
@@ -339,24 +320,11 @@ public class WorkProgressRegisterService {
                 filterConditions.append(" AND details.subScheme =:subScheme ");
             }
 
-            if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
-                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
-
+            if (estimateAbstractReport.getWorkCategory() != null) {
                     filterConditions.append(" AND details.workcategory =:workcategory ");
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
-                        filterConditions.append(" AND details.typeofslum =:typeofslum ");
-                    }
-
-                    if (estimateAbstractReport.getBeneficiary() != null) {
-                        filterConditions.append(" AND details.beneficiary =:beneficiary ");
-                    }
-
-                } else {
-
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-
-                }
+            }
+            if (estimateAbstractReport.getBeneficiary() != null) {
+                filterConditions.append(" AND details.beneficiary =:beneficiary ");
             }
 
             if (estimateAbstractReport.getNatureOfWork() != null) {
@@ -598,24 +566,12 @@ public class WorkProgressRegisterService {
                 filterConditions.append(" AND details.subScheme =:subScheme ");
             }
 
-            if (estimateAbstractReport.getWorkCategory() != null
-                    && !estimateAbstractReport.getWorkCategory().equalsIgnoreCase("undefined")) {
-                if (estimateAbstractReport.getWorkCategory().equalsIgnoreCase(WorksConstants.SLUM_WORK)) {
-
+            if (estimateAbstractReport.getWorkCategory() != null) {
                     filterConditions.append(" AND details.workcategory =:workcategory ");
-                    if (estimateAbstractReport.getTypeOfSlum() != null) {
-                        filterConditions.append(" AND details.typeofslum =:typeofslum ");
-                    }
-
-                    if (estimateAbstractReport.getBeneficiary() != null) {
-                        filterConditions.append(" AND details.beneficiary =:beneficiary ");
-                    }
-
-                } else {
-
-                    filterConditions.append(" AND details.workcategory =:workcategory ");
-
-                }
+            }
+            
+            if (estimateAbstractReport.getBeneficiary() != null) {
+                filterConditions.append(" AND details.beneficiary =:beneficiary ");
             }
 
             if (estimateAbstractReport.getNatureOfWork() != null) {
