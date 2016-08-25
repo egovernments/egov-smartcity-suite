@@ -85,6 +85,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 
 import com.google.gson.GsonBuilder;
 
@@ -115,6 +118,9 @@ public class SewerageRateDCBReportController {
     
     @Autowired 
     private ApplicationProperties applicationProperties;
+    
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
 
     @ModelAttribute 
     public DCBReportWardwiseResult dCBReportWardWise(){
@@ -190,8 +196,7 @@ public class SewerageRateDCBReportController {
             wards.addAll(searchRequest.getWards());
         }
         else{
-            // Commented to fix compilation error.
-            //wards.addAll(boundaryService.getAllBoundaries());
+            wards.addAll(boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(SewerageTaxConstants.BOUNDARYTYPE_WARD, SewerageTaxConstants.HIERARCHYTYPE_REVENUE));
         }
         
         for(Boundary boundary : wards){

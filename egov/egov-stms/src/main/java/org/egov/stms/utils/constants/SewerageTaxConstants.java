@@ -273,4 +273,8 @@ public class SewerageTaxConstants {
     public static final String NOTICE_WORK_ORDER = "WO";
     
     public static final String NEWCONNECTION_DOCTYPE_OTHERS = "Others";
+    
+    //DCB Report wardwise
+    public static final String BOUNDARYTYPE_WARD="Ward";
+    public static final String HIERARCHYTYPE_REVENUE="REVENUE";
 }

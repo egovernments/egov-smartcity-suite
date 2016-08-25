@@ -63,6 +63,8 @@ import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 
 @Service
 @Transactional(readOnly=true)
@@ -73,6 +75,9 @@ public class SewerageDCBReporService {
     
     @Autowired
     SewerageThirdPartyServices sewerageThirdPartyServices;
+    
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
     
     
     public List<SewerageRateDCBResult> getSewerageRateDCBReport(final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -167,23 +172,26 @@ public class SewerageDCBReporService {
         DCBReportWardwiseResult dcbResult = new DCBReportWardwiseResult();
 
         for (Map.Entry<String, List<SewerageApplicationDetails>> entry : applicationDtlMap.entrySet()) {
+            Boundary boundary = null;
+            BoundaryType boundaryType = null;
+            List<Boundary> boundaryList = new ArrayList<Boundary>();
             dcbResult = new DCBReportWardwiseResult();
-            for (SewerageApplicationDetails dtl : entry.getValue()) {
-                if (null != dtl) {
-                    for (EgDemandDetails demandDetails : dtl.getCurrentDemand().getEgDemandDetails()) {
+            for (SewerageApplicationDetails appDetails : entry.getValue()) {
+                if (appDetails != null) {
+                    for (EgDemandDetails demandDetails : appDetails.getCurrentDemand().getEgDemandDetails()) {
                         dcbResult.setNoofassessments(entry.getValue().size());
                         dcbResult.setRevenueWard(entry.getKey());
                         if (null != propertyType) {
                             dcbResult.setPropertyType(propertyType);
                         }
-                        //Commented to fix compilation error.
-                        /*Boundary boundary = boundaryService.getBoundaryByName(entry.getKey());
-                        dcbResult.setWardId(boundary.getId());*/
-
+                        boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(SewerageTaxConstants.BOUNDARYTYPE_WARD, SewerageTaxConstants.HIERARCHYTYPE_REVENUE);
+                        boundaryList.addAll(boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(entry.getKey(), boundaryType.getId()));
+                        if(!boundaryList.isEmpty())
+                        boundary = boundaryList.get(0);
+                        if(boundary!=null)                        
+                        dcbResult.setWardId(boundary.getId());
                         final DCBReportWardwiseResult rateResult = dcbReportMap.get(entry.getKey());
-
                         if (rateResult == null) {
-
                             dcbResult.setInstallmentYearDescription(demandDetails.getEgDemandReason().getEgInstallmentMaster().getDescription());
                             buildArrearAndCurrentDemandTax(dcbResult, demandDetails);
 
@@ -247,12 +255,12 @@ public class SewerageDCBReporService {
 
             for (SewerageApplicationDetails detail : applicationList) {
                 dcbResult = new DCBReportWardwiseResult();
-                if (null != detail) {
+                if (detail != null) {
                     dcbResult.setShscnumber(detail.getConnection().getShscNumber());
                     dcbResult.setOwnerName(detail.getOwnerName());
                     for (EgDemandDetails demandDetails : detail.getCurrentDemand().getEgDemandDetails()) {
                         dcbResult.setApplicationNumber(entry.getKey());
-                        if (null != propertyType) {
+                        if (propertyType != null) {
                             dcbResult.setPropertyType(propertyType);
                         }
                         final DCBReportWardwiseResult rateResult = dcbReportMap.get(entry.getKey());
