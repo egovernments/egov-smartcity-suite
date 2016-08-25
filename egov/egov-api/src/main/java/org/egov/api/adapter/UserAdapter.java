@@ -64,13 +64,13 @@ public class UserAdapter extends DataAdapter<Citizen> {
         if (citizen.getGender() != null)
             jo.addProperty("gender", citizen.getGender().name());
         if (citizen.getPan() != null)
-            jo.addProperty("panCard", citizen.getPan());
+            jo.addProperty("pan", citizen.getPan());
         if (citizen.getDob() != null) {
             DateTimeFormatter ft = DateTimeFormat.forPattern("yyyy-MM-dd");
             jo.addProperty("dob", ft.print(citizen.getDob().getTime()));
         }
         if (citizen.getAadhaarNumber() != null)
-            jo.addProperty("aadhaarCard", citizen.getAadhaarNumber());
+            jo.addProperty("aadhaarNumber", citizen.getAadhaarNumber());
         if (citizen.getLocale() != null)
             jo.addProperty("preferredLanguage", citizen.getLocale());
         return jo;

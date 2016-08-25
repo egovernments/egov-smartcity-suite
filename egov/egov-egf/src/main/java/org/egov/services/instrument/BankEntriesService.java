@@ -47,10 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BankEntriesService extends PersistenceService<BrsEntries, Long> {
 
-    public BankEntriesService(final Class<BrsEntries> brsEntries) {
-        this.type = brsEntries;
+    public BankEntriesService() {
+        super(BrsEntries.class);
     }
 
-    public BankEntriesService() {
+    public BankEntriesService(final Class<BrsEntries> type) {
+        super(type);
     }
 }

@@ -74,10 +74,11 @@ public class AppealDocuments extends AbstractPersistable<Long> {
     private Long id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "appeal")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "appeal", nullable = false)
     private Appeal appeal;
 
+    @NotNull
     @Length(min = 3, max = 100)
     private String documentName;
 

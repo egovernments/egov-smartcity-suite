@@ -140,13 +140,15 @@ public class CreateLetterOfAcceptanceController extends GenericWorkFlowControlle
         workOrder = letterOfAcceptanceService.getWorkOrderByEstimateNumber(estimateNumber);
         if (workOrder == null)
             workOrder = new WorkOrder();
-        if (workOrder.getWorkOrderDate() == null)
-            workOrder.setWorkOrderDate(new Date());
 
         loadViewData(model, abstractEstimate, workOrder, request);
 
         model.addAttribute("documentDetails", workOrder.getDocumentDetails());
         model.addAttribute("abstractEstimate", abstractEstimate);
+        if(!(abstractEstimate.getLineEstimateDetails() != null && abstractEstimate.getLineEstimateDetails().getLineEstimate().isSpillOverFlag() 
+                && abstractEstimate.getLineEstimateDetails().getLineEstimate().isWorkOrderCreated()))
+        	workOrder.setWorkOrderDate(new Date());
+        
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("workflowHistory",

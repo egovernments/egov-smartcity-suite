@@ -104,6 +104,14 @@ public class ContractorAdvanceServiceImpl extends PersistenceService<ContractorA
 
     private static final Logger LOGGER = Logger.getLogger(ContractorAdvanceServiceImpl.class);
 
+    public ContractorAdvanceServiceImpl(){
+        super(ContractorAdvanceRequisition.class);
+    }
+
+    public ContractorAdvanceServiceImpl(Class<ContractorAdvanceRequisition> type){
+        super(type);
+    }
+
     @Override
     public BigDecimal getAdvancePaidByWOEstimateId(final Long workOrderEstimateId) throws ValidationException {
         BigDecimal advanceAlreadyPaid = BigDecimal.ZERO;

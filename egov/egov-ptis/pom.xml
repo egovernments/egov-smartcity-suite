@@ -113,7 +113,7 @@
 	    <classifier>tests</classifier>
 	    <scope>test</scope>
 	</dependency>
-	
+
 		<dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
@@ -201,7 +201,7 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -308,8 +308,8 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 		</dependency>
-		
-		<!-- Jasper Report Compiler Dep 
+
+		<!-- Jasper Report Compiler Dep
        	<dependency>
 			<groupId>com.alexnederlof</groupId>
 			<artifactId>jasperreports-plugin</artifactId>

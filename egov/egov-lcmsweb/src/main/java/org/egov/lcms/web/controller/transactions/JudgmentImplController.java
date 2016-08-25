@@ -39,11 +39,9 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
-import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.Judgment;
 import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.service.JudgmentImplService;
@@ -92,9 +90,9 @@ public class JudgmentImplController {
     }
 
     @RequestMapping(value = "/new/", method = RequestMethod.POST)
-    public String create(@ModelAttribute("judgmentImpl") final JudgmentImpl judgmentImpl, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, @RequestParam("lcNumber") final String lcNumber,
-            final HttpServletRequest request, final Model model) {
+    public String create(@Valid @ModelAttribute("judgmentImpl") final JudgmentImpl judgmentImpl,
+            final BindingResult errors, final RedirectAttributes redirectAttrs,
+            @RequestParam("lcNumber") final String lcNumber, final HttpServletRequest request, final Model model) {
         final Judgment judgment = judgmentService.findByLcNumber(lcNumber);
         if (errors.hasErrors()) {
             model.addAttribute("judgment", judgment);
@@ -104,7 +102,7 @@ public class JudgmentImplController {
             judgmentImpl.setJudgment(judgment);
         judgmentImplService.saveOrUpdate(judgmentImpl);
         model.addAttribute("mode", "create");
-        model.addAttribute("appealDocList", new ArrayList<AppealDocuments>());
+        model.addAttribute("appealDocList", judgmentImplService.getAppealDocList(judgmentImpl));
         redirectAttrs.addFlashAttribute("judgmentImpl", judgmentImpl);
         model.addAttribute("message", "Judgment Implementation Created successfully.");
         return "judgmentimpl-success";

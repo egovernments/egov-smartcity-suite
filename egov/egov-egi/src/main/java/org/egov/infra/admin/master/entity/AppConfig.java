@@ -44,20 +44,20 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.search.domain.Searchable;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -67,20 +67,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.SEQUENCE;
+import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
+import static org.egov.infra.admin.master.entity.AppConfig.SEQ_APPCONFIG;
+import static org.hibernate.annotations.FetchMode.JOIN;
+
 @Entity
 @Table(name = "eg_appconfig")
-@SequenceGenerator(name = AppConfig.SEQ_APPCONFIG, sequenceName = AppConfig.SEQ_APPCONFIG, allocationSize = 1)
+@SequenceGenerator(name = SEQ_APPCONFIG, sequenceName = SEQ_APPCONFIG, allocationSize = 1)
 @CompositeUnique(fields = { "keyName", "module" }, enableDfltMsg = true)
 @Searchable
+@NamedEntityGraph(name = FETCH_WITH_VALUES,
+        attributeNodes = @NamedAttributeNode("confValues"))
 public class AppConfig extends AbstractAuditable {
 
     private static final long serialVersionUID = 8904645810221559541L;
-    public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
+    static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
+    public static final String FETCH_WITH_VALUES = "AppConfig.values";
 
     @Expose
     @DocumentId
     @Id
-    @GeneratedValue(generator = SEQ_APPCONFIG, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPCONFIG, strategy = SEQUENCE)
     private Long id;
 
     @NotBlank
@@ -90,7 +101,7 @@ public class AppConfig extends AbstractAuditable {
     @Searchable
     private String keyName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "module", nullable = false, updatable = false)
     @NotNull
     @Searchable
@@ -104,7 +115,8 @@ public class AppConfig extends AbstractAuditable {
     private String description;
 
     @Valid
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, mappedBy = "config")
+    @OneToMany(cascade = ALL, fetch = EAGER, mappedBy = "config", orphanRemoval = true)
+    @Fetch(JOIN)
     private List<AppConfigValues> confValues = new ArrayList<>();
 
     public Long getId() {
@@ -140,6 +152,7 @@ public class AppConfig extends AbstractAuditable {
     }
 
     public List<AppConfigValues> getConfValues() {
+        confValues.forEach(configValue -> configValue.setConfig(this));
         return confValues;
     }
 

@@ -43,23 +43,13 @@ import org.egov.deduction.model.EgRemittance;
 import org.egov.infstr.services.PersistenceService;
 
 public class RemittancePersistenceService extends PersistenceService<EgRemittance, Long> {
-    private PersistenceService persistenceService;
 
-    public RemittancePersistenceService(final Class<EgRemittance> egRemittance) {
-        this.type = egRemittance;
-    }
-    @Override
-    public EgRemittance persist(final EgRemittance model) {
-        // TODO Auto-generated method stub
-        return super.persist(model);
+    public RemittancePersistenceService() {
+        super(EgRemittance.class);
     }
 
-    public PersistenceService getPersistenceService() {
-        return persistenceService;
-    }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
+    public RemittancePersistenceService(Class<EgRemittance> type) {
+        super(type);
     }
 
 }

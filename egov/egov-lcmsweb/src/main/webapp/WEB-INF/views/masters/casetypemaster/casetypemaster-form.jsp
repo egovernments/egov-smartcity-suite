@@ -60,7 +60,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="caseType"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="50"
+								data-pattern="alphabetwithspace" maxlength="50"
 								required="required" />
 							<form:errors path="caseType" cssClass="error-msg" />
 						</div>
@@ -71,15 +71,15 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="ordernumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="1000"/>
+								data-pattern="number" maxlength="3"/>
 							<form:errors path="ordernumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.notes" /> :</label>
+								code="lbl.description" /> :</label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea class="form-control text-left patternvalidation"
 								path="notes" id="notes" name="notes"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="256" />
+								data-pattern="alphabetwithspace" maxlength="256" />
 							<form:errors path="notes" cssClass="error-msg" />
 						</div>
 					</div>
@@ -99,5 +99,5 @@
 							</form:select>
 						</div>
 
-						<input type="hidden" name="casetypeMaster"
-							value="${casetypeMaster.id}" />
+						<input type="hidden" name="caseTypeMaster"
+							value="${caseTypeMaster.id}" />

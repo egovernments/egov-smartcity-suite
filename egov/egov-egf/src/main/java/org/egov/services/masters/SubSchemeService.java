@@ -49,8 +49,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
 
-    public SubSchemeService(final Class<SubScheme> subScheme) {
-        this.type = subScheme;
+    
+    public SubSchemeService() {
+        super(SubScheme.class);
+    }
+
+    public SubSchemeService(Class<SubScheme> type) {
+        super(type);
     }
 
     public List<SubScheme> getBySchemeId(final Integer schemeId) {

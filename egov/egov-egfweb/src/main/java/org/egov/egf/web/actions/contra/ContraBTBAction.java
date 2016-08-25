@@ -164,8 +164,7 @@ public class ContraBTBAction extends BaseVoucherAction {
     @Qualifier("fundFlowService")
     private FundFlowService fundFlowService;
     private CGeneralLedger generalled;
-    @Autowired
-    private CommonAction commonAction;
+    
     private CChartOfAccounts chartofAccountsList;
     private List<CGeneralLedger> generalLedgerDesList = new ArrayList<CGeneralLedger>();
     private List<CGeneralLedger> generalLedgerSrcList = new ArrayList<CGeneralLedger>();
@@ -560,10 +559,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         return button;
     }
 
-    public CommonAction getCommonAction() {
-        return commonAction;
-    }
-
+   
     public ContraJournalVoucher getContraVoucher() {
         return contraVoucher;
     }
@@ -686,10 +682,7 @@ public class ContraBTBAction extends BaseVoucherAction {
         this.button = button;
     }
 
-    public void setCommonAction(final CommonAction commonAction) {
-        this.commonAction = commonAction;
-    }
-
+    
     public void setContraBean(final ContraBean contraBean) {
         this.contraBean = contraBean;
     }

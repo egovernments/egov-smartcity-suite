@@ -48,9 +48,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class SchemeService extends PersistenceService<Scheme, Integer> {
+   
+    public SchemeService() {
+        super(Scheme.class);
+    }
 
-    public SchemeService(final Class<Scheme> scheme) {
-        this.type = scheme;
+    public SchemeService(final Class<Scheme> type) {
+        super(type);
     }
 
     public List<Scheme> getByFundId(final Integer fundId) {

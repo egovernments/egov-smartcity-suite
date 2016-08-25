@@ -40,24 +40,25 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <title><s:if test="mode=='create' || mode=='edit'">
 		<s:text name='NewProp.title' />
 	</s:if></title>
-<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"
 	type="text/javascript"></script>
 <link
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"
 	type="text/javascript"></script>
 </head>
 
@@ -210,7 +211,8 @@
 			var rIndex = getRow(obj).rowIndex;
 			var tbl = document.getElementById('floorDetails');
 			var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
-			if(getControlInBranch(tbl.rows[rIndex],'unstructuredLand').value=='true'){
+			var unstructureLand = getControlInBranch(tbl.rows[rIndex],'unstructuredLand');
+			if(unstructureLand.options[unstructureLand.selectedIndex].text=='No'){
 				if(obj.value!=null && obj.value!=""){
 					var buildLength=getControlInBranch(tbl.rows[rIndex],'builtUpArealength');
 					var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');
@@ -247,15 +249,15 @@
 				var buildbreadth=getControlInBranch(tbl.rows[rIndex],'builtUpAreabreadth');  
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
 				if(selText!=null && selText=='No'){
+					buildLength.readOnly = false;      
+					buildbreadth.readOnly = false;
+					builtUpArea.readOnly = true;
+				} else{
 					buildLength.value="";
-					buildLength.readOnly = true;      
+					buildLength.readOnly = true; 
 					buildbreadth.value="";
 					buildbreadth.readOnly = true;
 					builtUpArea.readOnly = false;
-				} else{
-					buildLength.readOnly = false; 
-					buildbreadth.readOnly = false;
-					builtUpArea.readOnly = true;
 				}
 			}
 		}
@@ -277,7 +279,7 @@
 				
 	</script>
 	<script
-		src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-		<script src="<c:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
+		src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+		<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 </body>
 </html>

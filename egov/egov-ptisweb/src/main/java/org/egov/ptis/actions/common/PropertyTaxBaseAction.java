@@ -244,7 +244,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     protected List<StateHistory> setUpWorkFlowHistory(final Long stateId) {
         final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
-        workflowBean.setWorkFlowHistoryItems(workflowHisObj);
+        if (workflowBean != null)
+        	workflowBean.setWorkFlowHistoryItems(workflowHisObj);
         return workflowHisObj;
     }
 
@@ -403,7 +404,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 || floor.getStructureClassification().getId().toString().equals("-1"))
                             addActionError(getText("mandatory.constType", msgParams));
                         
-                        if (floor.getUnstructuredLand())
+                        if (!floor.getUnstructuredLand())
                         {
                             if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null
                                     || floor.getBuiltUpArea().getLength().equals("")) {

@@ -39,9 +39,15 @@
  */
 package org.egov.egf.web.actions.budget;
 
-
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -81,22 +87,14 @@ import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.util.ValueStack;
 
 @ParentPackage("egov")
 @Results({
-    @Result(name = Constants.DETAILLIST, location = "budgetSearch-" + Constants.DETAILLIST + ".jsp"),
-    @Result(name = Constants.BUDGETS, location = "budgetSearch-" + Constants.BUDGETS + ".jsp"),
-    @Result(name = Constants.LIST, location = "budgetSearch-" + Constants.LIST + ".jsp")
+        @Result(name = Constants.DETAILLIST, location = "budgetSearch-" + Constants.DETAILLIST + ".jsp"),
+        @Result(name = Constants.BUDGETS, location = "budgetSearch-" + Constants.BUDGETS + ".jsp"),
+        @Result(name = Constants.LIST, location = "budgetSearch-" + Constants.LIST + ".jsp")
 })
 public class BudgetSearchAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -104,20 +102,11 @@ public class BudgetSearchAction extends BaseFormAction {
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> gridFields = new ArrayList<String>();
     protected BudgetDetail budgetDetail = new BudgetDetail();
-
-    public BudgetDetail getBudgetDetail() {
-        return budgetDetail;
-    }
-
     private final List<Budget> budgetList = new ArrayList<Budget>();
     private final List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();
     protected List<BudgetDetail> savedbudgetDetailList = new ArrayList<BudgetDetail>();
-    protected BudgetDetailConfig budgetDetailConfig;
-    protected BudgetDetailService budgetDetailService;
-    protected BudgetService budgetService;
     protected List<BudgetAmountView> budgetAmountView = new ArrayList<BudgetAmountView>();
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
-
     protected Long financialYear;
     protected List<Budget> budgets;
     protected boolean isApproveAction = false;
@@ -129,7 +118,6 @@ public class BudgetSearchAction extends BaseFormAction {
     boolean errorMessage = true;
     boolean re;
     protected Budget topBudget = null;
-
     String message = "";
     protected List<String> mandatoryFields = new ArrayList<String>();
     private Map<Long, String> previuosYearBudgetDetailMap = new TreeMap<Long, String>();
@@ -142,18 +130,26 @@ public class BudgetSearchAction extends BaseFormAction {
     protected String nextfinYearRange = "";
     private String previousfinYearRange = "";
     private String twopreviousfinYearRange = "";
-   
- @Autowired
- @Qualifier("persistenceService")
- protected PersistenceService persistenceService;
- @Autowired
-    private AppConfigValueService appConfigValuesService;
     private boolean shouldShowREAppropriations = true;
     List<AppConfigValues> excludeList = new ArrayList<AppConfigValues>();
+
+    @Autowired
+    @Qualifier("persistenceService")
+    protected PersistenceService persistenceService;
+    @Autowired
+    protected BudgetDetailConfig budgetDetailConfig;
+    @Autowired
+    @Qualifier("budgetDetailService")
+    protected BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetService")
+    protected BudgetService budgetService;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     @Qualifier("masterDataCache")
     private EgovMasterDataCaching masterDataCache;
-  
+
     public String getMessage() {
         return message;
     }
@@ -235,8 +231,12 @@ public class BudgetSearchAction extends BaseFormAction {
         return showButton;
     }
 
-    public BudgetSearchAction(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
+    public BudgetSearchAction() {
+    }
+
+    @Override
+    public void prepare() {
+        super.prepare();
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
@@ -256,13 +256,8 @@ public class BudgetSearchAction extends BaseFormAction {
             addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
         if (shouldShowField(Constants.BOUNDARY))
             addRelatedEntity(Constants.BOUNDARY, Boundary.class);
-    }
-
-    @Override
-    public void prepare() {
-        super.prepare();
         if (!parameters.containsKey("skipPrepare")) {
-        	System.out.println(parameters);
+            System.out.println(parameters);
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
@@ -345,12 +340,8 @@ public class BudgetSearchAction extends BaseFormAction {
             budgetList.addAll(budgetDetailService.findBudgetTree(budget, budgetDetail));
         getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
         if (budgetList.isEmpty())
-        	addActionError(getText("budget.no.details.found"));
+            addActionError(getText("budget.no.details.found"));
         return Constants.LIST;
-    }
-
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
     }
 
     public void setBudgetDetail(final BudgetDetail budgetDetail) {
@@ -368,8 +359,7 @@ public class BudgetSearchAction extends BaseFormAction {
     public boolean showApprovalDetails() {
         boolean result = false;
         final String mode = getMode();
-        if (mode != null && mode.equals("approve"))
-        {
+        if (mode != null && mode.equals("approve")) {
             isApproveAction = true;
             result = isApproveAction;
         }
@@ -378,8 +368,7 @@ public class BudgetSearchAction extends BaseFormAction {
 
     // for modify screen
     public String budgetDetailList() {
-        if (parameters.get("budget.id") != null)
-        {
+        if (parameters.get("budget.id") != null) {
             final Budget Budget = budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
             setTopBudget(Budget);
         }
@@ -387,7 +376,8 @@ public class BudgetSearchAction extends BaseFormAction {
                 Constants.SEARCH_CRITERIA_KEY);
         criteria.setBudget(budgetDetail.getBudget());
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Before getting List------------------------------------------------------------------------------------");
+            LOGGER.debug(
+                    "Before getting List------------------------------------------------------------------------------------");
         savedbudgetDetailList = budgetDetailService.searchBy(criteria);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("After getting List----------------------------------------------------------------"
@@ -396,7 +386,8 @@ public class BudgetSearchAction extends BaseFormAction {
 
         computeAmounts(savedbudgetDetailList);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("After compute-------------------------------------------------------------------------------------------");
+            LOGGER.debug(
+                    "After compute-------------------------------------------------------------------------------------------");
         return Constants.DETAILLIST;
     }
 
@@ -420,12 +411,14 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     // for search screen
-	@Action(value = "/budget/budgetSearch-groupedBudgetDetailList")
+    @Action(value = "/budget/budgetSearch-groupedBudgetDetailList")
     public String groupedBudgetDetailList() {
-    	
-    	final BudgetDetail criteria = new BudgetDetail();
-        /*final BudgetDetail criteria =  (BudgetDetail) persistenceService.getSession().createCriteria(
-                Constants.SEARCH_CRITERIA_KEY);*/
+
+        final BudgetDetail criteria = new BudgetDetail();
+        /*
+         * final BudgetDetail criteria = (BudgetDetail) persistenceService.getSession().createCriteria(
+         * Constants.SEARCH_CRITERIA_KEY);
+         */
         Budget budget = budgetDetail.getBudget();
         if (budget != null && budget.getId() != null) {
             budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
@@ -494,8 +487,7 @@ public class BudgetSearchAction extends BaseFormAction {
             if (re) {
                 if (getConsiderReAppropriationAsSeperate())
                     view.setCurrentYearReApproved(divideAndRoundBigDecToString(approvedAmt));
-                else
-                {
+                else {
                     view.setCurrentYearReApproved(divideAndRoundBigDecToString(calculateTotal(detail)));
                     shouldShowREAppropriations = false;
                 }
@@ -517,19 +509,19 @@ public class BudgetSearchAction extends BaseFormAction {
 
     private void populateActualData(final CFinancialYear financialYear) {
         String fromDate = Constants.DDMMYYYYFORMAT2.format(financialYear.getStartingDate());
-        String toVoucherDate=Constants.DDMMYYYYFORMAT2.format(new Date());
+        String toVoucherDate = Constants.DDMMYYYYFORMAT2.format(new Date());
         final List<Object[]> result = budgetDetailService.fetchActualsForFYDate(fromDate,
-        		toVoucherDate, mandatoryFields);
+                toVoucherDate, mandatoryFields);
         for (final Object[] row : result)
             budgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());
         fromDate = Constants.DDMMYYYYFORMAT2.format(subtractYear(financialYear.getStartingDate()));
-        
+
         Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());       
-		cal.add(Calendar.YEAR, -1);
-		String	toVoucherDate1=Constants.DDMMYYYYFORMAT2.format(cal.getTime());
-        
-        final List<Object[]> previousYearResult = budgetDetailService.fetchActualsForFYDate(fromDate,toVoucherDate1,
+        cal.setTime(new Date());
+        cal.add(Calendar.YEAR, -1);
+        String toVoucherDate1 = Constants.DDMMYYYYFORMAT2.format(cal.getTime());
+
+        final List<Object[]> previousYearResult = budgetDetailService.fetchActualsForFYDate(fromDate, toVoucherDate1,
                 mandatoryFields);
         for (final Object[] row : previousYearResult)
             previousYearBudgetDetailIdsAndAmount.put(row[0].toString(), row[1].toString());
@@ -548,8 +540,7 @@ public class BudgetSearchAction extends BaseFormAction {
         return Constants.BUDGETS;
     }
 
-    public Position getPosition() throws ApplicationRuntimeException
-    {
+    public Position getPosition() throws ApplicationRuntimeException {
         Position pos;
         try {
             // TODO: Now employee is extending user so passing userid to get assingment -- changes done by Vaibhav
@@ -584,16 +575,14 @@ public class BudgetSearchAction extends BaseFormAction {
     /**
      * @return the topBudget
      */
-    public Budget getTopBudget()
-    {
+    public Budget getTopBudget() {
         return topBudget;
     }
 
     /**
      * @param topBudget the topBudget to set
      */
-    public void setTopBudget(final Budget topBudget)
-    {
+    public void setTopBudget(final Budget topBudget) {
         this.topBudget = topBudget;
     }
 
@@ -699,22 +688,24 @@ public class BudgetSearchAction extends BaseFormAction {
         this.nextfinYearRange = nextfinYearRange;
     }
 
-	public AppConfigValueService getAppConfigValuesService() {
-		return appConfigValuesService;
-	}
+    public AppConfigValueService getAppConfigValuesService() {
+        return appConfigValuesService;
+    }
 
-	public EgovMasterDataCaching getMasterDataCache() {
-		return masterDataCache;
-	}
+    public EgovMasterDataCaching getMasterDataCache() {
+        return masterDataCache;
+    }
 
-	public void setAppConfigValuesService(
-			AppConfigValueService appConfigValuesService) {
-		this.appConfigValuesService = appConfigValuesService;
-	}
+    public void setAppConfigValuesService(
+            AppConfigValueService appConfigValuesService) {
+        this.appConfigValuesService = appConfigValuesService;
+    }
 
-	public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
-		this.masterDataCache = masterDataCache;
-	}
-    
+    public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
+        this.masterDataCache = masterDataCache;
+    }
 
+    public BudgetDetail getBudgetDetail() {
+        return budgetDetail;
+    }
 }

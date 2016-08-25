@@ -69,6 +69,14 @@
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources/ directory -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
 	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -100,8 +108,7 @@
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
+    <bean id="messageSource" name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="parentMessageSource" ref="parentMessageSource" />
         <property name="basenames">
             <list>

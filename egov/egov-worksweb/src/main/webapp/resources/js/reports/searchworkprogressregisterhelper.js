@@ -236,7 +236,7 @@ function callAjaxSearch() {
 					"data" : ""} ,{ 
 					"data" : "ward"} ,{
 					"data" : "location"} ,{
-					"data" : "typeOfSlum"} ,{ 
+					"data" : "workCategory"} ,{ 
 					"data" : "beneficiaries"} ,{
 					"data" : "nameOfWork"} ,{
 					"data" : "winCodeEstimateNumber"} ,{

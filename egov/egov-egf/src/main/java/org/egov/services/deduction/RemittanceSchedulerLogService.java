@@ -44,8 +44,12 @@ import org.egov.model.recoveries.RemittanceSchedulerLog;
 
 public class RemittanceSchedulerLogService extends PersistenceService<RemittanceSchedulerLog, Long>
 {
-    public RemittanceSchedulerLogService(final Class<RemittanceSchedulerLog> remittanceSchedulerLog) {
-        this.type = remittanceSchedulerLog;
+    public RemittanceSchedulerLogService() {
+        super(RemittanceSchedulerLog.class);
+    }
+
+    public RemittanceSchedulerLogService(Class<RemittanceSchedulerLog> type) {
+        super(type);
     }
 
 }

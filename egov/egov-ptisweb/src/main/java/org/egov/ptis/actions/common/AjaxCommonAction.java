@@ -110,7 +110,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 @Namespace("/common")
 @ResultPath("/WEB-INF/jsp/common/")
 @Results({ @Result(name = "ward", location = "ajaxCommon-ward.jsp"),

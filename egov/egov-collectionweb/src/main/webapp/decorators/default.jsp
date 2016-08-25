@@ -90,25 +90,25 @@
         <title>eGov  - <decorator:title/> </title>
 
    
-    <link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
+    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png" sizes="32x32' context='/egi'/>">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/collections.css?rnd=${app_release_no}"/>
 	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
 	<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>
 	
-	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
-	<link href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
+	<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+	<link href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>" rel="stylesheet" type="text/css" />
+	<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"
 	rel="stylesheet" type="text/css" />
 		
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
 	
-<script	src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+<script	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/ajax-script.js?${app_release_no}"></script>
 	
-	<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<SCRIPT type="text/javascript" src="/collection/resources/js/jsCommonMethods.js"></SCRIPT>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yuiloader/yuiloader-min.js"></script>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/yahoo-dom-event/yahoo-dom-event.js"></script>
@@ -116,15 +116,15 @@
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/connection/connection-min.js"></script>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/datasource/datasource-min.js"></script>
 	<script type="text/javascript" src="/collection/resources/commonyui/yui2.8/datatable/datatable-min.js"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/commonyui/yui2.8/yahoo/yahoo-min.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/commonyui/yui2.8/dom/dom-min.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/autocomplete.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/commonyui/yui2.8/event/event-min.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/commonyui/yui2.8/animation/animation-min.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/commonjs/ajaxCommonFunctions.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/helper.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/collections.js' context='/collection'/>"></script>
-	<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/calender.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/commonyui/yui2.8/yahoo/yahoo-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/commonyui/yui2.8/dom/dom-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/js/autocomplete.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/commonyui/yui2.8/event/event-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/commonyui/yui2.8/animation/animation-min.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/commonjs/ajaxCommonFunctions.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/js/helper.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/js/collections.js' context='/collection'/>"></script>
+	<script type="text/javascript" src="<cdn:url value='/resources/js/calender.js' context='/collection'/>"></script>
 
     <decorator:head/>
     </head>

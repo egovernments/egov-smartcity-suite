@@ -48,7 +48,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
+import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.entity.enums.WorkStatus;
@@ -108,9 +108,9 @@ public class EstimateAbstractReportController {
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("subSchemes", Collections.emptyList());
         model.addAttribute("natureOfWork", natureOfWorkService.findAll());
-        model.addAttribute("typeOfSlum", TypeOfSlum.values());
         model.addAttribute("beneficiary", Beneficiary.values());
         model.addAttribute("typeOfWork", egwTypeOfWorkHibernateDAO.getTypeOfWorkForPartyTypeContractor());
         model.addAttribute("workStatus", WorkStatus.values());
+        model.addAttribute("workCategory", WorkCategory.values());
     }
 }

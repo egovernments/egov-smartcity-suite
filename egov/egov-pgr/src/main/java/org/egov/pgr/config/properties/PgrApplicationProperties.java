@@ -40,20 +40,25 @@
 
 package org.egov.pgr.config.properties;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(value = { "classpath:config/pgr-application-config.properties" }, ignoreResourceNotFound = true)
-public class PgrApplicationProperties extends ApplicationProperties {
+@PropertySource(value = {
+    "classpath:config/pgr-application-config.properties",
+    "classpath:dashboard/pgr-dashboard-sql.properties"}, ignoreResourceNotFound = true)
+public class PgrApplicationProperties {
 
     @Autowired
     private Environment environment;
 
     public Integer defaultResolutionTime() {
         return environment.getProperty("default.resolution.time", Integer.class);
+    }
+
+    public String getValue(String key) {
+        return environment.getProperty(key);
     }
 }

@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.milestone;
 
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,13 +50,15 @@ import org.egov.works.milestone.service.MilestoneService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 
 @Controller
 @RequestMapping(value = "/milestone")
@@ -68,8 +71,9 @@ public class CreateMilestoneController {
     private WorkOrderEstimateService workOrderEstimateService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
-
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
+    
     @RequestMapping(value = "/newform", method = RequestMethod.GET)
     public String showNewMilestoneForm(
             final Model model, final HttpServletRequest request) throws ApplicationException {

@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.masters.repository;
 
+import java.util.List;
+
 import org.egov.lcms.masters.entity.JudgmentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -48,5 +50,7 @@ import org.springframework.stereotype.Repository;
 public interface JudgmentTypeRepository extends JpaRepository<JudgmentType,java.lang.Long> {
 
 	JudgmentType findByCode(String code);
+
+    List<JudgmentType> findByActiveTrueOrderByNameAsc();
 
 }

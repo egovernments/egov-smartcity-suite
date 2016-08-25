@@ -41,45 +41,46 @@
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <html oncontextmenu="return false;">
     <head>
         <%@ include file="/includes/meta.jsp" %>
         <title>eGov  - <decorator:title/> </title>
 
-		<link href="<c:url value='/resources/css/propertytax.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
-		<link href="<c:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+		<link href="<cdn:url value='/resources/css/propertytax.css?${app_release_no}'/>" rel="stylesheet" type="text/css" />
+		<link href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		
-		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
-		<link rel="stylesheet" type="text/css" href="<c:url value='/resources/yui2.8/assets/skins/sam/datatable.css'/>"/>
-		<link href="<c:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/fonts/fonts-min.css'/>"/>
+		<link rel="stylesheet" type="text/css" href="<cdn:url value='/resources/yui2.8/assets/skins/sam/datatable.css'/>"/>
+		<link href="<cdn:url value='/resources/global/css/egov/custom.css' context='/egi'/>" rel="stylesheet" type="text/css" />
 
-		<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/yuiloader/yuiloader-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/element/element-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/connection/connection-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/datasource/datasource-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/datatable/datatable-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"> </script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yuiloader/yuiloader-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo-dom-event/yahoo-dom-event.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/element/element-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/connection/connection-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datasource/datasource-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/datatable/datatable-min.js'/>"></script>
 		
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/yahoo/yahoo-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/dom/dom-min.js'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/yui2.8/animation/animation-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/yahoo/yahoo-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/dom/dom-min.js'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/yui2.8/animation/animation-min.js'/>"></script>
 		
-		<script type="text/javascript" src="<c:url value='/resources/javascript/propertyTax.js?${app_release_no}'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/helper.js?${app_release_no}'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/WorkFlow.js?${app_release_no}'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/resources/erp2/js/calender.js?${app_release_no}'/>"></script> 
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/propertyTax.js?${app_release_no}'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/helper.js?${app_release_no}'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/WorkFlow.js?${app_release_no}'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/erp2/js/calender.js?${app_release_no}'/>"></script>
 		
-		<script type="text/javascript" src="<c:url value='/resources/javascript/validations.js?${app_release_no}'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/SASvalidation.js?${app_release_no}'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/dateValidation.js?${app_release_no}'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/createProperty.js?${app_release_no}'/>"></script>
-		<script type="text/javascript" src="<c:url value='/resources/javascript/json2.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/SASvalidation.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/createProperty.js?${app_release_no}'/>"></script>
+		<script type="text/javascript" src="<cdn:url value='/resources/javascript/json2.js?${app_release_no}'/>"></script>
 		
-	    <script type="text/javascript" src="<c:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
-	    <script type="text/javascript" src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-	    <script src="<c:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/javascript/jquery/ajax-script.js?${app_release_no}'/>"></script>
+	    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+	    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
     	<decorator:head/>
     </head>
     

@@ -115,7 +115,7 @@ $(document).ready(function()
 		$('.today').datepicker('setDate',startDate);
 
 		}catch(e){
-		console.warn("No Date Picker");
+		//console.warn("No Date Picker");
 	}
 	
 	try { 
@@ -123,7 +123,7 @@ $(document).ready(function()
 			'placement': 'bottom'
 		});
 		}catch(e){
-		console.warn("No tooltip");
+		//console.warn("No tooltip");
 	}
 	
 	$("a.open-popup").click(function(e) {
@@ -154,47 +154,13 @@ $(document).ready(function()
 	    });
 	}
 	
-	/*$("select").each(function() { 
-		if($(this).children('option').length == 2)
-		{
-		  $(this).find('option').eq(1).prop('selected', true);
-		}
-	});*/
-	
-	/*$(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
-        $(".alert-danger").alert('close');
-    }); */
-	
-	/*$('.inboxload').click(function(){
-		window.close();
-		parent.window.opener.inboxloadmethod();
-	});*/
-	
-	
-	/*
-	 * 
-	 * <div id="notifyerror" class="alert alert-danger" role="alert">
-					  <div>
-					       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					       <span class="sr-only">Error:</span>Error Message From Ajax
-					  </div>
-					  <div>
-					       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					       <span class="sr-only">Error:</span>Error Message From Ajax
-					  </div>
-					  <div>
-					       <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					       <span class="sr-only">Error:</span>Error Message From Ajax
-					  </div>
-					</div>
-					
-					<div id="notifysuccess" class="alert alert-success" role="alert">
-					   <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-					   <span class="sr-only">Success:</span>
-					    &nbsp;Data Entry Added Successfully!
-					</div>
-	 * 
-	 */
+	try{
+		jQuery.extend(jQuery.validator.messages, {
+			required: "Required"
+		});
+	}catch(e){
+		//console.warn("No validation involved");
+	}
 
 	$('form[data-ajaxsubmit="true"]').submit(function(e){
 		
@@ -437,8 +403,3 @@ function disableRefreshAndBack(e) {
 		if (key == 82)
 			e.preventDefault();
 }
-
-/*$(".refreshInBox refeshDraft").on('click', function() {
-	if(window.opener)
-		window.opener.refreshInbox();
-});*/

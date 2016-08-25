@@ -98,8 +98,8 @@
 <label class="col-sm-3 control-label text-right"><spring:message code="lbl.dateofagreement" /><c:if test="${abstractEstimate.lineEstimateDetails !=null && abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }"><span class="mandatory"></span></c:if></label>
 	<div class="col-sm-3 add-margin">
 		<c:choose>
-			<c:when test="${abstractEstimate.lineEstimateDetails !=null && abstractEstimate.lineEstimateDetails.lineEstimate.spillOverFlag && abstractEstimate.lineEstimateDetails.lineEstimate.workOrderCreated }">
-				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" value="${workOrderDate}" required="required"/>
+			<c:when test="${lineEstimateDetails.lineEstimate.spillOverFlag && lineEstimateDetails.lineEstimate.workOrderCreated }">
+				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control datepicker" data-date-end-date="0d" required="required"/>
 			</c:when>
 			<c:otherwise>
 				<form:input path="workOrderDate" id="workOrderDate" type="text" class="form-control" value="${workOrderDate}" disabled="true" />

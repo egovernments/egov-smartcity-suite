@@ -49,14 +49,14 @@ import org.springframework.core.env.Environment;
 value = { "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired
     private Environment environment;
 
     public String axisTransactionMessage() {
-        return environment.getProperty("AXIS.transactionmessage", String.class);
+        return environment.getProperty("AXIS.transactionmessage");
     }
 
     public Integer axisVersion() {
@@ -64,47 +64,51 @@ public class CollectionApplicationProperties {
     }
 
     public String axisCommand() {
-        return environment.getProperty("axis.command", String.class);
+        return environment.getProperty("axis.command");
     }
 
     public String axisCommandQuery() {
-        return environment.getProperty("axis.command.query", String.class);
+        return environment.getProperty("axis.command.query");
     }
 
     public String axisAccessCode() {
-        return environment.getProperty("axis.access.code", String.class);
+        return environment.getProperty("axis.access.code");
     }
 
     public String axisMerchant() {
-        return environment.getProperty("axis.merchant", String.class);
+        return environment.getProperty("axis.merchant");
     }
 
     public String axisLocale() {
-        return environment.getProperty("axis.locale", String.class);
+        return environment.getProperty("axis.locale");
     }
 
     public String axisOperator() {
-        return environment.getProperty("axis.operator.id", String.class);
+        return environment.getProperty("axis.operator.id");
     }
 
     public String axisPassword() {
-        return environment.getProperty("axis.password", String.class);
+        return environment.getProperty("axis.password");
     }
 
     public String axisReconcileUrl() {
-        return environment.getProperty("axis.reconcile.url", String.class);
+        return environment.getProperty("axis.reconcile.url");
     }
 
     public String axisSecureSecret() {
-        return environment.getProperty("axis.secure.secret", String.class);
+        return environment.getProperty("axis.secure.secret");
     }
     
     public String getEmailSubject() {
-        return environment.getProperty("email.subject.message", String.class);
+        return environment.getProperty("email.subject.message");
     }
     
     public String getEmailBody() {
-        return environment.getProperty("email.body.message", String.class);
+        return environment.getProperty("email.body.message");
+    }
+    
+    public String getValue(String key) {
+        return environment.getProperty(key);
     }
     
 }

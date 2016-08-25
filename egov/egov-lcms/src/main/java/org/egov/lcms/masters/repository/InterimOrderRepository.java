@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.masters.repository;
 
+import java.util.List;
+
 import org.egov.lcms.masters.entity.InterimOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -47,5 +49,9 @@ import org.springframework.stereotype.Repository;
 public interface InterimOrderRepository extends JpaRepository<InterimOrder, java.lang.Long> {
 
     InterimOrder findByCode(String code);
+
+    List<InterimOrder> findByActiveTrueOrderByInterimOrderTypeAsc();
+
+   
 
 }

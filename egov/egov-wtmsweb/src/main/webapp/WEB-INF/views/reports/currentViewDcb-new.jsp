@@ -378,4 +378,4 @@ function openNewWindow() {
 }
 
 </script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

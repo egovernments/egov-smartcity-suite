@@ -288,7 +288,7 @@ public class ComplaintService {
         BeanUtils.copyProperties(savedComplaint, savedComplaintIndex);
         final ComplaintIndex complaintIndex = ComplaintIndex.method(savedComplaintIndex);
 
-        complaintIndexService.createComplaintIndex(complaintIndex);
+        complaintIndexService.updateComplaintIndex(complaintIndex, approvalPosition, approvalComent);
         return savedComplaint;
     }
 
@@ -591,6 +591,11 @@ public class ComplaintService {
         complaintsCount.put(COMPLAINTS_RESOLVED, complaintRepository.getComplaintsTotalCountByStatus(resolvedStatus).intValue());
         complaintsCount.put(COMPLAINTS_UNRESOLVED, complaintRepository.getComplaintsTotalCountByStatus(pendingStatus).intValue());
         return complaintsCount;
+    }
+    
+    public List<Complaint> getOpenComplaints(){
+    	List<String> statusList = Arrays.asList("REGISTERED", "FORWARDED", "REOPENED","PROCESSING");
+    	return complaintRepository.findByStatusNameIn(statusList);
     }
 
 }

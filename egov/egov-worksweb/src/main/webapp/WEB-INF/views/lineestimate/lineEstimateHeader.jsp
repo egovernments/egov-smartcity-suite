@@ -113,29 +113,17 @@
 				</div>
 			</div>
 			
-			<div class="form-group" id="radioValue" >
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.slum" /><span class="mandatory"></span></label>
-			<div class="col-sm-3 add-margin">
-				<form:radiobutton path="workCategory" id="slum" value="SLUM_WORK" onclick="showSlumFields();" required="required" />
-			</div>
-			<label class="col-sm-2 control-label text-right"><spring:message code="lbl.nonslum" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<form:radiobutton path="workCategory" id="nonslum" value="NON_SLUM_WORK" onclick="disableSlumFields()" required="required" />
-			</div>
-		</div>
-		<div id="slumfields" style="display: none">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.typeofslum" /><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.workcategory" /><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:select path="typeOfSlum" data-first-option="false" id="typeOfSlum" cssClass="form-control" required="required">
+					<form:select path="workCategory" data-first-option="false" id="workCategory" cssClass="form-control" required="required">
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${typeOfSlum}" />
+						<form:options items="${workCategory}" />
 					</form:select>
-					<form:errors path="typeOfSlum" cssClass="add-margin error-msg" />
+					<form:errors path="workCategory" cssClass="add-margin error-msg" />
 				</div>
 				<div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.beneficiary" /><span class="mandatory"></span></label>
@@ -150,7 +138,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.natureofwork" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">

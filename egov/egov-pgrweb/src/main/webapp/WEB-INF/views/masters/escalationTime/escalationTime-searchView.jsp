@@ -248,4 +248,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/escalationTimeviewsearch.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url  value='/resources/js/app/escalationTimeviewsearch.js?rnd=${app_release_no}'/>"></script>

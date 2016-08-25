@@ -39,7 +39,16 @@
  */
 package org.egov.egf.web.actions.report;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -73,31 +82,19 @@ import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
-		@Result(name = "result", location = "budgetAppropriationRegisterReport-result.jsp"),
+        @Result(name = "result", location = "budgetAppropriationRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=BudgetAppropriationRegisterRepor.pdf" }),
+                "no-cache;filename=BudgetAppropriationRegisterRepor.pdf" }),
         @Result(name = "XLS", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
-        "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
+                "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
 })
 @ParentPackage("egov")
 public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1658431423915247237L;
     private static final Logger LOGGER = Logger.getLogger(BudgetAppropriationRegisterReportAction.class);
     String jasperpath = "/reports/templates/BudgetAppReport.jasper";
@@ -123,7 +120,6 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private BigDecimal reAmount = BigDecimal.ZERO;
     private String finYearRange;
     protected List<String> mandatoryFields = new ArrayList<String>();
-    private BudgetDetailConfig budgetDetailConfig;
     private BudgetService budgetService;
     private boolean isBeDefined = true;
     private boolean isReDefined = true;
@@ -132,7 +128,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private Boolean shouldShowREAppropriations = false;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    
+    @Autowired
+    private BudgetDetailConfig budgetDetailConfig;
+
     public BudgetAppropriationRegisterReportAction() {
         addRelatedEntity(Constants.FUNCTION, CFunction.class);
         addRelatedEntity(Constants.EXECUTING_DEPARTMENT, Department.class);
@@ -174,22 +172,18 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         // Get this to show at header level
         if (budgetService.hasApprovedBeForYear(financialYear.getId()))
             beAmount = getBudgetBEorREAmt("BE");
-        else
-        {
+        else {
             isBeDefined = false;
             isReDefined = false;
         }
         // -- Consider RE if RE is present & approved for the current yr.
-        if (budgetService.hasApprovedReForYear(financialYear.getId()))
-        {
+        if (budgetService.hasApprovedReForYear(financialYear.getId())) {
             reAmount = getBudgetBEorREAmt("RE");
             if (getConsiderReAppropriationAsSeperate())
                 totalGrant = reAmount.add(addtionalAppropriationForRe);
             else
                 totalGrant = reAmount;
-        }
-        else if (budgetService.hasApprovedBeForYear(financialYear.getId()))
-        {
+        } else if (budgetService.hasApprovedBeForYear(financialYear.getId())) {
             isReDefined = false;
             totalGrant = beAmount.add(addtionalAppropriationForBe);
         }
@@ -198,8 +192,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     }
 
     private void generateReport() {
-    	CFinancialYear financialYr=new CFinancialYear();
-    	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
+        CFinancialYear financialYr = new CFinancialYear();
+        financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
         CFinancialYear financialYear = null;
         financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
         finYearRange = financialYear.getFinYearRange();
@@ -275,14 +269,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
             query = persistenceService.getSession().createSQLQuery(strQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate",StandardBasicTypes.DATE)
-                    .addScalar("billDate",StandardBasicTypes.DATE)
-                    
+                    .addScalar("voucherDate", StandardBasicTypes.DATE)
+                    .addScalar("billDate", StandardBasicTypes.DATE)
+
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
         }
         budgetAppropriationRegisterList = query.list();
@@ -317,14 +311,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
             query = persistenceService.getSession().createSQLQuery(strsubQuery)
                     .addScalar("bdgApprNumber")
-                    .addScalar("voucherDate",StandardBasicTypes.DATE)
-                    .addScalar("billDate",StandardBasicTypes.DATE)
-                    
+                    .addScalar("voucherDate", StandardBasicTypes.DATE)
+                    .addScalar("billDate", StandardBasicTypes.DATE)
+
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount",BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount",BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
+                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             budgetApprRegNewList = query.list();
             if (budgetApprRegNewList.size() > 0) {
@@ -385,7 +379,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             for (final BudgetAppDisplay budgetAppropriationRegisterDisp : budgetAppropriationRegisterList) {
                 if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                    && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getDebitAmount());
                         totalDebit = totalDebit.add(budgetAppropriationRegisterDisp.getBillAmount());
@@ -397,7 +391,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     }
                 if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getCreditAmount() != null
-                    && budgetAppropriationRegisterDisp.getCreditAmount().compareTo(BigDecimal.ZERO) == 1) {
+                            && budgetAppropriationRegisterDisp.getCreditAmount().compareTo(BigDecimal.ZERO) == 1) {
 
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getCreditAmount());
                         totalCredit = totalCredit.add(budgetAppropriationRegisterDisp.getBillAmount());
@@ -409,7 +403,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     }
                 if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType()))
                     if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                    && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1)
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1)
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getDebitAmount());
                     else
                         budgetAppropriationRegisterDisp.setBillAmount(budgetAppropriationRegisterDisp.getCreditAmount().multiply(
@@ -423,24 +417,24 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                         cumulativeAmt = totalDebit.subtract(totalCredit);
                     budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
                 } else // when budgeting type is 'ALL', to calculate the cumulative balance,
-                    // if the debit amount>0, add the debit amount to cumulative amount
-                    // if the credit amount>0, subtract the credit amount from the cumulative amount
-                    if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType())) {
-                        if (budgetAppropriationRegisterDisp.getDebitAmount() != null
-                                && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
-                            cumulativeAmt = budgetAppropriationRegisterDisp.getBillAmount().abs().add(cumulativeAmt);
-                            budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                        } else {
-                            cumulativeAmt = cumulativeAmt.subtract(budgetAppropriationRegisterDisp.getBillAmount().abs());
-                            budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                        }
-                    } else if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType())) {
-                        cumulativeAmt = cumulativeAmt.add(totalCredit.subtract(totalDebit));
+                       // if the debit amount>0, add the debit amount to cumulative amount
+                       // if the credit amount>0, subtract the credit amount from the cumulative amount
+                if (BudgetingType.ALL.equals(budgetGroup.getBudgetingType())) {
+                    if (budgetAppropriationRegisterDisp.getDebitAmount() != null
+                            && budgetAppropriationRegisterDisp.getDebitAmount().compareTo(BigDecimal.ZERO) == 1) {
+                        cumulativeAmt = budgetAppropriationRegisterDisp.getBillAmount().abs().add(cumulativeAmt);
                         budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
-                    } else if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType())) {
-                        cumulativeAmt = cumulativeAmt.add(totalDebit.subtract(totalCredit));
+                    } else {
+                        cumulativeAmt = cumulativeAmt.subtract(budgetAppropriationRegisterDisp.getBillAmount().abs());
                         budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
                     }
+                } else if (BudgetingType.CREDIT.equals(budgetGroup.getBudgetingType())) {
+                    cumulativeAmt = cumulativeAmt.add(totalCredit.subtract(totalDebit));
+                    budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
+                } else if (BudgetingType.DEBIT.equals(budgetGroup.getBudgetingType())) {
+                    cumulativeAmt = cumulativeAmt.add(totalDebit.subtract(totalCredit));
+                    budgetAppropriationRegisterDisp.setCumulativeAmount(cumulativeAmt);
+                }
                 // when budgeting type is 'ALL', to calculate the running balance,
                 // if the debit amount>0, subtract the cumulative from running balance
                 // if the credit amount>0, add the cumulative to running balance
@@ -465,10 +459,10 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private BigDecimal getBudgetBEorREAmt(final String type) {
         BigDecimal approvedAmount = new BigDecimal(0.0);
         try {
-        	CFinancialYear financialYr=new CFinancialYear();
-        	financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
-        	final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
-        	
+            CFinancialYear financialYr = new CFinancialYear();
+            financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
+            final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
+
             List<BudgetDetail> budgedDetailList = new ArrayList<BudgetDetail>();
             String query = " from BudgetDetail bd where bd.budget.isbere=? and bd.budgetGroup=? and bd.budget.financialYear=? ";
             if (department.getId() != null && department.getId() != -1)
@@ -481,15 +475,13 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (budgedDetailList != null && budgedDetailList.size() > 0)
                 for (final BudgetDetail bdetail : budgedDetailList) {
                     approvedAmount = approvedAmount.add(bdetail.getApprovedAmount());
-                    if ("RE".equalsIgnoreCase(type) && !getConsiderReAppropriationAsSeperate())
-                    {
+                    if ("RE".equalsIgnoreCase(type) && !getConsiderReAppropriationAsSeperate()) {
                         approvedAmount = approvedAmount.add(bdetail.getApprovedReAppropriationsTotal());
                         continue;
                     } else if ("BE".equalsIgnoreCase(type))
                         addtionalAppropriationForBe = addtionalAppropriationForBe.add(bdetail
                                 .getApprovedReAppropriationsTotal());
-                    else
-                    {
+                    else {
                         shouldShowREAppropriations = true;
                         addtionalAppropriationForRe = addtionalAppropriationForRe.add(bdetail
                                 .getApprovedReAppropriationsTotal());
@@ -512,23 +504,17 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
         final String rBEorREAmountForm = " - (" + finYearRange + ") (Rs.)  : ";
         paramMapForReportFile.put("rAsOnDate", strAsOnDate);
-        if (isBeDefined)
-        {
+        if (isBeDefined) {
             paramMapForReportFile.put("rBE", rBEorREAmountForm + beAmount.toString());
             paramMapForReportFile.put("rAddiApprBe", addtionalAppropriationForBe.toString());
-        }
-        else
-        {
+        } else {
             paramMapForReportFile.put("rBE", rBEorREAmountForm + "Budget Not Defined ");
             paramMapForReportFile.put("rAddiApprBe", "");
         }
-        if (isReDefined)
-        {
+        if (isReDefined) {
             paramMapForReportFile.put("rRE", rBEorREAmountForm + reAmount.toString());
             paramMapForReportFile.put("rAddiApprRe", addtionalAppropriationForRe.toString());
-        }
-        else
-        {
+        } else {
             paramMapForReportFile.put("rRE", rBEorREAmountForm);
             paramMapForReportFile.put("rAddiApprRe", "");
         }
@@ -561,9 +547,6 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         return formatter.format(date);
     }
 
-    public void setBudgetDetailConfig(final BudgetDetailConfig budgetDetailConfig) {
-        this.budgetDetailConfig = budgetDetailConfig;
-    }
 
     public void setReportHelper(final ReportHelper reportHelper) {
         this.reportHelper = reportHelper;

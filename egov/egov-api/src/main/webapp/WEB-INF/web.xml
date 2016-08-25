@@ -49,7 +49,7 @@
 		and Filters -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:config/spring/applicationContext-api.xml</param-value>
+		<param-value>classpath*:config/spring/applicationContext-api.xml</param-value>
 	</context-param>
 	<context-param>
 		<param-name>locatorFactorySelector</param-name>

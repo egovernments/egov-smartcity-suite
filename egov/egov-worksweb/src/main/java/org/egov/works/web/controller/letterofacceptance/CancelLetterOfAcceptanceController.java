@@ -39,6 +39,7 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,12 +58,14 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.workorder.entity.WorkOrder;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 
 @Controller
 @RequestMapping(value = "/letterofacceptance")
@@ -77,7 +80,8 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;

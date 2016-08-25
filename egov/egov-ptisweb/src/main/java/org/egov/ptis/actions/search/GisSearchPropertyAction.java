@@ -83,7 +83,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONE_BNDRY_TYPE;
 @ParentPackage("egov")
 @Validations
 @Namespace("/search")
-@Transactional(readOnly = true)
 public class GisSearchPropertyAction extends BaseFormAction {
     /**
      *

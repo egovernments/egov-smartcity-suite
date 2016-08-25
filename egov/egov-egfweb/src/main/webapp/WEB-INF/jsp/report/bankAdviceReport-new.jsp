@@ -187,8 +187,9 @@ table.its th {
 							<tr>
 								<td align="center"><input type="button"
 									class="buttonsubmit" value="EXPORT PDF" id="exportpdf"
-									name="exportpdf" onclick="exportPDF();" /> <!-- 	<input type="button" class="buttonsubmit" value="EXPORT EXCEL" id="exportpdf" name="exportpdf" onclick="exportExcel();"/>-->
-									<!-- 	<input type="button" class="buttonsubmit" value="EXPORT HTM" id="exporthtml" name="exportpdf" onclick="exportHtml();"/>-->
+									name="exportpdf" onclick="exportPDF();" /> <input
+									type="button" class="buttonsubmit" value="EXPORT EXCEL"
+									id="exportpdf" name="exportpdf" onclick="exportExcel();" /> <!-- 	<input type="button" class="buttonsubmit" value="EXPORT HTM" id="exporthtml" name="exportpdf" onclick="exportHtml();"/>-->
 								</td>
 							</tr>
 						</table>

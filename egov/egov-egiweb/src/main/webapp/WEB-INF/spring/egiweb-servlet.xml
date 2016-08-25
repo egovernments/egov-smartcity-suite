@@ -51,51 +51,51 @@
     <mvc:annotation-driven enable-matrix-variables="true"
                            conversion-service="conversionService"
                            validator="validator">
-         <mvc:message-converters>
+        <mvc:message-converters>
             <!-- Use the HibernateAware mapper instead of the default -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="objectMapper">
-                    <bean class="org.egov.infra.web.support.json.mapper.HibernateAwareObjectMapper" />
+                    <bean class="org.egov.infra.web.support.json.mapper.HibernateAwareObjectMapper"/>
                 </property>
             </bean>
-        </mvc:message-converters>                  
+        </mvc:message-converters>
     </mvc:annotation-driven>
 
-    <context:property-placeholder />
+    <context:property-placeholder/>
 
-	<mvc:view-controller path="/error/500" view-name="error/500"/>
-  	<mvc:view-controller path="/error/404" view-name="error/404"/>
-  	<mvc:view-controller path="/error/403" view-name="error/403"/>
-  	<mvc:view-controller path="/error/400" view-name="error/400"/>
-  	<mvc:view-controller path="/help" view-name="help"/>
-  	<mvc:view-controller path="/login/secure" view-name="login"/>
+    <mvc:view-controller path="/error/500" view-name="error/500"/>
+    <mvc:view-controller path="/error/404" view-name="error/404"/>
+    <mvc:view-controller path="/error/403" view-name="error/403"/>
+    <mvc:view-controller path="/error/400" view-name="error/400"/>
+    <mvc:view-controller path="/help" view-name="help"/>
+    <mvc:view-controller path="/login/secure" view-name="login"/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<mvc:mapping path="/**"/>
-			<mvc:exclude-mapping path="/resources/**"/>
-			<bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
-		</mvc:interceptor>
-	</mvc:interceptors>
-	
-	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
-	
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
-		<property name="targetMethod" value="registerConverters"/>
-		<property name="arguments">
-			<list>
-				<set>
-					<bean class="org.springframework.data.repository.support.DomainClassConverter">
-						<constructor-arg ref="conversionService"/>
-					</bean>
-				</set>
-				<ref bean="conversionService"/>
-			</list>
-		</property>
-	</bean>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <bean class="org.egov.infra.web.spring.interceptor.CacheControlInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
+        <property name="targetMethod" value="registerConverters"/>
+        <property name="arguments">
+            <list>
+                <set>
+                    <bean class="org.springframework.data.repository.support.DomainClassConverter">
+                        <constructor-arg ref="conversionService"/>
+                    </bean>
+                </set>
+                <ref bean="conversionService"/>
+            </list>
+        </property>
+    </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver"/>
 
@@ -111,8 +111,9 @@
         <property name="validationMessageSource" ref="messageSource"/>
     </bean>
 
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="parentMessageSource" ref="parentMessageSource" />
+
+    <bean id="messageSource" name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="parentMessageSource" ref="parentMessageSource"/>
         <property name="basenames">
             <list>
                 <value>messages/labels</value>
@@ -123,8 +124,7 @@
         <!-- Disabling caching since on development-->
         <property name="cacheSeconds" value="0"/>
     </bean>
-	
- 
+
     <!-- Imports user-defined @Controller beans that process client requests -->
     <context:component-scan base-package="org.egov.infra.web.controller"/>
 

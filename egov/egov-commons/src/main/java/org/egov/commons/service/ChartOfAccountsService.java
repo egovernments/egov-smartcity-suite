@@ -52,10 +52,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Transactional(readOnly = true)
-public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long> {
-    public ChartOfAccountsService(final Class<CChartOfAccounts> chartOfAccounts) {
-        super(chartOfAccounts);
+public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts, Long>
+{
+    public ChartOfAccountsService(final Class<CChartOfAccounts> type) {
+        super(type);
     }
 
     public List<CChartOfAccounts> getActiveCodeList() {

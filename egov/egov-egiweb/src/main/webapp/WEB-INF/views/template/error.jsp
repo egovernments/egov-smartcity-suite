@@ -52,17 +52,17 @@
 		
 		<title>eGov Urban Portal</title>
 		
-		<link rel="icon" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/images/favicon.png'/>" sizes="32x32">
-	    <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/bootstrap/bootstrap.css'/>">
-	    <link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
-		<link rel="stylesheet" href="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
+		<link rel="icon" href="<cdn:url  value='/resources/global/images/favicon.png'/>" sizes="32x32">
+	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css'/>">
+	    <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
+		<link rel="stylesheet" href="<cdn:url  value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		
 		
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-        <script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
-        <script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/ie8/respond.min.js'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 		
 		

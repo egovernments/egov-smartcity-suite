@@ -92,7 +92,7 @@ public class ScheduleOfRateService {
 
     @Autowired
     private MessageSource messageSource;
-
+    
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
                 scheduleOfRateId);

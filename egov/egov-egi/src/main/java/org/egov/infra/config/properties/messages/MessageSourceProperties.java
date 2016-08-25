@@ -41,25 +41,62 @@
 package org.egov.infra.config.properties.messages;
 
 import org.egov.infra.config.properties.ApplicationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.utils.StringUtils.listToStringArray;
 
 @Configuration
 public class MessageSourceProperties {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MessageSourceProperties.class);
+
 	@Autowired
 	private ApplicationProperties applicationConfigProperties;
 
+	private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+
 	@Bean
-	public ResourceBundleMessageSource parentMessageSource() {
-		final ResourceBundleMessageSource resource = new ResourceBundleMessageSource();
-		resource.setBasenames(applicationConfigProperties.commonMessageFiles());
+	public ReloadableResourceBundleMessageSource parentMessageSource() {
+		final ReloadableResourceBundleMessageSource resource = new ReloadableResourceBundleMessageSource();
+		resource.setBasenames(processResourceWithPattern(applicationConfigProperties.commonMessageFiles()));
+        resource.setDefaultEncoding(Charset.defaultCharset().name());
 		if (applicationConfigProperties.devMode()) {
 			resource.setCacheSeconds(0);
 			resource.setUseCodeAsDefaultMessage(true);
 		}
 		return resource;
+	}
+
+	private String [] processResourceWithPattern(String ... baseNames) {
+		List<String> resources = new ArrayList<>();
+		for (String baseName : baseNames) {
+			if (baseName.contains("*")) {
+                try {
+                    Resource[] relResources = resourcePatternResolver.getResources("classpath*:"+baseName);
+                    for (Resource relResource : relResources) {
+                        resources.add("messages/"+relResource.getFilename().replace(".properties", EMPTY));
+                    }
+                } catch (IOException e) {
+                    LOG.warn("Could not load property file : {}", baseName);
+                }
+            } else {
+				resources.add(baseName);
+			}
+		}
+		return listToStringArray(resources);
 	}
 }

@@ -55,6 +55,14 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public class FundingAgencyService extends PersistenceService<FundingAgency, Integer> implements EntityTypeService {
+
+    public FundingAgencyService() {
+        super(FundingAgency.class);
+    }
+
+    public FundingAgencyService(Class<FundingAgency> type) {
+        super(type);
+    }
     /**
      * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
      */

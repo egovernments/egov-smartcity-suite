@@ -166,8 +166,8 @@
 	</div>
 </div>
 <link rel="stylesheet"
-	href="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
-	src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/meterEntry.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/meterEntry.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

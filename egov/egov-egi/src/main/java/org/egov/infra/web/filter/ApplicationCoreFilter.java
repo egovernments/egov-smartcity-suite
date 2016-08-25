@@ -55,7 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static org.egov.infra.utils.ApplicationConstant.CDN_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
@@ -95,8 +95,8 @@ public class ApplicationCoreFilter implements Filter {
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
         if (session.getAttribute(USERID_KEY) != null)
             ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
-        if(session.getServletContext().getAttribute(CDN_KEY) == null)
-            session.getServletContext().setAttribute(CDN_KEY,applicationProperties.getProperty("cdn.domain.url"));
+        if(session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
+            session.getServletContext().setAttribute(CDN_ATTRIB_NAME,applicationProperties.getProperty("cdn.domain.url"));
     }
 
     @Override

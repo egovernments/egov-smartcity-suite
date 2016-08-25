@@ -46,7 +46,8 @@ import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -66,7 +67,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class AdvertisementRenewalController extends HoardingControllerSupport {
 	
    @Autowired
-   private ResourceBundleMessageSource messageSource;
+   @Qualifier("messageSource")
+   private MessageSource messageSource;
 
     @RequestMapping(value = "/renewal/{id}", method = GET)
     public String renewForm(@PathVariable final String id, final Model model,

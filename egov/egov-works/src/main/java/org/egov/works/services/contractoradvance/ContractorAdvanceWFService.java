@@ -44,7 +44,11 @@ import org.egov.works.models.contractoradvance.ContractorAdvanceRequisition;
 
 public class ContractorAdvanceWFService extends PersistenceService<ContractorAdvanceRequisition, Long> {
     public ContractorAdvanceWFService() {
-        setType(ContractorAdvanceRequisition.class);
+        super(ContractorAdvanceRequisition.class);
+    }
+
+    public ContractorAdvanceWFService(Class<ContractorAdvanceRequisition> type) {
+        super(type);
     }
 
 }

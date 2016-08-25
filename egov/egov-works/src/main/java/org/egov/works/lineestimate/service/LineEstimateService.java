@@ -87,7 +87,6 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.entity.LineEstimatesForAbstractEstimate;
 import org.egov.works.lineestimate.entity.enums.LineEstimateStatus;
-import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.lineestimate.repository.LineEstimateAppropriationRepository;
 import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.lineestimate.repository.LineEstimateRepository;
@@ -575,9 +574,7 @@ public class LineEstimateService {
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.REJECTED.toString())) {
             updatedLineEstimate = update(lineEstimate, removedLineEstimateDetailsIds, files, financialYear);
             try {
-                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION)
-                        && lineEstimate.getWorkCategory().toString().equals(WorkCategory.NON_SLUM_WORK.toString()))
-                    resetWorkCategoryDetailsOnModify(lineEstimate);
+                if (workFlowAction.equals(WorksConstants.FORWARD_ACTION))
                 lineEstimateStatusChange(updatedLineEstimate, workFlowAction, mode);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getErrors());
@@ -622,11 +619,6 @@ public class LineEstimateService {
         updatedLineEstimate = lineEstimateRepository.save(updatedLineEstimate);
 
         return updatedLineEstimate;
-    }
-
-    private void resetWorkCategoryDetailsOnModify(final LineEstimate lineEstimate) {
-        lineEstimate.setTypeOfSlum(null);
-        lineEstimate.setBeneficiary(null);
     }
 
     private void resetAdminSanctionDetails(final LineEstimate lineEstimate) {

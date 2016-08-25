@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<script src="<cdn:url cdn='${applicationScope.cdn}'  value='/resources/js/app/complaintype.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/complaintype.js?rnd=${app_release_no}'/>"></script>
 
 <div class="row">
 	<div class="col-md-12">

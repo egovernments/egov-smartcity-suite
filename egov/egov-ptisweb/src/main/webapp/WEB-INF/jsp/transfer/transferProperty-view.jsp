@@ -40,6 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
@@ -76,7 +77,7 @@
 	}
 </script>
 <script
-	src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 </head>
 <body>
 	<div class="formmainbox">

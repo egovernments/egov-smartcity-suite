@@ -50,9 +50,14 @@ import java.util.Date;
 @Transactional(readOnly = true)
 public class InstrumentHeaderService extends PersistenceService<InstrumentHeader, Long> {
 
-    public InstrumentHeaderService(final Class<InstrumentHeader> instrumentHeader) {
-        this.type = instrumentHeader;
+    public InstrumentHeaderService() {
+        super(InstrumentHeader.class);
     }
+
+    public InstrumentHeaderService(final Class<InstrumentHeader> type) {
+        super(type);
+    }
+
     @Transactional
     public InstrumentHeader reconcile(Date recociledOn,Long ihId,EgwStatus reconciledStatus)
     {
