@@ -423,7 +423,7 @@
 			</div>
 			<div class="row">
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary">
+					<button type="submit" class="btn btn-primary" id="submitform">
 						<spring:message code="lbl.submit" />
 					</button>
 					<button type="button" class="btn btn-default"
