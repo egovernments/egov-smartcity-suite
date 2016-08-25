@@ -93,8 +93,9 @@ public class CreateLetterOfAcceptanceController {
         final String estimateNumber = request.getParameter("estimateNumber");
         final LineEstimateDetails lineEstimateDetails = lineEstimateService.findByEstimateNumber(estimateNumber);
         setDropDownValues(model, lineEstimateDetails);
-        if(!lineEstimateDetails.getLineEstimate().isSpillOverFlag() && !lineEstimateDetails.getLineEstimate().isWorkOrderCreated())
-        	workOrder.setWorkOrderDate(new Date());
+       	workOrder.setWorkOrderDate(new Date());
+       	if(lineEstimateDetails.getLineEstimate().isSpillOverFlag() && lineEstimateDetails.getLineEstimate().isWorkOrderCreated())
+       		workOrder.setWorkOrderDate(null);
         model.addAttribute("lineEstimateDetails", lineEstimateDetails);
         model.addAttribute("workOrder", workOrder);
         model.addAttribute("loggedInUser", securityUtils.getCurrentUser().getName());
