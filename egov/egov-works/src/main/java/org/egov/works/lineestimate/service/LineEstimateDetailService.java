@@ -55,6 +55,7 @@ import org.egov.works.lineestimate.repository.LineEstimateDetailsRepository;
 import org.egov.works.services.ProjectCodeService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,8 +71,9 @@ public class LineEstimateDetailService {
 
     @Autowired
     private AccountdetailkeyHibernateDAO accountdetailkeyHibernateDAO;
-
+    
     @Autowired
+    @Qualifier("projectCodeService")
     private ProjectCodeService projectCodeService;
 
     @Autowired

@@ -59,7 +59,7 @@ import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.repository.WorkOrderEstimateRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,7 +78,7 @@ public class WorkOrderEstimateService {
     private ContractorBillRegisterService contractorBillRegisterService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);

@@ -54,14 +54,20 @@ import org.egov.works.abstractestimate.entity.AssetsForEstimate;
 import org.egov.works.abstractestimate.entity.ProjectCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("projectCodeService")
+@Transactional(readOnly = true)
 public class ProjectCodeService extends PersistenceService<ProjectCode, Long> implements EntityTypeService {
 
     public ProjectCodeService() {
         super(ProjectCode.class);
     }
 
+    public ProjectCodeService(final Class<ProjectCode> type) {
+        super(type);
+    }
+    
     @Autowired
     private PersistenceService<AssetsForEstimate, Long> assetsForEstimateService;
 

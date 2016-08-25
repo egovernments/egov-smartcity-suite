@@ -50,7 +50,7 @@ import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -62,7 +62,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CancelAbstractEstimateController {
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
     private EstimateService estimateService;

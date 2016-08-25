@@ -70,6 +70,10 @@ public class DepositCodeService extends PersistenceService<DepositCode, Long> {
     public DepositCodeService() {
         super(DepositCode.class);
     }
+    
+    public DepositCodeService(final Class<DepositCode> type) {
+        super(type);
+    }
 
     public DepositCode getDepositCodeById(final Long DepositCodeId) {
         final DepositCode depositCode = entityManager.find(DepositCode.class, DepositCodeId);
