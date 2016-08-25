@@ -163,7 +163,7 @@ public class DailySTCollectionReportController {
             final Map<String, String> searchableObjects =(Map<String, String>) collectionIndexDocument.getResource().get("common");
             if(searchableObjects != null){
                 consumerNumber = searchableObjects.get("consumercode");
-                SewerageConnSearchRequest searchRequestObj = new SewerageConnSearchRequest();
+                DailySTCollectionReportSearch searchRequestObj = new DailySTCollectionReportSearch();
                 if(null!=searchRequest.getRevenueWard()){
                     searchRequestObj.setRevenueWard(searchRequest.getRevenueWard());
                 }
@@ -197,7 +197,7 @@ public class DailySTCollectionReportController {
                 searchRequest.searchCollectionFilters(), sortByReceiptDate, Page.NULL);
     }
     
-    private SearchResult getSewerageSearchResult(final SewerageConnSearchRequest searchRequest){
+    private SearchResult getSewerageSearchResult(final DailySTCollectionReportSearch searchRequest){
         final Sort sortByApplicationDate = Sort.by().field("clauses.applicationdate", SortOrder.ASC);
         return searchService.search(asList(Index.SEWARAGE.toString()), 
                 asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(), 

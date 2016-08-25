@@ -68,6 +68,13 @@ public class DailySTCollectionReportSearch {
     private String revenueWard;
     private String searchText;
     private String ulbName;
+    private String consumerNumber;
+    private String shscNumber;
+    private String applicantName;
+    private String mobileNumber;
+    private String doorNumber;
+    private String applicationDate;
+
 
     private String status;
 
@@ -174,6 +181,21 @@ public class DailySTCollectionReportSearch {
         logger.info("$$$$$$$$$$$$$$$$ Filters : " + andFilters);
         return Filters.withAndFilters(andFilters);
     }
+    
+    public Filters searchFilters() { 
+        final List<Filter> andFilters = new ArrayList<>(0);
+        andFilters.add(termsStringFilter(SewerageTaxConstants.SEARCHABLE_SHSCNO, shscNumber));
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_CITYNAME, ulbName));
+        andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_CONSUMER_NAME, applicantName));
+        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_MOBILENO , mobileNumber));
+        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_DOORNO, doorNumber));
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_REVWARD_NAME, revenueWard));
+        andFilters.add(queryStringFilter(SewerageTaxConstants.CLAUSES_APPLICATION_DATE,applicationDate));
+        andFilters.add(termsStringFilter(SewerageTaxConstants.CLAUSES_APPLICATIONNO,consumerNumber));
+        if (logger.isDebugEnabled())
+            logger.debug("finished filters");
+        return Filters.withAndFilters(andFilters);
+    }
 
     public Filters searchConnectionForWardFilters() {
         final List<Filter> andFilters = new ArrayList<>(0);
@@ -184,6 +206,54 @@ public class DailySTCollectionReportSearch {
 
     public String searchQuery() {
         return searchText;
+    }
+
+    public String getConsumerNumber() {
+        return consumerNumber;
+    }
+
+    public void setConsumerNumber(String consumerNumber) {
+        this.consumerNumber = consumerNumber;
+    }
+
+    public String getShscNumber() {
+        return shscNumber;
+    }
+
+    public void setShscNumber(String shscNumber) {
+        this.shscNumber = shscNumber;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getDoorNumber() {
+        return doorNumber;
+    }
+
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
+    }
+
+    public String getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(String applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
 }
