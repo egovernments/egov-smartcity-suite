@@ -946,7 +946,7 @@ public class ReportService {
                     baseRegisterVLTResultObj.setSitalArea(propMatView.getSitalArea()!=null?(propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP):BigDecimal.ZERO);
                     if(propMatView.getMarketValue()!=null && propMatView.getCapitalValue()!=null )
                     	baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue())>0?propMatView.getMarketValue():propMatView.getCapitalValue());
-                    
+                    baseRegisterVLTResultObj.setIsExempted(propMatView.getIsExempted()!=null?(propMatView.getIsExempted()?"Yes":"No"):"");
                     List<InstDmdCollMaterializeView> instDemandCollList = new LinkedList<InstDmdCollMaterializeView>(
                             propMatView.getInstDmdColl());
                     Map<String, Installment> currYearInstMap =propertyTaxUtil.getInstallmentsForCurrYear(new Date());
@@ -976,7 +976,22 @@ public class ReportService {
                     baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd()!=null && propMatView.getAggrArrDmd().compareTo(BigDecimal.ZERO)>=1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly()!=null?propMatView.getAggrArrearPenaly():BigDecimal.ZERO);
                     baseRegisterVLTResultObj.setArrearTotal(propMatView.getAggrArrDmd()!=null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO);
+                    BigDecimal arrColl = BigDecimal.ZERO;
+                    BigDecimal totalColl=BigDecimal.ZERO;
+                    BigDecimal currColl=BigDecimal.ZERO;
+                    arrColl=propMatView.getArrearCollection()!=null ? propMatView.getArrearCollection():BigDecimal.ZERO;
+                    baseRegisterVLTResultObj.setArrearColl(arrColl);
                     
+                    totalColl=totalColl.add(arrColl);
+                    if(propMatView.getAggrCurrFirstHalfColl()!=null){
+                    	currColl=currColl.add(propMatView.getAggrCurrFirstHalfColl());
+                    	totalColl=totalColl.add(currColl);
+                    }if(propMatView.getAggrCurrSecondHalfColl()!=null){
+                    	currColl=currColl.add(propMatView.getAggrCurrSecondHalfColl());
+                    	totalColl=totalColl.add(currColl);
+                    }
+                    baseRegisterVLTResultObj.setCurrentColl(currColl);
+                    baseRegisterVLTResultObj.setTotalColl(totalColl);
 
                     String arrearPerFrom = "";
                     String arrearPerTo = "";

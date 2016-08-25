@@ -14,6 +14,7 @@ public class BaseRegisterVLTResult {
 		private BigDecimal marketValue;
 		private BigDecimal documentValue;
 		private BigDecimal higherValueForImposedtax;
+		private String isExempted;
 	    private BigDecimal propertyTaxFirstHlf;
 	    private BigDecimal libraryCessTaxFirstHlf;
 	    private BigDecimal propertyTaxSecondHlf;
@@ -25,6 +26,10 @@ public class BaseRegisterVLTResult {
 	    private BigDecimal arrearLibraryTax;
 	    private BigDecimal arrearPenaltyFines;
 	    private BigDecimal arrearTotal;
+	    private BigDecimal arrearColl;
+	    private BigDecimal currentColl;
+	    private BigDecimal totalColl;
+	    
 	    
 		public String getAssessmentNo() {
 			return assessmentNo;
@@ -152,5 +157,30 @@ public class BaseRegisterVLTResult {
 		public void setSitalArea(BigDecimal sitalArea) {
 			this.sitalArea = sitalArea;
 		}
+		public String getIsExempted() {
+			return isExempted;
+		}
+		public void setIsExempted(String isExempted) {
+			this.isExempted = isExempted;
+		}
+		public BigDecimal getArrearColl() {
+			return arrearColl;
+		}
+		public void setArrearColl(BigDecimal arrearColl) {
+			this.arrearColl = arrearColl;
+		}
+		public BigDecimal getCurrentColl() {
+			return currentColl;
+		}
+		public void setCurrentColl(BigDecimal currentColl) {
+			this.currentColl = currentColl;
+		}
+		public BigDecimal getTotalColl() {
+			return totalColl;
+		}
+		public void setTotalColl(BigDecimal totalColl) {
+			this.totalColl = totalColl;
+		}
+		
 
 }

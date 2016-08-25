@@ -90,6 +90,7 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "marketValue", "title": "Market Value"},
 						  { "data" : "documentValue", "title": "Document Value"},
 						  { "data" : "higherValueForImposedtax", "title": "Higher Value For Imposed Tax "},
+						  { "data" : "isExempted", "title": "Exempted"},
 						  { "data" : "propertyTaxFirstHlf", "title": "PropertyTax FirstHlf"},
 						  { "data" : "libraryCessTaxFirstHlf", "title": "LibraryCessTax FirstHlf"},
 						  { "data" : "propertyTaxSecondHlf", "title": "PropertyTax SecondHlf"},
@@ -101,6 +102,9 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "arrearLibraryTax", "title": "ArrearLibraryTax"},
 						  { "data" : "arrearPenaltyFines", "title": "ArrearPenaltyFines"},
 						  { "data" : "arrearTotal", "title": "ArrearTotal"},
+						  { "data" : "arrearColl", "title": "Arrear Collection"},
+						  { "data" : "currentColl", "title": "Current Collection"},
+						  { "data" : "totalColl", "title": "Total Collection"},
 						  ],
 						  "aaSorting": [] 
 				});
