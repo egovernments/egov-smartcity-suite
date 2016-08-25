@@ -354,6 +354,15 @@ public class ScheduleOfRateService {
                     checkStartDate = new LocalDate(obj.getFromDate());
                     if (obj.getToDate() != null)
                         checkEndDate = new LocalDate(obj.getToDate());
+
+                    if (isLatestRate)
+                        if (checkStartDate.compareTo(existingStartDate) <= 0) {
+                            error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                            if (obj.getErrorReason() != null)
+                                error = obj.getErrorReason() + error;
+                            obj.setErrorReason(error);
+                            break;
+                        }
                     /**
                      * If latest existing SOR Rate to date is null
                      * 
@@ -382,8 +391,18 @@ public class ScheduleOfRateService {
                                     .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                     + ",";
                         else if (!toDateUpdated && isLatestRate) {
+                            LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
                             LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
-                            rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                            if (previousDay.compareTo(rateFromDate) > 0)
+                                rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                            else {
+                                error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null) + ",";
+                                if (obj.getErrorReason() != null)
+                                    error = obj.getErrorReason() + error;
+                                obj.setErrorReason(error);
+                                break;
+                            }
+
                             toDateUpdated = true;
                         }
 
@@ -428,8 +447,18 @@ public class ScheduleOfRateService {
                                         .getMessage("error.active.estimates.exist.for.given.date.range", null, null)
                                         + ",";
                             else if (!toDateUpdated && isLatestRate) {
+                                LocalDate rateFromDate = new LocalDate(rate.getValidity().getStartDate());
                                 LocalDate previousDay = new LocalDate(obj.getFromDate()).minusDays(1);
-                                rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                                if (previousDay.compareTo(rateFromDate) > 0)
+                                    rate.setValidity(new Period(rate.getValidity().getStartDate(), previousDay.toDate()));
+                                else {
+                                    error = error + " " + messageSource.getMessage("error.sor.rate.dates.overlap", null, null)
+                                            + ",";
+                                    if (obj.getErrorReason() != null)
+                                        error = obj.getErrorReason() + error;
+                                    obj.setErrorReason(error);
+                                    break;
+                                }
                                 toDateUpdated = true;
                             }
                         }
