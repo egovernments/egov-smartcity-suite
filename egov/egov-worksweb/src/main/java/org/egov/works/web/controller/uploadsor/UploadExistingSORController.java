@@ -115,7 +115,7 @@ public class UploadExistingSORController {
 
     @Autowired
     protected EstimateService estimateService;
-    
+
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -157,7 +157,8 @@ public class UploadExistingSORController {
 
             validateMandatoryFeilds(uploadSORRatesList);
 
-           errorInMasterData = scheduleOfRateService.validateRates(uploadSORRatesList);
+            if (!errorInMasterData)
+                errorInMasterData = scheduleOfRateService.validateRates(uploadSORRatesList);
 
             loadSorRateOriginalFileName = uploadSORService.prepareOriginalFileName(
                     WorksConstants.EXISTING_SOR_ORIGINAL_FILE_NAME_KEY,
@@ -166,8 +167,6 @@ public class UploadExistingSORController {
 
             final FileStoreMapper originalFileStore = fileStoreService.store(uploadSOR.getFile().getInputStream(),
                     loadSorRateOriginalFileName, uploadSOR.getFile().getContentType(), WorksConstants.FILESTORE_MODULECODE);
-
-           
 
             if (errorInMasterData) {
                 persistenceService.getSession().clear();
@@ -182,7 +181,7 @@ public class UploadExistingSORController {
                 model.addAttribute("outPutFileStoreId", outPutFileStoreId);
                 return "uploadSor-result";
             }
-            
+
             persistenceService.persist(originalFileStore);
             originalFileStoreId = originalFileStore.getFileStoreId();
 
@@ -216,7 +215,6 @@ public class UploadExistingSORController {
         model.addAttribute("outPutFileStoreId", outPutFileStoreId);
         return "uploadSor-result";
     }
-
 
     private void validateMandatoryFeilds(List<UploadScheduleOfRate> uploadSORRatesList) {
         try {
