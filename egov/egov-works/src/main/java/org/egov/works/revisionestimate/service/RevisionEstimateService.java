@@ -69,6 +69,7 @@ import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.mb.entity.MBHeader;
@@ -94,10 +95,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+
+import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
@@ -143,9 +147,15 @@ public class RevisionEstimateService {
 
     @Autowired
     private MBHeaderService mbHeaderService;
-    
+
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private MeasurementSheetService measurementSheetService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -229,7 +239,7 @@ public class RevisionEstimateService {
     @Transactional
     public RevisionAbstractEstimate updateRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String removedCQIds)
+            final String workFlowAction, final String removedActivityIds)
             throws ValidationException, IOException {
 
         RevisionAbstractEstimate updateRevisionEstimate = null;
@@ -242,7 +252,7 @@ public class RevisionEstimateService {
             mergeChangeQuantityActivities(revisionEstimate);
 
             List<Activity> activities = new ArrayList<Activity>(revisionEstimate.getActivities());
-            activities = removeDeletedActivities(activities, removedCQIds);
+            activities = removeDeletedActivities(activities, removedActivityIds);
             revisionEstimate.setActivities(activities);
         }
 
@@ -511,6 +521,8 @@ public class RevisionEstimateService {
 
         final Map<Long, String> previousEstimates = new HashMap<>();
 
+        Boolean measurementsPresent = false;
+
         // Populating Revision Estimate Activities
         for (final RevisionAbstractEstimate re : revisionAbstractEstimates)
             if (revisionEstimate == null || revisionEstimate.getCreatedDate() == null || revisionEstimate != null
@@ -526,6 +538,8 @@ public class RevisionEstimateService {
                     else if (activity.getParent() != null && activity.getSchedule() == null)
                         populateChangeQuantityActivities(activity, nonSorActivities, lumpSumActivities);
                 previousEstimates.put(re.getId(), re.getEstimateNumber());
+                if (!measurementsPresent)
+                    measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
             }
 
         revisionEstimate.getSorActivities().addAll(sorActivities);
@@ -534,6 +548,7 @@ public class RevisionEstimateService {
         revisionEstimate.getChangeQuantityLSActivities().addAll(lumpSumActivities);
 
         model.addAttribute("previousEstimates", previousEstimates);
+        model.addAttribute("measurementsPresent", measurementsPresent);
     }
 
     private void populateNonTenderedLumpSumActivities(final Activity activity, final List<Activity> activities) {
@@ -601,7 +616,6 @@ public class RevisionEstimateService {
         model.addAttribute("scheduleCategories", scheduleCategoryService.getAllScheduleCategories());
         model.addAttribute("workOrder", workOrderEstimate.getWorkOrder());
         model.addAttribute("stateType", revisionEstimate.getClass().getSimpleName());
-
     }
 
     public void revisionEstimateStatusChange(final RevisionAbstractEstimate revisionEstimate, final String workFlowAction) {
@@ -770,7 +784,9 @@ public class RevisionEstimateService {
                 final WorkOrderActivity workOrderActivity = workOrderActivityService
                         .getWorkOrderActivityByActivity(activity.getParent().getId());
                 if (workOrderActivity != null) {
-                    final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
+                    if (consumedQuantity == null)
+                        consumedQuantity = 0D;
                     if ("-".equals(activity.getSignValue())
                             && workOrderActivity.getApprovedQuantity() - consumedQuantity - activity.getQuantity() < 0)
                         bindErrors.reject("error.change.quantity", "error.change.quantity");
@@ -778,18 +794,19 @@ public class RevisionEstimateService {
             }
         }
     }
-    
+
     public List<String> findRENumbersToCancel(final String estimateNumber) {
-        return revisionEstimateRepository.getRENumbersToCancel("%" +estimateNumber + "%" , AbstractEstimate.EstimateStatus.APPROVED.toString(), AbstractEstimate.EstimateStatus.CANCELLED.toString());
+        return revisionEstimateRepository.getRENumbersToCancel("%" + estimateNumber + "%",
+                AbstractEstimate.EstimateStatus.APPROVED.toString(), AbstractEstimate.EstimateStatus.CANCELLED.toString());
     }
-    
+
     public List<SearchRevisionEstimate> searchRevisionEstimatesToCancel(final SearchRevisionEstimate searchRevisionEstimate) {
         Query query = null;
         query = entityManager.unwrap(Session.class)
                 .createSQLQuery(createQueryForSearchRevisionEstimates(searchRevisionEstimate))
                 .addScalar("id", LongType.INSTANCE)
                 .addScalar("woId", LongType.INSTANCE)
-                .addScalar("revisionEstimateNumber",StringType.INSTANCE)
+                .addScalar("revisionEstimateNumber", StringType.INSTANCE)
                 .addScalar("reDate", DateType.INSTANCE)
                 .addScalar("loaNumber", StringType.INSTANCE)
                 .addScalar("estimateNumber", StringType.INSTANCE)
@@ -799,7 +816,7 @@ public class RevisionEstimateService {
         query = setQueryParameterForSearchRevisionEstimates(searchRevisionEstimate, query);
         return query.list();
     }
-    
+
     private String createQueryForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate) {
         final StringBuilder filterConditions = new StringBuilder();
 
@@ -836,13 +853,16 @@ public class RevisionEstimateService {
         query.append(" AND aec.id = re.id ");
         query.append(" AND aep.id = woe.abstractestimate_id ");
         query.append(" AND woe.workorder_id = wo.id ");
-        query.append(" AND aec.status = status.id AND status.code = '"+searchRevisionEstimate.getRevisionEstimateStatus()+"' " );
-        query.append(" AND exists (select wo.id from egw_mb_header mbh ,egw_status mbstatus where mbh.status_id = mbstatus.id and mbstatus.code = 'CANCELLED')");
+        query.append(
+                " AND aec.status = status.id AND status.code = '" + searchRevisionEstimate.getRevisionEstimateStatus() + "' ");
+        query.append(
+                " AND exists (select wo.id from egw_mb_header mbh ,egw_status mbstatus where mbh.status_id = mbstatus.id and mbstatus.code = 'CANCELLED')");
         query.append(filterConditions.toString());
         return query.toString();
     }
 
-    private Query setQueryParameterForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate, final Query query) {
+    private Query setQueryParameterForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate,
+            final Query query) {
 
         if (searchRevisionEstimate != null) {
 
@@ -864,32 +884,66 @@ public class RevisionEstimateService {
         }
         return query;
     }
-    
+
     public String checkIfMBCreatedForRE(final WorkOrderEstimate workOrderEstimate) {
-       StringBuilder mbrefNumbres = new StringBuilder();
-       List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersToCancelRE(workOrderEstimate);
-       for (final MBHeader mBHeader : mbHeaders)
-           mbrefNumbres.append(mBHeader.getMbRefNo()).append(",");
-       if (mbrefNumbres.equals(""))
-           return "";
-       else
-           return mbrefNumbres.toString();
+        final StringBuilder mbrefNumbres = new StringBuilder();
+        final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersToCancelRE(workOrderEstimate);
+        for (final MBHeader mBHeader : mbHeaders)
+            mbrefNumbres.append(mBHeader.getMbRefNo()).append(",");
+        if (mbrefNumbres.equals(""))
+            return "";
+        else
+            return mbrefNumbres.toString();
     }
-    
+
     public RevisionAbstractEstimate cancel(final RevisionAbstractEstimate revisionAbstractEstimate) {
         revisionAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                 WorksConstants.REVISIONABSTRACTESTIMATE, RevisionAbstractEstimate.EstimateStatus.CANCELLED.toString()));
         return revisionEstimateRepository.save(revisionAbstractEstimate);
     }
-    
-    public String getRevisionEstimatesGreaterThanCurrent(final Long parentId,final Date createdDate) {
-       List<RevisionAbstractEstimate> revisionEstimatesList = revisionEstimateRepository.findRevisionEstimatesGreatedThan(parentId,createdDate);
-        StringBuilder revisionEstimates = new StringBuilder();
-        for(RevisionAbstractEstimate revisionAbstractEstimate : revisionEstimatesList) 
+
+    public String getRevisionEstimatesGreaterThanCurrent(final Long parentId, final Date createdDate) {
+        final List<RevisionAbstractEstimate> revisionEstimatesList = revisionEstimateRepository
+                .findRevisionEstimatesGreatedThan(parentId, createdDate);
+        final StringBuilder revisionEstimates = new StringBuilder();
+        for (final RevisionAbstractEstimate revisionAbstractEstimate : revisionEstimatesList)
             revisionEstimates.append(revisionAbstractEstimate.getEstimateNumber()).append(",");
-        if(revisionEstimates.equals(""))
+        if (revisionEstimates.equals(""))
             return "";
         else
             return revisionEstimates.toString();
+    }
+
+    public void validateREInDrafts(final Long estimateId, final JsonObject jsonObject, final BindingResult errors) {
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateRepository
+                .findByParent_IdAndEgwStatus_codeEquals(estimateId, WorksConstants.NEW);
+        String userName = "";
+        if (revisionEstimate != null) {
+            final String message = messageSource.getMessage("error.re.newstatus",
+                    new String[] { revisionEstimate.getEstimateNumber(), revisionEstimate.getEgwStatus().getDescription(),
+                            userName },
+                    null);
+            userName = worksUtils.getApproverName(revisionEstimate.getState().getOwnerPosition().getId());
+            jsonObject.addProperty("draftsError", message);
+            if (errors != null)
+                errors.reject("draftsError", message);
+        }
+    }
+
+    public void validateREInWorkFlow(final Long estimateId, final JsonObject jsonObject, final BindingResult errors) {
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateRepository.findByParentAndStatus(estimateId,
+                RevisionEstimateStatus.CANCELLED.toString(), RevisionEstimateStatus.APPROVED.toString(),
+                RevisionEstimateStatus.NEW.toString());
+        String userName = "";
+        if (revisionEstimate != null) {
+            final String message = messageSource.getMessage("error.re.workflow",
+                    new String[] { revisionEstimate.getEstimateNumber(), revisionEstimate.getEgwStatus().getDescription(),
+                            userName },
+                    null);
+            userName = worksUtils.getApproverName(revisionEstimate.getState().getOwnerPosition().getId());
+            jsonObject.addProperty("workFlowError", message);
+            if (errors != null)
+                errors.reject("workFlowError", message);
+        }
     }
 }

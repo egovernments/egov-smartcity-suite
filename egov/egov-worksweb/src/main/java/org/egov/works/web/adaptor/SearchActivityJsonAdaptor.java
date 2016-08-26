@@ -70,6 +70,12 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
         final WorkOrderActivity workOrderActivity = workOrderActivityService.getWorkOrderActivityByActivity(activity.getId());
+        Double rate = null;
+        if (activity.getAbstractEstimate().getParent() == null)
+            if (activity.getSchedule() != null)
+                rate = activity.getSORRateForDate(activity.getAbstractEstimate().getEstimateDate()).getValue();
+            else
+                rate = activity.getRate();
         if (activity.getSchedule() != null) {
             jsonObject.addProperty("description", activity.getSchedule().getDescription());
             jsonObject.addProperty("summary", activity.getSchedule().getSummary());
@@ -94,20 +100,24 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         else
             jsonObject.addProperty("uom", "");
 
-        if (activity.getRate() > 0)
-            jsonObject.addProperty("rate", activity.getRate());
-        else
-            jsonObject.addProperty("rate", "");
-
         jsonObject.addProperty("approvedQuantity", activity.getQuantity());
         if (workOrderActivity != null) {
             jsonObject.addProperty("estimateQuantity", workOrderActivity.getApprovedQuantity());
             final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
             jsonObject.addProperty("consumedQuantity", consumedQuantity == null ? "0" : consumedQuantity.toString());
+            if (activity.getSchedule() != null && activity.getAbstractEstimate().getParent() != null)
+                rate = activity.getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
+                        .getValue();
         } else {
             jsonObject.addProperty("estimateQuantity", 0);
             jsonObject.addProperty("consumedQuantity", 0);
         }
+
+        if (activity.getRate() > 0)
+            jsonObject.addProperty("rate", rate);
+        else
+            jsonObject.addProperty("rate", "");
+
         jsonObject.addProperty("estimateRate", activity.getEstimateRate());
         jsonObject.addProperty("id", activity.getId());
 

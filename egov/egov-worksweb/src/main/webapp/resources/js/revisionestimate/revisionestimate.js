@@ -837,12 +837,15 @@ var sorSearch = new Bloodhound({
 	function calculateEstimateValue() {
 		var nonTenderedTotal = $('#nonTenderedTotal').html();
 		var lumpSumTotal = $('#lumpSumTotal').html();
+		var activityTotal = $('#activityTotal').html();
 		if(nonTenderedTotal == '')
 			nonTenderedTotal = 0.0;
 		if(lumpSumTotal == '')
 			lumpSumTotal = 0.0;
+		if(activityTotal == '')
+			activityTotal = 0.0;
 
-		var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) ).toFixed(2);
+		var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) + parseFloat(activityTotal)).toFixed(2);
 		var estimateValue =  parseFloat(workValue).toFixed(2);
 		$('#estimateValue').val(estimateValue);
 		$('#workValue').val(workValue);
@@ -1429,6 +1432,8 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').removeAttr('required');
+		
+		flag = validateRevisionEstimate();
 	}
 	if (button != null && button == 'Approve') {
 		$('#approvalComent').removeAttr('required');
@@ -1438,6 +1443,8 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
+		
+		flag = validateRevisionEstimate();
 	}
 	if (button != null && button == 'Reject') {
 		$('#approvalDepartment').removeAttr('required');
@@ -1450,8 +1457,10 @@ function validateWorkFlowApprover(name) {
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
 		$('#approvalComent').attr('required', 'required');
+		
+		flag = validateRevisionEstimate();
 
-		if($("form").valid())
+		if(flag && $("form").valid())
 		{
 			bootbox.confirm($('#cancelConfirm').val(), function(result) {
 				if(!result) {
@@ -1471,6 +1480,7 @@ function validateWorkFlowApprover(name) {
 		$('#approvalPosition').attr('required', 'required');
 		$('#approvalComent').removeAttr('required');
 
+		flag = validateRevisionEstimate();
 	}
 
 	if(flag) {
@@ -1678,16 +1688,17 @@ function deleteActivity(obj) {
     //To get all the deleted rows id
     var aIndex = rIndex - 1;
     
-    if(!$("#removedCQIds").val()==""){
-		$("#removedCQIds").val($("#removedCQIds").val()+",");
+    if(!$("#removedActivityIds").val()==""){
+		$("#removedActivityIds").val($("#removedActivityIds").val()+",");
 	}
-	$("#removedCQIds").val($("#removedCQIds").val()+id);
+	$("#removedActivityIds").val($("#removedActivityIds").val()+id);
 	
 	var tbl=document.getElementById('tblchangequantity');	
 	var rowcount=$("#tblchangequantity > tbody > tr").length;
 	if(rowcount==2) {
 		var rowId = $(obj).attr('class').split('_').pop();
 		$('#changeQuantityActivitiesId_' + rowId).val('');
+		$('#changeQuantityActivitiesParent_' + rowId).val('');
 		$('#activity_' + rowId).val('');
 		$('.activityCategory_' + rowId).html('');
 		$('.activityCode_' + rowId).html('');
@@ -1698,6 +1709,8 @@ function deleteActivity(obj) {
 		$('#activityUnitRate_' + rowId).val('');
 		$('#activityQuantity_' + rowId).val('');
 		$('.activityApprovedAmount_' + rowId).html('');
+		$('.activityEstimatedAmount_' + rowId).html('');
+		$('.activityTotal_' + rowId).html('');
 		$('#activityRow').prop("hidden",true);
 		$('#activityRow').attr('sorinvisible', true);
 		$('#activityMessage').removeAttr('hidden');
@@ -1709,6 +1722,7 @@ function deleteActivity(obj) {
 	resetChangeQuantityIndexes();
 	//starting index for table fields
 	generateSlno('spanactivityslno');
+	activityTotal()
 	return true;
 }
 
@@ -1743,6 +1757,8 @@ function activityTotal() {
 			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
 	});
 	$('#activityTotal').html(total);
+	
+	calculateEstimateValue();
 }
 
 function changeSign(obj) {
@@ -1768,4 +1784,41 @@ function closeAllmsheet() {
 	$(".hide-ms:visible").each(function() {
 		$(this).trigger('click');
 	});
+}
+
+function validateRevisionEstimate() {
+	var tenderedRowCount = $("#tblNonTendered tbody tr[nontenderedinvisible='true']").length;
+	var lumpSumRowCount = $("#tblLumpSum tbody tr[lumpsuminvisible='true']").length;
+	var changeQuantityRowCount = $("#tblchangequantity tbody tr[sorinvisible='true']").length;
+	var workValue = $('#workValue').val();
+	var flag = true;
+	
+	if (tenderedRowCount == 1 && lumpSumRowCount == 1 && changeQuantityRowCount == 1) {
+		bootbox.alert($('#erroractivitymandatory').val());
+		return false;
+	}
+	
+	var message = "";
+	message = " for Activity Sl No : ";
+	var index = 0;
+	$("#tblchangequantity > tbody > tr[sorinvisible!='true'] .quantity").each(function() {
+		index++;
+		if ($(this).val() == "" || parseFloat($(this).val()) <= 0) {
+			flag = false;
+			message = message + index + ", ";
+		}
+	});
+	
+	if (!flag) {
+		message = message.slice(0, -2);
+		bootbox.alert($('#errorquantitieszero').val() + message);
+		return false;
+	}
+	
+	if (parseFloat(workValue) < 0) {
+		bootbox.alert($('#errorworkvaluenegative').val());
+		return false;
+	}
+	
+	return true;
 }

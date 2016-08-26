@@ -39,7 +39,7 @@
   --%>
 
   <div class="position_alert">
-			<spring:message	code="lbl.estimate.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${estimateValue}" default="0.0"></c:out></span>
+			<spring:message	code="lbl.re.value" /> : &#8377 <span id="estimateValueTotal"><c:out value="${estimateValue}" default="0.0"></c:out></span>
 		</div>
 		<div>
 		       <spring:hasBindErrors name="revisionEstimate">
@@ -93,7 +93,7 @@
 						
 						<c:if test="${previousEstimates.size() != 0 }">
 							<div class="row add-border">
-								<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.old.res" /> : </div> 
+								<div class="col-md-3 add-margin"><spring:message code="lbl.old.res" /> : </div> 
 								<div class="add-margin view-content">
 									<c:forEach var="estimate" items="${previousEstimates}" varStatus="item">
 										<c:if test="${item.index <= 4 }">

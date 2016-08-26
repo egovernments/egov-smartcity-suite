@@ -39,11 +39,15 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -53,13 +57,13 @@ import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,6 +71,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value = "/revisionestimate")
@@ -214,11 +219,36 @@ public class AjaxRevisionEstimateController {
             message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
         else {
             final String revisionEstimates = revisionEstimateService
-                    .getRevisionEstimatesGreaterThanCurrent(revisionEstimate.getParent().getId(),revisionEstimate.getCreatedDate());
+                    .getRevisionEstimatesGreaterThanCurrent(revisionEstimate.getParent().getId(),
+                            revisionEstimate.getCreatedDate());
             if (!revisionEstimates.equals(""))
                 message = messageSource.getMessage("error.reexists.greaterthancreateddate",
                         new String[] { revisionEstimates }, null);
         }
         return message;
+    }
+
+    @RequestMapping(value = "/validatere/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
+            final HttpServletRequest request, final HttpServletResponse response) {
+        final JsonObject jsonObject = new JsonObject();
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        revisionEstimateService.validateREInDrafts(workOrderEstimate.getEstimate().getId(), jsonObject, null);
+        revisionEstimateService.validateREInWorkFlow(workOrderEstimate.getEstimate().getId(), jsonObject, null);
+        if (jsonObject.toString().length() > 2) {
+            sendAJAXResponse(jsonObject.toString(), response);
+            return "";
+        }
+        return null;
+    }
+
+    protected void sendAJAXResponse(final String msg, final HttpServletResponse response) {
+        try {
+            final Writer httpResponseWriter = response.getWriter();
+            IOUtils.write(msg, httpResponseWriter);
+            IOUtils.closeQuietly(httpResponseWriter);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
     }
 }

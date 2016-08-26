@@ -190,12 +190,28 @@
 									<form:input type="hidden" path="changeQuantityActivities[${item.index }].rate" value="${activity.rate }" id="activityUnitRate_${item.index }" class="form-control table-input text-right"/>
 									<div class="input-group" style="width:150px">
 										<span class="input-group-btn number-sign">
-							               <button type="button" class="btn btn-default input-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="sign-text_${item.index }">+</span> &nbsp;<span class="caret"></span></button>
+							               <button type="button" class="btn btn-default input-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							               		<c:choose>
+							               			<c:when test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
+							               				<span class="sign-text_${item.index }">+</span> &nbsp;<span class="caret"></span>
+							               			</c:when>
+							               			<c:otherwise>
+							               				<span class="sign-text_${item.index }">-</span> &nbsp;<span class="caret"></span>
+							               			</c:otherwise>
+							               		</c:choose>
+							               </button>
 							               <ul class="dropdown-menu">
 							                  <li><a href="javascript:void(0);" class="${item.index }" onclick="changeSign(this);">+</a></li>
 							                  <li><a href="javascript:void(0);" class="${item.index }" onclick="changeSign(this);">-</a></li>
 							               </ul>
-							               <form:hidden path="changeQuantityActivities[${item.index }].signValue" value="+" id="changeQuantityActivitiesSignValue_${item.index }" />
+							               <c:choose>
+						               			<c:when test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
+						               				<form:hidden path="changeQuantityActivities[${item.index }].signValue" value="+" id="changeQuantityActivitiesSignValue_${item.index }" />
+						               			</c:when>
+						               			<c:otherwise>
+						               				<form:hidden path="changeQuantityActivities[${item.index }].signValue" value="-" id="changeQuantityActivitiesSignValue_${item.index }" />
+						               			</c:otherwise>
+						               		</c:choose>
 							            </span>
 										<c:choose>
 			            	        		<c:when test="${!activity.measurementSheetList.isEmpty() }">
@@ -228,7 +244,12 @@
 									<span class="activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 								</td>
 								<td>
-									<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
+										<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.quantity + activity.estimateQuantity) }</fmt:formatNumber></span>
+									</c:if>
+									<c:if test="${activity.revisionType == 'REDUCED_QUANTITY' }">
+										<span class="activityTotal activityTotal_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * (activity.estimateQuantity - activity.quantity) }</fmt:formatNumber></span>
+									</c:if>
 								</td>
 								<td>
 									<span class="add-padding activityDelete_${item.index }" onclick="deleteActivity(this);"><i class="fa fa-trash" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span>
@@ -239,9 +260,20 @@
 				</c:choose>
 			</tbody>
 			<tfoot>
+				<c:set var="cqsortotal" value="${0}" scope="session" />
+				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
+					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
+						<c:if test="${sorDtls.revisionType == 'ADDITIONAL_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.quantity + sorDtls.estimateQuantity)) }" />
+						</c:if>
+						<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">
+							<c:set var="cqsortotal"	value="${cqsortotal + (sorDtls.rate * (sorDtls.estimateQuantity - sorDtls.quantity)) }" />
+						</c:if>
+					</c:forEach>
+				</c:if>
 				<tr>
 					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
-					<td class="text-right"> <span id="activityTotal">0.00</span> </td>
+					<td class="text-right"><span id="activityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${cqsortotal }" /></fmt:formatNumber></span> </td>
 					<td></td>
 				</tr>
 			</tfoot>

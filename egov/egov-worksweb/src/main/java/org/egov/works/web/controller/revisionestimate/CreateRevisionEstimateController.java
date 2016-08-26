@@ -66,6 +66,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.gson.JsonObject;
+
 @Controller
 @RequestMapping(value = "/revisionestimate")
 public class CreateRevisionEstimateController extends GenericWorkFlowController {
@@ -122,7 +124,10 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
                 .getWorkOrderEstimateByAbstractEstimateId(revisionEstimate.getParent().getId());
-        
+
+        final JsonObject jsonObject = new JsonObject();
+        revisionEstimateService.validateREInDrafts(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
+        revisionEstimateService.validateREInWorkFlow(workOrderEstimate.getEstimate().getId(), jsonObject, bindErrors);
         revisionEstimateService.validateChangeQuantityActivities(revisionEstimate, bindErrors);
         if (bindErrors.hasErrors()) {
             revisionEstimateService.loadViewData(revisionEstimate, workOrderEstimate, model);

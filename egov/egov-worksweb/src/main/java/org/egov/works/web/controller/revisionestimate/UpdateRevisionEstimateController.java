@@ -64,6 +64,7 @@ import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -101,6 +102,9 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     @Autowired
     MBHeaderService mbHeaderService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @ModelAttribute("revisionEstimate")
     public RevisionAbstractEstimate getRevisionEstimate(@PathVariable final String revisionEstimateId) {
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService
@@ -110,7 +114,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.GET)
     public String updateForm(final Model model, @PathVariable final Long revisionEstimateId,
-            final HttpServletRequest request) {
+            final HttpServletRequest request, @RequestParam(value = "mode", required = false) final String mode) {
 
         final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(revisionEstimateId);
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
@@ -141,6 +145,11 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         model.addAttribute("approvalDesignation", request.getParameter("approvalDesignation"));
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(revisionEstimate.getId()));
+
+        if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
+            model.addAttribute("message",
+                    messageSource.getMessage("msg.revisionestimate.saved", new String[] { revisionEstimate.getEstimateNumber() },
+                            null));
         if (EstimateStatus.NEW.toString().equals(revisionEstimate.getEgwStatus().getCode()) ||
                 EstimateStatus.REJECTED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
             model.addAttribute("mode", "edit");
@@ -199,7 +208,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     public String update(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
             final BindingResult errors, final RedirectAttributes redirectAttributes,
             final Model model, final HttpServletRequest request,
-            @RequestParam final String removedCQIds)
+            @RequestParam final String removedActivityIds)
             throws ApplicationException, IOException {
 
         String mode = "";
@@ -254,12 +263,12 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
             model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
             model.addAttribute("designation", request.getParameter("designation"));
             model.addAttribute("approvedByValue", request.getParameter("approvedBy"));
-            model.addAttribute("removedCQIds", removedCQIds);
+            model.addAttribute("removedActivityIds", removedActivityIds);
             return "revisionEstimate-form";
         } else {
             if (null != workFlowAction)
                 updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction, removedCQIds);
+                        approvalComment, null, workFlowAction, removedActivityIds);
 
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 

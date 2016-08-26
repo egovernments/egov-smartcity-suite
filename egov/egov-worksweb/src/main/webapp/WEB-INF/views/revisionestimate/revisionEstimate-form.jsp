@@ -88,7 +88,9 @@
 	<input id="cancelConfirm" type="hidden" value="<spring:message code="msg.revisionestimate.confirm" />" />
 	<input type="hidden" id="workOrderNumber" name="workOrderNumber" value='<c:out value="${workOrderEstimate.workOrder.workOrderNumber }"/>'/>
 	<input type="hidden" id="workOrderEstimateId" name="workOrderEstimateId" value='<c:out value="${workOrderEstimate.id }"/>'/>
-	<input type="hidden" name="removedCQIds" id="removedCQIds" value="${removedCQIds }" class="form-control table-input hidden-input"/>
+	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
+	<input type="hidden" id="erroractivitymandatory" value="<spring:message code='error.re.activity.mandatory' />">
+	<input type="hidden" id="errorworkvaluenegative" value="<spring:message code='error.workvalue.negative' />">
 	<%@ include file="estimateHeaderDetail.jsp"%>
 		<div class="panel-heading">
 			<ul class="nav nav-tabs" id="settingstab">
@@ -148,7 +150,7 @@
 		</div>
 				
 </form:form> 
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 <div id="measurement" >

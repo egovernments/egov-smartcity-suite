@@ -59,14 +59,23 @@ public interface RevisionEstimateRepository extends JpaRepository<RevisionAbstra
 
     @Query("select distinct(re.createdBy) from RevisionAbstractEstimate as re")
     List<User> findRevisionEstimateCreatedByUsers();
-    
+
     @Query("select re from RevisionAbstractEstimate re where re.parent.id=:parentId and re.createdDate > :createdDate")
-    List<RevisionAbstractEstimate> findRevisionEstimatesGreatedThan(@Param("parentId") final Long parentId,@Param("createdDate") final Date createdDate); 
+    List<RevisionAbstractEstimate> findRevisionEstimatesGreatedThan(@Param("parentId") final Long parentId,
+            @Param("createdDate") final Date createdDate);
 
     @Query("select distinct(re.estimateNumber) from RevisionAbstractEstimate as re where upper(re.estimateNumber) like upper(:estimateNumber)")
     List<String> findDistinctEstimateNumberContainingIgnoreCase(@Param("estimateNumber") final String estimateNumber);
-    
+
     @Query("select distinct(re.estimateNumber) from RevisionAbstractEstimate re where re.parent is not null and re.egwStatus.code =:statusApproved and re.estimateNumber like :code and exists (select estimate from WorkOrderEstimate woe where woe.estimate = re.parent.id OR exists(select mbh.workOrderEstimate from MBHeader mbh where egwStatus.code =:statusCancelled))")
-    List<String> getRENumbersToCancel(@Param("code") String code,@Param("statusApproved") String statusApproved ,@Param("statusCancelled") String statusCancelled );
+    List<String> getRENumbersToCancel(@Param("code") String code, @Param("statusApproved") String statusApproved,
+            @Param("statusCancelled") String statusCancelled);
+
+    RevisionAbstractEstimate findByParent_IdAndEgwStatus_codeEquals(Long estimateId, String statusCode);
+
+    @Query("select re from RevisionAbstractEstimate as re where re.parent.id =:estimateId and egwStatus.code not in (:cancelledStatus, :approvedStatus, :newStatus)")
+    RevisionAbstractEstimate findByParentAndStatus(@Param("estimateId") Long estimateId,
+            @Param("cancelledStatus") String cancelledStatus, @Param("approvedStatus") String approvedStatus,
+            @Param("newStatus") String newStatus);
 
 }

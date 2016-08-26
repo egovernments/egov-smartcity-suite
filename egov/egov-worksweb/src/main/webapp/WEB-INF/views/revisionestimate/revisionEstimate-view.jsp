@@ -69,7 +69,7 @@
 <form:form name="revisionEstimateForm" role="form" method="post" modelAttribute="revisionEstimate" id="revisionEstimate"
 	class="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<input type="hidden" name="removedCQIds" id="removedCQIds" value="${removedCQIds }" class="form-control table-input hidden-input"/>
+	<input type="hidden" name="removedActivityIds" id="removedActivityIds" value="${removedActivityIds }" class="form-control table-input hidden-input"/>
 	<div class="new-page-header"><spring:message code="lbl.re" /></div> 
 	
 	<div class="panel-title text-center" style="color: green;">
@@ -131,5 +131,5 @@
 			</div>
 		</c:if>	
 </form:form> 
-<script type="text/javascript" src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript" src="<cdn:url value='/resources/js/revisionestimate/revisionestimate.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

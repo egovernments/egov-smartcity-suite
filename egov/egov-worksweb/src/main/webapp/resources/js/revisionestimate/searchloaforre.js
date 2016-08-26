@@ -183,6 +183,21 @@ $('#btncreatere').click(function(e) {
 		bootbox.alert("Please select a Letter of Acceptance to create Revision Estimate");
 	}
 	else {
-		window.location = "/egworks/revisionestimate/create?workOrderEstimateId="+workOrderEstimateId;
+		$.ajax({
+			type: "GET",
+			url: "/egworks/revisionestimate/validatere/"+workOrderEstimateId,
+			cache: true,
+		}).done(function(value) {
+			if(value == '') {
+				window.location = "/egworks/revisionestimate/create?workOrderEstimateId="+workOrderEstimateId;
+			} else {
+				var json = $.parseJSON(value);
+				$('#errorMessage').html('');
+				$.each(json, function(key, value){
+					$('#errorMessage').append(value + '</br>');
+				});
+				$('#errorMessage').show();
+			}
+		});
 	}
 });
