@@ -60,7 +60,6 @@ import org.egov.works.master.service.EstimateTemplateService;
 import org.egov.works.models.masters.EstimateTemplate;
 import org.egov.works.models.masters.EstimateTemplateActivity;
 import org.egov.works.models.masters.ScheduleOfRate;
-import org.egov.works.services.AbstractEstimateService;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +79,6 @@ public class EstimateTemplateAction extends SearchFormAction {
     @Autowired
     private AssignmentService assignmentService;
     private WorksService worksService;
-    // @Autowired
-    /* private PersonalInformationService personalInformationService; */
     @Autowired
     private EstimateTemplateService estimateTemplateService;
     private String mode = null;
@@ -93,7 +90,6 @@ public class EstimateTemplateAction extends SearchFormAction {
     public static final String SEARCH = "search";
     public static final String EDIT = "edit";
     public static final String SUCCESS = "success";
-    private AbstractEstimateService abstractEstimateService;
 
     @Autowired
     private UOMService uomService;
@@ -343,14 +339,6 @@ public class EstimateTemplateAction extends SearchFormAction {
 
     public void setSubTypeOfWork(final Long subTypeOfWork) {
         this.subTypeOfWork = subTypeOfWork;
-    }
-
-    public AbstractEstimateService getAbstractEstimateService() {
-        return abstractEstimateService;
-    }
-
-    public void setAbstractEstimateService(final AbstractEstimateService abstractEstimateService) {
-        this.abstractEstimateService = abstractEstimateService;
     }
 
     public void setWorksService(final WorksService worksService) {

@@ -53,6 +53,7 @@
 
     <bean class="org.egov.works.services.AbstractEstimateService" id="abstractEstimateService"
           parent="abstractPersistenceService" scope="prototype">
+         <constructor-arg name="type" value="org.egov.works.abstractestimate.entity.AbstractEstimate" />
         <property name="budgetNumberGenerator" ref="budgetNumberGenerator" />
         <property name="budgetDetailsDAO" ref="budgetDetailsDAO" />
         <property name="egovCommon" ref="egovCommon" />
@@ -130,7 +131,7 @@
 		id="measurementBookService" scope="prototype">
 		<constructor-arg>
 			<bean parent="persistenceService">
-				<property name="type"
+				<constructor-arg name="type"
 					value="org.egov.works.mb.entity.MBHeader" />
 			</bean>
 		</constructor-arg>
@@ -165,7 +166,7 @@
 		id="workOrderService" scope="prototype">
 		<constructor-arg>
 			<bean parent="persistenceService">
-				<property name="type" value="org.egov.works.workorder.entity.WorkOrder" />
+				<constructor-arg name="type" value="org.egov.works.workorder.entity.WorkOrder" />
 			</bean>
 		</constructor-arg>
 		<property name="worksService" ref="worksService" />
