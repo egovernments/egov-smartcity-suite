@@ -397,4 +397,10 @@
 	<put-attribute name="body" value="/WEB-INF/views/transactions/judgmentimpl-success.jsp"/>
 </definition>
 
+<definition name="dailyboardreport-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.dailyboardreport" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/reports/dailyboardreport-form.jsp"/>
+</definition>
+
+
 </tiles-definitions>
