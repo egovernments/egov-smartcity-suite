@@ -73,4 +73,8 @@ public class NatureOfBusinessService  {
 	public List<NatureOfBusiness> findAll() {
 		return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
 	}
+
+    public NatureOfBusiness getNatureOfBusinessByName(String name) {
+        return natureOfBusinessRepository.findByName(name);
+    }
 }
