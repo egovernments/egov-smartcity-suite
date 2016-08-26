@@ -56,6 +56,7 @@ public class GenerateConnectionBill {
     private String billNo;
     private Date billDate;
     private String locality;
+    private String fileStoreID;
 
     public String getLocality() {
         return locality;
@@ -159,6 +160,14 @@ public class GenerateConnectionBill {
 
     public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
+    }
+    
+    public String getFileStoreID() {
+        return fileStoreID;
+    }
+
+    public void setFileStoreID(String fileStoreID) {
+        this.fileStoreID = fileStoreID;
     }
 
 }
