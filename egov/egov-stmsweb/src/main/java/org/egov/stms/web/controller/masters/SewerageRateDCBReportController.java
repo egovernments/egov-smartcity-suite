@@ -151,7 +151,7 @@ public class SewerageRateDCBReportController {
     
     @RequestMapping(value="/dcb-report-wardwise", method=RequestMethod.GET)
     public String WardwiseSearch(@ModelAttribute DCBReportWardwiseResult dcbReportWardwiseResult, final Model model ){
-        List<Boundary> wardsList=boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE");
+       // List<Boundary> wardsList=boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "REVENUE");
         model.addAttribute("dcbReportWardwiseResult",dcbReportWardwiseResult);
         List<String> propertytype= new ArrayList<String>();
         for(PropertyType s : PropertyType.values()){

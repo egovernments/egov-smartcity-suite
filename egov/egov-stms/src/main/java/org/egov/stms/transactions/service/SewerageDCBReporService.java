@@ -229,13 +229,13 @@ public class SewerageDCBReporService {
             dcbResult.setArr_collection(dcbResult.getArr_collection()
                     .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setArr_balance(dcbResult.getArr_balance()
-                    .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected())));
-        } else {
-            dcbResult.setCurr_demand(dcbResult.getCurr_demand().add(demandDetails.getAmount()));
+                    .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
+        } else if(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+            dcbResult.setCurr_demand(dcbResult.getCurr_demand().add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setCurr_collection(dcbResult.getCurr_collection()
                     .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setCurr_balance(dcbResult.getCurr_balance()
-                    .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected())));
+                    .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
         }
     }
 
@@ -279,14 +279,15 @@ public class SewerageDCBReporService {
                                 dcbResult.setArr_collection(dcbResult.getArr_collection()
                                         .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setArr_balance(dcbResult.getArr_balance()
-                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected())));
-                            } else {
+                                        .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
+                            } else if(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                                    .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)){
                                 dcbResult.setCurr_demand(dcbResult.getCurr_demand()
                                         .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setCurr_collection(dcbResult.getCurr_collection()
                                         .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setCurr_balance(dcbResult.getCurr_balance()
-                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected())));
+                                        .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
 
                                 dcbResult.setTotal_demand(dcbResult.getArr_demand().add(dcbResult.getCurr_demand()));
                                 dcbResult.setTotal_collection(dcbResult.getArr_collection().add(dcbResult.getCurr_collection()));
