@@ -46,27 +46,14 @@
 			<div class="col-xs-3 add-margin">
 				<spring:message code="lbl.workcategory" />
 			</div> 
-			<c:choose>
-				<c:when test="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
-					<div class="col-xs-3 add-margin view-content">
-						<spring:message code="lbl.slum" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<div class="col-xs-3 add-margin view-content">
-						<spring:message code="lbl.nonslum" />
-					</div>
-				</c:otherwise>
-			</c:choose>
 		</div>
-		<c:if test="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory == 'SLUM_WORK' }">
 			<div class="row add-border">
 				<div class="col-xs-3 add-margin">
-					<spring:message code="lbl.typeofslum" />
+					<spring:message code="lbl.workcategory" />
 				</div> 
 			
 				<div class="col-xs-3 add-margin view-content">
-					<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.typeOfSlum}"></c:out>
+					<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.workCategory}"></c:out>
 				</div>
 				<div class="col-xs-3 add-margin">
 					<spring:message code="lbl.beneficiary" />
@@ -76,7 +63,6 @@
 					<c:out value="${abstractEstimate.lineEstimateDetails.lineEstimate.beneficiary}"></c:out>
 				</div>
 			</div>
-		</c:if>
 	</c:if>	
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin">

@@ -87,7 +87,7 @@
 							</c:if>
 							<div class="col-md-2 col-xs-6 add-margin"><spring:message code="lbl.paymentreleased" />.</div> 
 							<c:choose>
-								<c:when test="${paymentreleased != 0}">
+								<c:when test="${paymentreleased != 0 && paymentreleased != null}">
 									<div class="col-md-2 col-xs-6 add-margin view-content">&#8377 <span><fmt:formatNumber groupingUsed="false" maxFractionDigits="2"
 											minFractionDigits="2" value="${paymentreleased}" /></span></div>
 								</c:when>
