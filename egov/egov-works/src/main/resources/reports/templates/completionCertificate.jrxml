@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-08-22T18:53:57 -->
+<!-- 2016-08-26T15:42:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="completionCertificate" pageWidth="842" pageHeight="595" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" resourceBundle="custom" uuid="1bd30b92-7e6e-4bbd-aa76-f4a63208a99c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -53,7 +53,7 @@
 	<parameter name="nameOfWork" class="java.lang.String"/>
 	<parameter name="estimateNumber" class="java.lang.String"/>
 	<parameter name="reportRunDate" class="java.lang.String"/>
-	<parameter name="workValue" class="java.lang.String"/>
+	<parameter name="estimateValue" class="java.lang.String"/>
 	<parameter name="winCode" class="java.lang.String"/>
 	<parameter name="contractorName" class="java.lang.String"/>
 	<parameter name="contractorCode" class="java.lang.String"/>
@@ -71,34 +71,108 @@
 	<group name="DUMMY">
 		<groupExpression><![CDATA["DUMMY"]]></groupExpression>
 		<groupHeader>
-			<band height="25">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="3" y="-1" width="791" height="25" uuid="addc7d9b-7776-4be5-80ee-84aeff03e09e"/>
-					<box leftPadding="5" rightPadding="5"/>
-					<textElement markup="styled">
-						<font isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Estimate No:     </style>" + $P{estimateNumber} + "<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">      WIN Code :      </style>" + $P{winCode} + "<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">      work Value :      </style>" + $P{workValue}]]></textFieldExpression>
+			<band height="30">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="264" height="30" uuid="f9e41193-648b-4d25-a937-0c576625dcf7"/>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Estimate Number: </style>"+$P{estimateNumber}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="286" y="0" width="264" height="30" uuid="b1319703-b2c2-4297-9838-d31d14ec02af">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">WIN Code : </style>"+$P{winCode}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="551" y="0" width="222" height="30" uuid="dc117050-c236-4965-b597-a2623efa5be4">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Estimate Value (Rs): </style>"+$P{estimateValue}]]></textFieldExpression>
 				</textField>
 			</band>
-			<band height="25">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="3" y="0" width="789" height="25" uuid="7afb0194-adea-4f09-b066-a9a4cca364bb"/>
-					<box leftPadding="5" rightPadding="5"/>
-					<textElement markup="styled">
-						<font isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Work order number:   </style>" + $P{workOrderNumber} + "<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">      Contractor :  </style>" + $P{contractorName} + " - " + $P{contractorCode} + "<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">      Work order value(Rs) :  </style>" + $P{workOrderAmount}]]></textFieldExpression>
+			<band height="30">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="264" height="30" uuid="a15a4843-0e17-4f13-af24-f814decc9721"/>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work order number: </style>"+$P{workOrderNumber}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="286" y="0" width="264" height="30" uuid="db312ec2-4e24-4960-bb6f-1425cc289edc">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Contractor : </style>"+$P{contractorName} + " - " + $P{contractorCode}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="551" y="0" width="222" height="30" uuid="a5fdd5ff-54bd-4fe6-8bb7-7c8cb4f654b5">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work order value (Rs) : </style>"+$P{workOrderAmount}]]></textFieldExpression>
 				</textField>
 			</band>
-			<band height="25">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" x="3" y="0" width="789" height="25" uuid="989769fd-f408-42f6-bba6-99b13498068e"/>
-					<box leftPadding="5" rightPadding="5"/>
-					<textElement markup="styled">
-						<font isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Work commenced on:      </style>" + $P{workCommencedOn} + "<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">      Work completed on :       </style>" + $P{workCompletedDate}]]></textFieldExpression>
+			<band height="30">
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToTallestObject" x="20" y="0" width="264" height="30" uuid="95a2d6b8-a1b3-4d07-9ee4-e47e7bb4494d"/>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work completed on : </style>"+$P{workCompletedDate}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement stretchType="RelativeToTallestObject" x="286" y="0" width="264" height="30" uuid="a8cef7fe-1620-473c-94dc-8c55ff86c9a3">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="styled"/>
+					<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Work completed on : </style>"+$P{workCommencedOn}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="50">
@@ -115,7 +189,9 @@
 					<text><![CDATA[SL No]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="43" y="0" width="291" height="50" uuid="6ed98a84-7e03-4dd4-850d-f9f241b1a99c"/>
+					<reportElement x="97" y="0" width="237" height="50" uuid="6ed98a84-7e03-4dd4-850d-f9f241b1a99c">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
 					<box>
 						<topPen lineWidth="0.5"/>
 						<leftPen lineWidth="0.5"/>
@@ -151,7 +227,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[Qty]]></text>
+					<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="386" y="30" width="46" height="20" uuid="e9100799-3d7e-4439-b4ab-0a53085b4dc9"/>
@@ -203,7 +279,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[Qty]]></text>
+					<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="498" y="0" width="165" height="30" uuid="7f8f312a-63f4-4fe4-b29a-5741a82256af"/>
@@ -270,6 +346,20 @@
 					</textElement>
 					<text><![CDATA[Amount]]></text>
 				</staticText>
+				<staticText>
+					<reportElement x="43" y="0" width="54" height="50" uuid="b25615a4-908a-4664-90be-0d1fe3fb7650">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[SOR CODE]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 	</group>
@@ -285,7 +375,7 @@
 		</band>
 	</background>
 	<title>
-		<band height="111" splitType="Stretch">
+		<band height="131" splitType="Stretch">
 			<textField>
 				<reportElement x="284" y="7" width="291" height="43" uuid="5e795852-b515-4df1-8cc3-b5e6075cd19f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -300,27 +390,21 @@
 				</textElement>
 				<text><![CDATA[COMPLETION CERTIFICATE]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="343" y="78" width="437" height="20" isPrintWhenDetailOverflows="true" uuid="662a9cfa-0017-4226-a5d2-3d41e802dd41">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-				<box leftPadding="5" rightPadding="5"/>
-				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{nameOfWork}]]></textFieldExpression>
-			</textField>
 			<image>
 				<reportElement x="10" y="12" width="80" height="80" uuid="bfb07f34-7e0e-495e-ba48-e5ce4b819f89"/>
 				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="239" y="78" width="108" height="30" uuid="3384c574-3ed1-4747-a8a6-0b59668a0381"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Name of the Work:     ]]></text>
-			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="284" y="92" width="489" height="30" uuid="fa095143-3d30-4b99-8540-dfd296c1d599"/>
+				<box>
+					<topPen lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Name of the Work:  </style>"+$P{nameOfWork}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
@@ -418,8 +502,8 @@
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="663" y="0" width="52" height="20" forecolor="#080002" uuid="2034be8c-77c5-4868-a05f-713cb8796be7"/>
+			<textField isStretchWithOverflow="true" pattern="###0.00####;(###0.00####)" isBlankWhenNull="true">
+				<reportElement key="" stretchType="RelativeToTallestObject" x="663" y="0" width="52" height="20" forecolor="#080002" uuid="2034be8c-77c5-4868-a05f-713cb8796be7"/>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#000000"/>
 					<topPen lineWidth="0.5" lineColor="#000000"/>
@@ -430,12 +514,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="styled">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[(($F{executionQuantity} > $F{tenderQuantity}) ? "<style forecolor='#F51A16'>" +($F{tenderQuantity} - $F{executionQuantity}) +   "</style>" :  +($F{tenderQuantity} - $F{executionQuantity}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[(($F{executionQuantity} > $F{tenderQuantity}) ? "<style forecolor='#F51A16'>" + ABS(($F{tenderQuantity} - $F{executionQuantity})) +   "</style>" :  +($F{tenderQuantity} - $F{executionQuantity}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00#" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="715" y="0" width="66" height="20" uuid="ae58fde5-5ab8-4651-9dc5-50ab66b2fa52">
-					<printWhenExpression><![CDATA[($F{executionAmount}-$F{tenderAmount})<=0]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" x="715" y="0" width="66" height="20" uuid="ae58fde5-5ab8-4651-9dc5-50ab66b2fa52"/>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -445,7 +527,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{tenderRate} * $F{tenderQuantity}) - ($F{executionRate} * $F{executionQuantity})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[ABS(($F{tenderRate} * $F{tenderQuantity}) - ($F{executionRate} * $F{executionQuantity}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="7" y="0" width="36" height="20" uuid="810dcc86-2500-475b-bfc6-e5b2929df4de"/>
@@ -461,7 +543,9 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="291" height="20" uuid="5fa7517e-8b8c-4db2-9223-98d2ccb2d3b9"/>
+				<reportElement stretchType="RelativeToTallestObject" x="97" y="0" width="237" height="20" uuid="5fa7517e-8b8c-4db2-9223-98d2ccb2d3b9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -472,6 +556,21 @@
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getNonSor()==null?$F{workOrderActivity}.getActivity().getSchedule().getDescription():$F{workOrderActivity}.getActivity().getNonSor().getDescription()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="43" y="0" width="54" height="20" uuid="295fa251-a88c-433a-9f81-e8108b8009b5">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{workOrderActivity}.getActivity().getSchedule() != null ? $F{workOrderActivity}.getActivity().getSchedule().getCode() : "NA"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -132,7 +132,7 @@ public class CompletionCertificatePDFController {
             else
             	reportParams.put("estimateNumber","NA");
 
-            reportParams.put("workValue",df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getWorkValue()));
+            reportParams.put("estimateValue",df.format(contractorBillRegister.getWorkOrderEstimate().getEstimate().getEstimateValue()));
 
             reportParams.put("winCode",contractorBillRegister.getWorkOrderEstimate().getWorkOrder().getWorkOrderNumber());
             reportParams.put("contractorName",
