@@ -74,13 +74,13 @@ public class SewerageActionDropDownUtil {
         STATUSACTIONMAP.put("ESTIMATION AMOUNT PAID",Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.VIEWDCB)); 
         STATUSACTIONMAP.put("WORK ORDER GENERATED",Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.VIEWDCB)); 
         STATUSACTIONMAP.put("FINAL APPROVED",Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.VIEWDCB)); 
-        STATUSACTIONMAP.put("SANCTIONED", Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.CHANGENOOFCLOSET));
+        STATUSACTIONMAP.put("SANCTIONED", Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.CHANGENOOFCLOSET, SewerageTaxConstants.CLOSESEWERAGECONNECTION));
         STATUSACTIONMAP.put("SANCTIONEDWITHDEMAND", Arrays.asList(SewerageTaxConstants.VIEW,SewerageTaxConstants.CHANGENOOFCLOSET, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
         
 
 
         //Rolewise define action mappings
-        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.VIEWDCB, SewerageTaxConstants.CHANGENOOFCLOSET));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.VIEWDCB, SewerageTaxConstants.CHANGENOOFCLOSET, SewerageTaxConstants.CLOSESEWERAGECONNECTION));
         SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR, Arrays.asList(SewerageTaxConstants.VIEW));
         SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.VIEWDCB, SewerageTaxConstants.CHANGENOOFCLOSET));
         SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_CSCOPERTAOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
@@ -98,6 +98,8 @@ public class SewerageActionDropDownUtil {
                         SewerageTaxConstants.COLLECTDONATIONCHARHGES));
         actionUrlMap.put(SewerageTaxConstants.VIEWDCB, getActionWithUrl(SewerageTaxConstants.VIEWDCBURL, SewerageTaxConstants.VIEWDCB));
         actionUrlMap.put(SewerageTaxConstants.CHANGENOOFCLOSET, getActionWithUrl(SewerageTaxConstants.CHANGENOOFCLOSETURL, SewerageTaxConstants.CHANGENOOFCLOSET));
+        actionUrlMap.put(SewerageTaxConstants.CLOSESEWERAGECONNECTION, getActionWithUrl(SewerageTaxConstants.CLOSESEWERAGECONNECTIONURL, SewerageTaxConstants.CLOSESEWERAGECONNECTION));
+
         
     }
 

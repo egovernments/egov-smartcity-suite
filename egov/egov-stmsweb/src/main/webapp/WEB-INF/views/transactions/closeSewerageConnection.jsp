@@ -43,46 +43,50 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
-		<form:form  id="sewerageViewApplicationDetails" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageApplicationDetails" >
+		<form:form  action="/stms/application/close" id="sewerageViewApplicationDetails" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageApplicationDetails" >
 			<jsp:include page="commonApplicationDetails-view.jsp"/>
 			<jsp:include page="connectionDetails-view.jsp"></jsp:include>
-			<jsp:include page="estimationdetails-view.jsp"/>
-			<jsp:include page="seweragechargesdetails.jsp"/>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include>
-			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+			
+			<div class="panel panel-primary">
+				<div class="panel-heading ">
+					<div class="panel-title" style="color: orange;" align="left">
+						<strong><spring:message code="title.reasonForDisconnection" /></strong>
+					</div>
+				</div>
+				<div class="form-group">
+						<label class="col-sm-3 control-label">
+							<spring:message code="lbl.remarks"/>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<form:textarea cssClass="form-control patternvalidation" path="connection.closingRemarks"  cols="20" id="closingRemarks" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+				 		</div>
+				 		
+				 		<label class="col-sm-2 control-label text-right">
+							<spring:message code="lbl.attachdocument"/>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file"> 
+							<div class="add-margin error-msg" ><font size="2">
+								<spring:message code="lbl.mesg.document"/>	
+								</font></div>
+						</div>
+				</div>
+			</div>
+
+			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+			</div>
+			<div class="form-group text-center">
+				<input type="submit" value="Submit" class="btn btn-primary" id="submitButton" />
+ 			</div>
 		</form:form>
 	</div>					
 </div>					
 </div>
-<div class="row text-center">
-	<div class="add-margin">
-		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
-		<c:choose>
-			<c:when test="${sewerageApplicationDetails.status == 'ACTIVE' }">
-				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
-				<button type="button" class="btn btn-default" id="closeConnection" ><spring:message code="lbl.closeSewerage.connection" /></button>
-			</c:when>
-			<c:otherwise>
-				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
-				<button type="button" class="btn btn-default" id="closeConnection" ><spring:message code="lbl.closeSewerage.connection" /></button>
-			</c:otherwise>
-		</c:choose>
-	</div>
-</div>
 <script src="<cdn:url  value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript">  
+<script src="<cdn:url  value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
 
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
-</script>

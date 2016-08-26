@@ -52,6 +52,7 @@ public class SewerageTaxConstants {
     public static final String CHANGEINCLOSETS_NOCOLLECTION = "CHANGEINCLOSETS NOCOLLECTION";
     public static final String MODULETYPE = "SEWERAGETAXAPPLICATION";
     public static final String REVENUE_WARD = "WARD";
+    public static final String CLOSEACTIVESEWERAGECONNECTION = "CLOSESEWERAGECONNECTION";
 
     // appconfig keys
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
@@ -147,6 +148,8 @@ public class SewerageTaxConstants {
     public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
     public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
     public static final String VIEWDCBURL="/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
+    public static final String CLOSESEWERAGECONNECTION="Close sewerage connection";
+    public static final String CLOSESEWERAGECONNECTIONURL="/stms/application/close/{consumerno}/{assessmentno}";
     // Elastic Search Constants
     public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
     public static final String CLAUSES_CITYNAME = "clauses.cityname";

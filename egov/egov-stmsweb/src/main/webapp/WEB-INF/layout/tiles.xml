@@ -247,5 +247,11 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/transactions/legacySewerageConnection-form.jsp" />	
 	</definition>
+	<definition name="closeSewerageConnection" extends="base_layout">
+		<put-attribute name="page-title" value="title.closeSewerageConnection" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/closeSewerageConnection.jsp" />	
+	</definition>
 	
 </tiles-definitions>
