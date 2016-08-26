@@ -45,6 +45,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
@@ -52,7 +53,9 @@ import org.egov.works.web.adaptor.RevisionEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -81,6 +84,9 @@ public class AjaxRevisionEstimateController {
     @Autowired
     private WorkOrderEstimateService workOrderEstimateService;
 
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
+
     @RequestMapping(value = "/getrevisionestimatesbynumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(
             @RequestParam final String revisionEstimateNumber) {
@@ -92,16 +98,15 @@ public class AjaxRevisionEstimateController {
             @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
         final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
                 .searchRevisionEstimates(searchRevisionEstimate);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toJson(searchRevisionEstimates))
-                .append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toJson(searchRevisionEstimates)).append("}")
+                .toString();
         return result;
     }
 
     public Object toJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class,
-                revisionEstimateJsonAdaptor).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class, revisionEstimateJsonAdaptor)
+                .create();
         final String json = gson.toJson(object);
         return json;
     }
@@ -112,7 +117,8 @@ public class AjaxRevisionEstimateController {
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
         final String sorType = request.getParameter("sorType");
-        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .getWorkOrderEstimateById(workOrderEstimateId);
         final List<Activity> activities = revisionEstimateService
                 .searchActivities(workOrderEstimate.getEstimate().getId(), sorType);
         final List<Activity> activityList = new ArrayList<Activity>();
@@ -120,10 +126,9 @@ public class AjaxRevisionEstimateController {
         if (description != null && !description.equals(""))
             for (final Activity act : activities)
                 if (act.getSchedule() != null
-                        && act.getSchedule().getDescription().toLowerCase()
-                                .contains(description.toLowerCase())
-                        || act.getNonSor() != null && act.getNonSor().getDescription()
-                                .toLowerCase().contains(description.toLowerCase()))
+                        && act.getSchedule().getDescription().toLowerCase().contains(description.toLowerCase())
+                        || act.getNonSor() != null
+                                && act.getNonSor().getDescription().toLowerCase().contains(description.toLowerCase()))
                     activityList.add(act);
 
         if (!activityList.isEmpty()) {
@@ -146,8 +151,8 @@ public class AjaxRevisionEstimateController {
 
         final List<Activity> updatedActivities = mergeChangedQuantities(activities);
 
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchActivityResultJson(updatedActivities)).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":").append(toSearchActivityResultJson(updatedActivities))
+                .append("}").toString();
         return result;
     }
 
@@ -170,9 +175,50 @@ public class AjaxRevisionEstimateController {
 
     public Object toSearchActivityResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, searchActivityJsonAdaptor)
+        final Gson gson = gsonBuilder.registerTypeAdapter(Activity.class, searchActivityJsonAdaptor).create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/ajaxsearchretocancel", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody List<String> searchREToCancel(final String estimateNumber) {
+        return revisionEstimateService.findRENumbersToCancel(estimateNumber);
+    }
+
+    @RequestMapping(value = "/cancel/ajax-search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchRevisionEstimatesToCancel(
+            @ModelAttribute final SearchRevisionEstimate searchRevisionEstimate, final Model model) {
+        final List<SearchRevisionEstimate> searchRevisionEstimates = revisionEstimateService
+                .searchRevisionEstimatesToCancel(searchRevisionEstimate);
+        final String result = new StringBuilder("{ \"data\":").append(revisionEstimatesToJson(searchRevisionEstimates))
+                .append("}").toString();
+        return result;
+    }
+
+    public Object revisionEstimatesToJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(SearchRevisionEstimate.class, revisionEstimateJsonAdaptor)
                 .create();
         final String json = gson.toJson(object);
         return json;
+    }
+
+    @RequestMapping(value = "/ajax-checkifdependantObjectscreated", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String checkIfBillsCreated(@RequestParam final Long reId) {
+        String message = "";
+        final RevisionAbstractEstimate revisionEstimate = revisionEstimateService.getRevisionEstimateById(reId);
+        final WorkOrderEstimate workOrderEstimate = workOrderEstimateService
+                .findWorkOrderByRevisionEstimateNumber(revisionEstimate.getEstimateNumber());
+        final String mbRefNumbers = revisionEstimateService.checkIfMBCreatedForRE(workOrderEstimate);
+        if (!mbRefNumbers.equals(""))
+            message = messageSource.getMessage("error.re.mb.created", new String[] { mbRefNumbers }, null);
+        else {
+            final String revisionEstimates = revisionEstimateService
+                    .getRevisionEstimatesGreaterThanCurrent(revisionEstimate.getParent().getId(),revisionEstimate.getCreatedDate());
+            if (!revisionEstimates.equals(""))
+                message = messageSource.getMessage("error.reexists.greaterthancreateddate",
+                        new String[] { revisionEstimates }, null);
+        }
+        return message;
     }
 }

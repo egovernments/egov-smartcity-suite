@@ -929,4 +929,9 @@ public class MBHeaderService {
     public List<MBHeader> getMBHeaderForBillTillDate(final Long contractorBillId,final Long workOrderEstimateId) {
         return mbHeaderRepository.findMBHeadersTillDate(contractorBillId, workOrderEstimateId);
     }
+    
+    public List<MBHeader> getMBHeadersToCancelRE(final WorkOrderEstimate workOrderEstimate) { 
+        return mbHeaderRepository.findByWorkOrderEstimate_IdAndEgwStatus_codeNotOrderById(workOrderEstimate.getId(),
+                WorksConstants.CANCELLED_STATUS);
+    }
 }

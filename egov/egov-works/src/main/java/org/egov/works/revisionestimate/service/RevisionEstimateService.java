@@ -50,6 +50,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.service.UOMService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -70,6 +71,7 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.master.service.ScheduleCategoryService;
+import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
@@ -140,7 +142,10 @@ public class RevisionEstimateService {
     WorkOrderActivityService workOrderActivityService;
 
     @Autowired
-    MBHeaderService mbHeaderService;
+    private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -772,5 +777,119 @@ public class RevisionEstimateService {
                 }
             }
         }
+    }
+    
+    public List<String> findRENumbersToCancel(final String estimateNumber) {
+        return revisionEstimateRepository.getRENumbersToCancel("%" +estimateNumber + "%" , AbstractEstimate.EstimateStatus.APPROVED.toString(), AbstractEstimate.EstimateStatus.CANCELLED.toString());
+    }
+    
+    public List<SearchRevisionEstimate> searchRevisionEstimatesToCancel(final SearchRevisionEstimate searchRevisionEstimate) {
+        Query query = null;
+        query = entityManager.unwrap(Session.class)
+                .createSQLQuery(createQueryForSearchRevisionEstimates(searchRevisionEstimate))
+                .addScalar("id", LongType.INSTANCE)
+                .addScalar("woId", LongType.INSTANCE)
+                .addScalar("revisionEstimateNumber",StringType.INSTANCE)
+                .addScalar("reDate", DateType.INSTANCE)
+                .addScalar("loaNumber", StringType.INSTANCE)
+                .addScalar("estimateNumber", StringType.INSTANCE)
+                .addScalar("reValue", BigDecimalType.INSTANCE)
+                .addScalar("revisionEstimateStatus", StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(SearchRevisionEstimate.class));
+        query = setQueryParameterForSearchRevisionEstimates(searchRevisionEstimate, query);
+        return query.list();
+    }
+    
+    private String createQueryForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate) {
+        final StringBuilder filterConditions = new StringBuilder();
+
+        if (searchRevisionEstimate != null) {
+
+            if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
+                filterConditions.append(" AND aec.estimateNumber =:estimateNumber ");
+
+            if (searchRevisionEstimate.getFromDate() != null)
+                filterConditions.append(" AND aec.estimateDate >=:fromDate ");
+
+            if (searchRevisionEstimate.getToDate() != null)
+                filterConditions.append(" AND aec.estimateDate <=:toDate ");
+
+            if (searchRevisionEstimate.getLoaNumber() != null)
+                filterConditions.append(" AND wo.workOrder_Number like :loaNumber ");
+
+            if (searchRevisionEstimate.getCreatedBy() != null)
+                filterConditions.append(" AND aec.createdBy =:createdBy ");
+
+        }
+        final StringBuilder query = new StringBuilder();
+        query.append(" SELECT distinct re.id            AS id, ");
+        query.append(" wo.id                            AS woId ,  ");
+        query.append(" aec.estimateNumber               AS revisionEstimateNumber ,  ");
+        query.append(" aec.estimateDate                 AS reDate ,  ");
+        query.append(" wo.workOrder_Number              AS loaNumber ,  ");
+        query.append(" aep.estimateNumber               AS estimateNumber,  ");
+        query.append(" aec.estimateValue                AS reValue,  ");
+        query.append(" status.description               AS revisionEstimateStatus ");
+        query.append(" FROM egw_revision_estimate re,egw_abstractestimate aec,egw_abstractestimate aep,");
+        query.append(" egw_workorder wo,egw_workorder_estimate woe,egw_status status ");
+        query.append(" WHERE aec.parent = aep.id ");
+        query.append(" AND aec.id = re.id ");
+        query.append(" AND aep.id = woe.abstractestimate_id ");
+        query.append(" AND woe.workorder_id = wo.id ");
+        query.append(" AND aec.status = status.id AND status.code = '"+searchRevisionEstimate.getRevisionEstimateStatus()+"' " );
+        query.append(" AND exists (select wo.id from egw_mb_header mbh ,egw_status mbstatus where mbh.status_id = mbstatus.id and mbstatus.code = 'CANCELLED')");
+        query.append(filterConditions.toString());
+        return query.toString();
+    }
+
+    private Query setQueryParameterForSearchRevisionEstimates(final SearchRevisionEstimate searchRevisionEstimate, final Query query) {
+
+        if (searchRevisionEstimate != null) {
+
+            if (searchRevisionEstimate.getRevisionEstimateNumber() != null)
+                query.setString("estimateNumber", searchRevisionEstimate.getRevisionEstimateNumber());
+
+            if (searchRevisionEstimate.getFromDate() != null)
+                query.setDate("fromDate", searchRevisionEstimate.getFromDate());
+
+            if (searchRevisionEstimate.getToDate() != null)
+                query.setDate("toDate", searchRevisionEstimate.getToDate());
+
+            if (searchRevisionEstimate.getLoaNumber() != null)
+                query.setString("loaNumber", "%" + searchRevisionEstimate.getLoaNumber() + "%");
+
+            if (searchRevisionEstimate.getCreatedBy() != null)
+                query.setLong("createdBy", searchRevisionEstimate.getCreatedBy());
+
+        }
+        return query;
+    }
+    
+    public String checkIfMBCreatedForRE(final WorkOrderEstimate workOrderEstimate) {
+       StringBuilder mbrefNumbres = new StringBuilder();
+       List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersToCancelRE(workOrderEstimate);
+       for (final MBHeader mBHeader : mbHeaders)
+           mbrefNumbres.append(mBHeader.getMbRefNo()).append(",");
+       if (mbrefNumbres.equals(""))
+           return "";
+       else
+           return mbrefNumbres.toString();
+    }
+    
+    public RevisionAbstractEstimate cancel(final RevisionAbstractEstimate revisionAbstractEstimate) {
+        revisionAbstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
+                WorksConstants.REVISIONABSTRACTESTIMATE, RevisionAbstractEstimate.EstimateStatus.CANCELLED.toString()));
+        return revisionEstimateRepository.save(revisionAbstractEstimate);
+    }
+    
+    public String getRevisionEstimatesGreaterThanCurrent(final Long parentId,final Date createdDate) {
+       List<RevisionAbstractEstimate> revisionEstimatesList = revisionEstimateRepository.findRevisionEstimatesGreatedThan(parentId,createdDate);
+        StringBuilder revisionEstimates = new StringBuilder();
+        for(RevisionAbstractEstimate revisionAbstractEstimate : revisionEstimatesList) 
+            revisionEstimates.append(revisionAbstractEstimate.getEstimateNumber()).append(",");
+        if(revisionEstimates.equals(""))
+            return "";
+        else
+            return revisionEstimates.toString();
     }
 }

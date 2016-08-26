@@ -130,4 +130,5 @@ public interface MBHeaderRepository extends JpaRepository<MBHeader, Long> {
     
     @Query("select mbh from MBHeader mbh where mbh.workOrderEstimate.id = :workOrderEstimateId and mbh.egBillregister.id < :contractorBillId ")
     List<MBHeader> findMBHeadersTillDate(@Param("contractorBillId") final Long contractorBillId,@Param("workOrderEstimateId") final Long workOrderEstimateId);
+    
 }
