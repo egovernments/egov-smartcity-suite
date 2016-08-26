@@ -141,7 +141,7 @@ public class SewerageNoticeService {
 
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
     public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private Map<String, Object> reportParams = null;
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
     private BigDecimal donationCharges = BigDecimal.ZERO;
@@ -232,6 +232,7 @@ public class SewerageNoticeService {
 
     public ReportOutput generateReportOutputDataForEstimation(
             final SewerageApplicationDetails sewerageApplicationDetails, final HttpSession session) {
+        reportParams = new HashMap<String, Object>(); 
         if (sewerageApplicationDetails != null) {
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
@@ -257,24 +258,22 @@ public class SewerageNoticeService {
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("estimationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
-
             if (sewerageApplicationDetails.getCurrentDemand() != null) {
                 for (EgDemandDetails egDmdDetails : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails()) {
                     if (egDmdDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
                             .equalsIgnoreCase(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE)) {
                         donationCharges = egDmdDetails.getAmount().subtract(egDmdDetails.getAmtCollected());
-                        reportParams.put("donationCharges", donationCharges);
                     }
                 }
             }
-
             // TODO: CHECK THIS LOGIC AGAIN. IF FEE TYPE IS ESTIMATION FEES,
             // THEN WE NEED TO GROUP ALL FEESES.
             for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE))
                     estimationCharges = BigDecimal.valueOf(scf.getAmount());
-                reportParams.put("estimationCharges", estimationCharges);
-            }
+            } 
+            reportParams.put("estimationCharges", estimationCharges);
+            reportParams.put("donationCharges", donationCharges);
             reportParams.put("totalCharges", estimationCharges.add(donationCharges));
             reportParams.put("applicationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
@@ -290,6 +289,7 @@ public class SewerageNoticeService {
 
     public ReportOutput generateReportOutputForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session) {
+        reportParams = new HashMap<String, Object>(); 
         if (null != sewerageApplicationDetails) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),

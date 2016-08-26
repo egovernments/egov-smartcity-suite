@@ -287,13 +287,13 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 }
             }
             
-            if((currentDonationCharge.compareTo(oldDonationCharge)<0) && (currentSewerageTax.compareTo(oldSewerageTax)<0))
+            if((currentDonationCharge.compareTo(oldDonationCharge)<=0) && (currentSewerageTax.compareTo(oldSewerageTax)<=0))
             {
                 additionalRule=SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
                 if(sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
                     model.addAttribute("showApprovalDtls","yes");
             }
-        }
+        } 
         
         model.addAttribute("additionalRule", additionalRule);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));

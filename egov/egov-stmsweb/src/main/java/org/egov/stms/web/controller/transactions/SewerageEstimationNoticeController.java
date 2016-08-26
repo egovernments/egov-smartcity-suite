@@ -99,8 +99,6 @@ public class SewerageEstimationNoticeController {
     private static final int BUFFER_SIZE = 4096;
 
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
 
     @Autowired

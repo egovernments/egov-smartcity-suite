@@ -451,15 +451,13 @@ public class SewerageDemandService {
                                 oldSewerageTax));
                         totalDemandAmount = totalDemandAmount.add(currentSewerageTax.subtract(oldSewerageTax));
 
-                    } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0)// Mean, paid more amount in old installment.
-                                                                             // Difference amount will be used as next installment
-                                                                             // tax.
+                    } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0 )// Mean, paid more amount in old installment.
+                                                                             // Difference amount will be used as next installment tax.
                     {
-                        demand.addEgDemandDetails(createDemandDetails(oldSewerageTax,
-                                getDemandReasonByCodeAndInstallment(scf.getFeesDetail().getCode(), installment.getId()),
-                                oldSewerageTax));
-
                         if (oldSewerageTax.compareTo(currentSewerageTax) > 0) {
+                            demand.addEgDemandDetails(createDemandDetails(oldSewerageTax,
+                                getDemandReasonByCodeAndInstallment(scf.getFeesDetail().getCode(), installment.getId()), 
+                                oldSewerageTax));
                             // Add amount to advance of next installment if not present in this transaction.
                             createAdvanceDemandDetail(demand, oldSewerageTax.subtract(currentSewerageTax));
                             // totalDemandAmount = totalDemandAmount.add(oldSewerageTax.subtract(currentSewerageTax));
