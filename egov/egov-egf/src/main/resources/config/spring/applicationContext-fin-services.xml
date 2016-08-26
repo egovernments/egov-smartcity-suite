@@ -66,7 +66,7 @@
 		<constructor-arg name="type" value="org.egov.model.instrument.InstrumentType" />
 	</bean>
 
-	<bean id="bankEntriesService" class="org.egov.services.instrument.BankEntriesService" scope="prototype" autowire-candidate="default">
+	<bean id="bankEntriesService" class="org.egov.services.instrument.BankEntriesService"   autowire-candidate="default">
 	</bean>
 	
 
@@ -91,7 +91,7 @@
 	</bean>
 
 	<bean id="instrumentService" class="org.egov.services.instrument.InstrumentService"
-		scope="prototype">
+		 >
 	</bean>  
 
 
@@ -104,7 +104,7 @@
 		<constructor-arg name="type" value="org.egov.commons.Bankaccount" />
 	</bean>
 
-	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService" scope="prototype">
+	<bean id="bankReconService" class="org.egov.infstr.services.PersistenceService"  >
 		<constructor-arg name="type" value="org.egov.commons.Bankreconciliation" />
 	</bean>
 
@@ -112,7 +112,7 @@
         <constructor-arg name="type" value="org.egov.commons.EgfRecordStatus" />
     </bean>
 
-	<bean id="contraService" class="org.egov.services.contra.ContraService" scope="prototype">
+	<bean id="contraService" class="org.egov.services.contra.ContraService"  >
 		<property name="persistenceService" ref="persistenceService" />
 		<property name="instrumentService" ref="instrumentService" />
 		<property name="employeeServiceOld" ref="employeeServiceOld" />
@@ -154,14 +154,14 @@
     <bean id="budgetUsageService" class="org.egov.services.budget.BudgetUsageService">
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetUsage"/>
 	</bean>
-	<bean id="budgetService" class="org.egov.services.budget.BudgetService" scope="prototype">
+	<bean id="budgetService" class="org.egov.services.budget.BudgetService" >
 		<constructor-arg name="type" value="org.egov.model.budget.Budget" />
 	</bean>
 	<bean id="budgetGroupService" class="org.egov.services.budget.BudgetGroupService">
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetGroup" />
 	</bean>
 	<bean id="budgetDetailsDAO" class="org.egov.dao.budget.BudgetDetailsHibernateDAO"
-		scope="prototype">
+		>
 		<property name="budgetService" ref="budgetService" />
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
@@ -179,15 +179,15 @@
 	</bean>
 
 	<bean id="voucherHibDAO" class="org.egov.dao.voucher.VoucherHibernateDAO"
-		scope="prototype">
+		>
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	
 	<bean id="billsService" class="org.egov.services.bills.BillsService"
-		scope="prototype">
+		>
 	</bean>
 	<bean id="voucherHelper" class="org.egov.utils.VoucherHelper"
-		scope="prototype">
+		>
 		<property name="persistenceService" ref="persistenceService" />
 	</bean>
 	
@@ -237,13 +237,11 @@
                <constructor-arg name="type" value="org.egov.commons.CGeneralLedgerDetail" />
     </bean>
     
-    <bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService"
-		scope="prototype">
-	</bean>
+    <bean id="balanceSheetService" class="org.egov.services.report.BalanceSheetService" />
+	 
 
-	<bean id="incomeExpenditureService" class="org.egov.services.report.IncomeExpenditureService"
-		scope="prototype">
-	</bean>
+	<bean id="incomeExpenditureService" class="org.egov.services.report.IncomeExpenditureService" />
+ 
 
 	<bean id="functionwiseIEService" class="org.egov.services.report.FunctionwiseIEService"
 		scope="prototype" />
@@ -253,8 +251,7 @@
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetReAppropriationMisc" />
 	</bean>
 
-	<bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService"
-		scope="prototype">
+	<bean id="budgetReAppropriationService" class="org.egov.services.budget.BudgetReAppropriationService" >
 		<constructor-arg name="type" value="org.egov.model.budget.BudgetReAppropriation" />
 	</bean>
 	<bean id="budgetAppropriationService" class="org.egov.services.budget.BudgetAppropriationService">
@@ -280,7 +277,7 @@
 
 	<bean id="billsAccountingService"
 		class="org.egov.billsaccounting.services.BillsAccountingService"
-		scope="prototype">
+		 >
 	</bean>
 
 	<bean id="receiptService" class="org.egov.services.receipt.ReceiptService">
