@@ -85,6 +85,7 @@ public class SewerageThirdPartyServices {
         result.put("CURRENTWATERCHARGE", waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("currentDemand"))));
         result.put("PROPERTYID", waterTaxInfo.get("propertyID"));
+        result.put("CONSUMERCODE", waterTaxInfo.get("consumerCode"));
         return result;
     }
 
