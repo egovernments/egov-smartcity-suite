@@ -57,6 +57,13 @@
 								<spring:message code="lbl.preamble.details" />
 							</div>
 						</div>
+						<div class="row display-hide agenda-section">
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.status" /> </label>
+							<div class="col-sm-3 add-margin">
+								${councilAgenda.status.code}
+							</div>
+						</div>
 						<table class="table table-bordered">
 							<thead>
 								<th align="center"><spring:message code="lbl.serial.number" /></th>

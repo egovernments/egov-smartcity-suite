@@ -1,6 +1,7 @@
 package org.egov.council.entity;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,10 +43,9 @@ public class CouncilPreamble extends StateAware {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "department" , nullable = false)
+    @JoinColumn(name = "department", nullable = false)
     private Department department;
-    
-    
+
     @Column(name = "preambleNumber", unique = true)
     @Length(max = 25)
     private String preambleNumber;
@@ -64,7 +64,6 @@ public class CouncilPreamble extends StateAware {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper filestoreid;
 
-    
     @ManyToOne
     @JoinColumn(name = "status", nullable = false)
     private EgwStatus status;
@@ -72,6 +71,12 @@ public class CouncilPreamble extends StateAware {
     @NotNull
     @Enumerated(EnumType.ORDINAL)
     private PreambleType type;
+
+    @Transient
+    private Date fromDate;
+    
+    @Transient
+    private Date toDate;
 
     @Override
     public Long getId() {
@@ -147,10 +152,25 @@ public class CouncilPreamble extends StateAware {
         this.filestoreid = filestoreid;
     }
 
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
     @Override
     public String getStateDetails() {
         return String.format("Preamble Number %s ", preambleNumber);
-
     }
 
 }

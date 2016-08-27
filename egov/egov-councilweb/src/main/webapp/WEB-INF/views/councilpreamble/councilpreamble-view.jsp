@@ -109,6 +109,18 @@
 							</div>
 						</div>
 					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.ward.no" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilPreamble.wards}</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.status" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilPreamble.status.code}</div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -32,15 +33,18 @@ public class MeetingAttendence extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "meeting", nullable = false)
     private CouncilMeeting meeting;
-
-    @NotNull
-    @JoinColumn(name = "councilMember", nullable = false)
-    private CouncilMember councilMember;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "committeemember", nullable = false)
+    private CommitteeMembers committeeMembers;
 
     @NotNull
     @Column(name = "attendedMeeting")
     private Boolean attendedMeeting;
-
+    
+    @Transient
+    private Boolean checked;
+    
     public Long getId() {
         return id;
     }
@@ -57,12 +61,12 @@ public class MeetingAttendence extends AbstractAuditable {
         this.meeting = meeting;
     }
 
-    public CouncilMember getCouncilMember() {
-        return councilMember;
+    public CommitteeMembers getCommitteeMembers() {
+        return committeeMembers;
     }
 
-    public void setCouncilMember(CouncilMember councilMember) {
-        this.councilMember = councilMember;
+    public void setCommitteeMembers(CommitteeMembers committeeMembers) {
+        this.committeeMembers = committeeMembers;
     }
 
     public Boolean getAttendedMeeting() {
@@ -73,4 +77,12 @@ public class MeetingAttendence extends AbstractAuditable {
         this.attendedMeeting = attendedMeeting;
     }
 
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
+    }
+    
 }

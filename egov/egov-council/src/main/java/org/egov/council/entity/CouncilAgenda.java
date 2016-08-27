@@ -40,6 +40,7 @@
 package org.egov.council.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -54,6 +55,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -88,6 +90,12 @@ public class CouncilAgenda extends StateAware {
     @ManyToOne
     @JoinColumn(name = "status")
     private EgwStatus status;
+    
+    @Transient
+    private Date fromDate;
+    
+    @Transient
+    private Date toDate;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CouncilAgendaDetails> agendaDetails = new ArrayList<CouncilAgendaDetails>(0);
@@ -131,6 +139,22 @@ public class CouncilAgenda extends StateAware {
 
     public void setAgendaDetails(List<CouncilAgendaDetails> agendaDetails) {
         this.agendaDetails = agendaDetails;
+    }
+    
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
     }
 
     @Override

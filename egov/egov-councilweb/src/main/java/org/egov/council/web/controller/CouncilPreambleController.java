@@ -13,6 +13,7 @@ import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
@@ -44,6 +45,7 @@ public class CouncilPreambleController {
     private final static String COUNCILPREAMBLE_EDIT = "councilpreamble-edit";
     private final static String COUNCILPREAMBLE_VIEW = "councilpreamble-view";
     private final static String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
+    public static final String WARDWISE = "ward";
 
     @Autowired
     private CouncilPreambleService councilPreambleService;
@@ -63,17 +65,23 @@ public class CouncilPreambleController {
     protected @Autowired FileStoreService fileStoreService;
 
     protected @Autowired FileStoreUtils fileStoreUtils;
+    
+    @Autowired
+    private BoundaryService boundaryService;
 
     private static final Logger LOGGER = Logger.getLogger(CouncilPreambleController.class);
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments()); // WARD.
+        model.addAttribute("wards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(CouncilConstants.WARD,
+                CouncilConstants.REVENUE_HIERARCHY_TYPE)); 
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
         model.addAttribute("councilPreamble", new CouncilPreamble());
+        
         return COUNCILPREAMBLE_NEW;
     }
 
@@ -93,6 +101,15 @@ public class CouncilPreambleController {
                 LOGGER.error("Error in loading documents" + e.getMessage(), e);
             }
         }
+        /*List<PreambleWards> preambleWardsList = new ArrayList<PreambleWards>();
+        
+        String [] wards = councilPreamble.getWards().split(",");
+        for (String ward : wards) {
+            PreambleWards preamWards = new PreambleWards(); 
+            preamWards.setWard(Long.valueOf(ward));
+            preambleWardsList.add(preamWards);
+        }
+        councilPreamble.setPreambleWards(preambleWardsList);*/
         PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(PreambleNumberGenerator.class);
         councilPreamble.setPreambleNumber(preamblenumbergenerator.getNextNumber(councilPreamble));
@@ -142,8 +159,11 @@ public class CouncilPreambleController {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilPreamble", councilPreamble);
-
-        return COUNCILPREAMBLE_EDIT;
+        if(councilPreamble.getStatus().getCode().equals("PREAMBLEAPPROVEDFORMOM")){
+            return COUNCILPREAMBLE_VIEW;
+        } else{
+            return COUNCILPREAMBLE_EDIT;
+        }
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)

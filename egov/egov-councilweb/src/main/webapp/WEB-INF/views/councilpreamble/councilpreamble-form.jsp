@@ -83,8 +83,19 @@
 							<form:errors path="attachments" cssClass="error-msg" />
 						</c:otherwise>
 					</c:choose>
-
 				</div>
+			<%-- 	<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.ward.no" /> <span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin">
+					<div>
+							<form:select path="wards" multiple="true" id="ward" size="10" cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="0">ALL</form:option>
+								<form:options items="${wards}" itemValue="id" itemLabel="name"></form:options>
+							</form:select>
+							<form:errors path="wards" cssClass="error-msg" /> 
+						</div>
+						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
+				</div> --%>
 				</div>
 				<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
 					<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />

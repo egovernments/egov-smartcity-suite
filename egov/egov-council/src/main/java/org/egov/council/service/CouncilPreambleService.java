@@ -39,6 +39,9 @@
  */
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -46,10 +49,10 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.repository.CouncilPreambleRepository;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,21 +92,32 @@ public class CouncilPreambleService {
         return CouncilPreambleRepository.findById(id);
     }
 
-    public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
-        final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class);
-        if (null != councilPreamble.getDepartment())
-            criteria.add(Restrictions.eq("department", councilPreamble.getDepartment()));
-
-        if (null != councilPreamble.getPreambleNumber())
-            criteria.add(Restrictions.eq("preambleNumber", councilPreamble.getPreambleNumber()));
-        if (null != councilPreamble.getCreatedDate())
-            criteria.add(Restrictions.eq("createdDate", councilPreamble.getCreatedDate()));
-        if (null != councilPreamble.getCreatedDate())
-            criteria.add(Restrictions.eq("createdDate", councilPreamble.getCreatedDate()));
-        if (null != councilPreamble.getGistOfPreamble())
-            criteria.add(Restrictions.ilike("gistOfPreamble", councilPreamble.getGistOfPreamble(), MatchMode.ANYWHERE));
-
+    @SuppressWarnings("unchecked")
+    public List<CouncilPreamble> searchForPreamble(CouncilPreamble councilPreamble) {
+        final Criteria criteria = buildSearchCriteria(councilPreamble);
+        criteria.add(Restrictions.in("status.code", new String[] { APPROVED, ADJOURNED }));
         return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
+        final Criteria criteria = buildSearchCriteria(councilPreamble);
+        return criteria.list();
+    }
+
+    public Criteria buildSearchCriteria(CouncilPreamble councilPreamble) {
+        final Criteria criteria = getCurrentSession().createCriteria(CouncilPreamble.class, "councilPreamble")
+                .createAlias("councilPreamble.status", "status");
+
+        if (null != councilPreamble.getDepartment())
+            criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
+
+        if (councilPreamble.getFromDate() != null && councilPreamble.getToDate() != null) {
+            criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
+                    DateUtils.addDays(councilPreamble.getToDate(), 1)));
+        }
+
+        return criteria;
     }
 
 }
