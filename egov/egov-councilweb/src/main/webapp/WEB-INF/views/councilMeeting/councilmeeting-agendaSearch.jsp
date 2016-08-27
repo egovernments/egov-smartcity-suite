@@ -82,15 +82,23 @@
 							</div> --%>
 						
 						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.agenda.number" /> </label>
+							 <label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.fromdate" /> </label>
 							<div class="col-sm-3 add-margin">
-									<form:input path="agendaNumber"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="agendaNumber" cssClass="error-msg" />
+									<form:input path="fromDate"
+										class="form-control text-left patternvalidation dateval"
+										 data-date-end-date="0d"  />
+									<form:errors path="fromDate" cssClass="error-msg" />
+							</div> 
+							
+							<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.todate" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input type="text" cssClass="form-control datepicker"
+									path="toDate" id="meetingDate"/>
+								<form:errors path="toDate" cssClass="error-msg" />
 							</div>
-							</div>
+						</div>
 							
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group">

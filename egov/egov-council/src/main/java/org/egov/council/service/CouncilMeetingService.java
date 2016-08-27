@@ -40,16 +40,24 @@
 
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.MeetingAttendence;
+import org.egov.council.entity.MeetingMOM;
 import org.egov.council.repository.CouncilMeetingRepository;
+import org.egov.council.repository.MeetingAttendanceRepository;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -61,15 +69,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class CouncilMeetingService {
 
     private final CouncilMeetingRepository councilMeetingRepository;
+    private final MeetingAttendanceRepository meetingAttendanceRepository;
     @PersistenceContext
     private EntityManager entityManager;
-    
+
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    public CouncilMeetingService(CouncilMeetingRepository councilMeetingRepository,
+            MeetingAttendanceRepository meetingAttendance) {
+        super();
+        this.councilMeetingRepository = councilMeetingRepository;
+        this.meetingAttendanceRepository = meetingAttendance;
+    }
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
-    }
-    @Autowired
-    public CouncilMeetingService(final CouncilMeetingRepository councilMeetingRepository) {
-        this.councilMeetingRepository = councilMeetingRepository;
     }
 
     @Transactional
@@ -89,21 +105,45 @@ public class CouncilMeetingService {
     public CouncilMeeting findOne(Long id) {
         return councilMeetingRepository.findById(id);
     }
+
+    public List<MeetingAttendence> findListOfAttendance(CouncilMeeting id) {
+        return meetingAttendanceRepository.findByMeeting(id);
+    }
+
+    public CouncilMeeting updateMoMStatus(CouncilMeeting councilMeeting) {
+        for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
+
+            if (meetingMOM.getResolutionStatus().getCode().equals(ADJOURNED))
+                meetingMOM.getPreamble()
+                        .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME, ADJOURNED));
+        }
+     return councilMeeting;
+    }
+  //TODO: RENAME METHOD NAME
+    public List<CouncilMeeting> searchForMeeting(CouncilMeeting councilMeeting) {
+        final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
+                .createAlias("councilMeeting.status", "status");
+        buildSearchCriteria(councilMeeting,criteria);
+        criteria.add(Restrictions.in("status.code", new String[] { APPROVED}));
+        return criteria.list();
+    }
+    //TODO: RENAME METHOD NAME
+    public List<CouncilMeeting> search(CouncilMeeting councilMeeting) {
+        final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
+                .createAlias("councilMeeting.status", "status");
+        buildSearchCriteria(councilMeeting,criteria);
+       // criteria.add(Restrictions.in("status.code", new String[] {MEETINGUSEDINRMOM}));
+        return criteria.list();
+    }
     
-	public List<CouncilMeeting> search(CouncilMeeting councilMeeting) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilMeeting.class);
-	if (null != councilMeeting.getMeetingNumber())
-			criteria.add(Restrictions.ilike("meetingNumber", councilMeeting.getMeetingNumber(), MatchMode.ANYWHERE));
-	if(null != councilMeeting.getCommitteeType())
-		criteria.add(Restrictions.eq("committeeType", councilMeeting.getCommitteeType()));
-	if (null != councilMeeting.getMeetingDate())
-        criteria.add(Restrictions.eq("meetingDate", councilMeeting.getMeetingDate()));
-	if (null != councilMeeting.getMeetingTime())
-        criteria.add(Restrictions.eq("meetingTime", councilMeeting.getMeetingTime()));
-	if (null != councilMeeting.getMeetingLocation())
-        criteria.add(Restrictions.ilike("meetingLocation", councilMeeting.getMeetingLocation(),MatchMode.ANYWHERE));
-		return criteria.list();
-	}
-    
+    public void buildSearchCriteria(CouncilMeeting councilMeeting,Criteria criteria){
+        if (councilMeeting.getCommitteeType() != null)
+            criteria.add(Restrictions.eq("committeeType", councilMeeting.getCommitteeType()));
+
+        if (councilMeeting.getFromDate() != null && councilMeeting.getToDate() != null) {
+            criteria.add(Restrictions.between("meetingDate", councilMeeting.getFromDate(),
+                    DateUtils.addDays(councilMeeting.getToDate(), 1)));
+        }
+    }
+
 }

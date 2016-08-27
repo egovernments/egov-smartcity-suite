@@ -69,64 +69,29 @@
 								</form:select>
 								<form:errors path="committeeType" cssClass="error-msg" />
 							</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.number" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="meetingNumber"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="meetingNumber" cssClass="error-msg" />
-							</div>
 							</div>
 							
 							
 							
 						<div class="form-group">
-							<%-- <label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.meeting.date" /> </label>
+							 <label class="col-sm-3 control-label text-right"><spring:message
+									code="lbl.fromdate" /> </label>
 							<div class="col-sm-3 add-margin">
-									<form:input path=""
-										class="form-control text-left patternvalidation dateval"
+									<form:input path="fromDate"
+										class="form-control text-left patternvalidation datepicker"
 										 data-date-end-date="0d"  />
-									<form:errors path="" cssClass="error-msg" />
-							</div> --%>
+									<form:errors path="fromDate" cssClass="error-msg" />
+							</div> 
 							
 							<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.meeting.date" /> </label>
-				<div class="col-sm-3 add-margin">
-					<form:input type="text" cssClass="form-control datepicker"
-						path="meetingDate" id="meetingDate"/>
-					<form:errors path="meetingDate" cssClass="error-msg" />
-
-
-				</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.place" /> </label>
+							code="lbl.todate" /> </label>
 							<div class="col-sm-3 add-margin">
-									<form:input path="meetingLocation"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="meetingLocation" cssClass="error-msg" />
+								<form:input type="text" cssClass="form-control datepicker"
+									path="toDate" id="meetingDate"/>
+								<form:errors path="toDate" cssClass="error-msg" />
 							</div>
 						</div>
 						
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.meeting.time" /> </label>
-							<div class="col-sm-3 add-margin">
-					<form:select path="meetingTime" id="meetingTime"
-						cssClass="form-control"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${meetingTimingMap}" />
-					</form:select>
-					<form:errors path="meetingTime" cssClass="error-msg" />
-				</div>
-						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group">
 							<div class="text-center">

@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -60,8 +61,11 @@ public class CouncilMeeting  extends StateAware {
     @ManyToOne
     @JoinColumn(name = "status")
     private EgwStatus status;
-    
-    
+    @Transient
+    private Date fromDate;
+    @Transient
+    private Date toDate;
+
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
     private List<MeetingMOM> meetingMOMs = new ArrayList<MeetingMOM>(0);
 
@@ -150,4 +154,20 @@ public class CouncilMeeting  extends StateAware {
         this.meetingAttendence = meetingAttendence;
     }
 
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+    
 }

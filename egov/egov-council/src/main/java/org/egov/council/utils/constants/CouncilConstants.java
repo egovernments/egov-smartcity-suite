@@ -43,16 +43,26 @@ import java.util.LinkedHashMap;
 
 public class CouncilConstants {
     
-    public static final String COUNCILMEETING_STATUS_CREATED = "CREATED";
+    public static final String CREATED = "CREATED";
     public static final String MODULE_NAME = "COUNCIL";
     public static final String COUNCILMEETING="COUNCILMEETING";
     public final static String PREAMBLE_STATUS_CREATED="CREATED";
+    public final static String PREAMBLE_STATUS_APPROVED="APPROVED";
     public final static String PREAMBLE_MODULENAME = "COUNCILPREAMBLE";
     public final static String AGENDA_STATUS_APPROVED ="APPROVED";
     public final static String AGENDA_STATUS_INWORKFLOW ="INWORKFLOW";
     public final static String COUNCIL_RESOLUTION ="COUNCILRESOLUTION";	
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final String WARD = "Ward";
+    
+    public final static String AGENDA_MODULENAME = "COUNCILAGENDA";
+    public final static String MEETING_MODULENAME = "COUNCILMEETING";
+    public static final String PREAMBLEUSEDINAGENDA = "PREAMBLEUSEDINAGENDA";
+    public static final String AGENDAUSEDINMEETING = "AGENDAUSEDINMEETING";
+    public static final String MEETINGUSEDINRMOM = "MEETINGUSEDINRMOM";
+    public final static String APPROVED ="APPROVED";
+    public final static String REJECTED ="REJECTED";
+    public final static String ADJOURNED ="ADJOURNED";
     
     public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         {
@@ -78,4 +88,9 @@ public class CouncilConstants {
 
         }
     };
+    
+    public static final String SENDSMSFORCOUNCIL = "SENDSMSFORCOUNCIL";
+    public static final String SENDEMAILFORCOUNCIL = "SENDEMAILFORCOUNCIL";
+    
+    public static final String SMSEMAILTYPEFORCOUNCILMEETING="COUNCILMEETING";
 }

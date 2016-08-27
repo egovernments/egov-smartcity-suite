@@ -41,10 +41,28 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<form:form role="form" action="../update" modelAttribute="councilMeeting"
-	id="councilMomform" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" action="../update"
+	modelAttribute="councilMeeting" id="councilMomform"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<%@ include file="councilmom-form.jsp"%>
+	<div class="panel-heading">
+		<ul class="nav nav-tabs" id="settingstab">
+			<li class="active"><a data-toggle="tab" href="#councilmom"
+				data-tabidx=0><spring:message code="tab.council.mom" /></a></li>
+			<li><a data-toggle="tab" href="#councilattendance" data-tabidx=1><spring:message
+						code="tab.council.attendance" /></a></li>
+		</ul>
+	</div>
+	<div class="panel-body custom-form">
+		<div class="tab-content">
+			<div class="tab-pane fade in active" id="councilmom">
+				<%@ include file="councilmom-form.jsp"%>
+			</div>
+			<div id="councilattendance" class="tab-pane fade">
+				<%@ include file="councilmeeting-attend-form.jsp"%>
+			</div>
+		</div>
+	</div>
 </form:form>
 
 <script

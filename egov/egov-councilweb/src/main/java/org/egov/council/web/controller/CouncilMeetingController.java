@@ -39,7 +39,14 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,12 +58,14 @@ import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
-import org.egov.council.utils.constants.CouncilConstants;
+import org.egov.council.service.CouncilSmsAndEmailService;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
+import org.egov.council.web.adaptor.MeetingAttendanceJsonAdaptor;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
@@ -87,9 +96,11 @@ public class CouncilMeetingController {
     private final static String COUNCILMEETING_EDIT = "councilmeeting-edit";
     private final static String COUNCILMEETING_VIEW = "councilmeeting-view";
     private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
-    private final static String COUNCIL_MEETING_AGENDA_SEARCH ="councilmeetingAgenda-search";
+    private final static String COUNCIL_MEETING_AGENDA_SEARCH = "councilmeetingAgenda-search";
     private final static String MODULE_NAME = "COUNCIL";
-  
+    private final static String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
+    private final static String COUNCILMEETING_ATTENDANCE_SEARCH_RESULT = "councilmeeting-attendsearch-view";
+
     @Autowired
     private CouncilMeetingService councilMeetingService;
     @Autowired
@@ -103,101 +114,91 @@ public class CouncilMeetingController {
     private MessageSource messageSource;
     @Autowired
     private CommitteeTypeService committeeTypeService;
-    
+
     @Autowired
     private DepartmentService departmentService;
-    
-    
-  
+
+    @Autowired
+    private CouncilSmsAndEmailService councilSmsAndEmailService;
+
     @Qualifier("fileStoreService")
     protected @Autowired FileStoreService fileStoreService;
     protected @Autowired FileStoreUtils fileStoreUtils;
     private static final Logger LOGGER = Logger.getLogger(CouncilMeetingController.class);
+
     private void prepareNewForm(final Model model) {
-    	model.addAttribute("committeeType",
-				committeeTypeService.getActiveCommiteeType());
-        model.addAttribute("departmentList",
-				departmentService.getAllDepartments());
-        model.addAttribute("meetingTimingMap", CouncilConstants.MEETING_TIMINGS);
-        
-		
+        model.addAttribute("committeeType", committeeTypeService.getActiveCommiteeType());
+        model.addAttribute("departmentList", departmentService.getAllDepartments());
+        model.addAttribute("meetingTimingMap", MEETING_TIMINGS);
+
     }
 
     @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
-    public String newForm(@ModelAttribute final CouncilMeeting councilMeeting ,@PathVariable("id") final Long id,final Model model) {
+    public String newForm(@ModelAttribute final CouncilMeeting councilMeeting, @PathVariable("id") final Long id,
+            final Model model) {
 
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
         model.addAttribute("councilMeeting", councilMeeting);
         if (councilAgenda != null) {
-            //TODO: CHECK AGENDA STATUS. THROW ERROR IF AGENDA ALREADY USED IN MEETING.
-        /*	if(null!=councilAgenda.getStatus() && councilAgenda.getStatus()==egwStatusHibernateDAO.getStatusByModuleAndCode(
-    				CouncilConstants.PREAMBLE_MODULENAME,
-    				CouncilConstants.PREAMBLE_STATUS_CREATED)){*/
+            // TODO: CHECK AGENDA STATUS. THROW ERROR IF AGENDA ALREADY USED IN
+            // MEETING.
             councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
             buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);
-            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.COUNCILMEETING,CouncilConstants.COUNCILMEETING_STATUS_CREATED));
-          
-        	/*}
-        	else{
-        		model.addAttribute("message", "msg.invalid.agenda.details");
-        		 return COMMONERRORPAGE;
-        	}*/
-         }else
-        {
+           
+        } else {
             model.addAttribute("message", "msg.invalid.agenda.details");
             return COMMONERRORPAGE;
         }
         prepareNewForm(model);
-        
+
         return COUNCILMEETING_NEW;
     }
 
     private void buildMeetingMomByUsingAgendaDetails(final CouncilMeeting councilMeeting, CouncilAgenda councilAgenda) {
-        for(CouncilAgendaDetails councilAgendaDetail: councilAgenda.getAgendaDetails())
-           {
-               MeetingMOM meetingMom= new MeetingMOM();
-               meetingMom.setMeeting(councilMeeting);
-               meetingMom.setAgenda(councilAgendaDetail.getAgenda());
-               meetingMom.setPreamble(councilAgendaDetail.getPreamble());
-             
-               councilMeeting.addMeetingMoms(meetingMom); 
-           }
+        for (CouncilAgendaDetails councilAgendaDetail : councilAgenda.getAgendaDetails()) {
+            MeetingMOM meetingMom = new MeetingMOM();
+            meetingMom.setMeeting(councilMeeting);
+            meetingMom.setAgenda(councilAgendaDetail.getAgenda());
+            meetingMom.setPreamble(councilAgendaDetail.getPreamble());
+
+            councilMeeting.addMeetingMoms(meetingMom);
+        }
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting,final BindingResult errors,
-          final Model model, final RedirectAttributes redirectAttrs){
-       
-        // CHECK WE NEED TO SEND SMS ?
-        //if not workflow, change the status
-        if(councilMeeting.getStatus()==null) 
-            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.COUNCILMEETING,CouncilConstants.COUNCILMEETING_STATUS_CREATED));
+    public String create(@Valid @ModelAttribute final CouncilMeeting councilMeeting, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs) {
+        if (councilMeeting.getStatus() == null)
+            councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCILMEETING, APPROVED));
 
-    	if (errors.hasErrors()) {
+        if (errors.hasErrors()) {
             prepareNewForm(model);
             return COUNCILMEETING_NEW;
         }
-    	 CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
-                 .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
-    	councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
-    	
-    	for(MeetingMOM meetingMom: councilMeeting.getMeetingMOMs())
-    	{
-    	meetingMom.setMeeting(councilMeeting); 
-    	}
-    	
-         councilMeetingService.create(councilMeeting); //TODO: CHANGE STATUS OF AGENDA ON CREATION.
-         
+        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
+                .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
+        councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
+
+        for (MeetingMOM meetingMom : councilMeeting.getMeetingMOMs()) {
+            meetingMom.setMeeting(councilMeeting);
+            meetingMom.getAgenda()
+                    .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AGENDA_MODULENAME, AGENDAUSEDINMEETING));
+        }
+
+        councilMeetingService.create(councilMeeting); // TODO: CHANGE STATUS OF
+                                                      // AGENDA ON CREATION.
+        // councilSmsAndEmailService.sendSmsAndEmail(councilMeeting);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
-   @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilMeeting", councilMeeting);
-         return COUNCILMEETING_EDIT;
+        return COUNCILMEETING_EDIT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -207,7 +208,6 @@ public class CouncilMeetingController {
             prepareNewForm(model);
             return COUNCILMEETING_EDIT;
         }
- 
         councilMeetingService.update(councilMeeting);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
@@ -218,16 +218,13 @@ public class CouncilMeetingController {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilMeeting", councilMeeting);
-
         return COUNCILMEETING_VIEW;
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        
         model.addAttribute("councilMeeting", councilMeeting);
-      //  model.addAttribute("councilAgenda",new CouncilAgenda());
         return COUNCILMEETING_RESULT;
     }
 
@@ -239,12 +236,12 @@ public class CouncilMeetingController {
         return COUNCILMEETING_SEARCH;
 
     }
-    
+
     @RequestMapping(value = "/agendasearch/{mode}", method = RequestMethod.GET)
     public String searchagenda(@PathVariable("mode") final String mode, Model model) {
-    	prepareNewForm(model);
-		model.addAttribute("councilAgenda", new CouncilAgenda());
-		return COUNCIL_MEETING_AGENDA_SEARCH;
+        prepareNewForm(model);
+        model.addAttribute("councilAgenda", new CouncilAgenda());
+        return COUNCIL_MEETING_AGENDA_SEARCH;
 
     }
 
@@ -256,11 +253,66 @@ public class CouncilMeetingController {
                 .toString();
         return result;
     }
-
- 
+    
     public Object toSearchResultJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CouncilMeeting.class, new CouncilMeetingJsonAdaptor()).create();
+        final Gson gson = gsonBuilder.registerTypeAdapter(CouncilMeeting.class, new CouncilMeetingJsonAdaptor())
+                .create();
+        final String json = gson.toJson(object);
+        return json;
+    }
+
+    @RequestMapping(value = "/viewsmsemail", method = RequestMethod.GET)
+    public String retrieveSmsAndEmailDetailsForCouncilMeeting(final Model model) {
+        CouncilMeeting councilMeeting = new CouncilMeeting();
+        prepareNewForm(model);
+        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute("mode", "view");
+        return COUNCILMEETING_SEARCH;
+    }
+
+    @RequestMapping(value = "/sendsmsemail", method = RequestMethod.POST)
+    public void sendSmsAndEmailDetailsForCouncilMeeting(final Model model) {
+        councilSmsAndEmailService.sendSmsAndEmail(new CouncilMeeting());
+    }
+
+    @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
+    public String getSearchAttendance(final Model model) {
+        CouncilMeeting councilMeeting = new CouncilMeeting();
+        prepareNewForm(model);
+        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute("mode", "view");
+        return COUNCILMEETING_ATTENDANCE_SEARCH;
+    }
+
+    @RequestMapping(value = "/attendance/report/search", method = RequestMethod.GET)
+    public String getSearchReportForAttendance(final Model model) {
+        CouncilMeeting councilMeeting = new CouncilMeeting();
+        prepareNewForm(model);
+        model.addAttribute("councilMeeting", councilMeeting);
+        model.addAttribute("mode", "view");
+        return COUNCILMEETING_ATTENDANCE_SEARCH;
+    }
+
+    @RequestMapping(value = "/attendance/search/view/{id}", method = RequestMethod.GET)
+    public String searchAttendanceResult(@PathVariable("id") final CouncilMeeting councilMeeting, Model model) {
+        model.addAttribute("id", councilMeeting.getId());
+        model.addAttribute("currDate", new Date());
+        return COUNCILMEETING_ATTENDANCE_SEARCH_RESULT;
+    }
+
+    @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
+        List<MeetingAttendence> searchResultList = councilMeetingService.findListOfAttendance(id);
+        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson1(searchResultList)).append("}")
+                .toString();
+        return result;
+    }
+
+    public Object toSearchResultJson1(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(MeetingAttendence.class, new MeetingAttendanceJsonAdaptor())
+                .create();
         final String json = gson.toJson(object);
         return json;
     }

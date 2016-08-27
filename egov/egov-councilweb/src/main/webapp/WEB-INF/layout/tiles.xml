@@ -324,4 +324,17 @@
 	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-search.jsp"/>
 </definition>
+<definition name="councilmeeting-attendsearch" extends="base_layout">
+	<put-attribute name="page-title" value="title.meeting.attend.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attendsearch.jsp"/>
+</definition>
+<definition name="councilmeeting-attend-form" extends="base_layout">
+	<put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attend-form.jsp"/>
+</definition>
+
+<definition name="councilmeeting-attendsearch-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.meeting.attend.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/councilmom/councilmeeting-attendsearch-view.jsp"/>
+</definition>
 </tiles-definitions>

@@ -245,3 +245,49 @@ function addRowFromObject(rowJsonObj)
 
     return indexed_array;
 }*/
+
+$("#committeechk").change(function(){  
+	if($(this).is(':checked')){
+		$('#councilcommittee')
+        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
+        .prop('checked', true);
+		setHiddenValue(true);
+	}else{
+		$('#councilcommittee')
+        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
+        .prop('checked', false);
+		setHiddenValue(false);
+	}
+});
+
+function setHiddenValue(flag)
+{
+	
+	$('.councilcommitmem').each(function(){
+		$hiddenName=$(this).data('change-to');
+		$('input[name="'+$hiddenName+'"]').val(flag);
+	});
+	
+}
+
+$(document).ready(function() {
+    $(".councilcommitmem").change(function(){  
+    	$hiddenName=$(this).data('change-to');
+    	console.log( $hiddenName );
+    	if($(this).is(':checked')){
+    		$('input[name="'+$hiddenName+'"]').val(true);
+    	}else{
+    		$('input[name="'+$hiddenName+'"]').val(false);
+    	}
+    });
+
+});
+
+$("#buttonSubmit").click(function(e){ 
+		var chkbxLength = $('.councilcommitmem:checked').length;
+		if(chkbxLength <= 0){
+			bootbox.alert('Please select atleast one value');
+			return false;
+		}
+		return true;
+});  

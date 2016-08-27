@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -113,10 +113,59 @@
 													<td><c:out value="${mom.preamble.gistOfPreamble}" /></td>
 													<td><c:out value="${mom.agenda.agendaNumber}" /></td>
 													<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-													<td><c:out value="${mom.resolutionDetail}"/></td>
-													<td><c:out value="${mom.resolutionStatus.code}"/></td>
+													<td><c:out value="${mom.resolutionDetail}" /></td>
+													<td><c:out value="${mom.resolutionStatus.code}" /></td>
 													<td><c:out value="${mom.preamble.department.name}" /></td>
 												</div>
+											</tr>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<div class="col-md-3 col-xs-6 add-margin">
+											<spring:message code="lbl.noAgenda.Detail" />
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel-body">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.mom.attendance" />
+							</div>
+						</div>
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th align="center"><spring:message
+											code="lbl.serial.number" /></th>
+									<th>Member Name</th>
+									<th>Election Ward</th>
+									<th>Designation</th>
+									<th>Qualification</th>
+									<th>Party Affiliation</th>
+									<th>Meeting Attend</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${!councilMeeting.meetingAttendence.isEmpty()}">
+										<c:forEach items="${councilMeeting.meetingAttendence}"
+											var="meetingAttend" varStatus="counter">
+											<tr>
+												<td>${counter.index+1}</td>
+												<td><c:out
+														value="${meetingAttend.committeeMembers.councilMember.name}" /></td>
+												<td><c:out
+														value="${meetingAttend.committeeMembers.councilMember.electionWard.name}" /></td>
+												<td><c:out
+														value="${meetingAttend.committeeMembers.councilMember.designation.name}" /></td>
+												<td><c:out
+														value="${meetingAttend.committeeMembers.councilMember.qualification.name}" /></td>
+												<td><c:out
+														value="${meetingAttend.committeeMembers.councilMember.partyAffiliation.name}" /></td>
+												<td><c:out value="${meetingAttend.attendedMeeting}" /></td>
 											</tr>
 										</c:forEach>
 									</c:when>

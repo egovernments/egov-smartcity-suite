@@ -54,8 +54,8 @@
 						<div class="panel-title">Search Meeting</div>
 					</div>
 					<div class="panel-body">
-					
-					<div class="form-group">
+
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.meeting.type" /> </label>
 							<div class="col-sm-3 add-margin">
@@ -69,63 +69,24 @@
 								</form:select>
 								<form:errors path="committeeType" cssClass="error-msg" />
 							</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.number" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="meetingNumber"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="meetingNumber" cssClass="error-msg" />
-							</div>
-							</div>
-							
-							
-							
+						</div>
+
 						<div class="form-group">
-							<%-- <label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.meeting.date" /> </label>
 							<div class="col-sm-3 add-margin">
-									<form:input path=""
-										class="form-control text-left patternvalidation dateval"
-										 data-date-end-date="0d"  />
-									<form:errors path="" cssClass="error-msg" />
-							</div> --%>
-							
-							<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.meeting.date" /> </label>
-				<div class="col-sm-3 add-margin">
-					<form:input type="text" cssClass="form-control datepicker"
-						path="meetingDate" id="meetingDate"/>
-					<form:errors path="meetingDate" cssClass="error-msg" />
-
-
-				</div>
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.meeting.place" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="meetingLocation"
-										class="form-control text-left patternvalidation"
-										data-pattern="alphanumeric"  />
-									<form:errors path="meetingLocation" cssClass="error-msg" />
+								<form:input path="fromDate"
+									class="form-control text-left patternvalidation dateval"
+									data-date-end-date="0d" />
+								<form:errors path="fromDate" cssClass="error-msg" />
 							</div>
-						</div>
-						
-						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.meeting.time" /> </label>
+									code="lbl.meeting.date" /> </label>
 							<div class="col-sm-3 add-margin">
-					<form:select path="meetingTime" id="meetingTime"
-						cssClass="form-control"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${meetingTimingMap}" />
-					</form:select>
-					<form:errors path="meetingTime" cssClass="error-msg" />
-				</div>
+								<form:input type="text" cssClass="form-control datepicker"
+									path="toDate" id="meetingDate" />
+								<form:errors path="toDate" cssClass="error-msg" />
+							</div>
 						</div>
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group">
@@ -141,7 +102,6 @@
 				</div>
 			</div>
 		</div>
-	
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Council Meeting
@@ -153,10 +113,10 @@
 				<tr>
 					<th><spring:message code="lbl.meeting.type" /></th>
 					<th><spring:message code="lbl.meeting.number" /></th>
-					<th><spring:message code="lbl.meeting.date"/>
-					<th><spring:message code="lbl.meeting.place"/></th>
-					<th><spring:message code="lbl.meeting.time"/></th>
-					<th><spring:message code="lbl.view"/></th>
+					<th><spring:message code="lbl.meeting.date" />
+					<th><spring:message code="lbl.meeting.place" /></th>
+					<th><spring:message code="lbl.meeting.time" /></th>
+					<th><spring:message code="lbl.view" /></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -170,8 +130,6 @@
 			e.preventDefault();
 		}
 	});
-	
-	
 </script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
@@ -192,7 +150,8 @@
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
-<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 
 <script type="text/javascript"
 	src="<c:url value='/resources/app/js/councilMom.js'/>"></script>
