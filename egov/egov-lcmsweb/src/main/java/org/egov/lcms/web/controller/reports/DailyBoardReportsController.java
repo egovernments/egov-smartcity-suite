@@ -39,8 +39,6 @@
  */
 package org.egov.lcms.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,10 +47,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.lcms.transactions.entity.DailyBoardReportAdapter;
-import org.egov.lcms.transactions.entity.DailyBoardReportResults;
+import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.egov.lcms.transactions.service.DailyBoardReportService;
+import org.egov.lcms.web.adaptor.DailyBoardReportAdapter;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +63,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 @Controller
 @RequestMapping(value = "/reports")
 public class DailyBoardReportsController extends GenericLegalCaseController {
 
     @Autowired
     private DailyBoardReportService dailyBoardReportService;
+
+    @Autowired
+    private DailyBoardReportAdapter dailyBoardReportAdapter;
 
     @ModelAttribute
     private void getDailyBoardReport(final Model model) {
@@ -84,21 +87,28 @@ public class DailyBoardReportsController extends GenericLegalCaseController {
         model.addAttribute("currDate", new Date());
         return "dailyboardreport-form";
     }
+
     @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void getDailyBoardReportResult( @RequestParam final String caseType,
+    @RequestMapping(value = "/dailyBoardReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getDailyBoardReportResult(@RequestParam final String caseType,
             @RequestParam final String officerIncharge, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         List<DailyBoardReportResults> daildBoardReportsList = new ArrayList<DailyBoardReportResults>();
         final SQLQuery query = dailyBoardReportService.getDailyBoardReport(request.getParameter("caseNumber"),
-                request.getParameter("court"), request.getParameter("caseType"),request.getParameter("officerIncharge"),
-                request.getParameter("petitionType"),  request.getParameter("standingCouncil"), null);
+                request.getParameter("court"), request.getParameter("caseType"),
+                request.getParameter("officerIncharge"), request.getParameter("petitionType"),
+                request.getParameter("standingCouncil"), null);
         daildBoardReportsList = query.list();
-        String result = null;
-        result = new StringBuilder("{ \"data\":")
-                .append(toJSON(daildBoardReportsList, DailyBoardReportResults.class, DailyBoardReportAdapter.class))
-                .append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toSearchDailyBoardReportsJson(daildBoardReportsList)).append("}").toString();
+        return result;
+    }
+
+    public Object toSearchDailyBoardReportsJson(final Object object) {
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        final Gson gson = gsonBuilder.registerTypeAdapter(DailyBoardReportResults.class, dailyBoardReportAdapter)
+                .create();
+        final String json = gson.toJson(object);
+        return json;
     }
 }

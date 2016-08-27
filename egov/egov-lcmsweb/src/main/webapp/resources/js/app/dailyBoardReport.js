@@ -86,9 +86,9 @@ function submitForm() {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ "xls", "pdf", "print" ]
 				},
-				/*"fnRowCallBack" : function(row,data,index) {
+				"fnRowCallBack" : function(row,data,index) {
 					$('td:eq(0)',row).html(index+1);
-				},*/
+				},
 				columns :[{"title" : "S.no"},
 				             
 					       { "data" : "casetitle" , "title": "Case Title"},  
@@ -122,8 +122,6 @@ function submitForm() {
 							"aoColumnDefs" : []		
 				});
 		
-		
-		e.stopPropagation();
 	}
 	
 	function updateSerialNo()

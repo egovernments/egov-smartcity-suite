@@ -43,7 +43,8 @@ import java.util.Date;
 
 import javax.persistence.EntityManager;
 
-import org.egov.lcms.transactions.entity.DailyBoardReportResults;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.lcms.reports.entity.DailyBoardReportResults;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -62,35 +63,27 @@ public class DailyBoardReportService {
             final String standingcouncil,final String officerIncharge, final String status,final Date nextDate) {
 
         final StringBuilder queryStr = new StringBuilder();
-        queryStr.append("select distinct legalObj.casetitle as \"caseTitle\",courtmaster.name  as \"courtName\","
-                + "legalObj.casenumber as \"caseNumber\","
-                + "petmaster.petitionType as \"petitionType\","
-                + " legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\", "
-                + "legalObj.officerincharge  as \"officerIncharge\","
-                + "legalObj.nextdate  as \"nextDate\" "
-                + "from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,"
-                + "eglc_petitiontype_master petmaster,egw_status egwStatus");
-
-
-        queryStr.append (" where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and "
-                + "legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and "
-                + "legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
+        queryStr.append("select distinct legalObj.casetitle as \"caseTitle\",courtmaster.name  as \"courtName\",legalObj.casenumber as \"caseNumber\",petmaster.petitionType as \"petitionType\",")
+        .append(" legalObj.appealnum  as \"standingCouncil\",egwStatus.description  as \"caseStatus\", legalObj.officerincharge  as \"officerIncharge\",legalObj.nextdate  as \"nextDate\" ")
+        .append(" from EGLC_LEGALCASE legalObj,EGLC_BIPARTISANDETAILS bipart,eglc_court_master courtmaster,eglc_casetype_master casetypemaster,")
+        .append(" eglc_petitiontype_master petmaster,egw_status egwStatus where  bipart.legalcase=legalObj.id and legalObj.court=courtmaster.id and ")
+        .append(" legalObj.casetype=casetypemaster.id and legalObj.petitiontype=petmaster.id and ")
+        .append(" legalObj.status=egwStatus.id and egwStatus.moduletype='Legal Case' ");
 
 
         if (caseNumber != null && !caseNumber.isEmpty())
             queryStr.append(" and legalObj.casenumber = " + "'" + caseNumber + "'");
-        if (court != null && !"".equals(court))
+        if (StringUtils.isNotBlank(court))
             queryStr.append(" and courtmaster.id = " + "'" + court + "'");
-        if (court != null && !"".equals(court))
-            queryStr.append(" and courtmaster.id = " + "'" + court + "'");
-        if (casetype != null && !"".equals(casetype))
+     /* if (StringUtils.isNotBlank(court))
+            queryStr.append(" and courtmaster.id = " + "'" + court + "'");*/
+        if (casetype != null && StringUtils.isNotBlank(casetype))
             queryStr.append(" and casetypemaster.id = " + "'" + casetype + "'");
-
-        if (standingcouncil != null && !"".equals(standingcouncil))
+        if (standingcouncil != null && StringUtils.isNotBlank(standingcouncil))
             queryStr.append(" and legalObj.appealnum  like  " + "'" + standingcouncil + "%'");
         if (officerIncharge != null && !officerIncharge.isEmpty())
             queryStr.append(" and legalObj.officerIncharge = " + "'" + officerIncharge + "'");
-        if (status != null && !"".equals(status))
+        if (status != null && StringUtils.isNotBlank(status))
             queryStr.append(" and egwStatus.id = " + "'" + status + "'");
         if (nextDate != null )
             queryStr.append(" and legalObj.nextDate = " + "'" + nextDate + "'");

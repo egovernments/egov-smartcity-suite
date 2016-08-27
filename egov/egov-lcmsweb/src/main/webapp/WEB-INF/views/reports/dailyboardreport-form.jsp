@@ -83,14 +83,14 @@
 
 					<div class="form-group">
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fromdate" />:</label>
+								code="lbl.fromDate" />:</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="fromDate"
 								class="form-control datepicker" data-date-end-date="0d"
 								id="fromDate" data-inputmask="'mask': 'd/m/y'"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.todate" />:</label>
+								code="lbl.toDate" />:</label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="toDate"
 								class="form-control datepicker today" data-date-end-date="0d"

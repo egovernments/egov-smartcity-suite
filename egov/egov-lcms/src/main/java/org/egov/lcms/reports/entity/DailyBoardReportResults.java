@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.reports.entity;
 
 import java.util.Date;
 

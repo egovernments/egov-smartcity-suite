@@ -57,7 +57,7 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.departmentname" /> :<span class="mandatory"></span> </label>
+								code="lbl.department" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="name"
 								class="form-control text-left patternvalidation"

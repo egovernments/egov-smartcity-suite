@@ -37,15 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.web.adaptor;
 
 import java.lang.reflect.Type;
+
+import org.egov.lcms.reports.entity.DailyBoardReportResults;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+@Component
 public class DailyBoardReportAdapter implements JsonSerializer<DailyBoardReportResults> {
 
     @Override
@@ -61,7 +65,6 @@ public class DailyBoardReportAdapter implements JsonSerializer<DailyBoardReportR
         jsonObject.addProperty("officerIncharge", dailyboardresult.getOfficerIncharge());
         jsonObject.addProperty("casestatus", dailyboardresult.getCaseStatus());
         jsonObject.addProperty("nextdate", dailyboardresult.getNextDate());
-        // jsonObject.addProperty("Actions", legalcaseresult.getCourtName());
         return jsonObject;
     }
 
