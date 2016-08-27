@@ -38,7 +38,6 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.council.service;
-
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 
@@ -49,7 +48,9 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.repository.CouncilPreambleRepository;
+import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -67,6 +68,9 @@ public class CouncilPreambleService {
     private EntityManager entityManager;
 
     @Autowired
+    private PreambleWorkflowCustomImpl preambleWorkflowCustomImpl;
+    
+    @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
 
     public Session getCurrentSession() {
@@ -79,13 +83,23 @@ public class CouncilPreambleService {
     }
 
     @Transactional
-    public CouncilPreamble create(final CouncilPreamble councilPreamble) {
-        return CouncilPreambleRepository.save(councilPreamble);
+    public CouncilPreamble create(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment, String workFlowAction) {
+       
+        if (approvalPosition != null && approvalPosition > 0 && StringUtils.isNotEmpty(workFlowAction))
+            preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble,
+                    approvalPosition, approvalComment,workFlowAction);
+        
+         CouncilPreambleRepository.save(councilPreamble);
+         return councilPreamble;
     }
 
     @Transactional
-    public CouncilPreamble update(final CouncilPreamble CouncilPreamble) {
-        return CouncilPreambleRepository.save(CouncilPreamble);
+    public CouncilPreamble update(final CouncilPreamble councilPreamble, Long approvalPosition, String approvalComment,
+            String workFlowAction) {
+        if (approvalPosition != null && StringUtils.isNotEmpty(workFlowAction))
+            preambleWorkflowCustomImpl.createCommonWorkflowTransition(councilPreamble, approvalPosition,approvalComment, workFlowAction);
+        CouncilPreambleRepository.save(councilPreamble);
+        return councilPreamble;
     }
 
     public CouncilPreamble findOne(Long id) {

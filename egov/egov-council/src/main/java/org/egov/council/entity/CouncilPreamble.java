@@ -78,6 +78,15 @@ public class CouncilPreamble extends StateAware {
     @Transient
     private Date toDate;
 
+    @Transient
+    private Long approvalDepartment;
+
+    @Transient
+    private String approvalComent;
+    
+    @Transient
+    private Long approvalPosition;
+
     @Override
     public Long getId() {
         return id;
@@ -171,6 +180,30 @@ public class CouncilPreamble extends StateAware {
     @Override
     public String getStateDetails() {
         return String.format("Preamble Number %s ", preambleNumber);
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public Long getApprovalPosition() {
+        return approvalPosition;
+    }
+
+    public void setApprovalPosition(Long approvalPosition) {
+        this.approvalPosition = approvalPosition;
     }
 
 }

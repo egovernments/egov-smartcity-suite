@@ -3,6 +3,7 @@ package org.egov.council.web.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -13,6 +14,8 @@ import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -39,14 +42,13 @@ import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping("/councilpreamble")
-public class CouncilPreambleController {
+public class CouncilPreambleController extends GenericWorkFlowController {
     private final static String COUNCILPREAMBLE_NEW = "councilpreamble-new";
     private final static String COUNCILPREAMBLE_RESULT = "councilpreamble-result";
     private final static String COUNCILPREAMBLE_EDIT = "councilpreamble-edit";
     private final static String COUNCILPREAMBLE_VIEW = "councilpreamble-view";
     private final static String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
     public static final String WARDWISE = "ward";
-
     @Autowired
     private CouncilPreambleService councilPreambleService;
     @Autowired
@@ -65,10 +67,9 @@ public class CouncilPreambleController {
     protected @Autowired FileStoreService fileStoreService;
 
     protected @Autowired FileStoreUtils fileStoreUtils;
-    
     @Autowired
     private BoundaryService boundaryService;
-
+    
     private static final Logger LOGGER = Logger.getLogger(CouncilPreambleController.class);
 
     private void prepareNewForm(final Model model) {
@@ -80,16 +81,23 @@ public class CouncilPreambleController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("councilPreamble", new CouncilPreamble());
-        
+        CouncilPreamble councilPreamble = new CouncilPreamble();
+        model.addAttribute("councilPreamble",councilPreamble);
+        WorkflowContainer workFlowContainer= new WorkflowContainer();
+        prepareWorkflow(model, councilPreamble,workFlowContainer);
+        model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+        model.addAttribute("currentState", "NEW");
         return COUNCILPREAMBLE_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilPreamble councilPreamble, final BindingResult errors,
-            @RequestParam final MultipartFile attachments, final Model model, final RedirectAttributes redirectAttrs) {
+            @RequestParam final MultipartFile attachments, final Model model,final HttpServletRequest request, final RedirectAttributes redirectAttrs,@RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            WorkflowContainer workFlowContainer= new WorkflowContainer();
+            prepareWorkflow(model, councilPreamble,workFlowContainer);
+            model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
             return COUNCILPREAMBLE_NEW;
         }
 
@@ -101,22 +109,33 @@ public class CouncilPreambleController {
                 LOGGER.error("Error in loading documents" + e.getMessage(), e);
             }
         }
-        /*List<PreambleWards> preambleWardsList = new ArrayList<PreambleWards>();
-        
-        String [] wards = councilPreamble.getWards().split(",");
-        for (String ward : wards) {
-            PreambleWards preamWards = new PreambleWards(); 
-            preamWards.setWard(Long.valueOf(ward));
-            preambleWardsList.add(preamWards);
-        }
-        councilPreamble.setPreambleWards(preambleWardsList);*/
         PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(PreambleNumberGenerator.class);
         councilPreamble.setPreambleNumber(preamblenumbergenerator.getNextNumber(councilPreamble));
         councilPreamble.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                 CouncilConstants.PREAMBLE_STATUS_CREATED));
-        councilPreambleService.create(councilPreamble);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilPreamble.success", null, null));
+        
+        
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+        String approverName = "";
+        String nextDesignation = "";
+        if (request.getParameter("approvalComent") != null)
+            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approverName") != null)
+            approverName = request.getParameter("approverName");
+        if (request.getParameter("nextDesignation") != null)
+            nextDesignation = request.getParameter("nextDesignation");
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+          
+        councilPreambleService.create(councilPreamble, approvalPosition,
+                approvalComment, workFlowAction);
+        
+        String message = messageSource.getMessage("msg.councilPreamble.success", new String[] { approverName.concat("~").concat(nextDesignation), councilPreamble.getPreambleNumber() }, null);
+        redirectAttrs.addFlashAttribute("message",message);
         return "redirect:/councilpreamble/result/" + councilPreamble.getId();
     }
 
@@ -129,15 +148,23 @@ public class CouncilPreambleController {
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         model.addAttribute("councilPreamble", councilPreamble);
+        WorkflowContainer workFlowContainer= new WorkflowContainer();
+        prepareWorkflow(model, councilPreamble,workFlowContainer);
+        model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
         return COUNCILPREAMBLE_RESULT;
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilPreamble councilPreamble, final Model model,
             @RequestParam final MultipartFile attachments, final BindingResult errors,
-            final RedirectAttributes redirectAttrs) {
+            final HttpServletRequest request, final RedirectAttributes redirectAttrs,
+            @RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
+            WorkflowContainer workFlowContainer = new WorkflowContainer();
+            prepareWorkflow(model, councilPreamble, workFlowContainer);
+            model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+            model.addAttribute("currentState", councilPreamble.getCurrentState().getValue());
             return COUNCILPREAMBLE_EDIT;
         }
         if (attachments.getSize() > 0) {
@@ -148,8 +175,29 @@ public class CouncilPreambleController {
                 LOGGER.error("Error in loading Employee photo" + e.getMessage(), e);
             }
         }
-        councilPreambleService.update(councilPreamble);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilPreamble.success", null, null));
+        
+        Long approvalPosition = 0l;
+        String approvalComment = "";
+        String approverName = "";
+        String nextDesignation = "";
+        if (request.getParameter("approvalComent") != null)
+            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter("workFlowAction") != null)
+            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter("approverName") != null)
+            approverName = request.getParameter("approverName");
+        if (request.getParameter("nextDesignation") != null)
+            nextDesignation = request.getParameter("nextDesignation");
+        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+
+        councilPreambleService.update(councilPreamble, approvalPosition, approvalComment, workFlowAction);
+
+        String message = messageSource.getMessage("msg.councilPreamble.success", new String[] {
+                approverName.concat("~").concat(nextDesignation), councilPreamble.getPreambleNumber() }, null);
+        redirectAttrs.addFlashAttribute("message", message);
+        
+        redirectAttrs.addFlashAttribute("message", message);
         return "redirect:/councilpreamble/result/" + councilPreamble.getId();
     }
 
@@ -158,7 +206,12 @@ public class CouncilPreambleController {
             throws IOException {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         prepareNewForm(model);
+        WorkflowContainer workFlowContainer= new WorkflowContainer();
+        prepareWorkflow(model, councilPreamble,workFlowContainer);
+        model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+        model.addAttribute("currentState", councilPreamble.getCurrentState().getValue());
         model.addAttribute("councilPreamble", councilPreamble);
+
         if(councilPreamble.getStatus().getCode().equals("PREAMBLEAPPROVEDFORMOM")){
             return COUNCILPREAMBLE_VIEW;
         } else{

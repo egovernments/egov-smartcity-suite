@@ -44,9 +44,14 @@
 <form:form role="form" action="create" modelAttribute="councilPreamble"
 	id="councilPreambleform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<%@ include file="councilpreamble-form.jsp"%>
-
-	<div class="form-group">
+	 
+	<jsp:include page="councilpreamble-form.jsp"/>
+	
+	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+		<div class="buttonbottom" align="center">
+			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" /> 
+		</div>
+	<%-- <div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.submit' />
@@ -55,7 +60,7 @@
 				<spring:message code='lbl.close' />
 			</button>
 		</div>
-	</div>
+	</div> --%>
 </form:form>
 
 <script

@@ -38,37 +38,42 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<form:form role="form" action="../update" modelAttribute="councilPreamble" id="councilPreambleform" cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<%@ include file="councilpreamble-form.jsp"%>
-		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
-		</div>
-	<%-- <div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div> --%>
-</form:form>
-
-	<script src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>	
-	
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
-	});
+
+
+	function validateWorkFlowApprover(name) {
+		document.getElementById("workFlowAction").value=name;
+	    var approverPosId = document.getElementById("approvalPosition");
+	    /* if(approverPosId && approverPosId.value != -1) {
+			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
+			document.getElementById("approverName").value= approver.split('~')[0];
+		}   */
+		var rejectbutton=document.getElementById("workFlowAction").value;
+		if(rejectbutton!=null && rejectbutton=='Reject')
+			{
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
+			$('#approvalComent').attr('required', 'required');	
+			} 
+	   document.forms[0].submit;
+	   return true;
+	}
 </script>
+
+<div class="buttonbottom" align="center">
+	<table>
+		<tr>
+			<td>
+		<c:forEach items="${validActionList}" var="validButtons">
+				<form:button type="submit" id="${validButtons}" class="btn btn-primary workflow-submit"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+						<c:out value="${validButtons}" /> </form:button>
+			</c:forEach>
+				<input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-default" onclick="window.close();" /></td>
+		</tr>
+	</table>
+</div>
