@@ -1,4 +1,23 @@
 
+CREATE SEQUENCE seq_egcncl_committee_members;
+
+CREATE TABLE egcncl_committee_members
+(
+  id bigint NOT NULL,
+  committeetype bigint NOT NULL,
+  councilmember bigint NOT NULL,
+  createddate timestamp without time zone,
+  createdby bigint,
+  lastmodifieddate timestamp without time zone,
+  lastmodifiedby bigint,
+  version numeric DEFAULT 0,
+  CONSTRAINT pk_egcncl_committee_members PRIMARY KEY (id),
+  CONSTRAINT fk_egcncl_committeetype FOREIGN KEY (committeetype)
+      REFERENCES egcncl_committeetype (id) ,
+      CONSTRAINT fk_egcncl_members FOREIGN KEY (councilmember)
+      REFERENCES egcncl_members (id)
+);
+
 ALTER TABLE egcncl_meeting_attendence DROP CONSTRAINT fk_egcncl_meetingmember;
 ALTER TABLE egcncl_meeting_attendence RENAME COLUMN councilmember TO committeemember;
 
