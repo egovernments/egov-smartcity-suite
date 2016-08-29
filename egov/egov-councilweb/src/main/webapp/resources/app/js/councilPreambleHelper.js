@@ -71,12 +71,7 @@ function callAjaxSearch() {
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
-				/*
-				 * "fnRowCallback": function (row, data, index) {
-				 * $(row).on('click', function() { console.log(data.id);
-				 * window.open('/council/councilmember/'+ $('#mode').val()
-				 * +'/'+data.id,'','width=800, height=600,scrollbars=yes'); }); },
-				 */
+				
 				"sPaginationType" : "bootstrap",
 				"bDestroy" : true,
 				"autoWidth" : false,
@@ -103,7 +98,7 @@ function callAjaxSearch() {
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "expectedAmount",
+							"data" : "sanctionAmount",
 							"sClass" : "text-left"
 						},
 						{
