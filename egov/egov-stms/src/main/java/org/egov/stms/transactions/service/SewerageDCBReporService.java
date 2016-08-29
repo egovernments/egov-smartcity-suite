@@ -40,6 +40,12 @@
 
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ARREARSEWERAGETAX;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,17 +60,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.stms.masters.pojo.DCBReportWardwiseResult;
 import org.egov.stms.masters.pojo.SewerageRateDCBResult;
 import org.egov.stms.masters.pojo.SewerageRateResultComparatorByInstallment;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 
 @Service
 @Transactional(readOnly=true)
@@ -99,15 +104,15 @@ public class SewerageDCBReporService {
                             demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
                     dcbResult.setInstallmentYearId(demandDtl.getEgDemandReason().getEgInstallmentMaster().getId());
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(SewerageTaxConstants.ARREARSEWERAGETAX)) {
+                            .equalsIgnoreCase(ARREARSEWERAGETAX)) {
                         dcbResult.setArrearAmount(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
                         dcbResult.setCollectedArrearAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP));
                     } 
-                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)){
+                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_SEWERAGETAX_CODE)){
                         dcbResult.setDemandAmount(dcbResult.getDemandAmount().add(demandDtl.getAmount()));
                         dcbResult.setCollectedDemandAmount(dcbResult.getCollectedDemandAmount().add(demandDtl.getAmtCollected()));
                     }
-                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)) {
+                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)) {
                         dcbResult.setAdvanceAmount(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
@@ -116,18 +121,18 @@ public class SewerageDCBReporService {
                     dcbResult = sewerageReportMap.get(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription());
 
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(SewerageTaxConstants.ARREARSEWERAGETAX)) {
+                            .equalsIgnoreCase(ARREARSEWERAGETAX)) {
                         dcbResult.setArrearAmount(
                                 dcbResult.getArrearAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                         dcbResult.setCollectedArrearAmount(dcbResult.getCollectedArrearAmount()
                                 .add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
-                    } else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+                    } else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_SEWERAGETAX_CODE)) {
                         dcbResult.setDemandAmount(
                                 dcbResult.getDemandAmount().add(demandDtl.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                         dcbResult.setCollectedDemandAmount(dcbResult.getCollectedDemandAmount()
                                 .add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
-                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ADVANCE_CODE)){
+                    else if(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_ADVANCE_CODE)){
                         dcbResult.setAdvanceAmount(dcbResult.getAdvanceAmount().add(demandDtl.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                     sewerageReportMap.put(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription(), dcbResult);
@@ -184,7 +189,7 @@ public class SewerageDCBReporService {
                         if (null != propertyType) {
                             dcbResult.setPropertyType(propertyType);
                         }
-                        boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(SewerageTaxConstants.BOUNDARYTYPE_WARD, SewerageTaxConstants.HIERARCHYTYPE_REVENUE);
+                        boundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BOUNDARYTYPE_WARD, HIERARCHYTYPE_REVENUE);
                         boundaryList.addAll(boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc(entry.getKey(), boundaryType.getId()));
                         if(!boundaryList.isEmpty())
                         boundary = boundaryList.get(0);
@@ -223,19 +228,19 @@ public class SewerageDCBReporService {
 
     private void buildArrearAndCurrentDemandTax(DCBReportWardwiseResult dcbResult, EgDemandDetails demandDetails) {
         if (demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                .equalsIgnoreCase(SewerageTaxConstants.ARREARSEWERAGETAX)) {
+                .equalsIgnoreCase(ARREARSEWERAGETAX)) {
             dcbResult.setArr_demand(dcbResult.getArr_demand()
                     .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setArr_collection(dcbResult.getArr_collection()
                     .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setArr_balance(dcbResult.getArr_balance()
                     .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
-        } else if(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)) {
+        } else if(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(FEES_SEWERAGETAX_CODE)) {
             dcbResult.setCurr_demand(dcbResult.getCurr_demand().add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setCurr_collection(dcbResult.getCurr_collection()
                     .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
             dcbResult.setCurr_balance(dcbResult.getCurr_balance()
-                    .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
+                    .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
     }
 
@@ -273,21 +278,21 @@ public class SewerageDCBReporService {
                             dcbResult = dcbReportMap.get(entry.getKey());
 
                             if (demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                    .equalsIgnoreCase(SewerageTaxConstants.ARREARSEWERAGETAX)) {
+                                    .equalsIgnoreCase(ARREARSEWERAGETAX)) {
                                 dcbResult.setArr_demand(dcbResult.getArr_demand()
                                         .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setArr_collection(dcbResult.getArr_collection()
-                                        .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
+                                        .add(demandDetails.getAmtCollected()).setScale(2, BigDecimal.ROUND_HALF_UP));
                                 dcbResult.setArr_balance(dcbResult.getArr_balance()
-                                        .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
+                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).setScale(2, BigDecimal.ROUND_HALF_UP)));
                             } else if(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                    .equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE)){
+                                    .equalsIgnoreCase(FEES_SEWERAGETAX_CODE)){
                                 dcbResult.setCurr_demand(dcbResult.getCurr_demand()
                                         .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setCurr_collection(dcbResult.getCurr_collection()
                                         .add(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP)));
                                 dcbResult.setCurr_balance(dcbResult.getCurr_balance()
-                                        .add(demandDetails.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP).subtract(demandDetails.getAmtCollected().setScale(2, BigDecimal.ROUND_HALF_UP))));
+                                        .add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).setScale(2, BigDecimal.ROUND_HALF_UP)));
 
                                 dcbResult.setTotal_demand(dcbResult.getArr_demand().add(dcbResult.getCurr_demand()));
                                 dcbResult.setTotal_collection(dcbResult.getArr_collection().add(dcbResult.getCurr_collection()));
