@@ -67,7 +67,7 @@
 							${casetypeMaster.ordernumber}</div>
 
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.notes" />
+							<spring:message code="lbl.description" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${casetypeMaster.notes}</div>

@@ -66,7 +66,7 @@ public class CaseStage extends AbstractAuditable {
     private Long id;
 
     @NotNull
-    @Length(min = 3, max = 100)
+    @Length(max = 100)
     @Audited
     private String stage;
     @NotNull
