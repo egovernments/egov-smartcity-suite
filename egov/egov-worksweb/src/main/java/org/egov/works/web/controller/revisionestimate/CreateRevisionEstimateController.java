@@ -39,16 +39,31 @@
  */
 package org.egov.works.web.controller.revisionestimate;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
+import org.egov.works.lineestimate.entity.LineEstimate;
+import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
@@ -85,7 +100,19 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
     protected CustomizedWorkFlowService customizedWorkFlowService;
 
     @Autowired
+    private AppConfigValueService appConfigValuesService;
+
+    @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private BudgetDetailsDAO budgetDetailsDAO;
+
+    @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String showForm(@ModelAttribute("revisionEstimate") final RevisionAbstractEstimate revisionEstimate,
@@ -151,14 +178,20 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         } else {
 
             if (revisionEstimate.getState() == null)
-                if (WorksConstants.FORWARD_ACTION.equals(workFlowAction))
+                if (WorksConstants.FORWARD_ACTION.equals(workFlowAction)) {
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.CREATED.toString()));
-                else
+                    final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                            WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+                    final AppConfigValues value = values.get(0);
+                    if ("Y".equalsIgnoreCase(value.getValue()))
+                        validateBudgetAmount(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate(), bindErrors);
+                } else {
                     revisionEstimate.setEgwStatus(
                             worksUtils.getStatusByModuleAndCode(WorksConstants.REVISIONABSTRACTESTIMATE,
                                     EstimateStatus.NEW.toString()));
+                }
 
             savedRevisionEstimate = revisionEstimateService.createRevisionEstimate(revisionEstimate, approvalPosition,
                     approvalComment, null, workFlowAction);
@@ -170,6 +203,41 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
 
         return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + savedRevisionEstimate.getId()
                 + "&approvalPosition=" + approvalPosition;
+    }
+
+    private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
+        final List<Long> budgetheadid = new ArrayList<Long>();
+        budgetheadid.add(lineEstimate.getBudgetHead().getId());
+
+        try {
+            final BigDecimal budgetAvailable = budgetDetailsDAO
+                    .getPlanningBudgetAvailable(
+                            lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                            Integer.parseInt(lineEstimate
+                                    .getExecutingDepartment().getId().toString()),
+                            lineEstimate.getFunction().getId(),
+                            null,
+                            lineEstimate.getScheme() == null ? null : Integer.parseInt(lineEstimate.getScheme().getId()
+                                    .toString()),
+                            lineEstimate.getSubScheme() == null ? null : Integer.parseInt(lineEstimate.getSubScheme().getId()
+                                    .toString()),
+                            null, budgetheadid, Integer.parseInt(lineEstimate.getFund()
+                                    .getId().toString()));
+
+            BigDecimal totalEstimateAmount = BigDecimal.ZERO;
+
+            for (final LineEstimateDetails led : lineEstimate.getLineEstimateDetails())
+                totalEstimateAmount = led.getEstimateAmount().add(totalEstimateAmount);
+
+            if (budgetAvailable.compareTo(totalEstimateAmount) == -1)
+                errors.reject("error.budgetappropriation.insufficient.amount", null);
+        } catch (final ValidationException e) {
+            // TODO: Used ApplicationRuntimeException for time being since there is issue in session after
+            // budgetDetailsDAO.getPlanningBudgetAvailable API call
+            // TODO: needs to replace with errors.reject
+            for (final ValidationError error : e.getErrors())
+                throw new ApplicationRuntimeException(error.getKey());
+        }
     }
 
     @RequestMapping(value = "/revisionestimate-success", method = RequestMethod.GET)
@@ -210,6 +278,17 @@ public class CreateRevisionEstimateController extends GenericWorkFlowController 
         final String message = getMessageByStatus(revisionEstimate, approverName, nextDesign);
 
         model.addAttribute("message", message);
+
+        if (RevisionEstimateStatus.CREATED.toString().equals(revisionEstimate.getEgwStatus().getCode())
+                || RevisionEstimateStatus.RESUBMITTED.toString().equals(revisionEstimate.getEgwStatus().getCode())) {
+            final LineEstimateAppropriation lea = lineEstimateAppropriationService
+                    .findLatestByLineEstimateDetails_EstimateNumber(revisionEstimate.getParent().getEstimateNumber());
+            model.addAttribute("basMessage", messageSource
+                    .getMessage("msg.revisionestimate.budgetsanction.success",
+                            new String[] { revisionEstimate.getEstimateNumber(),
+                                    lea.getBudgetUsage().getAppropriationnumber() },
+                            null));
+        }
 
         return new ModelAndView("revisionEstimate-success", "revisionEstimate", revisionEstimate);
     }

@@ -61,6 +61,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -72,6 +73,9 @@ import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.ActivityRepository;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
+import org.egov.works.lineestimate.service.LineEstimateAppropriationService;
+import org.egov.works.lineestimate.service.LineEstimateDetailService;
+import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.master.service.ScheduleCategoryService;
 import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
@@ -163,6 +167,15 @@ public class RevisionEstimateService {
     private RevisionWorkOrderService revisionWorkOrderService;
 
     @Autowired
+    private LineEstimateService lineEstimateService;
+
+    @Autowired
+    private LineEstimateDetailService lineEstimateDetailService;
+
+    @Autowired
+    private LineEstimateAppropriationService lineEstimateAppropriationService;
+
+    @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
@@ -188,6 +201,7 @@ public class RevisionEstimateService {
     public RevisionAbstractEstimate createRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
+
         mergeSorAndNonSorActivities(revisionEstimate);
         final AbstractEstimate abstractEstimate = revisionEstimate.getParent();
         final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
@@ -211,6 +225,7 @@ public class RevisionEstimateService {
             revisionEstimate.setFundSource(abstractEstimate.getFundSource());
             revisionEstimate.setParentCategory(abstractEstimate.getParentCategory());
         }
+        doBudgetoryAppropriation(workFlowAction, revisionEstimate);
 
         saveChangeQuantityActivities(revisionEstimate);
 
@@ -221,6 +236,36 @@ public class RevisionEstimateService {
 
         revisionEstimateRepository.save(revisionEstimate);
         return revisionEstimate;
+    }
+
+    private void doBudgetoryAppropriation(String workFlowAction, RevisionAbstractEstimate revisionEstimate) {
+        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
+                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
+        final AppConfigValues value = values.get(0);
+        if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+
+            if ("Y".equalsIgnoreCase(value.getValue())) {
+                final List<Long> budgetheadid = new ArrayList<Long>();
+                budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
+                final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(
+                        revisionEstimate.getParent().getLineEstimateDetails(),
+                        lineEstimateService.getCurrentFinancialYear(new Date()).getId(),
+                        revisionEstimate.getEstimateValue().doubleValue(),
+                        budgetheadid);
+
+                if (!flag)
+                    throw new ValidationException(StringUtils.EMPTY, "error.budgetappropriation.insufficient.amount");
+            }
+        }
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            if ("Y".equalsIgnoreCase(value.getValue())) {
+                final String appropriationNumber = lineEstimateAppropriationService
+                        .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
+                lineEstimateService.releaseBudgetOnReject(revisionEstimate.getParent().getLineEstimateDetails(),
+                        revisionEstimate.getEstimateValue().doubleValue(),
+                        appropriationNumber);
+            }
+        }
     }
 
     private void saveChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
@@ -260,7 +305,7 @@ public class RevisionEstimateService {
             activities = removeDeletedActivities(activities, removedActivityIds);
             revisionEstimate.setActivities(activities);
         }
-
+        doBudgetoryAppropriation(workFlowAction, revisionEstimate);
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
 
         revisionEstimateStatusChange(updateRevisionEstimate, workFlowAction);
@@ -273,7 +318,7 @@ public class RevisionEstimateService {
             revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
             revisionWorkOrderService.create(revisionWorkOrder);
         }
-        
+
         revisionEstimateRepository.save(updateRevisionEstimate);
 
         return updateRevisionEstimate;
