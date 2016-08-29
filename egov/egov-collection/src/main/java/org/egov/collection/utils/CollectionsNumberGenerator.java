@@ -78,7 +78,7 @@ public class CollectionsNumberGenerator {
                 .getAutoNumberServiceFor(ChallanNumberGenerator.class);
         return challanNumberGen.generateChallanNumber(challan, financialYear);
     }
-    
+
     public String generateRemittanceNumber(final CFinancialYear financialYear) {
         final RemittanceNumberGenerator remittanceNumberGen = beanResolver
                 .getAutoNumberServiceFor(RemittanceNumberGenerator.class);
