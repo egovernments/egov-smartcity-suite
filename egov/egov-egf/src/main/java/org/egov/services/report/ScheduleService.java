@@ -39,17 +39,6 @@
  */
 package org.egov.services.report;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
@@ -65,6 +54,17 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 public abstract class ScheduleService extends PersistenceService {
     private static final Logger LOGGER = Logger.getLogger(ScheduleService.class);
     static final BigDecimal NEGATIVE = new BigDecimal("-1");
@@ -74,6 +74,14 @@ public abstract class ScheduleService extends PersistenceService {
     int majorCodeLength;
     int detailCodeLength;
     String voucherStatusToExclude;
+
+    public ScheduleService() {
+        super(null);
+    }
+
+    public ScheduleService(Class type) {
+        super(type);
+    }
 
     /* for detailed */
     Map<String, Schedules> getScheduleToGlCodeMapDetailed(final String reportType, final String coaType) {

@@ -49,7 +49,11 @@ import org.egov.works.milestone.entity.Milestone;
 public class MilestoneWFService extends PersistenceService<Milestone, Long> {
 
     public MilestoneWFService() {
-        setType(Milestone.class);
+        super(Milestone.class);
+    }
+
+    public MilestoneWFService(Class<Milestone> type) {
+        super(type);
     }
 
 }

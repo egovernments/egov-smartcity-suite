@@ -40,8 +40,8 @@
 
 package org.egov.tl.utils;
 
-import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -62,8 +62,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.service.masters.LicenseSubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -71,6 +71,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 
 @Service
 public class LicenseUtils {
@@ -98,6 +101,12 @@ public class LicenseUtils {
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
+
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
     }
@@ -109,11 +118,7 @@ public class LicenseUtils {
     }
 
     public List<LicenseSubCategory> getAllTradeNames(final String simpleName) {
-        return persistenceService.findAllBy("from org.egov.tl.entity.LicenseSubCategory where licenseType.name=?", simpleName);
-    }
-
-    public LicenseStatus getLicenseStatusbyCode(final String statusCode) {
-        return (LicenseStatus) persistenceService.find("FROM org.egov.tl.entity.LicenseStatus where statusCode=?", statusCode);
+        return licenseSubCategoryService.getLicenseSubCategoriesByLicenseTypeName(simpleName);
     }
 
     public List<Department> getAllDepartments() {
@@ -133,13 +138,13 @@ public class LicenseUtils {
     public String getDepartmentCodeForBillGenerate(){
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 Constants.TRADELICENSE_MODULENAME, "DEPARTMENTFORGENERATEBILL");
-        return (!appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : "");
+        return appConfigValue.isEmpty() ? EMPTY : appConfigValue.get(0).getValue();
     }
 
     public Position getCityLevelCommissioner() {
         final Department deptObj = departmentService.getDepartmentByName(Constants.ROLE_COMMISSIONERDEPARTEMNT);
         final Designation desgnObj = designationService.getDesignationByName("Commissioner");
-        List<Assignment> assignlist = new ArrayList<Assignment>();
+        List<Assignment> assignlist = new ArrayList<>();
         if(deptObj !=null)
             assignlist = assignmentService.getAssignmentsByDeptDesigAndDates(deptObj.getId(), desgnObj.getId(), new Date(),
                 new Date());
@@ -151,9 +156,7 @@ public class LicenseUtils {
     }
 
     public License applicationStatusChange(final License licenseObj, final String code) {
-        final EgwStatus statusChange = (EgwStatus) persistenceService.find("from org.egov.commons.EgwStatus where moduletype=? and code=?",
-                Constants.TRADELICENSEMODULE, code);
-        licenseObj.setEgwStatus(statusChange);
+        licenseObj.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, code));
         return licenseObj;
     }
 }

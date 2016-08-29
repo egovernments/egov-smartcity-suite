@@ -60,6 +60,14 @@ public class TenderResponseService extends PersistenceService<TenderResponse, Lo
     private PersonalInformationService personalInformationService;
     private PersistenceService persistenceService;
 
+    public TenderResponseService() {
+        super(TenderResponse.class);
+    }
+
+    public TenderResponseService(Class<TenderResponse> type) {
+        super(type);
+    }
+
     public List getApprovedByList(final Integer deptId) {
         List approvedByList = null;
         try {

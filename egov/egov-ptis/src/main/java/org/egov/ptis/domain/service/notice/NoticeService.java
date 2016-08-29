@@ -39,6 +39,14 @@
  */
 package org.egov.ptis.domain.service.notice;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -47,6 +55,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.notice.PtNotice;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +64,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
-import java.util.Date;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-@Service 
+@Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NoticeService extends PersistenceService<PtNotice, Long> {
     private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
@@ -73,17 +76,30 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
+    public NoticeService() {
+        super(PtNotice.class);
+    }
+
+    public NoticeService(Class<PtNotice> type) {
+        super(type);
+    }
+
     /**
-     * This method populates the <code>PtNotice</code> object along with notice input stream
+     * This method populates the <code>PtNotice</code> object along with notice
+     * input stream
      *
-     * @param basicProperty the <code>BasicProperty</code> object for which the notice is generated
-     * @param noticeNo - notice no
-     * @param noticeType - type of notice
-     * @param fileStream - input stream of generated notice.
+     * @param basicProperty
+     *            the <code>BasicProperty</code> object for which the notice is
+     *            generated
+     * @param noticeNo
+     *            - notice no
+     * @param noticeType
+     *            - type of notice
+     * @param fileStream
+     *            - input stream of generated notice.
      */
     public PtNotice saveNotice(final String applicationNumber, final String noticeNo, final String noticeType,
-            final BasicProperty basicProperty,
-            final InputStream fileStream) {
+            final BasicProperty basicProperty, final InputStream fileStream) {
         final PtNotice ptNotice = new PtNotice();
         final Module module = moduleDao.getModuleByName(PTMODULENAME);
         ptNotice.setModuleId(module.getId());
@@ -104,7 +120,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
 
     /**
-     * Using this method to attach different file store if document is already signed and been sent for sign again
+     * Using this method to attach different file store if document is already
+     * signed and been sent for sign again
      * 
      * @param notice
      * @param fileStream
@@ -135,8 +152,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
 
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
-        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?", noticeType,
-                applicationNo);
+        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?",
+                noticeType, applicationNo);
     }
 
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
@@ -147,4 +164,36 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         this.basicPropertyService = basicPropertyService;
     }
 
+    public String getNoticeByApplicationNo(String applicationNo) {
+        final StringBuilder queryStr = new StringBuilder(500);
+        String noticeNum = "";
+        queryStr.append(
+                "select notice.noticeNo from PtNotice notice left join notice.basicProperty bp , PropertyMutation mt ");
+        queryStr.append(" where notice.applicationNumber=:applicationNo");
+        queryStr.append(
+                " and notice.id = ( select max(id) from PtNotice where  applicationNumber = notice.applicationNumber and basicProperty = mt.basicProperty)");
+        final Query query = getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(applicationNo))
+            query.setString("applicationNo", applicationNo);
+        List<String> notices = query.list();
+        if (notices.size() != 0) {
+            noticeNum = (String) query.list().get(0);
+
+        } else
+            noticeNum = "";
+        return noticeNum;
+    }
+
+    public List<PropertyMutation> getListofMutations(String indexNumber) {
+        final StringBuilder queryStr = new StringBuilder();
+        queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
+        if (StringUtils.isNotBlank(indexNumber))
+            queryStr.append(" where bp.upicNo=:assessmentNo ");
+        queryStr.append(" order by mt.mutationDate desc ");
+        final Query query = getSession().createQuery(queryStr.toString());
+        if (StringUtils.isNotBlank(indexNumber))
+            query.setString("assessmentNo", indexNumber);
+        List<PropertyMutation> mutations = query.list();
+        return mutations;
+    }
 }

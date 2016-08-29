@@ -44,7 +44,11 @@ import org.egov.model.budget.BudgetReAppropriationMisc;
 
 public class BudgetReAppropriationMiscService extends PersistenceService<BudgetReAppropriationMisc, Long> {
     
-    public BudgetReAppropriationMiscService(final Class<BudgetReAppropriationMisc> budgetReAppropriationMisc) {
-        this.type = budgetReAppropriationMisc;
+    public BudgetReAppropriationMiscService() {
+        super(BudgetReAppropriationMisc.class);
+    }
+
+    public BudgetReAppropriationMiscService(final Class<BudgetReAppropriationMisc> type) {
+        super(type);
     }
 }

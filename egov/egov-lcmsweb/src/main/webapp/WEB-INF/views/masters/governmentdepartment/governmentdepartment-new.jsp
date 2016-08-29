@@ -58,3 +58,12 @@
 		</div>
 	</div>
 </form:form>
+<script>
+	
+	$('#buttonSubmit').click(function(e) {
+		if ($('form').valid()) {
+		} else {
+			e.preventDefault();
+		}
+	});
+</script>

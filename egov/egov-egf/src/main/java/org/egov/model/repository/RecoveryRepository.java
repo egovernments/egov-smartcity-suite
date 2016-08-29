@@ -50,8 +50,8 @@ import java.util.List;
 @Repository
 public interface RecoveryRepository extends JpaRepository<Recovery, Long> {
 
-    public List<Recovery> findByIsactive(Boolean isActive);
-    public List<Recovery> findByChartofaccounts(CChartOfAccounts chartofaccounts);
-    public List<Recovery> findByIsactiveAndRemittanceModeOrderByType(Boolean isActive,Character remittanceMode);
+    List<Recovery> findByIsactive(Boolean isActive);
+    List<Recovery> findByChartofaccounts(CChartOfAccounts chartofaccounts);
+    List<Recovery> findByIsactiveAndRemittanceModeOrderByType(Boolean isActive,Character remittanceMode);
 
 }

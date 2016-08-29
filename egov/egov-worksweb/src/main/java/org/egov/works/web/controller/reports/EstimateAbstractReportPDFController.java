@@ -56,17 +56,15 @@ import javax.servlet.http.HttpSession;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
 import org.egov.works.reports.service.WorkProgressRegisterService;
-import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -86,9 +84,6 @@ public class EstimateAbstractReportPDFController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private WorksUtils worksUtils;
 
     @Autowired
     private WorkProgressRegisterService workProgressRegisterService;
@@ -117,10 +112,6 @@ public class EstimateAbstractReportPDFController {
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
 
-    @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
     @RequestMapping(value = "/departmentwise/pdf", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generatePDFDepartmentWise(final HttpServletRequest request,
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
@@ -129,7 +120,6 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("scheme") final Integer scheme,
             @RequestParam("subScheme") final Integer subScheme,
             @RequestParam("workCategory") final String workCategory,
-            @RequestParam("typeOfSlum") final String typeOfSlum,
             @RequestParam("beneficiary") final String beneficiary,
             @RequestParam("natureOfWork") final Long natureOfWork,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
@@ -143,7 +133,6 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setScheme(scheme);
         searchRequest.setSubScheme(subScheme);
         searchRequest.setWorkCategory(workCategory);
-        searchRequest.setTypeOfSlum(typeOfSlum);
         searchRequest.setBeneficiary(beneficiary);
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
@@ -179,16 +168,12 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
-            queryParameters += "Work Category : " + workCategory + ", ";
-        }
-
-        if (typeOfSlum != null) {
-            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum + ", ";
+        if (workCategory != null) {
+            queryParameters += "Work Category : " + workCategory.replace('_',' ') + ", ";
         }
 
         if (beneficiary != null) {
-            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary + ", ";
+            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
         }
 
         if (natureOfWork != null) {
@@ -310,7 +295,6 @@ public class EstimateAbstractReportPDFController {
             @RequestParam("scheme") final Integer scheme,
             @RequestParam("subScheme") final Integer subScheme,
             @RequestParam("workCategory") final String workCategory,
-            @RequestParam("typeOfSlum") final String typeOfSlum,
             @RequestParam("beneficiary") final String beneficiary,
             @RequestParam("natureOfWork") final Long natureOfWork,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
@@ -326,7 +310,6 @@ public class EstimateAbstractReportPDFController {
         searchRequest.setScheme(scheme);
         searchRequest.setSubScheme(subScheme);
         searchRequest.setWorkCategory(workCategory);
-        searchRequest.setTypeOfSlum(typeOfSlum);
         searchRequest.setBeneficiary(beneficiary);
         searchRequest.setNatureOfWork(natureOfWork);
         searchRequest.setSpillOverFlag(spillOverFlag);
@@ -375,16 +358,12 @@ public class EstimateAbstractReportPDFController {
             queryParameters += messageSource.getMessage("msg.subscheme", null, null)
                     + subSchemeService.findById(subScheme, false).getName() + ", ";
 
-        if (workCategory != null && !workCategory.equalsIgnoreCase("undefined")) {
+        if (workCategory != null) {
             queryParameters += messageSource.getMessage("msg.workcategory", null, null) + workCategory.replace('_',' ') + ", ";
         }
 
-        if (typeOfSlum != null) {
-            queryParameters += messageSource.getMessage("msg.typeofslum", null, null) + typeOfSlum.replace('_',' ') + ", ";
-        }
-
         if (beneficiary != null) {
-            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary + ", ";
+            queryParameters += messageSource.getMessage("msg.beneficiary", null, null) + beneficiary.replaceAll("_C", "/C").replace("_", " ") + ", ";
         }
 
         if (natureOfWork != null) {

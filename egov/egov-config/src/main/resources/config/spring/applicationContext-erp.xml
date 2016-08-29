@@ -46,12 +46,10 @@
     <bean name="erpApplicationContext" class="org.springframework.context.support.ClassPathXmlApplicationContext">
         <constructor-arg>
             <list>
-                <value>classpath*:config/spring/applicationContext-egi.xml</value>
-                <value>classpath*:config/spring/applicationContext-eis.xml</value>
                 <value>classpath*:config/spring/applicationContext-search-all.xml</value>
                 <value>classpath*:config/spring/applicationContext-security.xml</value>
                 <value>classpath*:config/spring/applicationContext-quartz.xml</value>
-                <value>classpath*:config/spring/applicationContext-*-global-services.xml</value>
+                <value>classpath*:config/spring/applicationContext-*-services.xml</value>
             </list>
         </constructor-arg>
     </bean>

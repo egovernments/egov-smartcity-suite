@@ -1,25 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<jboss-deployment-structure>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
     <!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
-    <ear-subdeployments-isolated>TRUE</ear-subdeployments-isolated>
+    <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
     <deployment>
         <dependencies>
-            <module name="org.apache.log4j" export="TRUE"/>
-            <module name="org.slf4j" export="TRUE"/>
-            <module name="org.javassist" export="TRUE"/>
-            <module name="javax.jcr" export="TRUE"/>
-	    <module name="javax.servlet.jstl.api" export="true"/>
-            <module name="org.hibernate" export="TRUE"/>
-            <module name="org.infinispan" export="TRUE"/>
-            <module name="org.apache.xerces" export="TRUE"/>
-            <module name="org.jaxen" export="TRUE"/>
-            <module name="org.jdom" export="TRUE"/>
-            <module name="org.hibernate.validator" export="TRUE"/>
-            <module name="org.hibernate.envers" export="TRUE"/>
-            <module name="org.hibernate.search.orm" export="TRUE" services="export"/>
-            <module name="org.postgres" export="TRUE"/>
-            <module name="org.egov.settings" export="TRUE" optional="TRUE"/>
-            <!--<module name="deployment.jackrabbit-jca-2.6.2.rar" export="TRUE"/>-->
+            <module name="org.apache.log4j" export="true"/>
+            <module name="org.slf4j" export="true"/>
+            <module name="org.javassist" export="true"/>
+            <module name="javax.jcr" export="true"/>
+	        <module name="javax.servlet.jstl.api" export="true"/>
+            <module name="org.hibernate" export="true"/>
+            <module name="org.infinispan" export="true"/>
+            <module name="org.apache.xerces" export="true"/>
+            <module name="org.jaxen" export="true"/>
+            <module name="org.jdom" export="true"/>
+            <module name="org.hibernate.validator" export="true"/>
+            <module name="org.hibernate.envers" export="true"/>
+            <module name="org.hibernate.search.orm" export="true" services="export"/>
+            <module name="org.postgres" export="true"/>
+            <module name="org.egov.settings" export="true" optional="true"/>
+            <!--<module name="deployment.jackrabbit-jca-2.6.2.rar" export="true"/>-->
         </dependencies>
     </deployment>
 </jboss-deployment-structure>

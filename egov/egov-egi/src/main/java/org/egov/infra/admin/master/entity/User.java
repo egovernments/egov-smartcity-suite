@@ -72,8 +72,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(id = "id", tableName = "eg_user", columnName = {"username", "pan", "aadhaarNumber",
-        "emailId"}, fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
+@Unique(fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 public class User extends AbstractAuditable {
     public static final String SEQ_USER = "SEQ_EG_USER";

@@ -70,7 +70,7 @@
 						<div class="col-sm-3 col-md-2 add-margin">
 							<form:input type="text" path="name" id="name"
 								cssClass="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace"
+								data-pattern="alphabetwithspace"
 								maxlength="100" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
@@ -108,7 +108,7 @@
 								<span class="input-group-addon">+91</span>
 								<form:input type="text" path="mobileNumber" id="mobileNumber"
 									data-inputmask="'mask': '9999999999'" required="required"
-									cssClass="form-control" maxlength="10" data-pattern="numeric"
+									cssClass="form-control" maxlength="12" data-pattern="numeric"
 									placeholder="Mobile Number" />
 							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg" />
@@ -118,7 +118,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="email"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="50"
+								data-pattern="alphanumericwithspecialcharacters" maxlength="64"
 								placeholder="abc@xyz.com" />
 							<form:errors path="email" cssClass="error-msg" />
 						</div>
@@ -128,8 +128,8 @@
 								code="lbl.pannumber" />:<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="panNumber"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="20" required="required" />
+								class="form-control text-left patternvalidation" id="panNumber"
+								data-pattern="alphanumeric" maxlength="10" required="required" />
 							<form:errors path="panNumber" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -137,7 +137,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="specilization"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="25" />
+								data-pattern="alphabetwithspace" maxlength="64" />
 							<form:errors path="specilization" cssClass="error-msg" />
 						</div>
 					</div>
@@ -172,7 +172,7 @@
 								code="lbl.monthlyrenumeration" />:<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="monthlyRenumeration"
+							<form:input path="monthlyRenumeration" maxlength="10" id="monthlyRenumeration"
 								class="form-control text-left patternvalidation"
 								data-pattern="decimalvalues" required="required" />
 							<form:errors path="monthlyRenumeration" cssClass="error-msg" />
@@ -228,7 +228,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="bankaccount"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="20" />
+								data-pattern="number" maxlength="20" required="required"/>
 							<form:errors path="bankaccount" cssClass="error-msg" />
 						</div>
 
@@ -239,7 +239,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="ifsccode"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="20" />
+								data-pattern="alphanumeric" maxlength="20" required="required"/>
 							<form:errors path="ifsccode" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -247,7 +247,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="tinumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumeric" maxlength="20" />
+								data-pattern="alphanumeric" maxlength="20" required="required"/>
 							<form:errors path="tinumber" cssClass="error-msg" />
 						</div>
 

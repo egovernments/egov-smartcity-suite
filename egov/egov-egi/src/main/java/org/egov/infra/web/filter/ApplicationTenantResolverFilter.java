@@ -40,8 +40,8 @@
 
 package org.egov.infra.web.filter;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

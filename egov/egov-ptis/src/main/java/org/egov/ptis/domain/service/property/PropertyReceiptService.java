@@ -53,6 +53,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PropertyReceiptService extends PersistenceService<PropertyReceipt, Long> {
+
+    public PropertyReceiptService() {
+        super(PropertyReceipt.class);
+    }
+
+    public PropertyReceiptService(Class<PropertyReceipt> type) {
+        super(type);
+    }
+
     @Transactional
     public PropertyReceipt save(PropertyReceipt propertyReceipt) {
         return persist(propertyReceipt);

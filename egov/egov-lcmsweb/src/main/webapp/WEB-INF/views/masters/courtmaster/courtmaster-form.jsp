@@ -85,7 +85,7 @@
 								code="lbl.ordernumber" />: </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
-								class="form-control text-left patternvalidation"
+								class="form-control text-left patternvalidation" maxlength="3"
 								data-pattern="number" />
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>

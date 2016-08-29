@@ -39,19 +39,13 @@
  */
 package org.egov.works.web.actions.tender;
 
-import java.io.OutputStream;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -74,18 +68,26 @@ import org.egov.works.models.tender.WorksPackage;
 import org.egov.works.services.WorksService;
 import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
+import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class TenderNegotiationPDFGenerator extends AbstractPDFGenerator {
     private static final Logger LOGGER = Logger.getLogger(TenderNegotiationPDFGenerator.class);
-    private PersistenceService persistenceService = new PersistenceService();
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     @Autowired
     private EmployeeServiceOld employeeService;
     private final TenderResponse tenderResponse;

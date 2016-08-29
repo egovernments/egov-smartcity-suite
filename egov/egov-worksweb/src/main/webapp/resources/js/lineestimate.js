@@ -86,9 +86,8 @@ $(document).ready(function(){
 	$('#scheme').trigger('change');
 	$('#function').trigger('change');
 	
-	if(!$('#slum').is(':checked'))
-		$('#nonslum').attr('checked', 'checked');
-	return showSlumFieldsValue();
+	replaceWorkCategoryChar();
+	replaceBeneficiaryChar();
 });
 
 function renderPdf() {
@@ -382,29 +381,8 @@ function validateActualEstimateAmount() {
 	});
 }
 
-function disableSlumFields() {
-	var slum = document.getElementById("slum");
-	var slumfields = document.getElementById("slumfields");
-	slumfields.style.display = slum.checked ? "block" : "none";
-	document.getElementById("typeOfSlum").disabled = true;
-	document.getElementById("beneficiary").disabled = true;
-	$('#nonslum').attr('checked', 'checked');
-}
-
-function showSlumFields() {
-	replaceTypeOfSlumChar();
-	replaceBeneficiaryChar();
-	var slum = document.getElementById("slum");
-	var slumfields = document.getElementById("slumfields");
-	slumfields.style.display = slum.checked ? "block" : "none";
-	document.getElementById("typeOfSlum").disabled = false;
-	document.getElementById("beneficiary").disabled = false;
-	$('#slum').attr('checked', 'checked');
-	
-}
-
-function replaceTypeOfSlumChar() {
-	$('#typeOfSlum option').each(function() {
+function replaceWorkCategoryChar() {
+	$('#workCategory option').each(function() {
 	   var $this = $(this);
 	   $this.text($this.text().replace(/_/g, ' '));
 	});
@@ -413,10 +391,9 @@ function replaceTypeOfSlumChar() {
 function replaceBeneficiaryChar() {
 	$('#beneficiary option').each(function() {
 	   var $this = $(this);
-	   $this.text($this.text().replace(/_/g, '/'));
+	   $this.text($this.text().replace(/_C/g, '/C').replace(/_/g, ' '));
 	});
 }
-
 
 $('#typeofwork').blur(function(){
 	 if ($('#typeofwork').val() === '') {
@@ -514,18 +491,6 @@ function validatecouncilResolutionNumber() {
 	        this.value = val.substring(0, val.length - 1);
 	    }
 	});
-}
-
-function showSlumFieldsValue() {
-	var slum = $('#radioValue input:radio:checked').val()
-	if ('SLUM_WORK' == slum) {
-		showSlumFields();
-		return true;
-	} else if('NON_SLUM_WORK' == slum){
-		disableSlumFields();
-		return true;
-	} else
-		return false;
 }
 
 function roundTo(value, decimals, decimal_padding) {
@@ -679,4 +644,3 @@ function getFunctionsByFundAndDepartment() {
 				});
 			}
 }
-

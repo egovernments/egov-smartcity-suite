@@ -46,7 +46,8 @@ import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.demand.model.EgDemandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,7 +68,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UpdateLegacyAdvertisementController extends HoardingControllerSupport {
 
 	@Autowired
-	private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+	private MessageSource messageSource;
 	
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {

@@ -58,7 +58,7 @@
 				</div>
 
 			</div>
-				</div><div class="form-group">
+				<div class="form-group">
 								<label for="field-1" class="col-sm-3 control-label">Case Number</label>
 								<div class="col-sm-3 add-margin">
 									<input type="text" name="caseNumber" class="form-control patternvalidation" 
@@ -79,7 +79,7 @@
 							<form:option value="">
 								<spring:message code="lbls.select"/>
 							</form:option>
-							<form:options items="${caseTypeList}"  itemValue="id"  itemLabel="code"  />  
+							<form:options items="${caseTypeList}"  itemValue="id"  itemLabel="caseType"  />  
 						</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label">Standing Council</label>
@@ -97,7 +97,7 @@
 							<form:option value="">
 								<spring:message code="lbls.select"/>
 							</form:option>
-							<form:options items="${courtTypeList}" itemValue="id"  itemLabel="code"   />  
+							<form:options items="${courtTypeList}" itemValue="id"  itemLabel="courtType"   />  
 						</form:select>
 						</div>
 						<label for="field-1" class="col-sm-2 control-label">Court Name</label>

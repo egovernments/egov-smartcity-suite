@@ -52,6 +52,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -96,11 +97,8 @@ public class Appeal extends AbstractPersistable<Long> {
     @Column(name = "appealfiledby")
     private String appealFiledBy;
 
-    /*
-     * @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL) private List<AppealDocuments> appealDocuments = new
-     * ArrayList<AppealDocuments>(0);
-     */
+    @OneToMany(mappedBy = "appeal", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<AppealDocuments> appealDocuments = new ArrayList<AppealDocuments>(0);
 
     @Override
     public Long getId() {
@@ -144,12 +142,13 @@ public class Appeal extends AbstractPersistable<Long> {
         this.judgmentImpl = judgmentImpl;
     }
 
-    /*
-     * public List<AppealDocuments> getAppealDocuments() { return
-     * appealDocuments; } public void setAppealDocuments(final
-     * List<AppealDocuments> appealDocuments) { this.appealDocuments =
-     * appealDocuments; }
-     */
+    public List<AppealDocuments> getAppealDocuments() {
+        return appealDocuments;
+    }
+
+    public void setAppealDocuments(final List<AppealDocuments> appealDocuments) {
+        this.appealDocuments = appealDocuments;
+    }
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();

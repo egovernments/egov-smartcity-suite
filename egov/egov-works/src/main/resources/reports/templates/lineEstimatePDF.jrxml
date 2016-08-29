@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-04-26T18:25:36 -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-08-24T12:21:07 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lineEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e48ceff3-3e96-4152-8bcd-78fa1c9fed2b">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -64,7 +63,7 @@
 	<parameter name="function" class="java.lang.String"/>
 	<parameter name="account" class="java.lang.String"/>
 	<parameter name="modeOfAllotment" class="java.lang.String"/>
-	<parameter name="typeOfSlum" class="java.lang.String"/>
+	<parameter name="workCategory" class="java.lang.String"/>
 	<parameter name="beneficiary" class="java.lang.Boolean"/>
 	<parameter name="totalAmount" class="java.math.BigDecimal"/>
 	<parameter name="totalAmountWords" class="java.lang.String"/>
@@ -212,7 +211,7 @@
 				<textElement textAlignment="Left">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Slum : "+$P{typeOfSlum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Work category : "+$P{workCategory}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="130" y="225" width="410" height="20" uuid="36d1dfd3-c830-406c-a10b-b6e925ac3461"/>

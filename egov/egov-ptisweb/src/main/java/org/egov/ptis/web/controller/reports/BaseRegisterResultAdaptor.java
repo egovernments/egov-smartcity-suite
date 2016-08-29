@@ -73,6 +73,9 @@ public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterRes
         jsonObject.addProperty("arrearEduCess", (null != baseRegisterResultObj.getArrearEduCess() ? baseRegisterResultObj.getArrearEduCess().toString() : ""));
         jsonObject.addProperty("arrearTotal", (null != baseRegisterResultObj.getArrearTotal() ? baseRegisterResultObj.getArrearTotal().toString() : ""));
         jsonObject.addProperty("arrearPenaltyFines",(null != baseRegisterResultObj.getArrearPenaltyFines() ? baseRegisterResultObj.getArrearPenaltyFines().toString() : ""));
+        jsonObject.addProperty("arrearColl", (null != baseRegisterResultObj.getArrearColl() ? baseRegisterResultObj.getArrearColl().toString() : ""));
+        jsonObject.addProperty("currentColl", (null != baseRegisterResultObj.getCurrentColl() ? baseRegisterResultObj.getCurrentColl().toString() : ""));
+        jsonObject.addProperty("totalColl", (null != baseRegisterResultObj.getTotalColl() ? baseRegisterResultObj.getTotalColl().toString() : ""));
         jsonObject.addProperty("propertyUsage",(null != baseRegisterResultObj.getPropertyUsage()) ? baseRegisterResultObj.getPropertyUsage().toString() : "");
         jsonObject.addProperty("classification",(null != baseRegisterResultObj.getClassificationOfBuilding()) ? baseRegisterResultObj.getClassificationOfBuilding().toString() : "");
         jsonObject.addProperty("area", (null != baseRegisterResultObj.getPlinthArea()) ? baseRegisterResultObj

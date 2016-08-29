@@ -76,7 +76,6 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
-import org.egov.works.lineestimate.entity.enums.TypeOfSlum;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.models.masters.NatureOfWork;
 import org.hibernate.validator.constraints.Length;
@@ -172,9 +171,6 @@ public class LineEstimate extends StateAware {
 
     @Transient
     private String approvalComent;
-
-    @Enumerated(EnumType.STRING)
-    private TypeOfSlum typeOfSlum;
 
     @Enumerated(EnumType.STRING)
     private Beneficiary beneficiary;
@@ -388,14 +384,6 @@ public class LineEstimate extends StateAware {
 
     public void setAdminSanctionBy(final User adminSanctionBy) {
         this.adminSanctionBy = adminSanctionBy;
-    }
-
-    public TypeOfSlum getTypeOfSlum() {
-        return typeOfSlum;
-    }
-
-    public void setTypeOfSlum(final TypeOfSlum typeOfSlum) {
-        this.typeOfSlum = typeOfSlum;
     }
 
     public Beneficiary getBeneficiary() {

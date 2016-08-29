@@ -47,7 +47,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,8 +68,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class UpdateHoardingController extends HoardingControllerSupport {
 	
    @Autowired
-   private ResourceBundleMessageSource messageSource;	
+   @Qualifier("messageSource")
+   private MessageSource messageSource;
+
    private   WorkflowContainer workFlowContainer=null ;
+
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
         return advertisementPermitDetailService.findBy(Long.valueOf(id));

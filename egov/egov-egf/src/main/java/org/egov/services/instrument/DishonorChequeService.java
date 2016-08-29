@@ -58,6 +58,14 @@ public class DishonorChequeService extends PersistenceService<DishonorCheque, Lo
     private EisUtilService eisService;
     private FinancialIntegrationService financialIntegrationService;
 
+    public DishonorChequeService() {
+        super(DishonorCheque.class);
+    }
+
+    public DishonorChequeService(Class<DishonorCheque> type) {
+        super(type);
+    }
+
     public DishonorCheque approve(final DishonorCheque dishonorChq, final String workFlowAction, final String approverComments)
     {
         startWorkflow(dishonorChq, workFlowAction, approverComments);

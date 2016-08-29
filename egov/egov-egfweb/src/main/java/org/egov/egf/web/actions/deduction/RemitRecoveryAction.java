@@ -45,7 +45,6 @@ package org.egov.egf.web.actions.deduction;
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.opensymphony.xwork2.validator.annotations.Validation;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
@@ -65,13 +64,13 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.BankAccountService;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.payment.BasePaymentAction;
-import org.egov.egf.web.actions.voucher.CommonAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -97,6 +96,7 @@ import org.egov.model.voucher.WorkflowBean;
 import org.egov.payment.services.PaymentActionHelper;
 import org.egov.pims.commons.Designation;
 import org.egov.services.deduction.RemitRecoveryService;
+import org.egov.services.masters.BankService;
 import org.egov.services.payment.PaymentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
@@ -142,8 +142,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private RemitRecoveryService remitRecoveryService;
     private VoucherService voucherService;
     private List<RemittanceBean> listRemitBean;
+    @Autowired
+    @Qualifier("remittanceRecoveryService")
     private RecoveryService recoveryService;
-    private CommonAction common;
     private Map<String, String> modeOfCollectionMap = new HashMap<String, String>();
     private PaymentService paymentService;
     private Paymentheader paymentheader = new Paymentheader();
@@ -188,6 +189,14 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private ChartOfAccounts chartOfAccounts;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    @Qualifier("bankService")
+    private BankService bankService;
+
+    @Autowired
+    @Qualifier("bankAccountService")
+    private BankAccountService bankAccountService;
 
     public BigDecimal getBalance() {
         return balance;
@@ -360,7 +369,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     /**
      *
-     * @param vh
      *
      * 1.Creates one EgRemittance with paymentvoucher is set 2.updates every EgRemittanceGldtl for selected Bills 3.Creates
      * EgRemittanceDetail per selected Bill
@@ -774,7 +782,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     /**
      * @param remitDtl
-     * @param remit
      * @return
      */
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
@@ -820,10 +827,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     }
 
     private void loadBankBranchForFundAndType() {
-        common.setFundId(voucherHeader.getFundId().getId());
-        common.setTypeOfAccount("RECEIPTS_PAYMENTS,PAYMENTS");
-        common.ajaxLoadBanksByFundAndType();
-        addDropdownData("bankList", common.getBankBranchList());
+        addDropdownData("bankList", bankService.getBankByFundAndType(voucherHeader.getFundId().getId(), "RECEIPTS_PAYMENTS,PAYMENTS"));
     }
 
     private void loadBankAccountNumberForFundAndType()
@@ -833,21 +837,16 @@ public class RemitRecoveryAction extends BasePaymentAction {
         if (paymentheader != null && paymentheader.getBankaccount() != null)
         {
             bankaccount = paymentheader.getBankaccount();
-            common.setBranchId(bankaccount.getBankbranch().getId());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         } else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
         {
             bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
                     Integer.valueOf(commonBean.getAccountNumberId()));
-            common.setBranchId(bankaccount.getBankbranch().getId());
-            common.setBankId(bankaccount.getBankbranch().getBank().getId());
         }
-        if (common.getBranchId() != null)
+        if (bankaccount.getBankbranch().getId() != null)
         {
-            common.setTypeOfAccount("RECEIPTS_PAYMENTS,PAYMENTS");
-            common.ajaxLoadAccNumAndType();
-            addDropdownData("accNumList", common.getAccNumList());
+            addDropdownData("accNumList", bankAccountService.getBankAccounts(voucherHeader.getFundId().getId(), bankaccount.getBankbranch().getId(),
+                    bankaccount.getBankbranch().getBank().getId(), "RECEIPTS_PAYMENTS,PAYMENTS"));
         } else
             addDropdownData("accNumList", Collections.EMPTY_LIST);
     }
@@ -955,14 +954,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     public void setListRemitBean(final List<RemittanceBean> listRemitBean) {
         this.listRemitBean = listRemitBean;
-    }
-
-    public void setRecoveryService(final RecoveryService recoveryService) {
-        this.recoveryService = recoveryService;
-    }
-
-    public void setCommon(final CommonAction common) {
-        this.common = common;
     }
 
     public Paymentheader getPaymentheader() {

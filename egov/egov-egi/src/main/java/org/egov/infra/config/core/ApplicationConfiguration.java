@@ -42,6 +42,8 @@ package org.egov.infra.config.core;
 
 import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.jasper.JasperReportService;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +52,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -104,6 +107,16 @@ public class ApplicationConfiguration {
         if (!applicationProperties.devMode())
             cities.remove("public");
         return cities;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean entityValidator() {
+        return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
+    public ReportService reportService() {
+        return new JasperReportService(10,30);
     }
 
 }

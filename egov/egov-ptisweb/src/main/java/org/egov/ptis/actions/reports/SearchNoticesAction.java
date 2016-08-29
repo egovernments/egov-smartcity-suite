@@ -69,10 +69,10 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -96,8 +96,8 @@ import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.notice.PtNotice;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -144,7 +144,7 @@ public class SearchNoticesAction extends SearchFormAction {
     private InputStream fileStream;
     private Long contentLength;
     private String partNo;
-    
+
     @Autowired
     private PropertyTypeMasterDAO propertyTypeMasterDAO;
     @Autowired
@@ -152,6 +152,8 @@ public class SearchNoticesAction extends SearchFormAction {
     protected FileStoreService fileStoreService;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private NoticeService noticeService;
     private String municipal;
     private String district;
     private String reportHeader;
@@ -228,7 +230,7 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     @SkipValidation
-    @Action(value = "/searchNotices-citizen")
+    @Actions({ @Action(value = "/searchNotices-citizen"), @Action(value = "/public/searchNotices-citizen") })
     public String citizen() {
         return NEW;
     }
@@ -239,7 +241,8 @@ public class SearchNoticesAction extends SearchFormAction {
      */
     @SkipValidation
     @ValidationErrorPage(value = NEW)
-    @Action(value = "/searchNotices-citizenSearch")
+    @Actions({ @Action(value = "/searchNotices-citizenSearch"),
+            @Action(value = "/public/searchNotices-citizenSearch") })
     public String searchNotice() {
 
         if (!indexNumber.isEmpty()) {
@@ -255,15 +258,8 @@ public class SearchNoticesAction extends SearchFormAction {
     }
 
     private List<CitizenMutationInfo> getMutationsList(String indexNumber) {
-        final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
-        if (StringUtils.isNotBlank(indexNumber))
-            queryStr.append(" where bp.upicNo=:assessmentNo ");
-        queryStr.append(" order by mt.mutationDate desc ");
-        final Query query = persistenceService.getSession().createQuery(queryStr.toString());
-        if (StringUtils.isNotBlank(indexNumber))
-            query.setString("assessmentNo", indexNumber);
-        List<PropertyMutation> mutations = query.list();
+
+        List<PropertyMutation> mutations = noticeService.getListofMutations(indexNumber);
         List<CitizenMutationInfo> citizenMutationInfo = new LinkedList<CitizenMutationInfo>();
         for (PropertyMutation mt : mutations) {
             CitizenMutationInfo citizenMutationBean = new CitizenMutationInfo();
@@ -274,31 +270,13 @@ public class SearchNoticesAction extends SearchFormAction {
             citizenMutationBean.setMutationFee(mt.getMutationFee() != null ? mt.getMutationFee() : BigDecimal.ZERO);
             citizenMutationBean.setReceiptNo(mt.getReceiptNum() != null ? mt.getReceiptNum() : "");
             citizenMutationBean.setStatus(mt.getState().getValue());
-            citizenMutationBean.setNotice(getNoticeByApplicationNo(mt.getApplicationNo()));
+            citizenMutationBean.setNotice(noticeService.getNoticeByApplicationNo(mt.getApplicationNo()));
             citizenMutationBean.setAddress(mt.getBasicProperty().getAddress().toString());
             citizenMutationInfo.add(citizenMutationBean);
         }
 
         return citizenMutationInfo;
 
-    }
-
-    private String getNoticeByApplicationNo(String applicationNo) {
-        final StringBuilder queryStr = new StringBuilder(500);
-        String noticeNum = "";
-        queryStr.append("select notice.noticeNo from PtNotice notice left join notice.basicProperty bp , PropertyMutation mt ");
-        queryStr.append(" where notice.applicationNumber=:applicationNo");
-        queryStr.append(" and notice.id = ( select max(id) from PtNotice where  applicationNumber = notice.applicationNumber and basicProperty = mt.basicProperty)");
-        final Query query = persistenceService.getSession().createQuery(queryStr.toString());
-        if (StringUtils.isNotBlank(applicationNo))
-            query.setString("applicationNo", applicationNo);
-        List<String> notices = query.list();
-        if (notices.size() != 0) {
-            noticeNum = (String) query.list().get(0);
-
-        } else
-            noticeNum = "";
-        return noticeNum;
     }
 
     /**
@@ -424,7 +402,7 @@ public class SearchNoticesAction extends SearchFormAction {
      * @throws IOException
      */
     @SkipValidation
-    @Action(value = "/searchNotices-showNotice")
+    @Actions({ @Action(value = "/searchNotices-showNotice"), @Action(value = "/public/searchNotices-showNotice") })
     public String showNotice() throws IOException {
         final PtNotice ptNotice = (PtNotice) getPersistenceService().find("from PtNotice notice where noticeNo=?",
                 noticeNumber);
@@ -1049,5 +1027,4 @@ public class SearchNoticesAction extends SearchFormAction {
         this.mutationList = mutationList;
     }
 
-   
 }

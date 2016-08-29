@@ -97,7 +97,9 @@ function merge()
 			'connectionType': $("#connectionType").val(),
 			'consumerCode': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
-			'assessmentNumber': $("#assessmentNumber").val()
+			'assessmentNumber': $("#assessmentNumber").val(),
+			'start':0,
+			'length':4000
 		};
 	
 	window.open("/wtms/report/generateBill/search/mergeAndDownload"+obj_to_query(params), "_self");
@@ -126,7 +128,9 @@ var params={
 			'connectionType': $("#connectionType").val(),
 			'consumerCode': $("#consumerCode").val(),
 			'houseNumber': $("#houseNumber").val(),
-			'assessmentNumber': $("#assessmentNumber").val()
+			'assessmentNumber': $("#assessmentNumber").val(),
+			'start':0,
+			'length':4000
 		};
 window.open("/wtms/report/generateBill/search/zipAndDownload"+obj_to_query(params), "_self");
 	
@@ -155,6 +159,8 @@ function loadingReport()
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 				"autoWidth": false,
 				"bDestroy": true,
+				"processing": true,
+		        "serverSide": true,
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
 					"aButtons" : [ 
@@ -182,7 +188,7 @@ function loadingReport()
 				ajax : {
 					url : "/wtms/report/generateBill/search/result",
 					dataSrc:function(d){
-						if(d.recordsCount>1000)
+						if(d.recordsCount>4000)
 						{
 							$('#warning-msg').removeClass('hide');
 							$('#generateBill-table_wrapper').addClass('hide');
@@ -205,7 +211,14 @@ function loadingReport()
 						'assessmentNumber': assessmentNumber
 					}
 				},
-				"columns" : [{"sTitle" : "S.no", },
+				"columns" : [
+				              {
+				            	  "sTitle" : "S.no",
+				            	  "render": function ( data, type, full, meta ) {
+				            		  
+								      return oTable.fnPagingInfo().iStart+meta.row+1;
+								    }
+				              },
 							  { "data" : "hscNo" , 
 								"title": "H.S.C NO",
 								"render": function ( data, type, full, meta ) {
@@ -242,17 +255,20 @@ function loadingReport()
 					            "fnInitComplete": function() {
 					            	if(oDataTable){ oDataTable.fnSort( [ [7,'desc'] , [3,'asc'] ] ); }
 					            },
-					            "fnDrawCallback": function ( oSettings ) {
-					                /* Need to redo the counters if filtered or sorted */
+					            /*"fnDrawCallback": function ( oSettings ) {
+					            	
+					            	console.log('oSettings', oSettings);
+					            	
+					                 //Need to redo the counters if filtered or sorted 
 					            	if ( oSettings.bSorted || oSettings.bFiltered )
 					                {
-					                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
+					                    for ( var i=oSettings._iDisplayStart, iLen=(oSettings._iDisplayStart+oSettings.aiDisplay.length) ; i<iLen ; i++ )
 					                    {
-					                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
+					                        $('td:eq(0)', oSettings.aoData[oSettings.aiDisplay[i]].nTr ).html( i+1 );
 					                    }
 					                }
 					               
-					            },
+					            },*/
 					            
 								"aoColumnDefs" : [ {
 								

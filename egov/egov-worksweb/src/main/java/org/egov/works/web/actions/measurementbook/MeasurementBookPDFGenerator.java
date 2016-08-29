@@ -65,6 +65,7 @@ import org.egov.works.services.MeasurementBookService;
 import org.egov.works.services.WorkOrderService;
 import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.OutputStream;
 import java.text.DecimalFormat;
@@ -77,7 +78,9 @@ import java.util.Map;
 
 public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     private static final Logger logger = Logger.getLogger(MeasurementBookPDFGenerator.class);
-    private PersistenceService persistenceService = new PersistenceService();
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     private MeasurementBookService measurementBookService;
     private WorkOrderService workOrderService;
     public static final String MEASUREMENTBOOK_PDF_ERROR = "measurementbook.pdf.error";

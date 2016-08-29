@@ -66,6 +66,14 @@ public class LoanGrantService extends PersistenceService {
 
     final static Logger LOGGER = Logger.getLogger(LoanGrantService.class);
 
+    public LoanGrantService() {
+        super(null);
+    }
+
+    public LoanGrantService(Class type) {
+        super(type);
+    }
+
     @SuppressWarnings("unchecked")
     public List<Object> schemeUtilizationBy(final Integer schemeId, final Integer subSchemeId, final Date fromDate,
             final Date toDate,

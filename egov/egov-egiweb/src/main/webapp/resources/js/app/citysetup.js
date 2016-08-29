@@ -114,5 +114,21 @@ $(document).ready(function(){
 		  currenttabidx=$(this).data('tabidx');
 	});
 	
+	jQuery('form').validate({
+        ignore: ".ignore",
+        invalidHandler: function(e, validator){
+            if(validator.errorList.length)
+            	$('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+        }
+    });
+	
+	$('#submitform').click(function(e){
+		if($('form').valid()){
+			
+		}else{
+			e.preventDefault();
+		}
+	});
+	
 });
 

@@ -189,7 +189,7 @@
 			<groupId>com.jgeppert.struts2.jquery</groupId>
 			<artifactId>struts2-jquery-plugin</artifactId>
 		</dependency>
-				
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -296,8 +296,8 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 		</dependency>
-		
-		<!-- Jasper Report Compiler Dep 
+
+		<!-- Jasper Report Compiler Dep
        	<dependency>
 			<groupId>com.alexnederlof</groupId>
 			<artifactId>jasperreports-plugin</artifactId>
@@ -308,7 +308,7 @@
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
 		</dependency>
-		
+
 		<!-- RESTFUL WEBSERVICE START -->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>

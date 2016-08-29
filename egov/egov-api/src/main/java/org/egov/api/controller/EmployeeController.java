@@ -48,23 +48,18 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintSearchRequest;
 import org.egov.api.model.ForwardDetails;
-import org.egov.api.model.InboxItem;
 import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.service.ComplaintService;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.SearchResult;
 import org.egov.search.domain.Sort;
@@ -77,18 +72,15 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -102,44 +94,39 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.ApplicationConstant.N;
+import static org.egov.infra.utils.ApplicationConstant.Y;
 import static org.egov.infra.workflow.entity.StateAware.byCreatedDate;
-import static org.egov.infra.workflow.inbox.InboxRenderService.RENDER_Y;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1.0")
 public class EmployeeController extends ApiController {
 
     private static final Logger LOGGER = Logger.getLogger(EmployeeController.class);
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+    public static final String EGOV_API_ERROR = "EGOV-API ERROR ";
 
     @Autowired
     private TokenStore tokenStore;
 
     @Autowired
-    private PersistenceService<State, Long> statePersistenceService;
+    @Qualifier("entityQueryService")
+    private PersistenceService entityQueryService;
 
     @Autowired
-    private PersistenceService<WorkflowTypes, Long> workflowTypePersistenceService;
+    private WorkflowTypeService workflowTypeService;
 
     @Autowired
     private PositionMasterService posMasterService;
 
-    @Autowired
-    private EmployeeService employeeService;
-    
     @Autowired
     private SearchService searchService;
 
@@ -148,9 +135,7 @@ public class EmployeeController extends ApiController {
 
     @Autowired
     InboxRenderServiceDeligate<StateAware> inboxRenderServiceDelegate;
-    @Autowired
-    private ComplaintService complaintService;
-    
+
     @Autowired
     private EISServeable eisService;
 
@@ -158,13 +143,13 @@ public class EmployeeController extends ApiController {
     public ResponseEntity<String> getWorkFlowTypesWithItemsCount(final HttpServletRequest request) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
-            final List<Long> ownerpostitions = new ArrayList<Long>();
+            final List<Long> ownerpostitions = new ArrayList<>();
             ownerpostitions.add(posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId());
 
             return res.setDataAdapter(new UserAdapter())
                     .success(getWorkflowTypesWithCount(securityUtils.getCurrentUser().getId(), ownerpostitions));
         } catch (final Exception ex) {
-            LOGGER.error("EGOV-API ERROR ", ex);
+            LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
         }
     }
@@ -174,13 +159,13 @@ public class EmployeeController extends ApiController {
             @PathVariable final int resultsFrom, @PathVariable final int resultsTo) {
         final ApiResponse res = ApiResponse.newInstance();
         try {
-            final List<Long> ownerpostitions = new ArrayList<Long>();
+            final List<Long> ownerpostitions = new ArrayList<>();
             ownerpostitions.add(posMasterService.getPositionByUserId(securityUtils.getCurrentUser().getId()).getId());
             return res.setDataAdapter(new UserAdapter())
                     .success(createInboxData(getWorkflowItemsByUserAndWFType(securityUtils.getCurrentUser().getId(),
                             ownerpostitions, workFlowType, resultsFrom, resultsTo)));
         } catch (final Exception ex) {
-            LOGGER.error("EGOV-API ERROR ", ex);
+            LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
         }
     }
@@ -208,7 +193,7 @@ public class EmployeeController extends ApiController {
         	
         	boolean hasNextPage = total > pageno * limit;
         	
-        	ArrayList<Document> inboxItems=new ArrayList<Document>();
+        	ArrayList<Document> inboxItems=new ArrayList<>();
         	
         	for(Document document : searchResult.getDocuments())
         	{
@@ -236,7 +221,7 @@ public class EmployeeController extends ApiController {
             return getResponseHandler().success(jsonResp);
             
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
+        	LOGGER.error(EGOV_API_ERROR, e);
 			return getResponseHandler().error(getMessage("server.error"));
         }
         
@@ -259,7 +244,7 @@ public class EmployeeController extends ApiController {
             tokenStore.removeAccessToken(token);
             return ApiResponse.newInstance().success("", getMessage("msg.logout.success"));
         } catch (final Exception ex) {
-            LOGGER.error("EGOV-API ERROR ", ex);
+            LOGGER.error(EGOV_API_ERROR, ex);
             return ApiResponse.newInstance().error(getMessage("server.error"));
         }
     }
@@ -274,12 +259,12 @@ public class EmployeeController extends ApiController {
         	if(departmentId!=null && designationId!=null)
         	{
         		final Set<User> users = new HashSet<>();
-                eisService.getUsersByDeptAndDesig(departmentId, designationId, new Date()).stream().forEach(user -> {
+                eisService.getUsersByDeptAndDesig(departmentId, designationId, new Date()).stream().forEach(user ->
                     user.getRoles().stream().forEach(role -> {
                         if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
                             users.add(user);
-                    });
-                });
+                    })
+                );
                 forwardDetails.setUsers(users);
         	}
         	else if(departmentId!=null)
@@ -290,7 +275,7 @@ public class EmployeeController extends ApiController {
             return getResponseHandler().setDataAdapter(new ForwardDetailsAdapter()).success(forwardDetails);
             
         } catch (final Exception e) {
-        	LOGGER.error("EGOV-API ERROR ", e);
+        	LOGGER.error(EGOV_API_ERROR, e);
 			return getResponseHandler().error(getMessage("server.error"));
         }
     }
@@ -309,7 +294,7 @@ public class EmployeeController extends ApiController {
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
             final int resultsFrom, final int resultsTo) throws HibernateException, ClassNotFoundException {
-        return statePersistenceService.getSession().createCriteria(Class.forName(getWorkflowType(workFlowType).getTypeFQN()))
+        return entityQueryService.getSession().createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFirstResult(resultsFrom)
                 .setMaxResults(resultsTo)
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
@@ -327,8 +312,8 @@ public class EmployeeController extends ApiController {
     @SuppressWarnings("unchecked")
     public Number getWorkflowItemsCountByWFType(final Long userId, final List<Long> owners, final String workFlowType)
             throws HibernateException, ClassNotFoundException {
-        return (Number) statePersistenceService.getSession()
-                .createCriteria(Class.forName(getWorkflowType(workFlowType).getTypeFQN()))
+        return (Number) entityQueryService.getSession()
+                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
                 .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
                 .setProjection(Projections.rowCount())
@@ -343,8 +328,8 @@ public class EmployeeController extends ApiController {
     public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions)
             throws HibernateException, ClassNotFoundException {
 
-        final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<HashMap<String, Object>>();
-        final Query query = workflowTypePersistenceService.getSession().createQuery(
+        final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<>();
+        final Query query = entityQueryService.getSession().createQuery(
                 "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and createdBy.id != :userId group by type");
         query.setParameterList("ownerPositions", ownerPostitions);
         query.setParameter("statusEnded", StateStatus.ENDED);
@@ -354,25 +339,15 @@ public class EmployeeController extends ApiController {
         for (final Object[] rowObj : result) {
             final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, String.valueOf(rowObj[0]));
             if (wftitemscount > 0) {
-                final HashMap<String, Object> workFlowType = new HashMap<String, Object>();
-                WorkflowTypes workFlowTypeObj=getWorkflowType(String.valueOf(rowObj[0]));
+                final HashMap<String, Object> workFlowType = new HashMap<>();
+                WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(String.valueOf(rowObj[0]));
                 workFlowType.put("workflowtype", rowObj[0]);
                 workFlowType.put("inboxlistcount", wftitemscount);
                 workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
-                workFlowType.put("workflowgroupYN", workFlowTypeObj.getGroupYN());
+                workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
                 workFlowTypesWithItemsCount.add(workFlowType);
             }
         }
         return workFlowTypesWithItemsCount;
     }
-
-    @Transactional(readOnly = true)
-    public WorkflowTypes getWorkflowType(final String wfType) {
-        final WorkflowTypes workflowType = (WorkflowTypes) workflowTypePersistenceService.getSession()
-                .createCriteria(WorkflowTypes.class)
-                .add(Restrictions.eq("renderYN", RENDER_Y)).add(Restrictions.eq("type", wfType))
-                .setReadOnly(true).uniqueResult();
-        return workflowType;
-    }
-
 }

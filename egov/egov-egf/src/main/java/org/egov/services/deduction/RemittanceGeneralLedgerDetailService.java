@@ -45,7 +45,11 @@ import org.egov.infstr.services.PersistenceService;
 public class RemittanceGeneralLedgerDetailService extends PersistenceService<EgRemittanceGldtl, Long>
 {
     
-    public RemittanceGeneralLedgerDetailService(final Class<EgRemittanceGldtl> egRemittanceGldtl) {
-        this.type = egRemittanceGldtl;
+    public RemittanceGeneralLedgerDetailService() {
+        super(EgRemittanceGldtl.class);
+    }
+
+    public RemittanceGeneralLedgerDetailService(Class<EgRemittanceGldtl> type) {
+        super(type);
     }
 }

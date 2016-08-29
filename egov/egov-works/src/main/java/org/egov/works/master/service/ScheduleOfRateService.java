@@ -57,6 +57,14 @@ public class ScheduleOfRateService extends PersistenceService<ScheduleOfRate, Lo
     @PersistenceContext
     private EntityManager entityManager;
 
+    public ScheduleOfRateService() {
+        super(ScheduleOfRate.class);
+    }
+
+    public ScheduleOfRateService(Class<ScheduleOfRate> type) {
+        super(type);
+    }
+
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {
         final ScheduleOfRate scheduleOfRate = entityManager.find(ScheduleOfRate.class,
                 scheduleOfRateId);

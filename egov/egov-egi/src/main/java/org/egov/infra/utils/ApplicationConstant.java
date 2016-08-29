@@ -68,4 +68,9 @@ public final class ApplicationConstant {
 
     public static final String CDN_ATTRIB_NAME = "cdn";
     public static final String USERID_KEY = "userid";
+
+    public static final Character Y = Character.valueOf('Y');
+    public static final Character N = Character.valueOf('N');
+
+    private ApplicationConstant(){}
 }

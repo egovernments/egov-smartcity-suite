@@ -39,16 +39,6 @@
  */
 package org.egov.wtms.utils;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
@@ -88,10 +78,20 @@ import org.egov.wtms.application.service.WaterDemandConnectionService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
 
 @Service
 public class WaterTaxUtils {
@@ -134,7 +134,8 @@ public class WaterTaxUtils {
     private MessagingService messagingService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private UserService userService;
@@ -285,7 +286,7 @@ public class WaterTaxUtils {
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
             final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code, new String[] { applicantName, approvalComment,
+        final String smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName, approvalComment,
                 getMunicipalityName() }, locale);
         return smsMsg;
     }
@@ -293,7 +294,7 @@ public class WaterTaxUtils {
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
             final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String smsMsg = messageSource.getMessage(code,
+        final String smsMsg = wcmsMessageSource.getMessage(code,
                 new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
                 waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() }, locale);
         return smsMsg;
@@ -301,7 +302,7 @@ public class WaterTaxUtils {
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
         final Locale locale = LocaleContextHolder.getLocale();
-        final String emailSubject = messageSource.getMessage(code, new String[] { applicationNumber }, locale);
+        final String emailSubject = wcmsMessageSource.getMessage(code, new String[] { applicationNumber }, locale);
         return emailSubject;
     }
 

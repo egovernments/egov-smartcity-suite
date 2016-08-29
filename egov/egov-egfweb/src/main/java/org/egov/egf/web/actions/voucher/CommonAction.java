@@ -160,8 +160,14 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 })
 public class CommonAction extends BaseFormAction {
 
+   
     private static final Logger LOGGER = Logger.getLogger(CommonAction.class);
     private static final long serialVersionUID = 1L;
+    private static final String RTGSNUMBERSQUERY = "SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, "
+            + "Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')"+
+            " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null "+
+            "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
+            + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +"GROUP BY ih.transactionNumber,ih.id order by ih.id desc";
     private Integer fundId;
     private Integer schemeId;
     private Integer department;
@@ -727,18 +733,7 @@ public class CommonAction extends BaseFormAction {
             final String date1 = sdf.format(date);
 
             resultList = getPersistenceService()
-                    .findAllBy(
-                            ""
-                                    +
-                                    "SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph "
-                                    +
-                                    "WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')"
-                                    +
-                                    " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null "
-                                    +
-                                    "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
-                                    + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +
-                                    "GROUP BY ih.transactionNumber,ih.id", bankaccountId);
+                    .findAllBy(RTGSNUMBERSQUERY, bankaccountId);
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
                 ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);

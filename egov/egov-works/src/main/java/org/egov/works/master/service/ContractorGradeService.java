@@ -60,6 +60,15 @@ public class ContractorGradeService extends PersistenceService<ContractorGrade, 
     @PersistenceContext
     private EntityManager entityManager;
 
+    public ContractorGradeService() {
+        super(ContractorGrade.class);
+    }
+
+    public ContractorGradeService(Class<ContractorGrade> type) {
+        super(type);
+    }
+
+
     public ContractorGrade getContractorGradeById(final Long contractorGradeId) {
         final ContractorGrade contractorGrade = entityManager.find(ContractorGrade.class, contractorGradeId);
         return contractorGrade;

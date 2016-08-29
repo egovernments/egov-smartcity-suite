@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -53,9 +51,12 @@ import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,7 +66,8 @@ public class CloserConnectionService {
     private WaterConnectionDetailsRepository waterConnectionDetailsRepository;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource wcmsMessageSource;
 
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
@@ -95,10 +97,10 @@ public class CloserConnectionService {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(propertyID,
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
         if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.HOLDING))
-            validationMessage = messageSource.getMessage("err.validate.primary.connection.holding", new String[] {
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.holding", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
-            validationMessage = messageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
+            validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected", new String[] {
                     parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
         else if (null != assessmentDetails.getErrorDetails()
                 && null != assessmentDetails.getErrorDetails().getErrorCode())
@@ -107,13 +109,13 @@ public class CloserConnectionService {
                 && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
             if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                validationMessage = messageSource.getMessage("err.validate.property.taxdue", new String[] {
+                validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue", new String[] {
                         assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(), "Closure" }, null);
         } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
             final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
-                validationMessage = messageSource
+                validationMessage = wcmsMessageSource
                 .getMessage("err.closure.connection.watertaxdue", null, null);
             /*
              * if (parentWaterConnectionDetail.getConnection().getId() != null) if
@@ -121,7 +123,7 @@ public class CloserConnectionService {
              * messageSource.getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
              */
         } else if (null != inWorkflow)
-            validationMessage = messageSource.getMessage(
+            validationMessage = wcmsMessageSource.getMessage(
                     "err.validate.closeconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() }, null);

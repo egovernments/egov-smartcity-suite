@@ -38,6 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-08-24T12:19:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="workProgressRegisterPdf" pageWidth="1684" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dde57000-7ab1-4a8b-9792-f74605077701">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="0.9090909090909091"/>
@@ -86,7 +88,7 @@
 	<field name="location" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="typeOfSlum" class="java.lang.String">
+	<field name="workCategory" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="beneficiary" class="java.lang.String">
@@ -235,7 +237,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Type Of Slum]]></text>
+				<text><![CDATA[Work category]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="180" y="0" width="67" height="47" uuid="a6d9490a-17ff-4574-bfd3-8d2ca23db2bf"/>
@@ -720,7 +722,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{typeOfSlum}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{workCategory}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="180" y="0" width="67" height="40" uuid="c96f7f38-7232-4163-821e-249589f75636"/>

@@ -55,13 +55,13 @@ import org.egov.egf.masters.model.LoanGrantReceiptDetail;
 import org.egov.egf.masters.model.SchemeBankaccount;
 import org.egov.egf.masters.model.SubSchemeProject;
 import org.egov.egf.web.actions.masters.loangrant.LoanGrantBaseAction;
-import org.egov.egf.web.actions.voucher.CommonAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.services.masters.BankService;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
@@ -91,11 +91,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -5126017690888146473L;
+
     private static final String VIEW = "view";
     private LoanGrantHeader loanGrantHeader;
     private List<LoanGrantDetail> sanctionedAmountLGDetails;
@@ -105,7 +102,6 @@ public class LoanGrantAction extends LoanGrantBaseAction {
     private List<LoanGrantBean> projectCodeList;
     private Integer bankaccount;
     private Integer bank_branch;
-    private CommonAction common;
     private String mode;
     private Map<String, String> bankBranchMap;
     private List<LoanGrantHeader> loanGrantHeaderList;
@@ -113,6 +109,10 @@ public class LoanGrantAction extends LoanGrantBaseAction {
     private static final String SANCTIONEDTYPE = "sanctioned";
     private static final String UNSANCTIONEDTYPE = "unsanctioned";
     private static final String REVISEDTYPE = "revised";
+
+    @Autowired
+    @Qualifier("bankService")
+    private BankService bankService;
 
     public LoanGrantAction() {
         super();
@@ -495,8 +495,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
     @SkipValidation
     public void loadBanks()
     {
-        common.ajaxLoadBanks();
-        addDropdownData("bankBranchList", common.getBankBranchList());
+        addDropdownData("bankBranchList", bankService.getAllBankAndBranchName(getFundId()));
     }
 
     public void setLoanGrantHeader(final LoanGrantHeader loanGrantHeader) {
@@ -535,10 +534,6 @@ public class LoanGrantAction extends LoanGrantBaseAction {
 
     public List<LoanGrantDetail> getSanctionedAmountLGDetails() {
         return sanctionedAmountLGDetails;
-    }
-
-    public void setCommon(final CommonAction common) {
-        this.common = common;
     }
 
     public List<LoanGrantBean> getProjectCodeList() {

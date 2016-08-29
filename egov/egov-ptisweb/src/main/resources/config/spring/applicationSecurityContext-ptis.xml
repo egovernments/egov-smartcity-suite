@@ -44,7 +44,7 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.springframework.org/schema/security
-	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
+	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="false">
 
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
@@ -87,8 +87,6 @@
 				<security:filter-chain pattern="/report/dailyCollection/result" filters="none" />
 				<security:filter-chain pattern="/report/currentInstDCB" filters="none" />
 				<security:filter-chain pattern="/report/currentInstDCB/result" filters="none" /> 
-				<security:filter-chain pattern="/reports/searchNotices-citizen.action" filters="none" />  
-				<security:filter-chain pattern="/reports/searchNotices-citizenSearch.action" filters="none" />   
 				<security:filter-chain pattern="/reports/ulbWiseDCBList" filters="none" />  
 				
 				<security:filter-chain pattern="/public/**" filters="none"/>

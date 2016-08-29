@@ -47,7 +47,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.ptis.bean.ReportInfo;
-import org.egov.ptis.domain.entity.property.InstDmdCollMaterializeView;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,6 @@ public class HeadWiseDmdNdRecReportAction extends BaseFormAction {
     public String generateHeadWiseDmdColl() {
         ReportRequest reportRequest = null;
         ReportInfo reportInfo = new ReportInfo();
-        getPersistenceService().setType(InstDmdCollMaterializeView.class);
 
         currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
 

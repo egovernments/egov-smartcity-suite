@@ -47,7 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class EgPartyTypeService extends PersistenceService<EgPartytype, Integer> {
     
-    public EgPartyTypeService(final Class<EgPartytype> partyType) {
-        this.type = partyType;
+    public EgPartyTypeService() {
+        super(EgPartytype.class);
+    }
+
+    public EgPartyTypeService(Class<EgPartytype> type) {
+        super(type);
     }
 }

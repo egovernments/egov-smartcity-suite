@@ -102,7 +102,10 @@ public class ContraBTCAction extends BaseVoucherAction {
     private InstrumentService instrumentService;
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving Data";
     private static final String TRANSACTION_FAILED = "Transaction failed";
-    private PersistenceService<ContraJournalVoucher, Long> contrajournalService;
+
+    @Autowired
+    @Qualifier("contraJournalVoucherService")
+    private PersistenceService<ContraJournalVoucher, Long> contraJournalVoucherService;
     private static final Logger LOGGER = Logger
             .getLogger(ContraBTCAction.class);
     private BigDecimal availableBalance = BigDecimal.ZERO;
@@ -413,7 +416,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                 .getAccountNumberId()));
         cjv.setFromBankAccountId(bankAccount);
         cjv.setToBankAccountId(getCashBankAccount());
-        contrajournalService.persist(cjv);
+        contraJournalVoucherService.persist(cjv);
         return cjv;
     }
 
@@ -425,11 +428,6 @@ public class ContraBTCAction extends BaseVoucherAction {
         return (Bankaccount) persistenceService.find(
                 "from Bankaccount where chartofaccounts.glcode=?", contraBean
                 .getCashInHand());
-    }
-
-    public void setContrajournalService(
-            final PersistenceService<ContraJournalVoucher, Long> contraJVService) {
-        contrajournalService = contraJVService;
     }
 
     @Action(value = "/contra/contraBTC-ajaxAvailableBalance")
@@ -642,7 +640,7 @@ public class ContraBTCAction extends BaseVoucherAction {
                 contraVoucher.setFromBankAccountId(getBank(Integer
                         .valueOf(contraBean.getAccountNumberId())));
                 contraVoucher.setInstrumentHeaderId(instrument.get(0));
-                contrajournalService.persist(contraVoucher);
+                contraJournalVoucherService.persist(contraVoucher);
                 createLedgerAndPost(oldVoucher);
                 addActionMessage(getText("transaction.success")
                         + oldVoucher.getVoucherNumber());

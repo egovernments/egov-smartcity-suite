@@ -43,7 +43,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUsage;
 
 public class BudgetUsageService extends PersistenceService<BudgetUsage, Long> {
-    public BudgetUsageService(final Class<BudgetUsage> budgetUsage) {
-        this.type = budgetUsage;
+    public BudgetUsageService() {
+        super(BudgetUsage.class);
+    }
+
+    public BudgetUsageService(final Class<BudgetUsage> type) {
+        super(type);
     }
 }
