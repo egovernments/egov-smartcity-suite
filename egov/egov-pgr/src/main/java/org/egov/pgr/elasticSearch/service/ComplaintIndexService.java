@@ -142,7 +142,7 @@ public class ComplaintIndexService {
 		complaintIndex.setEscalationLevel(0);
 		complaintIndex.setReasonForRejection("");
 		complaintIndex.setRegistered(1);
-		complaintIndex.setInProcess(0);
+		complaintIndex.setInProcess(1);
 		complaintIndex.setAddressed(0);
 		complaintIndex.setRejected(0);
 		complaintIndex.setReOpened(0);
@@ -485,6 +485,7 @@ public class ComplaintIndexService {
 			String durationRange = (searchableObject.get("durationRange") == null) ? "" : searchableObject.get("durationRange").toString();
 			String reasonForRejection = (clausesObject.get("reasonForRejection") == null) ? "" : clausesObject.get("reasonForRejection").toString();
 			int registered = (clausesObject.get("registered") == null) ? 1 : (int)clausesObject.get("registered");
+			int reOpened = (clausesObject.get("reOpened") == null) ? 0 : (int)clausesObject.get("reOpened");
 
 			complaintIndex.setComplaintPeriod(complaintPeriod);
 			complaintIndex.setComplaintDuration(complaintDuration);
@@ -534,6 +535,7 @@ public class ComplaintIndexService {
 			complaintIndex.setDurationRange(durationRange);
 			complaintIndex.setReasonForRejection(reasonForRejection);
 			complaintIndex.setRegistered(registered);
+			complaintIndex.setReOpened(reOpened);
 			if(searchableObject.get("complaintReOpenedDate") != null)
 				complaintIndex.setComplaintReOpenedDate(formatDate(searchableObject.get("complaintReOpenedDate").toString()));
 		}
@@ -565,27 +567,25 @@ public class ComplaintIndexService {
 	
 	private ComplaintIndex updateComplaintIndexStatusRelatedFields(ComplaintIndex complaintIndex){
 		if(complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.PROCESSING.toString())
-				|| complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.FORWARDED.toString())){
+				|| complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.FORWARDED.toString())
+				|| complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REGISTERED.toString())){
 			complaintIndex.setInProcess(1);
 			complaintIndex.setAddressed(0);
 			complaintIndex.setRejected(0);
-			complaintIndex.setReOpened(0);
 		}
 		if(complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.COMPLETED.toString())
 				|| complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.WITHDRAWN.toString())){
 			complaintIndex.setInProcess(0);
 			complaintIndex.setAddressed(1);
 			complaintIndex.setRejected(0);
-			complaintIndex.setReOpened(0);
 		}
 		if(complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REJECTED.toString())){
 			complaintIndex.setInProcess(0);
 			complaintIndex.setAddressed(0);
 			complaintIndex.setRejected(1);
-			complaintIndex.setReOpened(0);
 		}
 		if(complaintIndex.getStatus().getName().equalsIgnoreCase(ComplaintStatus.REOPENED.toString())){
-			complaintIndex.setInProcess(0);
+			complaintIndex.setInProcess(1);
 			complaintIndex.setAddressed(0);
 			complaintIndex.setRejected(0);
 			complaintIndex.setReOpened(1);
