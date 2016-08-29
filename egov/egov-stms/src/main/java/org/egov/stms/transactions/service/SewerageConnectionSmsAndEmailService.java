@@ -39,6 +39,37 @@
  */
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.INSPECTIONCHARGE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SENDEMAILFORSEWERAGETAX;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SENDSMSFORSEWERAGETAX;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED;
+
 import java.math.BigDecimal;
 import java.util.Locale;
 
@@ -52,7 +83,6 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.utils.SewerageTaxUtils;
-import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -80,6 +110,9 @@ public class SewerageConnectionSmsAndEmailService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     /**
      * @return this method will send SMS and Email is isSmsEnabled is true
@@ -105,10 +138,10 @@ public class SewerageConnectionSmsAndEmailService {
                 String applicantName = owner.getOwnerName();
                 if (assessmentDetails.getPrimaryEmail() != null || assessmentDetails.getPrimaryMobileNo() != null) {
 
-                    if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
+                    if (NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
                             .getApplicationType().getCode())) {
                         getSmsAndEmailForNewConnection(sewerageApplicationDetails, email, mobileNumber, applicantName);
-                    } else if (SewerageTaxConstants.CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails
+                    } else if (CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails
                             .getApplicationType().getCode())) {
                         getSmsAndEmailForChangeInClosets(sewerageApplicationDetails, email, mobileNumber, applicantName);
                     }
@@ -119,11 +152,11 @@ public class SewerageConnectionSmsAndEmailService {
                     
                     
                     if (email_id != null || mobileno != null) {
-                        if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
+                        if (NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
                                 .getApplicationType().getCode())) {
                             getSmsAndEmailForNewConnection(sewerageApplicationDetails, email_id, mobileno,
                                     applicantName);
-                        } else if (SewerageTaxConstants.CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails
+                        } else if (CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails
                                 .getApplicationType().getCode())) {
                             getSmsAndEmailForChangeInClosets(sewerageApplicationDetails, email_id, mobileno,
                                     applicantName);
@@ -151,59 +184,57 @@ public class SewerageConnectionSmsAndEmailService {
         String body = "";
         String subject = "";
 
-        if (SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(SewerageApplicationDetails
+        if (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())
-                || SewerageTaxConstants.APPLICATION_STATUS_CREATED.equalsIgnoreCase(SewerageApplicationDetails
+                || APPLICATION_STATUS_CREATED.equalsIgnoreCase(SewerageApplicationDetails
                         .getStatus().getCode())) {
             if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                 smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectioncreate.sms", SewerageApplicationDetails,
-                        applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE);
+                        applicantName, SMSEMAILTYPENEWCONNCREATE);
                 body = EmailBodyByCodeAndArgsWithType("msg.newconnectioncreate.email.body", SewerageApplicationDetails,
-                        applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE);
+                        applicantName, SMSEMAILTYPENEWCONNCREATE);
                 subject = emailSubjectforEmailByCodeAndArgs("msg.newconnectioncreate.email.subject",
                         SewerageApplicationDetails.getApplicationNumber());
             } else {
                 smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectioncreateForNoInsFee.sms",
-                        SewerageApplicationDetails, applicantName,
-                        SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE);
+                        SewerageApplicationDetails, applicantName, SMSEMAILTYPENEWCONNCREATEFORNOINSFEE);
                 body = EmailBodyByCodeAndArgsWithType("msg.newconnectioncreateForNoInsFee.email.body",
-                        SewerageApplicationDetails, applicantName,
-                        SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE);
+                        SewerageApplicationDetails, applicantName, SMSEMAILTYPENEWCONNCREATEFORNOINSFEE);
                 subject = emailSubjectforEmailByCodeAndArgs("msg.newconnectioncreateForNoInsFee.email.subject",
                         SewerageApplicationDetails.getApplicationNumber());
             }
         }
-        if (SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(SewerageApplicationDetails.getStatus()
+        if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(SewerageApplicationDetails.getStatus()
                 .getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectiondeeapproval.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE);
+                    applicantName, SMSEMAILTYPENEWCONNDEEAPPROVE);
             body = EmailBodyByCodeAndArgsWithType("msg.newconnectiondeeapproval.email.body",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPENEWCONNDEEAPPROVE);
             subject = emailSubjectforEmailByCodeAndArgs("msg.newconnectiondeeapproval.email.subject",
                     SewerageApplicationDetails.getApplicationNumber());
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectionOnDemandAndDonation.sms",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPENEWCONNFEEPAID);
             body = EmailBodyByCodeAndArgsWithType("msg.newconnectionOnDemandAndDonation.email.body",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPENEWCONNFEEPAID);
             subject = emailSubjectforEmailByCodeAndArgs("msg.newconnectionOnDemandAndDonation.email.subject",
                     SewerageApplicationDetails.getApplicationNumber());
 
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectionapproval.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE);
+                    applicantName, SMSEMAILTYPENEWCONNFINALAPPROVE);
             body = EmailBodyByCodeAndArgsWithType("msg.newconncetionapproval.email.body", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE);
+                    applicantName, SMSEMAILTYPENEWCONNFINALAPPROVE);
             subject = emailSubjectforEmailByCodeAndArgs("msg.newconncetionapprove.email.subject",
                     SewerageApplicationDetails.getApplicationNumber());
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_REJECTED.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectionRejection.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT);
+                    applicantName, SMSEMAILTYPENEWCONNREJECT);
             body = EmailBodyByCodeAndArgsWithType("msg.newconnectionrejection.email.body", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT);
+                    applicantName, SMSEMAILTYPENEWCONNREJECT);
             subject = emailSubjectforEmailByCodeAndArgs("msg.newconnectionrejection.email.subject",
                     SewerageApplicationDetails.getApplicationNumber());
         }
@@ -229,58 +260,57 @@ public class SewerageConnectionSmsAndEmailService {
         String body = "";
         String subject = "";
 
-        if (SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(SewerageApplicationDetails
+        if (APPLICATION_STATUS_COLLECTINSPECTIONFEE.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())
-                || SewerageTaxConstants.APPLICATION_STATUS_CREATED.equalsIgnoreCase(SewerageApplicationDetails
+                || APPLICATION_STATUS_CREATED.equalsIgnoreCase(SewerageApplicationDetails
                         .getStatus().getCode())) {
             if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                 smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeincloset.sms", SewerageApplicationDetails,
-                        applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN);
+                        applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN);
                 body = EmailBodyByCodeAndArgsWithType("msg.changeincloset.email.body", SewerageApplicationDetails,
-                        applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN);
+                        applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN);
                 subject = emailSubjectforEmailByCodeAndArgs("msg.changeincloset.email.subject",
                         SewerageApplicationDetails.getConnection().getShscNumber());
             } else {
                 smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeinclosetForNoInsFee.sms", SewerageApplicationDetails,
-                        applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE);
+                        applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE);
                 body = EmailBodyByCodeAndArgsWithType("msg.changeinclosetForNoInsFee.email.body",
-                        SewerageApplicationDetails, applicantName,
-                        SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE);
+                        SewerageApplicationDetails, applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE);
                 subject = emailSubjectforEmailByCodeAndArgs("msg.changeinclosetForNoInsFee.email.subject",
                         SewerageApplicationDetails.getConnection().getShscNumber());
             }
         }
-        if (SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(SewerageApplicationDetails.getStatus()
+        if (APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(SewerageApplicationDetails.getStatus()
                 .getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeinclosetdeeapproval.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE);
+                    applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE);
             body = EmailBodyByCodeAndArgsWithType("msg.changeinclosetdeeapproval.email.body",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE);
             subject = emailSubjectforEmailByCodeAndArgs("msg.changeinclosetdeeapproval.email.subject",
                     SewerageApplicationDetails.getConnection().getShscNumber());
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_FEEPAID.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeinclosetOnDemandAndDonation.sms",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID);
             body = EmailBodyByCodeAndArgsWithType("msg.changeinclosetOnDemandAndDonation.email.body",
-                    SewerageApplicationDetails, applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID);
+                    SewerageApplicationDetails, applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID);
             subject = emailSubjectforEmailByCodeAndArgs("msg.changeinclosetOnDemandAndDonation.email.subject",
                     SewerageApplicationDetails.getConnection().getShscNumber());
 
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeinclosetapproval.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE);
+                    applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE);
             body = EmailBodyByCodeAndArgsWithType("msg.changeinclosetapproval.email.body", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE);
+                    applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE);
             subject = emailSubjectforEmailByCodeAndArgs("msg.changeinclosetapproval.email.subject",
                     SewerageApplicationDetails.getConnection().getShscNumber());
-        } else if (SewerageTaxConstants.APPLICATION_STATUS_REJECTED.equalsIgnoreCase(SewerageApplicationDetails
+        } else if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
             smsMsg = SmsBodyByCodeAndArgsWithType("msg.changeinclosetRejection.sms", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT);
+                    applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT);
             body = EmailBodyByCodeAndArgsWithType("msg.changeinclosetrejection.email.body", SewerageApplicationDetails,
-                    applicantName, SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT);
+                    applicantName, SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT);
             subject = emailSubjectforEmailByCodeAndArgs("msg.changeinclosetrejection.email.subject",
                     SewerageApplicationDetails.getConnection().getShscNumber());
         }
@@ -311,48 +341,55 @@ public class SewerageConnectionSmsAndEmailService {
     public String EmailBodyByCodeAndArgsWithType(final String code,
             final SewerageApplicationDetails sewerageApplicationDetails, final String applicantName, final String type) {
         String emailBody = "";
-        if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
+        if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             String.valueOf(getInspectionFeeForSewerage(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)) {
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNDEEAPPROVE)) {
             emailBody = messageSource.getMessage(
                     code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
 
-        } else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
+        } 
+        else if(type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)){
+            emailBody = messageSource.getMessage(
+                    code,
+                    new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
+                            String.valueOf(sumOfChangeClosetSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
+                            sewerageApplicationDetails.getConnection().getShscNumber() }, null);
+        }
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName,
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        } else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE)) {
+        } else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE)) {
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
-        } else if (SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
+        } else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName },
                     null);
-        else if (SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
+        else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        else if (SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
+        else if (SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
             emailBody = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApprovalComent(), muncipalityName,
                             sewerageApplicationDetails.getApplicationNumber(),
@@ -370,9 +407,58 @@ public class SewerageConnectionSmsAndEmailService {
     public BigDecimal sumOfSewerageApplnCharges(final SewerageApplicationDetails sewerageApplicationDetails) {
         BigDecimal totalAmt = BigDecimal.ZERO;
         for (SewerageConnectionFee sewerageConnFee : sewerageApplicationDetails.getConnectionFees()) {
-            if (!(sewerageConnFee.getFeesDetail().getDescription()).equals(SewerageTaxConstants.INSPECTIONCHARGE)) {
+            if (!(sewerageConnFee.getFeesDetail().getDescription()).equals(INSPECTIONCHARGE)) {
                 totalAmt = totalAmt.add(BigDecimal.valueOf(sewerageConnFee.getAmount()));
             }
+        }
+        return totalAmt;
+    }
+    /**
+     * @param SewerageAppliationDetails
+     * @param type
+     * @return Sum Of Sewerage Application charges including only the difference with first application
+     */
+    public BigDecimal sumOfChangeClosetSewerageApplnCharges(final SewerageApplicationDetails sewerageApplicationDetails){
+        BigDecimal totalAmt=BigDecimal.ZERO;
+        
+        BigDecimal oldDonationCharge = BigDecimal.ZERO;
+        BigDecimal oldSewerageTax = BigDecimal.ZERO;
+        
+        BigDecimal currentDonationCharge=BigDecimal.ZERO;
+        BigDecimal currentSewerageTax=BigDecimal.ZERO;
+        BigDecimal currentEstimationCharges=BigDecimal.ZERO;
+        
+        BigDecimal totalDonationCharge=BigDecimal.ZERO;
+        BigDecimal totalSewerageTax=BigDecimal.ZERO;
+        
+        if (sewerageApplicationDetails.getCurrentDemand() != null) {
+            SewerageApplicationDetails oldApplicationDtl = sewerageApplicationDetailsService.findByConnection_ShscNumberAndIsActive(sewerageApplicationDetails.getConnection().getShscNumber());
+            if(oldApplicationDtl !=null){
+                for (final SewerageConnectionFee oldSewerageConnectionFee : oldApplicationDtl.getConnectionFees()) {
+                    if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(FEES_SEWERAGETAX_CODE))
+                        oldSewerageTax=oldSewerageTax.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
+                    if (oldSewerageConnectionFee.getFeesDetail().getCode().equalsIgnoreCase(FEES_DONATIONCHARGE_CODE))
+                        oldDonationCharge=oldDonationCharge.add(BigDecimal.valueOf(oldSewerageConnectionFee.getAmount()));
+                } 
+            }
+            
+            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(FEES_SEWERAGETAX_CODE)) 
+                    currentSewerageTax=currentSewerageTax.add(BigDecimal.valueOf(scf.getAmount()));
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(FEES_DONATIONCHARGE_CODE))
+                    currentDonationCharge=currentDonationCharge.add(BigDecimal.valueOf(scf.getAmount()));
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(FEES_ESTIMATIONCHARGES_CODE))
+                    currentEstimationCharges = BigDecimal.valueOf(scf.getAmount());
+            }
+            
+            if(currentDonationCharge.compareTo(oldDonationCharge)>0){
+                totalDonationCharge = currentDonationCharge.subtract(oldDonationCharge);
+            }
+           
+            if(currentSewerageTax.compareTo(oldSewerageTax)>0){
+                totalSewerageTax = currentSewerageTax.subtract(oldSewerageTax);
+            }
+            totalAmt = totalSewerageTax.add(totalDonationCharge).add(currentEstimationCharges);
         }
         return totalAmt;
     }
@@ -385,7 +471,7 @@ public class SewerageConnectionSmsAndEmailService {
     public BigDecimal getInspectionFeeForSewerage(final SewerageApplicationDetails sewerageApplicationDetails) {
         BigDecimal totalAmt = BigDecimal.ZERO;
         for (SewerageConnectionFee sewerageConnFee : sewerageApplicationDetails.getConnectionFees()) {
-            if ((sewerageConnFee.getFeesDetail().getDescription()).equals(SewerageTaxConstants.INSPECTIONCHARGE)) {
+            if ((sewerageConnFee.getFeesDetail().getDescription()).equals(INSPECTIONCHARGE)) {
                 totalAmt = totalAmt.add(BigDecimal.valueOf(sewerageConnFee.getAmount()));
             }
         }
@@ -401,29 +487,36 @@ public class SewerageConnectionSmsAndEmailService {
     public String SmsBodyByCodeAndArgsWithType(final String code,
             final SewerageApplicationDetails sewerageApplicationDetails, final String applicantName, final String type) {
         String smsMsg = "";
-        if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
+        if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             String.valueOf(getInspectionFeeForSewerage(sewerageApplicationDetails)),
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
 
-        else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNCREATEFORNOINSFEE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
 
-        else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)) {
+          if(type.equalsIgnoreCase(SMSEMAILTYPENEWCONNDEEAPPROVE)){
             smsMsg = messageSource.getMessage(
                     code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
+          }
+          else if (type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE)){
+              smsMsg = messageSource.getMessage(
+                      code,
+                      new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
+                              String.valueOf(sumOfChangeClosetSewerageApplnCharges(sewerageApplicationDetails)), muncipalityName,
+                              sewerageApplicationDetails.getConnection().getShscNumber() }, null);
+          }
 
-        } else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFEEPAID)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID)) {
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName,
                             String.valueOf(sumOfSewerageApplnCharges(sewerageApplicationDetails)),
@@ -431,23 +524,23 @@ public class SewerageConnectionSmsAndEmailService {
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         }
 
-        else if (SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
+        else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        else if (type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
+        else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
                             sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
-        else if (SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
+        else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
-        else if (SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
+        else if (SMSEMAILTYPENEWCONNREJECT.equalsIgnoreCase(type)
+                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT))
             smsMsg = messageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApprovalComent(), muncipalityName,
                             sewerageApplicationDetails.getApplicationNumber(),
@@ -458,13 +551,13 @@ public class SewerageConnectionSmsAndEmailService {
 
     public Boolean isSmsEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SENDSMSFORSEWERAGETAX).get(0);
+                MODULE_NAME, SENDSMSFORSEWERAGETAX).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
     public Boolean isEmailEnabled() {
         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.SENDEMAILFORSEWERAGETAX).get(0);
+                MODULE_NAME, SENDEMAILFORSEWERAGETAX).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
 
