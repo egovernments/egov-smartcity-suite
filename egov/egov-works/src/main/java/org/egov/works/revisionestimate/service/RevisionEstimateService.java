@@ -58,6 +58,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
@@ -76,6 +77,7 @@ import org.egov.works.mb.entity.MBHeader;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
+import org.egov.works.revisionestimate.entity.RevisionWorkOrder;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.egov.works.revisionestimate.repository.RevisionEstimateRepository;
@@ -156,6 +158,9 @@ public class RevisionEstimateService {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private RevisionWorkOrderService revisionWorkOrderService;
 
     @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
@@ -239,7 +244,7 @@ public class RevisionEstimateService {
     @Transactional
     public RevisionAbstractEstimate updateRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String removedActivityIds)
+            final String workFlowAction, final String removedActivityIds, WorkOrderEstimate workOrderEstimate)
             throws ValidationException, IOException {
 
         RevisionAbstractEstimate updateRevisionEstimate = null;
@@ -258,14 +263,105 @@ public class RevisionEstimateService {
 
         updateRevisionEstimate = revisionEstimateRepository.save(revisionEstimate);
 
-        revisionEstimateStatusChange(revisionEstimate, workFlowAction);
+        revisionEstimateStatusChange(updateRevisionEstimate, workFlowAction);
 
-        createRevisionEstimateWorkflowTransition(revisionEstimate, approvalPosition, approvalComent, additionalRule,
+        createRevisionEstimateWorkflowTransition(updateRevisionEstimate, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
 
+        if (WorksConstants.APPROVE_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+            RevisionWorkOrder revisionWorkOrder = new RevisionWorkOrder();
+            revisionWorkOrder = createRevisionWorkOrder(updateRevisionEstimate, revisionWorkOrder, workOrderEstimate);
+            revisionWorkOrderService.create(revisionWorkOrder);
+        }
+        
         revisionEstimateRepository.save(updateRevisionEstimate);
 
         return updateRevisionEstimate;
+    }
+
+    private RevisionWorkOrder createRevisionWorkOrder(RevisionAbstractEstimate revisionEstimate,
+            RevisionWorkOrder revisionWorkOrder, WorkOrderEstimate workOrderEstimate) {
+
+        final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
+                .findByParent_Id(revisionEstimate.getParent().getId());
+
+        Integer reCount = revisionEstimates.size();
+        revisionWorkOrder.setParent(workOrderEstimate.getWorkOrder());
+        revisionWorkOrder.setWorkOrderDate(revisionEstimate.getEstimateDate());
+        revisionWorkOrder.setWorkOrderNumber(
+                workOrderEstimate.getWorkOrder().getWorkOrderNumber() + "/RW".concat(Integer.toString(reCount)));
+        revisionWorkOrder.setContractor(workOrderEstimate.getWorkOrder().getContractor());
+        revisionWorkOrder.setEngineerIncharge(workOrderEstimate.getWorkOrder().getEngineerIncharge());
+        revisionWorkOrder.setEmdAmountDeposited(0.00001);
+        revisionWorkOrder.setEgwStatus(worksUtils.getStatusByModuleAndCode(WorksConstants.WORKORDER, WorksConstants.APPROVED));
+        populateWorkOrderActivities(revisionWorkOrder, revisionEstimate);
+        return revisionWorkOrder;
+    }
+
+    protected void populateWorkOrderActivities(final RevisionWorkOrder revisionWorkOrder,
+            RevisionAbstractEstimate revisionEstimate) {
+        final WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
+        workOrderEstimate.setEstimate(revisionEstimate);
+        workOrderEstimate.setWorkOrder(revisionWorkOrder);
+        addWorkOrderEstimateActivities(workOrderEstimate, revisionWorkOrder, revisionEstimate);
+        revisionWorkOrder.addWorkOrderEstimate(workOrderEstimate);
+    }
+
+    private void addWorkOrderEstimateActivities(final WorkOrderEstimate workOrderEstimate,
+            final RevisionWorkOrder revisionWorkOrder, RevisionAbstractEstimate revisionEstimate) {
+        double woTotalAmount = 0;
+        double approvedAmount = 0;
+        final Double tenderFinalizedPercentage = revisionWorkOrder.getParent().getTenderFinalizedPercentage();
+        for (final Activity activity : revisionEstimate.getActivities()) {
+            final WorkOrderActivity workOrderActivity = new WorkOrderActivity();
+            workOrderActivity.setActivity(activity);
+            approvedAmount = 0;
+            if (activity != null
+                    && activity.getRevisionType() != null
+                    && (RevisionType.NON_TENDERED_ITEM.toString()
+                            .equalsIgnoreCase(activity.getRevisionType().toString())
+                            || RevisionType.LUMP_SUM_ITEM.toString().equalsIgnoreCase(activity.getRevisionType()
+                                    .toString())))
+                workOrderActivity.setApprovedRate(activity.getRate()
+                        / activity.getConversionFactorForRE(revisionWorkOrder.getParent().getWorkOrderDate()));
+            else if (activity != null
+                    && activity.getRevisionType() != null
+                    && (RevisionType.ADDITIONAL_QUANTITY.toString()
+                            .equalsIgnoreCase(activity.getRevisionType().toString())
+                            || RevisionType.REDUCED_QUANTITY.toString().equalsIgnoreCase(activity
+                                    .getRevisionType().toString())))
+                if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
+                    workOrderActivity.setApprovedRate(activity.getRate() + activity.getRate() * tenderFinalizedPercentage / 100);
+                else {
+                    workOrderActivity.setApprovedRate(activity.getRate());
+                }
+            workOrderActivity.setApprovedQuantity(activity.getQuantity());
+            approvedAmount = new Money(activity.getRate() * workOrderActivity.getApprovedQuantity())
+                    .getValue();
+            // If it is a reduced quantity, then the work order activity's
+            // amount needs to be negative, else the RevWO amount will always
+            // keep
+            // increasing even if reduction quantities are present in the RE
+            if (activity.getRevisionType() != null && RevisionType.REDUCED_QUANTITY.equals(activity.getRevisionType()))
+                approvedAmount = approvedAmount * -1;
+
+            // Apply percentage for change quantity items in case of percentage
+            // tender
+            if (activity != null
+                    && activity.getRevisionType() != null
+                    && (RevisionType.ADDITIONAL_QUANTITY.toString()
+                            .equalsIgnoreCase(activity.getRevisionType().toString())
+                            || RevisionType.REDUCED_QUANTITY.toString().equalsIgnoreCase(activity
+                                    .getRevisionType().toString())))
+                if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
+                    approvedAmount = approvedAmount + approvedAmount * tenderFinalizedPercentage / 100;
+
+            woTotalAmount = woTotalAmount + approvedAmount;
+            workOrderActivity.setApprovedAmount(approvedAmount);
+            workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
+            workOrderEstimate.addWorkOrderActivity(workOrderActivity);
+        }
+        workOrderEstimate.getWorkOrder().setWorkOrderAmount(woTotalAmount);
     }
 
     private List<Activity> removeDeletedActivities(final List<Activity> activities, final String removedActivityIds) {
@@ -360,6 +456,7 @@ public class RevisionEstimateService {
         for (final Activity activity : revisionEstimate.getNonTenderedActivities())
             if (activity.getId() == null) {
                 activity.setAbstractEstimate(revisionEstimate);
+                activity.setRevisionType(RevisionType.NON_TENDERED_ITEM);
                 revisionEstimate.addActivity(activity);
             } else
                 for (final Activity oldActivity : revisionEstimate.getSORActivities())
@@ -368,6 +465,7 @@ public class RevisionEstimateService {
         for (final Activity activity : revisionEstimate.getLumpSumActivities())
             if (activity.getId() == null) {
                 activity.setAbstractEstimate(revisionEstimate);
+                activity.setRevisionType(RevisionType.LUMP_SUM_ITEM);
                 revisionEstimate.addActivity(activity);
             } else
                 for (final Activity oldActivity : revisionEstimate.getNonSORActivities())

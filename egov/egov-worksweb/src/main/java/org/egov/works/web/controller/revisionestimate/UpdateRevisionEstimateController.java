@@ -268,7 +268,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         } else {
             if (null != workFlowAction)
                 updatedRevisionEstimate = revisionEstimateService.updateRevisionEstimate(revisionEstimate, approvalPosition,
-                        approvalComment, null, workFlowAction, removedActivityIds);
+                        approvalComment, null, workFlowAction, removedActivityIds, workOrderEstimate);
 
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 
@@ -276,11 +276,12 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
                 return "redirect:/revisionestimate/update/" + updatedRevisionEstimate.getId() + "?mode=save";
 
             if (approvalPosition == null)
-                return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + revisionEstimate.getId()
+                return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                         + "&approvalPosition=";
-            else
-                return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + revisionEstimate.getId()
-                        + "&approvalPosition=" + approvalPosition;
+
+            return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
+                    + "&approvalPosition=" + approvalPosition;
+
         }
     }
 

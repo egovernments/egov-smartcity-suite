@@ -287,6 +287,7 @@ public class WorkOrderEstimateService {
 
     private void getSubQueryForRE(final SearchRequestLetterOfAcceptanceForRE searchRequestLetterOfAcceptanceForRE,
             final StringBuilder queryStr) {
+        queryStr.append(" and woe.estimate.parent.id is null ");
         if (searchRequestLetterOfAcceptanceForRE.getWorkOrderNumber() != null)
             queryStr.append(" and woe.workOrder.workOrderNumber =:workOrderNumber ");
         if (searchRequestLetterOfAcceptanceForRE.getFromDate() != null)
@@ -302,12 +303,13 @@ public class WorkOrderEstimateService {
             queryStr.append(" and woe.workOrder.engineerIncharge.id =:workAssignedTo ");
 
     }
-    
+
     public List<Contractor> findContractorsByWorkOrderStatus(final String code) {
         return workOrderEstimateRepository.findContractorsByWorkOrderStatus("%" + code + "%", WorksConstants.APPROVED);
     }
-    
+
     public WorkOrderEstimate findWorkOrderByRevisionEstimateNumber(final String estimateNumber) {
-    return workOrderEstimateRepository.findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(estimateNumber,WorksConstants.APPROVED).get(0);
+        return workOrderEstimateRepository.findByEstimate_EstimateNumberContainingIgnoreCaseAndWorkOrder_EgwStatus_codeEquals(
+                estimateNumber, WorksConstants.APPROVED).get(0);
     }
 }
