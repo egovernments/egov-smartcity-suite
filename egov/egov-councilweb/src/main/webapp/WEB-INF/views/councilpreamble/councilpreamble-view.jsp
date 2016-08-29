@@ -111,15 +111,15 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.ward.no" />
+							<spring:message code="lbl.status" /> 
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.wards}</div>
+							 ${councilPreamble.status.code}</div>
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.status" />
+						<%-- 	<spring:message code="lbl.ward.no" /> --%>
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${councilPreamble.status.code}</div>
+							<%-- ${councilPreamble.wards} --%></div>
 					</div>
 				</div>
 			</div>
