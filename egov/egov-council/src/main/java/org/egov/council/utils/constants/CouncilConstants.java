@@ -57,9 +57,9 @@ public class CouncilConstants {
     
     public final static String AGENDA_MODULENAME = "COUNCILAGENDA";
     public final static String MEETING_MODULENAME = "COUNCILMEETING";
-    public static final String PREAMBLEUSEDINAGENDA = "PREAMBLEUSEDINAGENDA";
-    public static final String AGENDAUSEDINMEETING = "AGENDAUSEDINMEETING";
-    public static final String MEETINGUSEDINRMOM = "MEETINGUSEDINRMOM";
+    public static final String PREAMBLEUSEDINAGENDA = "PREAMBLE USED IN AGENDA";
+    public static final String AGENDAUSEDINMEETING = "AGENDA USED IN MEETING";
+    public static final String MEETINGUSEDINRMOM = "MOM CREATED";
     public final static String APPROVED ="APPROVED";
     public final static String REJECTED ="REJECTED";
     public final static String ADJOURNED ="ADJOURNED";
