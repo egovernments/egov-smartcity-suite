@@ -55,7 +55,7 @@ import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.dcb.bean.DCBReport;
 import org.egov.dcb.bean.Receipt;
-import org.egov.dcb.service.DCBServiceImpl;
+import org.egov.dcb.service.DCBService;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -86,7 +86,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/viewDcb")
 public class CurrentViewDcbController {
-
+    @Autowired
+    private DCBService dcbService;
+    
     @Autowired
     private CurrentDcbService currentDcbService;
 
@@ -161,9 +163,7 @@ public class CurrentViewDcbController {
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));
         if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null) {
-            final DCBServiceImpl dcbdemandService = (DCBServiceImpl) context.getBean("dcbdemandService");
             final DCBDisplayInfo dcbDispInfo = currentDcbService.getDcbDispInfo();
-
             final WaterConnectionBillable waterConnectionBillable = (WaterConnectionBillable) context
                     .getBean("waterConnectionBillable");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -171,8 +171,8 @@ public class CurrentViewDcbController {
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             waterConnectionBillable.setWaterConnectionDetails(waterConnectionDetails);
             waterConnectionBillable.setAssessmentDetails(assessmentDetails);
-            dcbdemandService.setBillable(waterConnectionBillable);
-            dCBReport = dcbdemandService.getCurrentDCBAndReceipts(dcbDispInfo);
+            dcbService.setBillable(waterConnectionBillable);
+            dCBReport = dcbService.getCurrentDCBAndReceipts(dcbDispInfo);
             activeRcpts = populateActiveReceiptsOnly(dCBReport.getReceipts());
             cancelRcpt = populateCancelledReceiptsOnly(dCBReport.getReceipts());
             model.addAttribute("activeRcpts", activeRcpts);
