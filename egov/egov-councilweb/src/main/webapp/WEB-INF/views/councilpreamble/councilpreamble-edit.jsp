@@ -46,20 +46,15 @@
 <form:form role="form" action="../update" modelAttribute="councilPreamble" id="councilPreambleform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilpreamble-form.jsp"%>
+	<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+				</div> 
 		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
 		<div class="buttonbottom" align="center">
 			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
 		</div>
-	<%-- <div class="form-group">
-		<div class="text-center">
-			<button type='submit' class='btn btn-primary' id="buttonSubmit">
-				<spring:message code='lbl.update' />
-			</button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
-	</div> --%>
+
 </form:form>
 
 	<script src="<c:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>	

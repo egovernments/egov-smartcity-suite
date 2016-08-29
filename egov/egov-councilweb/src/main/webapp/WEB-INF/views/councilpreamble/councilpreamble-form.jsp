@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div class="col-md-12">
+<div>
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">Create Preamble</div>
@@ -96,6 +96,11 @@
 						</div>
 						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
 				</div> --%>
+				
+				<c:if test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
+				<label class="col-sm-2 control-label text-right">	<spring:message code="lbl.preamble.number" /> </label>
+				<div class="col-sm-3 add-margin"> ${councilPreamble.preambleNumber}		</div>
+				</c:if>
 				</div>
 				<input type="hidden" name="councilPreamble" value="${councilPreamble.id}" />
 					<form:hidden path="preambleNumber" id="preambleNumber" value="${councilPreamble.preambleNumber}" />

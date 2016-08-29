@@ -94,6 +94,10 @@ function callAjaxSearch() {
 							"sClass" : "text-left"
 						},
 						{
+							"data" : "preambleNumber",
+							"sClass" : "text-left"
+						},
+						{
 							"data" : "gistOfPreamble",
 							"sClass" : "text-left"
 						},
@@ -153,6 +157,10 @@ function callAjaxSearchForAgendaPreamble() {
 							"sClass" : "text-left"
 						},
 						{
+							"data" : "preambleNumber",
+							"sClass" : "text-left"
+						},
+						{
 							"data" : "gistOfPreamble",
 							"sClass" : "text-left"
 						},
@@ -183,7 +191,7 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .view',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 4);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 5);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
@@ -193,7 +201,7 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .edit',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 4);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 5);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 

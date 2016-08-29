@@ -1,5 +1,7 @@
 package org.egov.council.web.controller;
 
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -12,6 +14,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.service.CouncilPreambleService;
+import org.egov.council.service.CouncilThirdPartyService;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -37,9 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import static org.egov.council.utils.constants.CouncilConstants.WARD; 
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
 @Controller
 @RequestMapping("/councilpreamble")
 public class CouncilPreambleController extends GenericWorkFlowController {
@@ -62,6 +64,9 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @Autowired
     private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+   
+    @Autowired
+    private CouncilThirdPartyService councilThirdPartyService;
 
     @Qualifier("fileStoreService")
     protected @Autowired FileStoreService fileStoreService;
@@ -74,8 +79,8 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("departments", departmentService.getAllDepartments()); // WARD.
-        model.addAttribute("wards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(CouncilConstants.WARD,
-                CouncilConstants.REVENUE_HIERARCHY_TYPE)); 
+        model.addAttribute("wards", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                REVENUE_HIERARCHY_TYPE)); 
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -83,11 +88,15 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         prepareNewForm(model);
         CouncilPreamble councilPreamble = new CouncilPreamble();
         model.addAttribute("councilPreamble",councilPreamble);
+        prepareWorkFlowOnLoad(model, councilPreamble);
+        model.addAttribute("currentState", "NEW");
+        return COUNCILPREAMBLE_NEW;
+    }
+
+    private void prepareWorkFlowOnLoad(final Model model, CouncilPreamble councilPreamble) {
         WorkflowContainer workFlowContainer= new WorkflowContainer();
         prepareWorkflow(model, councilPreamble,workFlowContainer);
         model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
-        model.addAttribute("currentState", "NEW");
-        return COUNCILPREAMBLE_NEW;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -95,13 +104,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             @RequestParam final MultipartFile attachments, final Model model,final HttpServletRequest request, final RedirectAttributes redirectAttrs,@RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
-            WorkflowContainer workFlowContainer= new WorkflowContainer();
-            prepareWorkflow(model, councilPreamble,workFlowContainer);
-            model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+            prepareWorkFlowOnLoad(model, councilPreamble);
             return COUNCILPREAMBLE_NEW;
         }
 
-        if (attachments.getSize() > 0) {
+        if (attachments!=null && attachments.getSize() > 0) {
             try {
                 councilPreamble.setFilestoreid(fileStoreService.store(attachments.getInputStream(),
                         attachments.getOriginalFilename(), attachments.getContentType(), CouncilConstants.MODULE_NAME));
@@ -148,9 +155,8 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String result(@PathVariable("id") final Long id, Model model) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         model.addAttribute("councilPreamble", councilPreamble);
-        WorkflowContainer workFlowContainer= new WorkflowContainer();
-        prepareWorkflow(model, councilPreamble,workFlowContainer);
-        model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+        model.addAttribute("applicationHistory", councilThirdPartyService.getHistory(councilPreamble));
+        prepareWorkFlowOnLoad(model, councilPreamble);
         return COUNCILPREAMBLE_RESULT;
     }
 
@@ -161,13 +167,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             @RequestParam String workFlowAction) {
         if (errors.hasErrors()) {
             prepareNewForm(model);
-            WorkflowContainer workFlowContainer = new WorkflowContainer();
-            prepareWorkflow(model, councilPreamble, workFlowContainer);
-            model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
+            prepareWorkFlowOnLoad(model, councilPreamble);
             model.addAttribute("currentState", councilPreamble.getCurrentState().getValue());
             return COUNCILPREAMBLE_EDIT;
         }
-        if (attachments.getSize() > 0) {
+        if (attachments!=null && attachments.getSize() > 0) {
             try {
                 councilPreamble.setFilestoreid(fileStoreService.store(attachments.getInputStream(),
                         attachments.getOriginalFilename(), attachments.getContentType(), CouncilConstants.MODULE_NAME));
@@ -211,6 +215,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         model.addAttribute("stateType", councilPreamble.getClass().getSimpleName());
         model.addAttribute("currentState", councilPreamble.getCurrentState().getValue());
         model.addAttribute("councilPreamble", councilPreamble);
+        model.addAttribute("applicationHistory", councilThirdPartyService.getHistory(councilPreamble));
 
         if(councilPreamble.getStatus().getCode().equals("PREAMBLEAPPROVEDFORMOM")){
             return COUNCILPREAMBLE_VIEW;
@@ -224,6 +229,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         prepareNewForm(model);
         model.addAttribute("councilPreamble", councilPreamble);
+        model.addAttribute("applicationHistory", councilThirdPartyService.getHistory(councilPreamble));
 
         return COUNCILPREAMBLE_VIEW;
     }
@@ -240,16 +246,10 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilPreamble councilPreamble) {
         List<CouncilPreamble> searchResultList = councilPreambleService.search(councilPreamble);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
-                .toString();
-        return result;
+        final String prambleJsonData = new StringBuilder("{\"data\":").append(toJSON(searchResultList,CouncilPreamble.class,CouncilPreambleJsonAdaptor.class))
+                .append("}").toString();
+        
+        return prambleJsonData;
     }
 
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CouncilPreamble.class, new CouncilPreambleJsonAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 }

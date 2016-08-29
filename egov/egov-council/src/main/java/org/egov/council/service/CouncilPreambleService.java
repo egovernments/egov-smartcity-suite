@@ -54,6 +54,7 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,10 +127,13 @@ public class CouncilPreambleService {
         if (null != councilPreamble.getDepartment())
             criteria.add(Restrictions.eq("councilPreamble.department", councilPreamble.getDepartment()));
 
-        if (councilPreamble.getFromDate() != null && councilPreamble.getToDate() != null) {
+        if (null!=councilPreamble.getFromDate() && null!=councilPreamble.getToDate()) {
             criteria.add(Restrictions.between("councilPreamble.createdDate", councilPreamble.getFromDate(),
                     DateUtils.addDays(councilPreamble.getToDate(), 1)));
         }
+        if (null != councilPreamble.getPreambleNumber())
+            criteria.add(Restrictions.ilike("councilPreamble.preambleNumber", councilPreamble.getPreambleNumber(),MatchMode.ANYWHERE));
+
 
         return criteria;
     }

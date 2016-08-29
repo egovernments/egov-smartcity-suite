@@ -54,7 +54,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.department" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:select path="department" id="department"
@@ -67,9 +67,17 @@
 								</form:select>
 								<form:errors path="department" cssClass="error-msg" />
 							</div>
+							<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.preamble.number" /> </label>
+							<div class="col-sm-3 add-margin">
+								<form:input type="text" cssClass="form-control"
+									path="preambleNumber" id="preambleNumber"/>
+								<form:errors path="preambleNumber" cssClass="error-msg" />
+							</div>
+							
 						</div>
 						<div class="form-group">
-							 <label class="col-sm-3 control-label text-right"><spring:message
+							 <label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.fromdate" /> </label>
 							<div class="col-sm-3 add-margin">
 									<form:input path="fromDate"
@@ -78,7 +86,7 @@
 									<form:errors path="fromDate" cssClass="error-msg" />
 							</div> 
 							
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.todate" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input type="text" cssClass="form-control datepicker"
@@ -111,6 +119,7 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.department" /></th>
+						<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.gistofpreamble" /></th>
 					<th><spring:message code="lbl.amount"/>
 					<th><spring:message code="lbl.view"/></th>

@@ -69,17 +69,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilPreamble.gistOfPreamble}</div>
-												<%-- <div class="col-xs-3 add-margin"><spring:message code="lbl.photo" />
-</div><div class="col-sm-3 add-margin view-content">
-<c:if test="${not empty councilMember.photo}">
-										<div class="col-md-3 col-xs-6 add-margin view-content">
-											<img class='imagem_artigo' src='data:image/jpg;Base64, ${imageFile}' alt="IMG DESC">
-											<img width="100" height="70" src='/council/councilmember/image?${councilMember.id}' /> 
-										</div>	
-										</c:if>
-</div> --%>
-
-						<div class="row add-border">
+					<div class="row add-border">
 							<div class="col-md-2 col-xs-6 add-margin">
 								<spring:message code="lbl.upload" />
 							</div>
@@ -87,12 +77,6 @@
 								id="links">
 								<c:choose>
 									<c:when test="${councilPreamble.filestoreid != null}">
-										<%-- <c:if test="${(councilMember.photo.contentType == 'image/jpg') || (councilMember.photo.contentType == 'image/jpeg')|| (councilMember.photo.contentType == 'image/gif')|| 
-										(councilMember.photo.contentType == 'image/png')}">
-										<a href="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}"
-												data-gallery> <img class="img-width add-margin"
-												src="/council/councilmember/downloadfile/${councilMember.photo.fileStoreId}" alt="councilMember.photo.fileName"/></a>
-										</c:if> --%>
 										<a
 											href="/council/councilmember/downloadfile/${councilPreamble.filestoreid.fileStoreId}"
 											data-gallery target="_blank"> <img
@@ -116,13 +100,16 @@
 						<div class="col-sm-3 add-margin view-content">
 							 ${councilPreamble.status.code}</div>
 						<div class="col-xs-3 add-margin">
-						<%-- 	<spring:message code="lbl.ward.no" /> --%>
+							<spring:message code="lbl.preamble.number" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<%-- ${councilPreamble.wards} --%></div>
+							${councilPreamble.preambleNumber}</div>
 					</div>
 				</div>
 			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+				</div> 
 		</div>
 	</div>
 	<div class="row text-center">
@@ -131,3 +118,4 @@
 				onclick="self.close()">Close</a>
 		</div>
 	</div>
+	
