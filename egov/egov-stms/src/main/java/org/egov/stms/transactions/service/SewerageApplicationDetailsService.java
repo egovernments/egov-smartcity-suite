@@ -643,6 +643,7 @@ public class SewerageApplicationDetailsService {
                                .getStatus().getCode()) || SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails
                                                .getStatus().getCode()) || SewerageTaxConstants.APPLICATION_STATUS_REJECTED.equalsIgnoreCase(sewerageApplicationDetails
                                                        .getStatus().getCode())){
+           sewerageApplicationDetails.setApprovalComent(approvalComent);
            sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
        }
         
