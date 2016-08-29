@@ -41,8 +41,8 @@ package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
 
 import java.io.IOException;
@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -81,12 +82,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import static  org.egov.infra.web.utils.WebUtils.toJSON;
 @Controller
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
@@ -97,9 +99,9 @@ public class CouncilMeetingController {
     private final static String COUNCILMEETING_VIEW = "councilmeeting-view";
     private final static String COUNCILMEETING_SEARCH = "councilmeeting-search";
     private final static String COUNCIL_MEETING_AGENDA_SEARCH = "councilmeetingAgenda-search";
-    private final static String MODULE_NAME = "COUNCIL";
     private final static String COUNCILMEETING_ATTENDANCE_SEARCH = "councilmeeting-attendsearch";
     private final static String COUNCILMEETING_ATTENDANCE_SEARCH_RESULT = "councilmeeting-attendsearch-view";
+    private final static String COUNCILMEETING_SEND_SMS_EMAIL = "councilmeetingsearch-tosendsms-email";
 
     @Autowired
     private CouncilMeetingService councilMeetingService;
@@ -185,9 +187,7 @@ public class CouncilMeetingController {
                     .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AGENDA_MODULENAME, AGENDAUSEDINMEETING));
         }
 
-        councilMeetingService.create(councilMeeting); // TODO: CHANGE STATUS OF
-                                                      // AGENDA ON CREATION.
-        // councilSmsAndEmailService.sendSmsAndEmail(councilMeeting);
+        councilMeetingService.create(councilMeeting); 
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.councilMeeting.success", null, null));
         return "redirect:/councilmeeting/result/" + councilMeeting.getId();
     }
@@ -248,32 +248,37 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
             @ModelAttribute final CouncilMeeting councilMeeting) {
-        List<CouncilMeeting> searchResultList = councilMeetingService.search(councilMeeting);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")
+        List<CouncilMeeting> searchResultList = councilMeetingService.searchMeeting(councilMeeting);
+        String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
                 .toString();
         return result;
     }
     
-    public Object toSearchResultJson(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(CouncilMeeting.class, new CouncilMeetingJsonAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
+    @RequestMapping(value = "/searchmeeting-tocreatemom", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String searchMeetingAndToCreateMOM( Model model,
+            @ModelAttribute final CouncilMeeting councilMeeting) {
+        List<CouncilMeeting> searchResultList = councilMeetingService.searchMeetingToCreateMOM(councilMeeting);
+         String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,CouncilMeeting.class,  CouncilMeetingJsonAdaptor.class)).append("}")
+                .toString();
+        return result;
     }
-
+    
     @RequestMapping(value = "/viewsmsemail", method = RequestMethod.GET)
     public String retrieveSmsAndEmailDetailsForCouncilMeeting(final Model model) {
         CouncilMeeting councilMeeting = new CouncilMeeting();
         prepareNewForm(model);
         model.addAttribute("councilMeeting", councilMeeting);
         model.addAttribute("mode", "view");
-        return COUNCILMEETING_SEARCH;
+        return COUNCILMEETING_SEND_SMS_EMAIL;
     }
-
-    @RequestMapping(value = "/sendsmsemail", method = RequestMethod.POST)
-    public void sendSmsAndEmailDetailsForCouncilMeeting(final Model model) {
-        councilSmsAndEmailService.sendSmsAndEmail(new CouncilMeeting());
+    
+    @RequestMapping(value = "/sendsmsemail", method = RequestMethod.GET)
+    public @ResponseBody String sendSmsAndEmailDetailsForCouncilMeeting(@RequestParam("id") Long id,
+            @RequestParam("msg") String msg,final Model model) {
+        CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
+        councilSmsAndEmailService.sendSmsAndEmail(councilMeeting,msg);
+        String result = new StringBuilder("{ \"success\":true }").toString();
+        return result;
     }
 
     @RequestMapping(value = "/attendance/search", method = RequestMethod.GET)
@@ -304,17 +309,10 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearc(@PathVariable("id") final CouncilMeeting id, Model model) {
         List<MeetingAttendence> searchResultList = councilMeetingService.findListOfAttendance(id);
-        String result = new StringBuilder("{ \"data\":").append(toSearchResultJson1(searchResultList)).append("}")
+       String result = new StringBuilder("{ \"data\":").append(toJSON(searchResultList,MeetingAttendence.class,  MeetingAttendanceJsonAdaptor.class)).append("}")
                 .toString();
         return result;
     }
 
-    public Object toSearchResultJson1(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(MeetingAttendence.class, new MeetingAttendanceJsonAdaptor())
-                .create();
-        final String json = gson.toJson(object);
-        return json;
-    }
 
 }

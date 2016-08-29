@@ -117,26 +117,23 @@ public class CouncilMeetingService {
                 meetingMOM.getPreamble()
                         .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME, ADJOURNED));
         }
-     return councilMeeting;
+        return councilMeeting;
     }
-  //TODO: RENAME METHOD NAME
-    public List<CouncilMeeting> searchForMeeting(CouncilMeeting councilMeeting) {
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilMeeting> searchMeetingToCreateMOM(CouncilMeeting councilMeeting) {
+        return buildSearchCriteria(councilMeeting)
+                .add(Restrictions.in("status.code", new String[] { APPROVED})).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilMeeting> searchMeeting(CouncilMeeting councilMeeting) {
+        return buildSearchCriteria(councilMeeting).list();
+    }
+
+    public Criteria buildSearchCriteria(CouncilMeeting councilMeeting) {
         final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
                 .createAlias("councilMeeting.status", "status");
-        buildSearchCriteria(councilMeeting,criteria);
-        criteria.add(Restrictions.in("status.code", new String[] { APPROVED}));
-        return criteria.list();
-    }
-    //TODO: RENAME METHOD NAME
-    public List<CouncilMeeting> search(CouncilMeeting councilMeeting) {
-        final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
-                .createAlias("councilMeeting.status", "status");
-        buildSearchCriteria(councilMeeting,criteria);
-       // criteria.add(Restrictions.in("status.code", new String[] {MEETINGUSEDINRMOM}));
-        return criteria.list();
-    }
-    
-    public void buildSearchCriteria(CouncilMeeting councilMeeting,Criteria criteria){
         if (councilMeeting.getCommitteeType() != null)
             criteria.add(Restrictions.eq("committeeType", councilMeeting.getCommitteeType()));
 
@@ -144,6 +141,7 @@ public class CouncilMeetingService {
             criteria.add(Restrictions.between("meetingDate", councilMeeting.getFromDate(),
                     DateUtils.addDays(councilMeeting.getToDate(), 1)));
         }
+        return criteria;
     }
 
 }

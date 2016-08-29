@@ -60,6 +60,9 @@ $(document).ready(function() {
 								}, {
 									"data" : "committeeType",
 									"sClass" : "text-left"
+								}, {
+									"data" : "attendance",
+									"sClass" : "text-left"
 								} ]				
 			});
 			

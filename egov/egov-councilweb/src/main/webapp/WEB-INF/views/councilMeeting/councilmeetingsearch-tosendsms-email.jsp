@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) <2015>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -116,8 +116,8 @@
 					<th><spring:message code="lbl.meeting.date" />
 					<th><spring:message code="lbl.meeting.place" /></th>
 					<th><spring:message code="lbl.meeting.time" /></th>
-					<th><spring:message code="lbl.view" /></th>
-					<th>&nbsp;</th>
+					<th><spring:message code="lbl.msg" /></th>
+					<th><spring:message code="lbl.msg" /></th>
 				</tr>
 			</thead>
 		</table>
@@ -154,5 +154,5 @@
 	src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 
 <script type="text/javascript"
-	src="<c:url value='/resources/app/js/councilMom.js'/>"></script>
+	src="<c:url value='/resources/app/js/councilSendSmsEmail.js'/>"></script>
 

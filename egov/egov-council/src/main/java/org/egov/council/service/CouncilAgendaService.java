@@ -42,7 +42,6 @@ package org.egov.council.service;
 
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.CREATED;
 
 import java.util.List;
 
@@ -95,20 +94,18 @@ public class CouncilAgendaService {
         return councilAgendaRepository.findById(id);
     }
 
+    @SuppressWarnings("unchecked")
     public List<CouncilAgenda> search(CouncilAgenda councilAgenda) {
-        final Criteria criteria = getCurrentSession().createCriteria(CouncilAgenda.class,"councilAgenda").createAlias("councilAgenda.status", "status");
-        buildSearchCriteria(councilAgenda, criteria);
-        return criteria.list();
+        return buildSearchCriteria(councilAgenda).list();
     }
     
-    public List<CouncilAgenda> searchForAgenda(CouncilAgenda councilAgenda) {
-        final Criteria criteria = getCurrentSession().createCriteria(CouncilAgenda.class,"councilAgenda").createAlias("councilAgenda.status", "status");
-        buildSearchCriteria(councilAgenda, criteria);
-        criteria.add(Restrictions.in("status.code", new String[] {APPROVED, ADJOURNED}));
-        return criteria.list();
+    @SuppressWarnings("unchecked")
+    public List<CouncilAgenda> searchForAgendaToCreateMeeting(CouncilAgenda councilAgenda) {
+        return buildSearchCriteria(councilAgenda).add(Restrictions.in("status.code", new String[] {APPROVED, ADJOURNED})).list();
     }
     
-    public void buildSearchCriteria(CouncilAgenda councilAgenda,Criteria criteria){
+    public Criteria buildSearchCriteria(CouncilAgenda councilAgenda){
+        final Criteria criteria = getCurrentSession().createCriteria(CouncilAgenda.class,"councilAgenda").createAlias("councilAgenda.status", "status");
         if(null != councilAgenda.getStatus())
             criteria.add(Restrictions.eq("status", councilAgenda.getStatus().getCode()));
     if(null != councilAgenda.getCommitteeType())
@@ -116,5 +113,6 @@ public class CouncilAgendaService {
     if (councilAgenda.getFromDate() != null && councilAgenda.getToDate() != null) {
         criteria.add(Restrictions.between("councilAgenda.createdDate", councilAgenda.getFromDate(),DateUtils.addDays(councilAgenda.getToDate(),1)));
     }
+    return criteria;
     }
 }

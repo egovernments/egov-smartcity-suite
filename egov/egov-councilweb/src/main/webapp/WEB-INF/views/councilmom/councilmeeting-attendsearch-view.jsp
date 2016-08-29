@@ -59,6 +59,7 @@
 					<th>Address</th>
 					<th>Meeting Type</th>
 					<th>Meeting Date</th>
+					<th>Attendance</th>
 				</tr>
 			</thead>
 			<tbody></tbody>

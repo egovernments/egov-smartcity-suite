@@ -68,7 +68,7 @@ function callAjaxSearch() {
 		reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/council/agenda/searchagenda-tocreatemeeting",      
+					url : "/council/councilmeeting/searchmeeting-tocreatemom",      
 					type: "POST",
 					"data":  getFormData(jQuery('form'))
 				},
@@ -85,15 +85,19 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-left"} ,{ 
 "data" : "committeeType", "sClass" : "text-left"} ,{ 
-"data" : "status", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+"data" : "meetingNumber", "sClass" : "text-left"} ,{ 
+"data" : "meetingDate", "sClass" : "text-left"},{
+"data" : "meetingLocation", "sClass" : "text-left"},{
+"data" : "meetingTime", "sClass" : "text-left"},{
+"data" : "", "sClass" : "text-left",
+"render" : function(data, type, full) {
+    return '<textarea class="form-control"/>'
+ } },{ "data" : null, "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {
-        var mode = $('#mode').val();
-       	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Create Meeting</button>';
+          	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Send Sms</button>';
     }
 }
 ,{ "data": "id", "visible":false }
@@ -101,10 +105,52 @@ function callAjaxSearch() {
 			});
 			}
 
-
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
-	var id = reportdatatable.fnGetData($(this).parent().parent(),4);
-	//window.open('/council/agenda/'+ $('#mode').val() +'/'+id,'','width=800, height=600,scrollbars=yes');
-	window.open('/council/councilmeeting/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
+	var msg = $(this).parent().parent().find('textarea').val();
+	var id = reportdatatable.fnGetData($(this).parent().parent(),7);
+	
+	$.ajax({
+	   url: '/council/councilmeeting/sendsmsemail?id='+id+'&msg='+msg,
+	   data: {
+	      format: 'json'
+	   },
+	   beforeSend:function()
+	   {
+		   $('.loader-class').modal('show', {backdrop: 'static'});  
+	   },
+	   type: 'GET',
+	   error: function() {
+		   bootbox.alert('Oops error while sending SMS And Email!!!!');
+		   $('.loader-class').modal('hide');
+	   },
+	   success: function(data) {
+		   
+		   data=JSON.parse(data);
+		   
+		   console.log('data', data);
+			    if(data.success === true)
+			    {
+			    	bootbox.alert('SMS And Email Sent Successfully To All Committee Members!!!!');
+			    }
+			    else
+			    	{
+			    	bootbox.alert('Oops error while sending SMS And Email!!!!');
+			    	}
+		   
+		   $('.loader-class').modal('hide');
+	   }
+	});
+	
 	
 });
+
+
+String.prototype.compose = (function (){
+	   var re = /\{{(.+?)\}}/g;
+	   return function (o){
+	       return this.replace(re, function (_, k){
+	           return typeof o[k] != 'undefined' ? o[k] : '';
+	       });
+	   }
+}());
+
