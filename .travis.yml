@@ -8,4 +8,4 @@ services:
   - postgresql
 addons:
   postgresql: "9.4"
-install: "clean package -U -s settings.xml -Dmaven.javadoc.skip=true -Dbuild.number=1 -Ddb.url=jdbc:postgresql://localhost:5432/postgres -Ddb.password= -Ddb.user=postgres  -Ddb.driver=org.postgresql.Driver"
+install: "mvn clean package -U -s settings.xml -Dmaven.javadoc.skip=true -Dbuild.number=1 -Ddb.url=jdbc:postgresql://localhost:5432/postgres -Ddb.password= -Ddb.user=postgres  -Ddb.driver=org.postgresql.Driver"
