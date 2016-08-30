@@ -220,20 +220,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
 
         if (null != sewerageApplicationDetails.getId()) {
-            currentUser = userService.getUserById(sewerageApplicationDetails.getCreatedBy().getId());
-            if (currentUser != null && sewerageApplicationDetails.getConnection().getLegacy()) {
-                for (final Role userrole : currentUser.getRoles())
-                    if (userrole.getName().equals(SewerageTaxConstants.ROLE_SUPERUSER)) {
-                        Position positionuser = sewerageTaxUtils.getZonalLevelClerkForLoggedInUser(
-                                sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-                        if (positionuser != null)
-                            wfInitiator = assignmentService.getPrimaryAssignmentForPositionAndDate(positionuser.getId(),
-                                    new Date());
-                        break;
-                    }
-            } else {
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId());
-            }
+            //currentUser = userService.getUserById(sewerageApplicationDetails.getCreatedBy().getId());
+             wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails.getCreatedBy().getId());
         }
         
         if (SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
