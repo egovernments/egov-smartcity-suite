@@ -43,15 +43,25 @@ $(document).ready(function(){
 		validateSewerageConnection();
 	});
 	
+	$("#executionDate" ).datepicker({
+		format: "dd/mm/yyyy",
+		startDate: new Date(2005, 03, 1),
+		autoclose: true 
+	}).on('changeDate', function(ev) {
+		if(isValidDate($('#executionDate').val())){
+				clear_formDemandDetailTable();
+		}
+	});
+	
+	function isValidDate(s) {
+	  var bits = s.split('/');
+	  var d = new Date(bits[2] + '/' + bits[1] + '/' + bits[0]);
+	  return !!(d && (d.getMonth() + 1) == bits[1] && d.getDate() == Number(bits[0]));
+	}
 	
 	$('#shscNumber').blur(function(){
 		validateSewerageConnectionNumber();
 	});
-	
-	$('#executionDate').blur(function(){
-		clear_formDemandDetailTable();
-	});
-	
 	
 	function validateSewerageConnection() {
 		propertyID=$('#propertyIdentifier').val()
@@ -157,7 +167,6 @@ function loadPropertyDetails() {
 			dataType: "json",
 			success: function (response) { 
 				var waterTaxDue = getWaterTaxDue(propertyID);
-				//console.log(waterTaxDue['CURRENTWATERCHARGE']);  
 						$('#propertyIdentifierError').html('');
 						applicantName = '';
 						for(i=0; i<response.ownerNames.length; i++) {
@@ -238,14 +247,27 @@ function getWaterTaxDue(propertyID) {
 	}
 }
 
-function initDemandDetailRow(instlmnt,reasondsc,demandamount,collectionamount){
-	var table = document.getElementById('legacyDemandDetails');
-	getControlInBranch(table.rows[1],'demandDetailBeanList0installment').value=instlmnt;
-	getControlInBranch(table.rows[1],'demandDetailBeanList0reasonMasterDesc').value=reasondsc;
-	getControlInBranch(table.rows[1],'demandDetailBeanList0actualAmount').value=demandamount;
-	getControlInBranch(table.rows[1],'demandDetailBeanList0actualCollection').value=collectionamount;
-	
+function validateDemandDetailsOnSubmit(){
+	var tbl=document.getElementById("legacyDemandDetails");
+    var lastRow = (tbl.rows.length)-1;
+    var instlmnt,demandamount,collectionamount;
+    var mandatoryValEntered=false, mandatoryValNotEntered=false;
+    for(var i=1;i<=lastRow;i++){
+    	instlmnt=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'installment').value;
+    	demandamount=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'actualAmount').value;
+    	collectionamount=getControlInBranch(tbl.rows[i],'demandDetailBeanList'+(i-1)+'actualCollection').value;
+         if((demandamount=='' || demandamount == 0 ) || (collectionamount=='' || collectionamount == 0)) { 
+          	bootbox.alert("Enter all mandatory Details for installment \""+instlmnt+"\".");
+    		return false; 
+    	}
+        if((demandamount!='' && collectionamount!='' &&  collectionamount > demandamount)) { 
+           	bootbox.alert("Collection cannot be more than Demand for installment \""+instlmnt+"\".");
+     		return false; 
+     	}
+    } 
+    return true;
 }
+
 
 function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount,instlmntId,dmndReasonId) {
     var table = document.getElementById('legacyDemandDetails');
@@ -319,10 +341,6 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     actualCollection.setAttribute("value", collectionamount);
     cell4.appendChild(actualCollection);  
     
-    newCol = document.createElement("td");
-	newRow.appendChild(newCol);
-    var cell5 = row.insertCell(4);
-    cell5.className = "text-right";
     var installmentId = document.createElement("input");
     installmentId.setAttribute("class","form-control");
     installmentId.setAttribute("data-pattern","decimalvalue"); 
@@ -330,12 +348,8 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     installmentId.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].installmentId");
     installmentId.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"installmentId");
     installmentId.setAttribute("value", instlmntId);
-    cell5.appendChild(installmentId);
+    cell4.appendChild(installmentId);  
     
-    newCol = document.createElement("td");
-	newRow.appendChild(newCol);
-    var cell6 = row.insertCell(5);
-    cell6.className = "text-right";
     var demandReasonId = document.createElement("input");
     demandReasonId.setAttribute("class","form-control");
     demandReasonId.setAttribute("data-pattern","decimalvalue"); 
@@ -343,7 +357,6 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     demandReasonId.setAttribute("name", "demandDetailBeanList[" + (elementIndex-1) + "].demandReasonId");
     demandReasonId.setAttribute("id", "demandDetailBeanList"+(elementIndex-1)+"demandReasonId");
     demandReasonId.setAttribute("value", dmndReasonId);
-    cell5.appendChild(demandReasonId); 
-     
+    cell4.appendChild(demandReasonId); 
     patternvalidation();
 }

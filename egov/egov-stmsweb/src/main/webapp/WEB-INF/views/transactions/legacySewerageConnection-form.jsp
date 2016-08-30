@@ -60,16 +60,15 @@
 				<jsp:include page="connectiondetails.jsp"></jsp:include>
 				<jsp:include page="inspectionCharges.jsp"></jsp:include>   
 				<jsp:include page="documentdetails.jsp"></jsp:include>	
-				<%-- <jsp:include page="legacyDemandDetails.jsp"></jsp:include>	 --%>
 			<div class="text-center">
-				<button type="submit" class="btn btn-primary" id = "submit"><spring:message code="lbl.submit"/></button>
+				<button type="submit" class="btn btn-primary" id = "submit" onclick="validateDemandDetailsOnSubmit();"><spring:message code="lbl.submit"/></button>
 			    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
 			</div>
 		</form:form>
 	</div>
-</div>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/legacyconnection.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url cdn='${applicationScope.cdn}' value='/resources/javascript/helper.js' context='/stms'/>"></script>    
+</div> 
+<script src="<cdn:url  value='/resources/js/transactions/legacyconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>    
 

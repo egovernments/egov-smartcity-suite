@@ -181,10 +181,10 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
        
-            createSewerageConnectionFee(sewerageApplicationDetails,
-                    SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE);
-            createSewerageConnectionFee(sewerageApplicationDetails,
-                    SewerageTaxConstants.FEES_SEWERAGETAX_CODE);
+        createSewerageConnectionFee(sewerageApplicationDetails,
+                SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE);
+        createSewerageConnectionFee(sewerageApplicationDetails,
+                SewerageTaxConstants.FEES_SEWERAGETAX_CODE);
         model.addAttribute("mode", null);
         return "legacySewerageConnection-form"; 
     }

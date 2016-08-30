@@ -54,8 +54,8 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.executiondate" /><span class="mandatory"></span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="connection.executionDate" title="Please enter a valid date" class="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" 
-			data-date-end-date="-1d" id="executionDate"
+		<form:input path="connection.executionDate" title="Please enter a valid date" class="form-control" pattern="\d{1,2}/\d{1,2}/\d{4}" 
+			data-date-end-date="-1d"  id="executionDate"
 			data-inputmask="'mask': 'd/m/y'" required="required" />
 		<form:errors path="connection.executionDate" cssClass="add-margin error-msg" />
 	</div>
@@ -66,17 +66,11 @@
 			      <tr>
 			        <th class="text-center">Installment</th>
 			        <th class="text-center">Tax</th>
-					<th class="text-right">Demand</th>
-					<th class="text-right">Collection</th>
+					<th class="text-right">Demand<span class="mandatory"></span></th>
+					<th class="text-right">Collection<span class="mandatory"></span></th>
 			      </tr>
 		    </thead>
 		<tbody> 
-		<%--  <tr class="data-fetchedFromDB">
-			<td class="text-center"><form:input type="text" class="form-control read-only" path="demandDetailBeanList[0].installment" id="demandDetailBeanList0installment" /></td>
-			<td class="text-center"><form:input type="text" class="form-control read-only" path="demandDetailBeanList[0].reasonMasterDesc" id="demandDetailBeanList0reasonMasterDesc" /></td>
-			<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="demandDetailBeanList[0].actualAmount" id="demandDetailBeanList0actualAmount" maxlength="8" /></td>
-			<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="demandDetailBeanList[0].actualCollection" id="demandDetailBeanList0actualCollection" maxlength="8" /></td>
-	      </tr>  --%>
 		</tbody>
 		</table>
 </div>
