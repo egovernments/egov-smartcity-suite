@@ -39,7 +39,6 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
@@ -48,6 +47,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -223,8 +223,7 @@ public class ReportService {
         String arrearPerFrom = "";
         String arrearPerTo = "";
         if (instDemandCollList.size() > 1) {
-            arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size() - 3).getInstallment()
-                    .getToDate());
+        	arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
             arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
             baseRegisterResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
         } else {
@@ -1026,8 +1025,7 @@ public class ReportService {
                     String arrearPerFrom = "";
                     String arrearPerTo = "";
                     if (instDemandCollList.size() > 1) {
-                        arrearPerTo = dateFormatter.format(instDemandCollList.get(instDemandCollList.size() - 2).getInstallment()
-                                .getToDate());
+                    	arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
                         arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
                         baseRegisterVLTResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
                     } else {
