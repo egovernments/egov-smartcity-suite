@@ -99,10 +99,12 @@ public class BoundaryType extends AbstractAuditable {
     @Transient
     private Set<BoundaryType> childBoundaryTypes;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }

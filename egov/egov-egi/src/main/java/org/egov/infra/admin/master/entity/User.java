@@ -135,7 +135,7 @@ public class User extends AbstractAuditable {
     private String aadhaarNumber;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Address> address = new ArrayList<Address>();
+    private List<Address> address = new ArrayList<>();
 
     private boolean active;
 
