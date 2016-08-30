@@ -37,7 +37,6 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<div class="main-content">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -64,8 +63,8 @@
 								code="lbl.name" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="name"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="100"
+								class="form-control text-left pattern"
+								maxlength="100"
 								required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>

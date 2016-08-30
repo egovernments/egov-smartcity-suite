@@ -65,4 +65,18 @@
 			e.preventDefault();
 		}
 	});
+	var alphanumericwithoutspace = /[^a-zA-Z0-9]/g ;
+
+	jQuery('.aaa').on("input", function(e){
+		if(jQuery(this).val().match(alphanumericwithoutspace)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumericwithoutspace,'') );
+		}
+	});
+	var alphanumeric = /[^a-zA-Z0-9 ]/g ;
+	
+	jQuery('.pattern').on("input", function(e){
+		if(jQuery(this).val().match(alphanumeric)){
+			jQuery(this).val( jQuery(this).val().replace(alphanumeric,'') );
+		}
+	});
 </script>
