@@ -112,12 +112,13 @@
 				</div>
 				<div class="row">
 					<div class="text-center">
-						<button type='button' class='btn btn-primary ' id="btnsearch">
+						<button type='button' class='btn btn-primary ' id="btnsearchPreamble">
 							<spring:message code='lbl.search' />
 						</button>
 						<a href='javascript:void(0)' class='btn btn-default'
 							onclick='self.close()'><spring:message code='lbl.close' /></a>
 					</div>
+					<div class="col-md-12 text-center"> <b style="color:red"> (Search and add preamble to create agenda)</b></div>
 				</div>
 			</div>
 		</div>
@@ -137,15 +138,15 @@
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	
-<div class="row display-hide agenda-section">
+<div class="row">
 	<div class="col-md-6 table-header text-left">Create Agenda</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-		<div class="row display-hide agenda-section">
+		<div class="row">
 
 			<label class="col-sm-2 control-label text-right"><spring:message
-					code="lbl.committeetype" /> </label>
+					code="lbl.committeetype" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="committeeType" id="committeeType"
+				<form:select path="committeeType" id="committeeType" required="required"
 					cssClass="form-control" cssErrorClass="form-control error">
 					<form:option value="">
 						<spring:message code="lbl.select" />
@@ -157,12 +158,11 @@
 			</div>
 		</div>
 
-		<div class="col-md-12 form-group report-table-container">
+		<div class="col-md-12 form-group report-table-container display-hide agenda-section">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id=agendaTable>
 			<thead>
 				<tr>
-					<%-- <th><spring:message code="lbl.serial.no" /></th> --%>
 					<th><spring:message code="lbl.preamble.number" /></th>
 					<th><spring:message code="lbl.department" /></th>
 					<th><spring:message code="lbl.gist.preamble" /></th>
@@ -184,11 +184,22 @@
 </form:form>
 <script>
 	$('#btnsearch').click(function(e) {
+		if ($('#committeeType').val()=="") {
+			alert("Please select committe type");
+			e.preventDefault();
+			} else {
+		}
+	});
+
+	$('#btnsearchPreamble').click(function(e) {
+		console.log('valid1111111');
 		if ($('form').valid()) {
+			return true;
 		} else {
 			e.preventDefault();
 		}
 	});
+	
 	
 	
 </script>

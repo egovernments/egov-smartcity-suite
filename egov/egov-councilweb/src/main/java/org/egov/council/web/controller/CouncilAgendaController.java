@@ -40,7 +40,7 @@
 package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_CREATED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
 import static org.egov.infra.web.utils.WebUtils.toJSON;
 
 import java.io.IOException;
@@ -142,7 +142,7 @@ public class CouncilAgendaController {
         councilAgenda.setAgendaNumber(agendaNumberGenerator.getNextNumber(councilAgenda));
 
         councilAgenda.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
-                PREAMBLE_STATUS_CREATED));
+                PREAMBLE_STATUS_APPROVED));
 
         councilAgendaService.create(councilAgenda);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.agenda.success", null, null));

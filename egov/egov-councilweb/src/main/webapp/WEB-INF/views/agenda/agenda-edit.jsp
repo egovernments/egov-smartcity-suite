@@ -115,12 +115,13 @@
 				</div>
 				<div class="row">
 					<div class="text-center">
-						<button type='button' class='btn btn-primary ' id="btnsearch">
+						<button type='button' class='btn btn-primary ' id="btnsearchPreamble">
 							<spring:message code='lbl.search' />
 						</button>
 						<a href='javascript:void(0)' class='btn btn-default'
 							onclick='self.close()'><spring:message code='lbl.close' /></a>
 					</div>
+						<div class="col-md-12 text-center"> <b style="color:red"> (Search and add preamble to create agenda)</b></div>
 				</div>
 			</div>
 		</div>
@@ -142,7 +143,7 @@
 	<!-- <div class="row display-hide agenda-section"> -->
 	<div class="col-md-6 table-header text-left">Update Agenda</div>
 	<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-	<div class="row display-hide agenda-section">
+	<div class="row ">
 
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.committeetype" /> </label>
@@ -268,12 +269,24 @@
 </form:form>
 
 <script>
-	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
+
+$('#buttonSubmit').click(function(e) {
+	if ($('#committeeType').val()=="") {
+		alert("Please select committe type");
+		e.preventDefault();
 		} else {
-			e.preventDefault();
-		}
-	});
+	}
+});
+
+$('#btnsearchPreamble').click(function(e) {
+	console.log('valid1111111');
+	if ($('form').valid()) {
+		return true;
+	} else {
+		e.preventDefault();
+	}
+});
+
 </script>
 
 

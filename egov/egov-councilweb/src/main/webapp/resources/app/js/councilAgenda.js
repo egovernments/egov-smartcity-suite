@@ -121,9 +121,9 @@ function addReadOnlyRow(btn)
 		
 		if($(this).val() === data.preambleNumber)
 		{
-			bootbox.alert("Duplicate value!");
+			bootbox.alert("Preamble already added in agenda.");
 			isDuplicate=true;
-			return
+			return;
 		}
 		
 	});
@@ -156,7 +156,7 @@ function addReadOnlyRow(btn)
 }
 
 
-jQuery('#btnsearch').click(function(e) {
+jQuery('#btnsearchPreamble').click(function(e) {
 	callAjaxSearch();
 });
 
@@ -195,19 +195,40 @@ function callAjaxSearch() {
 				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				
 				aaSorting: [],				
-				columns : [ { 
-					"data" : " S.No",'sTitle': "S.no"} ,{ 
-					"data" : "preambleNumber",'sTitle': "Preamble Number"} ,{ 
-					"data" : "department",'sTitle': "Department"} ,{ 
-					"data" : "gistOfPreamble",'sTitle': "Gist of Preamble"},{ 
-					"data" : "sanctionAmount", "sClass" : "text-right",'sTitle': "Amount"},/*{ 
-					"data" : "department","visible" :false, "searchable": false},*/{
-					"data" : "id","visible" : false, "searchable" : false} ,
-					,{ "data" : null, "target":-1,"sortable": false,'sTitle': "Action",
-					    "render": function ( data, type, full, meta ) {
-					       	 return '<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''+ JSON.stringify(full) +'\' onclick="addReadOnlyRow(this)"><span class="glyphicon glyphicon-edit"></span>&nbsp;Add</button>';
-					    }
-					}
+
+								columns : [
+						{
+							"data" : "preambleNumber",
+							'sTitle' : "Preamble Number"
+						},
+						{
+							"data" : "department",
+							'sTitle' : "Department"
+						},
+						{
+							"data" : "gistOfPreamble",
+							'sTitle' : "Gist of Preamble"
+						},
+						{
+							"data" : "sanctionAmount",
+							"sClass" : "text-right",
+							'sTitle' : "Amount"
+						},
+						{
+							"data" : null,
+							"target" : -1,
+							"sortable" : false,
+							'sTitle' : "Action",
+							"render" : function(data, type, full, meta) {
+								return '<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
+										+ JSON.stringify(full)
+										+ '\' onclick="addReadOnlyRow(this)"><span class="glyphicon glyphicon-edit"></span>&nbsp;Add</button>';
+							}
+						}, {
+							"data" : "id",
+							"visible" : false,
+							"searchable" : false
+						}
 					]				
 			});
 			}
@@ -215,7 +236,7 @@ function callAjaxSearch() {
 
 $(document).ready(function() {
 	
-	jQuery( ".dateval" ).datepicker({ 
+	/*jQuery( ".dateval" ).datepicker({ 
    	 format: 'dd/mm/yyyy',
    	 autoclose:true,
         onRender: function(date) {
@@ -228,8 +249,8 @@ $(document).ready(function() {
 			  DateValidation1(electiondate , oathdate);
 		  }
 		 
-	  }).data('datepicker');
-	
+	  }).data('datepicker');*/
+/*	
 	function DateValidation1(start , end){
 	    if (start != "" && end != "") {
 			var stsplit = start.split("/");
@@ -259,11 +280,16 @@ $(document).ready(function() {
 			retvalue = true;
 		}
 	    return retvalue;
-	}
+	}*/
 
 	$("#agendaTable tbody").on('click','tr td .delete',function(event) {
+		if($(tbody).find('tr').length==1)
+		{	bootbox.alert("You cannot delete this row.");
+		}
+		else {
 		$(this).closest('tr').remove();
-		regenerateIndexes();		
+		regenerateIndexes();
+		}
 	});
 	
 });
