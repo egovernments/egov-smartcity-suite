@@ -4,3 +4,7 @@ before_install:
  - ls
 jdk:
   - oraclejdk8
+services:
+  - postgresql
+addons:
+  postgresql: "9.4"
