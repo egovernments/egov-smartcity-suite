@@ -161,6 +161,7 @@ public class RevisionEstimateService {
     private MeasurementSheetService measurementSheetService;
 
     @Autowired
+    @Qualifier("parentMessageSource")
     private MessageSource messageSource;
 
     @Autowired

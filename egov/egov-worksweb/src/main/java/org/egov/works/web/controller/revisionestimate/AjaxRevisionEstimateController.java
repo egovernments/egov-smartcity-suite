@@ -58,7 +58,7 @@ import org.egov.works.web.adaptor.SearchActivityJsonAdaptor;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,7 +90,7 @@ public class AjaxRevisionEstimateController {
     private WorkOrderEstimateService workOrderEstimateService;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/getrevisionestimatesbynumber", method = RequestMethod.GET)
     public @ResponseBody List<String> findAbstractEstimateNumbersForAbstractEstimate(

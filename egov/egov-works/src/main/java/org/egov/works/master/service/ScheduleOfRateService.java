@@ -66,6 +66,7 @@ import org.egov.works.uploadsor.UploadScheduleOfRate;
 import org.hibernate.Session;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -91,6 +92,7 @@ public class ScheduleOfRateService {
     private UserService userService;
 
     @Autowired
+    @Qualifier("parentMessageSource")
     private MessageSource messageSource;
     
     public ScheduleOfRate getScheduleOfRateById(final Long scheduleOfRateId) {

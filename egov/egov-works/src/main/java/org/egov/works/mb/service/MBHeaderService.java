@@ -116,6 +116,7 @@ public class MBHeaderService {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     @Autowired
+    @Qualifier("parentMessageSource")
     private MessageSource messageSource;
 
     @Autowired
