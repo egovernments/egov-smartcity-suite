@@ -41,7 +41,9 @@ package org.egov.egf.web.actions.masters;
 
 
 import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.CoaCache;
 import com.exilant.exility.common.TaskFailedException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -119,6 +121,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
     String parentForDetailedCode = "";
     private final Map<Long, Integer> glCodeLengths = new HashMap<Long, Integer>();
     private boolean updateOnly = false;
+    @Autowired
+	private CoaCache coaCache;
 
     @Override
     public Object getModel() {
@@ -623,10 +627,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     void clearCache() {
         try {
-        	chartOfAccounts.loadAccountData();
-        } catch (final TaskFailedException e) {
-
-            LOGGER.error("Error" + e.getMessage(), e);
+        	coaCache.reLoad();
+        }catch(Exception e)
+        {
+        	LOGGER.error("Error while reloading coa cache");  
         }
     }
 

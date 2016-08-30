@@ -48,6 +48,8 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -73,6 +75,9 @@ public class BudgetAppropriationService extends PersistenceService {
     private BudgetDetailsDAO budgetDetailsDAO;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     public BudgetAppropriationService() {
         super(null);
@@ -131,11 +136,10 @@ public class BudgetAppropriationService extends PersistenceService {
     }
 
     private boolean isBudgetCheckNeeded(final CChartOfAccounts coa) {
-        final List<AppConfigValues> list = appConfigValuesService.getConfigValuesByModuleAndKey("EGF", "budgetCheckRequired");
-        boolean checkReq = false;
-        if ("Y".equalsIgnoreCase(list.get(0).getValue()))
-            if (null != coa && null != coa.getBudgetCheckReq() && coa.getBudgetCheckReq())
-                checkReq = true;
+    	 boolean checkReq=false; 
+    	if(!budgetControlTypeService.getConfigValue().equals(BudgetControlType.BudgetCheckOption.NONE.toString()))
+			if (null != coa && null != coa.getBudgetCheckReq() && coa.getBudgetCheckReq())
+                checkReq = true;  
         return checkReq;
     }
 
