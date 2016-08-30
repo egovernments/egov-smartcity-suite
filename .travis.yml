@@ -1,3 +1,6 @@
 language: java
+before_install:
+ - cd egov
+ - ls
 jdk:
   - oraclejdk8
