@@ -85,7 +85,7 @@ import static org.hibernate.annotations.FetchMode.JOIN;
 public class AppConfig extends AbstractAuditable {
 
     private static final long serialVersionUID = 8904645810221559541L;
-    static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
+    public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     public static final String FETCH_WITH_VALUES = "AppConfig.values";
 
     @Expose
@@ -119,10 +119,12 @@ public class AppConfig extends AbstractAuditable {
     @Fetch(JOIN)
     private List<AppConfigValues> confValues = new ArrayList<>();
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
