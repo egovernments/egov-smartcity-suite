@@ -89,6 +89,7 @@ import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
+import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -361,6 +362,7 @@ public class RevisionEstimateService {
         for (final Activity activity : revisionEstimate.getActivities()) {
             final WorkOrderActivity workOrderActivity = new WorkOrderActivity();
             workOrderActivity.setActivity(activity);
+            populateWorkOrderMeasurementSheet(workOrderActivity);
             approvedAmount = 0;
             if (activity != null
                     && activity.getRevisionType() != null
@@ -408,6 +410,21 @@ public class RevisionEstimateService {
             workOrderEstimate.addWorkOrderActivity(workOrderActivity);
         }
         workOrderEstimate.getWorkOrder().setWorkOrderAmount(woTotalAmount);
+    }
+
+    private void populateWorkOrderMeasurementSheet(WorkOrderActivity workOrderActivity) {
+        WorkOrderMeasurementSheet workOrderMeasurementSheet;
+        for (MeasurementSheet mSheet : workOrderActivity.getActivity().getMeasurementSheetList()) {
+            workOrderMeasurementSheet = new WorkOrderMeasurementSheet();
+            workOrderMeasurementSheet.setNo(mSheet.getNo());
+            workOrderMeasurementSheet.setLength(mSheet.getLength());
+            workOrderMeasurementSheet.setWidth(mSheet.getWidth());
+            workOrderMeasurementSheet.setDepthOrHeight(mSheet.getDepthOrHeight());
+            workOrderMeasurementSheet.setQuantity(mSheet.getQuantity());
+            workOrderMeasurementSheet.setMeasurementSheet(mSheet);
+            workOrderMeasurementSheet.setWoActivity(workOrderActivity);
+            workOrderActivity.getWorkOrderMeasurementSheets().add(workOrderMeasurementSheet);
+        }
     }
 
     private List<Activity> removeDeletedActivities(final List<Activity> activities, final String removedActivityIds) {

@@ -272,12 +272,14 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
             redirectAttributes.addFlashAttribute("revisionEstimate", updatedRevisionEstimate);
 
-            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode()))
+            if (EstimateStatus.NEW.toString().equals(updatedRevisionEstimate.getEgwStatus().getCode())) {
                 return "redirect:/revisionestimate/update/" + updatedRevisionEstimate.getId() + "?mode=save";
+            }
 
-            if (approvalPosition == null)
+            if (approvalPosition == null) {
                 return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                         + "&approvalPosition=";
+            }
 
             return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
                     + "&approvalPosition=" + approvalPosition;
