@@ -69,7 +69,7 @@
 											<tr>
 												<td colspan="4" class="headingwk">
 													<div class="arrowiconwk">
-														<img src="/egworks/resources/erp2/images/arrow.gif" />
+														<img src="<cdn:url value='/egworks/resources/erp2/images/arrow.gif' />">
 													</div>
 													<div class="headplacer">
 														<s:text name='contractor.search.label.search' />
@@ -129,7 +129,7 @@
 																		<tr>
 																			<td width="4%" class="headingwk">
 																				<div class="arrowiconwk">
-																					<img src="/egworks/resources/erp2/images/arrow.gif" />
+																					<img src="<cdn:url value='/egworks/resources/erp2/images/arrow.gif' />">
 																				</div>
 																				<div class="headplacer">
 																					<s:text name='contractor.search.label.searchResult' />

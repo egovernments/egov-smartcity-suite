@@ -43,7 +43,7 @@
 <html>
 <title><s:text name='page.title.milestone.template'/></title>
 <body class="yui-skin-sam">
-<script src="<egov:url path='/resources/js/milestonetemplate/milestonetemplate.js?${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/milestonetemplate/milestonetemplate.js?rnd=${app_release_no}'/>"></script>
 	<div class="new-page-header">
 		<s:if test="%{model.id == null}">
 			<s:text name="milestone.template.create" />

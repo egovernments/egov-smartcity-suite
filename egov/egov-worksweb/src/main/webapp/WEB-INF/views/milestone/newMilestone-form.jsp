@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <body onload="replacePercentageValue();">
 <form:form name="milestoneForm" role="form" action="milestone-save" modelAttribute="milestone" id="milestone" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	<form:hidden id="mode" path=""  value="${mode}"/>
@@ -78,4 +79,4 @@
 	</div>
 </form:form>  
 </body>
-<script src="<c:url value='/resources/js/milestone/milestone.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/milestone/milestone.js?rnd=${app_release_no}'/>"></script>
