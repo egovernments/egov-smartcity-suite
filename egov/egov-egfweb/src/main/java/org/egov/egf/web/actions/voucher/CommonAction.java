@@ -99,9 +99,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.masters.model.AccountEntity;
 import org.egov.model.bills.EgBillSubType;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.budget.BudgetDetail;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.voucher.CommonBean;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.financingsource.FinancingSourceService;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
@@ -156,7 +158,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
         @Result(name = "COA", location = "common-COA.jsp"),
         @Result(name = "process", location = "common-process.jsp"),
         @Result(name = "schemeBy20", location = "common-schemeBy20.jsp"),
-        @Result(name = "yearCode", location = "common-yearCode.jsp")
+        @Result(name = "yearCode", location = "common-yearCode.jsp"),
+        @Result(name = "estimateBudgetDetails", location = "common-estimateBudgetDetails.jsp")
 })
 public class CommonAction extends BaseFormAction {
 
@@ -202,7 +205,8 @@ public class CommonAction extends BaseFormAction {
     private Integer billSubtypeId;
     private String billType;
     private String searchType;
-
+    private List<BudgetDetail> budgetDetailList;
+    
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -247,6 +251,9 @@ public class CommonAction extends BaseFormAction {
     private String functionName;
     private Integer bankaccount;
     private List<CFinancialYear> yearCodeList;
+    private Long functionId;
+    @Autowired
+    private BudgetDetailService budgetDetailService;
 
     public String getSerialNo() {
         return serialNo;
@@ -3686,6 +3693,29 @@ public class CommonAction extends BaseFormAction {
         return "process";
     }
 
+    @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByFundId")
+    public String ajaxLoadEstimateBudgetDetailsByFundId()
+    {
+            if( fundId!=null && fundId!=0 )
+                budgetDetailList=budgetDetailService.getDepartmentFromBudgetDetailByFundId(fundId);
+        return "estimateBudgetDetails";
+    }
+    @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByDepartmentId")
+    public String ajaxLoadEstimateBudgetDetailsByDepartmentId()
+    {
+            if( departmentId!=null && departmentId!=0)
+                budgetDetailList=budgetDetailService.getFunctionFromBudgetDetailByDepartmentId(departmentId.longValue());
+        return "estimateBudgetDetails";
+    }
+    
+    @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByFuncId")
+    public String ajaxLoadEstimateBudgetDetailsByFuncId()
+    {
+            if( functionId!=null && functionId!=0)
+                budgetDetailList=budgetDetailService.getBudgetDetailByFunctionId(functionId);
+        return "estimateBudgetDetails";
+    }
+    
     public String getStateId() {
         return stateId;
     }
@@ -4189,6 +4219,22 @@ public class CommonAction extends BaseFormAction {
 
     public void setYearCodeList(List<CFinancialYear> yearCodeList) {
         this.yearCodeList = yearCodeList;
+    }
+
+    public Long getFunctionId() {
+        return functionId;
+    }
+
+    public void setFunctionId(Long functionId) {
+        this.functionId = functionId;
+    }
+
+    public List<BudgetDetail> getBudgetDetailList() {
+        return budgetDetailList;
+    }
+
+    public void setBudgetDetailList(List<BudgetDetail> budgetDetailList) {
+        this.budgetDetailList = budgetDetailList;
     }
 
 }
