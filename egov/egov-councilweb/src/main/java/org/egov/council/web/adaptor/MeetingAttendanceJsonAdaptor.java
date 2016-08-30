@@ -93,7 +93,7 @@ public class MeetingAttendanceJsonAdaptor implements JsonSerializer<MeetingAtten
                 else
                     jsonObject.addProperty("address", StringUtils.EMPTY);
                 if (attendence.getAttendedMeeting() != null)
-                    jsonObject.addProperty("attendance", attendence.getAttendedMeeting() == true?"Present":"Absent");
+                    jsonObject.addProperty("attendance", attendence.getAttendedMeeting()?"Present":"Absent");
                 else
                     jsonObject.addProperty("attendance", StringUtils.EMPTY);
                
