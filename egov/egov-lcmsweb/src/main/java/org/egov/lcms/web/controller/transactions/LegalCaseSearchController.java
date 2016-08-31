@@ -39,21 +39,17 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.lcms.transactions.entity.LegalCaseReportResult;
-import org.egov.lcms.transactions.entity.LegalCaseReportResultAdaptor;
+import org.egov.infra.web.utils.WebUtils;
+import org.egov.lcms.reports.entity.LegalCaseSearchResult;
 import org.egov.lcms.transactions.service.SearchLegalCaseService;
-import org.hibernate.SQLQuery;
+import org.egov.lcms.web.adaptor.LegalCaseSearchJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -74,7 +70,7 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
 
     @ModelAttribute
     private void getLegalCaseReport(final Model model) {
-        final LegalCaseReportResult legalCaseReportResult = new LegalCaseReportResult();
+        final LegalCaseSearchResult legalCaseReportResult = new LegalCaseSearchResult();
         model.addAttribute("legalCaseReportResult", legalCaseReportResult);
     }
 
@@ -85,8 +81,8 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
     }
 
     @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void getLegalCaseSearchResult(@RequestParam final String caseNumber,
+    @RequestMapping(value = "/legalsearchResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String getLegalCaseSearchResult(@RequestParam final String caseNumber,
             @RequestParam final String lcNumber, @RequestParam final String court, @RequestParam final String caseType,
             @RequestParam final String standingCouncil, @RequestParam final String courtType,
             @RequestParam final String isStatusExcluded, final HttpServletRequest request,
@@ -94,16 +90,13 @@ public class LegalCaseSearchController extends GenericLegalCaseController {
         Boolean caseExcluded = Boolean.FALSE;
         if (request.getParameter("isStatusExcluded").equals("true"))
             caseExcluded = Boolean.TRUE;
-        List<LegalCaseReportResult> legalcaseSearchList = new ArrayList<LegalCaseReportResult>();
-        final SQLQuery query = searchLegalCaseService.getLegalCaseReport(request.getParameter("caseNumber"),
+        List<LegalCaseSearchResult>  legalcaseSearchList = searchLegalCaseService.getLegalCaseReport(request.getParameter("caseNumber"),
                 request.getParameter("lcNumber"), request.getParameter("court"), request.getParameter("caseType"),
                 request.getParameter("standingCouncil"), request.getParameter("courtType"), null, caseExcluded);
-        legalcaseSearchList = query.list();
-        String result = null;
-        result = new StringBuilder("{ \"data\":")
-                .append(toJSON(legalcaseSearchList, LegalCaseReportResult.class, LegalCaseReportResultAdaptor.class)).append("}")
+        String result = new StringBuilder("{ \"data\":")
+                .append(WebUtils.toJSON(legalcaseSearchList, LegalCaseSearchResult.class, 
+                		LegalCaseSearchJsonAdaptor.class)).append("}")
                 .toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+        return result;
     }
 }

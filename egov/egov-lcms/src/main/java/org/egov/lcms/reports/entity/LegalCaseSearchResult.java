@@ -37,13 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.lcms.transactions.entity;
+package org.egov.lcms.reports.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LegalCaseReportResult {
+public class LegalCaseSearchResult {
     private String caseNumber;
     private String lcNumber;
     private Date caseFromDate;
@@ -59,7 +59,6 @@ public class LegalCaseReportResult {
     private String petName;
     private Boolean isStatusExcluded;
     private String caseStatus;
-    private List<String> actionList = new ArrayList<String>(0);
     private String assignDept;
 
     public String getStandingCouncil() {
@@ -166,13 +165,6 @@ public class LegalCaseReportResult {
         this.caseStatus = caseStatus;
     }
 
-    public List<String> getActionList() {
-        return actionList;
-    }
-
-    public void setActionList(final List<String> actionList) {
-        this.actionList = actionList;
-    }
 
     public String getCaseTitle() {
         return caseTitle;
