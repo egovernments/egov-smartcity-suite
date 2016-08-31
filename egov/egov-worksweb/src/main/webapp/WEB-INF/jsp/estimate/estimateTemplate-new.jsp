@@ -47,7 +47,7 @@
 <title><s:text name='page.title.estimate.template'/></title>
 <body class="yui-skin-sam">
 
-<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script>
 <script>
 function enableFieldsForModify(){
     var id=dom.get('id').value;

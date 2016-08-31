@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form:form name="mbHeaderSearchForm" role="form" modelAttribute="searchRequestMBHeader"
 	id="searchRequestMBHeader"	class="form-horizontal form-groups-bordered">
 	<div class="alert text-left" style="color: red;" id="errorMessage" hidden="true"></div>
@@ -61,4 +62,4 @@
 			</div>
 </form:form>
 <jsp:include page="mbheader-searchResult.jsp" />
-<script src="<c:url value='/resources/js/mb/searchmbheader.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/mb/searchmbheader.js?rnd=${app_release_no}'/>"></script>

@@ -150,4 +150,4 @@ jQuery(document).on("click", ".report-table-container table tbody tr", function(
 </script>
 
 <script type="text/javascript"
-	src="<c:url value='/resources/js/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/searchestimatetemplate.js?rnd=${app_release_no}'/>"></script>

@@ -39,7 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-<script src="<egov:url path='/resources/js/works.js?${app_release_no}'/>"></script> 
+<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <title><s:text name="sor.list" /></title>

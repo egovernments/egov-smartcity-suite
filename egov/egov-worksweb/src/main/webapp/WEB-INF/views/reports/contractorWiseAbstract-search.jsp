@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form:form name="SearchRequest" role="form" action="" modelAttribute="contractorWiseAbstractReport" id="contractorWiseAbstractReport" class="form-horizontal form-groups-bordered">
 			<div class="row">
 				<div class="col-md-12">
@@ -62,6 +63,6 @@
 		<jsp:include page="contractorWiseAbstractReport-searchresults.jsp"/>
 		
 <script
- 	src="<c:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
+ 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.stickytableheaders.min.js' context='/egi'/>"
  	type="text/javascript"></script>
-<script src="<c:url value='/resources/js/reports/contractorwiseabstractreport.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/reports/contractorwiseabstractreport.js?rnd=${app_release_no}'/>"></script>

@@ -45,8 +45,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <script
-	src="<egov:url path='resources/js/uploadsor/uploadsor.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/uploadsor/uploadsor.js?rnd=${app_release_no}'/>"></script>
 <style>
 .file-ellipsis {
 	width: auto !Important;

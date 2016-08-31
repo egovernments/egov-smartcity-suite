@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/map-autocomplete.css' context='/egi'/>">
 	  <div class="form-group">
 			<label class="col-sm-2 control-label text-right">
 			    <spring:message code="lbl.department" />

@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <style>
 .position_alert {
 	position: fixed;
@@ -160,6 +161,6 @@
 var msg = '<spring:message code="lbl.header" />';
 </script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-	<script src="<c:url value='/resources/js/viewlocationmap.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/abstractestimate/abstractestimate.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	<script src="<cdn:url value='/resources/js/viewlocationmap.js?rnd=${app_release_no}'/>"></script>

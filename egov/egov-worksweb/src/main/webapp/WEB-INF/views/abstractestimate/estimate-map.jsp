@@ -37,7 +37,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-  
+  <%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
   <div class="modal fade" id="modal-6">
 	   <div class="modal-dialog">
 		  <div class="modal-content">
@@ -53,7 +53,7 @@
 							<!-- panel body -->
 							<div class="panel-body no-padding">
 								<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
-								<script type="text/javascript" src="<c:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
+								<script type="text/javascript" src="<cdn:url value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
 								<div id="normal" class="img-prop"></div>
 								<input id="pac-input" class="controls " type="text" placeholder="Enter a location">
 							</div>

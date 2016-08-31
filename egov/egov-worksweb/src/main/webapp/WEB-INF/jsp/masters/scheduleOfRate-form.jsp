@@ -46,8 +46,8 @@ ul {
 list-style-type: none;
 }
 </style>
-<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
-<script src="<egov:url path='resources/js/master/scheduleofrate.js?${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/master/scheduleofrate.js?rnd=${app_release_no}'/>"></script>
 <script>
  
 function enableLastEndDate(){

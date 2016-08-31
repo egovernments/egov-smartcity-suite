@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 
 <form:form name="overheadForm" id="overheadForm" role="form" action="/egworks/masters/overhead-save" modelAttribute="overhead"  class="form-horizontal form-groups-bordered">
 	<input type="hidden" value="<spring:message code='overhead.overheadRates.invalid' />" id='overheadRateDetails'>
@@ -88,4 +89,4 @@
 	</div>
 </form:form>
 <script
-	src="<c:url value='/resources/js/master/overhead.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/master/overhead.js?rnd=${app_release_no}'/>"></script>

@@ -227,4 +227,4 @@
 <%@ include file="../measurementsheet/mb-measurementsheet-formtable.jsp"%>
 </div>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/mb/mbmeasurementsheet.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/mb/mbmeasurementsheet.js?rnd=${app_release_no}'/>"></script>

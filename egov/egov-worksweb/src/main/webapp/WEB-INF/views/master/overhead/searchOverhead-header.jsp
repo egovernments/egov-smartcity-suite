@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form:form name="SearchRequestOverhead" role="form" action=""
 	modelAttribute="searchRequestOverhead" id="searchRequestOverhead"
 	class="form-horizontal form-groups-bordered">
@@ -75,10 +76,10 @@
 <c:choose>
 <c:when test="${mode!='view'}">
 <script
-	src="<c:url value='/resources/js/master/modifyoverhead.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/master/modifyoverhead.js?rnd=${app_release_no}'/>"></script>
 </c:when>
 <c:otherwise>
 <script
-	src="<c:url value='/resources/js/master/viewoverhead.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/master/viewoverhead.js?rnd=${app_release_no}'/>"></script>
 </c:otherwise>
 </c:choose>

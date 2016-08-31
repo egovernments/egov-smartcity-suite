@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <style>
       .position_alert{
         position:fixed;z-index:9999;top:85px;right:20px;background:#F2DEDE;padding:10px 20px;border-radius: 5px;
@@ -166,9 +167,9 @@
 </form:form>
 
 <script type="text/javascript"
-	src="<c:url value='/resources/js/mb/measurementbook.js?rnd=${app_release_no}'/>"></script>
-	<script src="<c:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/js/mb/measurementbook.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
 <c:if test="${mode == 'edit' || mode == 'workflowView' }">
 	<script type="text/javascript"
-	src="<c:url value='/resources/js/mb/mbformsubmit.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/mb/mbformsubmit.js?rnd=${app_release_no}'/>"></script>
 </c:if>

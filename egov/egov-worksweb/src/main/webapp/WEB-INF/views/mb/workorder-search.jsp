@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div id="searchFormDiv">
 	<form:form name="abstractEstimateForm" role="form" modelAttribute="searchRequestLetterOfAcceptance"
 		id="searchRequestLetterOfAcceptance"	class="form-horizontal form-groups-bordered">
@@ -64,7 +65,7 @@
 		</div>
 	</form:form>
 	<jsp:include page="workorder-searchResult.jsp" />
-	<script src="<c:url value='/resources/js/mb/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/mb/searchloaformbheader.js?rnd=${app_release_no}'/>"></script>
 </div>
 <div id="successPage" hidden="true">
 	<jsp:include page="mb-success.jsp"/>
@@ -72,4 +73,4 @@
 <div id="measurementBookDiv" hidden="true">
 	<jsp:include page="measurementBook-form.jsp"/>
 </div>
-<script src="<c:url value='/resources/js/mb/mbajaxsubmit.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/mb/mbajaxsubmit.js?rnd=${app_release_no}'/>"></script>

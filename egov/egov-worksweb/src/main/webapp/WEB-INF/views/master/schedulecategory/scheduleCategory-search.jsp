@@ -43,7 +43,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input type="hidden"
 	value="<spring:message code="error.schedulecategory.select" />"
 	id="selectScheduleCategory" />
@@ -108,10 +108,10 @@
 <c:choose>
 	<c:when test="${mode == 'view' }">
 		<script
-			src="<egov:url path='resources/js/master/viewschedulecategory.js?${app_release_no}'/>"></script>
+			src="<cdn:url value='/resources/js/master/viewschedulecategory.js?rnd=${app_release_no}'/>"></script>
 	</c:when>
 	<c:otherwise>
 		<script
-			src="<egov:url path='resources/js/master/modifyschedulecategory.js?${app_release_no}'/>"></script>
+			src="<cdn:url value='/resources/js/master/modifyschedulecategory.js?rnd=${app_release_no}'/>"></script>
 	</c:otherwise>
 </c:choose>

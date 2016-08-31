@@ -42,7 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <input type="hidden" value="${workOrder.offlineStatuses.size() }" id="statusSize" />
 <input type="hidden" value="${offlineStatusSize }" id="offlineStatusSize" />
 <table class="table table-bordered" id="tblsetstatus">
@@ -84,4 +84,4 @@
 			</c:forEach>
 		</tbody>
 </table>
-<script src="<c:url value='/resources/js/offlinestatus.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/offlinestatus.js?rnd=${app_release_no}'/>"></script>

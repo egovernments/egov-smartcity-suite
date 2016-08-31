@@ -63,7 +63,7 @@ list-style-type:none;
 				value="Close" Class="btn btn-default" onclick="window.close();" />
 		</div>
 	</div>
-	<script src="<egov:url path='resources/js/works.js?${app_release_no}'/>"></script>
-	<script src="<egov:url path='resources/js/master/schedulecategory.js?${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/works.js?rnd=${app_release_no}'/>"></script>
+	<script src="<cdn:url value='/resources/js/master/schedulecategory.js?rnd=${app_release_no}'/>"></script>
 </body>
 </html>
