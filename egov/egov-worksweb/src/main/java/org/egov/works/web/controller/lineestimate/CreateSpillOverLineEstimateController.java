@@ -39,11 +39,21 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -80,13 +90,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class CreateSpillOverLineEstimateController {
@@ -121,6 +124,9 @@ public class CreateSpillOverLineEstimateController {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
     
     @Autowired
     private BoundaryService boundaryService;
@@ -161,10 +167,8 @@ public class CreateSpillOverLineEstimateController {
         validateAdminSanctionDetail(lineEstimate, errors);
         validateTechSanctionDetails(lineEstimate, errors);
 
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
-                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Y"))
+        if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
         
         validateBudgetHead(lineEstimate, errors);

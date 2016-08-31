@@ -39,6 +39,15 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CFinancialYear;
@@ -46,10 +55,11 @@ import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -84,14 +94,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -131,19 +133,19 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     private BudgetDetailsDAO budgetDetailsDAO;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
+    private SecurityUtils securityUtils;
 
     @Autowired
-    private SecurityUtils securityUtils;
-    
-    @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private ModeOfAllotmentService modeOfAllotmentService;
-    
+
     @Autowired
     private LineEstimateUOMService lineEstimateUOMService;
+
+    @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -224,10 +226,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
         if (lineEstimate.getStatus().getCode().equals(LineEstimateStatus.CHECKED.toString())
                 && !workFlowAction.equalsIgnoreCase(WorksConstants.REJECT_ACTION.toString())) {
-            final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-            final AppConfigValues value = values.get(0);
-            if (value.getValue().equalsIgnoreCase("Y"))
+            if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
                 validateBudgetAmount(lineEstimate, errors);
         }
         if (errors.hasErrors()) {
@@ -284,7 +284,8 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
             List<CChartOfAccountDetail> accountDetails = new ArrayList<CChartOfAccountDetail>();
             accountDetails.addAll(lineEstimate.getBudgetHead().getMaxCode().getChartOfAccountDetails());
             for (CChartOfAccountDetail detail : accountDetails) {
-                if (detail.getDetailTypeId() != null && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
+                if (detail.getDetailTypeId() != null
+                        && detail.getDetailTypeId().getName().equalsIgnoreCase(WorksConstants.PROJECTCODE))
                     check = true;
             }
             if (!check) {
@@ -296,6 +297,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     }
 
     private void validateBudgetAmount(final LineEstimate lineEstimate, final BindingResult errors) {
+
         final List<Long> budgetheadid = new ArrayList<Long>();
         budgetheadid.add(lineEstimate.getBudgetHead().getId());
 
