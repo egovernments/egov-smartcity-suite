@@ -39,7 +39,6 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
