@@ -44,6 +44,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.egov.works.workorder.repository.WorkOrderMeasurementSheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,9 @@ public class WorkOrderMeasurementSheetService {
 
     public List<WorkOrderMeasurementSheet> search(final WorkOrderMeasurementSheet workOrderMeasurementSheet) {
         return workOrderMeasurementSheetRepository.findAll();
+    }
+
+    public List<WorkOrderMeasurementSheet> findByParentId(final Long parentId) {
+        return workOrderMeasurementSheetRepository.findByParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
     }
 }

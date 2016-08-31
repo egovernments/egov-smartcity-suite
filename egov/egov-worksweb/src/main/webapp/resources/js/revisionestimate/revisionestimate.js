@@ -595,50 +595,85 @@ var sorSearch = new Bloodhound({
 		//regenerate index existing inputs in table row
 		$(".activityRow").each(function() {
 			$(this).find("input,button, select,textarea,td,tbody,tr,table, errors, span, input:hidden").each(function() {
-
-
+				
 				if (!$(this).is('span')) {
 					$(this).attr({
 						'name' : function(_, name) {
-							//console.log(name);
-							if(name)
-								{
-								name= name.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
-								return name.replace(/_\d+/,"_"+idx);
+							if(name != undefined)
+								if(name) {
+								  name= name.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
+								  return name.replace(/_\d+/,"_"+idx);
 								}
 						},
 						'id' : function(_, id) {
-							//console.log(id);
-							if(id)
-								{
-								id= id.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
-								return id.replace(/_\d+/,"_"+idx);
-								}
-								
+							if(id != undefined)
+								return id.replace(/\d+/, idx);
+						},
+						'class' : function(_, name) {
+							if(name != undefined)
+								return name.replace(/\d+/, idx);
 						},
 						'data-idx' : function(_, dataIdx) {
 							return idx;
 						}
 					});
 				} else {
+					if($(this).attr('class').endsWith('.mstd')) {
+						var subRowIdx=0;
+						$(this).find("table > tbody > tr").each(function() {
+						  	$(this).find("input, textarea, td").each(function() {
+								if ($(this).is('td')) {
+									$(this).attr({
+										'id' : function(_, id) {
+											if(id != undefined && id.indexOf('msrow') >= 0) {
+												return id.split('_')[0] + '_' + idx + '_' + subRowIdx;
+											} else {
+												if(id != undefined)
+													return id.replace(/\d+/, idx);
+											}
+										}
+									});
+								}
+								else{
+									$(this).attr({
+										'name' : function(_, name) {
+											if(name != undefined)
+												if(name) {
+													name = name.replace(/measurementSheetList\[.\]/g, "measurementSheetList["+subRowIdx+"]");
+													return name;
+												}
+										},
+										'id' : function(_, id) {
+											if(id != undefined)
+												if(id.indexOf('_') == -1) {
+													id = id.replace(/measurementSheetList\[.\]/g, "measurementSheetList["+subRowIdx+"]");
+													return id;
+												} else {
+													if(id.indexOf('_woMeasurementSheet') == -1)
+														return 'changeQuantityActivities_' + idx + '_measurementSheetList_' + subRowIdx + '_id';
+													else
+														return 'changeQuantityActivities_' + idx + '_measurementSheetList_' + subRowIdx + '_woMeasurementSheet';
+												}
+										},
+										'data-idx' : function(_, dataIdx) {
+											return subRowIdx;
+										}
+									});
+								}
+							});
+							subRowIdx++;
+						});
+					}
+					
 					$(this).attr({
 						'class' : function(_, name) {
-							//console.log(name);
-							if(name)
-								{
-								name= name.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
-							return	name=name.replace(/_\d+/,"_"+idx);
-								
-								}
+							if(name != undefined)
+								return name.replace(/\d+/, idx);
 						},
 						'id' : function(_, id) {
-							if(id)
-							{
-								//console.log(id);
-								id= id.replace(/changeQuantityActivities\[.\]/g, "changeQuantityActivities["+idx+"]");
-								return id.replace(/_\d+/,"_"+idx);
-							}
-						}
+							if(id != undefined)
+								return id.replace(/\d+/, idx);
+						},
 					});
 				}
 			});
@@ -686,9 +721,11 @@ var sorSearch = new Bloodhound({
 			{
 				nonTenderedMsArray[idx]=mscontent;
 			}
-			else
+			else if (sortable.indexOf("lumpSumActivities") >= 0)
 			{
 				lumpSumMsArray[idx]=mscontent;
+			} else {
+				sorMsArray[idx]=mscontent;
 			}
 
 
@@ -837,15 +874,15 @@ var sorSearch = new Bloodhound({
 	function calculateEstimateValue() {
 		var nonTenderedTotal = $('#nonTenderedTotal').html();
 		var lumpSumTotal = $('#lumpSumTotal').html();
-		var activityTotal = $('#activityTotal').html();
+		var reActivityTotal = $('#reActivityTotal').html();
 		if(nonTenderedTotal == '')
 			nonTenderedTotal = 0.0;
 		if(lumpSumTotal == '')
 			lumpSumTotal = 0.0;
-		if(activityTotal == '')
+		if(reActivityTotal == '')
 			activityTotal = 0.0;
 
-		var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) + parseFloat(activityTotal)).toFixed(2);
+		var workValue = parseFloat(parseFloat(nonTenderedTotal) + parseFloat(lumpSumTotal) + parseFloat(reActivityTotal)).toFixed(2);
 		var estimateValue =  parseFloat(workValue).toFixed(2);
 		$('#estimateValue').val(estimateValue);
 		$('#workValue').val(workValue);
@@ -1038,19 +1075,19 @@ var sorSearch = new Bloodhound({
 	
 	function findNet(obj)
 	{
-		var len=$(obj).closest('table').find('tr').length;
+		var len=$(obj).closest('tbody').find('tr').length;
 
 
 		var name=obj.id.split(".");
+		var index = name[0].split('[')[1].split(']')[0];
 
 		var sum=0;
-		for(var i=0;i<len-2;i++)
+		for(var i=0;i<len-1	;i++)
 		{
 			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
 			var quantity=eval(document.getElementById(qname).value);
-			var oname=name[0]+'.measurementSheetList['+i+'].identifier';
-			var operationObj=document.getElementById(oname);
-			var operation=operationObj.options[operationObj.selectedIndex].value;
+			var oname= '#msrowidentifier_' + index + '_' + i;
+			var operation=$(oname).html().trim();
 			//console.log(quantity+"---"+operation);
 			if(quantity===undefined)
 				quantity=0;
@@ -1058,7 +1095,7 @@ var sorSearch = new Bloodhound({
 				quantity=0;
 			if(quantity=='')
 				quantity=0;
-			if(operation=='A')
+			if(operation=='No')
 				sum=sum+quantity;
 			else
 				sum=sum-quantity;
@@ -1092,9 +1129,15 @@ var sorSearch = new Bloodhound({
 			return false;
 		}
 		var qobj1=document.getElementById(sid.split(".")[0]+".measurementSheetList[0].no");
-		if(!validateMsheet(qobj1))
-		{
-			return false;
+		if(sid.split("[")[0] == "changeQuantityActivities") {
+			if(!validateCQMsheet(qobj1)) {
+				return false;
+			}
+		} else {
+			if(!validateMsheet(qobj1))
+			{
+				return false;
+			}
 		}
 
 		document.getElementsByName(sid.split(".")[0]+".quantity")[0].value=document.getElementById(sid.split(".")[0]+".msnet").innerHTML;
@@ -1109,9 +1152,11 @@ var sorSearch = new Bloodhound({
 		if(sid.split(".")[0].indexOf("nonTenderedActivities") >= 0)
 		{
 			calculateEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
-		}else
+		}else if(sid.split(".")[0].indexOf("lumpSumActivities") >= 0)
 		{
 			calculateLumpSumEstimateAmount(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
+		} else if(sid.split(".")[0].indexOf("changeQuantityActivities") >= 0) {
+			calculateActivityAmounts(document.getElementsByName(sid.split(".")[0]+".quantity")[0]);
 		}
 		$(qobj).attr("readonly","readonly");
 
@@ -1120,14 +1165,13 @@ var sorSearch = new Bloodhound({
 	
 	function validateMsheet(obj)
 	{
-
-		var len=$(obj).closest('table').find('tr').length;
+		var len=$(obj).closest('tbody').find('tr').length;
 	
 	
 		var name=obj.id.split(".");
 	
 		var sum=0;
-		for(var i=0;i<len-2;i++)
+		for(var i=0;i<len-1;i++)
 		{
 			var qname=name[0]+'.measurementSheetList['+i+'].quantity';
 			var no=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].no').value);
@@ -1153,6 +1197,24 @@ var sorSearch = new Bloodhound({
 		}
 		return true;
 
+	}
+	
+	function validateCQMsheet(obj)
+	{
+		var len=$(obj).closest('tbody').find('tr').length;
+		var name=obj.id.split(".");
+		for(var i=0;i<len-1;i++){
+			var length=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].length').value);
+			var width=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].width').value);
+			var depthorheight=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].depthOrHeight').value);
+			var quantity=eval(document.getElementById(name[0]+'.measurementSheetList['+i+'].quantity').value);
+
+			if ((length != '' || width != '' || depthorheight != '') && quantity == '') {
+				bootbox.alert("Please Enter Quantity");
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	$(document).on('click','.add-msrow',function () {
@@ -1288,7 +1350,7 @@ var sorSearch = new Bloodhound({
 				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
 				}
 				
-		}else
+		}else if(sid.split(".")[0].indexOf("lumpSumActivities") >= 0)
 		{
 			if(lumpSumMsArray[idx])
 				{
@@ -1296,6 +1358,12 @@ var sorSearch = new Bloodhound({
 			if(lumpSumMsArray[idx].length==0)
 				document.getElementById(sid.split(".")[0]+".mspresent").value="0";
 				}
+		} else {
+			if(sorMsArray[idx]) {
+				document.getElementById(sid.split(".")[0]+".mstd").innerHTML=sorMsArray[idx];
+				if(sorMsArray[idx].length==0)
+					document.getElementById(sid.split(".")[0]+".mspresent").value="0";
+			}
 		}
 
 		document.getElementById(sid.split(".")[0]+".msopen").value="0";
@@ -1604,10 +1672,11 @@ function populateActivities(data, selectedActivities){
 			$('#activityUnitRate_' + activityCount).val(unitRate);
 			$('.activityApprovedAmount_' + activityCount).html(parseFloat(activity.activityAmount).toFixed(2));
 			if (activity.ms != "") {
+				$('#activityQuantity_' + activityCount).attr('readonly', 'readonly');
 				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').removeAttribute('style');
-				var newrow= $('#msheaderrowtemplate').html();
+				var newrow= $('#cqmsheaderrowtemplate').html();
 
-				newrow=  newrow.replace(/msrowtemplate/g, 'msrowsorchangeQuantityActivities[' + activityCount + ']');
+				newrow=  newrow.replace(/cqmsrowtemplate/g, 'msrowsorchangeQuantityActivities[' + activityCount + ']');
 				newrow=  newrow.replace(/templatesorActivities\[0\]/g, 'changeQuantityActivities[' + activityCount + ']');
 				newrow = newrow.replace(/templatesorActivities_0/g, 'changeQuantityActivities_' + activityCount);
 				newrow = newrow.replace(/templatemssubmit_0/g, 'mssubmit_' + activityCount);
@@ -1625,14 +1694,14 @@ function populateActivities(data, selectedActivities){
 					if (index > 0) {
 						var msrowname= "changeQuantityActivities[" + activityCount + "].mstable";
 						var msrownameid=msrowname.split(".")[0];
-						var rep='measurementSheets\['+ index +'\]';
+						var rep='measurementSheetList\['+ index +'\]';
 
-						var $newrow = "<tr>"+$('#msrowtemplate').html()+"</tr>";
+						var $newrow = "<tr>"+$('#cqmsrowtemplate').html()+"</tr>";
 						$newrow = $newrow.replace(/templatesorActivities\[0\]/g,msrownameid);
-						$newrow = $newrow.replace(/measurementSheets\[0\]/g,rep);
+						$newrow = $newrow.replace(/measurementSheetList\[0\]/g,rep);
 						$newrow = $newrow.replace(/templatesorActivities_0/g, 'changeQuantityActivities_' + activityCount);
-						$newrow = $newrow.replace(/measurementSheets_0_id/g, 'measurementSheets_' + index + '_id');
-						$newrow = $newrow.replace(/measurementSheets_0_woMeasurementSheet/g, 'measurementSheets_' + index + '_woMeasurementSheet');
+						$newrow = $newrow.replace(/measurementSheetList_0_id/g, 'measurementSheetList_' + index + '_id');
+						$newrow = $newrow.replace(/measurementSheetList_0_parent/g, 'measurementSheetList_' + index + '_parent');
 						$newrow = $newrow.replace('msrowslNo_0_0', 'msrowslNo_' + activityCount + '_' + index);
 						$newrow = $newrow.replace('msrowremarks_0_0', 'msrowremarks_' + activityCount + '_' + index);
 						$newrow = $newrow.replace('msrowno_0_0', 'msrowno_' + activityCount + '_' + index);
@@ -1648,10 +1717,10 @@ function populateActivities(data, selectedActivities){
 						patternvalidation();
 					}
 					$.each(measurementSheet, function(key, value){
-						if(key == "msid") {
-							$('#changeQuantityActivities_' + activityCount + '_measurementSheets_' + index + '_woMeasurementSheet').attr('value', value);
-						} else if(key == "id") {
-							$('#changeQuantityActivities_' + activityCount + '_measurementSheets_' + index + '_id').attr('value', value);
+						if(key == "id") {
+							$('#changeQuantityActivities_' + activityCount + '_measurementSheetList_' + index + '_id').attr('value', value);
+						} else if(key == "parent") {
+							$('#changeQuantityActivities_' + activityCount + '_measurementSheetList_' + index + '_parent').attr('value', value);
 						} else if(key == "identifier") {
 							if(value == 'A')
 								$('#msrowidentifier_' + activityCount + '_' + index).html('No');
@@ -1663,11 +1732,13 @@ function populateActivities(data, selectedActivities){
 				});
 			} else {
 				document.getElementById('changeQuantityActivities[' + activityCount + '].msadd').style.display = 'none';
+				$('#activityQuantity_' + activityCount).removeAttr('readonly');
 			}
 			calculateActivityAmounts($('#activityQuantity_' + activityCount));
 			activityCount++;
 		}
 	});
+	reActivityTotal();
 	activityTotal();
 }
 
@@ -1722,6 +1793,7 @@ function deleteActivity(obj) {
 	resetChangeQuantityIndexes();
 	//starting index for table fields
 	generateSlno('spanactivityslno');
+	reActivityTotal();
 	activityTotal()
 	return true;
 }
@@ -1747,7 +1819,19 @@ function calculateActivityAmounts(currentObj) {
 		estimatedAmount = -1 * estimatedAmount;
 	$('.activityEstimatedAmount_' + rowcount).html(parseFloat(estimatedAmount).toFixed(2));
 	$('.activityTotal_' + rowcount).html((parseFloat(parseFloat(estimateQuantity) * unitRate) + parseFloat(estimatedAmount)).toFixed(2));
+	reActivityTotal();
 	activityTotal();
+}
+
+function reActivityTotal() {
+	var total = 0;
+	$('.reActivityTotal').each(function() {
+		if($(this).html().trim() != "")
+			total = parseFloat(parseFloat(total) + parseFloat($(this).html().replace(',', ''))).toFixed(2);
+	});
+	$('#reActivityTotal').html(total);
+	
+	calculateEstimateValue();
 }
 
 function activityTotal() {
@@ -1822,3 +1906,60 @@ function validateRevisionEstimate() {
 	
 	return true;
 }
+
+function addCQMSheet(obj) {
+//	console.log("adding msheet for "+obj.id);
+	var rowid=obj.id;
+	sorId=rowid.split(".");
+	var	sortable=sorId[0];
+
+
+	var msfieldsName=rowid.replace("msadd","measurementSheetList");
+	var   mscontent=document.getElementById(rowid.replace("msadd","mstd")).innerHTML;
+
+	var   msopen=document.getElementById(rowid.replace("msadd","msopen")).value;
+	if(msopen==1)
+		return ;
+
+	if(mscontent!='')
+	{
+		  if(mscontent.indexOf(headstart) >=0)
+			  {
+			  var head= mscontent.substring(mscontent.indexOf(headstart),mscontent.indexOf(headend));
+			  var tail= mscontent.substring(mscontent.indexOf(tailstart),mscontent.indexOf(tailend));
+			  mscontent= mscontent.replace(head,"");
+			  mscontent= mscontent.replace(tail,"");
+			  }
+		
+		var curRow = $(obj).closest('tr');
+		var k= "<tr class='msheet-tr' id=\""+sortable+".mstr\"><td colspan=\"14\">";
+		mscontent=k+mscontent+"</td></tr>";
+		curRow.after(mscontent);
+		if(document.getElementById(rowid.replace("msadd","mstd")))
+			document.getElementById(rowid.replace("msadd","mstd")).innerHTML="";
+		if(document.getElementById(rowid.replace("msadd","msopen")))
+			document.getElementById(rowid.replace("msadd","msopen")).value="1";
+		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
+		sorMsArray[idx]=mscontent;
+	}else
+	{
+
+		var curRow = $(obj).closest('tr');
+		var newrow= $('#cqmsheaderrowtemplate').html();
+
+		newrow=  newrow.replace(/cqmsrowtemplate/g,'msrow'+sortable);
+		newrow=  newrow.replace(/templatesorActivities\[0\]/g,sortable);
+		if(document.getElementById(rowid.replace("msadd","msopen")))
+			document.getElementById(rowid.replace("msadd","msopen")).value="1";
+		if(document.getElementById(rowid.replace("msadd","mspresent")))
+			document.getElementById(rowid.replace("msadd","mspresent")).value="1";
+		curRow.after(newrow);
+		var idx=sortable.substr(sortable.indexOf("["),sortable.indexOf("]"));
+		sorMsArray[idx]="";
+	}
+	patternvalidation();
+}
+
+$(document).on('click','.reset-cq',function () {
+	var len=$(this).closest('table').find('.runtime-update').val("");
+});

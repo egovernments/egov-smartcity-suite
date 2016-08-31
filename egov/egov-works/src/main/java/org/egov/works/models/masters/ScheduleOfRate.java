@@ -51,7 +51,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.formula.functions.T;
 import org.egov.common.entity.UOM;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Period;
@@ -64,6 +63,8 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_SCHEDULEOFRATE", columnName = {
         "CODE" }, message = "sor.code.isunique")
@@ -140,6 +141,7 @@ public class ScheduleOfRate extends BaseModel {
         return sorRates;
     }
 
+    @JsonIgnore
     public List<SORRate> getSorRatesOrderById() {
         Collections.sort(sorRates, (c1, c2) -> c1.getId().compareTo(c2.getId()));
         Collections.reverse(sorRates);

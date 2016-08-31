@@ -44,9 +44,13 @@ import java.lang.reflect.Type;
 
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
+import org.egov.works.abstractestimate.service.EstimateService;
+import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
 import org.egov.works.mb.service.MBHeaderService;
+import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.workorder.entity.WorkOrderActivity;
+import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +68,18 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
 
     @Autowired
     MBHeaderService mbHeaderService;
+
+    @Autowired
+    EstimateService estimateService;
+
+    @Autowired
+    MeasurementSheetService measurementSheetService;
+
+    @Autowired
+    WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
+
+    @Autowired
+    RevisionEstimateService revisionEstimateService;
 
     @Override
     public JsonElement serialize(final Activity activity, final Type typeOfSrc,
@@ -100,14 +116,17 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
         else
             jsonObject.addProperty("uom", "");
 
-        jsonObject.addProperty("approvedQuantity", activity.getQuantity());
         if (workOrderActivity != null) {
+            revisionEstimateService.deriveWorkOrderActivityQuantity(workOrderActivity);
             jsonObject.addProperty("estimateQuantity", workOrderActivity.getApprovedQuantity());
             final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
             jsonObject.addProperty("consumedQuantity", consumedQuantity == null ? "0" : consumedQuantity.toString());
-            if (activity.getSchedule() != null && activity.getAbstractEstimate().getParent() != null)
-                rate = activity.getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
-                        .getValue();
+            if (activity.getAbstractEstimate().getParent() != null)
+                if (activity.getSchedule() != null)
+                    rate = activity.getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
+                            .getValue();
+                else
+                    rate = activity.getRate();
         } else {
             jsonObject.addProperty("estimateQuantity", 0);
             jsonObject.addProperty("consumedQuantity", 0);
@@ -125,7 +144,8 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
             final JsonArray jsonArray = new JsonArray();
             for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
                 final JsonObject child = new JsonObject();
-                child.addProperty("msid", ms.getId());
+                revisionEstimateService.deriveMeasurementSheetQuantity(ms);
+                child.addProperty("parent", ms.getId());
                 child.addProperty("slNo", ms.getSlNo());
                 child.addProperty("remarks", ms.getRemarks());
                 child.addProperty("no", ms.getNo());
@@ -139,6 +159,18 @@ public class SearchActivityJsonAdaptor implements JsonSerializer<Activity> {
             jsonObject.add("ms", jsonArray);
         } else
             jsonObject.add("ms", new JsonArray());
+
+        Double qty = 0d;
+        for (final MeasurementSheet ms : activity.getMeasurementSheetList())
+            if (ms.getIdentifier() == 'A')
+                qty = qty + ms.getQuantity().doubleValue();
+            else
+                qty = qty - ms.getQuantity().doubleValue();
+        if (!activity.getMeasurementSheetList().isEmpty())
+            activity.setQuantity(qty);
+
+        jsonObject.addProperty("approvedQuantity", activity.getQuantity());
+
         return jsonObject;
     }
 

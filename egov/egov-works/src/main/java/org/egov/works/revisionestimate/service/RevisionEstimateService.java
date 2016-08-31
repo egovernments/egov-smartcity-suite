@@ -40,6 +40,7 @@
 package org.egov.works.revisionestimate.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,7 +62,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.persistence.entity.component.Money;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -90,6 +90,7 @@ import org.egov.works.utils.WorksUtils;
 import org.egov.works.workorder.entity.WorkOrderActivity;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
+import org.egov.works.workorder.service.WorkOrderMeasurementSheetService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -178,6 +179,9 @@ public class RevisionEstimateService {
     private LineEstimateAppropriationService lineEstimateAppropriationService;
 
     @Autowired
+    WorkOrderMeasurementSheetService workOrderMeasurementSheetService;
+
+    @Autowired
     public RevisionEstimateService(final RevisionEstimateRepository revisionEstimateRepository) {
         this.revisionEstimateRepository = revisionEstimateRepository;
     }
@@ -229,7 +233,7 @@ public class RevisionEstimateService {
         }
         doBudgetoryAppropriation(workFlowAction, revisionEstimate);
 
-        saveChangeQuantityActivities(revisionEstimate);
+        mergeChangeQuantityActivities(revisionEstimate);
 
         revisionEstimateRepository.save(revisionEstimate);
 
@@ -240,12 +244,11 @@ public class RevisionEstimateService {
         return revisionEstimate;
     }
 
-    private void doBudgetoryAppropriation(String workFlowAction, RevisionAbstractEstimate revisionEstimate) {
+    private void doBudgetoryAppropriation(final String workFlowAction, final RevisionAbstractEstimate revisionEstimate) {
         final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
                 WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
         final AppConfigValues value = values.get(0);
-        if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
-
+        if (WorksConstants.FORWARD_ACTION.toString().equalsIgnoreCase(workFlowAction))
             if ("Y".equalsIgnoreCase(value.getValue())) {
                 final List<Long> budgetheadid = new ArrayList<Long>();
                 budgetheadid.add(revisionEstimate.getParent().getLineEstimateDetails().getLineEstimate().getBudgetHead().getId());
@@ -256,10 +259,10 @@ public class RevisionEstimateService {
                         budgetheadid);
 
                 if (!flag)
-                    throw new ValidationException(StringUtils.EMPTY, "error.budgetappropriation.insufficient.amount");
+                    throw new ValidationException(org.apache.commons.lang.StringUtils.EMPTY,
+                            "error.budgetappropriation.insufficient.amount");
             }
-        }
-        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction)) {
+        if (WorksConstants.REJECT_ACTION.toString().equalsIgnoreCase(workFlowAction))
             if ("Y".equalsIgnoreCase(value.getValue())) {
                 final String appropriationNumber = lineEstimateAppropriationService
                         .generateBudgetAppropriationNumber(revisionEstimate.getParent().getLineEstimateDetails());
@@ -267,31 +270,22 @@ public class RevisionEstimateService {
                         revisionEstimate.getEstimateValue().doubleValue(),
                         appropriationNumber);
             }
-        }
     }
 
-    private void saveChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
-        for (final Activity activity : revisionEstimate.getChangeQuantityActivities()) {
-            final Activity act = activityRepository.findOne(activity.getParent().getId());
-            activity.setParent(act);
-            activity.setAbstractEstimate(revisionEstimate);
-            activity.setSchedule(act.getSchedule());
-            activity.setNonSor(act.getNonSor());
-            activity.setUom(act.getUom());
-            activity.setRate(act.getRate());
-            if ("-".equals(activity.getSignValue()))
-                activity.setRevisionType(RevisionType.REDUCED_QUANTITY);
-            else
-                activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
-            activity.setEstimateRate(activity.getRate() * activity.getQuantity());
-        }
-        revisionEstimate.getActivities().addAll(revisionEstimate.getChangeQuantityActivities());
+    private void removeEmptyMS(final Activity activity) {
+        final List<MeasurementSheet> toRemove = new LinkedList<MeasurementSheet>();
+        for (final MeasurementSheet ms : activity.getMeasurementSheetList())
+            if (ms.getQuantity() == null || ms.getQuantity() != null && ms.getQuantity().equals(""))
+                toRemove.add(ms);
+
+        for (final MeasurementSheet msremove : toRemove)
+            activity.getMeasurementSheetList().remove(msremove);
     }
 
     @Transactional
     public RevisionAbstractEstimate updateRevisionEstimate(final RevisionAbstractEstimate revisionEstimate,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final String removedActivityIds, WorkOrderEstimate workOrderEstimate)
+            final String workFlowAction, final String removedActivityIds, final WorkOrderEstimate workOrderEstimate)
             throws ValidationException, IOException {
 
         RevisionAbstractEstimate updateRevisionEstimate = null;
@@ -326,13 +320,13 @@ public class RevisionEstimateService {
         return updateRevisionEstimate;
     }
 
-    private RevisionWorkOrder createRevisionWorkOrder(RevisionAbstractEstimate revisionEstimate,
-            RevisionWorkOrder revisionWorkOrder, WorkOrderEstimate workOrderEstimate) {
+    private RevisionWorkOrder createRevisionWorkOrder(final RevisionAbstractEstimate revisionEstimate,
+            final RevisionWorkOrder revisionWorkOrder, final WorkOrderEstimate workOrderEstimate) {
 
         final List<RevisionAbstractEstimate> revisionEstimates = revisionEstimateRepository
                 .findByParent_Id(revisionEstimate.getParent().getId());
 
-        Integer reCount = revisionEstimates.size();
+        final Integer reCount = revisionEstimates.size();
         revisionWorkOrder.setParent(workOrderEstimate.getWorkOrder());
         revisionWorkOrder.setWorkOrderDate(revisionEstimate.getEstimateDate());
         revisionWorkOrder.setWorkOrderNumber(
@@ -346,7 +340,7 @@ public class RevisionEstimateService {
     }
 
     protected void populateWorkOrderActivities(final RevisionWorkOrder revisionWorkOrder,
-            RevisionAbstractEstimate revisionEstimate) {
+            final RevisionAbstractEstimate revisionEstimate) {
         final WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
         workOrderEstimate.setEstimate(revisionEstimate);
         workOrderEstimate.setWorkOrder(revisionWorkOrder);
@@ -355,7 +349,7 @@ public class RevisionEstimateService {
     }
 
     private void addWorkOrderEstimateActivities(final WorkOrderEstimate workOrderEstimate,
-            final RevisionWorkOrder revisionWorkOrder, RevisionAbstractEstimate revisionEstimate) {
+            final RevisionWorkOrder revisionWorkOrder, final RevisionAbstractEstimate revisionEstimate) {
         double woTotalAmount = 0;
         double approvedAmount = 0;
         final Double tenderFinalizedPercentage = revisionWorkOrder.getParent().getTenderFinalizedPercentage();
@@ -380,9 +374,8 @@ public class RevisionEstimateService {
                                     .getRevisionType().toString())))
                 if (!tenderFinalizedPercentage.equals(Double.valueOf(0)))
                     workOrderActivity.setApprovedRate(activity.getRate() + activity.getRate() * tenderFinalizedPercentage / 100);
-                else {
+                else
                     workOrderActivity.setApprovedRate(activity.getRate());
-                }
             workOrderActivity.setApprovedQuantity(activity.getQuantity());
             approvedAmount = new Money(activity.getRate() * workOrderActivity.getApprovedQuantity())
                     .getValue();
@@ -412,9 +405,9 @@ public class RevisionEstimateService {
         workOrderEstimate.getWorkOrder().setWorkOrderAmount(woTotalAmount);
     }
 
-    private void populateWorkOrderMeasurementSheet(WorkOrderActivity workOrderActivity) {
+    private void populateWorkOrderMeasurementSheet(final WorkOrderActivity workOrderActivity) {
         WorkOrderMeasurementSheet workOrderMeasurementSheet;
-        for (MeasurementSheet mSheet : workOrderActivity.getActivity().getMeasurementSheetList()) {
+        for (final MeasurementSheet mSheet : workOrderActivity.getActivity().getMeasurementSheetList()) {
             workOrderMeasurementSheet = new WorkOrderMeasurementSheet();
             workOrderMeasurementSheet.setNo(mSheet.getNo());
             workOrderMeasurementSheet.setLength(mSheet.getLength());
@@ -552,6 +545,7 @@ public class RevisionEstimateService {
     private void mergeChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
         for (final Activity activity : revisionEstimate.getChangeQuantityActivities())
             if (activity.getId() == null) {
+                removeEmptyMS(activity);
                 final Activity act = activityRepository.findOne(activity.getParent().getId());
                 activity.setParent(act);
                 activity.setAbstractEstimate(revisionEstimate);
@@ -564,19 +558,19 @@ public class RevisionEstimateService {
                 else
                     activity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
                 activity.setEstimateRate(activity.getRate() * activity.getQuantity());
+                for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
+                    final MeasurementSheet sheet = measurementSheetService.findOne(ms.getParent().getId());
+                    ms.setActivity(activity);
+                    ms.setParent(sheet);
+                    ms.setIdentifier(sheet.getIdentifier());
+                    ms.setRemarks(sheet.getRemarks());
+                    ms.setSlNo(sheet.getSlNo());
+                }
                 revisionEstimate.addActivity(activity);
             } else
                 for (final Activity oldActivity : revisionEstimate.getActivities())
                     if (oldActivity.getId() != null && oldActivity.getId().equals(activity.getId()))
                         updateChangeQuantityActivity(oldActivity, activity);
-        if (LOG.isDebugEnabled())
-            for (final Activity ac : revisionEstimate.getActivities())
-                LOG.debug(ac.getMeasurementSheetList().size() + "    " + ac.getQuantity());
-
-        for (final Activity ac : revisionEstimate.getChangeQuantityActivities())
-            for (final MeasurementSheet ms : ac.getMeasurementSheetList())
-                if (ms.getActivity() == null)
-                    ms.setActivity(ac);
     }
 
     private void updateChangeQuantityActivity(final Activity oldActivity, final Activity activity) {
@@ -590,7 +584,7 @@ public class RevisionEstimateService {
         oldActivity.setServiceTaxPerc(activity.getServiceTaxPerc());
         oldActivity.setEstimateRate(activity.getRate() * activity.getQuantity());
         oldActivity.setUom(parent.getUom());
-        oldActivity.setMeasurementSheetList(mergeMeasurementSheet(oldActivity, activity));
+        oldActivity.setMeasurementSheetList(mergeCQMeasurementSheet(oldActivity, activity));
         if ("+".equals(activity.getSignValue()))
             oldActivity.setRevisionType(RevisionType.ADDITIONAL_QUANTITY);
         else
@@ -613,9 +607,9 @@ public class RevisionEstimateService {
                     msold.setDepthOrHeight(msnew.getDepthOrHeight());
                     msold.setNo(msnew.getNo());
                     msold.setActivity(msnew.getActivity());
-                    msold.setIdentifier(msnew.getIdentifier());
-                    msold.setRemarks(msnew.getRemarks());
-                    msold.setSlNo(msnew.getSlNo());
+                    msold.setIdentifier(msnew.getParent().getIdentifier());
+                    msold.setRemarks(msnew.getParent().getRemarks());
+                    msold.setSlNo(msnew.getParent().getSlNo());
                     msold.setQuantity(msnew.getQuantity());
                     newMsList.add(msold);
 
@@ -655,8 +649,35 @@ public class RevisionEstimateService {
             oldActivity.getMeasurementSheetList().remove(msremove);
         }
 
+        removeEmptyMS(oldActivity);
         return oldActivity.getMeasurementSheetList();
 
+    }
+
+    private List<MeasurementSheet> mergeCQMeasurementSheet(final Activity oldActivity, final Activity activity) {
+        for (final MeasurementSheet msnew : activity.getMeasurementSheetList()) {
+            if (msnew.getId() == null) {
+                msnew.setActivity(oldActivity);
+                oldActivity.getMeasurementSheetList().add(msnew);
+                continue;
+            }
+            for (final MeasurementSheet msold : oldActivity.getMeasurementSheetList())
+                if (msnew.getId().longValue() == msold.getId().longValue()) {
+                    msold.setLength(msnew.getLength());
+                    msold.setWidth(msnew.getWidth());
+                    msold.setDepthOrHeight(msnew.getDepthOrHeight());
+                    msold.setNo(msnew.getNo());
+                    msold.setActivity(msnew.getActivity());
+                    msold.setIdentifier(msnew.getParent().getIdentifier());
+                    msold.setRemarks(msnew.getParent().getRemarks());
+                    msold.setSlNo(msnew.getParent().getSlNo());
+                    msold.setQuantity(msnew.getQuantity());
+                    msold.setActivity(oldActivity);
+                }
+        }
+
+        removeEmptyMS(oldActivity);
+        return oldActivity.getMeasurementSheetList();
     }
 
     private void updateActivity(final Activity oldActivity, final Activity activity) {
@@ -702,6 +723,12 @@ public class RevisionEstimateService {
                 if (!measurementsPresent)
                     measurementsPresent = measurementSheetService.existsByEstimate(re.getId());
             }
+
+        // Calculating activity quantity after merging measurement sheets by volume
+        calculateActivityQuantity(sorActivities);
+        calculateActivityQuantity(nonSorActivities);
+        calculateActivityQuantity(nonTenderedActivities);
+        calculateActivityQuantity(lumpSumActivities);
 
         revisionEstimate.getSorActivities().addAll(sorActivities);
         revisionEstimate.getNonSorActivities().addAll(nonSorActivities);
@@ -754,6 +781,62 @@ public class RevisionEstimateService {
                     sa.setQuantity(sa.getQuantity() - activity.getQuantity());
                     sa.setQuantityChanged(true);
                 }
+    }
+
+    private void calculateActivityQuantity(final List<Activity> activities) {
+        for (final Activity activity : activities) {
+            Double qty = 0d;
+            for (final MeasurementSheet ms : activity.getMeasurementSheetList()) {
+                populateMeasurementSheet(ms);
+                if (ms.getIdentifier() == 'A')
+                    qty = qty + ms.getQuantity().doubleValue();
+                else
+                    qty = qty - ms.getQuantity().doubleValue();
+            }
+            if (!activity.getMeasurementSheetList().isEmpty())
+                activity.setQuantity(qty);
+        }
+    }
+
+    private void populateMeasurementSheet(final MeasurementSheet ms) {
+        final List<MeasurementSheet> remsList = measurementSheetService.findByParentId(ms.getId());
+        Double no = ms.getNo() == null ? 0 : ms.getNo().doubleValue();
+        Double length = ms.getLength() == null ? 0 : ms.getLength().doubleValue();
+        Double width = ms.getWidth() == null ? 0 : ms.getWidth().doubleValue();
+        Double depthOrHeight = ms.getDepthOrHeight() == null ? 0 : ms.getDepthOrHeight().doubleValue();
+        for (final MeasurementSheet rems : remsList)
+            if (ms.getIdentifier() == 'A') {
+                if (rems.getNo() != null)
+                    no = no + rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length + rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width + rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+            } else {
+                if (rems.getNo() != null)
+                    no = no - rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length - rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width - rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+            }
+        if (no != null && no != 0)
+            ms.setNo(new BigDecimal(no));
+        if (length != null && length != 0)
+            ms.setLength(new BigDecimal(length));
+        if (width != null && width != 0)
+            ms.setWidth(new BigDecimal(width));
+        if (depthOrHeight != null && depthOrHeight != 0)
+            ms.setDepthOrHeight(new BigDecimal(depthOrHeight));
+
+        ms.setQuantity(new BigDecimal(
+                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
+                        * (width == null || width == 0 ? 1 : width.doubleValue())
+                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
     }
 
     public void loadViewData(final RevisionAbstractEstimate revisionEstimate, final WorkOrderEstimate workOrderEstimate,
@@ -1051,10 +1134,8 @@ public class RevisionEstimateService {
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersToCancelRE(workOrderEstimate);
         for (final MBHeader mBHeader : mbHeaders)
             mbrefNumbres.append(mBHeader.getMbRefNo()).append(",");
-        if (mbrefNumbres.equals(""))
-            return "";
-        else
-            return mbrefNumbres.toString();
+
+        return mbrefNumbres.toString();
     }
 
     public RevisionAbstractEstimate cancel(final RevisionAbstractEstimate revisionAbstractEstimate) {
@@ -1069,10 +1150,8 @@ public class RevisionEstimateService {
         final StringBuilder revisionEstimates = new StringBuilder();
         for (final RevisionAbstractEstimate revisionAbstractEstimate : revisionEstimatesList)
             revisionEstimates.append(revisionAbstractEstimate.getEstimateNumber()).append(",");
-        if (revisionEstimates.equals(""))
-            return "";
-        else
-            return revisionEstimates.toString();
+
+        return revisionEstimates.toString();
     }
 
     public void validateREInDrafts(final Long estimateId, final JsonObject jsonObject, final BindingResult errors) {
@@ -1106,5 +1185,100 @@ public class RevisionEstimateService {
             if (errors != null)
                 errors.reject("workFlowError", message);
         }
+    }
+
+    public void deriveWorkOrderActivityQuantity(final WorkOrderActivity workOrderActivity) {
+        if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
+            for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets()) {
+                final List<WorkOrderMeasurementSheet> rewomsList = workOrderMeasurementSheetService.findByParentId(woms.getId());
+                Double no = woms.getNo() == null ? 0 : woms.getNo().doubleValue();
+                Double length = woms.getLength() == null ? 0 : woms.getLength().doubleValue();
+                Double width = woms.getWidth() == null ? 0 : woms.getWidth().doubleValue();
+                Double depthOrHeight = woms.getDepthOrHeight() == null ? 0 : woms.getDepthOrHeight().doubleValue();
+                for (final WorkOrderMeasurementSheet rems : rewomsList)
+                    if (woms.getMeasurementSheet().getIdentifier() == 'A') {
+                        if (rems.getNo() != null)
+                            no = no + rems.getNo().doubleValue();
+                        if (rems.getLength() != null)
+                            length = length + rems.getLength().doubleValue();
+                        if (rems.getWidth() != null)
+                            width = width + rems.getWidth().doubleValue();
+                        if (rems.getDepthOrHeight() != null)
+                            depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+                    } else {
+                        if (rems.getNo() != null)
+                            no = no - rems.getNo().doubleValue();
+                        if (rems.getLength() != null)
+                            length = length - rems.getLength().doubleValue();
+                        if (rems.getWidth() != null)
+                            width = width - rems.getWidth().doubleValue();
+                        if (rems.getDepthOrHeight() != null)
+                            depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+                    }
+                if (no != null && no != 0)
+                    woms.setNo(new BigDecimal(no));
+                if (length != null && length != 0)
+                    woms.setLength(new BigDecimal(length));
+                if (width != null && width != 0)
+                    woms.setWidth(new BigDecimal(width));
+                if (depthOrHeight != null && depthOrHeight != 0)
+                    woms.setDepthOrHeight(new BigDecimal(depthOrHeight));
+
+                woms.setQuantity(new BigDecimal(
+                        (no == null || no == 0 ? 1 : no.doubleValue())
+                                * (length == null || length == 0 ? 1 : length.doubleValue())
+                                * (width == null || width == 0 ? 1 : width.doubleValue())
+                                * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
+            }
+        Double qty = 0d;
+        for (final WorkOrderMeasurementSheet woms : workOrderActivity.getWorkOrderMeasurementSheets())
+            if (woms.getMeasurementSheet().getIdentifier() == 'A')
+                qty = qty + woms.getQuantity().doubleValue();
+            else
+                qty = qty - woms.getQuantity().doubleValue();
+        if (!workOrderActivity.getWorkOrderMeasurementSheets().isEmpty())
+            workOrderActivity.setApprovedQuantity(qty);
+    }
+
+    public void deriveMeasurementSheetQuantity(final MeasurementSheet measurementSheet) {
+        final List<MeasurementSheet> remsList = measurementSheetService.findByParentId(measurementSheet.getId());
+        Double no = measurementSheet.getNo() == null ? 0 : measurementSheet.getNo().doubleValue();
+        Double length = measurementSheet.getLength() == null ? 0 : measurementSheet.getLength().doubleValue();
+        Double width = measurementSheet.getWidth() == null ? 0 : measurementSheet.getWidth().doubleValue();
+        Double depthOrHeight = measurementSheet.getDepthOrHeight() == null ? 0
+                : measurementSheet.getDepthOrHeight().doubleValue();
+        for (final MeasurementSheet rems : remsList)
+            if (measurementSheet.getIdentifier() == 'A') {
+                if (rems.getNo() != null)
+                    no = no + rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length + rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width + rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight + rems.getDepthOrHeight().doubleValue();
+            } else {
+                if (rems.getNo() != null)
+                    no = no - rems.getNo().doubleValue();
+                if (rems.getLength() != null)
+                    length = length - rems.getLength().doubleValue();
+                if (rems.getWidth() != null)
+                    width = width - rems.getWidth().doubleValue();
+                if (rems.getDepthOrHeight() != null)
+                    depthOrHeight = depthOrHeight - rems.getDepthOrHeight().doubleValue();
+            }
+        if (no != null && no != 0)
+            measurementSheet.setNo(new BigDecimal(no));
+        if (length != null && length != 0)
+            measurementSheet.setLength(new BigDecimal(length));
+        if (width != null && width != 0)
+            measurementSheet.setWidth(new BigDecimal(width));
+        if (depthOrHeight != null && depthOrHeight != 0)
+            measurementSheet.setDepthOrHeight(new BigDecimal(depthOrHeight));
+
+        measurementSheet.setQuantity(new BigDecimal(
+                (no == null || no == 0 ? 1 : no.doubleValue()) * (length == null || length == 0 ? 1 : length.doubleValue())
+                        * (width == null || width == 0 ? 1 : width.doubleValue())
+                        * (depthOrHeight == null || depthOrHeight == 0 ? 1 : depthOrHeight.doubleValue())));
     }
 }

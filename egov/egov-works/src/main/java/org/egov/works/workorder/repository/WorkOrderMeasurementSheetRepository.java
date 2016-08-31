@@ -43,10 +43,16 @@ import java.util.List;
 
 import org.egov.works.workorder.entity.WorkOrderMeasurementSheet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkOrderMeasurementSheetRepository extends JpaRepository<WorkOrderMeasurementSheet, java.lang.Long> {
 
     List<WorkOrderMeasurementSheet> findByWoActivity_Id(final Long workOrderActivityId);
+
+    @Query("select woms from WorkOrderMeasurementSheet woms where woms.parent.id =:parentId and woms.measurementSheet.activity.abstractEstimate.egwStatus.code =:abstractEstimateStatus ")
+    List<WorkOrderMeasurementSheet> findByParent_Id(@Param("parentId") final Long parentId,
+            @Param("abstractEstimateStatus") final String abstractEstimateStatus);
 }

@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.works.abstractestimate.entity.Activity;
 import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate;
 import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
@@ -117,7 +118,7 @@ public class AjaxRevisionEstimateController {
     }
 
     @RequestMapping(value = "/ajax-searchactivities", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchWorkOrderActivities(final HttpServletRequest request) {
+    public @ResponseBody String searchActivities(final HttpServletRequest request) {
         final Long workOrderEstimateId = Long.parseLong(request.getParameter("workOrderEstimateId"));
         final String description = request.getParameter("description");
         final String itemCode = request.getParameter("itemCode");
@@ -229,7 +230,7 @@ public class AjaxRevisionEstimateController {
     }
 
     @RequestMapping(value = "/validatere/{workOrderEstimateId}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String validateWorkOrder(@PathVariable final Long workOrderEstimateId,
+    public @ResponseBody String validateRevisionEstimate(@PathVariable final Long workOrderEstimateId,
             final HttpServletRequest request, final HttpServletResponse response) {
         final JsonObject jsonObject = new JsonObject();
         final WorkOrderEstimate workOrderEstimate = workOrderEstimateService.getWorkOrderEstimateById(workOrderEstimateId);
@@ -248,7 +249,7 @@ public class AjaxRevisionEstimateController {
             IOUtils.write(msg, httpResponseWriter);
             IOUtils.closeQuietly(httpResponseWriter);
         } catch (final IOException e) {
-            e.printStackTrace();
+            throw new ApplicationRuntimeException("error.validate.re");
         }
     }
 }

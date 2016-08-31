@@ -131,7 +131,7 @@
 						               <form:hidden path="changeQuantityActivities[0].signValue" value="+" id="changeQuantityActivitiesSignValue_0" />
 						            </span>
 									<form:input path="changeQuantityActivities[0].quantity" id="activityQuantity_0" data-errormsg="Quantity is mandatory!" data-pattern="decimalvalue" data-idx="0" data-optional="0" required="required" class="form-control input-sm text-right quantity" maxlength="64" onblur="calculateActivityAmounts(this);" onkeyup="validateQuantityInput(this);"/>
-									<span class="input-group-addon openmsheet" name="changeQuantityActivities[0].msadd" id="changeQuantityActivities[0].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
+									<span class="input-group-addon openmsheet" name="changeQuantityActivities[0].msadd" id="changeQuantityActivities[0].msadd" data-idx="0" onclick="addCQMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"></i></span>
 								</div>
 							</td>
 							<td hidden="true">
@@ -140,7 +140,7 @@
 								<span  class="changeQuantityActivities[0].mstd" id="changeQuantityActivities[0].mstd" data-idx="0"></span>
 							</td>
 							<td>
-								<span class="activityEstimatedAmount_0"></span>
+								<span class="reActivityTotal activityEstimatedAmount_0"></span>
 							</td>
 							<td>
 								<span class="activityTotal activityTotal_0"></span>
@@ -223,10 +223,10 @@
 				                    	</c:choose>
 										<c:choose>
 											<c:when test="${!activity.measurementSheetList.isEmpty() }">
-												<span class="input-group-addon openmbsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+												<span class="input-group-addon openmbsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addCQMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
 											</c:when>
 											<c:otherwise>
-												<span style="display: none;" class="input-group-addon openmsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
+												<span style="display: none;" class="input-group-addon openmsheet" name="changeQuantityActivities[${item.index }].msadd" id="changeQuantityActivities[${item.index }].msadd" data-idx="0" onclick="addCQMSheet(this);return false;" data-toggle="tooltip" title="" data-original-title="Add Measurement Sheet"><i  class="fa fa-plus-circle" aria-hidden="true"></i></span>
 											</c:otherwise>
 										</c:choose>
 									</div>
@@ -241,7 +241,7 @@
 									</span>
 								</td>
 								<td>
-									<span class="activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
+									<span class="reActivityTotal activityEstimatedAmount_${item.index }"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="4">${activity.rate * activity.quantity }</fmt:formatNumber></span>
 								</td>
 								<td>
 									<c:if test="${activity.revisionType == 'ADDITIONAL_QUANTITY' }">
@@ -260,6 +260,12 @@
 				</c:choose>
 			</tbody>
 			<tfoot>
+				<c:set var="recqsortotal" value="${0}" scope="session" />
+				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
+					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
+						<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+					</c:forEach>
+				</c:if>
 				<c:set var="cqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
@@ -272,7 +278,8 @@
 					</c:forEach>
 				</c:if>
 				<tr>
-					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
+					<td class="text-right"><span id="reActivityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${recqsortotal }" /></fmt:formatNumber></span> </td>
 					<td class="text-right"><span id="activityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${cqsortotal }" /></fmt:formatNumber></span> </td>
 					<td></td>
 				</tr>

@@ -91,6 +91,10 @@ public class MeasurementSheet extends AbstractAuditable {
     @JoinColumn(name = "activityid")
     private Activity activity;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
+    private MeasurementSheet parent;
+
     @Override
     public Long getId() {
         return id;
@@ -171,6 +175,14 @@ public class MeasurementSheet extends AbstractAuditable {
 
     public void setActivity(final Activity activity) {
         this.activity = activity;
+    }
+
+    public MeasurementSheet getParent() {
+        return parent;
+    }
+
+    public void setParent(final MeasurementSheet parent) {
+        this.parent = parent;
     }
 
 }

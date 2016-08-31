@@ -115,10 +115,10 @@
 								 		<c:if test="${sorDtls.revisionType == 'REDUCED_QUANTITY' }">-</c:if>
 								 		<c:out value="${sorDtls.quantity}"></c:out>
 								 	<c:if test="${sorDtls.measurementSheetList.size() > 0 }">
-								 		 <button class="btn btn-default openmsheet" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								 		 <button class="btn btn-default openmsheet" name="changeQuantityActivities[${item.index}].msadd" id="changeQuantityActivities[${item.index}].msadd" data-idx="0" onclick="addCQMSheet(this);return false;"><i  class="fa fa-plus-circle" aria-hidden="true"></i></button>
 								 	 </c:if>
 								 	</td>
-								 		<%@ include file="../measurementsheet/nontenderedsor-measurementsheet-formtableview.jsp" %>  
+								 		<%@ include file="../measurementsheet/changequantity-measurementsheet-formtable-view.jsp" %>  
 								 	<td class="text-right"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${sorDtls.getAmount().value}" /></fmt:formatNumber></td>
 								 	<c:if test="${isServiceVATRequired == true }">
 										<td class="text-right"><c:out value="${sorDtls.serviceTaxPerc}"></c:out></td>
@@ -141,6 +141,12 @@
 				</c:choose> 
 			</tbody>
 			<tfoot>
+				<c:set var="recqsortotal" value="${0}" scope="session" />
+				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
+					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
+						<c:set var="recqsortotal" value="${recqsortotal + (sorDtls.rate * (sorDtls.quantity)) }" />
+					</c:forEach>
+				</c:if>
 				<c:set var="cqsortotal" value="${0}" scope="session" />
 				<c:if test="${revisionEstimate.changeQuantityActivities != null}">
 					<c:forEach items="${revisionEstimate.changeQuantityActivities}" var="sorDtls">
@@ -154,11 +160,12 @@
 				</c:if>
 				<tr>
 				<c:if test="${isServiceVATRequired == true }">
-					<td colspan="12" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="11" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
 				<c:if test="${isServiceVATRequired == false }">
-					<td colspan="10" class="text-right"><spring:message code="lbl.total" /></td>
+					<td colspan="9" class="text-right"><spring:message code="lbl.total" /></td>
 				</c:if>
+				<td class="text-right"><span id="reActivityTotal"><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out default="0.00" value="${recqsortotal }" /></fmt:formatNumber></span> </td>
 					<td class="text-right">
 						<span><fmt:formatNumber groupingUsed="false" minFractionDigits="2" maxFractionDigits="2"><c:out value="${cqsortotal}" /></fmt:formatNumber></span>
 					</td>

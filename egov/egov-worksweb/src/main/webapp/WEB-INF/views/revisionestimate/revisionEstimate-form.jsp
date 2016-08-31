@@ -155,4 +155,8 @@
 
 <div id="measurement" >
 <%@ include file="../measurementsheet/measurementsheet-formtable.jsp"%>
+</div>
+
+<div id="cqMeasurement" >
+<%@ include file="../measurementsheet/changequantity-measurementsheet-formtable.jsp"%>
 </div>      

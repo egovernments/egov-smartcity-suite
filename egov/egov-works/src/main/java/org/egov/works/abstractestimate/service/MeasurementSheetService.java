@@ -46,6 +46,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.repository.MeasurementSheetRepository;
+import org.egov.works.revisionestimate.entity.RevisionAbstractEstimate.RevisionEstimateStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -93,5 +94,9 @@ public class MeasurementSheetService {
 
     public Boolean existsByEstimate(final Long abstractEstimateId) {
         return measurementSheetRepository.existsByEstimate(abstractEstimateId);
+    }
+
+    public List<MeasurementSheet> findByParentId(final Long parentId) {
+        return measurementSheetRepository.findByParent_Id(parentId, RevisionEstimateStatus.APPROVED.toString());
     }
 }

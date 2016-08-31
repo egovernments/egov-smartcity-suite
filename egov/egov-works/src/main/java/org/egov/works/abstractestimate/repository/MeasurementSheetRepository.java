@@ -56,4 +56,8 @@ public interface MeasurementSheetRepository extends JpaRepository<MeasurementShe
     @Query("SELECT CASE WHEN COUNT(ms) > 0 THEN true ELSE false END from MeasurementSheet ms where ms.activity.abstractEstimate.id = :abstractEstimateId")
     Boolean existsByEstimate(@Param("abstractEstimateId") final Long abstractEstimateId);
 
+    @Query("select ms from MeasurementSheet ms where ms.parent.id =:parentId and ms.activity.abstractEstimate.egwStatus.code =:abstractEstimateStatus ")
+    List<MeasurementSheet> findByParent_Id(@Param("parentId") final Long parentId,
+            @Param("abstractEstimateStatus") final String abstractEstimateStatus);
+
 }

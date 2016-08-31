@@ -52,6 +52,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate.EstimateStatus;
 import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.abstractestimate.entity.MeasurementSheet;
 import org.egov.works.abstractestimate.service.EstimateService;
 import org.egov.works.abstractestimate.service.MeasurementSheetService;
 import org.egov.works.letterofacceptance.service.WorkOrderActivityService;
@@ -146,7 +147,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
         model.addAttribute("approvalPosition", request.getParameter("approvalPosition"));
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(revisionEstimate.getId()));
 
-        if (mode != null && mode.equalsIgnoreCase(WorksConstants.SAVE_ACTION))
+        if (WorksConstants.SAVE_ACTION.equalsIgnoreCase(mode))
             model.addAttribute("message",
                     messageSource.getMessage("msg.revisionestimate.saved", new String[] { revisionEstimate.getEstimateNumber() },
                             null));
@@ -191,17 +192,41 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
     }
 
     private void prepareChangeQuantityActivities(final RevisionAbstractEstimate revisionEstimate) {
-        for (final Activity activity : revisionEstimate.getActivities())
+        for (final Activity activity : revisionEstimate.getActivities()) {
             if (activity.getParent() != null) {
                 final WorkOrderActivity workOrderActivity = workOrderActivityService
                         .getWorkOrderActivityByActivity(activity.getParent().getId());
                 if (workOrderActivity != null) {
+                    revisionEstimateService.deriveWorkOrderActivityQuantity(workOrderActivity);
                     final Double consumedQuantity = mbHeaderService.getPreviousCumulativeQuantity(-1L, workOrderActivity.getId());
                     activity.setConsumedQuantity(consumedQuantity == null ? 0 : consumedQuantity);
                     activity.setEstimateQuantity(workOrderActivity.getApprovedQuantity());
+
+                    if (activity.getSchedule() != null)
+                        activity.setRate(activity
+                                .getSORRateForDate(workOrderActivity.getWorkOrderEstimate().getWorkOrder().getWorkOrderDate())
+                                .getValue());
+                    ;
                 }
                 revisionEstimate.getChangeQuantityActivities().add(activity);
+            } else {
+                if (activity.getSchedule() != null)
+                    activity.setRate(activity.getSORRateForDate(activity.getAbstractEstimate().getEstimateDate()).getValue());
+                ;
             }
+
+            if (!activity.getMeasurementSheetList().isEmpty())
+                for (final MeasurementSheet ms : activity.getMeasurementSheetList())
+                    revisionEstimateService.deriveMeasurementSheetQuantity(ms);
+            Double qty = 0d;
+            for (final MeasurementSheet ms : activity.getMeasurementSheetList())
+                if (ms.getIdentifier() == 'A')
+                    qty = qty + ms.getQuantity().doubleValue();
+                else
+                    qty = qty - ms.getQuantity().doubleValue();
+            if (!activity.getMeasurementSheetList().isEmpty())
+                activity.setQuantity(qty);
+        }
     }
 
     @RequestMapping(value = "/update/{revisionEstimateId}", method = RequestMethod.POST)
@@ -278,7 +303,7 @@ public class UpdateRevisionEstimateController extends GenericWorkFlowController 
 
             if (approvalPosition == null) {
                 return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()
-                        + "&approvalPosition=";
+                + "&approvalPosition=";
             }
 
             return "redirect:/revisionestimate/revisionestimate-success?revisionEstimate=" + updatedRevisionEstimate.getId()

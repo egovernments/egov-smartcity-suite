@@ -8,9 +8,8 @@ import org.egov.works.revisionestimate.entity.SearchRevisionEstimate;
 import org.egov.works.revisionestimate.service.RevisionEstimateService;
 import org.egov.works.workorder.entity.WorkOrderEstimate;
 import org.egov.works.workorder.service.WorkOrderEstimateService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,7 +27,7 @@ public class CancelRevisionEstimateController {
     private WorkOrderEstimateService workOrderEstimateService;
     
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private MessageSource messageSource;
     
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String cancelRevisionEstimateSearchForm(@ModelAttribute final SearchRevisionEstimate searchRevisionEstimate,

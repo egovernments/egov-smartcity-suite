@@ -1,4 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -38,115 +37,108 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<c:choose>
-<c:when test="${activity.measurementSheetList.size() > 0 }">
-<c:set var="net" value="0" />      
- <td hidden="true">
-                             <input class="classmspresent" type="hidden" disabled="disabled" name="changeQuantityActivities[${item.index }].mspresent" value="1" id="changeQuantityActivities[${item.index }].mspresent" data-idx="0"/>
-                             <input class="classmsopen" type="hidden" disabled="disabled" name="changeQuantityActivities[${item.index }].msopen" value="0" id="changeQuantityActivities[${item.index }].msopen" data-idx="0"/>
-                       
-                             <span name="changeQuantityActivities[${item.index }].mstd" class="changeQuantityActivities[${item.index }].mstd" id="changeQuantityActivities[${item.index }].mstd" data-idx="0">
-    <!--only for validity head start -->                         
+<c:if test="${!activity.measurementSheetList.isEmpty() }">
+	<!--only for validity head start -->                         
     <table>
-    <tr class='msheet-tr'>
-        <td colspan="9"><!--only for validity head end -->
-            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /><div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div>
-            </div>
-
-            <table class=" table table-bordered  msheet-table" id="changeQuantityActivities[${item.index }].mstable">
-                <thead>
-                <th><spring:message code="lbl.slno" /></th>
-                <th><spring:message code="lbl.identifier" /></th>
-                <th><spring:message code="lbl.description" /></th>
-                <th><spring:message code="lbl.no" /></th>
-                <th><spring:message code="lbl.length" /></th>
-                <th><spring:message code="lbl.width" /></th>
-                <th><spring:message code="lbl.depthorheight" /></th>
-                <th><spring:message code="lbl.quantity" /><span class="mandatory"></span></th>
-                <th><spring:message code="lbl.delete" /></th>
-                </thead>
-                <tbody id="msrow1">
-                <c:forEach items="${activity.measurementSheetList}" var="ms" varStatus="msindex" >
-                <tr id="msrow">
-                    <td>
-                        <input  name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].slNo" value="${ms.slNo}" readonly="readonly" id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].slNo" class="form-control text-right patternvalidation runtime-update spanslno" data-pattern="decimalvalue" />
-                   <input type="hidden"  name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].id" value="${ms.id}"/>
-                    <input type="hidden"  name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].activity" value="${ms.activity.id}"/> 
-                    
-                    </td>
-                    <td>
-                        <select name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"    id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].identifier"  onchange="findNet(this)" class="form-control runtime-update"   >
-                            <option value="A" <c:if test="${ms.identifier=='A'}"> selected="selected" </c:if>    >No</option>
-                            <option value="D" <c:if test="${ms.identifier=='D'}"> selected="selected" </c:if>    >Yes</option>
-                            </select>
-                    </td>
-                    <td>
-                        <textarea name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].remarks"    id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].remarks" class="form-control text-left patternvalidation runtime-update"
-                               data-pattern="alphanumeric" maxlength="1024" >${ms.remarks}</textarea>
-
-                    </td>
-                    <td>
-                        <input name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].no" value="${ms.no}" maxlength="6" onkeyup="limitCharatersBy3_2(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].no" class="form-control text-right patternvalidation runtime-update"
-                               data-pattern="decimalvalue" data-idx="0" />
-
-                    </td>
-                    <td>                                                                     
-                        <input name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].length" maxlength="15" onkeyup="limitCharatersBy10_4(this);" value="${ms.length}"  id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].length" class="form-control text-right patternvalidation runtime-update"
-                               data-pattern="decimalvalue" data-idx="0" />
-
-                    </td>
-                    <td>
-                        <input name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].width" maxlength="15" onkeyup="limitCharatersBy10_4(this);"  value="${ms.width}"  id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].width" class="form-control text-right patternvalidation runtime-update"
-                               data-pattern="decimalvalue"  data-idx="0" />
-
-                    </td><td>
-                    <input name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight"  maxlength="15" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
-                           data-pattern="decimalvalue"  value="${ms.depthOrHeight}" data-idx="0" />
-
-                </td><td>
-                    <input name="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].quantity" id="changeQuantityActivities[${item.index }].measurementSheetList[${msindex.index}].quantity" class="form-control text-right patternvalidation runtime-update"
-                           data-pattern="decimalvalue"  value="${ms.quantity}" required="required" onblur="findNet(this)" />
-                   
-			<c:if test="${ms.identifier=='A'}">
-				<c:set var="net" value="${net+ms.quantity}" />
-			</c:if> 
-			<c:if test="${ms.identifier=='D'}">
-				<c:set var="net" value="${net-ms.quantity}" />
-			</c:if>
-											</td>
-                    <td><span class="glyphicon glyphicon-trash"   data-toggle="tooltip" title="" data-original-title="Delete!"   onclick="deleteThisRow(this)" data-idx="${msindex.index}"></span></td>
-                </tr>
-                </c:forEach>
-                <tr>
-                    <td colspan="6" class="text-right">
-                        <input type="button" value ="<spring:message code="lbl.addrow" />" class="btn btn-xs btn-info add-msrow">
-                        <button   class="btn btn-xs btn-danger reset-ms"><spring:message code="lbl.reset" /></button>
-                        <input type="button" value="<spring:message code="lbl.submit" />"  id="changeQuantityActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit"/> 
-                    </td>
-                    <td class="text-right"><spring:message code="lbl.subtotal" /></td>
-                    <td id="changeQuantityActivities[${item.index }].msnet"  class="text-right">${net}</td>
-                    <td></td>
-                </tr>
-                
-                <tbody>
-            </table>
-       <!--only for validity tail start -->  
-        </td>
+	    <tr class='msheet-tr'>
+	        <td colspan="13"><!--only for validity head end -->
+	            <div class="view-content" style="color:#f2851f"><spring:message code="lbl.measurementsheet" /> <div class="pull-right"><span class="glyphicon glyphicon-remove-circle error-msg hide-ms" style="cursor:pointer;font-size:16px;"></span></div></div>
+	            <table class=" table table-bordered msheet-table" id="changeQuantityActivities[${item.index }].mstable">
+	                <thead>
+	                	<tr>
+		                    <th colspan="1"></th>
+		                    <th colspan="7"><spring:message code="lbl.approved.qty" /></th>
+	                    	<th colspan="5"><spring:message code="lbl.revised.qty" /></th>
+	                    </tr>
+	                    <tr>
+		                    <th><spring:message code="lbl.slno" /></th>
+		                    <th><spring:message code="lbl.description" /></th>
+		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.length" /></th>
+		                    <th><spring:message code="lbl.width" /></th>
+		                    <th><spring:message code="lbl.depthorheight" /></th>
+		                    <th><spring:message code="lbl.quantity" /></th>
+		                    <th><spring:message code="lbl.identifier" /></th>
+		                    <th><spring:message code="lbl.no" /></th>
+		                    <th><spring:message code="lbl.length" /></th>
+		                    <th><spring:message code="lbl.width" /></th>
+		                    <th><spring:message code="lbl.depthorheight" /></th>
+		                    <th><spring:message code="lbl.quantity" /></th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                	<c:forEach begin="0" end="${activity.parent.measurementSheetList.size() - 1 }" varStatus="index">
+	                		<tr>
+			                	<td hidden="true">
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].id" class="clearthis" id="changeQuantityActivities_${item.index }_measurementSheetList_${index.index }_id" />
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].parent" id="changeQuantityActivities_${item.index }_measurementSheetList_${index.index }_parent" />
+			                    </td>
+			                	<td id="msrowslNo_${item.index }_${index.index }">${activity.parent.measurementSheetList.get(index.index).slNo }</td>
+			                    <td id="msrowremarks_${item.index }_${index.index }">${activity.parent.measurementSheetList.get(index.index).remarks }</td>
+			                    <td id="msrowno_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).no }</td>
+			                    <td id="msrowlength_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).length }</td>
+			                    <td id="msrowwidth_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).width }</td>
+			                    <td id="msrowdepthOrHeight_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).depthOrHeight }</td>
+			                    <td id="msrowquantity_${item.index }_${index.index }" align="right">${activity.parent.measurementSheetList.get(index.index).quantity }</td>
+			                    <c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">
+									<c:set var="total" value="${total + activity.parent.measurementSheetList.get(index.index).quantity}" />
+								</c:if>
+								<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'D'}">
+									<c:set var="total" value="${total - activity.parent.measurementSheetList.get(index.index).quantity}" />
+								</c:if>
+			                    <td id="msrowidentifier_${item.index }_${index.index }">
+			                    	<c:choose>
+			                    		<c:when test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">No</c:when>
+			                    		<c:otherwise>Yes</c:otherwise>
+			                    	</c:choose>
+			                    </td>
+			                    <td>
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].no" onkeyup="limitCharatersBy3_2(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].no" class="form-control text-right patternvalidation runtime-update"
+			                               data-pattern="decimalvalue" data-idx="0" />
+			
+			                    </td>
+			                    <td>                                                                     
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].length" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].length" class="form-control text-right patternvalidation runtime-update"
+			                               data-pattern="decimalvalue" data-idx="0" />
+			
+			                    </td>
+			                    <td>
+			                        <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].width" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].width" class="form-control text-right patternvalidation runtime-update"
+			                               data-pattern="decimalvalue"  data-idx="0" />
+			
+			                    </td>
+			                    <td>
+				                    <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].depthOrHeight" onkeyup="limitCharatersBy10_4(this);" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].depthOrHeight" class="form-control text-right patternvalidation runtime-update"
+				                           data-pattern="decimalvalue"  data-idx="0" />
+			
+			                	</td>
+			                	<td>
+				                    <form:input path="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" id="changeQuantityActivities[${item.index }].measurementSheetList[${index.index }].quantity" class="form-control text-right patternvalidation runtime-update"
+				                           data-pattern="decimalvalue" onblur="findNet(this)" />
+									<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'A'}">
+										<c:set var="net" value="${net + activity.measurementSheetList.get(index.index).quantity}" />
+									</c:if>
+									<c:if test="${activity.parent.measurementSheetList.get(index.index).identifier == 'D'}">
+										<c:set var="net" value="${net - activity.measurementSheetList.get(index.index).quantity}" />
+									</c:if>
+			                	</td>
+			                </tr>
+	                	</c:forEach>
+		                <tr>
+		                	<td colspan="5"></td>
+		                    <td class="text-right"><spring:message code="lbl.total" /></td>
+		                    <td class="text-right view-content">${total }</td>
+		                    <td colspan="4" class="text-right">
+		                        <input type="button" name="resetButton" value="Reset" id="resetButton" class="btn btn-xs btn-danger reset-ms" />
+		                        <input type="button" value="Submit" id="changeQuantityActivities[${item.index }].mssubmit" class="btn btn-xs btn-primary ms-submit mssubmit_${item.index }"/> 
+		                    </td>
+		                    <td class="text-right"><spring:message code="lbl.total" /></td>
+		                    <td id="changeQuantityActivities[${item.index }].msnet" class="text-right">${net}</td>
+		                </tr>
+	                </tbody>
+	            </table>
+	        <!--only for validity tail start -->  
+	        </td>
         </tr><!--only for validity -->
-    </table> <!--only for validity tail end -->  
- 
-</span>  
-</td>
-</c:when>
-<c:otherwise>
-<td hidden="true">
-<input class="classmspresent" type="hidden" disabled="disabled" name="changeQuantityActivities[${item.index }].mspresent" value="0" id="changeQuantityActivities[${item.index }].mspresent" data-idx="0"/>
-<input class="classmsopen" type="hidden" disabled="disabled" name="changeQuantityActivities[${item.index }].msopen" value="0" id="changeQuantityActivities[${item.index }].msopen" data-idx="0"/>
-<span  class="changeQuantityActivities[${item.index }].mstd" id="changeQuantityActivities[${item.index }].mstd" data-idx="0"></span>
-</td>
-</c:otherwise>
-</c:choose>     
-
-
-
+    </table> <!--only for validity tail end -->
+</c:if>
