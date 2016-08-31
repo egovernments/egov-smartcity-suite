@@ -2,7 +2,7 @@
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
 # 
-#     Copyright (C) <2016>  eGovernments Foundation
+#     Copyright (C) <2015>  eGovernments Foundation
 # 
 #     The updated version of eGov suite of products as by eGovernments Foundation 
 #     is available at http://www.egovernments.org
@@ -41,47 +41,41 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %> 
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%> 
 <div id="main">
-<div class="row">
+<div class="row"> 
 	<div class="col-md-12">
-		<form:form  id="sewerageViewApplicationDetails" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageApplicationDetails" >
-			<jsp:include page="commonApplicationDetails-view.jsp"/>
-			<jsp:include page="connectionDetails-view.jsp"></jsp:include>
-			<jsp:include page="estimationdetails-view.jsp"/>
-			<jsp:include page="seweragechargesdetails.jsp"/>
-			<jsp:include page="documentdetails-view.jsp"></jsp:include>
-			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+		<form:form  id="sewarageCloseConnectionSuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageApplicationDetails" >
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title text-center">
+					<c:choose>
+						<c:when test="${sewerageApplicationDetails.state.value != 'Rejected' &&
+						 sewerageApplicationDetails.status.code != 'CANCELLED' && sewerageApplicationDetails.status.code != 'CLOSERSANCTIONED'}">
+							<span><spring:message code="msg.closeconnection.ack.success" arguments="${sewerageApplicationDetails.applicationNumber}"/></span>
+							<span ><spring:message code="msg.closeconnection.success.forward" />${approverName}~${nextDesign}</span>
+						</c:when>
+						<c:when test="${sewerageApplicationDetails.status.code == 'CLOSERSANCTIONED'}">
+							<span><spring:message code="msg.closeconnection.process.success" arguments="${sewerageApplicationDetails.applicationNumber}" /></span>
+							<span ><spring:message code="msg.closeconnection.success.forward" />${approverName}~${nextDesign}</span>
+						</c:when>
+						<c:when test="${sewerageApplicationDetails.state.value == 'Rejected'}">
+							<span><spring:message code="msg.closeconnection.rejected" arguments="${sewerageApplicationDetails.applicationNumber}"/>${approverName}~${nextDesign}</span>
+						</c:when>
+						<c:when test="${sewerageApplicationDetails.status.code == 'CANCELLED'}">
+							<span><spring:message code="msg.closeconnection.cancelled" arguments="${sewerageApplicationDetails.applicationNumber}" /></span>
+						</c:when>
+					</c:choose>
+				</div>  
+			</div>
+			</div>
 		</form:form>
 	</div>					
 </div>					
 </div>
 <div class="row text-center">
 	<div class="add-margin">
-		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
-		<c:choose>
-			<c:when test="${sewerageApplicationDetails.status == 'ACTIVE' }">
-				<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
-				<button type="button" class="btn btn-default" id="closeConnection" ><spring:message code="title.lbl.closeSewerageConnection" /></button>
-			</c:when>
-			<c:otherwise>
-				<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>
-				<button type="button" class="btn btn-default" id="viewDCB" ><spring:message code="lbl.view.dcb" /></button>
-			</c:otherwise>
-		</c:choose>
+		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>
-<script src="<cdn:url  value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript">  
-
-function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-}
-</script>

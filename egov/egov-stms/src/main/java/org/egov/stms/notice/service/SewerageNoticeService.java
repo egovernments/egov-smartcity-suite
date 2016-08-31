@@ -73,11 +73,13 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -139,8 +141,12 @@ public class SewerageNoticeService {
     @Autowired
     private DesignationService designationService;
 
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
     public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
+    public static final String CLOSECONNECTIONNOTICE = "sewerageCloseConnectionNotice";
     private Map<String, Object> reportParams = null;
     private ReportRequest reportInput = null;
     private ReportOutput reportOutput = null;
@@ -515,6 +521,83 @@ public class SewerageNoticeService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Exit from addFilesToZip method");
         return out;
+    }
+    
+    
+    public SewerageNotice generateReportForCloseConnection(final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session) {
+        SewerageNotice sewerageNotice = null;
+        reportOutput = generateReportOutputForSewerageCloseConnection(sewerageApplicationDetails, session);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+            generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            sewerageNotice = saveCloseConnectionNotice(sewerageApplicationDetails, generateNoticePDF);
+        }
+        return sewerageNotice;
+    }
+    
+    public ReportOutput generateReportOutputForSewerageCloseConnection(final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session) {
+        reportParams = new HashMap<String, Object>(); 
+        if (null != sewerageApplicationDetails) {
+            final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
+                    sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
+                    PropertyExternalService.FLAG_FULL_DETAILS);
+            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+            String ownerName = "";
+            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                ownerName = names.getOwnerName();
+                break;
+            }
+            reportParams.put("conntitle",
+                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+            reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
+            reportParams.put("district", session.getAttribute("districtName"));
+
+            reportParams.put(
+                    "presentCommissioner",
+                    assignmentService
+                            .getAllActiveAssignments(
+                                    designationService.getDesignationByName(
+                                            SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId()).get(0)
+                            .getEmployee().getName());
+            
+            reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            reportParams.put("noOfSeatsResidential", sewerageApplicationDetails.getConnectionDetail()
+                    .getNoOfClosetsResidential());
+            reportParams.put("noOfSeatsNonResidential", sewerageApplicationDetails.getConnectionDetail()
+                    .getNoOfClosetsNonResidential());
+            reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
+            reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
+
+            reportParams.put("eeApprovalDate", formatter.format(sewerageApplicationDetails.getLastModifiedDate()));
+            reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getShscNumber());
+            reportParams.put("applicantname", WordUtils.capitalize(ownerName)); 
+            reportParams.put("address", assessmentDetails.getPropertyAddress());
+            reportParams.put("doorno", doorno[0]);
+            reportParams.put("applicationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
+            reportInput = new ReportRequest(CLOSECONNECTIONNOTICE, sewerageApplicationDetails, reportParams);
+        }
+        return reportService.createReport(reportInput);
+    }
+    
+    public SewerageNotice saveCloseConnectionNotice(final SewerageApplicationDetails sewerageApplicationDetails,
+            final InputStream fileStream) {
+        SewerageNotice sewerageNotice = null;
+
+        if (sewerageApplicationDetails != null) {
+            sewerageNotice = new SewerageNotice();
+            SewerageCloseConnectionNoticeNumberGenerator sewerageCloseConnectionNoticeNumberGenerator = beanResolver
+                    .getAutoNumberServiceFor(SewerageCloseConnectionNoticeNumberGenerator.class);
+            String closeConnNoticeNo = sewerageCloseConnectionNoticeNumberGenerator.generateCloserNoticeNumber();
+            buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, closeConnNoticeNo,
+                    new Date(), SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE);
+            final String fileName = closeConnNoticeNo + ".pdf";
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                    SewerageTaxConstants.FILESTORE_MODULECODE);
+            sewerageNotice.setFileStore(fileStore);
+        }
+        return sewerageNotice;
     }
 
 }

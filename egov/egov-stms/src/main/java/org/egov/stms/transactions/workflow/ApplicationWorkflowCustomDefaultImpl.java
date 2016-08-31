@@ -60,5 +60,14 @@ public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCus
         super.createCommonWorkflowTransition(sewerageApplicationDetails, approvalPosition, approvalComent, additionalRule,
                 workFlowAction);
     }
+    
+    @Override
+    public void createCloseConnectionWorkflowTransition(final SewerageApplicationDetails sewerageApplicationDetails,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        super.createCloseConnectionWorkflowTransition(sewerageApplicationDetails, approvalPosition, approvalComent, additionalRule,
+                workFlowAction);
+    }
+    
 
 }

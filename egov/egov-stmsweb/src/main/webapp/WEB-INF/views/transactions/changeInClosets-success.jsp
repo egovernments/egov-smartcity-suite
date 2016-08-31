@@ -55,7 +55,7 @@
 							<c:when test="${sewerageApplicationDetails.state.value != 'Closed'
 							&& sewerageApplicationDetails.state.value != 'Rejected'}">
 								<span><spring:message code="msg.changeincloset.ack.success" arguments="${sewerageApplicationDetails.applicationNumber}"/></span>
-								<span ><spring:message code="msg.changeincloset.sussess.forward" />${approverName}~${nextDesign}</span>
+								<span ><spring:message code="msg.changeincloset.success.forward" />${approverName}~${nextDesign}</span>
 							</c:when>
 							<c:when test="${sewerageApplicationDetails.state.value == 'Closed' && sewerageApplicationDetails.status.code != 'CANCELLED'}">
 								<span><spring:message code="msg.changeincloset.process.success" arguments="${sewerageApplicationDetails.applicationNumber}" /></span>

@@ -160,4 +160,22 @@ public class SewerageEstimationNoticeController {
         inputStream.close();
         outStream.close();
     }
+    
+    @RequestMapping(value = "/closeConnectionNotice", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<byte[]> generateCloserNotice(final HttpServletRequest request,
+            final HttpSession session) {
+        final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+                .findByApplicationNumber(request.getParameter("pathVar"));
+        return generateCloseConnectionReport(sewerageApplicationDetails, session);
+    }
+
+    private ResponseEntity<byte[]> generateCloseConnectionReport(final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session) {
+        final HttpHeaders headers = new HttpHeaders();
+        ReportOutput reportOutput = null;
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=CloseConnectionNotice.pdf");
+        reportOutput = sewerageNoticeService.generateReportOutputForSewerageCloseConnection(sewerageApplicationDetails, session);
+        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
 }

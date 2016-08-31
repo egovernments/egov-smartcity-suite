@@ -268,6 +268,15 @@ function validateDemandDetailsOnSubmit(){
     return true;
 }
 
+$(".btn-primary").click(function() { 
+	if(!validateDemandDetailsOnSubmit()){
+		return false;
+	}
+	if($('form').valid())
+		document.forms[0].submit();	
+	return;
+});	
+
 
 function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount,instlmntId,dmndReasonId) {
     var table = document.getElementById('legacyDemandDetails');

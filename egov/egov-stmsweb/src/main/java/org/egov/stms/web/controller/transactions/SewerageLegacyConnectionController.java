@@ -154,7 +154,7 @@ public class SewerageLegacyConnectionController extends GenericWorkFlowControlle
         if (sewerageApplicationDetails != null) {
             for (final DocumentTypeMaster dtm : documentTypeMasterList) {
                 SewerageApplicationDetailsDocument sad = new SewerageApplicationDetailsDocument();
-                if (dtm != null && dtm.getDescription().equalsIgnoreCase(SewerageTaxConstants.NEWCONNECTION_DOCTYPE_OTHERS)) {
+                if (dtm != null && dtm.getDescription().equalsIgnoreCase(SewerageTaxConstants.DOCTYPE_OTHERS)) {
                     sad.setDocumentTypeMaster(dtm);
                     tempDocList.add(sad);
                 }

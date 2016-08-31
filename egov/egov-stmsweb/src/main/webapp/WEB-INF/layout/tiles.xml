@@ -253,4 +253,17 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/transactions/sewerageLegacyApplication-success.jsp" />
 	</definition>
+	<definition name="closeSewerageConnection" extends="base_layout">
+		<put-attribute name="page-title" value="title.lbl.closeSewerageConnection" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/closeSewerageConnection.jsp" />	
+	</definition>
+	<definition name="closeConnection-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.lbl.closeSewerageConnection" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/transactions/closeConnection-success.jsp" />	
+	</definition>
+	
 </tiles-definitions>

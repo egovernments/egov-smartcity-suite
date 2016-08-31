@@ -40,10 +40,13 @@
 package org.egov.stms.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -65,6 +68,9 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -80,6 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class SewerageTaxUtils {
@@ -123,6 +130,10 @@ public class SewerageTaxUtils {
 
     @Autowired
     private InstallmentDao installmentDao;
+    
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
 
     /**
@@ -443,6 +454,25 @@ public class SewerageTaxUtils {
         final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME); 
         final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
         return installments;
+    }
+    
+    
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), SewerageTaxConstants.FILESTORE_MODULECODE);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        else
+            return null;
     }
 
 }

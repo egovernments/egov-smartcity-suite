@@ -541,7 +541,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
+                final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;
                 if (fileStoreSet != null && !fileStoreSet.isEmpty())
                     fsIterator = fileStoreSet.iterator();
@@ -603,23 +603,5 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 && sewerageConnectionEstimationDetails.getItemDescription() == null))
             return false;
         return true;
-    }
-
-    private Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays
-                    .asList(files)
-                    .stream()
-                    .filter(file -> !file.isEmpty())
-                    .map(file -> {
-                        try {
-                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                    file.getContentType(), SewerageTaxConstants.FILESTORE_MODULECODE);
-                        } catch (final Exception e) {
-                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                        }
-                    }).collect(Collectors.toSet());
-        else
-            return null;
     }
 }

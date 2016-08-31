@@ -185,6 +185,8 @@ public class SewerageApplicationDetails extends StateAware {
     @Transient
     private List<SewerageDemandDetail> demandDetailBeanList = new ArrayList<SewerageDemandDetail>(0);
     
+    private String closeConnectionReason;
+    
     @Override
     public Long getId() {
         return id;
@@ -438,6 +440,14 @@ public class SewerageApplicationDetails extends StateAware {
 
     public void setDemandDetailBeanList(List<SewerageDemandDetail> demandDetailBeanList) {
         this.demandDetailBeanList = demandDetailBeanList;
+    }
+
+    public String getCloseConnectionReason() {
+        return closeConnectionReason;
+    }
+
+    public void setCloseConnectionReason(String closeConnectionReason) {
+        this.closeConnectionReason = closeConnectionReason;
     }
     
 }

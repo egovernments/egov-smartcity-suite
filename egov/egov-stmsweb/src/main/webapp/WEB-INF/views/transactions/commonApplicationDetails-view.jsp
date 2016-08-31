@@ -73,6 +73,7 @@
 				<c:out value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}" />
 				<input type="hidden" id="assessmentNo" value="${sewerageApplicationDetails.connectionDetail.propertyIdentifier}"/>
 				<input type="hidden" id="applNumber" value="${sewerageApplicationDetails.applicationNumber}"/>
+				<input type="hidden" id="shscNumber" value="${sewerageApplicationDetails.connection.shscNumber}"/>
 			</div>
 			<div class="col-xs-3 add-margin"><spring:message code="lbl.shsc.number"/></div>
 			<div class="col-xs-3 add-margin view-content">

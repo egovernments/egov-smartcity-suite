@@ -117,9 +117,10 @@ $(document).on('change', 'select.actiondropdown', function() {
 			}
 		});
 		}  
-	else if($(this).find(":selected").text()=="Close sewerage connection"){
-		validatePropertyTaxDue(ptassessmentno);
-			callurl($(this).val(), $(this).data('consumer-no'),ptassessmentno,shscnumber);
+	else if($(this).find(":selected").text()=="Close Sewerage Connection"){
+		// TODO : add validation to check whether already close connection is in workflow.
+		// shld not allow multiple close connection process
+		callurl($(this).val(), $(this).data('consumer-no'),ptassessmentno,shscnumber);
 	}
 	else{  
 		if($(this).find(":selected").index()>0){
@@ -204,65 +205,8 @@ $("#viewDCB").click(function(){
 });
   
 $("#closeConnection").click(function(){
-	var appNumber = document.getElementById("applNumber").value;
-	var assessmentNum=document.getElementById("assessmentNo").value;
-	window.open("/stms/application/close/"+appNumber+"/"+assessmentNum, '_blank', "width=800, height=600, scrollbars=yes");
+	// TODO : add validation to check whether already close connection is in workflow.
+	// shld not allow multiple close connection process
+	var shscNumber=document.getElementById("shscNumber").value;
+	window.open("/stms/transactions/closeConnection/"+shscNumber, '_blank', "width=800, height=600, scrollbars=yes");
 });
-
-function validatePropertyTaxDue(propertyID){
-	var errorMessage=""; 
-	var subErrorMessage="";
-	
-	if(propertyID != '') {
-		$.ajax({
-			url: "/ptis/rest/property/"+propertyID,      
-			type: "GET",
-			dataType: "json",
-			success: function (response) { 
-				var waterTaxDue = validateWaterTaxDue(propertyID);
-				if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
-					if($('#legacy'))
-					{
-				    resetPropertyDetails();
-					}
-					bootbox.alert(response.errorDetails.errorMessage);
-				}
-				else {
-					if(response.propertyDetails.taxDue > 0) {
-						errorMessage = "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and"+subErrorMessage;
-						return false;
-					}
-				/*	if(waterTaxDue['WATERTAXDUE'] > 0) {
-						errorMessage += "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand is due Rs."+ waterTaxDue['WATERTAXDUE']+"/-. Please clear demand and"+subErrorMessage;
-					}*/
-					else{
-						return true;
-					}
-				}					
-			}, 
-			error: function (response) {
-				console.log("failed");
-			}
-		});
-	}	
-}
-
-function validateWaterTaxDue(propertyID) {
-	var result;
-	if(propertyID != "") {
-		$.ajax({
-			url: "/stms/ajaxconnection/check-watertax-due",
-				type: "GET",
-				'async':false,
-				cache: true,
-				data: {
-					assessmentNo : propertyID
-				},
-				dataType: "json",
-		}).done(function(value) {
-				result = value; 
-				console.log("result = "+result);
-		});
-		return result;
-	}
-}

@@ -52,7 +52,7 @@ public class SewerageTaxConstants {
     public static final String CHANGEINCLOSETS_NOCOLLECTION = "CHANGEINCLOSETS NOCOLLECTION";
     public static final String MODULETYPE = "SEWERAGETAXAPPLICATION";
     public static final String REVENUE_WARD = "WARD";
-    public static final String CLOSEACTIVESEWERAGECONNECTION = "CLOSESEWERAGECONNECTION";
+    public static final String CLOSESEWERAGECONNECTION = "CLOSESEWERAGECONNECTION";
 
     // appconfig keys
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
@@ -76,9 +76,7 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_STATUS_COLLECTINSPECTIONFEE = "COLLECTINSPECTIONFEE";
     public static final String APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID = "SANCTIONEDWITHDEMAND";
     
-    public static final String APPLICATION_STATUS_CLOSERINITIATED = "CLOSERINITIATED";
-    public static final String APPLICATION_STATUS_CLOSERINPROGRESS = "CLOSERINPROGRESS";
-    public static final String APPLICATION_STATUS_CLOSERAPRROVED = "CLOSERAPPROVED";
+    public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
     // application status constants - end
     
     // workflow related - start 
@@ -87,6 +85,7 @@ public class SewerageTaxConstants {
     
     // current states
     public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WF_CLOSE_COONNECTION_STATE_REJECTED = " Close Connection Rejected";
     public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
     public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Exe Engineer Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
@@ -96,6 +95,7 @@ public class SewerageTaxConstants {
     public static final String WF_STATE_PAYMENTDONE = "Payment Done Against Estimation";
     public static final String WF_STATE_EE_APPROVED = "Executive Engineer Approved";
     public static final String WF_STATE_WO_GENERATED = "Work Order Generated";
+    public static final String WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING = "Close Connection Notice Generation Pending";
     
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -105,6 +105,7 @@ public class SewerageTaxConstants {
     public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
+    public static final String WF_STATE_CONNECTION_CLOSE_BUTTON = "Generate Close Connection Notice";
     
     //Pendingactions
     public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
@@ -148,8 +149,8 @@ public class SewerageTaxConstants {
     public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
     public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
     public static final String VIEWDCBURL="/stms/reports/sewerageRateReportView/{consumerno}/{assessmentno}";
-    public static final String CLOSESEWERAGECONNECTION="Close sewerage connection";
-    public static final String CLOSESEWERAGECONNECTIONURL="/stms/application/close/{consumerno}/{assessmentno}";
+    public static final String CLOSECONNECTION_ACTIONDROPDOWN="Close Sewerage Connection";
+    public static final String CLOSESEWERAGECONNECTIONURL="/stms/transactions/closeConnection/{shscNumber}";
     // Elastic Search Constants
     public static final String SEARCHABLE_SHSCNO = "searchable.shscnumber";
     public static final String CLAUSES_CITYNAME = "clauses.cityname";
@@ -271,11 +272,12 @@ public class SewerageTaxConstants {
  // Notice Types
     public static final String NOTICE_TYPE_ESTIMATION_NOTICE = "Estimation Notice";
     public static final String NOTICE_TYPE_WORK_ORDER_NOTICE = "Workorder Notice";
+    public static final String NOTICE_TYPE_CLOSER_NOTICE = "Close Connection Notice";
     public static final String NOTICE_TYPE_DEMAND_BILL_NOTICE = "Demand Bill";
     public static final String NOTICE_ESTIMATION = "EM";
     public static final String NOTICE_WORK_ORDER = "WO";
     
-    public static final String NEWCONNECTION_DOCTYPE_OTHERS = "Others";
+    public static final String DOCTYPE_OTHERS = "Others";
     
     //DCB Report wardwise
     public static final String BOUNDARYTYPE_WARD="Ward";

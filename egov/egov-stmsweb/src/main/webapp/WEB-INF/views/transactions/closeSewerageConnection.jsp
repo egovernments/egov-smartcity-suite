@@ -46,10 +46,22 @@
 <div id="main">
 <div class="row">
 	<div class="col-md-12">
-		<form:form  action="/stms/application/close" id="sewerageViewApplicationDetails" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="sewerageApplicationDetails" >
-			<jsp:include page="commonApplicationDetails-view.jsp"/>
-			<jsp:include page="connectionDetails-view.jsp"></jsp:include>
-			
+		<form:form role="form" method="post"   
+			modelAttribute="sewerageApplicationDetails" id="closeSewerageConnectionform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
+			<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/> 
+			<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
+			<form:hidden path="connectionDetail.id" id="connectionDetail" value="${sewerageApplicationDetails.connectionDetail.id}"/> 
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/> 
+			<form:hidden path="" id="appStatus" value="${sewerageApplicationDetails.status.code}"/> 
+	 	    <input type="hidden" name="shscNumber" id="shscNumber" value="${shscNumber}">  
+			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
+			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
+			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
+			<jsp:include page="commonApplicationDetails-view.jsp"/> 
+			<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
+			 
 			<div class="panel panel-primary">
 				<div class="panel-heading ">
 					<div class="panel-title" style="color: orange;" align="left">
@@ -58,10 +70,19 @@
 				</div>
 				<div class="form-group">
 						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.remarks"/>
+							<spring:message code="lbl.remarks"/><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:textarea cssClass="form-control patternvalidation" path="connection.closingRemarks"  cols="20" id="closingRemarks" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+						
+						<c:choose>
+						<c:when test="${sewerageApplicationDetails!=null && (sewerageApplicationDetails.status != null 
+							&& (sewerageApplicationDetails.status.code != 'CREATED' && sewerageApplicationDetails.status.code != 'REJECTED' ))}">
+								<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="100" readonly="true"/>
+						</c:when>
+						<c:otherwise>
+							<form:textarea cssClass="form-control patternvalidation" path="closeConnectionReason"  cols="20" id="closeConnectionReason" data-pattern="alphanumericwithspace" maxlength="100" required="required"/>
+						</c:otherwise>	
+						</c:choose>	
 				 		</div>
 				 		
 				 		<label class="col-sm-2 control-label text-right">
@@ -74,19 +95,44 @@
 								</font></div>
 						</div>
 				</div>
+			 	<c:if test="${sewerageApplicationDetails!=null && sewerageApplicationDetails.appDetailsDocument[0].fileStore != null}">
+					<div class="row">
+					<div class="col-sm-3 add-margin"></div>
+					<div class="col-sm-3 add-margin"></div>
+					
+					<label class="col-sm-3 control-label"><spring:message  code="lbl.fileattached"/></label> 
+						<div class="col-sm-3 add-margin">
+							<a href="/egi/downloadfile?fileStoreId=${sewerageApplicationDetails.appDetailsDocument[0].fileStore.fileStoreId}&moduleName=STMS" target="_blank"> 
+												<c:out value="${sewerageApplicationDetails.appDetailsDocument[0].fileStore.fileName}"/></a>
+						</div>
+					</div> 
+				</c:if> 
+				
 			</div>
-
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-			<div class="buttonbottom" align="center">
-				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-			</div>
-			<div class="form-group text-center">
-				<input type="submit" value="Submit" class="btn btn-primary" id="submitButton" />
- 			</div>
+	 		<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 		</form:form>
 	</div>					
 </div>					
 </div>
-<script src="<cdn:url  value='/resources/js/search/connectionsearch.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/js/transactions/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script>
 
+$(document).ready(function()
+{
+	var appStatus = $('#appStatus').val(); 
+	if(appStatus == 'DEEAPPROVED'){ 
+		$(".show-row").hide(); 
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	} else {
+		$(".show-row").show(); 
+		$('#approverDetailHeading').show();
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
+});
+</script>

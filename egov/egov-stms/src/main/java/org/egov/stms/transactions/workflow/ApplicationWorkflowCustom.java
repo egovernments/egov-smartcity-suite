@@ -58,4 +58,7 @@ public interface ApplicationWorkflowCustom {
             Long approvalPosition, String approvalComent, String additionalRule,
             String workFlowAction);
 
+    void createCloseConnectionWorkflowTransition(SewerageApplicationDetails sewerageApplicationDetails,
+            Long approvalPosition, String approvalComent, String additionalRule, String workFlowAction);
+
 }

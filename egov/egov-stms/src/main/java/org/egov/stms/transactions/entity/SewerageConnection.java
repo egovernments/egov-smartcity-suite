@@ -91,7 +91,6 @@ public class SewerageConnection extends AbstractAuditable {
     @OneToMany(mappedBy = "connection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SewerageApplicationDetails> applicationDetails = new ArrayList<SewerageApplicationDetails>(0);
 
-    private String closingRemarks;
     
     @Override
     public Long getId() {
@@ -155,12 +154,4 @@ public class SewerageConnection extends AbstractAuditable {
         getApplicationDetails().add(applicationDetails);
     }
 
-    public String getClosingRemarks() {
-        return closingRemarks;
-    }
-
-    public void setClosingRemarks(String closingRemarks) {
-        this.closingRemarks = closingRemarks;
-    }
-    
    }

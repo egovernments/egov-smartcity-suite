@@ -98,7 +98,7 @@ public class SewerageActionDropDownUtil {
                         SewerageTaxConstants.COLLECTDONATIONCHARHGES));
         actionUrlMap.put(SewerageTaxConstants.VIEWDCB, getActionWithUrl(SewerageTaxConstants.VIEWDCBURL, SewerageTaxConstants.VIEWDCB));
         actionUrlMap.put(SewerageTaxConstants.CHANGENOOFCLOSET, getActionWithUrl(SewerageTaxConstants.CHANGENOOFCLOSETURL, SewerageTaxConstants.CHANGENOOFCLOSET));
-        actionUrlMap.put(SewerageTaxConstants.CLOSESEWERAGECONNECTION, getActionWithUrl(SewerageTaxConstants.CLOSESEWERAGECONNECTIONURL, SewerageTaxConstants.CLOSESEWERAGECONNECTION));
+        actionUrlMap.put(SewerageTaxConstants.CLOSECONNECTION_ACTIONDROPDOWN, getActionWithUrl(SewerageTaxConstants.CLOSESEWERAGECONNECTIONURL, SewerageTaxConstants.CLOSESEWERAGECONNECTION));
 
         
     }
