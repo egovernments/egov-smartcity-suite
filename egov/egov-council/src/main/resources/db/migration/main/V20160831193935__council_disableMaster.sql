@@ -1,0 +1,1 @@
+update eg_module set enabled=false where id in (select id from eg_module  where contextroot='council' and name in ('Council Designation','Council Party','Council Qualification','Council Caste'));
