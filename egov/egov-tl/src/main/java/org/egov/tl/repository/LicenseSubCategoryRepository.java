@@ -70,4 +70,6 @@ public interface LicenseSubCategoryRepository extends JpaRepository<LicenseSubCa
     @Query("select sc from org.egov.tl.entity.LicenseSubCategory sc where sc.category.id = :categoryId")
     List<LicenseSubCategory> findAllByCategoryId(@Param("categoryId") Long id);
 
+    List<LicenseSubCategory> findByLicenseType_Name(String licenseTypeName);
+
 }

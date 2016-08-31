@@ -50,21 +50,34 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.EgDeductionDetails;
 import org.egov.model.recoveries.Recovery;
 import org.egov.utils.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+@Service("recoveryPersistenceService")
+@Transactional(readOnly = true)
 public class RecoveryService extends PersistenceService<Recovery, Long> {
 
-    private EgDeductionDetailsHibernateDAO egDeductionDetHibernateDao;
-    private TdsHibernateDAO tdsHibernateDAO;
     private static final Logger LOGGER = Logger.getLogger(RecoveryService.class);
-    private static final String EMPTY_STRING = "";
 
-    public RecoveryService(final Class<Recovery> recovery) {
-        this.type = recovery;
+    @Autowired
+    private EgDeductionDetailsHibernateDAO egDeductionDetHibernateDao;
+    @Autowired
+    private TdsHibernateDAO tdsHibernateDAO;
+
+    public RecoveryService() {
+        super(Recovery.class);
+    }
+
+    public RecoveryService(Class<Recovery> type) {
+        super(type);
     }
     
     public Recovery getTdsById(final Long tdsId)
@@ -213,25 +226,25 @@ public class RecoveryService extends PersistenceService<Recovery, Long> {
         if (null == recoveryCode || recoveryCode.trim().equals("")) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Recovery Code is missing");
-            throw new ValidationException(EMPTY_STRING, "Recovery Code is missing");
+            throw new ValidationException(EMPTY, "Recovery Code is missing");
         }
 
         if (null == partyType || partyType.trim().equals("")) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Party Type is missing");
-            throw new ValidationException(EMPTY_STRING, "Party Type is missing");
+            throw new ValidationException(EMPTY, "Party Type is missing");
         }
 
         if (null == grossAmount) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Gross Amount is missing");
-            throw new ValidationException(EMPTY_STRING, "Gross Amount is missing");
+            throw new ValidationException(EMPTY, "Gross Amount is missing");
         }
 
         if (null == asOnDate) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("AsOnDate is missing");
-            throw new ValidationException(EMPTY_STRING, "AsOnDate is missing");
+            throw new ValidationException(EMPTY, "AsOnDate is missing");
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("getDeductionAmount() -> recoveryCode :" + recoveryCode + " | partyType :" + partyType
@@ -245,7 +258,7 @@ public class RecoveryService extends PersistenceService<Recovery, Long> {
         final Recovery recovery = getTdsByTypeAndPartyType(recoveryCode, egPartytype);
 
         if (recovery == null)
-            throw new ValidationException(EMPTY_STRING, "Recovery with " + recoveryCode + " code  and " + egPartytype
+            throw new ValidationException(EMPTY, "Recovery with " + recoveryCode + " code  and " + egPartytype
                     + " party type is invalid.");
         if (recovery.getRecoveryMode() == 'M')
             return BigDecimal.valueOf(-1);
@@ -261,12 +274,12 @@ public class RecoveryService extends PersistenceService<Recovery, Long> {
                     egPartytype, egSubPartytype, egwTypeOfWork, asOnDate);
         } catch (final Exception e) {
             LOGGER.error("Exception in egDeductionDetails fetching :" + e);
-            throw new ValidationException(EMPTY_STRING, "Error while fetching the date for this " + recoveryCode
+            throw new ValidationException(EMPTY, "Error while fetching the date for this " + recoveryCode
                     + " code for this " + dateFormatter.format(asOnDate) + " date. " + e.getMessage());
         }
 
         if (null == egDeductionDetails)
-            throw new ValidationException(EMPTY_STRING, "There is no data for this " + recoveryCode + " code for this "
+            throw new ValidationException(EMPTY, "There is no data for this " + recoveryCode + " code for this "
                     + dateFormatter.format(asOnDate) + " date.");
 
         if (null != recovery.getCalculationType() && recovery.getCalculationType().equalsIgnoreCase("flat")) {

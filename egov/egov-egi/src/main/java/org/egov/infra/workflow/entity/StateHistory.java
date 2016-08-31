@@ -65,7 +65,7 @@ import java.util.Date;
 @SequenceGenerator(name = StateHistory.SEQ_STATEHISTORY, sequenceName = StateHistory.SEQ_STATEHISTORY, allocationSize = 1)
 public class StateHistory implements Serializable {
     private static final long serialVersionUID = -2286621991905578107L;
-    public static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
+    static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)

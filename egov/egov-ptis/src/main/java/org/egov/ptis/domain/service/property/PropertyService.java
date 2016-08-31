@@ -1097,12 +1097,6 @@ public class PropertyService {
             List<EgDemandDetails> oldEgDmndDtlsList = null;
             List<EgDemandDetails> newEgDmndDtlsList = null;
 
-            if (newProperty.getIsExemptedFromTax())
-                if (!rsn.equalsIgnoreCase(DEMANDRSN_CODE_LIBRARY_CESS)
-                        && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_EDUCATIONAL_CESS)
-                        && !rsn.equalsIgnoreCase(DEMANDRSN_CODE_UNAUTHORIZED_PENALTY))
-                    continue;
-
             oldEgDmndDtlsList = getEgDemandDetailsListForReason(ptDmndOld.getEgDemandDetails(), rsn);
             newEgDmndDtlsList = getEgDemandDetailsListForReason(newEgDemandDetailsSet, rsn);
 
@@ -1867,8 +1861,10 @@ public class PropertyService {
                         && currSecondHalf.equals(demandDetials.getEgDemandReason().getEgInstallmentMaster())) {
                     advanceDemandDetails = demandDetials;
                 }
-                collection = collection.add(demandDetials.getAmtCollected());
-                demandDetials.setAmtCollected(BigDecimal.ZERO);
+                if(!demandDetials.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(DEMANDRSN_CODE_PENALTY_FINES)){
+	                collection = collection.add(demandDetials.getAmtCollected());
+	                demandDetials.setAmtCollected(BigDecimal.ZERO);
+                }
             }
             collection = collection.add(excessCollection);
             for (final Installment installment : installments) {

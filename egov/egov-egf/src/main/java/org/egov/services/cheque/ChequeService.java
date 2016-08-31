@@ -72,8 +72,12 @@ public class ChequeService extends PersistenceService<AccountCheques, Long> {
         this.persistenceService = persistenceService;
     }
 
-    public ChequeService(final Class<AccountCheques> accountCheques) {
-        this.type = accountCheques;
+    public ChequeService() {
+        super(AccountCheques.class);
+    }
+
+    public ChequeService(final Class<AccountCheques> type) {
+       super(type);
     }
     /**
      *

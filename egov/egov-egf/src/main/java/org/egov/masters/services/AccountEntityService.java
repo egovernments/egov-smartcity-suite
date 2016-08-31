@@ -61,8 +61,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService {
     
-    public AccountEntityService(final Class<AccountEntity> accountEntity) {
-        this.type = accountEntity;
+    public AccountEntityService() {
+        super(AccountEntity.class);
+    }
+
+    public AccountEntityService(final Class<AccountEntity> type) {
+        super(type);
     }
     
     @Override

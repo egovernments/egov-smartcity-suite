@@ -50,8 +50,8 @@
 								code="lbl.code" /> :<span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="25"
+								class="form-control text-left aaa"
+								 maxlength="25"
 								required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
@@ -60,7 +60,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="name"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspecialcharacterswithspace" maxlength="50"
+								data-pattern="alphanumericspecialcharacters" maxlength="50"
 								required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
@@ -71,7 +71,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="description"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacterswithspace" maxlength="256" />
+								data-pattern="alphanumericspecialcharacters" maxlength="256" />
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -79,7 +79,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="orderNumber"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="4"/>
+								data-pattern="number" maxlength="3"/>
 							<form:errors path="orderNumber" cssClass="error-msg" />
 						</div>
 					</div>

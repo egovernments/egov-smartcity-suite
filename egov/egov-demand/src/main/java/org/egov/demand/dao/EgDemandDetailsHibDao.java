@@ -72,9 +72,9 @@ public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
     }
 
     @Override
+    @Transactional
     public EgDemandDetails create(EgDemandDetails egDemandDetails) {
         getCurrentSession().saveOrUpdate(egDemandDetails);
-        getCurrentSession().flush();
         return egDemandDetails;
     }
 

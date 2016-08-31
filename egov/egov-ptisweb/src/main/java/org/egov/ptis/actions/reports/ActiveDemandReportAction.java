@@ -64,7 +64,6 @@ import static java.lang.Boolean.FALSE;
  *
  */
 @ParentPackage("egov")
-@Transactional(readOnly = true)
 public class ActiveDemandReportAction extends BaseFormAction {
 
 	private static final String WARD = "Ward";

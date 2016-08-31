@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	   default-lazy-init="false">
+		
+	<context:component-scan base-package="org.egov.infra, org.egov.infstr"/>
+
+	<bean id="masterDataCache" class="org.egov.infstr.utils.EgovMasterDataCaching" lazy-init="false"/>
+	
+	<bean id="persistenceService" class="org.egov.infstr.services.PersistenceService">
+        <constructor-arg name="type">
+            <null/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="abstractPersistenceService" class="org.egov.infstr.services.PersistenceService" abstract="true"/>
+
+	<bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
+	
+	<bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
+	
+	<!-- Use this only for generic hibernate query -->
+	<bean id="entityQueryService" class="org.egov.infstr.services.PersistenceService">
+		<constructor-arg name="type" >
+			<null/>
+		</constructor-arg>
+	</bean>
+	
+	<!-- NEW WORKFLOW ADDITIONS -->
+	
+	<bean id="stateAwarePersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.infra.workflow.entity.StateAware" />
+	</bean>
+	
+	<!--
+		This is a generic bean so do not use this to do transition of your own StateAware objects
+		For your own StateAware object transition declare a separate bean definition
+		like 
+		<bean id="myStateAwareWorkflowService" parent="workflowService">
+			<constructor-arg index="0" ref="myStateAwarePersistenceService"/>
+		</bean>
+	-->
+	<bean id="workflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+		<constructor-arg index="0" ref="stateAwarePersistenceService" />
+	</bean>
+	
+</beans>

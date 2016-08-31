@@ -47,7 +47,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class GeneralLedgerDetailService extends PersistenceService<CGeneralLedgerDetail, Long> {
     
-    public GeneralLedgerDetailService(final Class<CGeneralLedgerDetail> generalLedgerDetail) {
-        this.type = generalLedgerDetail;
+    public GeneralLedgerDetailService() {
+        super(CGeneralLedgerDetail.class);
+    }
+
+    public GeneralLedgerDetailService(Class<CGeneralLedgerDetail> type) {
+        super(type);
     }
 }

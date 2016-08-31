@@ -39,13 +39,12 @@
  */
 package org.egov.ptis.repository.dashboard;
 
+import org.egov.ptis.config.PTISApplicationProperties;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -60,7 +59,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
@@ -79,8 +77,7 @@ public class RevenueDashboardRepository {
     private EntityManager entityManager;
 
     @Autowired
-    @Qualifier("dashboardSQLSource")
-    private ReloadableResourceBundleMessageSource dashboardSQLSource;
+    private PTISApplicationProperties ptisApplicationProperties;
 
     private Session getSession() {
         return entityManager.unwrap(Session.class);
@@ -411,7 +408,7 @@ public class RevenueDashboardRepository {
 
     private SQLQuery getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
-                .createSQLQuery(dashboardSQLSource.getMessage(sqlKey, null, Locale.getDefault()));
+                .createSQLQuery(ptisApplicationProperties.getValue(sqlKey));
     }
 
     public static Map<String, Double> constructDatePlaceHolderForDouble(final DateTime startDate, final DateTime endDate,
@@ -442,6 +439,6 @@ public class RevenueDashboardRepository {
     }
 
     protected SQLQuery getCurrentFinYear() {
-        return getSession().createSQLQuery(dashboardSQLSource.getMessage("revenue.ptis.finyear", null, Locale.getDefault()));
+        return getSession().createSQLQuery(ptisApplicationProperties.getValue("revenue.ptis.finyear"));
     }
 }

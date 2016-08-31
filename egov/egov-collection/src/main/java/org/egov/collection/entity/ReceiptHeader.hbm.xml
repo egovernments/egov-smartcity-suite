@@ -225,7 +225,7 @@
     <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.service.code=? and rh.consumerCode=? and online.status.code = ?]]></query>
     
     <query name="RECEIPT_BY_SERVICE_RECEIPTNUMBER_CONSUMERCODE">
-    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where rh.service.code=? and (rh.receiptnumber=? or rh.manualreceiptnumber=?) and rh.consumerCode=?]]></query>
+    <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh where (rh.receiptnumber=? or rh.manualreceiptnumber=?) and rh.consumerCode=?]]></query>
     
     <query name="RECEIPT_BY_RECEIPTID_AND_REFERENCENUMBER">
     <![CDATA[select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.id=? and rh.referencenumber = ? ]]></query>

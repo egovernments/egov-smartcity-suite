@@ -75,17 +75,17 @@ public class CourtTypeMaster extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     @Audited
     private String code;
 
     @NotNull
     @SafeHtml
-    @Length(min = 3, max = 100)
+    @Length(max = 32)
     @Audited
     private String courtType;
 
-    @Length(min = 3, max = 128)
+    @Length(max = 256)
     @SafeHtml
     private String notes;
 

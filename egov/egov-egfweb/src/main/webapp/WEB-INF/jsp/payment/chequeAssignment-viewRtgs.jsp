@@ -77,7 +77,7 @@
 				<s:iterator var="p" value="instVoucherList" status="s">
 					<s:set var="rtgsNumber"
 						value="%{instrumentHeaderId.transactionNumber}" />
-					 <s:if test="%{#rtgsNumber!=#PreRtgsNumber}">
+					<s:if test="%{#rtgsNumber!=#PreRtgsNumber}">
 						<tr>
 							<td style="text-align: center" class="blueborderfortdnew"><strong><s:property
 										value='%{instrumentHeaderId.transactionNumber}' /></strong> <a
@@ -86,7 +86,12 @@
 							'<s:property value="%{instrumentHeaderId.bankAccountId.id}" />',
 							'<s:property value="%{instrumentHeaderId.bankAccountId.bankbranch.id}" />',
 							'<s:property value="%{instrumentHeaderId.bankAccountId.bankbranch.bank.id}" />'); ">Generate
-									pdf</a> <s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'>
+									pdf,</a> <a href="#"
+								onclick="generateReport('xls','<s:property value='%{instrumentHeaderId.id}'/>',
+							'<s:property value="%{instrumentHeaderId.bankAccountId.id}" />',
+							'<s:property value="%{instrumentHeaderId.bankAccountId.bankbranch.id}" />',
+							'<s:property value="%{instrumentHeaderId.bankAccountId.bankbranch.bank.id}" />'); ">Generate
+									xls</a> <s:if test='%{billSubType.equalsIgnoreCase("TNEB")}'>
 									<a href="#"
 										onclick="generateReport('text','<s:property value='%{instrumentHeaderId.id}'/>',
 							'<s:property value="%{instrumentHeaderId.bankAccountId.id}" />',
@@ -105,7 +110,7 @@
 						</tr>
 						<s:set var="PreRtgsNumber"
 							value="instVoucherList[0].instrumentHeaderId.transactionNumber" />
-					</s:if> 
+					</s:if>
 
 					<tr>
 
@@ -114,7 +119,7 @@
 						<td style="text-align: center" class="blueborderfortdnew"><s:property
 								value="%{voucherHeaderId.voucherNumber}" /></td>
 						<td style="text-align: right" class="blueborderfortdnew"><s:property
-								value="%{instrumentHeaderId.instrumentAmount}" /></td>
+								value="%{paymentAmount}" /></td>
 						<td style="text-align: center" class="blueborderfortdnew"><s:date
 								name="%{instrumentHeaderId.transactionDate}" format="dd/MM/yyyy" /></td>
 						<td style="text-align: center" class="blueborderfortdnew"><s:property
@@ -140,7 +145,13 @@ function generateReport(type,instrumentnumber,bankaccount,bankbranch,bank){
 	if(type=='pdf'){
 		 var url="${pageContext.request.contextPath}/report/bankAdviceReport-exportPDF.action?bank.id="+
 			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
-	}else{
+	}
+	else if(type=='xls'){
+		 var url="${pageContext.request.contextPath}/report/bankAdviceReport-exportExcel.action?bank.id="+
+			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
+	}
+	
+	else{
 	 	 var url="${pageContext.request.contextPath}/report/bankAdviceReport-exportText.action?bank.id="+
 	 			bank+"&bankbranch.id="+bankbranch+"&bankaccount.id="+bankaccount+"&instrumentnumber.id="+instrumentnumber;
 	}

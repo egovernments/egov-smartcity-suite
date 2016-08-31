@@ -80,7 +80,8 @@ import org.egov.works.web.adaptor.LineEstimateJsonAdaptor;
 import org.egov.works.web.adaptor.SearchLineEstimateToCancelJSONAdaptor;
 import org.egov.works.web.adaptor.SubSchemeAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -131,7 +132,8 @@ public class AjaxLineEstimateController {
     private SearchLineEstimateToCancelJSONAdaptor searchLineEstimateToCancelJSONAdaptor;
 
     @Autowired
-    private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private FinancialYearService financialYearService;

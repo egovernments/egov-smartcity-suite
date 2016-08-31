@@ -39,20 +39,42 @@
  */
 package org.egov.ptis.actions.edit;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentHibDao;
+import org.egov.dcb.bean.DCBDisplayInfo;
+import org.egov.demand.dao.EgDemandDetailsDao;
+import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.ptis.bean.DemandDetail;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.bill.PropertyTaxBillable;
+import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.DemandAudit;
+import org.egov.ptis.domain.entity.property.DemandAuditDetails;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.service.DemandAuditService;
+import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -71,39 +93,20 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
-import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentHibDao;
-import org.egov.dcb.bean.DCBDisplayInfo;
-import org.egov.demand.model.EgDemand;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.ptis.bean.DemandDetail;
-import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.bill.PropertyTaxBillable;
-import org.egov.ptis.domain.entity.demand.PTDemandCalculations;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.DemandAudit;
-import org.egov.ptis.domain.entity.property.DemandAuditDetails;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.service.DemandAuditService;
-import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
 /**
  * <p>
@@ -181,8 +184,12 @@ public class EditDemandAction extends BaseFormAction {
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     private DemandAuditService demandAuditService;
-
-    DemandAudit demandAudit = new DemandAudit();
+    @Autowired
+    private EgDemandDetailsDao demandDetailsDao;
+    @Autowired
+    @Qualifier("propertyImplService")
+    private PersistenceService propertyImplService;
+    private DemandAudit demandAudit = new DemandAudit();
 
     private List<EgDemandDetails> demandDetails = new ArrayList<EgDemandDetails>();
     private List<DemandDetail> demandDetailBeanList = new ArrayList<DemandDetail>();
@@ -738,8 +745,7 @@ public class EditDemandAction extends BaseFormAction {
                     if (isUpdateAmount || isUpdateCollection) {
                         ddFromDB.setModifiedDate(new Date());
                         logAudit(dmdDetail);
-                        getPersistenceService().setType(EgDemandDetails.class);
-                        getPersistenceService().update(ddFromDB);
+                        demandDetailsDao.update(ddFromDB);
 
                         break;
                     }
@@ -776,8 +782,7 @@ public class EditDemandAction extends BaseFormAction {
                                 extraCollAmt);
                         newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().subtract(extraCollAmt));
                         newDmndDtls.setModifiedDate(new Date());
-                        getPersistenceService().setType(EgDemandDetails.class);
-                        getPersistenceService().update(newDmndDtls);
+                        demandDetailsDao.update(newDmndDtls);
                     }
                 }
             }
@@ -824,8 +829,7 @@ public class EditDemandAction extends BaseFormAction {
             basicProperty.getProperty().getPtDemandSet().add(ptdemand);
         }
 
-        getPersistenceService().setType(PropertyImpl.class);
-        getPersistenceService().update(basicProperty.getProperty());
+        propertyImplService.update(basicProperty.getProperty());
 
         LOGGER.info("Exiting from update");
         return RESULT_ACK;

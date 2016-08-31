@@ -45,8 +45,12 @@ import org.egov.infstr.services.PersistenceService;
 public class AccountdetailkeyService extends PersistenceService<Accountdetailkey, Integer> {
     private PersistenceService persistenceService;
 
-    public AccountdetailkeyService(final Class<Accountdetailkey> accountdetailkey) {
-        this.type = accountdetailkey;
+    public AccountdetailkeyService() {
+        super(Accountdetailkey.class);
+    }
+
+    public AccountdetailkeyService(final Class<Accountdetailkey> type) {
+        super(type);
     }
 
     @Override

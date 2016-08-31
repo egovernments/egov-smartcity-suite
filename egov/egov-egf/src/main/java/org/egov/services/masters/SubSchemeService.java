@@ -44,7 +44,11 @@ import org.egov.infstr.services.PersistenceService;
 
 public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
     
-    public SubSchemeService(final Class<SubScheme> subScheme) {
-        this.type = subScheme;
+    public SubSchemeService() {
+        super(SubScheme.class);
+    }
+
+    public SubSchemeService(Class<SubScheme> type) {
+        super(type);
     }
 }

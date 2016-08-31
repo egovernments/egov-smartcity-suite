@@ -72,9 +72,14 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
-    public AccountChequesService(final Class<AccountCheques> accountCheques) {
-        this.type = accountCheques;
+    public AccountChequesService() {
+        super(AccountCheques.class);
     }
+
+    public AccountChequesService(Class<AccountCheques> type) {
+        super(type);
+    }
+
     @Transactional
     public void createCheques(List<ChequeDetail> chequeDetailsList, Map<String, String> chequeIdMap,
             Map<String, AccountCheques> chequeMap, Bankaccount bankaccount, String deletedChqDeptId) {

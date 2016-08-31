@@ -51,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRException;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -91,8 +93,6 @@ import org.hibernate.FlushMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import net.sf.jasperreports.engine.JRException;
-
 @Results(value = {
         @Result(name = "results", location = "budgetVarianceReport-results.jsp"),
         @Result(name = "form", location = "budgetVarianceReport-form.jsp"),
@@ -101,7 +101,6 @@ import net.sf.jasperreports.engine.JRException;
         @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
                 "application/xls", "contentDisposition", "no-cache;filename=BudgetVarianceReport.xls" })
 })
-
 @ParentPackage("egov")
 public class BudgetVarianceReportAction extends BaseFormAction {
 
@@ -330,7 +329,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                 budgetVarianceEntry.setAdditionalAppropriation(BigDecimal.ZERO);
                 final BigDecimal estimateAmount = (budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
                         .getApprovedAmount()).add(budgetDetail.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO
-                                : budgetDetail.getApprovedReAppropriationsTotal());
+                        : budgetDetail.getApprovedReAppropriationsTotal());
                 budgetVarianceEntry.setEstimate(estimateAmount);
             } else {
                 budgetVarianceEntry.setEstimate(budgetDetail.getApprovedAmount() == null ? BigDecimal.ZERO : budgetDetail
@@ -339,6 +338,7 @@ public class BudgetVarianceReportAction extends BaseFormAction {
                         .setAdditionalAppropriation(budgetDetail.getApprovedReAppropriationsTotal() == null ? BigDecimal.ZERO
                                 : budgetDetail.getApprovedReAppropriationsTotal());
             }
+            budgetVarianceEntry.setTotal(budgetVarianceEntry.getEstimate().add(budgetVarianceEntry.getAdditionalAppropriation()));
             budgetVarianceEntries.add(budgetVarianceEntry);
         }
         populateActualData(financialYear);
@@ -528,7 +528,6 @@ public class BudgetVarianceReportAction extends BaseFormAction {
     public String getAccountType() {
         return accountType;
     }
-
 
     public void setReportService(final ReportService reportService) {
         this.reportService = reportService;

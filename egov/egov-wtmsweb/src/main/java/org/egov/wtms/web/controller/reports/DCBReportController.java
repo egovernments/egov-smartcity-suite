@@ -99,7 +99,6 @@ public class DCBReportController {
         return dCBReportResult;
     }
 
-    @Autowired
     public @ModelAttribute("connectionTypes") Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
     }

@@ -39,6 +39,11 @@
  */
 package org.egov.wtms.integration;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -48,17 +53,8 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesThirdPartyService {
-
-    public WaterConnectionDetails waterConnectionDetails;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -72,6 +68,7 @@ public class WaterChargesThirdPartyService {
     }
 
     public byte[] getEstimationNotice(final String applicationNo) throws IOException {
+        WaterConnectionDetails waterConnectionDetails = null;
         if (StringUtils.isNotBlank(applicationNo))
             waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNo);
         if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
@@ -83,7 +80,8 @@ public class WaterChargesThirdPartyService {
     }
 
     public Map<String, String> validateWaterConnectionStatus(final String applicationNo) {
-        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNo);
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumber(applicationNo);
         final Map<String, String> statusCommentsMap = new HashMap<String, String>();
         if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                 || waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)

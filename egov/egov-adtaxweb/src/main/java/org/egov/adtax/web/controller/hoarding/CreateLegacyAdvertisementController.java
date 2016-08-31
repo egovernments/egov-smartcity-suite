@@ -47,7 +47,8 @@ import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.commons.Installment;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,7 +67,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class CreateLegacyAdvertisementController extends HoardingControllerSupport {
 	
 	@Autowired
-	private ResourceBundleMessageSource messageSource;
+    @Qualifier("messageSource")
+	private MessageSource messageSource;
 
     @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {

@@ -71,6 +71,7 @@ import org.egov.works.services.WorksService;
 import org.egov.works.services.contractoradvance.ContractorAdvanceService;
 import org.egov.works.utils.AbstractPDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -83,7 +84,9 @@ import java.util.Map;
 
 public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private static final Logger logger = Logger.getLogger(ContractorBillPDFGenerator.class);
-    private PersistenceService persistenceService = new PersistenceService();
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
     @Autowired
     private EmployeeServiceOld employeeService;
     private final Map<String, String> pdfLabel;

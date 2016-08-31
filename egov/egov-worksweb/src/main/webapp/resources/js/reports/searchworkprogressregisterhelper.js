@@ -223,7 +223,7 @@ function callAjaxSearch() {
 					"data" : "", "sClass" : "text-center"} ,{ 
 					"data" : "ward", "sClass" : "text-left"} ,{
 					"data" : "location", "sClass" : "text-left"} ,{
-					"data" : "typeOfSlum", "sClass" : "text-left"} ,{ 
+					"data" : "workCategory", "sClass" : "text-left"} ,{ 
 					"data" : "beneficiaries", "sClass" : "text-left"} ,{
 					"data" : "nameOfWork", "sClass" : "text-left"} ,{
 					"data" : "winCode", "sClass" : "text-left"} ,{

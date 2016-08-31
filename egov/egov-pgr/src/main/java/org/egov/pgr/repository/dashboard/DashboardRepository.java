@@ -40,23 +40,20 @@
 
 package org.egov.pgr.repository.dashboard;
 
-import static org.egov.infra.utils.DateUtils.endOfGivenDate;
-import static org.egov.infra.utils.DateUtils.startOfGivenDate;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 @Repository
 @SuppressWarnings("all")
@@ -66,8 +63,7 @@ public class DashboardRepository {
     private EntityManager entityManager;
 
     @Autowired
-    @Qualifier("dashboardSQLSource")
-    private ReloadableResourceBundleMessageSource dashboardSQLSource;
+    private PgrApplicationProperties pgrApplicationProperties;
 
     public List<Object[]> fetchComplaintResolutionTrendBetween(final Date fromDate, final Date toDate) {
         return fetchDateRangeData("pgr.comp.resolution.weekly.trend", fromDate, toDate);
@@ -149,7 +145,7 @@ public class DashboardRepository {
 
     private SQLQuery getQuery(final String sqlKey) {
         return entityManager.unwrap(Session.class)
-                .createSQLQuery(dashboardSQLSource.getMessage(sqlKey, null, Locale.getDefault()));
+                .createSQLQuery(pgrApplicationProperties.getValue(sqlKey));
     }
 
     public List<Object[]> fetchTopComplaintsForCurrentMonthBetween(final Date fromDate, final Date toDate) {

@@ -1092,9 +1092,12 @@ function updatetotalAmount(){
 	else {
 		totalamount=parseFloat(document.getElementById('totalcramount').value);
 	}
-	document.getElementById('misctotalAmount').value=totalamount.toFixed(2);
+	
+	var totalAmountStr=(totalamount>0?totalamount.toFixed(2):totalamount);
+	
+	document.getElementById('misctotalAmount').value=totalAmountStr;
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
-	document.getElementById('instrHeaderCash.instrumentAmount').value=totalamount.toFixed(2);
+	document.getElementById('instrHeaderCash.instrumentAmount').value=totalAmountStr;	
 }
 
 function validateDetailCode(obj)

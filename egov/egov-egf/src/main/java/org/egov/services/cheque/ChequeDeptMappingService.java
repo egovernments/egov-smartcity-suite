@@ -47,11 +47,11 @@ import org.egov.model.cheque.ChequeDeptMapping;
 
 public class ChequeDeptMappingService extends PersistenceService<ChequeDeptMapping, Long> {
 
-    public ChequeDeptMappingService(final Class<ChequeDeptMapping> chequeDeptMapping) {
-        this.type = chequeDeptMapping;
+    public ChequeDeptMappingService() {
+        super(ChequeDeptMapping.class);
     }
 
-    public ChequeDeptMappingService() {
-
+    public ChequeDeptMappingService(final Class<ChequeDeptMapping> type) {
+        super(type);
     }
 }

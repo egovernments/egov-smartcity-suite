@@ -115,7 +115,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public PersistenceService<InstrumentHeader, Long> instrumentHeaderService;
     private PersistenceService persistenceService;
     private EisUtilService eisService;
-    private DishonorChequeService dishonorChequeService;
+    private DishonorChequeService finDishonorChequeService;
     private SimpleWorkflowService<DishonorCheque> dishonorChequeWorkflowService;
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
@@ -178,7 +178,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         mode = "approve";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(">>>>>>" + dishonourChqId);
-        dishonorChequeView = dishonorChequeService.find(" from DishonorCheque where id=?", dishonourChqId);
+        dishonorChequeView = finDishonorChequeService.find(" from DishonorCheque where id=?", dishonourChqId);
         for (final DishonorChequeDetails dc : dishonorChequeView.getDetails())
             if (dc.getFunctionId() != null)
             {
@@ -885,8 +885,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         this.chartOfAccountService = chartOfAccountService;
     }
 
-    public void setDishonorChequeService(final DishonorChequeService dishonorChequeService) {
-        this.dishonorChequeService = dishonorChequeService;
+    public void setFinDishonorChequeService(final DishonorChequeService finDishonorChequeService) {
+        this.finDishonorChequeService = finDishonorChequeService;
     }
 
     public VoucherHelper getVoucherHelper() {

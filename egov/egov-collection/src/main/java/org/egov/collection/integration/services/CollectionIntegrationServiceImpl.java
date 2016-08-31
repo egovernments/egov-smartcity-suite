@@ -39,15 +39,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
@@ -89,6 +80,15 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Collections integration service implementation - exposes APIs that can be used by other applications (typically billing
  * systems) to interact with the collections module.
@@ -112,14 +112,6 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
 
     List<ValidationError> errors = new ArrayList<ValidationError>(0);
 
-    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
-        this.receiptHeaderService = receiptHeaderService;
-    }
-
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
-    }
-
     private CollectionCommon collectionCommon;
 
     @Autowired
@@ -128,6 +120,18 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
     private CollectionApplicationProperties collectionApplicationProperties;
     @Autowired
     private FundHibernateDAO fundDAO;
+
+    public CollectionIntegrationServiceImpl() {
+        super(ReceiptHeader.class);
+    }
+
+    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
+        this.receiptHeaderService = receiptHeaderService;
+    }
+
+    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
+        this.collectionsUtil = collectionsUtil;
+    }
 
     /*
      * (non-Javadoc)

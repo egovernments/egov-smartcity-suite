@@ -39,7 +39,7 @@
    ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
    -->
 <!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-07-22T13:01:41 -->
+<!-- 2016-08-26T11:21:52 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="budgetVarianceReport" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a9828aea-316e-4c57-888c-e2b817b926cb">
 	<property name="net.sf.jasperreports.export.pdf.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.columnHeader" value="columnHeader"/>
@@ -51,7 +51,7 @@
 	<field name="departmentName" class="java.lang.String"/>
 	<field name="departmentCode" class="java.lang.String"/>
 	<field name="functionCode" class="java.lang.String"/>
-	<field name="budgetCode" class="java.lang.String"/>
+	<field name="total" class="java.math.BigDecimal"/>
 	<field name="budgetHead" class="java.lang.String"/>
 	<field name="estimate" class="java.math.BigDecimal"/>
 	<field name="additionalAppropriation" class="java.math.BigDecimal"/>
@@ -81,7 +81,7 @@
 	<columnHeader>
 		<band height="50" splitType="Stretch">
 			<staticText>
-				<reportElement x="371" y="0" width="59" height="50" uuid="78f701dd-03ee-4fb5-bda3-f6aa0f42d984"/>
+				<reportElement x="303" y="0" width="70" height="50" uuid="78f701dd-03ee-4fb5-bda3-f6aa0f42d984"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -95,7 +95,7 @@
 				<text><![CDATA[Additional Appropriation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="430" y="0" width="60" height="50" uuid="1cb20a44-c737-4f2b-8343-d115c236a8b3"/>
+				<reportElement x="440" y="0" width="60" height="50" uuid="1cb20a44-c737-4f2b-8343-d115c236a8b3"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -109,7 +109,7 @@
 				<text><![CDATA[Actual]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="490" y="0" width="70" height="50" uuid="758c65a6-5d97-4e55-8749-88f02e4be737"/>
+				<reportElement x="500" y="0" width="70" height="50" uuid="758c65a6-5d97-4e55-8749-88f02e4be737"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -123,7 +123,7 @@
 				<text><![CDATA[Variance]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="256" y="0" width="50" height="50" uuid="76a02c1f-0bcc-45d3-b3fd-4efc7f4e06f5"/>
+				<reportElement x="-19" y="0" width="54" height="50" uuid="76a02c1f-0bcc-45d3-b3fd-4efc7f4e06f5"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -137,7 +137,7 @@
 				<text><![CDATA[Fund]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="120" y="0" width="66" height="50" uuid="a495f040-a7cc-46f0-95f8-d521d5ca6c94"/>
+				<reportElement x="35" y="0" width="66" height="50" uuid="a495f040-a7cc-46f0-95f8-d521d5ca6c94"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -151,7 +151,7 @@
 				<text><![CDATA[Function]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="54" y="0" width="66" height="50" uuid="e60a2463-9e9e-4956-b065-920b4f426920"/>
+				<reportElement x="171" y="0" width="66" height="50" uuid="e60a2463-9e9e-4956-b065-920b4f426920"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -165,7 +165,7 @@
 				<text><![CDATA[Budget Group]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="54" height="50" uuid="337d8eb0-cf81-432f-ac12-e8bcb4b63393"/>
+				<reportElement x="373" y="0" width="67" height="50" uuid="337d8eb0-cf81-432f-ac12-e8bcb4b63393"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -176,10 +176,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Budget]]></text>
+				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="306" y="0" width="65" height="50" uuid="1bcc5b46-7950-44c2-be97-876ef03f5a72"/>
+				<reportElement x="237" y="0" width="66" height="50" uuid="1bcc5b46-7950-44c2-be97-876ef03f5a72"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -193,7 +193,7 @@
 				<textFieldExpression><![CDATA[$P{estimateHeading}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="186" y="0" width="70" height="50" uuid="30403d32-2f97-4aee-8d53-ccef6b10b6a5"/>
+				<reportElement x="101" y="0" width="70" height="50" uuid="30403d32-2f97-4aee-8d53-ccef6b10b6a5"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -211,7 +211,7 @@
 	<detail>
 		<band height="80" splitType="Stretch">
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="490" y="0" width="70" height="80" uuid="81819746-49f2-4539-8346-1f76546da0d6"/>
+				<reportElement x="500" y="0" width="70" height="80" uuid="81819746-49f2-4539-8346-1f76546da0d6"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -223,7 +223,7 @@
 				<textFieldExpression><![CDATA[$F{variance}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="430" y="0" width="60" height="80" uuid="9ea0f58f-e71d-4e36-9e8b-e7f99769e19c"/>
+				<reportElement x="440" y="0" width="60" height="80" uuid="9ea0f58f-e71d-4e36-9e8b-e7f99769e19c"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -235,7 +235,7 @@
 				<textFieldExpression><![CDATA[$F{actual}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="371" y="0" width="59" height="80" uuid="71f00920-8fc4-4a35-aafe-e5c556ef93fa"/>
+				<reportElement x="303" y="0" width="70" height="80" uuid="71f00920-8fc4-4a35-aafe-e5c556ef93fa"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -247,7 +247,7 @@
 				<textFieldExpression><![CDATA[$F{additionalAppropriation}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="256" y="0" width="50" height="80" uuid="2067460e-f588-4b41-8add-c46b051f3c06"/>
+				<reportElement x="-19" y="0" width="54" height="80" uuid="2067460e-f588-4b41-8add-c46b051f3c06"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -259,7 +259,7 @@
 				<textFieldExpression><![CDATA[$F{fundCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="120" y="0" width="66" height="80" uuid="5219c2ed-c1cd-4cca-99e8-33758ba8e103"/>
+				<reportElement x="35" y="0" width="66" height="80" uuid="5219c2ed-c1cd-4cca-99e8-33758ba8e103"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -271,7 +271,7 @@
 				<textFieldExpression><![CDATA[$F{functionCode}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="54" y="0" width="66" height="80" uuid="dbdff843-853b-4d6b-802c-c3a1175b993d"/>
+				<reportElement x="171" y="0" width="66" height="80" uuid="dbdff843-853b-4d6b-802c-c3a1175b993d"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -283,7 +283,7 @@
 				<textFieldExpression><![CDATA[$F{budgetHead}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="54" height="80" uuid="9be288b8-63d2-4f14-bd54-1a826317e86e"/>
+				<reportElement x="373" y="0" width="67" height="80" uuid="9be288b8-63d2-4f14-bd54-1a826317e86e"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -291,11 +291,11 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{budgetCode}]]></textFieldExpression>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement x="306" y="0" width="65" height="80" uuid="45c40713-fc3f-412f-a786-0a7001c49b24"/>
+				<reportElement x="237" y="0" width="66" height="80" uuid="45c40713-fc3f-412f-a786-0a7001c49b24"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>
@@ -307,7 +307,7 @@
 				<textFieldExpression><![CDATA[$F{estimate}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="186" y="0" width="70" height="80" uuid="ec29e325-d078-4781-b8c1-e118ee247edd"/>
+				<reportElement x="101" y="0" width="70" height="80" uuid="ec29e325-d078-4781-b8c1-e118ee247edd"/>
 				<box>
 					<pen lineWidth="1.0" lineColor="#010101"/>
 					<topPen lineWidth="1.0"/>

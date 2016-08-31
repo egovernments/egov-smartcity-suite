@@ -76,19 +76,19 @@ public class JudgmentType extends AbstractAuditable {
 
 	@NotNull
 	@SafeHtml
-	@Length(min = 1, max = 25)
+	@Length(max = 25)
 	@Audited
 	private String code;
 
 	@NotNull
 	@SafeHtml
-	@Length(min = 1, max = 50)
+	@Length(max = 50)
 	@Audited
 	@Column(name = "judgmenttype")
 	private String name;
 
 	@SafeHtml
-	@Length(min = 3, max = 256)
+	@Length(max = 256)
 	private String description;
 
 	@Min(1)

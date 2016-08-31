@@ -53,7 +53,7 @@
 					<th><spring:message code="lbl.slno" /></th>
 					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.location" /></th>
-					<th><spring:message code="lbl.typeofslum" /></th>
+					<th><spring:message code="lbl.workcategory" /></th>
 					<th><spring:message code="lbl.beneficiaries" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
 					<th><spring:message code="lbl.wincode" /></th>

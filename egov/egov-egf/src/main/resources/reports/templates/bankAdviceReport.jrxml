@@ -38,8 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport"  printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="752" leftMargin="72" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-08-25T11:04:19 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bankAdviceReport" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="752" leftMargin="72" rightMargin="18" topMargin="18" bottomMargin="18" isFloatColumnFooter="true" uuid="e977129d-8063-4dc8-acc3-8e8fecf2dd1e">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -134,7 +135,7 @@ The Manager,
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="520" y="0" width="85" height="20" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
+				<reportElement x="617" y="0" width="85" height="20" uuid="50ea7b62-d510-49ee-817f-8b85896fa257"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -145,7 +146,8 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Amount(Rs.)]]></text>
+				<text><![CDATA[Party Amount
+]]></text>
 			</staticText>
 			<staticText>
 				<reportElement stretchType="RelativeToBandHeight" x="25" y="0" width="200" height="20" isPrintWhenDetailOverflows="true" uuid="6a1eccdd-8ce2-4cd2-a6cb-6ae052c6ee5e"/>
@@ -159,7 +161,8 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Name of Account Holder]]></text>
+				<text><![CDATA[Party Name
+]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="0" width="25" height="20" uuid="0c3b7cae-a144-40e7-b352-d8899dc4392d"/>
@@ -173,10 +176,11 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Sl.No]]></text>
+				<text><![CDATA[Sno
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="225" y="0" width="125" height="20" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
+				<reportElement positionType="Float" x="310" y="0" width="125" height="20" uuid="6955e172-0b54-4011-87ab-6b5340886570"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -187,10 +191,11 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Bank Name]]></text>
+				<text><![CDATA[Party Bank Name
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="435" y="0" width="85" height="20" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
+				<reportElement positionType="Float" x="532" y="0" width="85" height="20" uuid="9ad6daf2-770e-4675-9aee-45d499b51848"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -201,10 +206,11 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[IFSC Code]]></text>
+				<text><![CDATA[Party Bank Ifsc Code
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="605" y="0" width="147" height="20" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
+				<reportElement x="435" y="0" width="97" height="20" uuid="27f7a361-3b8a-4d71-a296-14c0b35558ac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -215,10 +221,11 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[UTR Number]]></text>
+				<text><![CDATA[Party Bank Branch
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="350" y="0" width="85" height="20" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
+				<reportElement x="225" y="0" width="85" height="20" uuid="28093082-e9c7-4f95-9be7-292f760a6af8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -229,14 +236,15 @@ The Manager,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Account Number]]></text>
+				<text><![CDATA[Party Account no
+]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="25" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="225" y="0" width="125" height="25" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
+				<reportElement x="310" y="0" width="125" height="25" uuid="3ce804a9-2b46-409d-ae18-8598990e6eb5"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -248,7 +256,7 @@ The Manager,
 				<textFieldExpression><![CDATA[$F{bank}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="435" y="0" width="85" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
+				<reportElement x="532" y="0" width="85" height="25" uuid="1ca99d34-be69-4921-883b-f31edb6b4e93"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -260,7 +268,7 @@ The Manager,
 				<textFieldExpression><![CDATA[$F{ifscCode}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="520" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
+				<reportElement positionType="Float" x="617" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="e63ea28c-c321-448e-862f-578be1383a3f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -302,7 +310,7 @@ The Manager,
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="605" y="0" width="147" height="25" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
+				<reportElement x="435" y="0" width="97" height="25" uuid="ca25d589-73f4-46b6-967a-220b3542843c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -314,7 +322,7 @@ The Manager,
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="350" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="bd506a2f-9a03-4ddb-85b4-cbadf53002f1"/>
+				<reportElement positionType="Float" x="225" y="0" width="85" height="25" isPrintWhenDetailOverflows="true" uuid="bd506a2f-9a03-4ddb-85b4-cbadf53002f1"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -350,7 +358,7 @@ The Manager,
 				<text><![CDATA[For Financial Adviser]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="2" width="435" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
+				<reportElement positionType="Float" x="0" y="2" width="532" height="24" uuid="6119aaa1-1b13-4395-aded-99cbbe990fa5"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -364,7 +372,7 @@ The Manager,
 				<text><![CDATA[Total ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="435" y="2" width="170" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
+				<reportElement x="532" y="2" width="170" height="24" uuid="f07a8ff5-e237-4e05-8162-921deaff5088"/>
 				<box rightPadding="3">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>

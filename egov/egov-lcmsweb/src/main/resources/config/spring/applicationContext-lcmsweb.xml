@@ -46,16 +46,18 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    
-    <import resource="classpath*:config/spring/applicationContext-lcms.xml"/>
-	<import resource="applicationSecurityContext-lcms.xml"/>
-	<context:property-placeholder />
+
+    <import resource="applicationSecurityContext-lcms.xml"/>
+
+    <context:property-placeholder/>
+
     <context:component-scan base-package="org.egov.lcms.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
-	
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="${max.file.upload.size}"/>
-		<property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="${max.file.upload.size}"/>
+        <property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
     </bean>
+
 </beans>

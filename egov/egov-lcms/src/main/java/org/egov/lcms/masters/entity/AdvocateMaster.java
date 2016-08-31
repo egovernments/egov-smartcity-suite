@@ -48,7 +48,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -86,11 +85,11 @@ public class AdvocateMaster extends AbstractAuditable {
     private String salutation;
 
     @NotNull
-    @Length(min = 3, max = 100)
+    @Length(max = 128)
     @Audited
     private String name;
 
-    @Length(min = 3, max = 128)
+    @Length(max = 256)
     @Audited
     private String address;
 
@@ -115,7 +114,6 @@ public class AdvocateMaster extends AbstractAuditable {
     private String email;
 
     @NotNull
-    @Min(value = 1)
     @Audited
     private double monthlyRenumeration;
 
@@ -127,7 +125,7 @@ public class AdvocateMaster extends AbstractAuditable {
     private String firmName;
 
     @NotNull
-    @Length(max = 20)
+    @Length(max = 10)
     @Audited
     private String panNumber;
 
