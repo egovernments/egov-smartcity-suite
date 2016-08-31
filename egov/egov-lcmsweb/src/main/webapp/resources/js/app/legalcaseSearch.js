@@ -63,7 +63,6 @@ function submitForm() {
 
 	var caseNumber = $("#caseNumber").val();
 	var lcNumber = $("#lcNumber").val();
-	var judgmentId = $("#judgmentId").val();
 	
 	$('.report-section').removeClass('display-hide');
 	$('#report-footer').show();

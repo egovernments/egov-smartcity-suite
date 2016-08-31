@@ -37,23 +37,21 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.controller.transactions.digitalSignature;
+package org.egov.ptis.web.controller.transactions.digitalsignature;
 
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,18 +64,14 @@ public class DigitalSignatureReportController {
 
     private static final String DIGITAL_SIGNATURE_REPORT_FORM = "digitalSignatureReport-form";
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private SecurityUtils securityUtils;
 
     @Autowired
     private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
 
-    private Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+    @Autowired
+    private WorkflowTypeService workflowTypeService;
 
     @RequestMapping(value = "/digitalSignatureReport-form", method = RequestMethod.GET)
     public String searchForm(final Model model) {
@@ -89,24 +83,16 @@ public class DigitalSignatureReportController {
 
     @SuppressWarnings("unchecked")
     public List<HashMap<String, Object>> getRecordsForDigitalSignature() {
-        final List<HashMap<String, Object>> resultList = new ArrayList<HashMap<String, Object>>();
+        final List<HashMap<String, Object>> resultList = new ArrayList<>();
         final List<StateAware> stateAwareList = fetchItems();
 
         if (null != stateAwareList && !stateAwareList.isEmpty()) {
-            HashMap<String, Object> tempMap = new HashMap<String, Object>();
-            WorkflowTypes workflowTypes = null;
-            List<WorkflowTypes> workflowTypesList = new ArrayList<WorkflowTypes>();
+            HashMap<String, Object> tempMap;
             for (final StateAware record : stateAwareList)
-                if (record != null)
-                    if (record.getState() != null && record.getState().getNextAction() != null && 
+                if (record != null && record.getState() != null && record.getState().getNextAction() != null &&
                     record.getState().getNextAction().equalsIgnoreCase(PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING)) {
-                        tempMap = new HashMap<String, Object>();
-                        workflowTypesList = getCurrentSession().getNamedQuery(WorkflowTypes.WF_TYPE_BY_TYPE_AND_RENDER_Y)
-                                .setString(0, record.getStateType()).list();
-                        if (workflowTypesList != null && !workflowTypesList.isEmpty())
-                            workflowTypes = workflowTypesList.get(0);
-                        else
-                            workflowTypes = null;
+                        tempMap = new HashMap<>();
+                        WorkflowTypes workflowTypes = workflowTypeService.getEnabledWorkflowTypeByType(record.getStateType());
                         if (PTMODULENAME.equalsIgnoreCase(workflowTypes.getModule().getName())) {
                             if (record.getState().getValue().startsWith("Create")
                                     || record.getState().getValue().startsWith("Alter")
@@ -116,7 +102,7 @@ public class DigitalSignatureReportController {
                             else
                                 tempMap.put("objectId", record.getId());
                             tempMap.put("type", record.getState().getNatureOfTask());
-                            tempMap.put("module", workflowTypes != null ? workflowTypes.getModule().getDisplayName() : null);
+                            tempMap.put("module", workflowTypes.getModule().getDisplayName());
                             tempMap.put("details", record.getStateDetails());
                             tempMap.put("status", record.getCurrentState().getValue());
                             resultList.add(tempMap);
@@ -127,9 +113,7 @@ public class DigitalSignatureReportController {
     }
 
     public List<StateAware> fetchItems() {
-        final List<StateAware> digitalSignWFItems = new ArrayList<StateAware>();
-        digitalSignWFItems.addAll(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
-        return digitalSignWFItems;
+        return new ArrayList<>(inboxRenderServiceDeligate.getInboxItems(securityUtils.getCurrentUser().getId()));
     }
 
 }

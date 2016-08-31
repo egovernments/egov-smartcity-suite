@@ -40,20 +40,18 @@
 
 package org.egov.tl.service.masters;
 
-import org.egov.infstr.services.PersistenceService;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
-import org.egov.tl.entity.LicenseType;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
 import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.utils.Constants;
+import org.egov.tl.service.LicenseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Iterator;
 import java.util.List;
+
+import static org.egov.tl.utils.Constants.TRADELICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -66,22 +64,20 @@ public class LicenseSubCategoryService {
     private LicenseCategoryService licenseCategoryService;
 
     @Autowired
-    @Qualifier("entityQueryService")
-    private PersistenceService entityQueryService;
-
-    @Autowired
     private FeeTypeService feeTypeService;
 
     @Autowired
     private UnitOfMeasurementService unitOfMeasurementService;
+
+    @Autowired
+    private LicenseTypeService licenseTypeService;
     
     @Transactional
     public LicenseSubCategory create(LicenseSubCategory subCategory, List<LicenseSubCategoryDetails> details, Long categoryId){
         if(categoryId!=null){
             subCategory.setCategory(licenseCategoryService.findById(categoryId));
         }
-        LicenseType licenseType=(LicenseType)entityQueryService.find("from org.egov.tl.entity.LicenseType where name=?", Constants.TRADELICENSE);
-        subCategory.setLicenseType(licenseType);
+        subCategory.setLicenseType(licenseTypeService.getLicenseTypeByName(TRADELICENSE));
         for (LicenseSubCategoryDetails scDetails : details) {
             if(scDetails!=null){
                 scDetails.setSubCategory(subCategory);
@@ -112,6 +108,10 @@ public class LicenseSubCategoryService {
     
     public List<LicenseSubCategory> findAll(){
         return licenseSubCategoryRepository.findAll();
+    }
+
+    public List<LicenseSubCategory> getLicenseSubCategoriesByLicenseTypeName(String licenseTypeName) {
+        return licenseSubCategoryRepository.findByLicenseType_Name(licenseTypeName);
     }
 
 }

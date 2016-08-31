@@ -70,7 +70,7 @@
 						<div class="col-sm-3 col-md-2 add-margin">
 							<form:input type="text" path="name" id="name"
 								cssClass="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace"
+								data-pattern="alphanumericspecialcharacters"
 								maxlength="100" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
@@ -88,7 +88,7 @@
 							<form:textarea class="form-control text-left patternvalidation"
 								path="address" id="address" name="address"
 								data-pattern="alphanumericwithspecialcharacterswithspace"
-								maxlength="128" />
+								maxlength="256" />
 							<form:errors path="address" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -96,7 +96,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="contactPhone"
 								class="form-control text-left patternvalidation"
-								data-pattern="numeric" maxlength="20" />
+								data-pattern="number" maxlength="20" />
 							<form:errors path="contactPhone" cssClass="error-msg" />
 						</div>
 					</div>
@@ -108,7 +108,7 @@
 								<span class="input-group-addon">+91</span>
 								<form:input type="text" path="mobileNumber" id="mobileNumber"
 									data-inputmask="'mask': '9999999999'" required="required"
-									cssClass="form-control" maxlength="12" data-pattern="numeric"
+									cssClass="form-control" maxlength="12" data-pattern="number"
 									placeholder="Mobile Number" />
 							</div>
 							<form:errors path="mobileNumber" cssClass="add-margin error-msg" />
@@ -137,7 +137,7 @@
 						<div class="col-sm-3 add-margin">
 							<form:input path="specilization"
 								class="form-control text-left patternvalidation"
-								data-pattern="alphabetwithspace" maxlength="64" />
+								data-pattern="alphanumericspecialcharacters" maxlength="64" />
 							<form:errors path="specilization" cssClass="error-msg" />
 						</div>
 					</div>

@@ -38,15 +38,26 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.tl.service;
 
-import org.egov.infra.workflow.entity.StateHistory;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.tl.entity.LicenseStatus;
+import org.egov.tl.repository.LicenseStatusRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface StateHistoryRepository extends JpaRepository<StateHistory, Long> {
+@Service
+@Transactional(readOnly = true)
+public class LicenseStatusService {
 
-    Long countByOwnerPosition_Id(Long id);
+    @Autowired
+    private LicenseStatusRepository licenseStatusRepository;
 
+    public LicenseStatus getLicenseStatusByName(String name) {
+        return licenseStatusRepository.findByName(name);
+    }
+
+    public LicenseStatus getLicenseStatusByCode(String code) {
+        return licenseStatusRepository.findByStatusCode(code);
+    }
 }

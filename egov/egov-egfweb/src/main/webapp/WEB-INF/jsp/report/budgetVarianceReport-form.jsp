@@ -59,23 +59,10 @@ var callback = {
 		}
 function getData(){
 	var asOnDate =  document.getElementById('asOnDate').value;
-	var accountType =  document.getElementById('accountType').value;
-	var budgetGroup =  document.getElementById('budgetGroup').value;
-	var fund = document.getElementById('fund').value;
-	var functionId=document.getElementById('function').value;
 	var department = document.getElementById('executingDepartment').value;
-	
 	
 	if(department ==-1){
 		bootbox.alert("Please select department")
-		return false;
-	}
-	if(functionId ==-1){
-		bootbox.alert("Please select function")
-		return false;
-	}
-	if(fund ==-1){
-		bootbox.alert("Please select fund")
 		return false;
 	}
 	if(asOnDate ==''){
@@ -85,36 +72,6 @@ function getData(){
 	document.budgetVarianceReport.action='/EGF/report/budgetVarianceReport-loadData.action?asOnDate='+asOnDate;
 	document.budgetVarianceReport.submit();  
 	return true;
-	/* var url = '/EGF/report/budgetVarianceReport-ajaxLoadData.action?skipPrepare=true&asOnDate='+asOnDate+'&accountType='+accountType+'&budgetDetail.budgetGroup.id='+budgetGroup+getMiscData();
-	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);  */
-}
-
-function getMiscData(){
-	var fund,department,functionary,field,scheme,subscheme,data,functionId,budgetGroup="";
-	fund = document.getElementById('fund');
-	department = document.getElementById('executingDepartment');
-	functionary = document.getElementById('functionary');
-	field = document.getElementById('field');
-	scheme = document.getElementById('scheme');
-	subscheme = document.getElementById('subScheme');
-	functionId=document.getElementById('function');
-	budgetGroup =  document.getElementById('budgetGroup');
-	if(fund != undefined)
-		data = data+"&budgetDetail.fund.id="+fund.value;
-	if(department != undefined)
-		data = data+"&budgetDetail.executingDepartment.id="+department.value;
-	if(functionary != undefined)
-		data = data+"&budgetDetail.functionary.id="+functionary.value;
-	if(functionId != undefined)
-		data = data+"&budgetDetail.function.id="+functionId.value;
-	if(field != undefined)
-		data = data+"&budgetDetail.boundary.id="+field.value;
-	if(scheme != undefined)
-		data = data+"&budgetDetail.scheme.id="+scheme.value;
-	if(subscheme != undefined)
-		data = data+"&budgetDetail.subScheme.id="+subscheme.value;
-	
-	return data;
 }
 
 function exportXls(){
@@ -217,8 +174,7 @@ function resetSubmit()
 								headerValue="----Choose----" /></td>
 					</s:if>
 					<s:if test="%{isFieldMandatory('function')}">
-						<td class="bluebox" width="10%">Function:<span
-							class="mandatory1">*</span></td>
+						<td class="bluebox" width="10%">Function:</td>
 						<td class="bluebox"><s:select name="function" id="function"
 								value="%{budgetDetail.function.id}"
 								list="dropdownData.functionList" listKey="id" listValue="name"
@@ -227,7 +183,7 @@ function resetSubmit()
 				</tr>
 				<tr>
 					<s:if test="%{isFieldMandatory('fund')}">
-						<td class="greybox" width="10%">Fund:<span class="mandatory1">*</span></td>
+						<td class="greybox" width="10%">Fund:</td>
 						<td class="greybox"><s:select name="fund" id="fund"
 								value="%{budgetDetail.fund.id}" list="dropdownData.fundList"
 								listKey="id" listValue="name" headerKey="-1"

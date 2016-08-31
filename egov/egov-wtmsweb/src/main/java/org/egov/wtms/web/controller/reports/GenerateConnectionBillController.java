@@ -40,11 +40,33 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -73,31 +95,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping("/report/generateBill/search")
@@ -165,22 +167,30 @@ public class GenerateConnectionBillController {
             throws IOException, ParseException {
         String result = null;
         List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<>();
-        generateConnectionBillList = generateConnectionBillService
-                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
-                        request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter("consumerCode"),
-                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        generateConnectionBillList = generateConnectionBillService.getBillReportDetails(request.getParameter("zone"),
+                request.getParameter("revenueWard"), request.getParameter("propertyType"),
+                request.getParameter("applicationType"), request.getParameter("connectionType"),
+                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter("assessmentNumber"));
+        final long foundRows = generateConnectionBillService.getTotalCountofBills(request.getParameter("zone"),
+                request.getParameter("revenueWard"), request.getParameter("propertyType"),
+                request.getParameter("applicationType"), request.getParameter("connectionType"),
+                request.getParameter("consumerCode"), request.getParameter("houseNumber"),
+                request.getParameter("assessmentNumber"));
+
         final int count = generateConnectionBillList.size();
-        LOGGER.info("Total count of records-->"+Long.valueOf(count));
-        List<GenerateConnectionBill> generateconnectionBillList = new ArrayList<>();
-        if (Long.valueOf(count)>2000){
-            generateconnectionBillList = new ArrayList<>();
-        }
-        result = new StringBuilder("{ \"data\":").append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
-                GenerateConnectionBillAdaptor.class)).append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
+        LOGGER.info("Total count of records-->" + Long.valueOf(count));
+        new ArrayList<>();
+        if (Long.valueOf(count) > 5000)
+            new ArrayList<>();
+        result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
+                .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
+                .append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
+                        GenerateConnectionBillAdaptor.class))
+                .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
-        
+
     }
 
     @RequestMapping(value = "/result/{consumerCode}", method = GET)
@@ -189,12 +199,12 @@ public class GenerateConnectionBillController {
         final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
-        response.setHeader("content-disposition", "attachment; filename=\"" +consumerCode+".pdf" + "\"");
+        response.setHeader("content-disposition", "attachment; filename=\"" + consumerCode + ".pdf" + "\"");
         if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
             try {
 
-                final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
-                        .get(0) + "");
+                final FileStoreMapper fsm = fileStoreMapperRepository
+                        .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final FileInputStream inStream = new FileInputStream(file);
                 final PrintWriter outStream = response.getWriter();
@@ -221,28 +231,26 @@ public class GenerateConnectionBillController {
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of Bills : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
+            LOGGER.debug("Number of Bills : "
+                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         final List<InputStream> pdfs = new ArrayList<InputStream>();
 
         for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
-        	if(connectionbill!=null){
-            try {
-            	
-                final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(
-                        connectionbill.getHscNo(), connectionbill.getApplicationType());
-                if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null) {
-                    final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(waterChargesDocumentslist
-                            .get(0) + "");
-                    final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                    final byte[] bFile = FileUtils.readFileToByteArray(file);
-                    pdfs.add(new ByteArrayInputStream(bFile));
+            if (connectionbill != null)
+                try {
+                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository
+                                .findByFileStoreId(connectionbill.getFileStoreID());
+                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                        final byte[] bFile = FileUtils.readFileToByteArray(file);
+                        pdfs.add(new ByteArrayInputStream(bFile));
+                    }
+                } catch (final Exception e) {
+                    LOGGER.debug("Entered into executeJob" + e);
+                    continue;
                 }
-            } catch (final Exception e) {
-                LOGGER.debug("Entered into executeJob" + e);
-                continue;
-            }
-        	}
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
         try {
@@ -336,14 +344,14 @@ public class GenerateConnectionBillController {
     public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, ParseException, ValidationException {
         final long startTime = System.currentTimeMillis();
-
         final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
                 .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
                         request.getParameter("propertyType"), request.getParameter("applicationType"),
                         request.getParameter("connectionType"), request.getParameter("consumerCode"),
                         request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of BIlls : " + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
+            LOGGER.debug("Number of BIlls : "
+                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream = null;
             if (null != generateConnectionBillList || generateConnectionBillList.size() >= 0) {
@@ -355,11 +363,9 @@ public class GenerateConnectionBillController {
 
             for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
                 try {
-                    final List<Long> filestoreList = generateConnectionBillService.getDocuments(
-                            connectionbill.getHscNo(), connectionbill.getApplicationType());
-                    if (!filestoreList.isEmpty() && filestoreList.get(0) != null) {
-                        final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(filestoreList.get(0)
-                                + "");
+                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository
+                                .findByFileStoreId(connectionbill.getFileStoreID());
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                         final byte[] bFile = FileUtils.readFileToByteArray(file);
                         zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),

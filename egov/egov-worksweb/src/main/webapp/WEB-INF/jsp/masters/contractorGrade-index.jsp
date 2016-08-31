@@ -39,7 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
-<script src="<egov:url path='/resources/js/contractorgrade.js?${app_release_no}'/>"></script> 
+<script src="<cdn:url value='/resources/js/contractorgrade.js?rnd=${app_release_no}'/>"></script> 
 <html>
 <title><s:text name="contractor.grade.list" /></title>
 <body>

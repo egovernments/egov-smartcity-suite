@@ -39,33 +39,38 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="false">
+	default-lazy-init="false">
 
-    <context:component-scan base-package="org.egov.wtms" />
+	<context:component-scan base-package="org.egov.wtms" />
 
-    <bean id="waterConnectionBillable" class="org.egov.wtms.application.service.collection.WaterConnectionBillable" scope="prototype" />
+	<bean id="waterConnectionBillable"
+		class="org.egov.wtms.application.service.collection.WaterConnectionBillable"
+		scope="prototype" />
 
-    <bean id="waterTaxExternalService" class="org.egov.wtms.application.service.collection.WaterTaxExternalService" scope="prototype"/>
+	<bean id="waterTaxExternalService"
+		class="org.egov.wtms.application.service.collection.WaterTaxExternalService" />
 
-    <bean id="WaterConnectionDetailsPersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type" value="org.egov.wtms.application.entity.WaterConnectionDetails" />
-    </bean>
-        
-    <bean id="WaterConnectionDetailsInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-         <constructor-arg index="0" ref="WaterConnectionDetailsPersistenceService"/>
-    </bean>
-        
-    <bean id="waterChargesIntegrationServiceImpl" class="org.egov.wtms.integration.WaterChargesIntegrationServiceImpl" scope="prototype">
+	<bean id="WaterConnectionDetailsPersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.wtms.application.entity.WaterConnectionDetails" />
 	</bean>
-	
-	<bean id="waterChargesThirdPartyService" class="org.egov.wtms.integration.WaterChargesThirdPartyService" scope="prototype">
+
+	<bean id="WaterConnectionDetailsInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="WaterConnectionDetailsPersistenceService" />
 	</bean>
-	
-    <bean id="applicationWorkflowCustomDefaultImpl" class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
-     <bean id="dcbdemandService" class="org.egov.dcb.service.DCBServiceImpl" scope="prototype" />
-	
+
+	<bean id="waterChargesIntegrationServiceImpl"
+		class="org.egov.wtms.integration.WaterChargesIntegrationServiceImpl">
+	</bean>
+
+	<bean id="waterChargesThirdPartyService" class="org.egov.wtms.integration.WaterChargesThirdPartyService">
+	</bean>
+
+	<bean id="applicationWorkflowCustomDefaultImpl"
+		class="org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl" />
 </beans>

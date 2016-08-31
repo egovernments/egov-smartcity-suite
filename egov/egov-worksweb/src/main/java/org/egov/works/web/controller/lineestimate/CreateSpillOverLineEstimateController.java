@@ -53,6 +53,8 @@ import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
@@ -122,6 +124,9 @@ public class CreateSpillOverLineEstimateController {
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
+    private BudgetControlTypeService budgetControlTypeService;
+    
+    @Autowired
     private BoundaryService boundaryService;
 
     @Autowired
@@ -162,10 +167,8 @@ public class CreateSpillOverLineEstimateController {
         validateLineEstimateDetails(lineEstimate, errors);
         validateAdminSanctionDetail(lineEstimate, errors);
 
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(WorksConstants.EGF_MODULE_NAME,
-                WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (value.getValue().equalsIgnoreCase("Y"))
+        if (BudgetControlType.BudgetCheckOption.MANDATORY.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
             validateBudgetAmount(lineEstimate, errors);
 
         validateBudgetHead(lineEstimate, errors);

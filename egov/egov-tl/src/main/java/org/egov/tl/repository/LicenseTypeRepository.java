@@ -38,15 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.tl.repository;
 
-import org.egov.infra.workflow.entity.State;
+import org.egov.tl.entity.LicenseType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface StateRepository extends JpaRepository<State, Long> {
+public interface LicenseTypeRepository extends JpaRepository<LicenseType, Long> {
 
-    Long countByOwnerPosition_Id(Long id);
-
+    LicenseType findByName(String name);
 }

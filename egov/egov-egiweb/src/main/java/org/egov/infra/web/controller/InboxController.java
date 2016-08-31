@@ -47,7 +47,6 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxRenderService;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -101,7 +100,7 @@ public class InboxController {
             final State state = stateAware.getCurrentState();
             final WorkflowTypes workflowTypes = inboxRenderServiceDeligate.getWorkflowType(stateAware.getStateType());
             final Inbox inboxItem = new Inbox();
-            inboxItem.setId(InboxRenderService.GROUP_Y.equals(workflowTypes.getGroupYN()) ? EMPTY : state.getId() + "#" + workflowTypes.getId());
+            inboxItem.setId(workflowTypes.isGrouped() ? EMPTY : state.getId() + "#" + workflowTypes.getId());
             inboxItem.setDate(DATE_FORMATTER.print(new DateTime(state.getCreatedDate())));
             inboxItem.setSender(state.getSenderName());
             inboxItem.setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());

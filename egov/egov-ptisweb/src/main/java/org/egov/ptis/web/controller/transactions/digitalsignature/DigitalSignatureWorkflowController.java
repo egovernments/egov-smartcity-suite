@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.ptis.web.controller.transactions.digitalSignature;
+package org.egov.ptis.web.controller.transactions.digitalsignature;
 
 import org.apache.commons.io.FileUtils;
 import org.egov.eis.entity.Assignment;
@@ -83,7 +83,6 @@ import java.util.Date;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_PROPERTY_TRANSFER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
@@ -304,16 +303,13 @@ public class DigitalSignatureWorkflowController {
         response.setContentType("application/pdf");
         response.setContentType("application/octet-stream");
         response.setHeader("content-disposition", "attachment; filename=\"" + fileStoreMapper.getFileName() + "\"");
-        try {
-            FileInputStream inStream = new FileInputStream(file);
+        try (FileInputStream inStream = new FileInputStream(file)){
             OutputStream outStream = response.getOutputStream();
             int bytesRead = -1;
             byte[] buffer = FileUtils.readFileToByteArray(file);
             while ((bytesRead = inStream.read(buffer)) != -1) {
                 outStream.write(buffer, 0, bytesRead);
             }
-            inStream.close();
-            outStream.close();
         } catch (FileNotFoundException fileNotFoundExcep) {
             throw new ApplicationRuntimeException("Exception while loading file : " + fileNotFoundExcep);
         } catch (final IOException ioExcep) {

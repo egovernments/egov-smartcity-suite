@@ -41,7 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <form:form name="searchMilestoneTemplateForm" role="form" action="create" modelAttribute="milestoneTemplate" id="milestoneTemplate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
   	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
@@ -103,5 +103,5 @@
 	});
 </script>
 <script type="text/javascript"
-	src="<c:url value='/resources/js/milestonetemplate/searchmilestonetemplate.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/milestonetemplate/searchmilestonetemplate.js?rnd=${app_release_no}'/>"></script>
 			

@@ -43,6 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglibs/cdn.tld" prefix="cdn"%>
 <div class="page-container" id="page-container">
 		<form:form name="SearchRequest" role="form" action="" modelAttribute="estimateAppropriationRegisterSearchRequest" id="estimateAppropriationRegisterSearchRequest" class="form-horizontal form-groups-bordered">
 			<div class="row">
@@ -70,4 +71,4 @@
 		}
 	});
 </script>
-<script src="<c:url value='/resources/js/reports/searchestimateappropriationregisterhelper.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/reports/searchestimateappropriationregisterhelper.js?rnd=${app_release_no}'/>"></script>

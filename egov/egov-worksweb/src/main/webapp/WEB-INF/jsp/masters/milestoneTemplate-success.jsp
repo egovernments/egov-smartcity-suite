@@ -39,7 +39,7 @@
   --%>
 <%@ include file="/includes/taglibs.jsp"%>
 <script
-	src="<egov:url path='/resources/js/milestonetemplate/milestonetemplate.js?${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/milestonetemplate/milestonetemplate.js?rnd=${app_release_no}'/>"></script>
 <html>
 <head>
 <style type="text/css">

@@ -42,7 +42,7 @@
 <html>  
 	<head>  
     	<title><s:text name="contractor.grade.master.title" /></title>
-    	<script src="<egov:url path='resources/js/contractorgrade.js?${app_release_no}'/>"></script> 
+    	<script src="<cdn:url value='resources/js/contractorgrade.js?rnd=${app_release_no}'/>"></script> 
 	</head>  
 	<body>
 	

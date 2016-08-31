@@ -40,13 +40,10 @@
 package org.egov.wtms.application.workflow;
 
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 
 /**
  * The Class ApplicationCommonWorkflow.
  */
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
 
     public ApplicationWorkflowCustomDefaultImpl() {

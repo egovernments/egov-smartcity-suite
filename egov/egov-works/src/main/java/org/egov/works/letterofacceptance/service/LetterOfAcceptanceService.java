@@ -52,6 +52,8 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.egf.budget.model.BudgetControlType;
+import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -175,6 +177,8 @@ public class LetterOfAcceptanceService {
 
     @Autowired
     private MBHeaderService mBHeaderService;
+    
+    private BudgetControlTypeService budgetControlTypeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -778,11 +782,10 @@ public class LetterOfAcceptanceService {
         workOrder.setWorkOrderAmount(revisedWorkOrderAmount);
         if (StringUtils.isNotBlank(workOrder.getPercentageSign()) && workOrder.getPercentageSign().equals("-"))
             workOrder.setTenderFinalizedPercentage(workOrder.getTenderFinalizedPercentage() * -1);
-        final List<AppConfigValues> values = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WorksConstants.EGF_MODULE_NAME, WorksConstants.APPCONFIG_KEY_BUDGETCHECK_REQUIRED);
-        final AppConfigValues value = values.get(0);
-        if (workOrder.getPercentageSign().equals("+")) {
-            if (appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
+         if (workOrder.getPercentageSign().equals("+")) {
+            if (appropriationAmount > 0 && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+
                 final List<Long> budgetheadid = new ArrayList<Long>();
                 budgetheadid.add(lineEstimateDetails.getLineEstimate().getBudgetHead().getId());
                 final boolean flag = lineEstimateDetailService.checkConsumeEncumbranceBudget(lineEstimateDetails,
@@ -792,13 +795,15 @@ public class LetterOfAcceptanceService {
                 if (!flag)
                     throw new ValidationException("", "error.budgetappropriation.insufficient.amount");
             }
-        } else if (workOrder.getPercentageSign().equals("-"))
-            if (appropriationAmount > 0 && value.getValue().equalsIgnoreCase("Y")) {
-                final String appropriationNumber = lineEstimateAppropriationService
+        } else if (workOrder.getPercentageSign().equals("-")) {
+            if (appropriationAmount > 0 && !BudgetControlType.BudgetCheckOption.NONE.toString()
+                    .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+                String appropriationNumber = lineEstimateAppropriationService
                         .generateBudgetAppropriationNumber(lineEstimateDetails);
-                lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount,
-                        appropriationNumber);
+                lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount, appropriationNumber);
+
             }
+        }
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);
         return savedworkOrder;
     }

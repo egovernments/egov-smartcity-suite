@@ -188,4 +188,7 @@ function checkPanNumber() {
         return false;
         }
     return true;
-} 			
+} 
+$('#panNumber').keyup(function() {
+    this.value = this.value.toUpperCase();
+});

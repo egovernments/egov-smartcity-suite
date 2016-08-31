@@ -74,7 +74,7 @@ function bodyOnLoad() {
 <title><s:text name='page.title.milestone.template.search' /></title>
 <body onload="bodyOnLoad()" class="yui-skin-sam">
 <script
-	src="<egov:url path='/resources/js/milestonetemplate/milestonetemplate.js?${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/milestonetemplate/milestonetemplate.js?rnd=${app_release_no}'/>"></script>
 		
 <s:hidden name="mode" id="mode" value="%{mode}" />
 <input type="hidden" value="<s:text name='milestontemplate.modify.select' />" id='selectMilestoneTemplate'>

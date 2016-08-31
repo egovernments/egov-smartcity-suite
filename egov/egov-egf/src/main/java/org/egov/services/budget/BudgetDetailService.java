@@ -39,6 +39,24 @@
  */
 package org.egov.services.budget;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.script.ScriptContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
@@ -60,11 +78,11 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -82,6 +100,7 @@ import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -90,23 +109,6 @@ import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.script.ScriptContext;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> {
     protected EisCommonService eisCommonService;
@@ -2869,6 +2871,28 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         return find(
                 "from BudgetDetail bd where bd.fund.id = ? and bd.function.id = ? and bd.executingDepartment.id = ? and bd.budgetGroup.id= ? and bd.budget.id = ?",
                 fundId, functionId, deptId, budgetGroupId, budgetId);
+    }
+
+    public List<BudgetDetail> getDepartmentFromBudgetDetailByFundId(final Integer fundId) {
+
+        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
+        
+        return criteria.add(Restrictions.eq("fund.id", fundId))
+                .setProjection(Projections.distinct(Projections.property("executingDepartment")))
+                .addOrder(Order.asc("executingDepartment")).list();
+    }
+
+    public List<BudgetDetail> getFunctionFromBudgetDetailByDepartmentId(final Long departmentId) {
+        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
+        return criteria.add(Restrictions.eq("executingDepartment.id", departmentId))
+                .setProjection(Projections.distinct(Projections.property("function")))
+                .addOrder(Order.asc("function")).list();
+    }
+
+    public List<BudgetDetail> getBudgetDetailByFunctionId(final Long functionId) {
+        final Criteria criteria = getSession().createCriteria(BudgetDetail.class);
+        return criteria.add(Restrictions.eq("function.id", functionId)).setProjection(Projections.distinct(Projections.property("budgetGroup")))
+                .addOrder(Order.asc("budgetGroup")).list();
     }
 
     @Transactional

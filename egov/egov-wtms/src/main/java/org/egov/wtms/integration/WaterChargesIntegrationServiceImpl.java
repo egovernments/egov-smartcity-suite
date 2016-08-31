@@ -65,10 +65,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrationService {
 
     @Autowired
@@ -112,7 +109,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                         if (null != arrInstal) {
                             consumerConsumption.setArrearFromDate(new DateTime(arrInstal.getFromDate()));
                             consumerConsumption.setArrearToDate(new DateTime(currentInstallment.getFromDate())
-                            .minusDays(1));
+                                    .minusDays(1));
                         }
                         consumerConsumption.setCurrentFromDate(new DateTime(currentInstallment.getFromDate()));
                         consumerConsumption.setCurentToDate(new DateTime(currentInstallment.getToDate()));

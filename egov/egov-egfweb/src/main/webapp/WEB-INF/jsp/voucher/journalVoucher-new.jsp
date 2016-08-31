@@ -419,19 +419,6 @@ function onloadtask(){
 	//document.getElementById('vouchermis.function').style.display="none";
 	//document.getElementById('functionnametext').style.display="none";
 	var message = '<s:property value="message"/>';
-	<s:if test="%{message==@org.egov.utils.FinancialConstants@BUDGET_CHECK_ERROR_MESSAGE}">
-	
-	var x=confirm(message+" . Do you want to continue?")
-        if(x==true)
-	{
-        document.getElementById("voucherHeader.allowNegetive").value="true";
-	}
-	else{
-	     document.getElementById("voucherHeader.allowNegetive").value="false";
-	}
-	message="";
-	</s:if>	
-	//alert(document.getElementById("voucherHeader.allowNegetive").value);
 	if(message != null && message != '')
 		showMessage(message);
 	<s:if test="%{voucherTypeBean.voucherNumType == null}">

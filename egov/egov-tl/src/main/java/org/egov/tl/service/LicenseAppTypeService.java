@@ -38,27 +38,22 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.service;
+package org.egov.tl.service;
 
-import org.egov.infra.admin.master.repository.StateHistoryRepository;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.repository.LicenseAppTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class StateHistoryService {
-
-    private final StateHistoryRepository stateHistoryRepository;
+public class LicenseAppTypeService {
 
     @Autowired
-    public StateHistoryService(final StateHistoryRepository stateHistoryRepository) {
-        this.stateHistoryRepository = stateHistoryRepository;
+    private LicenseAppTypeRepository licenseAppTypeRepository;
+
+    public LicenseAppType getLicenseAppTypeByName(String name) {
+        return licenseAppTypeRepository.findByName(name);
     }
-
-    public boolean isPositionUnderWorkflowHistory(final Long posId) {
-
-        return stateHistoryRepository.countByOwnerPosition_Id(posId) > 0;
-    }
-
 }

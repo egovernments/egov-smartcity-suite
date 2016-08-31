@@ -72,13 +72,13 @@ public class CaseTypeMaster extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CASE_TYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(min = 1, max = 25)
+    @Length(max = 25)
     @Audited
     @NotNull
     private String code;
 
     @NotNull
-    @Length(min = 3, max = 50)
+    @Length(max = 50)
     @Audited
     private String caseType;
 
@@ -86,7 +86,7 @@ public class CaseTypeMaster extends AbstractAuditable {
     @NotNull
     private Boolean active;
 
-    @Length(min = 3, max = 256)
+    @Length(max = 256)
     @SafeHtml
     private String notes;
     

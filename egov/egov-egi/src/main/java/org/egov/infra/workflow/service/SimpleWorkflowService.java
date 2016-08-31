@@ -74,17 +74,15 @@ import java.util.List;
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
     private final PersistenceService<T, Long> stateAwarePersistenceService;
-    private PersistenceService<WorkflowAction, Long> actionPersistenceService;
-    
+
+    @Autowired
+    private WorkflowActionService workflowActionService;
+
     @Autowired
     private ScriptService scriptService;
 
     public SimpleWorkflowService(final PersistenceService<T, Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
-    }
-
-    public void setActionPersistenceService(final PersistenceService<WorkflowAction, Long> actionPersistenceService) {
-        this.actionPersistenceService = actionPersistenceService;
     }
 
     @Override
@@ -97,11 +95,9 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     @Override
     public T transition(final String actionName, final T stateAware, final String comment) {
-        final List<WorkflowAction> workflowActions = this.actionPersistenceService.findAllByNamedQuery(WorkflowAction.BY_NAME_AND_TYPE,
-                actionName, stateAware.getStateType());
-        WorkflowAction workflowAction = new WorkflowAction(actionName, stateAware.getStateType(), actionName);
-        if (!workflowActions.isEmpty())
-            workflowAction = workflowActions.get(0);
+        WorkflowAction workflowAction = workflowActionService.getWorkflowActionByNameAndType(actionName, stateAware.getStateType());
+        if (workflowAction == null)
+            workflowAction = new WorkflowAction(actionName, stateAware.getStateType(), actionName);
         return transition(workflowAction, stateAware, comment);
     }
 
@@ -112,8 +108,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final List<String> actionNames = (List<String>) scriptService.executeScript(trasitionScript,
                 ScriptService.createContext("wfItem", stateAware, "workflowService", this, "persistenceService",
                         this.stateAwarePersistenceService));
-        final List<WorkflowAction> savedWorkflowActions = this.actionPersistenceService.findAllByNamedQuery(WorkflowAction.IN_NAMES_AND_TYPE,
-                stateAware.getStateType(), actionNames);
+        final List<WorkflowAction> savedWorkflowActions = workflowActionService.getAllWorkflowActionByTypeAndActionNames(stateAware.getStateType(), actionNames);
         return savedWorkflowActions.isEmpty() ? createActions(stateAware, actionNames) : savedWorkflowActions;
     }
 
@@ -145,7 +140,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private List<WorkflowAction> createActions(final T stateAware, final List<String> actionNames) {
-        final List<WorkflowAction> workflowActions = new ArrayList<WorkflowAction>();
+        final List<WorkflowAction> workflowActions = new ArrayList<>();
         for (final String action : actionNames)
             workflowActions.add(new WorkflowAction(action, stateAware.getStateType(), action));
         return workflowActions;
@@ -166,10 +161,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             final String additionalRule, final String currentState, final String pendingActions, Date date) {
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions);
-        if (null == date)
-            date = new Date();
-        final Criterion crit1 = Restrictions.le("fromDate", date);
-        final Criterion crit2 = Restrictions.ge("toDate", date);
+        final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
+        final Criterion crit2 = Restrictions.ge("toDate", date == null ? new Date() : date);
         final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
         wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
 
@@ -191,7 +184,6 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             else
                 return defaultObjectTypeList.get(0);
         } else {
-            if (objectTypeList.size() > 0)
                 for (final WorkFlowMatrix matrix : objectTypeList)
                     if (matrix.getToDate() == null)
                         return matrix;

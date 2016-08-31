@@ -162,7 +162,7 @@ public class BalanceSheetService extends ReportService {
             final String glCodeForExcessIE,
             final String filterQuery, final Date toDate, final Date fromDate) {
         final BigDecimal divisor = balanceSheet.getDivisor();
-        voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
+    String    voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         StringBuffer qry = new StringBuffer(256);
         //TODO- We are only grouping by fund here. Instead here grouping should happen based on the filter like -department and Function also
         qry = qry.append("select sum(g.creditamount)-sum(g.debitamount),v.fundid from voucherheader v,");
@@ -199,7 +199,7 @@ public class BalanceSheetService extends ReportService {
         final BigDecimal divisor = balanceSheet.getDivisor();
         BigDecimal sum = BigDecimal.ZERO;
         String formattedToDate = "";
-       voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
+    String   voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         if ("Yearly".equalsIgnoreCase(balanceSheet.getPeriod()))
         {
             final Calendar cal = Calendar.getInstance();
@@ -250,7 +250,7 @@ public class BalanceSheetService extends ReportService {
         coaType.add('L');
         final Date fromDate = getFromDate(balanceSheet);
         final Date toDate = getToDate(balanceSheet);
-        voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
+        String   voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         final List<Fund> fundList = balanceSheet.getFunds();
         final String filterQuery = getFilterQuery(balanceSheet);
         populateCurrentYearAmountPerFund(balanceSheet, fundList, filterQuery, toDate, fromDate, BS);
